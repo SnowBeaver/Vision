@@ -1,0 +1,6 @@
+.vagrant
+*.pyc
+.idea
+.ropeproject
+config.py
+env
