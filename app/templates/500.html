@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Error occured 500</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="page not found">
+		<meta name="keywords" content="page not found">
+		<meta charset="utf-8">
+		<!-- SUPPORT FOR IE6-8 OF HTML5 ELEMENTS -->
+		<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+		{% include 'widgets/analytics.html' %}
+	</head>
+	<body>
+		<div class="main-menu">
+			<div class="w1000">
+				{% include 'widgets/topmenu.html' %}
+			</div>
+		</div>
+		<div class="header">
+			<div class="w1000">
+				<div>
+					<div class="right-section">
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+		<div class="center-divider"></div>
+
+		<div class="grey-background profile-page">
+			<div class="w1000">
+				<div class="title-container title container">Error</div>
+				<div class="profile white arial">
+					<div class="title " style="font-size: 150pt;">500</div>
+					<div style="margin-top:100px">
+						Oops, we have encountered an error. Problem report is already sent to support team.
+						<br>Sorry for inconvenience.
+						<br>
+						<a href="{{ url_for('home.home') }}" style="text-decoration:underline;">back to home page</span></a>
+				</div>
+				</p>
+			</div>
+			<div class="shadow-outer mb8"></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
+{% block bottommenu %}
+{% include 'widgets/bottom-menu.html' %}
+{% endblock %}
+
+{% block footer %}
+{% include 'widgets/footer.html' %}
+{% endblock %}
+
+{% block js_footer %}
+{% endblock %}
+</body>
+</html>

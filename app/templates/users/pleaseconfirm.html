@@ -1,0 +1,16 @@
+{% extends "dashboard.html" %}
+
+{% block content_footer %}
+{% endblock %}
+
+{% block page %}
+<div class="w1000" style="height: 300px;margin-top:200px">
+	<div class="alert alert-danger">
+		Your email is not confirmed yet.
+		We have sent you a confirmation letter recently. Please follow instructions described in the letter
+		in order to confirm your e-mail.
+		If you still did not receive any email from us
+		<a href="{{ url_for('users.reconfirm', alias=user.alias) }}">click here</a>
+	</div>
+</div>
+{% endblock %}

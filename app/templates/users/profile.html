@@ -1,0 +1,56 @@
+{% extends "dashboard.html" %}
+
+<div class="title-container title container">
+  {% block dashboard_menu %}
+  {% include 'widgets/dashboard-menu.html' %}
+  {% endblock %}
+</div>
+
+{% block panel_body %}
+  {% if session.help %}
+  <div class="jumbotron">
+    <h1>
+      {{ session.help.greeting }}
+    </h1>
+    <p>
+    {{ session.help.suggestion }}
+    </p>
+  </div>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>Edit profile</h2>
+{% from "forms/macros.html" import form_field %}
+<div class="profile-form-container">
+  <div class="photo pull-left ">
+    {% if user.photo == '' or not user.photo %}
+      <img src="{{ url_for('static', filename='img/no-photo.png') }}" alt="no photo">
+    {% endif %}
+    {% if user.photo %}
+      {% if user.photo.startswith(('http','https')) %}
+      <img src="{{ user.photo }}" alt="{{ user.alias}}" />
+      {% else %}
+    {% endif %}
+    <img src="/photo/thumb/245/{{ user.alias }}/{{ user.photo }}" alt="{{ user.alias }}">
+    {% endif %}
+  </div>
+  <div class="pull-right">
+    <form method="POST" action="" enctype="multipart/form-data" class="form-horizontal" role="form">
+      {{ form.csrf_token }}
+      Change your photo {{ form_field(form.photo, class="form-control input-lg") }}
+      {{ form_field(form.name, class="form-control input-lg") }}
+      {{ form_field(form.description, class="form-control input-lg", rows=4) }}
+      {{ form_field(form.website, class="form-control input-lg", rows=4) }}
+      {{ form_field(form.mobile, class="form-control input-lg") }}
+      <input type="submit" value="Save" class="btn btn-block btn-lg btn-primary">
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block content_footer %}
+{% endblock %}
+
+{% block bottommenu %}
+{% endblock %}

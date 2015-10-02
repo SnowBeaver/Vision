@@ -1,0 +1,22 @@
+{% extends "dashboard.html" %}
+
+<div class="title-container title container">
+	{% block navbar_right %}
+	<li><a href="" title="" class="" id="">test</a></li>
+	<li><div class="pull-left"><img src="{{user.avatar(28)}}">{{ user.name|striptags|title }}</div></li>
+	{% endblock %}
+
+	{% block profile_image %}
+	<div class="pull-left"><img src="{{user.avatar(28)}}"> {{ user.name }}'s dashboard</div>
+	{% endblock %}
+
+	{% block dashboard_menu %}
+	{% include 'widgets/dashboard-menu.html' %}
+	{% endblock %}
+</div>
+{% block content %}
+{% endblock %}
+{% block panel_footer %}
+{% endblock %}
+{% block bottommenu %}
+{% endblock %}

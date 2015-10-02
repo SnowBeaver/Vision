@@ -16,7 +16,7 @@ PGPASSWORD="ViSiOn" psql -U postgres -p 5432 -h localhost -c "ALTER ROLE vision 
 PGPASSWORD="ViSiOn" psql -U postgres -p 5432 -h localhost -c "CREATE DATABASE vision OWNER vision";
 
 # create structure and fill fixtures
-
+#
 # clear the cache
 
 # reload supervisor to start all the services

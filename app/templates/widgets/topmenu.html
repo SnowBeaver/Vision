@@ -1,0 +1,13 @@
+<menu>
+	{% block navbar %}
+	<li><a href="/">Home</a></li>
+	{% block navbar_right %}
+		{% if user and session.user_id %}
+		<li><a href="{{ url_for('users.home') }}" title="{{ user.name|striptags|title }}'s dashboard">Dashboard</a></li>
+		<li><a href="{{ url_for('users.logout') }}"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+		{% elif not session.user_id %}
+			<li><a data-toggle="modal" data-target="#login" href="{{ url_for('users.login') }}">Login</a></li>
+		{% endif %}
+	{% endblock %}
+	{% endblock %}
+</menu>

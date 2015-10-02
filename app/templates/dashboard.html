@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{% block head %}
+		<title>{{ user.name }}'s dashboard '{% block title %}{% endblock %}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="author" content="">
+		<meta charset="utf-8">
+		<!-- SUPPORT FOR IE6-8 OF HTML5 ELEMENTS -->
+		<!--[if lt IE 9]>
+					<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<![endif]-->
+		<link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='js/upload/css/jquery.fileupload.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}">
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		{% endblock %}
+<body>
+{% include 'widgets/dashboard-top-menu.html' %}
+<div class="center-divider"></div>
+<div class="grey-background profile-page">
+{% block page %}
+	<div class="panel panel-default w1000 page">
+	{% include 'widgets/dashboard-flash.html' %}
+		<div class="panel-heading">{% block dashboard_menu %}{% endblock %}</div>
+		<div class="panel-body">
+			{% block panel_body %}
+			{% endblock %}
+		</div>
+		{% block content %}
+		{% endblock %}
+	</div>
+	{% block content_footer %}
+	<div class="panel-footer w1000">
+		{% block panel_footer %}
+		{% endblock %}
+	</div>
+	{% endblock %}
+{% endblock %}
+</div>
+<p>&nbsp;</p>
+
+{% block bottommenu %}
+{% include 'widgets/bottom-menu.html' %}
+{% endblock %}
+
+{% block footer %}
+{% include 'widgets/footer.html' %}
+{% endblock %}
+	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject_src.js"></script>
+
+	<script src="{{ url_for("static", filename="js/upload/vendor/jquery.ui.widget.js") }}"></script>
+	<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+	<!-- The basic File Upload plugin -->
+	<script src="{{ url_for("static", filename="js/upload/jquery.fileupload.js") }}"></script>
+	<script src="{{ url_for("static", filename="js/upload/jquery.iframe-transport.js") }}"></script>
+	{#
+	<!-- The File Upload processing plugin -->
+	<script src="{{ url_for("static", filename="js/upload/jquery.fileupload-process.js") }}"></script>
+	<!-- The File Upload validation plugin -->
+	<script src="{{ url_for("static", filename="js/upload/jquery.fileupload-validate.js") }}"></script>
+	#}
+</body>
+</html>

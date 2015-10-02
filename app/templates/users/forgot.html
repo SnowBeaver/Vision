@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block top %}
+{% endblock %}
+{% block rightcontent %}
+{% endblock %}
+{% block header %}
+<header></header>
+{% endblock %}
+
+{% block content %}
+<div class="login-form-container">
+	<div class="title-container title container container-background">
+		<div>PASSWORD REMINDER</div>
+	</div>
+	<div class="container arial container-background">
+		{% from "forms/macros.html" import render_field %}
+		<form class="form fs13" method="POST" action="{{ url_for('users.forgot') }}">
+			{{ form.csrf_token }}
+			{{ render_field(form.email, class="input text") }}
+			<div>
+				<br>
+				To ensure the security of your information, we ask that you type the code (displayed below) in the text box.
+			</div>
+			<label>Are you a human?</label>
+			{{ form.recaptcha }}
+			<input type="submit" value="Submit" class="btn">
+		</form>
+	</div>
+</div>
+{% endblock %}
+{% block bottommenu %}
+{% endblock %}

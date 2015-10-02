@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <title>{% block title %}Vision{% endblock %}</title>
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta charset="utf-8">
+    <!-- SUPPORT FOR IE6-8 OF HTML5 ELEMENTS -->
+    <!--[if lt IE 9]>
+          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% endblock %}
+    {% include 'widgets/analytics.html' %}
+  </head>
+  <body>
+    <div class="main-menu">
+      <div class="w1000">
+        {% include 'widgets/topmenu.html' %}
+      </div>
+    </div>
+    {% block header %}
+    {% endblock %}
+    {% block top %}
+    <div class="{% block top_banner %}home-main{% endblock %}">
+      <div class="w1000">
+        <div>
+          <a href="{{ url_for('home.home') }}">
+            <div class="logo"></div>
+          </a>
+          <div class="right-section">
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+    {% include 'widgets/flash.html' %}
+    {% block content %}
+    <div class="center-divider"></div>
+    <div>
+      <div class="w1000">
+        {% block topcontent %}
+        {% endblock %}
+        {% block rightcontent %}
+        <div class="right-side"></div>
+        {% endblock %}
+        <div class="clear"></div>
+      </div>
+    </div>
+    {% endblock %}
+    {% block bottommenu %}
+    {% include 'widgets/bottom-menu.html' %}
+    {% endblock %}
+    {% block footer %}
+    <div class="center-divider"></div>
+    {% include 'widgets/footer.html' %}
+    {% endblock %}
+    {% block js_footer %}
+    {% endblock %}
+    <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  </body>
+</html>
