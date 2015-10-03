@@ -44,8 +44,7 @@ def before_request():
 @login_required
 def home():
     return render_template(
-        "users/me.html", user=g.user,
-        form=form
+        "users/me.html", user=g.user
     )
 
 @mod.route('/pleaseconfirm')

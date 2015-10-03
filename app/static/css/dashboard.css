@@ -326,6 +326,7 @@ div.dashboard-right-memu  ul.nav li a:hover {
 }
 
 .panel-default{
+	margin-top: 100px;
 }
 .page{
   min-height: 450px;
@@ -370,4 +371,13 @@ div.dashboard-right-memu  ul.nav li a:hover {
 .panel-body{
 }
 .navbar-nav > li > a {
+}
+.panel, .panel-footer{
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+}
+.panel-footer{
+	border: 1px solid #ddd;
+	border-top: 0px;
 }

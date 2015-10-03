@@ -1,33 +1,5 @@
-<script type="text/javascript" charset="utf-8" language="javascript">
-$(function () {
-    $('#fileupload').fileupload({
-        url: '{{ url_for("samples.jupload") }}',
-        dataType: 'json',
-        submit: function(){
-          $("#pleaseWaitDialog").modal('show');
-        },
-        done: function (e, data) {
-          $("#pleaseWaitDialog").modal('hide');
-          if( data.result.error && data.result.error != '' ){
-            return alert(data.result.error);
-          }
-          $.get('{{ url_for("samples.ajaxlist") }}', false, mycallback, 'json');
-          function mycallback(response) {
-            $("#reload").html(response.html);
-          }
-        }
-    });
-
-    $('.google-drive').click(function(){
-        $.get('{{ url_for("samples.import_from_gd") }}', false, function(){
-        }, 'json');
-    });
-});
-</script>
-
 <div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
   <div class="modal-header">
-    <h1>Uploading...</h1>
   </div>
   <div class="modal-body">
     <div class="progress progress-striped active">
@@ -46,20 +18,4 @@ $(function () {
   </button>
   <a href="{{ url_for('users.home') }}"><span class="glyphicon glyphicon-home home"></span></a>
 </div>
-
-<!-- Collect the nav links, forms, and other content for toggling -->
-<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-  <span class="btn btn-primary fileinput-button pull-right" style="margin-top:8px;">
-    <i class="glyphicon glyphicon-plus"></i>
-    <span>Upload new sound sample</span>
-    <input id="fileupload" type="file" name="files[]" multiple>
-  </span>
-    {#
-  <span class="btn btn-primary fileinput-button pull-right google-drive" style="margin-top:8px;margin-right:10px;" >
-      <i class="glyphicon glyphicon-import"></i>
-      <span title="Import from Google Drive">Import from Google Drive</span>
-  </span>
-    #}
-
-</div><!-- /.navbar-collapse -->
 </nav>
