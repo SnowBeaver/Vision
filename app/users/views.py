@@ -17,6 +17,7 @@ from app.users.constants import UPLOAD_FOLDER
 from app.users.models import User
 from app.users.utils import allowed_image_file
 from app.users.decorators import login_required, templated
+from itsdangerous import URLSafeTimedSerializer
 
 
 mod = Blueprint('users', __name__, url_prefix='/users')
@@ -54,23 +55,43 @@ def pleaseconfirm():
     return render_template("users/pleaseconfirm.html", user=g.user)
 
 
-@mod.route("/confirm/<string:code>", methods=['GET', 'POST'])
-def confirm(code):
-    """docstring for reconfirm"""
-    id = "{%s}" % base64.b64decode(code)
+@mod.route("/confirm/<string:token>", methods=['GET', 'POST'])
+def confirm(token):
+    """docstring for confirm"""
     try:
-        user = db.session.query(User).get(id)
-    except Exception:
-        abort(404)
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired.', 'danger')
+
+    user = User.query.filter_by(email=email).first_or_404()
 
     if user.is_confirmed():
-        abort(404)
-
-    user.confirmed = 1
-    user.active = 1
-    db.session.commit()
+        flash('Account already confirmed. Please login.', 'success')
+    else:
+        user.confirmed = True
+        user.active = True
+        db.session.commit()
+        flash('You have confirmed your account. Thanks!', 'success')
 
     return redirect(url_for('users.home'))
+
+
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=current_app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except:
+        return False
+    return email
 
 
 @mod.route("/reconfirm/<string:alias>", methods=['GET', 'POST'])
@@ -84,20 +105,13 @@ def reconfirm(alias):
 def send_confirmation():
     """docstring for send_confirmation"""
 
-    lnk = url_for(
-        'users.confirm',
-        code=base64.b64encode(str(g.user.id)),
-        _external=True
-    )
-
-    conflnk_html = '<a href="%s">%s</a>' % (
-        lnk,
-        lnk
-    )
+    token = generate_confirmation_token(str(g.user.get_email()))
+    lnk = url_for('users.confirm', token=token, _external=True)
+    conflnk_html = '<a href="%s">%s</a>' % (lnk, lnk)
 
     msg = Message(
         "Please confirm your account at vision website",
-        sender="noreply@.com",
+        sender=current_app.config['NOREPLY_EMAIL'],
         recipients=[g.user.get_email()]
     )
     msg.body = "\nWelcome\n\n"
