@@ -2,7 +2,7 @@
 	<socket>/tmp/vision.sock</socket>
 	<pythonpath>/home/vision/www/</pythonpath>
 	<module>app:app</module>
-	<processes>4</processes>
+	<processes>2</processes>
 	<chdir>/home/vision/www</chdir>
 	<pidfile>/tmp/vision.pid</pidfile>
 	<virtualenv>/home/vision/www/env/</virtualenv>
