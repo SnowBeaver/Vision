@@ -4,10 +4,28 @@ from hashlib import md5
 from sqlalchemy import event
 from sqlalchemy.sql import text
 import datetime
+from flask.ext.security import RoleMixin, UserMixin
 
+# Define models
+users_roles = db.Table(
+    'users_roles',
+    db.Column('user_id', db.Integer(), db.ForeignKey('users_user.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+)
 
-class User(db.Model):
+class Role(db.Model, RoleMixin):
+    """
+    Class Role
+    """
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
 
+class User(db.Model, UserMixin):
+    """
+    Class User
+
+    """
     __tablename__ = 'users_user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,7 +33,10 @@ class User(db.Model):
     alias = db.Column(db.String(50), unique=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
-    roles = db.Column(db.SmallInteger, default=USER.USER)
+    roles = db.relationship(
+        'Role', secondary=users_roles,
+        backref=db.backref('users_user', lazy='dynamic')
+    )
     status = db.Column(db.SmallInteger, default=USER.NEW)
     address = db.Column(db.String(255))
     mobile = db.Column(db.String(50))
@@ -69,3 +90,4 @@ class User(db.Model):
     def avatar(self, size):
         return 'http://www.gravatar.com/avatar/' + \
             md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
+

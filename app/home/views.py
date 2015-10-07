@@ -9,7 +9,7 @@ import datetime
 from app.home.decorators import templated
 from flask import g
 
-mod = Blueprint('home', __name__, url_prefix='')
+mod = Blueprint('home', __name__, url_prefix='/app')
 
 
 @mod.before_app_request
@@ -25,7 +25,7 @@ def before_request():
             del session['user_id']
 
 
-@mod.route('/', methods=['GET'])
+@mod.route('/home', methods=['GET'])
 def home():
     """docstring for home."""
     return render_template(

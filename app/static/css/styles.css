@@ -2,7 +2,7 @@
 body{
   margin: 0px;
   padding: 0px;
-  background-image: url('/static/img/bg.png');
+  background-image: url('/app/static/img/bg.png');
 }
 ul, menu{
   margin: 0px;
@@ -35,11 +35,11 @@ header{
 /* Fonts */
 @font-face {
   font-family: Fjalla;
-  src: url(/static/fonts/FjallaOne-Regular.ttf);
+  src: url(/app/static/fonts/FjallaOne-Regular.ttf);
 }
 @font-face {
   font-family: BebasNeue;
-  src: url(/static/fonts/BebasNeue.otf);
+  src: url(/app/static/fonts/BebasNeue.otf);
 }
 /* Fonts END */
 
@@ -146,7 +146,7 @@ header{
   font-size: 27px;
 }
 .center-divider{
-  background: url(/static/img/center-divider.png);
+  background: url(/app/static/img/center-divider.png);
   height: 4px;
 }
 .center{

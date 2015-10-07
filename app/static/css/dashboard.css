@@ -23,11 +23,11 @@ a:hover{
 /* Fonts */
 @font-face {
     font-family: Fjalla;
-    src: url(/static/fonts/FjallaOne-Regular.ttf);
+    src: url(/app/static/fonts/FjallaOne-Regular.ttf);
 }
 @font-face {
     font-family: BebasNeue;
-    src: url(/static/fonts/BebasNeue.otf);
+    src: url(/app/static/fonts/BebasNeue.otf);
 }
 /* Fonts END */
 

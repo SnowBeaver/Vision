@@ -20,7 +20,7 @@ from app.users.decorators import login_required, templated
 from itsdangerous import URLSafeTimedSerializer
 
 
-mod = Blueprint('users', __name__, url_prefix='/users')
+mod = Blueprint('users', __name__, url_prefix='/app/users')
 
 
 def authorize(user):

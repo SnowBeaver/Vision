@@ -4,3 +4,7 @@
 .ropeproject
 config.py
 env
+var
+bbenv
+flaskbb
+flaskbb.xml
