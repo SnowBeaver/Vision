@@ -2,7 +2,6 @@ import os
 import time
 import md5
 import base64
-import datetime
 from flask import Blueprint, request, render_template
 from flask import flash, g, session, redirect, url_for
 from flask import jsonify, abort, make_response
@@ -307,8 +306,6 @@ def profile():
         db.session.commit()
         flash("Profile updated")
 
-        # wait until photo will be converted, temporary hack
-        time.sleep(1)
         return redirect(url_for("users.profile"))
 
     return dict(form=form, user=user)
@@ -332,5 +329,3 @@ def change_password():
         return redirect(url_for("users.home"))
 
     return dict(form=form, user=user)
-
-# vim: set ts=4 sw=4 tw=79 :

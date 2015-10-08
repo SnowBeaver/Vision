@@ -4,17 +4,18 @@
 
 from unipath import Path
 
+APP_NAME = 'Vision Diagnostic'
+HOST = 'visiondiagnostic.org'
 DEBUG = True
 
 CACHE_TIMEOUT = 300
 ROOT_DIR = Path(__file__).ancestor(1)
+HOME_DIR = ROOT_DIR.parent
+TMP_DIR = '/tmp'
 UPLOAD_FOLDER = ROOT_DIR + '/var/uploads/'
 
 #max upload 6 Mb
 MAX_CONTENT_LENGTH = 6 * 1024 * 1024
-
-HOME_DIR = ROOT_DIR.parent
-TMP_DIR = '/tmp'
 
 TESTING = False
 ADMINS = frozenset(['vasili.pascal@gmail.com'])
@@ -29,6 +30,8 @@ CSRF_ENABLED = True
 CSRF_SESSION_KEY = "somethingimpossibletoguesshere"
 
 NOREPLY_EMAIL = 'noreply@visiondiagnostic.org'
+SUPPORT_EMAIL = 'support@visiondiagnostic.org'
+
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USE_SSL = True
