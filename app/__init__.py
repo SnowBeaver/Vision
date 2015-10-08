@@ -9,7 +9,7 @@ from flask.ext.security import Security, SQLAlchemyUserDatastore, \
 from flask.ext.admin import Admin
 from flask.ext import admin, login
 
-app = Flask(__name__, static_url_path='/app')
+app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
 db = SQLAlchemy(app)
 db.create_all()

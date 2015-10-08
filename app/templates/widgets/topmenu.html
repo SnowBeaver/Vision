@@ -1,6 +1,7 @@
 <menu>
 	{% block navbar %}
 	<li><a href="/">Home</a></li>
+	<li><a href="/forum">Forum</a></li>
 	{% block navbar_right %}
 		{% if user and session.user_id %}
 		<li><a href="{{ url_for('users.home') }}" title="{{ user.name|striptags|title }}'s dashboard">Dashboard</a></li>
