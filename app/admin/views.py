@@ -4,7 +4,7 @@ from flask import Flask
 from flask import Blueprint, request, render_template
 from flask.ext.admin.contrib import sqla
 from app import db
-from app.users.models import User
+from app.users.models import User, Role
 from flask import flash, g, session, redirect, url_for
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -13,6 +13,7 @@ from flask.ext.admin import helpers, expose
 from flask.ext import admin, login
 from wtforms import form, fields, validators
 from werkzeug.security import check_password_hash
+#from flask.ext.security.decorators import roles_required
 
 
 # Define login and registration forms (for flask-login)
@@ -72,7 +73,16 @@ class MyModelView(ModelView):
 
         if not login.current_user.is_authenticated():
             return False
-        return True
+
+        # Prevent administration of Roles unless the
+        # currently logged-in user has the "admin" role
+        return login.current_user.has_role('admin')
+
+
+class RoleAdmin(MyModelView):
+
+    def __init__(self, dbsession):
+        super(RoleAdmin, self).__init__(Role, dbsession)
 
 
 class UserAdmin(MyModelView):

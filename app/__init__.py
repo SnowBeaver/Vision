@@ -56,5 +56,6 @@ app.register_blueprint(homeModule)
 from app.users.views import mod as userModule
 app.register_blueprint(userModule)
 
-from app.admin.views import UserAdmin
+from app.admin.views import UserAdmin, RoleAdmin
 backend.add_view(UserAdmin(db.session))
+backend.add_view(RoleAdmin(db.session))
