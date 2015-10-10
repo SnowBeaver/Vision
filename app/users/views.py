@@ -17,7 +17,7 @@ from app.users.models import User
 from app.users.utils import allowed_image_file
 from app.users.decorators import login_required, templated
 from itsdangerous import URLSafeTimedSerializer
-from flask.ext.babel import gettext, ngettext
+from flask.ext.babel import gettext
 
 
 mod = Blueprint('users', __name__, url_prefix='/users')
@@ -61,17 +61,17 @@ def confirm(token):
     try:
         email = confirm_token(token)
     except:
-        flash(gettext('The confirmation link is invalid or has expired.'), 'danger')
+        flash(gettext(u'The confirmation link is invalid or has expired.'), 'danger')
 
     user = User.query.filter_by(email=email).first_or_404()
 
     if user.is_confirmed():
-        flash(gettext('Account already confirmed. Please login.'), 'success')
+        flash(gettext(u'Account already confirmed. Please login.'), 'success')
     else:
         user.confirmed = True
         user.active = True
         db.session.commit()
-        flash(gettext('You have confirmed your account. Thanks!'), 'success')
+        flash(gettext(u'You have confirmed your account. Thanks!'), 'success')
 
     return redirect(url_for('users.home'))
 
@@ -110,7 +110,7 @@ def send_confirmation():
     conflnk_html = '<a href="%s">%s</a>' % (lnk, lnk)
 
     msg = Message(
-        gettext("Please confirm your account at vision website"),
+        gettext(u"Please confirm your account at vision website"),
         sender=current_app.config['NOREPLY_EMAIL'],
         recipients=[g.user.get_email()]
     )
@@ -166,9 +166,9 @@ def login():
                 # the session can't be modified as it's signed,
                 # it's a safe place to store the user id
                 authorize(user)
-                flash(ngettext('Welcome %(name)s', user.name))
+                flash(gettext(u'Welcome') + " " + user.name)
                 return redirect(url_for('users.home'))
-        flash(gettext('Wrong email or password'), 'error-message')
+        flash(gettext(u'Wrong email or password'), 'error-message')
 
     return render_template('users/login.html', form=form)
 
@@ -203,9 +203,9 @@ def register():
             if exists:
                 flash(
                     gettext(
-                        'User with this e-mail was registered already.'
-                        ' If you forgot your password click ' +
-                        '<a href="%s">remind password</a>' % url_for(
+                        u'User with this e-mail was registered already.'
+                        u' If you forgot your password click ' +
+                        u'<a href="%s">remind password</a>' % url_for(
                             'users.forgot')
                     ))
                 # redirect user to the 'home' method of the user module.
@@ -245,7 +245,7 @@ def register():
         db.session.commit()
 
         # flash will display a message to the user
-        flash(gettext('Thanks for registering'))
+        flash(gettext(u'Thanks for registering'))
         # redirect user to the 'home' method of the user module.
         return redirect(url_for('users.home'))
 
@@ -306,7 +306,7 @@ def profile():
                 user.photo = newfn
 
         db.session.commit()
-        flash(gettext('Profile updated'))
+        flash(gettext(u'Profile updated'))
 
         return redirect(url_for("users.profile"))
 
@@ -327,7 +327,7 @@ def change_password():
         user.mobile = form.mobile.data
         user.website = form.website.data
         db.session.commit()
-        flash(gettext("Profile updated"))
+        flash(gettext(u"Profile updated"))
         return redirect(url_for("users.home"))
 
     return dict(form=form, user=user)
