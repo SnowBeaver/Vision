@@ -8,12 +8,14 @@ from flask.ext.security import Security, SQLAlchemyUserDatastore, \
     UserMixin, RoleMixin, login_required
 from flask.ext.admin import Admin
 from flask.ext import admin, login
+from flask.ext.babel import Babel
 
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
 db = SQLAlchemy(app)
 db.create_all()
 mail = Mail(app)
+babel = Babel(app)
 
 from app.admin.views import MyAdminIndexView
 

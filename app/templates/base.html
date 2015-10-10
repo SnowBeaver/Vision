@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     {% block head %}
-    <title>{% block title %}Visiondiagnostic{% endblock %}</title>
+    <title>{% block title %}Vision Diagnostic{% endblock %}</title>
     <meta name=viewport content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="keywords" content="">
@@ -14,6 +14,7 @@
       <![endif]-->
 
     <link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
     {% endblock %}
@@ -44,7 +45,7 @@
     {% include 'widgets/flash.html' %}
     {% block content %}
     <div class="center-divider"></div>
-    <div>
+    <div class="jumbotron w1000 h800">
       <div class="w1000">
         {% block topcontent %}
         {% endblock %}
@@ -65,6 +66,7 @@
     {% block js_footer %}
     {% endblock %}
     <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
   </body>

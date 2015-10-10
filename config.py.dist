@@ -39,3 +39,10 @@ MAIL_USERNAME = ''
 MAIL_PASSWORD = ''
 
 RECAPTCHA_PUBLIC_KEY = ''
+
+LANGUAGES = {
+    'en': 'English',
+    'fr': 'French',
+    'es': 'Español'
+}
+BABEL_DEFAULT_LOCALE = 'en'
