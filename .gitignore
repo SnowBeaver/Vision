@@ -8,3 +8,5 @@ var
 bbenv
 flaskbb
 flaskbb.xml
+*.mo
+app/messages.pot
