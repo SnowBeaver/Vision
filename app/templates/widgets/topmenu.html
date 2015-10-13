@@ -7,12 +7,12 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">Vision Diagnostic</a>
+			<a class="navbar-brand" href="#">{{ _('Vision Diagnostic') }}</a>
 		</div>
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="/">{{ _('Home') }}</a></li>
-				<li><a href="/forum">Forum</a></li>
+				<li><a href="/forum">{{ _('Forum') }}</a></li>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button"
@@ -26,11 +26,11 @@
 			<ul class="nav navbar-nav navbar-right">
 				{% block navbar_right %}
 				{% if user and session.user_id %}
-					<li><a href="{{ url_for('users.home') }}" title="{{ user.name|striptags|title }}'s dashboard">Dashboard</a></li>
-					<li><a href="{{ url_for('users.logout') }}"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+				<li><a href="{{ url_for('users.home') }}" title="{{ user.name|striptags|title }}'s dashboard">{{ _('Dashboard') }}</a></li>
+				<li><a href="{{ url_for('users.logout') }}"><span class="glyphicon glyphicon-log-out"></span>{{ _('Logout') }}</a></li>
 				{% elif not session.user_id %}
-					<li><a href="{{ url_for('users.register') }}">Register</a></li>
-					<li><a href="{{ url_for('users.login') }}">Login</a></li>
+				<li><a href="{{ url_for('users.register') }}">{{ _('Register') }}</a></li>
+				<li><a href="{{ url_for('users.login') }}">{{ _('Login') }}</a></li>
 				{% endif %}
 
 				<li class="dropdown">
