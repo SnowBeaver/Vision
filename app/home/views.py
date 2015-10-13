@@ -72,3 +72,20 @@ def home():
         'home/index.html',
         user=g.user,
     )
+
+@mod.route('/wiki/users', methods=['GET'])
+def wiki_users():
+    """docstring for home."""
+    return render_template(
+        'wiki/users.html',
+        user=g.user,
+    )
+
+@mod.route('/wiki/developers', methods=['GET'])
+def wiki_devs():
+    """docstring for home."""
+    return render_template(
+        'wiki/developers.html',
+        user=g.user,
+    )
+
