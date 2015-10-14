@@ -2,7 +2,7 @@ Vagrant.configure("2") do |config|
     config.vm.provider "virtualbox"
 
     config.vm.box = "vision_development"
-    config.vm.box_url = "http://login:password@158.69.182.50/devbox/package.box"
+    config.vm.box_url = "http://login:password@visiondiagnostic.org/devbox/package.box"
 
     config.vm.network :private_network, ip: "192.168.88.88"
     config.vm.network :forwarded_port, guest: 80, host: 9002
