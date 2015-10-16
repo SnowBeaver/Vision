@@ -76,10 +76,6 @@ header{
 }
 
 /* Standart block padding */
-.container{
-	overflow: hidden;
-}
-
 .form-container{
 	padding: 30px 40px 25px;
 }
