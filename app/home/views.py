@@ -25,19 +25,19 @@ def before_request():
         if not g.user:
             del session['user_id']
 
-    g.locale = get_locale()
+    # g.locale = get_locale()
 
-@babel.localeselector
-def get_locale():
-    if 'locale' in session:
-        g.locale = session['locale']
-        return g.locale
+# @babel.localeselector
+# def get_locale():
+    # if 'locale' in session:
+       # g.locale = session['locale']
+       # return g.locale
 
-    # import sys
-    # sys.exit(1)
-    return request.accept_languages.best_match(
-        current_app.config['LANGUAGES'].keys()
-    )
+    # # import sys
+    # # sys.exit(1)
+    # return request.accept_languages.best_match(
+        # current_app.config['LANGUAGES'].keys()
+    # )
 
 @babel.timezoneselector
 def get_timezone():

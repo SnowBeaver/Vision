@@ -12,8 +12,8 @@ from flask.ext.admin.contrib.sqla import filters
 from flask.ext.admin import helpers, expose
 from flask.ext import admin, login
 from wtforms import form, fields, validators
+from flask import current_app
 from werkzeug.security import check_password_hash
-#from flask.ext.security.decorators import roles_required
 
 
 # Define login and registration forms (for flask-login)
@@ -49,7 +49,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         if helpers.validate_form_on_submit(form):
             user = form.get_user()
             if not user:
-                link = '<p>Please contact %s</p>' % app.config['SUPPORT_EMAIL']
+                link = '<p>Please contact %s</p>' % current_app.config['SUPPORT_EMAIL']
                 self._template_args['link'] = link
                 return redirect(url_for('.index'))
 
