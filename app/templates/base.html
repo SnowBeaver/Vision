@@ -64,15 +64,15 @@
     <div class="center-divider"></div>
     {% include 'widgets/footer.html' %}
     {% endblock %}
-    {% block js %}
-    {% endblock %}
     {% block js_footer %}
     {% block extrajs %}
-    {% endblock extrajs %}
-    {% endblock %}
     <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    {% block js %}
+    {% endblock %}
+    {% endblock extrajs %}
+    {% endblock %}
   </body>
 </html>
