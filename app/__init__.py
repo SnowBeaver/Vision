@@ -9,10 +9,20 @@ from flask.ext.security import Security, SQLAlchemyUserDatastore, \
 from flask.ext.admin import Admin
 from flask.ext import admin, login
 from flask.ext.babel import Babel
+from flask.ext.blogging import SQLAStorage, BloggingEngine
+from sqlalchemy import create_engine, MetaData
 
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
 db = SQLAlchemy(app)
+
+# blogging
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+meta = MetaData()
+sql_storage = SQLAStorage(engine, metadata=meta)
+blog = BloggingEngine(app, sql_storage)
+meta.create_all(bind=engine)
+
 db.create_all()
 mail = Mail(app)
 babel = Babel(app)
@@ -25,6 +35,7 @@ backend = Admin(
     index_view=MyAdminIndexView(),
     base_template='admin.html'
 )
+
 
 @app.errorhandler(404)
 def not_found(error):
@@ -41,12 +52,13 @@ def init_login():
 
     # Create user loader function
     @login_manager.user_loader
+    @blog.user_loader
     def load_user(user_id):
         return db.session.query(User).get(user_id)
 
-
 # Initialize flask-login
 init_login()
+
 
 from app.users.models import User, Role
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)

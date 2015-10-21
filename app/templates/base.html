@@ -17,6 +17,11 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block style %}
+    {% endblock style %}
+
+    {% block extrastyle %}
+    {% endblock extrastyle %}
     {% endblock %}
     {% include 'widgets/analytics.html' %}
   </head>
@@ -41,7 +46,7 @@
     {% include 'widgets/flash.html' %}
     {% block content %}
     <div class="center-divider"></div>
-    <div class="jumbotron w1000 h800">
+    <div class="w1000 h800 page">
       <div class="w1000">
         {% block topcontent %}
         {% endblock %}
@@ -59,7 +64,11 @@
     <div class="center-divider"></div>
     {% include 'widgets/footer.html' %}
     {% endblock %}
+    {% block js %}
+    {% endblock %}
     {% block js_footer %}
+    {% block extrajs %}
+    {% endblock extrajs %}
     {% endblock %}
     <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>

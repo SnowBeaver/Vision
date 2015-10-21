@@ -7,28 +7,29 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">{{ _('Vision Diagnostic') }}</a>
+			<a class="navbar-brand" href="{{ url_for('home.home') }}">{{ _('Vision Diagnostic') }}</a>
 		</div>
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="/">{{ _('Home') }}</a></li>
+				<li {% if request.path == "/content/page/1/" %} class="active" {% endif %}>
+				<a href="{{ url_for('blogging.page_by_id', post_id=1) }}">{{ _('About') }}</a></li>
 				<li><a href="/forum"><i class="fa fa-comment"></i>&nbsp;{{ _('Forum') }}</a></li>
-				<li class="dropdown">
+				<li class="dropdown {% if 'wiki' in request.path %}active{% endif %}">
 					<a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button"
 						aria-haspopup="true" aria-expanded="false"><i class="fa fa-book"></i>&nbsp;{{ _('Wiki') }}&nbsp;<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-							<li><a href="{{ url_for('home.wiki_users') }}">{{ _('Users') }}</a></li>
+						<li><a href="{{ url_for('home.wiki_users') }}">{{ _('Users') }}</a></li>
 							<li><a href="{{ url_for('home.wiki_devs') }}">{{ _('Developers') }}</a></li>
 					</ul>
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				{% block navbar_right %}
-				{% if user and session.user_id %}
-				<li><a href="{{ url_for('users.home') }}" title="{{ user.name|striptags|title }}'s dashboard">{{ _('Dashboard') }}</a></li>
-				<li><a href="{{ url_for('users.logout') }}"><span class="glyphicon glyphicon-log-out"></span>{{ _('Logout') }}</a></li>
-				{% elif not session.user_id %}
+				{% if current_user.is_authenticated() %}
+				<li><a href="{{ url_for('admin.index') }}" title="{{ current_user.name|striptags|title }}'s dashboard">{{ _('Dashboard') }}</a></li>
+				<li><a href="{{ url_for('users.logout') }}"><span class="glyphicon glyphicon-log-out"></span>&nbsp;{{ _('Logout') }}</a></li>
+				{% else %}
 				<li><a href="{{ url_for('users.register') }}">{{ _('Register') }}</a></li>
 				<li><a href="{{ url_for('users.login') }}">{{ _('Login') }}</a></li>
 				{% endif %}

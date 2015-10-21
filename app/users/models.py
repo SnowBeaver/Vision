@@ -102,6 +102,9 @@ class User(db.Model, UserMixin):
     def get_email(self):
         return self.email
 
+    def get_name(self):
+        return self.name
+
     def avatar(self, size):
         return 'http://www.gravatar.com/avatar/' + \
             md5(self.email).hexdigest() + '?d=mm&s=' + str(size)

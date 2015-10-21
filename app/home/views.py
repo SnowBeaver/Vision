@@ -33,8 +33,6 @@ def before_request():
        # g.locale = session['locale']
        # return g.locale
 
-    # # import sys
-    # # sys.exit(1)
     # return request.accept_languages.best_match(
         # current_app.config['LANGUAGES'].keys()
     # )
