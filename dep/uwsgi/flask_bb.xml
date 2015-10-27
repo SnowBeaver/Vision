@@ -1,0 +1,15 @@
+<uwsgi>
+	<socket>/tmp/flaskbb.sock</socket>
+	<pythonpath>/home/vision/www/flaskbb/</pythonpath>
+	<base>/home/vision/www/flaskbb/</base>
+	<module>wsgi:flaskbb</module>
+	<collable>flaskbb</collable>
+	<processes>2</processes>
+	<chdir>/home/vision/www/flaskbb</chdir>
+	<pidfile>/tmp/flaskbb.pid</pidfile>
+	<virtualenv>/home/vision/www/bbenv/</virtualenv>
+	<uid>vision</uid>
+	<gid>www-data</gid>
+	<lazy>true</lazy>
+	<chmod-socket>775</chmod-socket>
+</uwsgi>
