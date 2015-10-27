@@ -1,17 +1,23 @@
 <footer>
-<div class="w1000 arial">
+<div class="w1000 arial container">
   <a href="/">
     <div class="logo"></div>
   </a>
   <div class="left-footer">
-    <div>© 2015 Vision</div>
+    <div>© 2015 Vision Diagnostic</div>
   </div>
   <div class="right-footer">
-  <div style="float:right">
-  </div>
-    <ul class="footer-menu">
-    </ul>
-    <div></div>
+	  <div style="float:right">
+	  </div>
+	  <ul class="footer-menu">
+		  <li class="active"><a href="/">{{ _('Home') }}</a></li>
+		  <li><a href="{{ url_for('home.wiki_users') }}">{{ _('Wiki Users') }}</a></li>
+		  <li><a href="{{ url_for('home.wiki_devs') }}">{{ _('Wiki Developers') }}</a></li>
+		  <li><a href="{{ url_for('users.register') }}">{{ _('Register') }}</a></li>
+		  <li><a href="{{ url_for('users.login') }}">{{ _('Login') }}</a></li>
+	  </ul>
+	  <div>
+	  </div>
   </div>
 </div>
 </footer>
