@@ -4,23 +4,24 @@
 
 from unipath import Path
 
+APP_NAME = 'Vision Diagnostic'
+HOST = 'visiondiagnostic.org'
 DEBUG = True
 
 CACHE_TIMEOUT = 300
 ROOT_DIR = Path(__file__).ancestor(1)
+HOME_DIR = ROOT_DIR.parent
+TMP_DIR = '/tmp'
 UPLOAD_FOLDER = ROOT_DIR + '/var/uploads/'
 
 #max upload 6 Mb
 MAX_CONTENT_LENGTH = 6 * 1024 * 1024
 
-HOME_DIR = ROOT_DIR.parent
-TMP_DIR = '/tmp'
-
 TESTING = False
 ADMINS = frozenset(['vasili.pascal@gmail.com'])
 
-SECRET_KEY = '&)\xfe\x8a\xee;\x0c\xb1\xbe\xe5\x94Z\xc3Ejs*\xe8\xfe\x13LS\x97\xd0\x81\x13\x18\xc0m\xcd;,\xc8\xb2r\xcfIY\xce\xb4\xfbx\x81t\xd5\x9f\x1dk\r\x9b'
 SECURITY_PASSWORD_SALT = 'SomethingSaltyYouCanNotGuesss'
+SECRET_KEY = '&)\xfe\x8a\xee;\x0c\xb1\xbe\xe5\x94Z\xc3Ejs*\xe8\xfe\x13LS\x97\xd0\x81\x13\x18\xc0m\xcd;,\xc8\xb2r\xcfIY\xce\xb4\xfbx\x81t\xd5\x9f\x1dk\r\x9b'
 
 SQLALCHEMY_DATABASE_URI = "postgresql://vision:ViSiOn@localhost/vision"
 DATABASE_CONNECT_OPTIONS = {}
@@ -29,6 +30,8 @@ CSRF_ENABLED = True
 CSRF_SESSION_KEY = "somethingimpossibletoguesshere"
 
 NOREPLY_EMAIL = 'noreply@visiondiagnostic.org'
+SUPPORT_EMAIL = 'support@visiondiagnostic.org'
+
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USE_SSL = True
@@ -36,3 +39,16 @@ MAIL_USERNAME = ''
 MAIL_PASSWORD = ''
 
 RECAPTCHA_PUBLIC_KEY = ''
+
+LANGUAGES = {
+    'en': 'English',
+    'fr': 'French',
+    'es': 'Español'
+}
+BABEL_DEFAULT_LOCALE = 'en'
+
+BLOGGING_URL_PREFIX = "/content"
+BLOGGING_DISQUS_SITENAME = 'visiondiagnostic'
+BLOGGING_SITEURL = HOST
+BLOGGING_SITENAME = APP_NAME
+BLOGGING_PERMISSIONS = False
