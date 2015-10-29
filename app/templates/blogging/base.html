@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block style %}
+     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
 {% endblock style %}
 {% block topcontent %}
     <!-- main content -->
@@ -29,4 +30,19 @@
          {% endblock extramain %}
      </div>
     {% include "blogging/analytics.html" %}
+    {% block js %}
+        <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script type="text/x-mathjax-config">
+              MathJax.Hub.Config({
+                  "HTML-CSS": {
+                      styles: {
+                      ".MathJax .mo, .MathJax .mi": {color: "black ! important"}}
+                      }
+                  ,tex2jax: {inlineMath: [['$','$'], ['\\\\(','\\\\)']],processEscapes: true}
+              });
+        </script>
+    {% endblock js %}
+
 {% endblock %}
