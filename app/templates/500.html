@@ -10,7 +10,9 @@
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 		{% include 'widgets/analytics.html' %}
 	</head>
@@ -58,6 +60,10 @@
 {% endblock %}
 
 {% block js_footer %}
+    <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
 {% endblock %}
 </body>
 </html>
