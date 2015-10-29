@@ -33,4 +33,3 @@ Pillow
 psycopg2
 Flask-Babel
 Flask-Admin
-flask-blogging
