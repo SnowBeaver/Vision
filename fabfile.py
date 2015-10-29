@@ -15,22 +15,22 @@ env.user = 'vagrant'
 
 PROJECT = 'vision'
 
-LOCAL_ROOT_DIR = Path(__file__).ancestor(1)
+LOCAL_ROOT_DIR = Path(__file__).ancestor(2)
 LOCAL_PROJECT_DIR = Path(LOCAL_ROOT_DIR, 'project')
 
-env.directory = Path('/home', PROJECT, 'www')
-env.venv = Path(env.directory, 'env')
+env.directory = '/home/%s/www'%PROJECT
+
+env.venv = env.directory + '/env'
 env.activate = 'source ' + env.venv + '/bin/activate'
-env.pip = os.path.join(env.venv, 'bin/pip')
-env.python = os.path.join(env.venv, 'bin/python')
-env.home = Path('/home', PROJECT)
+env.pip = env.venv + '/bin/pip'
+env.python = env.venv + '/bin/python'
+env.home = '/home/' + PROJECT
 
 #bbflask
-env.bbenv = Path(env.directory, 'bbenv')
+env.bbenv = env.directory + '/bbenv'
 env.bbactivate = 'source ' + env.bbenv + '/bin/activate'
-env.bbpip = os.path.join(env.bbenv, 'bin/pip')
-env.bbpython = os.path.join(env.bbenv, 'bin/python')
-
+env.bbpip = env.bbenv + '/bin/pip'
+env.bbpython = env.bbenv + '/bin/python'
 
 @contextmanager
 def source_virtualenv():
@@ -56,21 +56,22 @@ def setup_dev():
     sudo('apt-get install -y python-pip')
     sudo("pip install virtualenv")
     sudo("pip install gunicorn")
-    deploy_nginx()
-    deploy_supervisor()
 
     sudo("rm -rf %s"  % env.venv)
     sudo("mkdir -p %s" % env.directory, user="vision")
     with cd(env.directory):
         run('git pull origin master')
-        run('virtualenv env')
+        run('virtualenv env --always-copy')
         with source_virtualenv():
             run(env.pip + ' install uwsgi')
-            run(env.bbpip + ' install uwsgi')
+            #run(env.bbpip + ' install uwsgi')
             run(env.pip + ' install -r requirements.txt')
 
-    restart_services()
+    deploy_nginx()
+    deploy_supervisor()
+
     setup_dev_app()
+    restart_services()
     deploy()
 
 
@@ -107,14 +108,17 @@ def deploy_dev_image():
 def deploy_supervisor():
     super_conf = "/etc/supervisor/conf.d/%s.conf" % PROJECT
     sudo("rm -f %s" % super_conf)
-    put("%s/dep/supervisor/template.conf" % LOCAL_ROOT_DIR, super_conf, use_sudo=True)
+    #put("%s/dep/supervisor/template.conf" % LOCAL_ROOT_DIR, super_conf, use_sudo=True)
+    put( Path(LOCAL_PROJECT_DIR, 'dep' , 'supervisor' , 'template.conf'), super_conf, use_sudo=True)
+
     sudo("chown root:root %s" % super_conf)
     restart_services()
 
 def deploy_nginx():
     nginx_conf = "/etc/nginx/sites-available/%s.conf" % PROJECT
     sudo("rm -f %s" % nginx_conf)
-    put("%s/dep/nginx/template.conf" % LOCAL_ROOT_DIR, nginx_conf, use_sudo=True)
+    #put("%s/dep/nginx/template.conf" % LOCAL_ROOT_DIR, nginx_conf, use_sudo=True)
+    put( Path(LOCAL_PROJECT_DIR,'dep', 'nginx', 'template.conf') , nginx_conf, use_sudo=True)
 
     sudo("chown root:root %s" % nginx_conf)
     sudo("rm -f /etc/nginx/sites-enabled/%s.conf" % PROJECT)
@@ -134,7 +138,7 @@ def provision():
         with source_virtualenv():
             run('python manage.py db migrate')
 
-def deploy():
+def first_deploy():
     if 'vagrant' in env.user:
         local('cd %s && vagrant up' % LOCAL_PROJECT_DIR)
 
@@ -145,22 +149,23 @@ def deploy():
         with source_virtualenv():
             nginx_conf = "/etc/nginx/sites-available/%s.conf" % PROJECT
             flaskbb_conf = "/etc/supervisor/conf.d/flaskbb.conf"
-            flaskbb_xml = "%s/flaskbb.xml" % PROJECT
+            flaskbb_xml = "%s/flask_bb.xml" % PROJECT
             vision_xml = "%s/vision.xml" % PROJECT
-            uwsgi_local = LOCAL_PROJECT_DIR.parent.child('uwsgi')
+            uwsgi_local = LOCAL_PROJECT_DIR.child('dep').child('uwsgi')
 
             sudo("rm -f %s/vision.xml" % (env.directory))
-            sudo("rm -f %s/flaskbb.xml" % (env.directory))
-            put("%s/flaskbb.xml" % uwsgi_local, "%s/flaskbb.xml" % env.directory)
-            put("%s/vision.xml" % uwsgi_local, "%s/vision.xml" % env.directory)
+            sudo("rm -f %s/flask_bb.xml" % (env.directory))
+            put( Path(uwsgi_local , "flask_bb.xml"), "%s/flask_bb.xml" % env.directory)
+            put( Path(uwsgi_local , "vision.xml" ), "%s/vision.xml" % env.directory)
 
             sudo("rm -f %s" % nginx_conf)
             sudo("rm -f %s" % flaskbb_conf)
 
-            put("%s/dep/nginx/template.conf" % LOCAL_ROOT_DIR, nginx_conf, use_sudo=True)
-            put("%s/dep/supervisor/flaskbb.conf" % LOCAL_ROOT_DIR, flaskbb_conf, use_sudo=True)
+            put( Path(LOCAL_PROJECT_DIR , 'dep' , 'nginx' ,'template.conf') , nginx_conf, use_sudo=True)
+            put( Path(LOCAL_PROJECT_DIR , 'dep' , 'supervisor' ,'flaskbb.conf'), flaskbb_conf, use_sudo=True)
 
             run(env.pip + ' install -r requirements.txt')
+            setup_trans()
             update_trans()
             compile_trans()
             update_flaskbb()
@@ -174,6 +179,18 @@ def deploy():
 
             deploy_supervisor()
             restart_services()
+
+def deploy():
+    with cd(env.directory):
+        run('git pull origin master')
+        with source_virtualenv():
+            run(env.pip + ' install -r requirements.txt')
+            update_trans()
+            compile_trans()
+            run('find . -name "*.pyc" -exec rm -rf {} \;')
+            run('python -c "from app import db;db.create_all()"')
+    restart_services()
+
 
 def update_flaskbb():
     with cd(env.directory):
@@ -221,4 +238,3 @@ def update_trans():
         with source_virtualenv():
             run('pybabel update -i app/messages.pot -d app/translations')
             run('rm -f ./messages.pot')
-
