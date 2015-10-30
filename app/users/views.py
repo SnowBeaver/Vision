@@ -167,7 +167,7 @@ def login():
                 # it's a safe place to store the user id
                 authorize(user)
                 flash(gettext(u'Welcome') + " " + user.name)
-                return redirect(url_for('users.home'))
+                return redirect(url_for('home.home'))
         flash(gettext(u'Wrong email or password'), 'error-message')
 
     return render_template('users/login.html', form=form)

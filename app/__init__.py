@@ -27,6 +27,20 @@ db.create_all()
 mail = Mail(app)
 babel = Babel(app)
 
+# Initialize flask-login
+def init_login():
+    login_manager = login.LoginManager()
+    login_manager.init_app(app)
+
+    # Create user loader function
+    @login_manager.user_loader
+    @blog.user_loader
+    def load_user(user_id):
+        return db.session.query(User).get(user_id)
+
+# Initialize flask-login
+init_login()
+
 from app.admin.views import MyAdminIndexView
 
 backend = Admin(
@@ -44,21 +58,6 @@ def not_found(error):
 @app.errorhandler(500)
 def error_500(error):
     return render_template('500.html'), 500
-
-# Initialize flask-login
-def init_login():
-    login_manager = login.LoginManager()
-    login_manager.init_app(app)
-
-    # Create user loader function
-    @login_manager.user_loader
-    @blog.user_loader
-    def load_user(user_id):
-        return db.session.query(User).get(user_id)
-
-# Initialize flask-login
-init_login()
-
 
 from app.users.models import User, Role
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
