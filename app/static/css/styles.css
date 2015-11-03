@@ -304,6 +304,16 @@ footer .logo{
 	border-radius: 4px;
 }
 
+.flash-info, .flashes{
+	background-color: #bae0ba;
+	color:black;
+	padding-left:5px;
+	padding-top: 10px;
+	font-size: 0.9em;
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+}
+
 ul.errors li{
 	color: red;
 }
