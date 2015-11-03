@@ -23,7 +23,7 @@ ADMINS = frozenset(['vasili.pascal@gmail.com'])
 SECURITY_PASSWORD_SALT = 'SomethingSaltyYouCanNotGuesss'
 SECRET_KEY = '&)\xfe\x8a\xee;\x0c\xb1\xbe\xe5\x94Z\xc3Ejs*\xe8\xfe\x13LS\x97\xd0\x81\x13\x18\xc0m\xcd;,\xc8\xb2r\xcfIY\xce\xb4\xfbx\x81t\xd5\x9f\x1dk\r\x9b'
 SECURITY_RECOVERABLE = True
-SECURITY_RESET_URL = '/users/forgot-password/'
+SECURITY_RESET_URL = '/users/forgot-password'
 
 SQLALCHEMY_DATABASE_URI = "postgresql://vision:ViSiOn@localhost/vision"
 DATABASE_CONNECT_OPTIONS = {}
