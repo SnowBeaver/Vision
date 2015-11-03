@@ -131,20 +131,21 @@ def send_confirmation():
     mail.send(msg)
 
 
-@mod.route('/forgot-password', methods=['GET', 'POST'])
-def forgot():
-    if 'user_id' in session:
-        return redirect(url_for('users.home'))
+# @mod.route('/forgot-password', methods=['GET', 'POST'])
+# def forgot():
+#     if 'user_id' in session:
+#         return redirect(url_for('users.home'))
+#
+#     form = ForgotForm(request.form)
+#     if request.method == 'POST':
+#         if form.validate_on_submit():
+#             user = User.query.filter_by(email=form.email.data).first()
+#             if user:
+#                 return user
+#
+#     # make sure data are valid, but doesn't validate password is right
+#     return render_template("users/forgot.html", form=form)
 
-    form = ForgotForm(request.form)
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            user = User.query.filter_by(email=form.email.data).first()
-            if user:
-                return user
-
-    # make sure data are valid, but doesn't validate password is right
-    return render_template("users/forgot.html", form=form)
 
 
 @mod.route('/login', methods=['GET', 'POST'])
