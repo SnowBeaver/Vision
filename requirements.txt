@@ -34,3 +34,4 @@ psycopg2
 Flask-Babel
 Flask-Admin
 sqlalchemy-i18n
+markdown

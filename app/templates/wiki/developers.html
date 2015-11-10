@@ -3,5 +3,7 @@
 <h1>
 	{{ _('Developers Wiki') }}
 </h1>
-{{ _('Developers Wiki') }}
+	{% trans %}
+	{{ content }}
+	{% endtrans %}
 {% endblock %}

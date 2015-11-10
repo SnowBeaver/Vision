@@ -77,16 +77,17 @@ def setup_dev():
 
 def restart_services():
     sudo("service supervisor stop")
+    sudo('service redis-server stop')
+    sudo("service nginx stop")
     with settings(abort_exception = FabricException):
         try:
             sudo('killall uwsgi')
         except FabricException:
             pass
     sudo("service nginx reload")
-    sudo("service nginx restart")
+    sudo("service nginx start")
     sudo("service supervisor force-reload")
-    sudo("service supervisor restart")
-    sudo('service redis-server stop')
+    sudo("service supervisor start")
     sudo('service redis-server start')
 
 def deploy_dev_image():
@@ -208,11 +209,7 @@ def update_remote():
             run(env.pip + ' install -r requirements.txt')
             run('find . -name "*.pyc" -exec rm -rf {} \;')
             run('python -c "from app import db;db.create_all()"')
-            sudo('service apache2 stop')
-            sudo('service nginx restart')
-            sudo('service supervisor restart')
-            sudo('service redis-server stop')
-            sudo('service redis-server start')
+            restart_services()
 
 def setup_redis():
     sudo("apt-get install -y redis-server")
