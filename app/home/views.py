@@ -7,13 +7,12 @@ from flask import render_template
 from flask import g, request
 from flask import current_app 
 
-from app import db
+from app import db ,sql_storage ,blog
 from app import babel
 from app.users.models import User
-from app.home.models import _is_blogger
-
+from app.home.models import _is_blogger, _get_news , _get_blog_meta
+import sqlalchemy_utils
 from flask_login import current_user
-
 
 mod = Blueprint('home', __name__, url_prefix='')
 
@@ -29,17 +28,18 @@ def before_request():
         if not g.user:
             del session['user_id']
 
-    # g.locale = get_locale()
+    g.locale = get_locale()
+    sqlalchemy_utils.i18n.get_locale = get_locale
 
-# @babel.localeselector
-# def get_locale():
-    # if 'locale' in session:
-       # g.locale = session['locale']
-       # return g.locale
+@babel.localeselector
+def get_locale():
+    if 'locale' in session:
+       g.locale = session['locale']
+       return g.locale
 
-    # return request.accept_languages.best_match(
-        # current_app.config['LANGUAGES'].keys()
-    # )
+    return request.accept_languages.best_match(
+        current_app.config['LANGUAGES'].keys()
+    )
 
 @babel.timezoneselector
 def get_timezone():
@@ -62,32 +62,21 @@ def lang(lang):
     session['locale'] = lang
     g.locale = lang
 
+    posts = _get_news(current_user)
+    meta = _get_blog_meta()
+
     return render_template(
-        'home/index.html',
-        user=g.user,
+         'home/index.html'
+        ,user = g.user
+        ,posts = posts
+        ,meta = meta
     )
 
 @mod.route('/', methods=['GET'])
 def home():
     """docstring for home."""
-
-    # show last news on the front page
-    blogging_engine = current_app.extensions["FLASK_BLOGGING_ENGINE"]
-    storage = blogging_engine.storage
-    
-    tag  = "NEWS"
-    count = 10
-    offset = 0
-
-    render = blogging_engine.config.get("BLOGGING_RENDER_TEXT", True)
-    posts = storage.get_posts(count=count, offset=offset, tag=tag,
-                              include_draft=False, user_id=None, recent=True)
-    for post in posts:
-        blogging_engine.process_post(post, render=render)
-        post["editable"] = current_user.get_id() == int(post["user_id"])
-    
-    meta = {}
-    meta["is_user_blogger"] = _is_blogger(g.user , blogging_engine.blogger_permission)
+    posts = _get_news(current_user)
+    meta = _get_blog_meta()
 
     return render_template(
          'home/index.html'

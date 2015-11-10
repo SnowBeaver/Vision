@@ -7,7 +7,6 @@ from flask import flash, g, session, redirect, url_for
 from flask import make_response
 from flask import current_app
 from flask_mail import Message
-from werkzeug import check_password_hash, generate_password_hash
 from werkzeug import secure_filename
 from app import db
 from app import mail
@@ -18,7 +17,7 @@ from app.users.utils import allowed_image_file
 from app.users.decorators import login_required, templated
 from itsdangerous import URLSafeTimedSerializer
 from flask.ext.babel import gettext
-
+from flask.ext.security.utils import encrypt_password , verify_password
 
 mod = Blueprint('users', __name__, url_prefix='/users')
 
@@ -163,7 +162,7 @@ def login():
         if form.validate_on_submit():
             user = User.query.filter_by(email=form.email.data).first()
             # we use werzeug to validate user's password
-            if user and check_password_hash(user.password, form.password.data):
+            if user and verify_password(form.password.data , user.password):
                 # the session can't be modified as it's signed,
                 # it's a safe place to store the user id
                 authorize(user)
@@ -229,7 +228,7 @@ def register():
             name=form.name.data,
             email=form.email.data,
             alias=alias,
-            password=generate_password_hash(form.password.data)
+            password=encrypt_password(form.password.data)
         )
         # Insert the record in our database and commit it
         db.session.add(user)

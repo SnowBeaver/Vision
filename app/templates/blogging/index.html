@@ -1,19 +1,20 @@
 {% extends "blogging/base.html" %}
 {% block title %}
-Blog Posts
+    {{ _('Blog Posts') }}
 {% endblock title %}
 
 {% block main %}
     {% if alert %}
         <div class="alert alert-{{alert.type}}">
-            <strong>{{ alert.type }}</strong> {{ alert.message }}
+            <strong>{{ alert.type }}</strong>
+            {{ alert.message }}
         </div>
     {% endif %}
 
     {% if meta.is_user_blogger %}
         <div class="pull-right">
             <a href="{{ url_for('blogging.editor') }}" id="new">
-                <span class="glyphicon glyphicon-plus"></span>&nbsp;New
+                <span class="glyphicon glyphicon-plus"></span>&nbsp; {{ _('New') }}
             </a>
         </div>
     {% endif %}
@@ -25,8 +26,11 @@ Blog Posts
             <a href="{{ post.url }}">
                 <h1>{{ post.title }}</h1>
             </a>
-            <p>Posted by <a href="{{ url_for('blogging.posts_by_author', user_id=post.user_id)}}"><em>{{post.user_name}}</em></a>
-            on {{post.post_date.strftime('%d %b, %Y')}}</p>
+            <p> {{ _('Posted by') }}
+                <a href="{{ url_for('blogging.posts_by_author', user_id=post.user_id)}}">
+                    <em>{{ post.user_name }}</em>
+                </a>
+            {{ _('on') }} {{ post.post_date.strftime('%d %b, %Y') }}</p>
 
             <!-- post tags-->
             {% if post.tags %}
@@ -49,16 +53,15 @@ Blog Posts
             <div class="col-md-12">
                 <ul class="pager">
                     {% if meta.pagination.prev_page %}
-                        <li><a href="{{meta.pagination.prev_page}}">&laquo;Prev</a></li>
+                        <li><a href="{{meta.pagination.prev_page}}">&laquo; {{ _('Prev') }}</a></li>
                     {% else %}
-                        <li class="disabled"><a href="">&laquo; Prev</a></li>
+                        <li class="disabled"><a href="">&laquo; {{ _('Prev') }}</a></li>
                     {% endif %}
                     {% if meta.pagination.next_page %}
-                        <li><a href="{{meta.pagination.next_page}}">Next &raquo;</a></li>
+                        <li><a href="{{meta.pagination.next_page}}"> {{ _('Next') }} &raquo;</a></li>
                     {% else %}
-                        <li class="disabled"><a href="">Next &raquo;</a></li>
+                        <li class="disabled"><a href="">{{ _('Next') }} &raquo;</a></li>
                     {% endif %}
-
                 </ul>
             </div>
         </div>
