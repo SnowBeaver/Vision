@@ -54,6 +54,7 @@ def get_timezone():
     # return request.accept_languages.best_match(translations)
 
 @mod.route('/lang/<string:lang>', methods=['GET'])
+# @guest_per.require(http_exception = 403)
 def lang(lang):
     """docstring for lang"""
     if lang not in current_app.config['LANGUAGES']:
@@ -73,6 +74,7 @@ def lang(lang):
     )
 
 @mod.route('/', methods=['GET'])
+# @guest_per.require(http_exception = 403)
 def home():
     """docstring for home."""
     posts = _get_news(current_user)
@@ -86,6 +88,7 @@ def home():
    )
 
 @mod.route('/wiki/users', methods=['GET'])
+# @guest_per.require(http_exception = 403)
 def wiki_users():
     """docstring for home."""
     return render_template(
@@ -94,9 +97,13 @@ def wiki_users():
     )
 
 @mod.route('/wiki/developers', methods=['GET'])
+# @guest_per.require(http_exception = 403)
 def wiki_devs():
     """docstring for home."""
     return render_template(
         'wiki/developers.html',
         user=g.user,
     )
+
+
+

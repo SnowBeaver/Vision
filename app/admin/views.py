@@ -14,6 +14,7 @@ from flask.ext import admin, login
 from wtforms import form, fields, validators
 from flask import current_app
 from werkzeug.security import check_password_hash
+from app import admin_per , user_per , guest_per , blogger_per
 
 
 # Define login and registration forms (for flask-login)
@@ -36,6 +37,7 @@ class LoginForm(form.Form):
 class MyAdminIndexView(admin.AdminIndexView):
 
     @expose('/')
+    @admin_per.require(http_exception = 403)
     def index(self):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))

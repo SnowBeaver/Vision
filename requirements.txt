@@ -35,3 +35,4 @@ Flask-Babel
 Flask-Admin
 flask-blogging
 sqlalchemy-i18n
+Flask-Principal

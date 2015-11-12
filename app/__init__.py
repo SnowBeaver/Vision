@@ -24,18 +24,45 @@ blog = BloggingEngine(app, sql_storage)
 meta.create_all(bind=engine)
 
 db.create_all()
+
 mail = Mail(app)
 babel = Babel(app)
+
+from flask.ext.principal import Principal, RoleNeed ,Permission , ActionNeed
+
+# Needs
+be_admin = RoleNeed('admin')
+be_user = RoleNeed('user')
+be_guest = RoleNeed('quest')
+be_blogger = RoleNeed('blogger')
+
+# Permissions
+guest_per = Permission(be_guest)
+guest_per.description = "Guest's permissions"
+
+user_per = Permission(be_user)
+user_per.description = "User's permissions"
+
+blogger_per = Permission(be_blogger)
+blogger_per.description = "Blogger's permissions"
+
+admin_per = Permission(be_admin)
+admin_per.description = "Admin's permissions"
+
+apps_needs = [ be_admin , be_user , be_guest , be_blogger ]
+apps_permissions = [ admin_per , user_per , guest_per , blogger_per ]
+
+Principal(app)
+
 
 from app.admin.views import MyAdminIndexView
 
 backend = Admin(
     app,
     app.config['APP_NAME'],
-    index_view=MyAdminIndexView(),
-    base_template='admin.html'
+    index_view = MyAdminIndexView(),
+    base_template = 'admin.html'
 )
-
 
 @app.errorhandler(404)
 def not_found(error):
@@ -44,6 +71,10 @@ def not_found(error):
 @app.errorhandler(500)
 def error_500(error):
     return render_template('500.html'), 500
+
+@app.errorhandler(403)
+def error_403(error):
+    return render_template('403.html'), 403
 
 # Initialize flask-login
 def init_login():
@@ -73,3 +104,5 @@ app.register_blueprint(userModule)
 from app.admin.views import UserAdmin, RoleAdmin
 backend.add_view(UserAdmin(db.session))
 backend.add_view(RoleAdmin(db.session))
+
+

@@ -12,15 +12,17 @@ from app import db
 from app import mail
 from app.users.forms import RegisterForm, LoginForm, ProfileForm, ForgotForm
 from app.users.constants import UPLOAD_FOLDER
-from app.users.models import User
+from app.users.models import User, Role , users_roles
 from app.users.utils import allowed_image_file
 from app.users.decorators import login_required, templated
 from itsdangerous import URLSafeTimedSerializer
 from flask.ext.babel import gettext
 from flask.ext.security.utils import encrypt_password , verify_password
+from flask.ext.principal import identity_changed , Identity , AnonymousIdentity
+
+from app import guest_per , user_per , blogger_per , admin_per
 
 mod = Blueprint('users', __name__, url_prefix='/users')
-
 
 def authorize(user):
     session['user_id'] = user.id
@@ -41,10 +43,10 @@ def before_request():
 
 @mod.route('/dashboard')
 @mod.route('/home')
-@login_required
+@user_per.require(http_exception = 403)
 def home():
     return render_template(
-        "users/me.html", user=g.user
+        "users/me.html", user = g.user
     )
 
 @mod.route('/pleaseconfirm')
@@ -166,6 +168,10 @@ def login():
                 # the session can't be modified as it's signed,
                 # it's a safe place to store the user id
                 authorize(user)
+                # Tell Flask-Principal the identity changed
+                identity_changed.send(current_app._get_current_object(),
+                                  identity = Identity(user.id))
+
                 flash(gettext(u'Welcome') + " " + user.name)
                 return redirect(url_for('users.home'))
         flash(gettext(u'Wrong email or password'), 'error-message')
@@ -181,6 +187,11 @@ def logout():
 
     if 'user_id' in session:
         del session['user_id']
+
+     # Tell Flask-Principal the user is anonymous
+    identity_changed.send(current_app._get_current_object(),
+                          identity = AnonymousIdentity())
+
 
     response = make_response(redirect(url_for('users.login')))
     response.set_cookie('sc', '', expires=0)
@@ -225,11 +236,21 @@ def register():
             alias = hashlib.md5(form.email.data).hexdigest()
 
         user = User(
-            name=form.name.data,
-            email=form.email.data,
-            alias=alias,
-            password=encrypt_password(form.password.data)
+            name = form.name.data,
+            email = form.email.data,
+            alias = alias,
+            password = encrypt_password(form.password.data)
         )
+
+        # add default
+        userRole = db.session.query(Role).filter(Role.name == "user").first()
+        if userRole is not None:
+            # createUserRole =  users_roles( user_id = user.id
+            #     , role_id = userRole.id );
+            # adminRole =  db.session.query(Role).filter(Role.name == "admin").first()
+            # user.roles.append(adminRole)
+            user.roles.append(userRole)
+
         # Insert the record in our database and commit it
         db.session.add(user)
         db.session.flush()
@@ -253,7 +274,7 @@ def register():
 
 
 @mod.route("/profile", methods=['GET', 'POST'])
-@login_required
+@user_per.require(http_exception = 403)
 @templated('users/profile.html')
 def profile():
     user = g.user
@@ -314,7 +335,7 @@ def profile():
 
 
 @mod.route("/profile/change-password", methods=['GET', 'POST'])
-@login_required
+@user_per.require(http_exception = 403)
 @templated('users/change-password.html')
 def change_password():
     user = User.query.get(session['user_id'])
