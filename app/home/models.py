@@ -38,3 +38,33 @@ def _get_blog_meta():
     meta["is_user_blogger"] = _is_blogger(g.user , blog.blogger_permission)
 
     return meta
+
+from flask.ext.principal import identity_loaded, RoleNeed, UserNeed
+from app import app as app_cfg
+from app import admin_per, user_per , guest_per , blogger_per
+from app import  be_admin , be_user , be_guest , be_blogger
+from flask_login import current_user
+from flask import current_app
+
+@identity_loaded.connect_via(app_cfg)
+def on_identity_loaded(sender, identity):
+
+    # Set the identity user object
+    identity.user = current_user
+
+    # Add the UserNeed to the identity
+    if hasattr(current_user, 'id'):
+        identity.provides.add(UserNeed(current_user.id))
+
+    # Assuming the User model has a list of roles, update the
+    # identity with the roles that the user provides
+
+    if hasattr(current_user, 'roles'):
+        roles = getattr(current_app ,'roles' , None)
+        if roles is not None:
+            for role in roles:
+                identity.provides.add(RoleNeed(role.name))
+        else:
+            identity.provides.add(be_guest)
+    else:
+        identity.provides.add(be_guest)
