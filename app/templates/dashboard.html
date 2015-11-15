@@ -22,21 +22,25 @@
 <div class="center-divider"></div>
 <div class="grey-background profile-page">
 {% block page %}
-	<div class="panel panel-default w1000 page">
-	{% include 'widgets/dashboard-flash.html' %}
-		<div class="panel-heading">{% block dashboard_menu %}{% endblock %}</div>
-		<div class="panel-body">
-			{% block panel_body %}
-			{% endblock %}
-		</div>
-		{% block content %}
-		{% endblock %}
-	</div>
+	<div class="container">
+         <div class="panel-default panel page rmBottom">
+            {% include 'widgets/dashboard-flash.html' %}
+            <div class="panel-heading">{% block dashboard_menu %}{% endblock %}</div>
+            <div class="panel-body">
+                {% block panel_body %}
+                {% endblock %}
+            </div>
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
 	{% block content_footer %}
-	<div class="panel-footer w1000">
-		{% block panel_footer %}
-		{% endblock %}
-	</div>
+	<div class="container">
+        <div class=" panel-footer">
+            {% block panel_footer %}
+            {% endblock %}
+	    </div>
+    </div>
 	{% endblock %}
 {% endblock %}
 </div>

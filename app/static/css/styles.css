@@ -58,7 +58,7 @@ header{
 .container-shadow{
 }
 .w1000{
-	width: 1170px;
+	max-width: 1170px;
 	margin: 0 auto;
 	position: relative;
 }
@@ -345,4 +345,3 @@ div.page-footer{
 	margin-top: 10px;
 	min-height: 800px;
 }
-

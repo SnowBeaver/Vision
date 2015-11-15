@@ -58,10 +58,11 @@ Principal(app)
 from app.admin.views import MyAdminIndexView
 
 backend = Admin(
-    app,
-    app.config['APP_NAME'],
-    index_view = MyAdminIndexView(),
-    base_template = 'admin.html'
+     app
+    ,app.config['APP_NAME']
+    ,index_view = MyAdminIndexView()
+    ,template_mode='bootstrap3'
+    ,base_template = 'admin.html'
 )
 
 @app.errorhandler(404)
