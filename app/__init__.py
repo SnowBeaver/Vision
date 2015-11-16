@@ -48,8 +48,13 @@ blogger_per.description = "Blogger's permissions"
 admin_per = Permission(be_admin)
 admin_per.description = "Admin's permissions"
 
-apps_needs = [ be_admin , be_user , be_guest , be_blogger ]
-apps_permissions = [ admin_per , user_per , guest_per , blogger_per ]
+apps_needs = [
+    be_admin, be_user, be_guest, be_blogger
+]
+
+apps_permissions = [
+    admin_per, user_per, guest_per, blogger_per
+]
 
 Principal(app)
 
@@ -104,5 +109,3 @@ app.register_blueprint(userModule)
 from app.admin.views import UserAdmin, RoleAdmin
 backend.add_view(UserAdmin(db.session))
 backend.add_view(RoleAdmin(db.session))
-
-
