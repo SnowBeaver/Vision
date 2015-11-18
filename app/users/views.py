@@ -173,7 +173,7 @@ def login():
                                   identity = Identity(user.id))
 
                 flash(gettext(u'Welcome') + " " + user.name)
-                return redirect(url_for('users.home'))
+                return redirect(url_for('home.home'))
         flash(gettext(u'Wrong email or password'), 'error-message')
 
     return render_template('users/login.html', form=form)

@@ -1,6 +1,8 @@
 #!/bin/bash
 cd /home/vision/www
 
+git pull origin master
+
 # recreate database and load clean dump
 echo "Stopping all services"
 sudo supervisorctl stop all

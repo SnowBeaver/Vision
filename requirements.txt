@@ -3,7 +3,6 @@ Flask-Cache==0.12
 Flask-Login==0.2.7
 Flask-Mail==0.9.0
 Flask-Migrate==0.1.4
-Flask-Principal==0.4.0
 Flask-SQLAlchemy==2.0
 Flask-Script==0.6.3
 Flask-Security==1.6.9
@@ -11,6 +10,7 @@ Flask-UUID==0.2
 Flask-WTF==0.9.2
 Flask-thumbnails==0.2
 flask-paginate==0.2.1
+Flask-Principal
 Jinja2==2.7.1
 Mako==0.9.0
 MarkupSafe==0.18
@@ -33,7 +33,5 @@ Pillow
 psycopg2
 Flask-Babel
 Flask-Admin
-flask-blogging
 sqlalchemy-i18n
-Flask-Principal
 markdown

@@ -11,6 +11,7 @@ from flask.ext import admin, login
 from flask.ext.babel import Babel
 from flask.ext.blogging import SQLAStorage, BloggingEngine
 from sqlalchemy import create_engine, MetaData
+from flask.ext.principal import Principal, RoleNeed ,Permission , ActionNeed
 
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
@@ -27,8 +28,6 @@ db.create_all()
 
 mail = Mail(app)
 babel = Babel(app)
-
-from flask.ext.principal import Principal, RoleNeed ,Permission , ActionNeed
 
 # Needs
 be_admin = RoleNeed('admin')
@@ -49,8 +48,13 @@ blogger_per.description = "Blogger's permissions"
 admin_per = Permission(be_admin)
 admin_per.description = "Admin's permissions"
 
-apps_needs = [ be_admin , be_user , be_guest , be_blogger ]
-apps_permissions = [ admin_per , user_per , guest_per , blogger_per ]
+apps_needs = [
+    be_admin, be_user, be_guest, be_blogger
+]
+
+apps_permissions = [
+    admin_per, user_per, guest_per, blogger_per
+]
 
 Principal(app)
 

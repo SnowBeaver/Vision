@@ -5,7 +5,7 @@ from flask import session
 from flask import Blueprint
 from flask import render_template
 from flask import g, request
-from flask import current_app 
+from flask import current_app
 
 from app import db ,sql_storage ,blog
 from app import babel
@@ -15,6 +15,8 @@ import sqlalchemy_utils
 from flask_login import current_user
 from app.pages.storage import get_page_by_title ,get_page_by_slug ,process_page , isblogger
 from app.pages.views import render
+import markdown
+from flask import Markup
 
 mod = Blueprint('home', __name__, url_prefix='')
 
@@ -111,10 +113,14 @@ def wiki_users():
 @mod.route('/wiki/developers', methods=['GET'])
 # @guest_per.require(http_exception = 403)
 def wiki_devs():
-    """docstring for home."""
+    """temporary expose README.md from git as a wiki file for developers"""
+    with open('README.md', 'r') as fh:
+        content = fh.read()
+        content = Markup(markdown.markdown(content))
+
     return render_template(
         'wiki/developers.html',
-        user=g.user,
+        **locals()
     )
 
 
