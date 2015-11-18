@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Vision Diagnostic - edit page
+{% endblock title %}
+
+{% block extrastyle %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.8.0/css/bootstrap-markdown.min.css" rel="stylesheet"/>
+{% endblock extrastyle %}
+
+{% block topcontent %}
+    <form class="form-horizontal" action="{{ url_for('pages.editor', page_id=page_id or None) }}" method="POST">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <legend> {{ _('Page Editor') }}</legend>
+            <div class="form-group">
+                <label class="control-label" for="title">
+                    {{ _("Title") }}
+                </label>
+                <div class="input-group col-md-12">
+                    {{form.title(placeholder=_('Title'), id = "title", class = "form-control", required = "" )}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label" for="slug">
+                    {{ _("Slug") }}
+                </label>
+                <div class="input-group col-md-12">
+                    {{form.slug(placeholder=_('Slug'), id = "slug", class = "form-control", required = "" )}}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group col-md-12">
+                    {{form.text(placeholder=_('Page text'), required = "", data_provide = "markdown", rows = "16")}}
+                    <span class="help-block">
+                        {{ _('Learn more about') }} <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">MarkDown</a>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group col-md-12">
+                    {{ form.submit(id="submit", class="btn btn-primary") }}
+                </div>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.8.0/js/bootstrap-markdown.min.js">
+    </script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js">
+    </script>
+    <script type="text/javascript">
+        $(document).ready()
+        {
+            $(".form-group #text").markdown({ autofocus:true,savable:false });
+        }
+    </script>
+{% endblock js %}

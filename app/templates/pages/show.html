@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}
+    Vision Diagnostic - show all pages
+{% endblock title %}
+
+{% block topcontent %}
+    <div class="row mb8 mt8">
+        <div class="col-md-12">
+            <span class="pull-right">
+                <a href="{{ url_for('pages.editor') }}" id="new">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp; {{ _('New') }}
+                </a>
+            </span>
+        </div>
+    </div>
+    {% if pages %}
+        {% for page in pages %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box-header clearfix">
+                        <div class="pull-left">
+                            <a href="{{ page.url }}">
+                                <h1>{{ _(page.title) }}</h1>
+                            </a>
+                        </div>
+                        {% if isblogger %}
+                            <div class="pull-right">
+                            {% if page.editable %}
+                                <a href="{{ url_for('pages.delete', page_id=page.id) }}" class="delete" >
+                                    <span class="glyphicon glyphicon-trash">
+                                    </span>&nbsp; {{ _('Delete') }}
+                                </a>&nbsp&nbsp&nbsp&nbsp
+                                <a href="{{ url_for('pages.editor', page_id=page.id) }}" id="edit">
+                                    <span class="glyphicon glyphicon-edit"></span>&nbsp; {{ _('Edit') }}
+                                </a>&nbsp&nbsp&nbsp&nbsp
+                            {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

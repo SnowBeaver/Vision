@@ -1,7 +1,5 @@
-{% extends "base.html" %}
-{% block topcontent %}
-<h1>
-	{{ _('Users Wiki') }}
-</h1>
-{{ _('Users Wiki') }}
-{% endblock %}
+{% if page %}
+    {% include 'pages/page.html' %}
+{% else %}
+    {% extends 'base.html' %}
+{% endif %}

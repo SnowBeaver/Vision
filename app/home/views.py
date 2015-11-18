@@ -13,6 +13,8 @@ from app.users.models import User
 from app.home.models import _is_blogger, _get_news , _get_blog_meta
 import sqlalchemy_utils
 from flask_login import current_user
+from app.pages.storage import get_page_by_title ,get_page_by_slug ,process_page , isblogger
+from app.pages.views import render
 
 mod = Blueprint('home', __name__, url_prefix='')
 
@@ -91,9 +93,19 @@ def home():
 # @guest_per.require(http_exception = 403)
 def wiki_users():
     """docstring for home."""
+    #page = get_page_by_title(u"wiki users")
+    page = get_page_by_slug(u'wiki-users')
+
+    canEdit = None
+    if page is not None:
+        canEdit = isblogger(current_user = g.user)
+        process_page(page, render = render)
+
     return render_template(
-        'wiki/users.html',
-        user=g.user,
+         'wiki/users.html'
+        ,user = g.user
+        ,page = page
+        ,isblogger = canEdit
     )
 
 @mod.route('/wiki/developers', methods=['GET'])
