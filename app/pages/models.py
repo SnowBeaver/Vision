@@ -9,6 +9,8 @@ from sqlalchemy_i18n import (
 from app import db
 from datetime import datetime
 
+make_translatable( options = {'locales': ['en' , 'fr' , 'es']})
+
 class Pages(Translatable , db.Model):
     __tablename__ = 'pages'
     __translatable__ = {

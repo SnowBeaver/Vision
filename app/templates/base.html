@@ -2,26 +2,25 @@
 <html lang="en">
   <head>
     {% block head %}
-    <title>{% block title %}Vision Diagnostic{% endblock %}</title>
-    <meta name=viewport content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <meta name="author" content="">
-    <meta charset="utf-8">
-    <!-- SUPPORT FOR IE6-8 OF HTML5 ELEMENTS -->
-    <!--[if lt IE 9]>
-          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-      <![endif]-->
+        <title>{% block title %}Vision Diagnostic{% endblock %}</title>
+        <meta name=viewport content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="author" content="">
+        <meta charset="utf-8">
+        <!-- SUPPORT FOR IE6-8 OF HTML5 ELEMENTS -->
+        <!--[if lt IE 9]>
+              <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+          <![endif]-->
 
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-	  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-    {% block style %}
-    {% endblock style %}
-
-    {% block extrastyle %}
-    {% endblock extrastyle %}
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+        {% block style %}
+        {% endblock style %}
+        {% block extrastyle %}
+        {% endblock extrastyle %}
     {% endblock %}
     {% include 'widgets/analytics.html' %}
   </head>
@@ -48,6 +47,8 @@
     <div class="center-divider"></div>
     <div class="h800 container page">
       <div class="">
+        {% block leftcontent %}
+        {% endblock leftcontent %}
         {% block topcontent %}
         {% endblock %}
         {% block rightcontent %}
@@ -68,7 +69,7 @@
         {% block extrajs %}
             <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
             <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-            <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+            <script src="{{ url_for('static', filename='bootstrap/js/jquery-ui.min.js') }}"></script>
             <script src="{{ url_for('static', filename='js/common.js') }}"></script>
             {% block js %}
             {% endblock %}

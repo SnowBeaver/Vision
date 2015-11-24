@@ -37,9 +37,10 @@ _markdown_extensions = [MathJaxExtension(), MetaExtension()]
 
 def get_locale():
     if 'locale' in session:
-        return session['locale']
-    else:
-       return 'en'
+        if session['locale'] is not None:
+            return session['locale']
+
+    return 'en'
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale

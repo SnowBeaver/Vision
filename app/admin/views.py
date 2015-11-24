@@ -15,7 +15,8 @@ from wtforms import form, fields, validators
 from flask import current_app
 from werkzeug.security import check_password_hash
 from app import admin_per , user_per , guest_per , blogger_per
-
+from app.tree.storage import get_tree
+from app.tree.forms import TreeView
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -34,6 +35,8 @@ class LoginForm(form.Form):
     def get_user(self):
         return db.session.query(User).filter_by(email=self.email.data).first()
 
+
+
 class MyAdminIndexView(admin.AdminIndexView):
 
     @expose('/')
@@ -41,6 +44,8 @@ class MyAdminIndexView(admin.AdminIndexView):
     def index(self):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
+        self._template_args['tree'] = get_tree()
+        self._template_args['tree_view'] = TreeView()
         return super(MyAdminIndexView, self).index()
 
     @expose('/login/', methods=('GET', 'POST'))
@@ -64,9 +69,10 @@ class MyAdminIndexView(admin.AdminIndexView):
         return super(MyAdminIndexView, self).index()
 
     @expose('/logout/')
+    @admin_per.require(http_exception = 403)
     def logout_view(self):
         login.logout_user()
-        return redirect(url_for('.index'))
+        return redirect(url_for('home.home'))
 
 
 class MyModelView(ModelView):
@@ -85,6 +91,8 @@ class RoleAdmin(MyModelView):
 
     def __init__(self, dbsession):
         super(RoleAdmin, self).__init__(Role, dbsession)
+
+
 
 
 class UserAdmin(MyModelView):

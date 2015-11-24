@@ -2,6 +2,8 @@
 {% block head %}
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jstree.min.css') }}">
+
     <style type="text/css">
         .fa-large{
             font-size: 20px;
@@ -13,21 +15,191 @@
 	<div id="navbar" class="navbar-collapse collapse in">
         {{ super() }}
         {% if current_user.is_authenticated() %}
-        <ul class="nav navbar-nav pull-right">
-            <li class="dropdown">
-                <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="#">
-                    <i class="fa fa-user fa-large" ></i>
-                    {{ current_user.login }}
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" role="menu">
-                    <li>
-                        <a href="{{ url_for('admin.logout_view') }}">Log out</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+            <ul class="nav navbar-nav pull-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-large" ></i>
+                        {{ current_user.login }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="{{ url_for('admin.logout_view') }}">Log out</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         {% endif %}
     </div>
 {% endblock main_menu %}
+
+{% block tail %}
+   <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
+
+    <script type="text/javascript" >
+        function stringifyObject ( obj ) {
+          if ( $.isArray( obj ) || (typeof obj !== "object") ) {
+            return obj.toString()
+          }
+          var seen = [];
+          return JSON.stringify(
+            obj,
+            function( key, val ) {
+              if (val != null && typeof val == "object") {
+                if ( seen.indexOf( val ) >= 0 )
+                  return
+                  seen.push( val )
+              }
+              return val
+            }
+          );
+        }
+
+        $("#treeView").submit(function(e){
+
+            $.post('{{ url_for("tree.update") }}', $( this ).serialize()
+            ,function(data){
+                if(data.status == "OK"){
+                    alert("View is updated");
+                }else{
+                    alert("Error in submiting");
+                }
+
+            }).fail(function () {
+                alert("Something went wrong");
+            });
+            e.preventDefault();
+        });
+
+        $('#tree').jstree({
+             //  for admin "contextmenu"
+             "plugins" : [ "search" , "json_data" , "types"  , "contextmenu" , 'dnd' , 'state']
+            ,"core" : {
+                 "animation" : 0
+                ,"check_callback" : true
+            }
+            ,"types" : {
+                "#" : {
+                  "max_children" : 1,
+                  "max_depth" : 4,
+                  "valid_children" : ["Vision Diagnostic"]
+                },
+                "root" : {
+                  "icon" : "",
+                  "valid_children" : ["default"]
+                },
+                "default" : {
+                  "valid_children" : ["default","file"]
+                },
+                "file" : {
+                  "icon" : "glyphicon glyphicon-file",
+                  "valid_children" : []
+                }
+            }
+            // for admin "contextmenu"
+            ,'contextmenu' : {
+                'items' : function(node) {
+                    tmp = $.jstree.defaults.contextmenu.items();
+                    delete tmp.create.action;
+                    tmp.create.label = "New";
+                    tmp.create.submenu = {
+                        "create_folder" : {
+                            "separator_after"	: true,
+                            "label"				: "Folder",
+                            "action"			: function (data) {
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "New folder" , 'icon' : '../app/static/img/folder.png' , 'type' : 'default' }
+                                ,function(data){
+                                    inst.create_node(obj, { type : "default" , 'id' : data.id , 'text' : 'New Folder' + data.id , 'icon' : '../app/static/img/folder.png' }
+                                            , "last", function (new_node) {
+                                        setTimeout(function () { inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        },
+                        "create_file" : {
+                            "label"				: "File",
+                            "action"			: function (data) {
+                                var inst = $.jstree.reference(data.reference);
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "New file" , 'icon' : '../app/static/img/file.png', 'type' : 'file' }
+                                 ,function(data){
+                                    if(data.id){
+                                        inst.create_node(obj, { type : "file" , 'id' : data.id , 'text' : 'New File' + data.id , 'icon' : '../app/static/img/file.png' }
+                                                , "last", function(new_node) {
+                                            setTimeout(function(){
+                                                inst.edit(new_node);
+                                            },0);
+                                        });
+                                    }
+                                }).fail(function () {
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                    };
+                    if(this.get_type(node) === "file") {
+                        delete tmp.create;
+                    }
+                    delete tmp.ccp.submenu.copy;
+                    return tmp;
+                }
+			}
+        }).on('delete_node.jstree', function (e, data) {
+                $.post('{{url_for("tree.delete")}}', { 'id' : data.node.id } ,function(data ){
+                    //alert(data.id == true );
+                }).fail(function () {
+	    			data.instance.refresh();
+				});
+             }).on('rename_node.jstree', function (e, data) {
+			    $.post('{{url_for("tree.rename")}}', { 'id' : data.node.id, 'text' : data.text } ,function(data ){
+                        //alert(data.success == true );
+                }).fail(function () {
+	    			data.instance.refresh();
+				});
+            }).on('move_node.jstree', function (e, data) {
+                $.post('{{url_for("tree.move")}}', { 'node_id' : data.node.id, 'parent_id' : data.parent } ,function(data ){
+                    //alert(data.success == true );
+                }).fail(function () {
+	    			data.instance.refresh();
+				});
+			})
+            .on('copy_node.jstree', function (e, data){
+//                $.post('{{url_for("tree.copy")}}', { 'node_id' : data.original.id , 'parent_id' : data.parent } ,function(d){
+//                    if(d.status == "OK"){
+//                        data.instance.refresh();
+//                    }else{
+//                        alert("Something went wrong");
+//                    }
+//                }).fail(function () {
+//	    			data.instance.refresh();
+//				});
+
+			}).on('select_node.jstree', function (e, data) {
+                    $("#treeView #node_id").val(data.node.id);
+
+                    $.post('{{ url_for("tree.getview") }}', { 'node_id' : data.node.id } ,function(data ){
+                        if(data.view){
+                            $("#treeView #view").val(data.view);
+                        }
+                    }).fail(function () {
+
+                    });
+			});
+
+        var to = false;
+        $('#plugins4_q').keyup(function () {
+            if(to) { clearTimeout(to); }
+            to = setTimeout(function () {
+              var v = $('#plugins4_q').val();
+              $('#tree').jstree(true).search(v);
+            }, 250);
+        });
+
+    </script>
+{% endblock tail %}
 

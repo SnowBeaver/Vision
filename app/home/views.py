@@ -17,6 +17,8 @@ from app.pages.storage import get_page_by_title ,get_page_by_slug ,process_page 
 from app.pages.views import render
 import markdown
 from flask import Markup
+from flask import jsonify
+from app.tree.storage import get_tree
 
 mod = Blueprint('home', __name__, url_prefix='')
 
@@ -28,9 +30,10 @@ def before_request():
     g.user = None
 
     if 'user_id' in session:
-        g.user = User.query.get(session['user_id'])
-        if not g.user:
-            del session['user_id']
+        if session['user_id'] is not None:
+            g.user = User.query.get(session['user_id'])
+            if not g.user:
+                del session['user_id']
 
     g.locale = get_locale()
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -38,8 +41,9 @@ def before_request():
 @babel.localeselector
 def get_locale():
     if 'locale' in session:
-       g.locale = session['locale']
-       return g.locale
+        if session['locale'] is not None:
+            g.locale = session['locale']
+            return g.locale
 
     return request.accept_languages.best_match(
         current_app.config['LANGUAGES'].keys()
@@ -96,6 +100,7 @@ def home():
 def wiki_users():
     """docstring for home."""
     #page = get_page_by_title(u"wiki users")
+
     page = get_page_by_slug(u'wiki-users')
 
     canEdit = None
@@ -122,6 +127,3 @@ def wiki_devs():
         'wiki/developers.html',
         **locals()
     )
-
-
-

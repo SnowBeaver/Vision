@@ -185,9 +185,6 @@ def logout():
         del session['user_id']
         g.user = None
 
-    if 'user_id' in session:
-        del session['user_id']
-
      # Tell Flask-Principal the user is anonymous
     identity_changed.send(current_app._get_current_object(),
                           identity = AnonymousIdentity())

@@ -110,6 +110,14 @@ app.register_blueprint(userModule)
 from app.pages.views import mod as pageModule
 app.register_blueprint(pageModule)
 
+#resiger tree
+from app.tree.views import mod as treeModule
+app.register_blueprint(treeModule)
+
 from app.admin.views import UserAdmin, RoleAdmin
 backend.add_view(UserAdmin(db.session))
 backend.add_view(RoleAdmin(db.session))
+
+#create tree table
+from app.tree.models import Base
+Base.metadata.create_all(engine)

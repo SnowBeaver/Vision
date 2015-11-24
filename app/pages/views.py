@@ -20,8 +20,10 @@ def before_request():
     """
     set_locale()
     g.user = None
+
     if 'user_id' in session:
-        g.user = User.query.get(session['user_id'])
+        if session['user_id'] is not None:
+            g.user = User.query.get(session['user_id'])
 
 @mod.route("/page/<int:page_id>/", defaults={"page_id": None} )
 @mod.route("/page/<int:page_id>/")
