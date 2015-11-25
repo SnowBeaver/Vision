@@ -21,11 +21,46 @@
 	    </div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
     <div id="wrapper" class="col-md-12">
-    	<h1>
-			{{ _('Vision Diagnostic') }}
-		</h1>
-		{{ _('For Fluid Insulated Equipment') }}
-		
+    	<div class="row">
+            {% if page %}
+                <div class="col-md-12">
+                    <div class="box-header clearfix">
+                        {% if isblogger %}
+                            <span class="pull-right">
+                                {% if page.editable %}
+                                   <a href="{{ url_for('pages.delete', page_id=page.id) }}" id="delete">
+                                        <span class="glyphicon glyphicon-trash"></span>&nbsp; {{ _('Delete') }}
+                                    </a>&nbsp&nbsp&nbsp&nbsp
+                                    <a href="{{ url_for('pages.editor', page_id=page.id) }}" id="edit">
+                                        <span class="glyphicon glyphicon-edit"></span>&nbsp; {{ _('Edit') }}
+                                    </a>&nbsp&nbsp&nbsp&nbsp
+                                {% endif %}
+                                    <a href="{{ url_for('pages.editor') }}" id="new">
+                                        <span class="glyphicon glyphicon-plus"></span>&nbsp; {{ _('New') }}
+                                    </a>
+                            </span>
+                        {% endif %}
+                        <span class="pull-left">
+                            <a href="{{ url_for('pages.page', page_id = page.id) }}">
+                              <h1>{{ page.title }}</h1>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="box-body">
+                        <div class="">
+                            {{ page.rendered_text | safe }}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <h1>
+                    {{ _('Vision Diagnostic') }}
+                </h1>
+                {{ _('For Fluid Insulated Equipment') }}
+            {% endif %}
+
+        </div>
+
 		<!-- show news -->
         {% if posts %}
             {% for post in posts %}

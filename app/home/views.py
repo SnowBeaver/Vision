@@ -74,11 +74,20 @@ def lang(lang):
     posts = _get_news(current_user)
     meta = _get_blog_meta()
 
+    page = get_page_by_slug(u'vision-diagnostic')
+
+    canEdit = None
+    if page is not None:
+        canEdit = isblogger(current_user = g.user)
+        process_page(page, render = render)
+
     return render_template(
          'home/index.html'
         ,user = g.user
         ,posts = posts
         ,meta = meta
+        ,isblogger = canEdit
+        ,page = page
     )
 
 @mod.route('/', methods=['GET'])
@@ -88,11 +97,20 @@ def home():
     posts = _get_news(current_user)
     meta = _get_blog_meta()
 
+    page = get_page_by_slug(u'vision-diagnostic')
+
+    canEdit = None
+    if page is not None:
+        canEdit = isblogger(current_user = g.user)
+        process_page(page, render = render)
+
     return render_template(
          'home/index.html'
         ,user  = g.user
         ,posts = posts
         ,meta  = meta
+        ,isblogger = canEdit
+        ,page = page
    )
 
 @mod.route('/wiki/users', methods=['GET'])
