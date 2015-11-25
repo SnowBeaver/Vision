@@ -4,11 +4,9 @@ from wtforms import TextAreaField, FileField, HiddenField
 from wtforms.validators import Required, EqualTo, Email, Length, Optional
 from app.users.utils import check_password
 
-
 class LoginForm(Form):
     email = TextField('Email address', [Required(), Email()])
     password = PasswordField('Password', [Required()])
-
 
 class RegisterForm(Form):
     name = TextField('Full Name', [Required()])

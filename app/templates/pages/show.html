@@ -4,15 +4,17 @@
 {% endblock title %}
 
 {% block topcontent %}
-    <div class="row mb8 mt8">
-        <div class="col-md-12">
-            <span class="pull-right">
-                <a href="{{ url_for('pages.editor') }}" id="new">
-                    <span class="glyphicon glyphicon-plus"></span>&nbsp; {{ _('New') }}
-                </a>
-            </span>
+    {% if isblogger %}
+        <div class="row mb8 mt8">
+            <div class="col-md-12">
+                <span class="pull-right">
+                    <a href="{{ url_for('pages.editor') }}" id="new">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp; {{ _('New') }}
+                    </a>
+                </span>
+            </div>
         </div>
-    </div>
+    {% endif %}
     {% if pages %}
         {% for page in pages %}
             <div class="row">
