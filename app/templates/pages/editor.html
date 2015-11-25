@@ -54,9 +54,26 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js">
     </script>
     <script type="text/javascript">
+        // Generates a URL-friendly "slug" from a provided string.
+        // For example: "This Is Great!!!" transforms into "this-is-great"
+        function generateSlug (value) {
+          // 1) convert to lowercase
+          // 2) remove dashes and pluses
+          // 3) replace spaces with dashes
+          // 4) remove everything but alphanumeric characters and dashes
+          return value.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        };
+
         $(document).ready()
         {
             $(".form-group #text").markdown({ autofocus:true,savable:false });
+
+            $(".form-horizontal #title").keyup(function(event){
+                var value = $(this).val();
+                console.log(value);
+
+                $(".form-horizontal #slug").val(generateSlug(value));
+            });
         }
     </script>
 {% endblock js %}

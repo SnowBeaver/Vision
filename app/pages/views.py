@@ -25,8 +25,8 @@ def before_request():
         if session['user_id'] is not None:
             g.user = User.query.get(session['user_id'])
 
-@mod.route("/page/<int:page_id>/", defaults={"page_id": None} )
-@mod.route("/page/<int:page_id>/")
+@mod.route("/<int:page_id>/", defaults={"page_id": None} )
+@mod.route("/<int:page_id>/")
 def page(page_id):
     global render
     page = get_page_by_id(page_id)
