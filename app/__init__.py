@@ -12,6 +12,8 @@ from flask.ext.babel import Babel
 from flask.ext.blogging import SQLAStorage, BloggingEngine
 from sqlalchemy import create_engine, MetaData
 from flask.ext.principal import Principal, RoleNeed ,Permission , ActionNeed
+from raven.contrib.flask import Sentry
+
 
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
@@ -28,6 +30,7 @@ db.create_all()
 
 mail = Mail(app)
 babel = Babel(app)
+sentry = Sentry(app)
 
 # Needs
 be_admin = RoleNeed('admin')
