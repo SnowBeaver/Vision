@@ -235,3 +235,8 @@ def update_trans():
         with source_virtualenv():
             run('pybabel update -i app/messages.pot -d app/translations')
             run('rm -f ./messages.pot')
+
+def create_root():
+    with cd(env.directory):
+        with source_virtualenv():
+            run('python -c "from app import db;from app.tree.models import TreeNode;node = TreeNode(text = u\'Vision Diagnositc\' , disabled=True , selected=True , icon=\'app/static/img/root.png\' , type=\'default\');db.session.add(node);db.session.commit()"')
