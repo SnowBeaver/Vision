@@ -239,4 +239,11 @@ def update_trans():
 def create_root():
     with cd(env.directory):
         with source_virtualenv():
-            run('python -c "from app import db;from app.tree.models import TreeNode;node = TreeNode(text = u\'Vision Diagnositc\' , disabled=True , selected=True , icon=\'app/static/img/root.png\' , type=\'default\');db.session.add(node);db.session.commit()"')
+            run('python -c "from app import db;from app.tree.models import TreeNode;node = TreeNode(text = u\'Vision Diagnostic\' , disabled=True , selected=True , icon=\'app/static/img/root.png\' , type=\'default\');db.session.add(node);db.session.commit()"')
+
+def create_home():
+    with cd(env.directory):
+        with source_virtualenv():
+            run('python -c "from app import db;")
+            run('python -c "")
+
