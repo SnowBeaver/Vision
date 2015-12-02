@@ -117,9 +117,14 @@ app.register_blueprint(pageModule)
 from app.tree.views import mod as treeModule
 app.register_blueprint(treeModule)
 
-from app.admin.views import UserAdmin, RoleAdmin
+from app.admin.views import UserAdmin, RoleAdmin , FileView , ImageView
+from app.admin.models import File, Image
+
 backend.add_view(UserAdmin(db.session))
 backend.add_view(RoleAdmin(db.session))
+
+backend.add_view(FileView(File, db.session))
+backend.add_view(ImageView(Image, db.session))
 
 #create tree table
 from app.tree.models import Base
