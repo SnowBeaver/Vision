@@ -145,3 +145,14 @@ def wiki_devs():
         'wiki/developers.html',
         **locals()
     )
+
+from .models import get_images
+
+@mod.route('/images', methods=['POST'])
+def images():
+    if request.is_xhr:
+        images = get_images()
+        return jsonify( { 'images' : images } )
+    else:
+        #redirect to home
+        pass

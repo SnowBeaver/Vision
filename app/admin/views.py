@@ -17,6 +17,8 @@ from werkzeug.security import check_password_hash
 from app import admin_per , user_per , guest_per , blogger_per
 from app.tree.storage import get_tree
 from app.tree.forms import TreeView
+from .models import File, Image
+from jinja2 import Markup
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -34,8 +36,6 @@ class LoginForm(form.Form):
 
     def get_user(self):
         return db.session.query(User).filter_by(email=self.email.data).first()
-
-
 
 class MyAdminIndexView(admin.AdminIndexView):
 
@@ -132,3 +132,69 @@ class UserAdmin(MyModelView):
 
     def __init__(self, dbsession):
         super(UserAdmin, self).__init__(User, dbsession)
+
+
+from sqlalchemy.event import listens_for
+from flask_admin.form import ImageUploadField,FileUploadField , thumbgen_filename
+
+PROJECT = 'vision'
+env_dir = '/home/%s/www'%PROJECT
+file_path = env_dir + '/app/static/img/uploads/'
+
+class FileView(sqla.ModelView):
+    # Override form field to use Flask-Admin FileUploadField
+    form_overrides = {
+        'path': FileUploadField
+    }
+
+    # Pass additional parameters to 'path' to FileUploadField constructor
+    form_args = {
+        'path': {
+            'label': 'File',
+            'base_path': file_path,
+            'allow_overwrite': False
+        }
+    }
+
+class ImageView(sqla.ModelView):
+    def _list_thumbnail(view, context, model, name):
+        if not model.path:
+            return ''
+
+        prefix = 'img/uploads/'
+        return Markup('<img src="%s">' % url_for('static', filename = thumbgen_filename(prefix + model.path)))
+
+    column_formatters = {
+        'path': _list_thumbnail
+    }
+
+    # Alternative way to contribute field is to override it completely.
+    # In this case, Flask-Admin won't attempt to merge various parameters for the field.
+    form_extra_fields = {
+        'path': ImageUploadField('Image', base_path = file_path, thumbnail_size = (100, 100, True))
+    }
+
+@listens_for(File, 'after_delete')
+def del_file(mapper, connection, target):
+    if target.path:
+        try:
+            os.remove(op.join(file_path, target.path))
+        except OSError:
+            # Don't care if was not deleted because it does not exist
+            pass
+
+@listens_for(Image, 'after_delete')
+def del_image(mapper, connection, target):
+    if target.path:
+        # Delete image
+        try:
+            os.remove(op.join(file_path, target.path))
+        except OSError:
+            pass
+
+        # Delete thumbnail
+        try:
+            os.remove(op.join(file_path,
+                              thumbgen_filename(target.path)))
+        except OSError:
+            pass

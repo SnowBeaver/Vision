@@ -355,3 +355,13 @@ div.page-footer{
 	margin-top: 10px;
 	min-height: 800px;
 }
+
+#image_data .img-size{
+    text-align: center;
+}
+#image_data .img-unsel{
+    border: 5px solid #f5f5f5;
+}
+#image_data .img-sel{
+    border: 5px solid #357ebd;
+}

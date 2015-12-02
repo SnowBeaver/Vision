@@ -68,3 +68,18 @@ def on_identity_loaded(sender, identity):
             identity.provides.add(be_guest)
     else:
         identity.provides.add(be_guest)
+
+
+# get all stored images
+from app.admin.models import Image
+
+def get_images():
+    try:
+        allImages = db.session().query(Image).all()
+        res = [img.serialize  for img in allImages]
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res

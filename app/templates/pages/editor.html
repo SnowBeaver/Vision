@@ -9,6 +9,22 @@
 {% endblock extrastyle %}
 
 {% block topcontent %}
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body row" id="image_data" style="padding-bottom: 1%;padding-top: 1%;">
+
+                </div>
+                <div class="col-md-12 modal-body" id="btn" style="float:left">
+                     <button type="button" class="btn btn-primary" id="toMarkUp">
+                         Add to MarkDown
+                     </button>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+
     <form class="form-horizontal" action="{{ url_for('pages.editor', page_id=page_id or None) }}" method="POST">
         {{ form.hidden_tag() }}
         <fieldset>
@@ -30,8 +46,13 @@
                 </div>
             </div>
             <div class="form-group">
+                <div class="input-group col-md-12" style="padding-bottom: 5px;">
+                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" id="media">
+                         Add Media
+                     </button>
+                </div>
                 <div class="input-group col-md-12">
-                    {{form.text(placeholder=_('Page text'), required = "", data_provide = "markdown", rows = "16")}}
+                    {{ form.text(placeholder=_('Page text'), required = "", data_provide = "markdown", rows = "16") }}
                     <span class="help-block">
                         {{ _('Learn more about') }} <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">MarkDown</a>
                     </span>
@@ -47,12 +68,9 @@
 {% endblock %}
 
 {% block js %}
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.8.0/js/bootstrap-markdown.min.js">
-    </script>
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js">
-    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-markdown/2.8.0/js/bootstrap-markdown.min.js"> </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js"> </script>
+
     <script type="text/javascript">
         // Generates a URL-friendly "slug" from a provided string.
         // For example: "This Is Great!!!" transforms into "this-is-great"
@@ -66,14 +84,61 @@
 
         $(document).ready()
         {
-            $(".form-group #text").markdown({ autofocus:true,savable:false });
+            $(".form-group #text").markdown({
+                 autofocus:true
+                ,savable:false
+            });
 
             $(".form-horizontal #title").keyup(function(event){
                 var value = $(this).val();
-                console.log(value);
-
                 $(".form-horizontal #slug").val(generateSlug(value));
+            });
+
+            var img_path = "{{ url_for('static' , filename='img/uploads/' ) }}";
+
+            $(".form-group #media").click(function (e) {
+
+                $(".modal .modal-content #btn").addClass('hidden');
+
+                $.post('{{ url_for("home.images") }}'
+                    , function (data) {
+                        if (data.images) {
+                            $(".modal .modal-content #image_data").html("");
+                            /* loop through all images and display them */
+                            data.images.forEach(function (item) {
+                                var data = "<div class='col-md-4 no-border img-size' style=''>";
+                                var thumb = img_path + item.path;
+                                data += "<img src='" + thumb + "' alt='" + item.name + "' id='img-" + item.id + "' width='120px' height='120px' class='img-unsel' />";
+                                data += "</div>";
+                                $(".modal .modal-content #image_data").append(data);
+
+                            });
+                            $(".modal .modal-content #btn").removeClass('hidden');
+                        }
+                    }).fail(function () {
+                        $(".modal .modal-content #image_data").html("");
+                        $(".modal .modal-content #image_data").append("An Error has occurred!");
+                    });
+            });
+
+            $('.modal .modal-content #image_data').on('click', 'img', function () {
+                if ($(this).hasClass('img-unsel')) {
+                    $(this).removeClass('img-unsel').addClass('img-sel');
+                } else {
+                    if ($(this).hasClass('img-sel')) {
+                        $(this).removeClass('img-sel').addClass('img-unsel');
+                    }
+                }
+            });
+
+            $(".modal .modal-content #toMarkUp").click(function () {
+                $(".modal .modal-content #image_data .img-sel").each(function (index) {
+                    console.log($(this).prop('src') + " " + $(this).prop('alt'));
+                    var data = '\n![' + $(this).prop('alt') + '](' + $(this).prop('src') + ' "' + $(this).prop('alt') + '")';
+                    $('.form-group #text').append(data);
+                });
+                $('.modal').modal('hide');
             });
         }
     </script>
-{% endblock js %}
+{% endblock js %}2
