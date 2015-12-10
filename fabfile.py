@@ -43,7 +43,6 @@ def source_bb_virtualenv():
         yield
 
 def setup_dev():
-    local('cd %s && vagrant up && vagrant provision' % LOCAL_PROJECT_DIR)
     sudo("mkdir -p %s/var/logs" % env.directory, user="vision")
     sudo("mkdir -p %s/var/uploads" % env.directory, user="vision")
     sudo("chmod -R g+wrx %s/var/logs" % env.directory, user="vision")
@@ -64,7 +63,6 @@ def setup_dev():
         run('virtualenv env --always-copy')
         with source_virtualenv():
             run(env.pip + ' install uwsgi')
-            #run(env.bbpip + ' install uwsgi')
             run(env.pip + ' install -r requirements.txt')
 
     deploy_nginx()
@@ -109,8 +107,7 @@ def deploy_dev_image():
 def deploy_supervisor():
     super_conf = "/etc/supervisor/conf.d/%s.conf" % PROJECT
     sudo("rm -f %s" % super_conf)
-    #put("%s/dep/supervisor/template.conf" % LOCAL_ROOT_DIR, super_conf, use_sudo=True)
-    put( Path(LOCAL_PROJECT_DIR, 'dep' , 'supervisor' , 'template.conf'), super_conf, use_sudo=True)
+    put( Path(env.directory, 'dep' , 'supervisor' , 'template.conf'), super_conf, use_sudo=True)
 
     sudo("chown root:root %s" % super_conf)
     restart_services()
@@ -118,8 +115,7 @@ def deploy_supervisor():
 def deploy_nginx():
     nginx_conf = "/etc/nginx/sites-available/%s.conf" % PROJECT
     sudo("rm -f %s" % nginx_conf)
-    #put("%s/dep/nginx/template.conf" % LOCAL_ROOT_DIR, nginx_conf, use_sudo=True)
-    put( Path(LOCAL_PROJECT_DIR,'dep', 'nginx', 'template.conf') , nginx_conf, use_sudo=True)
+    put( Path(LOCAL_PROJECT_DIR, 'dep', 'nginx', 'template.conf') , nginx_conf, use_sudo=True)
 
     sudo("chown root:root %s" % nginx_conf)
     sudo("rm -f /etc/nginx/sites-enabled/%s.conf" % PROJECT)
@@ -240,10 +236,3 @@ def create_root():
     with cd(env.directory):
         with source_virtualenv():
             run('python -c "from app import db;from app.tree.models import TreeNode;node = TreeNode(text = u\'Vision Diagnostic\' , disabled=True , selected=True , icon=\'../app/static/img/root.png\' , type=\'default\');db.session.add(node);db.session.commit()"')
-
-def create_home():
-    with cd(env.directory):
-        with source_virtualenv():
-            run('python -c "from app import db;")
-            run('python -c "")
-
