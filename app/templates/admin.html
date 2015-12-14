@@ -56,11 +56,14 @@
         }
 
         $("#treeView").submit(function(e){
-
             $.post('{{ url_for("tree.update") }}', $( this ).serialize()
             ,function(data){
                 if(data.status == "OK"){
                     alert("View is updated");
+                    $("#tree #" + data.id + "_anchor .jstree-icon").attr({
+                         'data-original-title' : data.tooltip
+                        ,'title' : data.tooltip
+                    });
                 }else{
                     alert("Error in submiting");
                 }
@@ -73,7 +76,7 @@
 
         $('#tree').jstree({
              //  for admin "contextmenu"
-             "plugins" : [ "search" , "json_data" , "types"  , "contextmenu" , 'dnd' , 'state']
+             "plugins" : [ "search" , "json_data" , "types"  , "contextmenu" , 'dnd' , 'state' ]
             ,"core" : {
                  "animation" : 0
                 ,"check_callback" : true
@@ -86,14 +89,66 @@
                 },
                 "root" : {
                   "icon" : "",
-                  "valid_children" : ["default"]
-                },
-                "default" : {
-                  "valid_children" : ["default","file"]
-                },
-                "file" : {
-                  "icon" : "glyphicon glyphicon-file",
-                  "valid_children" : []
+                  "valid_children" : ["default","air_bkr","bkr","main","bushing","capacitor","induc,mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,"default" : {
+                  "valid_children" : ["default","file","main","air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'main' :{
+                     "icon" : "../app/static/img/icons/main_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'air_bkr' :{
+                     "icon" : "../app/static/img/icons/air_bkr_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'bkr' :{
+                     "icon" : "../app/static/img/icons/bkr_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'bushing' :{
+                     "icon" : "../app/static/img/icons/bushing_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'capacitor' :{
+                     "icon" : "../app/static/img/icons/capacitor_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'induc' :{
+                     "icon" : "../app/static/img/icons/induc_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'mcc' :{
+                     "icon" : "../app/static/img/icons/mcc_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'rect' :{
+                     "icon" : "../app/static/img/icons/rect_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'source' :{
+                     "icon" : "../app/static/img/icons/source_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'switch' :{
+                     "icon" : "../app/static/img/icons/switch_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'synch' :{
+                     "icon" : "../app/static/img/icons/synch_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'tank' :{
+                     "icon" : "../app/static/img/icons/tank_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'tc' :{
+                     "icon" : "../app/static/img/icons/tc_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                }
+                ,'transfo' :{
+                     "icon" : "../app/static/img/icons/transfo_b.ico"
+                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
                 }
             }
             // for admin "contextmenu"
@@ -103,48 +158,373 @@
                     delete tmp.create.action;
                     tmp.create.label = "New";
                     tmp.create.submenu = {
-                        "create_folder" : {
-                            "separator_after"	: true,
-                            "label"				: "Folder",
-                            "action"			: function (data) {
+                         'create_main' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Main"
+                            ,"action"			    : function (data){
                                 var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
-                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "New folder" , 'icon' : '../app/static/img/folder.png' , 'type' : 'default' }
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "New Main" , 'icon' : '../app/static/img/icons/main_b.ico' , 'type' : 'main' , tooltip : "Main tooltip" }
                                 ,function(data){
-                                    inst.create_node(obj, { type : "default" , 'id' : data.id , 'text' : 'New Folder' + data.id , 'icon' : '../app/static/img/folder.png' }
+
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'New Main' + data.id , 'icon' : '../app/static/img/icons/main_b.ico' , type: 'main' }
                                             , "last", function (new_node) {
-                                        setTimeout(function () { inst.edit(new_node); },0);
+
+                                        setTimeout(function () {
+                                            <!--$("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Main tooltip" + data.id }).tooltip({-->
+                                                <!--track: true-->
+                                            <!--});-->
+                                            inst.edit(new_node); },0);
+                                    });
+
+
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'air_bkr' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Air Bkr"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Air Bkr" , 'icon' : '../app/static/img/icons/air_bkr_b.ico' , 'type' : 'air_bkr' , tooltip : "Air Bkr tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Air Bkr' + data.id , 'icon' : '../app/static/img/icons/air_bkr_b.ico' , type: 'air_bkr' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Air Bkr tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
                                     });
                                 }).fail(function () {
                                     console.log(fail);
                                     data.instance.refresh();
                                 });
                             }
-                        },
-                        "create_file" : {
-                            "label"				: "File",
-                            "action"			: function (data) {
-                                var inst = $.jstree.reference(data.reference);
+                        }
+                        ,'bkr' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Bkr"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
-                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "New file" , 'icon' : '../app/static/img/file.png', 'type' : 'file' }
-                                 ,function(data){
-                                    if(data.id){
-                                        inst.create_node(obj, { type : "file" , 'id' : data.id , 'text' : 'New File' + data.id , 'icon' : '../app/static/img/file.png' }
-                                                , "last", function(new_node) {
-                                            setTimeout(function(){
-                                                inst.edit(new_node);
-                                            },0);
-                                        });
-                                    }
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Bkr" , 'icon' : '../app/static/img/icons/bkr_b.ico' , 'type' : 'bkr' , tooltip : "Bkr tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Bkr' + data.id , 'icon' : '../app/static/img/icons/bkr_b.ico' , 'type' : 'bkr' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Bkr tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
                                 }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'bushing' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Bushing"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Bushing" , 'icon' : '../app/static/img/icons/bushing_b.ico' , 'type' : 'bushing' , tooltip : "Bushing tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Bushing' + data.id , 'icon' : '../app/static/img/icons/bushing_b.ico' , 'type' : 'bushing' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Brushing tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'capacitor' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Capacitor"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Capacitor" , 'icon' : '../app/static/img/icons/capacitor_b.ico' , 'type' : 'capacitor' , tooltip : "Capacitor tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Capacitor' + data.id , 'icon' : '../app/static/img/icons/capacitor_b.ico' , 'type' : 'capacitor' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Capacitor tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'induc' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Induc"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Induc" , 'icon' : '../app/static/img/icons/induc_b.ico' , 'type' : 'induc' , tooltip : "Induc tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Induc' + data.id , 'icon' : '../app/static/img/icons/induc_b.ico' , 'type' : 'induc' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Induc tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'mcc_b' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Mcc"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Mcc" , 'icon' : '../app/static/img/icons/mcc_b.ico' , 'type' : 'mcc' , tooltip : "Mcc tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Mcc' + data.id , 'icon' : '../app/static/img/icons/mcc_b.ico' , 'type' : 'mcc' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Mcc tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'rect' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Rect"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Rect" , 'icon' : '../app/static/img/icons/rect_b.ico' , 'type' : 'rect' , tooltip : "Rect tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Rect' + data.id , 'icon' : '../app/static/img/icons/rect_b.ico' , 'type' : 'rect' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Rect tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'source' : {
+                             "separator_after"	    : true
+                            ,"label"				: "source"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Source" , 'icon' : '../app/static/img/icons/source_b.ico' , 'type' : 'source' , tooltip : "Source tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Source' + data.id , 'icon' : '../app/static/img/icons/source_b.ico' , 'type' : 'source' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Source tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'switch' : {
+                             "separator_after"	    : true
+                            ,"label"				: "switch"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Switch" , 'icon' : '../app/static/img/icons/switch_b.ico' , 'type' : 'switch' , tooltip : "Switch tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Switch' + data.id , 'icon' : '../app/static/img/icons/switch_b.ico' , 'type' : 'switch' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Switch tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'synch' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Synch"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Synch" , 'icon' : '../app/static/img/icons/synch_b.ico' , 'type' : 'synch' , tooltip : "Synch tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Synch' + data.id , 'icon' : '../app/static/img/icons/synch_b.ico' , 'type' : 'synch' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Synch tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'tank' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Tank"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Tank" , 'icon' : '../app/static/img/icons/tank_b.ico' , 'type' : 'tank' , tooltip : "Tank tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'Tank' + data.id , 'icon' : '../app/static/img/icons/tank_b.ico' , 'type' : 'tank' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Tank tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'tc' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Tc"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Tc" , 'icon' : '../app/static/img/icons/tc_b.ico' , 'type' : 'tc' , tooltip : "Tc tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'tc' + data.id , 'icon' : '../app/static/img/icons/tc_b.ico' , 'type' : 'tc' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Tc tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+                            }
+                        }
+                        ,'transfo' : {
+                             "separator_after"	    : true
+                            ,"label"				: "Transfo"
+                            ,"action"			    : function (data){
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Transfo" , 'icon' : '../app/static/img/icons/transfo_b.ico' , 'type' : 'transfo' , tooltip : "Transfo tooltip" }
+                                ,function(data){
+                                    inst.create_node(obj, { 'id' : data.id , 'text' : 'transfo_b.ico' + data.id , 'icon' : '../app/static/img/icons/transfo_b.ico' , 'type' : 'transfo' }
+                                            , "last", function (new_node) {
+
+                                        setTimeout(function () {
+                                            $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Transfo tooltip" + data.id }).tooltip({
+                                                track: true
+                                            });
+                                            inst.edit(new_node); },0);
+                                    });
+                                }).fail(function () {
+                                    console.log(fail);
                                     data.instance.refresh();
                                 });
                             }
                         }
                     };
+
+
+                    console.log(this.get_type(node));
+
+                    if( (this.get_type(node) === "default")
+                        || ((this.get_type(node) === "root"))
+                    )
+                    {
+                        $.each(tmp.create.submenu , function(index, value){
+                            if( value.label !== 'Main' ){
+                                console.log(tmp.create.submenu[index]);
+                                delete tmp.create.submenu[index];
+                                //delete value;
+                                //delete this;
+                            }
+                        });
+
+                        // delete everything except main
+                        <!--delete tmp.create.submenu.air_bkr;-->
+                        <!--delete tmp.create.submenu.bkr;-->
+                        <!--delete tmp.create.submenu.bushing;-->
+                        <!--delete tmp.create.submenu.capacitor;-->
+                        <!--delete tmp.create.submenu.induc;-->
+                        <!--delete tmp.create.submenu.mcc_b;-->
+                        <!--delete tmp.create.submenu.rect;-->
+                        <!--delete tmp.create.submenu.source;-->
+                        <!--delete tmp.create.submenu.switch;-->
+                        <!--delete tmp.create.submenu.synch;-->
+                        <!--delete tmp.create.submenu.tank;-->
+                        <!--delete tmp.create.submenu.tc;-->
+                        <!--delete tmp.create.submenu.transfo;-->
+
+                    }else if(this.get_type(node) == "main"){
+                        //delete main submenu
+                        delete tmp.create.submenu.main;
+                    }
+
                     if(this.get_type(node) === "file") {
                         delete tmp.create;
                     }
+
                     delete tmp.ccp.submenu.copy;
                     return tmp;
                 }
@@ -156,7 +536,7 @@
 	    			data.instance.refresh();
 				});
              }).on('rename_node.jstree', function (e, data) {
-			    $.post('{{url_for("tree.rename")}}', { 'id' : data.node.id, 'text' : data.text } ,function(data ){
+			    $.post('{{url_for("tree.rename")}}', { 'id' : data.node.id, 'text' : data.text } ,function(data){
                         //alert(data.success == true );
                 }).fail(function () {
 	    			data.instance.refresh();
@@ -182,14 +562,29 @@
 			}).on('select_node.jstree', function (e, data) {
                     $("#treeView #node_id").val(data.node.id);
 
-                    $.post('{{ url_for("tree.getview") }}', { 'node_id' : data.node.id } ,function(data ){
-                        if(data.view){
-                            $("#treeView #view").val(data.view);
+                    $.post('{{ url_for("tree.getview") }}', { 'node_id' : data.node.id } ,function(res){
+                        if(res.view){
+                            $("#treeView #view").val(res.view);
+                            $("#treeView #tooltip").val(res.tooltip);
                         }
                     }).fail(function () {
 
                     });
-			});
+			}).on('ready.jstree', function (e, data){
+
+			    $("#tree li").each(function(){
+			        var title = $(this).attr('title');
+			        if(title != 'undefined'){
+			            var id = $(this).attr('id');
+			            <!--console.log(title);-->
+			            $("#tree #" + id + "_anchor .jstree-icon").attr({ 'title' : title }).tooltip({
+			                track: true
+			            });
+			            $(this).removeAttr('title');
+                    }
+			    });
+            });
+
 
         var to = false;
         $('#plugins4_q').keyup(function () {
