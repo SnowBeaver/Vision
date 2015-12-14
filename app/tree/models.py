@@ -35,6 +35,7 @@ class TreeNode(Translatable , Base):
     selected = sqla.Column(sqla.Boolean() , default = False)
     type = sqla.Column(sqla.String(58) , default = 'file')
     view = sqla.Column(sqla.String(126) , default = 'home')
+    status = sqla.Column(sqla.SmallInteger(), default = 1 )
 
     children = relationship("TreeNode",
         # cascade deletions
@@ -52,8 +53,9 @@ class TreeNode(Translatable , Base):
         return self.locale
 
     def __init__(self, text = '', parent=None ,icon="glyphicon-file", opened = True , disabled = False
-                 , selected = False , view = "home" , type = 'file'):
+                 , selected = False , view = "home" , type = 'file' , tooltip = '' , status = 1):
         self.text = text
+        self.tooltip = tooltip
         self.parent = parent
         self.icon = icon
         self.opened = opened
@@ -61,6 +63,7 @@ class TreeNode(Translatable , Base):
         self.selected = selected
         self.view = view
         self.type = type
+        self.status = status
 
     def __repr__(self):
         return "TreeNode(name=%r, id=%r, parent_id=%r)" % (
@@ -84,3 +87,4 @@ class TreeNodeTranslation(translation_base(TreeNode)):
     __tablename__ = 'tree_translation'
 
     text = sqla.Column(sqla.UnicodeText())
+    tooltip = sqla.Column(sqla.UnicodeText())

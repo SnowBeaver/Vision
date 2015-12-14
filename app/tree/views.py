@@ -7,7 +7,7 @@ from .storage import *
 from flask import jsonify
 from .forms import TreeView
 from app import admin_per
-
+from flask import redirect , url_for
 
 mod = Blueprint('tree', __name__, url_prefix='/tree')
 
@@ -30,7 +30,7 @@ def rename():
         return jsonify({ 'success' : success })
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))
 
 @mod.route("/create/", methods=['POST'])
 def create():
@@ -39,12 +39,12 @@ def create():
         if admin_per.require().can():
             if request.form['parent']:
                 id = create_node(parent = request.form['parent'] , text = request.form['text']
-                                 , icon = request.form['icon'], type = request.form['type'])
+                                 , icon = request.form['icon'], type = request.form['type'] , tooltip = request.form['tooltip'])
 
         return jsonify({ 'id' : id })
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))
 
 @mod.route("/delete/", methods=['POST'])
 def delete():
@@ -57,38 +57,42 @@ def delete():
         return jsonify({ 'id' : id })
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))
 
 @mod.route("/update/", methods=['POST'])
 def update():
     if request.is_xhr:
         status = "NOK"
+        ret_id = None
+        tooltip = None
         if admin_per.require().can():
             form = TreeView(request.form)
             if form.validate():
-                res = update_node(request.form['node_id'], request.form['view'])
+                res = update_node(request.form['node_id'], request.form['view'] , request.form['tooltip'] )
                 if res is not None:
+                    ret_id = request.form['node_id']
+                    tooltip = request.form['tooltip']
                     status = "OK"
-
-        return jsonify( { 'status' : status } )
+        return jsonify( { 'status' : status, 'id' : ret_id , 'tooltip' : tooltip } )
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))
 
 @mod.route("/getview/", methods=['POST'])
 def getview():
     if request.is_xhr:
         retView = None
+        tooltip = None
         if admin_per.require().can():
             if request.form['node_id']:
                 res = get_view_by_id(request.form['node_id'])
                 if res is not None:
-                    retView = res
+                    retView , tooltip  = res
 
-        return jsonify( { 'view' : retView } )
+        return jsonify( { 'view' : retView  , 'tooltip' :  tooltip } )
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))
 
 @mod.route("/renderview/", methods=['POST'])
 def renderview():
@@ -102,7 +106,7 @@ def renderview():
         return template
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))
 
 @mod.route("/move/", methods=['POST'])
 def move():
@@ -115,7 +119,7 @@ def move():
         return jsonify({ 'status' : status })
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))
 
 @mod.route("/copy/", methods=['POST'])
 def copy():
@@ -129,4 +133,4 @@ def copy():
         return jsonify({ 'status' : status })
     else:
         # redirect to home
-        pass
+        return redirect(url_for('home.home'))

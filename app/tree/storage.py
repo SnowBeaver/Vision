@@ -38,14 +38,18 @@ def get_tree():
     return res
 
 # create generate tree
-def create_node(parent, text, icon , type):
+def create_node(parent, text, icon , type , tooltip):
     try:
         # options(joinedload_all("children", "children", "children", "children")).
         parent = db.session.query(TreeNode).filter(TreeNode.id == parent).first()
         node = TreeNode(icon = icon, parent = parent , type = type)
         node.text = text + str(node.id)
+        node.tooltip = tooltip + str(node.id)
+
         if get_locale() is not node.get_locale():
-            node.translations[node.get_locale()].text = text
+            node.translations[node.get_locale()].text = text + str(node.id)
+            node.translations[node.get_locale()].tooltip = tooltip  + str(node.id)
+
         # parent.append(node)
         # parent.children[text + str(node.id)] = node
         db.session.commit()
@@ -88,7 +92,7 @@ def delete_node(id):
 def get_view_by_id(id):
     try:
         node = db.session.query(TreeNode).filter(TreeNode.id == id).first()
-        res = node.view
+        res = (node.view , node.tooltip)
     except Exception as e:
         import logging
         logging.error(e)
@@ -97,9 +101,11 @@ def get_view_by_id(id):
     return res
 
 #update node tree
-def update_node(node_id,view):
+def update_node(node_id,view , tooltip):
     try:
-        db.session.query(TreeNode).filter(TreeNode.id == node_id).update({ 'view' : view })
+        node = db.session.query(TreeNode).filter(TreeNode.id == node_id).first()
+        node.view = view
+        node.tooltip = tooltip
         db.session.commit()
         res = True
     except Exception as e:
@@ -141,7 +147,6 @@ def copy_node(node_id,parent_id):
         db.session.commit()
         db.session.flush()
 
-        print(node.id)
         res = node.id
     except Exception as e:
         import logging
@@ -158,9 +163,12 @@ def render_tree_li(tree):
     data += ",\"selected\" : " + selected
     disabled = "true" if tree.disabled else "false"
     data += ",\"disabled\" : " + disabled
-    data += ",\"type\" : \"" + tree.type +"\""
+    data += ",\"type\" : \"" + tree.type + "\""
     data += ",\"icon\" : \"" + tree.icon + "\"}'"
+    if tree.tooltip is not None:
+        data += " title=\"" + tree.tooltip + "\""
     data += " id=\"" + str(tree.id) + "\">" + tree.text
+
     return data
 
 def create_tree(tree):

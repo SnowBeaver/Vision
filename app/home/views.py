@@ -17,8 +17,7 @@ import markdown
 from flask import Markup
 from app.pages.storage import get_page_by_title ,get_page_by_slug ,process_page , isblogger
 from app.pages.views import render
-from flask import jsonify
-from app.tree.storage import get_tree
+from flask import jsonify, redirect , url_for
 
 mod = Blueprint('home', __name__, url_prefix='')
 
@@ -155,4 +154,4 @@ def images():
         return jsonify( { 'images' : images } )
     else:
         #redirect to home
-        pass
+        return redirect(url_for('home.home'))
