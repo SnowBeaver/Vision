@@ -18,7 +18,7 @@ PROJECT = 'vision'
 LOCAL_ROOT_DIR = Path(__file__).ancestor(2)
 LOCAL_PROJECT_DIR = Path(LOCAL_ROOT_DIR, 'project')
 
-env.directory = '/home/%s/www'%PROJECT
+env.directory = Path('/home', PROJECT, 'www')
 
 env.venv = env.directory + '/env'
 env.activate = 'source ' + env.venv + '/bin/activate'
@@ -31,6 +31,9 @@ env.bbenv = env.directory + '/bbenv'
 env.bbactivate = 'source ' + env.bbenv + '/bin/activate'
 env.bbpip = env.bbenv + '/bin/pip'
 env.bbpython = env.bbenv + '/bin/python'
+
+env.redis_conf = Path(LOCAL_ROOT_DIR, "dep", "redis", "redis.conf")
+
 
 @contextmanager
 def source_virtualenv():
@@ -69,6 +72,7 @@ def setup_dev():
     deploy_supervisor()
 
     setup_dev_app()
+    setup_blogging()
     restart_services()
     deploy()
 
@@ -115,7 +119,7 @@ def deploy_supervisor():
 def deploy_nginx():
     nginx_conf = "/etc/nginx/sites-available/%s.conf" % PROJECT
     sudo("rm -f %s" % nginx_conf)
-    put( Path(LOCAL_PROJECT_DIR, 'dep', 'nginx', 'template.conf') , nginx_conf, use_sudo=True)
+    put( Path(LOCAL_PROJECT_DIR, 'dep', 'nginx', 'template.conf'), nginx_conf, use_sudo=True)
 
     sudo("chown root:root %s" % nginx_conf)
     sudo("rm -f /etc/nginx/sites-enabled/%s.conf" % PROJECT)
@@ -209,8 +213,7 @@ def update_remote():
 
 def setup_redis():
     sudo("apt-get install -y redis-server")
-    redis_conf = "%s/dep/redis/redis.conf" % LOCAL_ROOT_DIR
-    put(redis_conf, '/etc/redis/redis.conf', use_sudo=True)
+    put(env.redis_conf, '/etc/redis/redis.conf', use_sudo=True)
     sudo("update-rc.d redis-server defaults")
     sudo("service redis-server start")
 
@@ -236,3 +239,12 @@ def create_root():
     with cd(env.directory):
         with source_virtualenv():
             run('python -c "from app import db;from app.tree.models import TreeNode;node = TreeNode(text = u\'Vision Diagnostic\' , disabled=True , selected=True , icon=\'../app/static/img/root.png\' , type=\'default\');db.session.add(node);db.session.commit()"')
+
+def setup_blogging():
+    with cd(env.directory):
+        with source_virtualenv():
+            run('rm -rf Flask-Blogging')
+            run('git clone https://github.com/optimum-web/Flask-Blogging.git Flask-Blogging')
+            with cd('Flask-Blogging'):
+                run('git fetch && git pull origin master')
+                run('python setup.py install')
