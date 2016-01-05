@@ -27,6 +27,7 @@ class Pages(Translatable , db.Model):
     author_id = db.Column(db.Integer,  default = 0)
     draft = sqla.Column(sqla.SmallInteger, default=0)
     slug = sqla.Column(sqla.Unicode(256))
+    tag =  sqla.Column(sqla.Unicode(256),autoincrement = False, nullable = True)
 
     def get_locale(self):
         return self.locale

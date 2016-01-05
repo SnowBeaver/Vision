@@ -80,7 +80,7 @@ def editor(page_id):
             if request.method == 'POST':
                 form = PageEditor(request.form)
                 if form.validate():
-                    if form.validate():
+                    if form.tag.data.lower() not in ('forum','lang','users','pages','admin','tree'):
                         page = get_page_by_id(page_id)
                         if (page is not None) and page.id == page_id:
                             pass
@@ -94,12 +94,19 @@ def editor(page_id):
                                 ,page_id = pid
                         ))
                     else:
-                        flash(gettext(u"There were errors in page submission"), gettext(u"warning"))
+                        flash(gettext(u"Tag {0} is forbidden".format(form.tag.data)), gettext(u"warning"))
                         return render_template(
                             "pages/editor.html"
                             ,form = form
                             ,page_id = page_id
                         )
+                else:
+                    flash(gettext(u"There were errors in page submission"), gettext(u"warning"))
+                    return render_template(
+                        "pages/editor.html"
+                        ,form = form
+                        ,page_id = page_id
+                    )
             else:
                 if page_id is not None:
                     page = get_page_by_id(page_id)
@@ -109,6 +116,7 @@ def editor(page_id):
                              title = page.title
                             ,slug = page.slug
                             ,text = page.text
+                            ,tag = page.tag
                         )
                         return render_template(
                              "pages/editor.html"
@@ -128,3 +136,4 @@ def editor(page_id):
     except PermissionDenied:
         flash(gettext(u"You do not have permissions to create or edit pages"), gettext(u"warning"))
         return redirect(url_for("pages.show"))
+
