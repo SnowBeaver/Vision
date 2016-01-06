@@ -7,7 +7,6 @@ from flask import render_template
 from flask import g, request
 from flask import current_app
 
-from app import db ,sql_storage ,blog
 from app import babel
 from app.users.models import User
 from app.home.models import _is_blogger, _get_news , _get_blog_meta
@@ -17,7 +16,7 @@ import markdown
 from flask import Markup
 from app.pages.storage import get_page_by_title ,get_page_by_slug ,process_page , isblogger
 from app.pages.views import render
-from flask import jsonify, redirect , url_for
+from flask import jsonify,redirect,url_for,abort
 
 mod = Blueprint('home', __name__, url_prefix='')
 
@@ -112,26 +111,6 @@ def home():
         ,page = page
    )
 
-@mod.route('/wiki/users', methods=['GET'])
-# @guest_per.require(http_exception = 403)
-def wiki_users():
-    """docstring for home."""
-    #page = get_page_by_title(u"wiki users")
-
-    page = get_page_by_slug(u'wiki-users')
-
-    canEdit = None
-    if page is not None:
-        canEdit = isblogger(current_user = g.user)
-        process_page(page, render = render)
-
-    return render_template(
-         'wiki/users.html'
-        ,user = g.user
-        ,page = page
-        ,isblogger = canEdit
-    )
-
 @mod.route('/wiki/developers', methods=['GET'])
 # @guest_per.require(http_exception = 403)
 def wiki_devs():
@@ -155,3 +134,33 @@ def images():
     else:
         #redirect to home
         return redirect(url_for('home.home'))
+
+from app.pages.storage import isblogger,process_page,get_page_by_tag_slug,get_pages_by_tag
+from app.pages.views import render
+
+@mod.route('/<string:tag>/<string:slug>', methods=['GET'])
+def show_page_tag(tag,slug):
+    page = get_page_by_tag_slug(tag,slug)
+    if page is None:
+        abort(404)
+
+    canedit = isblogger(current_user = g.user)
+    process_page(page, render = render)
+
+    return render_template(
+         "pages/page.html"
+        ,page = page
+        ,isblogger = canedit
+    )
+
+from app import app
+@app.context_processor
+def costum_function():
+    def menu_item(tag):
+        out = ''
+        pages = get_pages_by_tag(tag)
+        for page in pages:
+            out = out + '<li> <a href="{0}"> {1} </a> </li>'.format(url_for('home.show_page_tag',tag = tag, slug = page.slug) , page.slug)
+        return out
+
+    return dict(menu_item=menu_item)

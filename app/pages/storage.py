@@ -56,6 +56,25 @@ def get_page_by_id(page_id):
 
     return res
 
+def get_page_by_tag_slug(tag,slug):
+    try:
+        res = Pages.query.filter_by(tag = tag ,slug = slug).first()
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def get_pages_by_tag(tag):
+    try:
+        res = Pages.query.filter_by(tag = tag)
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+    return res
+
 # get page by slug
 def get_page_by_slug(slug):
     try:
@@ -129,6 +148,8 @@ def store_form_data(blog_form ,user ,page):
     title = blog_form.title.data
     text = blog_form.text.data
     slug = blog_form.slug.data
+    tag = blog_form.tag.data
+
     # draft = blog_form.draft.data
     author_id = user.get_id()
     current_datetime = datetime.datetime.utcnow()
@@ -141,6 +162,7 @@ def store_form_data(blog_form ,user ,page):
     pid = save_page(  title = title
                      ,text = text
                      ,slug = slug
+                     ,tag = tag
                      ,author_id = author_id
                      ,created_on = created_on
                      ,updated_on = updated_on
@@ -149,7 +171,7 @@ def store_form_data(blog_form ,user ,page):
 
     return pid
 
-def save_page(title ,text, slug , author_id ,created_on,updated_on,page_id):
+def save_page(title ,text, slug ,tag, author_id ,created_on,updated_on,page_id):
     try:
         if page_id is not None:
             currentPage = Pages.query.filter_by(id = page_id).first()
@@ -159,6 +181,7 @@ def save_page(title ,text, slug , author_id ,created_on,updated_on,page_id):
             currentPage = Pages(  title = title
                                  ,text = text
                                  ,slug = slug
+                                 ,tag = tag
                                  ,created_on = created_on
                                  ,updated_on = updated_on
                                  ,author_id = author_id
@@ -171,6 +194,7 @@ def save_page(title ,text, slug , author_id ,created_on,updated_on,page_id):
             currentPage.title = title;
             currentPage.text = text;
             currentPage.slug = slug;
+            currentPage.tag = tag;
             currentPage.created_on = created_on;
             currentPage.updated_on = updated_on;
             currentPage.author_id = author_id;
