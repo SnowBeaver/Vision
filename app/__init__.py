@@ -131,8 +131,8 @@ backend.add_view(ImageView(Image, db.session))
 from app.tree.models import Base
 Base.metadata.create_all(engine)
 
-if app.config['DEBUG']:
-    import sys
-    sys.path.append('/home/vision/.pycharm_helpers/pydev')
-    import pydevd
-    pydevd.settrace('192.168.88.1', port=9004, stdoutToServer=True, stderrToServer=True)
+# if app.config['DEBUG']:
+#     import sys
+#     sys.path.append('/home/vision/.pycharm_helpers/pydev')
+#     import pydevd
+#     pydevd.settrace('192.168.88.1', port=9004, stdoutToServer=True, stderrToServer=True)

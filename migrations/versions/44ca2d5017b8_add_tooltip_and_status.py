@@ -15,14 +15,15 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.add_column(
-         'tree_translation'
-        ,sa.Column('tooltip', sa.TEXT(), autoincrement = False, nullable = True)
-    )
-    op.add_column(
-         'tree'
-        ,sa.Column('status' , sa.SmallInteger() , server_default = '1' , autoincrement = False, nullable = True)
-    )
+    pass
+    #op.add_column(
+    #     'tree_translation'
+    #    ,sa.Column('tooltip', sa.TEXT(), autoincrement = False, nullable = True)
+    #)
+    #op.add_column(
+    #     'tree'
+    #    ,sa.Column('status' , sa.SmallInteger() , server_default = '1' , autoincrement = False, nullable = True)
+    #)
 
 def downgrade():
     op.drop_column('tree_translation' , 'tooltip')
