@@ -32,7 +32,7 @@ env.bbactivate = 'source ' + env.bbenv + '/bin/activate'
 env.bbpip = env.bbenv + '/bin/pip'
 env.bbpython = env.bbenv + '/bin/python'
 
-env.redis_conf = Path(LOCAL_ROOT_DIR, "dep", "redis", "redis.conf")
+env.redis_conf = Path(LOCAL_PROJECT_DIR, "dep", "redis", "redis.conf")
 
 
 @contextmanager
@@ -46,6 +46,7 @@ def source_bb_virtualenv():
         yield
 
 def setup_dev():
+    local('cd %s && vagrant up' % LOCAL_PROJECT_DIR)
     sudo("mkdir -p %s/var/logs" % env.directory, user="vision")
     sudo("mkdir -p %s/var/uploads" % env.directory, user="vision")
     sudo("chmod -R g+wrx %s/var/logs" % env.directory, user="vision")
@@ -59,7 +60,13 @@ def setup_dev():
     sudo("pip install virtualenv")
     sudo("pip install gunicorn")
 
-    sudo("rm -rf %s"  % env.venv)
+
+    with settings(abort_exception = FabricException):
+        try:
+            sudo("rm -rf %s"  % env.venv)
+        except FabricException:
+            pass
+
     sudo("mkdir -p %s" % env.directory, user="vision")
     with cd(env.directory):
         run('git pull origin master')
@@ -111,7 +118,7 @@ def deploy_dev_image():
 def deploy_supervisor():
     super_conf = "/etc/supervisor/conf.d/%s.conf" % PROJECT
     sudo("rm -f %s" % super_conf)
-    put( Path(env.directory, 'dep' , 'supervisor' , 'template.conf'), super_conf, use_sudo=True)
+    put( Path(LOCAL_PROJECT_DIR, 'dep' , 'supervisor' , 'template.conf'), super_conf, use_sudo=True)
 
     sudo("chown root:root %s" % super_conf)
     restart_services()
@@ -132,7 +139,8 @@ def setup_dev_app():
         run('cp config.py.dist config.py')
         with source_virtualenv():
             run('find . -name "*.pyc" -exec rm -rf {} \;')
-            run('python manage.py db init')
+            #run('python manage.py db init')
+            run('python manage.py db upgrade')
 
 def provision():
     with cd(env.directory):
@@ -248,3 +256,20 @@ def setup_blogging():
             with cd('Flask-Blogging'):
                 run('git fetch && git pull origin master')
                 run('python setup.py install')
+
+def setup_flaskbb():
+    setup_redis()
+    sudo("apt-get install -y uwsgi uwsgi-plugin-python ")
+    FLASKBB_DIR = env.directory + '/flaskbb'
+    with cd(env.directory):
+        run('rm -rf flaskbb')
+        run('git clone https://github.com/sh4nks/flaskbb.git')
+        run('virtualenv ' + env.bbenv)
+        with source_bb_virtualenv():
+            run('rm -f ' + FLASKBB_DIR + '/configs/production.py')
+            put(Path(LOCAL_ROOT_DIR, 'flaskbb', 'production.py'), FLASKBB_DIR + '/flaskbb/configs')
+            put(Path(LOCAL_ROOT_DIR, 'flaskbb', 'templates', 'navigation.html'), FLASKBB_DIR + '/flaskbb/templates')
+            with cd('./flaskbb'):
+                run(env.bbpip + ' install -r requirements.txt')
+                run(env.bbpython + ' %s/manage.py initdb' % FLASKBB_DIR)
+                run(env.bbpython + ' %s/manage.py populate' % FLASKBB_DIR)
