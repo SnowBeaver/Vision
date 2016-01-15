@@ -19,6 +19,8 @@ from app.tree.storage import get_tree
 from app.tree.forms import TreeView
 from .models import File, Image
 from jinja2 import Markup
+from flask_admin import BaseView
+from flask import jsonify
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -44,6 +46,7 @@ class MyAdminIndexView(admin.AdminIndexView):
     def index(self):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
+
         self._template_args['tree'] = get_tree()
         self._template_args['tree_view'] = TreeView()
         return super(MyAdminIndexView, self).index()
@@ -67,6 +70,8 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['form'] = form
         self._template_args['link'] = link
         return super(MyAdminIndexView, self).index()
+
+
 
     @expose('/logout/')
     @admin_per.require(http_exception = 403)
@@ -198,3 +203,138 @@ def del_image(mapper, connection, target):
                               thumbgen_filename(target.path)))
         except OSError:
             pass
+
+from .storage import *
+from .forms import MenuViewForm
+from app.pages.models import Pages
+from app.tree.storage import get_locale
+
+class MenuView(BaseView):
+    # @expose.before_app_request
+    # def before_request():
+    #     set_locale()
+
+    @expose('/')
+    def index(self):
+        if not login.current_user.is_authenticated():
+            return redirect(url_for('.login_view'))
+
+        form = MenuViewForm()
+
+        # myChoices = [ ('' , '...') ]
+        # for page in Pages.query.order_by(Pages.updated_on.desc()).all():
+        #     myChoices.append( (page.translations[page.get_locale()].title , page.translations[get_locale()].title) )
+
+        myChoices = [ ( 0 , '...') ] + [ ( page.id , page.translations[get_locale()].title) for page in Pages.query.order_by(Pages.updated_on.desc()).all() ]
+        form.page_view.choices = myChoices
+
+        self._template_args['menu'] = get_menu()
+        self._template_args['menu_view'] = form
+        #print get_menu()
+        return self.render('admin/menu.html')
+
+    @expose('/create/', methods=['POST'])
+    def create(self):
+        if request.is_xhr:
+            id = None
+            if admin_per.require().can():
+                if request.form['parent']:
+                    id = create_node(parent = request.form['parent'] , text = request.form['text'] , type = request.form['type'] )
+            return jsonify({ 'id' : id })
+        else:
+            # redirect to home
+            return redirect(url_for('.index'))
+
+
+    @expose('/delete/', methods=['POST'])
+    def delete(self):
+        if request.is_xhr:
+            id = None
+            if admin_per.require().can():
+                if request.form['id']:
+                    id = delete_node(id = request.form['id'])
+
+            return jsonify({ 'id' : id })
+        else:
+            # redirect to home
+            return redirect(url_for('.index'))
+
+    @expose('/rename/', methods=['POST'])
+    def rename(self):
+        if request.is_xhr:
+            success = False
+            if admin_per.require().can():
+                if request.form['id']:
+                    success = rename_node(id = request.form['id'] , text = request.form['text'])
+
+            return jsonify({ 'success' : success })
+        else:
+            # redirect to home
+            return redirect(url_for('.index'))
+
+
+    @expose('/move/' , methods=['POST'])
+    def move(self):
+        if request.is_xhr:
+            status = "NOK"
+            if request.form['node_id']:
+                res = move_node(request.form['node_id'],request.form['parent_id'])
+                if res is not None:
+                    status = "OK"
+            return jsonify({ 'status' : status })
+        else:
+            # redirect to home
+            return redirect(url_for('.index'))
+
+    @expose('/copy/', methods=['POST'])
+    def copy(self):
+        pass
+
+
+    @expose('/getview/', methods=['POST'])
+    def getview(self):
+        if request.is_xhr:
+            retView = 0
+            if admin_per.require().can():
+                if request.form['node_id']:
+                    res = get_view_by_id(request.form['node_id'])
+                    if res is not None:
+                        retView  = res
+
+            return jsonify( { 'view' : retView } )
+        else:
+            # redirect to home
+            return redirect(url_for('.index'))
+
+    @expose('/update/', methods=['POST'])
+    def update(self):
+        if request.is_xhr:
+            status = "NOK"
+            ret_id = 0
+            if admin_per.require().can():
+                form = MenuViewForm(request.form)
+
+                myChoices = [ ( '0' , '...') ] + [ ( str(page.id) , page.translations[get_locale()].title) for page in Pages.query.order_by(Pages.updated_on.desc()).all() ]
+                form.page_view.choices = myChoices
+
+                if form.validate():
+                    res = update_node(request.form['node_id'], request.form['page_view'] )
+                    if res is not None:
+                        ret_id = request.form['node_id']
+                        status = "OK"
+                else:
+                    data = []
+                    for field, errors in form.errors.items():
+                        for error in errors:
+                            data.append( (getattr(form, field).label.text , error) )
+
+                    status = data
+            return jsonify( { 'status' : status, 'id' : ret_id } )
+
+        else:
+            # redirect to home
+            return redirect(url_for('.index'))
+
+
+
+

@@ -9,7 +9,7 @@ from .forms import TreeView
 from app import admin_per
 from flask import redirect , url_for
 
-mod = Blueprint('tree', __name__, url_prefix='/tree')
+mod = Blueprint('tree', __name__, url_prefix='/admin/tree')
 
 @mod.before_app_request
 def before_request():

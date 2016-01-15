@@ -43,6 +43,9 @@ def create_node(parent, text, icon , type , tooltip):
         # options(joinedload_all("children", "children", "children", "children")).
         parent = db.session.query(TreeNode).filter(TreeNode.id == parent).first()
         node = TreeNode(icon = icon, parent = parent , type = type)
+        #think of a different solution how to extract node.id
+        db.session.commit()
+
         node.text = text + str(node.id)
         node.tooltip = tooltip + str(node.id)
 
