@@ -247,3 +247,12 @@ def create_home():
             run('python -c "from app import db;")
             run('python -c "")
 
+def menu_root():
+    with cd(env.directory):
+        with source_virtualenv():
+            run(
+                'python -c "from app import db;from app.admin.models import MenuItemsNode;' +
+                'node = MenuItemsNode(text = u\'Vision Diagnostic\' , disabled = True , selected = True , type = \'parent\' );' +
+                'top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );' +
+                'db.session.add(node);db.session.commit()"'
+            )
