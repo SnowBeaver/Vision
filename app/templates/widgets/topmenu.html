@@ -1,5 +1,5 @@
 {% block navbar %}
-<nav class="navbar navbar-default navbar-static-top">
+<div class="navbar navbar-default " role="navigation">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -15,16 +15,9 @@
 				<li {% if request.path == "/content/page/1/" %} class="active" {% endif %}>
 				<a href="{{ url_for('blogging.page_by_id', post_id=1) }}">{{ _('About') }}</a></li>
 				<li><a href="/forum"><i class="fa fa-comment"></i>&nbsp;{{ _('Forum') }}</a></li>
-				<li class="dropdown {% if 'wiki' in request.path %}active{% endif %}">
-					<a href="#" class="dropdown-toggle"
-						data-toggle="dropdown" role="button"
-						aria-haspopup="true" aria-expanded="false"><i class="fa fa-book"></i>&nbsp;{{ _('Wiki') }}&nbsp;<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						{{ menu_item('wiki') | safe }}
-						<li><a href="{{ url_for('home.wiki_devs') }}">{{ _('Developers') }}</a></li>
-					</ul>
-				</li>
+				<li> {{ ul_menu('Top Menu') | safe }} </li>
 			</ul>
+
 			<ul class="nav navbar-nav navbar-right">
 				{% block navbar_right %}
 				{% if current_user.is_authenticated() %}
@@ -49,5 +42,5 @@
 			</ul>
 		</div><!--/.nav-collapse -->
 	</div><!--/.container-fluid -->
-</nav>
+</div>
 {% endblock %}

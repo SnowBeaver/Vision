@@ -80,7 +80,7 @@ def editor(page_id):
             if request.method == 'POST':
                 form = PageEditor(request.form)
                 if form.validate():
-                    if form.tag.data.lower() not in ('forum','lang','users','pages','admin','tree'):
+                    if form.tag.data.lower() not in ('forum','lang','users','pages','admin'):
                         page = get_page_by_id(page_id)
                         if (page is not None) and page.id == page_id:
                             pass

@@ -25,7 +25,7 @@ engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 meta = MetaData()
 sql_storage = SQLAStorage(engine, metadata=meta)
 blog = BloggingEngine(app, sql_storage)
-meta.create_all(bind=engine)
+meta.create_all(bind = engine)
 
 db.create_all()
 
@@ -118,7 +118,7 @@ app.register_blueprint(pageModule)
 from app.tree.views import mod as treeModule
 app.register_blueprint(treeModule)
 
-from app.admin.views import UserAdmin, RoleAdmin , FileView , ImageView
+from app.admin.views import UserAdmin, RoleAdmin , FileView , ImageView ,MenuView
 from app.admin.models import File, Image
 
 backend.add_view(UserAdmin(db.session))
@@ -126,6 +126,8 @@ backend.add_view(RoleAdmin(db.session))
 
 backend.add_view(FileView(File, db.session))
 backend.add_view(ImageView(Image, db.session))
+
+backend.add_view(MenuView(name="Menu"))
 
 #create tree table
 from app.tree.models import Base

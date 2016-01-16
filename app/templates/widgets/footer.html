@@ -11,8 +11,7 @@
 	  </div>
 	  <ul class="footer-menu">
 		  <li class="active"><a href="/">{{ _('Home') }}</a></li>
-		  {{ menu_item('wiki') | safe }}
-		  <li><a href="{{ url_for('home.wiki_devs') }}">{{ _('Wiki Developers') }}</a></li>
+		  {{ li_menu('Top Menu') | safe }}
 		  <li><a href="{{ url_for('users.register') }}">{{ _('Register') }}</a></li>
 		  <li><a href="{{ url_for('users.login') }}">{{ _('Login') }}</a></li>
 	  </ul>

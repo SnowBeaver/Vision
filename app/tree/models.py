@@ -43,7 +43,7 @@ class TreeNode(Translatable , Base):
         # many to one + adjacency list - remote_side
         # is required to reference the 'remote'
         # column in the join condition.
-        backref = backref("parent", remote_side=id),
+        backref = backref("parent", remote_side = id),
         # children will be represented as a dictionary
         # on the "name" attribute.
         collection_class = attribute_mapped_collection('text'),

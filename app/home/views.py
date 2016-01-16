@@ -154,13 +154,14 @@ def show_page_tag(tag,slug):
     )
 
 from app import app
+from app.admin.storage import ul_menu_creation
+
 @app.context_processor
 def costum_function():
-    def menu_item(tag):
-        out = ''
-        pages = get_pages_by_tag(tag)
-        for page in pages:
-            out = out + '<li> <a href="{0}"> {1} </a> </li>'.format(url_for('home.show_page_tag',tag = tag, slug = page.slug) , page.slug)
-        return out
+    def ul_menu(tag):
+        return ul_menu_creation(tag)
 
-    return dict(menu_item=menu_item)
+    def li_menu(tag):
+        return ul_menu_creation(tag, use_ul = False)
+
+    return dict(ul_menu = ul_menu , li_menu = li_menu )

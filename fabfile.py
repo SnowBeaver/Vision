@@ -273,3 +273,15 @@ def setup_flaskbb():
                 run(env.bbpip + ' install -r requirements.txt')
                 run(env.bbpython + ' %s/manage.py initdb' % FLASKBB_DIR)
                 run(env.bbpython + ' %s/manage.py populate' % FLASKBB_DIR)
+            run('python -c "from app import db;")
+            run('python -c "")
+
+def menu_root():
+    with cd(env.directory):
+        with source_virtualenv():
+            run(
+                'python -c "from app import db;from app.admin.models import MenuItemsNode;' +
+                'node = MenuItemsNode(text = u\'Vision Diagnostic\' , disabled = True , selected = True , type = \'parent\' );' +
+                'top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );' +
+                'db.session.add(node);db.session.commit()"'
+            )

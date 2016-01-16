@@ -84,7 +84,7 @@
             ,"types" : {
                 "#" : {
                   "max_children" : 1,
-                  "max_depth" : 4,
+                  "max_depth" : 5,
                   "valid_children" : ["Vision Diagnostic"]
                 },
                 "root" : {
@@ -96,7 +96,7 @@
                 }
                 ,'main' :{
                      "icon" : "../app/static/img/icons/main_b.ico"
-                    ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
+                    ,"valid_children" : ["default","file","main","air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo"]
                 }
                 ,'air_bkr' :{
                      "icon" : "../app/static/img/icons/air_bkr_b.ico"
@@ -156,9 +156,24 @@
                 'items' : function(node) {
                     tmp = $.jstree.defaults.contextmenu.items();
                     delete tmp.create.action;
+
+                    var current = $('#tree').jstree(true).get_selected('full',true)[0];
+
+                    if( current.parents.length >= 5){
+
+                        tmp.create.label = '';
+                        tmp.ccp.label = '';
+
+                        delete tmp.ccp.submenu.paste;
+                        delete tmp.ccp.submenu.cut;
+                        delete tmp.ccp.submenu.copy;
+
+                        return tmp;
+                    }
+
                     tmp.create.label = "New";
                     tmp.create.submenu = {
-                         'create_main' : {
+                         'main' : {
                              "separator_after"	    : true
                             ,"label"				: "Main"
                             ,"action"			    : function (data){
@@ -486,43 +501,36 @@
                     };
 
 
-                    console.log(this.get_type(node));
-
                     if( (this.get_type(node) === "default")
                         || ((this.get_type(node) === "root"))
                     )
                     {
                         $.each(tmp.create.submenu , function(index, value){
                             if( value.label !== 'Main' ){
-                                console.log(tmp.create.submenu[index]);
+                                //console.log(tmp.create.submenu[index]);
                                 delete tmp.create.submenu[index];
                                 //delete value;
                                 //delete this;
                             }
                         });
 
-                        // delete everything except main
-                        <!--delete tmp.create.submenu.air_bkr;-->
-                        <!--delete tmp.create.submenu.bkr;-->
-                        <!--delete tmp.create.submenu.bushing;-->
-                        <!--delete tmp.create.submenu.capacitor;-->
-                        <!--delete tmp.create.submenu.induc;-->
-                        <!--delete tmp.create.submenu.mcc_b;-->
-                        <!--delete tmp.create.submenu.rect;-->
-                        <!--delete tmp.create.submenu.source;-->
-                        <!--delete tmp.create.submenu.switch;-->
-                        <!--delete tmp.create.submenu.synch;-->
-                        <!--delete tmp.create.submenu.tank;-->
-                        <!--delete tmp.create.submenu.tc;-->
-                        <!--delete tmp.create.submenu.transfo;-->
-
-                    }else if(this.get_type(node) == "main"){
+                    }else if(this.get_type(node) != "main"){
                         //delete main submenu
+                        console.log("aici");
                         delete tmp.create.submenu.main;
                     }
 
                     if(this.get_type(node) === "file") {
                         delete tmp.create;
+                    }
+
+                    if( node.state != null && node.state.disabled == true)
+                    {
+                        delete tmp.rename;
+                        delete tmp.remove;
+                        tmp.ccp.label = '';
+                        delete tmp.ccp.submenu.paste;
+                        delete tmp.ccp.submenu.cut;
                     }
 
                     delete tmp.ccp.submenu.copy;
