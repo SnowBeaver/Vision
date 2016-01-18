@@ -215,9 +215,10 @@ class MenuView(BaseView):
     #     set_locale()
 
     @expose('/')
+    @admin_per.require(http_exception = 403)
     def index(self):
         if not login.current_user.is_authenticated():
-            return redirect(url_for('.login_view'))
+            return redirect(url_for('users.login'))
 
         form = MenuViewForm()
 
