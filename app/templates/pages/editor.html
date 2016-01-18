@@ -24,12 +24,21 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div>
 
+        </div>
+    </div>
     <form class="form-horizontal" action="{{ url_for('pages.editor', page_id=page_id or None) }}" method="POST">
         {{ form.hidden_tag() }}
         <fieldset>
             <legend> {{ _('Page Editor') }}</legend>
             <div class="form-group">
+                <div class="input-group col-md-12">
+                    {% for error in form.title.errors %}
+                        <div style="color: red;">[{{ error }}]</div>
+                    {% endfor %}
+                </div>
                 <label class="control-label" for="title">
                     {{ _("Title") }}
                 </label>
@@ -38,23 +47,47 @@
                 </div>
             </div>
             <div class="form-group">
+                <div class="input-group col-md-12">
+                    {% for error in form.slug.errors %}
+                        <div style="color: red;">[{{ error }}]</div>
+                    {% endfor %}
+                </div>
                 <label class="control-label" for="slug">
-                    {{ _("Slug") }}
+                    <div class="input-group col-md-12">
+                        {{ _("Slug") }}
+                    </div>
                 </label>
                 <div class="input-group col-md-12">
                     {{ form.slug(placeholder=_('Slug'), id = "slug", class = "form-control", required = "" ) }}
                 </div>
+                <div class="input-group col-md-12">
+                    <strong> alphanumeric characters and - are allowed </strong>
+                </div>
             </div>
             <div class="form-group">
+                <div class="input-group col-md-12">
+                    {% for error in form.tag.errors %}
+                        <div style="color: red;">[{{ error }}]</div>
+                    {% endfor %}
+                </div>
                 <label class="control-label" for="tag">
                     {{ _("Tag") }}
                 </label>
                 <div class="input-group col-md-12">
                     {{ form.tag(placeholder=_('Tag'), id = "tag", class = "form-control", required = "" ) }}
-                    <p> <strong> * Forbidden tags: forum,lang,users,pages,admin,</strong> </p>
+                    <p>
+                        <div class="input-group col-md-12">
+                            <strong> alphanumeric characters and - are allowed </strong>
+                        </div>
+                        <strong> * Forbidden tags: forum,lang,users,pages,admin,</strong> </p>
                 </div>
             </div>
             <div class="form-group">
+                 <div class="input-group col-md-12">
+                    {% for error in form.text.errors %}
+                        <div style="color: red;">[{{ error }}]</div>
+                    {% endfor %}
+                </div>
                 <div class="input-group col-md-12" style="padding-bottom: 5px;">
                      <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg" id="media">
                          Add Media
@@ -66,6 +99,7 @@
                         {{ _('Learn more about') }} <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">MarkDown</a>
                     </span>
                 </div>
+
             </div>
             <div class="form-group">
                 <div class="input-group col-md-12">
