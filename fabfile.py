@@ -13,6 +13,9 @@ class FabricException(Exception):
 env.hosts = ['192.168.88.88']
 env.user = 'vagrant'
 
+env.user = 'vision'
+env.hosts = ['159.203.28.93']
+
 PROJECT = 'vision'
 
 LOCAL_ROOT_DIR = Path(__file__).ancestor(2)
@@ -273,15 +276,9 @@ def setup_flaskbb():
                 run(env.bbpip + ' install -r requirements.txt')
                 run(env.bbpython + ' %s/manage.py initdb' % FLASKBB_DIR)
                 run(env.bbpython + ' %s/manage.py populate' % FLASKBB_DIR)
-            run('python -c "from app import db;")
-            run('python -c "")
 
 def menu_root():
     with cd(env.directory):
         with source_virtualenv():
-            run(
-                'python -c "from app import db;from app.admin.models import MenuItemsNode;' +
-                'node = MenuItemsNode(text = u\'Vision Diagnostic\' , disabled = True , selected = True , type = \'parent\' );' +
-                'top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );' +
-                'db.session.add(node);db.session.commit()"'
+            run( 'python -c "from app import db;from app.admin.models import MenuItemsNode;node = MenuItemsNode(text = u\'Vision Diagnostic\', disabled = True, selected = True, type = \'parent\' );top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );db.session.add(node);db.session.commit()"'
             )
