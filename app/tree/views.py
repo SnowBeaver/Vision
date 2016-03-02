@@ -134,3 +134,19 @@ def copy():
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
+@mod.route("/status/", methods=['POST'])
+def status():
+    if request.is_xhr:
+        status = "NOK"
+        src = ''
+        if request.form['node_id']:
+            res = change_status(request.form['node_id'] , request.form['status'])
+            if res is not None:
+                status = "OK"
+                src = res
+
+        return jsonify({ 'status' : status , 'src' : src })
+    else:
+        # redirect to home
+        return redirect(url_for('home.home'))

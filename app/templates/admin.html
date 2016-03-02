@@ -157,8 +157,8 @@
                     tmp = $.jstree.defaults.contextmenu.items();
                     delete tmp.create.action;
 
-                    var current = $('#tree').jstree(true).get_selected('full',true)[0];
 
+                    var current = $('#tree').jstree(true).get_selected('full',true)[0];
                     if( current.parents.length >= 5){
 
                         tmp.create.label = '';
@@ -170,6 +170,103 @@
 
                         return tmp;
                     }
+
+                    if( (this.get_type(node) !== "default")
+                        && ((this.get_type(node) !== "root"))
+                    )
+                    {
+                        tmp['status'] = {
+                             'label' : "Status"
+                            ,'submenu' : {
+                                'on' : {
+                                    "separator_after"	    : true
+                                    ,"label"				: "on"
+                                    ,"action"			    : function (data){
+                                        var inst = $.jstree.reference(data.reference),
+                                        obj = inst.get_node(data.reference);
+                                        <!-- change status to on -->
+                                        $.post('{{ url_for("tree.status") }}', { 'node_id' : obj.id , 'status' : 1 }
+                                        ,function(data){
+                                            if(data.status == "OK"){
+                                                $("#tree #" + obj.id + " a i").css('background-image','url(' + data.src +')');
+                                            }
+
+                                        }).fail(function () {
+                                            console.log(fail);
+                                            data.instance.refresh();
+                                        });
+                                    }
+                                }
+                                ,'off' : {
+                                     "separator_after"	    : true
+                                    ,"label"				: "off"
+                                    ,"action"			    : function (data){
+                                        var inst = $.jstree.reference(data.reference),
+                                        obj = inst.get_node(data.reference);
+                                        <!-- change status to off -->
+                                        $.post('{{ url_for("tree.status") }}', { 'node_id' : obj.id , 'status' : 0 }
+                                        ,function(data){
+                                            if(data.status == "OK"){
+                                                $("#tree #" + obj.id + " a i").css('background-image','url(' + data.src +')');
+                                            }
+
+                                        }).fail(function () {
+                                            console.log(fail);
+                                            data.instance.refresh();
+                                        });
+                                    }
+                                }
+                            }
+                        };
+
+                        tmp['split'] = {
+                             'label' : 'Split'
+                            ,"separator_before"  : false    // Insert a separator before the item
+	                        ,"separator_after"   : true,     // Insert a separator after the item
+                            "action" : function (data) {
+                                 var inst = $.jstree.reference(data.reference),
+                                 obj = inst.get_node(data.reference);
+
+                                 console.log("split " + obj.id);
+                            },
+                        }
+
+                        tmp['join'] = {
+                            'label' : 'Join'
+                            ,"separator_before"  : false    // Insert a separator before the item
+	                        ,"separator_after"   : true,     // Insert a separator after the item
+	                        "action" : function (data){
+	                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                                console.log("Join " + obj.id);
+                                ids = [];
+                                console.log(ids.length);
+                                $.each( $('#tree').jstree(true).get_selected('full',true) , function( index , value){
+                                        if(value.id != obj.id){
+                                            ids[ids.length] = value.id;
+                                        }
+                                });
+
+                                console.log(ids);
+
+                                $.post('{{ url_for("tree.join") }}', { 'node_id' : obj.id , 'join' : ids }
+                                ,function(data){
+                                    if(data.status == "OK"){
+                                        <!-- TODO -->
+                                    }
+
+                                }).fail(function () {
+                                    console.log(fail);
+                                    data.instance.refresh();
+                                });
+
+	                        }
+                        }
+
+                    }
+
+
 
                     tmp.create.label = "New";
                     tmp.create.submenu = {
@@ -500,7 +597,6 @@
                         }
                     };
 
-
                     if( (this.get_type(node) === "default")
                         || ((this.get_type(node) === "root"))
                     )
@@ -516,7 +612,6 @@
 
                     }else if(this.get_type(node) != "main"){
                         //delete main submenu
-                        console.log("aici");
                         delete tmp.create.submenu.main;
                     }
 

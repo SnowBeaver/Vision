@@ -131,6 +131,24 @@ def move_node(node_id,parent_id):
 
     return res
 
+def change_status(node_id, status):
+    try:
+        node = db.session.query(TreeNode).filter(TreeNode.id == node_id).first()
+
+        if int(status) == 0:
+            node.icon = node.icon.replace('_b.ico' , '_r.ico')
+        elif int(status) == 1:
+            node.icon = node.icon.replace('_r.ico' , '_b.ico')
+
+        db.session.commit()
+        res = node.icon
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
 #copy node tree
 def copy_node(node_id,parent_id):
     try:
@@ -187,6 +205,8 @@ def create_tree(tree):
         data+= "</ul>"
     data+= "</li>"
     return data
+
+
 
 @app.template_filter('render_tree')
 def render_tree_filter(tree):
