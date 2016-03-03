@@ -10,8 +10,8 @@ class FabricException(Exception):
 
 # the servers where the commands are executed
 # the user to use for the remote commands
-env.hosts = ['192.168.88.88']
-env.user = 'vagrant'
+# env.hosts = ['192.168.88.88']
+# env.user = 'vagrant'
 
 env.user = 'vision'
 env.hosts = ['159.203.28.93']
