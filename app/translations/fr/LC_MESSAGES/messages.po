@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-10 12:27+0200\n"
-"PO-Revision-Date: 2015-11-10 12:27+0200\n"
+"POT-Creation-Date: 2015-11-25 11:23-0500\n"
+"PO-Revision-Date: 2015-11-25 11:23-0500\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -19,11 +19,53 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.1.1\n"
 
+#: app/pages/forms.py:14
+msgid "submit"
+msgstr ""
+
+#: app/pages/views.py:49
+msgid "Page successfully delete"
+msgstr ""
+
+#: app/pages/views.py:49 app/pages/views.py:91
+msgid "info"
+msgstr ""
+
+#: app/pages/views.py:51
+msgid "Could not delete page"
+msgstr ""
+
+#: app/pages/views.py:51 app/pages/views.py:54 app/pages/views.py:97
+#: app/pages/views.py:119 app/pages/views.py:129
+msgid "warning"
+msgstr ""
+
+#: app/pages/views.py:54
+msgid "Page dosen't exists"
+msgstr ""
+
+#: app/pages/views.py:91
+msgid "Page successfully added!"
+msgstr ""
+
+#: app/pages/views.py:97
+msgid "There were errors in page submission"
+msgstr ""
+
+#: app/pages/views.py:119
+msgid "You do not have the rights to edit this page"
+msgstr ""
+
+#: app/pages/views.py:129
+msgid "You do not have permissions to create or edit pages"
+msgstr ""
+
 #: app/templates/blogging/editor.html:14
 msgid "Blog Editor"
 msgstr ""
 
 #: app/templates/blogging/editor.html:18 app/templates/blogging/editor.html:21
+#: app/templates/pages/editor.html:18 app/templates/pages/editor.html:21
 msgid "Title"
 msgstr ""
 
@@ -31,7 +73,7 @@ msgstr ""
 msgid "Blog text"
 msgstr ""
 
-#: app/templates/blogging/editor.html:29
+#: app/templates/blogging/editor.html:29 app/templates/pages/editor.html:36
 msgid "Learn more about"
 msgstr ""
 
@@ -48,17 +90,18 @@ msgid "Blog Posts"
 msgstr ""
 
 #: app/templates/blogging/index.html:17 app/templates/blogging/page.html:40
-#: app/templates/home/index.html:55
+#: app/templates/home/index.html:39 app/templates/home/index.html:89
+#: app/templates/pages/page.html:40 app/templates/pages/show.html:12
 msgid "New"
 msgstr ""
 
 #: app/templates/blogging/index.html:29 app/templates/blogging/page.html:49
-#: app/templates/home/index.html:80
+#: app/templates/home/index.html:114
 msgid "Posted by"
 msgstr ""
 
 #: app/templates/blogging/index.html:33 app/templates/blogging/page.html:53
-#: app/templates/home/index.html:81
+#: app/templates/home/index.html:115
 msgid "on"
 msgstr ""
 
@@ -71,27 +114,45 @@ msgid "Next"
 msgstr ""
 
 #: app/templates/blogging/page.html:15 app/templates/home/index.html:11
+#: app/templates/pages/page.html:15
 msgid "Are you sure you want to delete this post ?"
 msgstr ""
 
 #: app/templates/blogging/page.html:19 app/templates/home/index.html:15
+#: app/templates/pages/page.html:19
 msgid "Cancel"
 msgstr ""
 
-#: app/templates/blogging/page.html:32 app/templates/home/index.html:47
+#: app/templates/blogging/page.html:32 app/templates/home/index.html:32
+#: app/templates/home/index.html:81 app/templates/pages/page.html:33
+#: app/templates/pages/show.html:33
 msgid "Delete"
 msgstr ""
 
-#: app/templates/blogging/page.html:36 app/templates/home/index.html:51
+#: app/templates/blogging/page.html:36 app/templates/home/index.html:35
+#: app/templates/home/index.html:85 app/templates/pages/page.html:36
+#: app/templates/pages/show.html:36
 msgid "Edit"
 msgstr ""
 
-#: app/templates/home/index.html:26 app/templates/widgets/topmenu.html:10
+#: app/templates/home/index.html:57 app/templates/widgets/topmenu.html:11
 msgid "Vision Diagnostic"
 msgstr ""
 
-#: app/templates/home/index.html:28
+#: app/templates/home/index.html:59
 msgid "For Fluid Insulated Equipment"
+msgstr ""
+
+#: app/templates/pages/editor.html:15
+msgid "Page Editor"
+msgstr ""
+
+#: app/templates/pages/editor.html:26 app/templates/pages/editor.html:29
+msgid "Slug"
+msgstr ""
+
+#: app/templates/pages/editor.html:34
+msgid "Page text"
 msgstr ""
 
 #: app/templates/widgets/footer.html:13
@@ -106,86 +167,90 @@ msgstr ""
 msgid "Wiki Developers"
 msgstr ""
 
-#: app/templates/widgets/footer.html:16 app/templates/widgets/topmenu.html:33
+#: app/templates/widgets/footer.html:16 app/templates/widgets/topmenu.html:34
 msgid "Register"
 msgstr ""
 
-#: app/templates/widgets/footer.html:17 app/templates/widgets/topmenu.html:34
+#: app/templates/widgets/footer.html:17 app/templates/widgets/topmenu.html:35
 msgid "Login"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:15
+#: app/templates/widgets/topmenu.html:16
 msgid "About"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:16
+#: app/templates/widgets/topmenu.html:17
 msgid "Forum"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:20
+#: app/templates/widgets/topmenu.html:21
 msgid "Wiki"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:22
+#: app/templates/widgets/topmenu.html:23
 msgid "Users"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:23
+#: app/templates/widgets/topmenu.html:24
 msgid "Developers"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:30
+#: app/templates/widgets/topmenu.html:31
 msgid "Dashboard"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:31
+#: app/templates/widgets/topmenu.html:32
 msgid "Logout"
 msgstr ""
 
-#: app/templates/wiki/developers.html:4 app/templates/wiki/developers.html:6
+#: app/templates/wiki/developers.html:4
 msgid "Developers Wiki"
 msgstr ""
 
-#: app/templates/wiki/users.html:4 app/templates/wiki/users.html:6
-msgid "Users Wiki"
+#: app/templates/wiki/developers.html:6
+#, python-format
+msgid ""
+"\n"
+"\t%(content)s\n"
+"\t"
 msgstr ""
 
-#: app/users/views.py:63
+#: app/users/views.py:65
 msgid "The confirmation link is invalid or has expired."
 msgstr ""
 
-#: app/users/views.py:68
+#: app/users/views.py:70
 msgid "Account already confirmed. Please login."
 msgstr ""
 
-#: app/users/views.py:73
+#: app/users/views.py:75
 msgid "You have confirmed your account. Thanks!"
 msgstr ""
 
-#: app/users/views.py:112
+#: app/users/views.py:114
 msgid "Please confirm your account at vision website"
 msgstr ""
 
-#: app/users/views.py:169
+#: app/users/views.py:175
 msgid "Welcome"
 msgstr ""
 
-#: app/users/views.py:171
+#: app/users/views.py:177
 msgid "Wrong email or password"
 msgstr ""
 
-#: app/users/views.py:208
+#: app/users/views.py:216
 #, python-format
 msgid ""
 "User with this e-mail was registered already. If you forgot your password"
 " click <a href=\"%s\">remind password</a>"
 msgstr ""
 
-#: app/users/views.py:248
+#: app/users/views.py:266
 msgid "Thanks for registering"
 msgstr ""
 
-#: app/users/views.py:309 app/users/views.py:330
+#: app/users/views.py:327 app/users/views.py:348
 msgid "Profile updated"
 msgstr ""
 
