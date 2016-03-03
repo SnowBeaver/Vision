@@ -235,9 +235,9 @@
                             'label' : 'Join'
                             ,"separator_before"  : false    // Insert a separator before the item
 	                        ,"separator_after"   : true,     // Insert a separator after the item
-	                        "action" : function (data){
-	                            var inst = $.jstree.reference(data.reference),
-                                obj = inst.get_node(data.reference);
+	                        "action" : function (node){
+	                            var inst = $.jstree.reference(node.reference),
+                                obj = inst.get_node(node.reference);
 
                                 console.log("Join " + obj.id);
                                 ids = [];
@@ -254,12 +254,9 @@
                                 ,function(data){
                                     if(data.status == "OK"){
                                         <!-- TODO -->
-                                        console.log(data.joined);
                                         $.each( data.joined , function(index, value){
-                                            console.log(value);
-                                            $("#tree").jstree("remove","#" + value);
+                                            $('#tree').jstree(true).delete_node($("#" + value));
                                         });
-
                                     }
 
                                 }).fail(function () {
