@@ -5,6 +5,7 @@ from app import db
 from sqlalchemy.orm import joinedload_all
 from app import app
 from sqlalchemy.orm.session import make_transient
+import json
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -142,6 +143,30 @@ def change_status(node_id, status):
 
         db.session.commit()
         res = node.icon
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def join_node(node_id, to_join):
+    try:
+        res = []
+        ids =  json.loads(to_join)
+
+        print ids
+        print to_join
+
+        for id in ids:
+
+            print id
+
+            node = db.session.query(TreeNode).filter(TreeNode.id == id).first()
+            db.session.delete(node)
+            db.session.commit()
+            res.append(id)
+
     except Exception as e:
         import logging
         logging.error(e)

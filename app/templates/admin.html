@@ -250,10 +250,16 @@
 
                                 console.log(ids);
 
-                                $.post('{{ url_for("tree.join") }}', { 'node_id' : obj.id , 'join' : ids }
+                                $.post('{{ url_for("tree.join") }}', { 'node_id' : obj.id , 'to_join' : JSON.stringify(ids) }
                                 ,function(data){
                                     if(data.status == "OK"){
                                         <!-- TODO -->
+                                        console.log(data.joined);
+                                        $.each( data.joined , function(index, value){
+                                            console.log(value);
+                                            $("#tree").jstree("remove","#" + value);
+                                        });
+
                                     }
 
                                 }).fail(function () {
@@ -265,8 +271,6 @@
                         }
 
                     }
-
-
 
                     tmp.create.label = "New";
                     tmp.create.submenu = {

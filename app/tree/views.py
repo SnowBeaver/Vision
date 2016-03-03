@@ -8,6 +8,8 @@ from flask import jsonify
 from .forms import TreeView
 from app import admin_per
 from flask import redirect , url_for
+import json
+
 
 mod = Blueprint('tree', __name__, url_prefix='/admin/tree')
 
@@ -131,6 +133,20 @@ def copy():
                 status = "OK"
 
         return jsonify({ 'status' : status })
+    else:
+        # redirect to home
+        return redirect(url_for('home.home'))
+
+@mod.route("/join/", methods=['POST'])
+def join():
+    if request.is_xhr:
+        status = "NOK"
+        if request.form['node_id']:
+            res = join_node(request.form['node_id'], request.form['to_join'])
+            if res is not None:
+                status = "OK"
+
+        return jsonify({ 'status' : status , 'joined' : res })
     else:
         # redirect to home
         return redirect(url_for('home.home'))
