@@ -76,10 +76,22 @@
 
         $('#tree').jstree({
              //  for admin "contextmenu"
-             "plugins" : [ "search" , "json_data" , "types"  , "contextmenu" , 'dnd' , 'state' ]
+             "plugins" : [ "search" , "json_data" , "types"  , "contextmenu" , 'dnd' , 'state' , 'changed' ]
             ,"core" : {
                  "animation" : 0
-                ,"check_callback" : true
+                ,"check_callback" : function (operation, node, node_parent, node_position, more) {
+                    // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                    // in case of 'rename_node' node_position is filled with the new node name
+                    var res = true;
+                    if(operation === 'delete_node'){
+                        if(confirm("Are you sure you want to delete the element?")){
+                        } else {
+                            res = false;
+                        }
+                    }
+                    return res;
+                    //return operation === 'rename_node' ? true : false;
+                }
             }
             ,"types" : {
                 "#" : {
@@ -180,7 +192,7 @@
                             ,'submenu' : {
                                 'on' : {
                                     "separator_after"	    : true
-                                    ,"label"				: "on"
+                                    ,"label"				: "Normal"
                                     ,"action"			    : function (data){
                                         var inst = $.jstree.reference(data.reference),
                                         obj = inst.get_node(data.reference);
@@ -197,9 +209,16 @@
                                         });
                                     }
                                 }
+                                ,'medium' : {
+                                      "separator_after"	    : true
+                                    ,"label"				: "Warning"
+                                    ,"action"			    : function (data){
+                                        <!-- TODO -->
+                                    }
+                                }
                                 ,'off' : {
                                      "separator_after"	    : true
-                                    ,"label"				: "off"
+                                    ,"label"				: "Danger"
                                     ,"action"			    : function (data){
                                         var inst = $.jstree.reference(data.reference),
                                         obj = inst.get_node(data.reference);
@@ -633,12 +652,13 @@
                     return tmp;
                 }
 			}
-        }).on('delete_node.jstree', function (e, data) {
+        }).on('delete_node.jstree', function (e, data ) {
                 $.post('{{url_for("tree.delete")}}', { 'id' : data.node.id } ,function(data ){
                     //alert(data.id == true );
                 }).fail(function () {
-	    			data.instance.refresh();
-				});
+                    data.instance.refresh();
+                });
+
              }).on('rename_node.jstree', function (e, data) {
 			    $.post('{{url_for("tree.rename")}}', { 'id' : data.node.id, 'text' : data.text } ,function(data){
                         //alert(data.success == true );

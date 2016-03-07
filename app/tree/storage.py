@@ -137,8 +137,10 @@ def change_status(node_id, status):
         node = db.session.query(TreeNode).filter(TreeNode.id == node_id).first()
 
         if int(status) == 0:
+            node.status = 0
             node.icon = node.icon.replace('_b.ico' , '_r.ico')
         elif int(status) == 1:
+            node.status = 1
             node.icon = node.icon.replace('_r.ico' , '_b.ico')
 
         db.session.commit()
@@ -155,13 +157,7 @@ def join_node(node_id, to_join):
         res = []
         ids =  json.loads(to_join)
 
-        print ids
-        print to_join
-
         for id in ids:
-
-            print id
-
             node = db.session.query(TreeNode).filter(TreeNode.id == id).first()
             db.session.delete(node)
             db.session.commit()
