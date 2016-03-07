@@ -200,7 +200,7 @@
                                         $.post('{{ url_for("tree.status") }}', { 'node_id' : obj.id , 'status' : 1 }
                                         ,function(data){
                                             if(data.status == "OK"){
-                                                $("#tree #" + obj.id + " a i").css('background-image','url(' + data.src +')');
+                                                $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
                                             }
 
                                         }).fail(function () {
@@ -226,7 +226,7 @@
                                         $.post('{{ url_for("tree.status") }}', { 'node_id' : obj.id , 'status' : 0 }
                                         ,function(data){
                                             if(data.status == "OK"){
-                                                $("#tree #" + obj.id + " a i").css('background-image','url(' + data.src +')');
+                                                $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
                                             }
 
                                         }).fail(function () {
