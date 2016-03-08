@@ -138,10 +138,22 @@ def change_status(node_id, status):
 
         if int(status) == 0:
             node.status = 0
-            node.icon = node.icon.replace('_b.ico' , '_r.ico')
+            to_rep = '_b.ico'
+            if '_y.ico' in node.icon:
+                to_rep = '_y.ico'
+            node.icon = node.icon.replace( to_rep , '_r.ico')
+        elif int(status) == 2:
+            node.status = 0
+            to_rep = '_b.ico'
+            if '_r.ico' in node.icon:
+                to_rep = '_r.ico'
+            node.icon = node.icon.replace( to_rep, '_y.ico')
         elif int(status) == 1:
             node.status = 1
-            node.icon = node.icon.replace('_r.ico' , '_b.ico')
+            to_rep = '_r.ico'
+            if '_y.ico' in node.icon:
+                to_rep = '_y.ico'
+            node.icon = node.icon.replace(to_rep , '_b.ico')
 
         db.session.commit()
         res = node.icon
