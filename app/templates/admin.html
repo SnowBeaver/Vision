@@ -8,6 +8,18 @@
         .fa-large{
             font-size: 20px;
         }
+
+        .equal_container{
+            position:relative;
+            width:100%;
+            min-height: inherit;
+            height: 100%;
+        }
+
+        .equal_col{
+            min-height: inherit;
+            height: 100%;
+        }
     </style>
 {% endblock head %}
 
@@ -96,7 +108,7 @@
             ,"types" : {
                 "#" : {
                   "max_children" : 1,
-                  "max_depth" : 7,
+                  "max_depth" : 10,
                   "valid_children" : ["Vision Diagnostic"]
                 }
                 ,"root" : {
@@ -174,8 +186,6 @@
                     delete tmp.create.action;
 
                     var current = $('#tree').jstree(true).get_selected('full',true)[0];
-
-
 
                     if( (this.get_type(node) !== "default")
                         && ((this.get_type(node) !== "root"))
@@ -273,8 +283,6 @@
                                         }
                                 });
 
-                                console.log(ids);
-
                                 $.post('{{ url_for("tree.join") }}', { 'node_id' : obj.id , 'to_join' : JSON.stringify(ids) }
                                 ,function(data){
                                     if(data.status == "OK"){
@@ -295,7 +303,7 @@
                     }
 
                     if(typeof current !== 'undefined'){
-                        if( current.parents.length >= 5){
+                        if( current.parents.length >= 9){
 
                             tmp.create.label = '';
                             tmp.ccp.label = '';

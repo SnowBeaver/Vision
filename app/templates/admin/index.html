@@ -3,13 +3,14 @@
 {% block body %}
     {{ super() }}
     <div class="row-fluid">
-        <div class="row" style="min-height: 800px;">
+        <div class="row" style="min-height: 800px;position:relative;">
             {% if current_user.is_authenticated() %}
                 {% if tree is defined %}
-                    {% include 'widgets/leftcontent.html' %}
-                    <div class="col-md-9">
+                    <div class="equal_container">
+                        {% include 'widgets/leftcontent.html' %}
+                        <div class="col-md-8 equal_col">
                 {% else %}
-                    <div class="col-md-12">
+                        <div class="col-md-12">
                 {% endif %}
                         <div class="row">
                             <h1>Welcome</h1>
@@ -32,6 +33,9 @@
                             </form>
                         </div>
                     </div>
+                {% if tree is defined %}
+                    </div>
+                {% endif %}
             {% else %}
             <form method="POST" action="">
                 {{ form.hidden_tag() if form.hidden_tag }}
