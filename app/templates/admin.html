@@ -34,10 +34,10 @@
         .margin-bottom-md {margin-bottom: 3%;}
         .margin-bottom-lg {margin-bottom: 4%;}
 
-        .margin-right-xs {margin-top: 1% !important;}
-        .margin-right-sm {margin-top: 2%;}
-        .margin-right-md {margin-top: 3%;}
-        .margin-right-lg {margin-top: 4%;}
+        .margin-right-xs {margin-right: 1% !important;}
+        .margin-right-sm {margin-right: 2%;}
+        .margin-right-md {margin-right: 3%;}
+        .margin-right-lg {margin-right: 4%;}
 
         .margin-top-xs {margin-top: 1% !important;}
         .margin-top-sm {margin-top: 2%;}
@@ -47,12 +47,17 @@
         .padding-top-xs {padding-top: 1% !important;}
         .padding-top-sm {padding-top: 2%;}
         .padding-top-md {padding-top: 3%;}
-        .padding-top-lg {padding-top: 4%;}
+        .padding-top-lg {padding-top: 4% !important;}
 
         .padding-bottom-xs {padding-top: 1% !important;}
         .padding-bottom-sm {padding-top: 2%;}
         .padding-bottom-md {padding-top: 3%;}
         .padding-bottom-lg {padding-top: 4%;}
+
+        .padding-right-xs {padding-right: 1% !important;}
+        .padding-right-sm {padding-right: 2%;}
+        .padding-right-md {padding-right: 3%;}
+        .padding-right-lg {padding-right: 4%;}
 
         .tab_row > div {
             margin-bottom: 1% !important;
@@ -60,7 +65,6 @@
 
         #my-tab-content label{
             width: 100%;
-            text-align: center;
         }
 
         #my-tab-content{
@@ -70,6 +74,14 @@
             padding: 1% !important ;
         }
 
+        #my-tab-content textarea{
+            resize: vertical;
+            height: 235px;
+        }
+
+        .auto{
+            width: auto !important;
+        }
     </style>
 {% endblock head %}
 
@@ -100,7 +112,10 @@
 <script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
     <script type="text/javascript">
         $(function () {
-            $('.datetimepicker ').datetimepicker();
+            $('.datetimepicker').datetimepicker();
+            $('.datepicker').datetimepicker({
+                format: 'MM/DD/YYYY'
+            });
         });
     </script>
 

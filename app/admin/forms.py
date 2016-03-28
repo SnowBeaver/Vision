@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import SelectField , HiddenField , TextField , DateField , IntegerField , FloatField
+from wtforms import SelectField , HiddenField , TextField , DateField , IntegerField , FloatField , TextAreaField, BooleanField
 from wtforms.validators import Required , Length , Optional
 from app.pages.models import Pages
 from app.tree.storage import get_locale
@@ -19,10 +19,10 @@ order_status_choice = [ ( 'Paid' , 'Paid' ) , ]
 laboratory_choice = [ ('* Aucun' , '* Aucun') , ]
 
 
-class IdentificatioViewForm(Form):
+class IdentificationViewForm(Form):
     analysis_type = TextField('Analysis Type', validators=[ Required() ]  )
     initials = TextField('Initials' , validators=[ Required() ]  )
-    acq_date = DateField('Acquisition date' , validators=[ Optional() ] , format = '%m/%d/%Y %H:%M:%S'  )
+    acq_date = DateField('Acquisition date' , validators=[ Optional() ] , format = '%m/%d/%Y %H:%M A'  )
     reason = SelectField('Reason for analysis' , choices = reason_choice , validators = [Required()] )
     stage = SelectField('Analysis stage' , choices = stage_choice , validators = [Required()] )
     temp = IntegerField('Fluid temp.(*C)', validators=[ Required() ] )
@@ -38,3 +38,21 @@ class IdentificatioViewForm(Form):
     order_status = SelectField('Lad order status' , choices = order_status_choice , validators = [Required()])
     lab_no = TextField('Lab P.O. No.' , validators=[ Required() ])
     laboratory = SelectField('Laboratory' , choices = laboratory_choice , validators = [Required()])
+
+class TestRepairViewForm(Form):
+    comments = TextAreaField('Test or sampling comments',  validators=[ Required() ])
+    notes = TextAreaField('Notes on equipment: repairs, additions, etc.',  validators=[ Required() ])
+    sampled = TextField('Sampled by' , validators=[ Required() ]  )
+    date = DateField('Date of repairs or degassing' , validators=[ Optional() ] , format = '%m/%d/%Y %H:%M A'  )
+
+class RecordsDiagnosticViewForm(Form):
+    diagnosis = TextAreaField('Diagnosis',  validators=[ Required() ])
+    recommendations = TextAreaField('Recommendations',  validators=[ Required() ])
+    predefined_diag = TextField('Predefined diagnosis' , validators=[ Required() ] )
+    predefined_rec = TextField('Predefined Recommendations' , validators=[ Required() ] )
+    date = DateField('Date of recommendation' , validators=[ Optional() ] , format = '%m/%d/%Y'  )
+
+class EquipmentDiagnosisViewForm(Form):
+    diagnosis = TextAreaField('Equipment diagnosis',  validators=[ Required() ])
+    indicator =  TextField('Condition indicator' , validators=[ Required() ] )
+    condition = BooleanField( 'Equipment in questionable condition or out of service' , validators=[ Optional() ]);
