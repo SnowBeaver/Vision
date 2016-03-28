@@ -8,6 +8,80 @@
         .fa-large{
             font-size: 20px;
         }
+        .equal_container{
+            position:relative;
+            width:100%;
+            min-height: inherit;
+            height: 100%;
+        }
+        .equal_col{
+            min-height: inherit;
+            height: 100%;
+        }
+
+        .nopadding {
+           padding: 0 !important;
+           margin: 0 !important;
+        }
+
+        .no-gutter > [class*='col-'] {
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+        }
+
+        .margin-bottom-xs {margin-bottom: 1%;}
+        .margin-bottom-sm {margin-bottom: 2%;}
+        .margin-bottom-md {margin-bottom: 3%;}
+        .margin-bottom-lg {margin-bottom: 4%;}
+
+        .margin-right-xs {margin-right: 1% !important;}
+        .margin-right-sm {margin-right: 2%;}
+        .margin-right-md {margin-right: 3%;}
+        .margin-right-lg {margin-right: 4%;}
+
+        .margin-top-xs {margin-top: 1% !important;}
+        .margin-top-sm {margin-top: 2%;}
+        .margin-top-md {margin-top: 3%;}
+        .margin-top-lg {margin-top: 4%;}
+
+        .padding-top-xs {padding-top: 1% !important;}
+        .padding-top-sm {padding-top: 2%;}
+        .padding-top-md {padding-top: 3%;}
+        .padding-top-lg {padding-top: 4% !important;}
+
+        .padding-bottom-xs {padding-top: 1% !important;}
+        .padding-bottom-sm {padding-top: 2%;}
+        .padding-bottom-md {padding-top: 3%;}
+        .padding-bottom-lg {padding-top: 4%;}
+
+        .padding-right-xs {padding-right: 1% !important;}
+        .padding-right-sm {padding-right: 2%;}
+        .padding-right-md {padding-right: 3%;}
+        .padding-right-lg {padding-right: 4%;}
+
+        .tab_row > div {
+            margin-bottom: 1% !important;
+        }
+
+        #my-tab-content label{
+            width: 100%;
+        }
+
+        #my-tab-content{
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            padding: 1% !important ;
+        }
+
+        #my-tab-content textarea{
+            resize: vertical;
+            height: 235px;
+        }
+
+        .auto{
+            width: auto !important;
+        }
     </style>
 {% endblock head %}
 
@@ -34,9 +108,19 @@
 {% endblock main_menu %}
 
 {% block tail %}
-   <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('.datetimepicker').datetimepicker();
+            $('.datepicker').datetimepicker({
+                format: 'MM/DD/YYYY'
+            });
+        });
+    </script>
 
     <script type="text/javascript" >
+
         function stringifyObject ( obj ) {
           if ( $.isArray( obj ) || (typeof obj !== "object") ) {
             return obj.toString()
@@ -96,7 +180,7 @@
             ,"types" : {
                 "#" : {
                   "max_children" : 1,
-                  "max_depth" : 7,
+                  "max_depth" : 10,
                   "valid_children" : ["Vision Diagnostic"]
                 }
                 ,"root" : {
@@ -174,8 +258,6 @@
                     delete tmp.create.action;
 
                     var current = $('#tree').jstree(true).get_selected('full',true)[0];
-
-
 
                     if( (this.get_type(node) !== "default")
                         && ((this.get_type(node) !== "root"))
@@ -273,8 +355,6 @@
                                         }
                                 });
 
-                                console.log(ids);
-
                                 $.post('{{ url_for("tree.join") }}', { 'node_id' : obj.id , 'to_join' : JSON.stringify(ids) }
                                 ,function(data){
                                     if(data.status == "OK"){
@@ -295,7 +375,7 @@
                     }
 
                     if(typeof current !== 'undefined'){
-                        if( current.parents.length >= 5){
+                        if( current.parents.length >= 9){
 
                             tmp.create.label = '';
                             tmp.ccp.label = '';

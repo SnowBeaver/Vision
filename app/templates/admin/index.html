@@ -3,20 +3,22 @@
 {% block body %}
     {{ super() }}
     <div class="row-fluid">
-        <div class="row" style="min-height: 800px;">
+        <div class="row" style="min-height: 800px;position:relative;">
             {% if current_user.is_authenticated() %}
                 {% if tree is defined %}
-                    {% include 'widgets/leftcontent.html' %}
-                    <div class="col-md-9">
+                    <div class="equal_container">
+                        {% include 'widgets/leftcontent.html' %}
+                        <div class="col-md-8 equal_col">
                 {% else %}
-                    <div class="col-md-12">
+                        <div class="col-md-12">
                 {% endif %}
                         <div class="row">
                             <h1>Welcome</h1>
                             <p class="lead"> to admin panel </p>
                             <p> Help information </p>
                         </div>
-                        <div class="row">
+
+                        <div class="row margin-bottom-xs padding-top-lg">
                             <form class="" method="post" id="treeView" action="#" >
                                 {{ tree_view.hidden_tag() }}
                                 <div class="form-group">
@@ -32,6 +34,10 @@
                             </form>
                         </div>
                     </div>
+                {% if tree is defined %}
+                    </div>
+                {% endif %}
+                {% include 'admin/tabs.html' %}
             {% else %}
             <form method="POST" action="">
                 {{ form.hidden_tag() if form.hidden_tag }}
