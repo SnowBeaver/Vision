@@ -17,7 +17,137 @@
                             <p class="lead"> to admin panel </p>
                             <p> Help information </p>
                         </div>
-                        <div class="row">
+
+                        <div class="row margin-bottom-xs">
+                            <ul id="tabs" class="nav nav-tabs " data-tabs="tabs">
+                                <li class="active"> <a href="#tabs-1" data-toggle="tab"> Identification </a> </li>
+                                <li> <a href="#tabs-2" data-toggle="tab"> Test repair notes </a> </li>
+                                <li> <a href="#tabs-3" data-toggle="tab"> Future </a> </li>
+                                <li> <a href="#tabs-4" data-toggle="tab"> Diagnosis and recommendations </a> </li>
+                            </ul>
+                            <div id="my-tab-content" class="tab-content col-lg-12 nopadding" style="position:relative;">
+                                <div id="tabs-1" class="tab-pane active ">
+                                    {{ identification.hidden_tag() }}
+                                    <div class="tab_row">
+                                        <!-- first row -->
+                                        <div class="col-lg-12 nopadding">
+                                            <div class="col-lg-6 nopadding">
+                                                {{ identification.analysis_type.label }}
+                                                {{ identification.analysis_type(class_="form-control" , placeholder = "Dissolved gas") }}
+                                            </div>
+                                            <div class="col-lg-6 nopadding">
+                                                <div class="col-lg-6 nopadding">
+                                                    {{ identification.initials.label }}
+                                                    {{ identification.initials(class_="form-control" , placeholder = "MI") }}
+                                                </div>
+                                                <div class="col-lg-6 nopadding ">
+                                                    {{ identification.acq_date.label }}
+                                                    <div class="datetimepicker input-group date">
+                                                        {{ identification.acq_date(class_="form-control" , placeholder = "20/03/1999 8:00 AM") }}
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- second row -->
+                                        <div class="col-lg-12 nopadding">
+                                            <div class="col-lg-6 nopadding">
+                                                {{ identification.reason.label }}
+                                                {{ identification.reason(class_="form-control") }}
+                                            </div>
+                                            <div class="col-lg-6 nopadding">
+                                                <div class="col-lg-6 nopadding">
+                                                    {{ identification.stage.label }}
+                                                    {{ identification.stage(class_="form-control") }}
+                                                </div>
+                                                <div class="col-lg-6 nopadding">
+                                                    {{ identification.temp.label }}
+                                                    {{ identification.temp(class_="form-control" , placeholder = 25 ) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- third row -->
+                                        <div class="col-lg-12 nopadding">
+                                            <div class="col-lg-6 nopadding">
+                                                <div class="col-lg-6 nopadding">
+                                                    {{ identification.insulating.label }}
+                                                    {{ identification.insulating(class_="form-control" , placeholder = "Oil" ) }}
+                                                </div>
+                                                <div class="col-lg-6 nopadding">
+                                                    {{ identification.contract.label }}
+                                                    {{ identification.contract(class_="form-control" , placeholder = "LA-654" ) }}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 nopadding">
+                                                {{ identification.grouping.label }}
+                                                {{ identification.grouping(class_="form-control") }}
+                                            </div>
+                                        </div>
+                                        <!-- fourth row -->
+                                        <div class="col-lg-12 nopadding">
+                                            <div class="col-lg-2 nopadding">
+                                                {{ identification.sampling.label }}
+                                                {{ identification.sampling(class_="form-control") }}
+                                            </div>
+                                            <div class="col-lg-3 nopadding">
+                                                {{ identification.syringe.label }}
+                                                {{ identification.syringe(class_="form-control") }}
+                                            </div>
+                                            <div class="col-lg-2 nopadding">
+                                                {{ identification.analysis_no.label }}
+                                                {{ identification.analysis_no(class_="form-control") }}
+                                            </div>
+                                            <div class="col-lg-3 nopadding">
+                                                {{ identification.lab_date.label }}
+                                                <div class="datetimepicker input-group date">
+                                                    {{ identification.lab_date(class_="form-control" ) }}
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2 nopadding">
+                                                {{ identification.lab_date.label }}
+                                                {{ identification.load_mva(class_="form-control" , placeholder = 1.2 ) }}
+                                            </div>
+                                        </div>
+                                        <!-- fifth row -->
+                                        <div class="col-lg-12 nopadding">
+                                            <div class="col-lg-3 nopadding">
+                                                {{ identification.equipment.label }}
+                                                {{ identification.equipment(class_="form-control") }}
+                                            </div>
+                                            <div class="col-lg-3 nopadding">
+                                                {{ identification.order_status.label }}
+                                                {{ identification.order_status(class_="form-control") }}
+                                            </div>
+                                            <div class="col-lg-3 nopadding">
+                                                {{ identification.order_status.label }}
+                                                {{ identification.lab_no(class_="form-control") }}
+                                            </div>
+                                            <div class="col-lg-3 nopadding">
+                                                {{ identification.laboratory.label }}
+                                                {{ identification.laboratory(class_="form-control") }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="tabs-2" class="tab-pane margin-top-xs">
+
+                                </div>
+                                <div id="tabs-3" class="tab-pane">
+
+                                </div>
+                                <div id="tabs-4" class="tab-pane">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row margin-bottom-xs padding-top-lg">
                             <form class="" method="post" id="treeView" action="#" >
                                 {{ tree_view.hidden_tag() }}
                                 <div class="form-group">
@@ -32,6 +162,7 @@
                                 <button type="submit" class="btn btn-default">Submit</button>
                             </form>
                         </div>
+
                     </div>
                 {% if tree is defined %}
                     </div>

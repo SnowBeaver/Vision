@@ -39,6 +39,8 @@ class LoginForm(form.Form):
     def get_user(self):
         return db.session.query(User).filter_by(email=self.email.data).first()
 
+from .forms import IdentificatioViewForm
+
 class MyAdminIndexView(admin.AdminIndexView):
 
     @expose('/')
@@ -49,6 +51,9 @@ class MyAdminIndexView(admin.AdminIndexView):
 
         self._template_args['tree'] = get_tree()
         self._template_args['tree_view'] = TreeView()
+        #front page views
+        self._template_args['identification'] = IdentificatioViewForm()
+
         return super(MyAdminIndexView, self).index()
 
     @expose('/login/', methods=('GET', 'POST'))
