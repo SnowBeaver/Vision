@@ -12,20 +12,22 @@ from app import db
 from app import mail
 from app.users.forms import RegisterForm, LoginForm, ProfileForm, ForgotForm
 from app.users.constants import UPLOAD_FOLDER
-from app.users.models import User, Role , users_roles
+from app.users.models import User, Role, users_roles
 from app.users.utils import allowed_image_file
 from app.users.decorators import login_required, templated
 from itsdangerous import URLSafeTimedSerializer
 from flask.ext.babel import gettext
-from flask.ext.security.utils import encrypt_password , verify_password
-from flask.ext.principal import identity_changed , Identity , AnonymousIdentity
+from flask.ext.security.utils import encrypt_password, verify_password
+from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
-from app import guest_per , user_per , blogger_per , admin_per
+from app import guest_per, user_per, blogger_per, admin_per
 
 mod = Blueprint('users', __name__, url_prefix='/users')
 
+
 def authorize(user):
     session['user_id'] = user.id
+
 
 def is_logged():
     return g.user
@@ -43,11 +45,12 @@ def before_request():
 
 @mod.route('/dashboard')
 @mod.route('/home')
-@user_per.require(http_exception = 403)
+@user_per.require(http_exception=403)
 def home():
     return render_template(
-        "users/me.html", user = g.user
+        "users/me.html", user=g.user
     )
+
 
 @mod.route('/pleaseconfirm')
 def pleaseconfirm():
@@ -164,19 +167,20 @@ def login():
         if form.validate_on_submit():
             user = User.query.filter_by(email=form.email.data).first()
             # we use werzeug to validate user's password
-            if user and verify_password(form.password.data , user.password):
+            if user and verify_password(form.password.data, user.password):
                 # the session can't be modified as it's signed,
                 # it's a safe place to store the user id
                 authorize(user)
                 # Tell Flask-Principal the identity changed
                 identity_changed.send(current_app._get_current_object(),
-                                  identity = Identity(user.id))
+                                      identity=Identity(user.id))
 
                 flash(gettext(u'Welcome') + " " + user.name)
                 return redirect(url_for('home.home'))
         flash(gettext(u'Wrong email or password'), 'error-message')
 
     return render_template('users/login.html', form=form)
+
 
 @mod.route('/logout', methods=['GET'])
 def logout():
@@ -185,10 +189,9 @@ def logout():
         del session['user_id']
         g.user = None
 
-     # Tell Flask-Principal the user is anonymous
+        # Tell Flask-Principal the user is anonymous
     identity_changed.send(current_app._get_current_object(),
-                          identity = AnonymousIdentity())
-
+                          identity=AnonymousIdentity())
 
     response = make_response(redirect(url_for('users.login')))
     response.set_cookie('sc', '', expires=0)
@@ -233,10 +236,10 @@ def register():
             alias = hashlib.md5(form.email.data).hexdigest()
 
         user = User(
-            name = form.name.data,
-            email = form.email.data,
-            alias = alias,
-            password = encrypt_password(form.password.data)
+            name=form.name.data,
+            email=form.email.data,
+            alias=alias,
+            password=encrypt_password(form.password.data)
         )
 
         # add default
@@ -271,7 +274,7 @@ def register():
 
 
 @mod.route("/profile", methods=['GET', 'POST'])
-@user_per.require(http_exception = 403)
+@user_per.require(http_exception=403)
 @templated('users/profile.html')
 def profile():
     user = g.user
@@ -332,7 +335,7 @@ def profile():
 
 
 @mod.route("/profile/change-password", methods=['GET', 'POST'])
-@user_per.require(http_exception = 403)
+@user_per.require(http_exception=403)
 @templated('users/change-password.html')
 def change_password():
     user = User.query.get(session['user_id'])
