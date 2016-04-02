@@ -76,11 +76,39 @@
 
         #my-tab-content textarea{
             resize: vertical;
-            height: 235px;
+            height: 150px;
         }
 
         .auto{
             width: auto !important;
+        }
+        .maxwidth{
+            width: 100%;
+            position: relative;
+            float: left;
+        }
+
+        fieldset.scheduler-border {
+            border: 1px groove #ddd !important;
+            padding: 0 1.4em 1.4em 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+        }
+
+        legend.scheduler-border {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width:auto;
+            padding:0 10px;
+            border-bottom:none;
+            margin-bottom: 0px;
+        }
+
+        .modal-dialog{
+            width: 100%;
+            max-width: 960px;
         }
     </style>
 {% endblock head %}

@@ -3,41 +3,75 @@
 {% block body %}
     {{ super() }}
     <div class="row-fluid">
-        <div class="row" style="min-height: 800px;position:relative;">
+        <div class="" style="position:relative;">
             {% if current_user.is_authenticated() %}
-                {% if tree is defined %}
-                    <div class="equal_container">
-                        {% include 'widgets/leftcontent.html' %}
-                        <div class="col-md-8 equal_col">
-                {% else %}
-                        <div class="col-md-12">
-                {% endif %}
-                        <div class="row">
-                            <h1>Welcome</h1>
-                            <p class="lead"> to admin panel </p>
-                            <p> Help information </p>
-                        </div>
+                <div class="maxwidth">
+                    <ul class="nav nav-pills" role="tablist">
+                        <li>
+                            <button class="btn btn-default nopadding">
+                                <img src="{{ url_for('static', filename='img/toolbar/open.png') }}" alt="open" />
+                            </button>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#addForm" class="nopadding">
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/add.png') }}" alt="add" />
+                                </button>
+                            </a>
+                        </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/delete.png') }}" alt="delete" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/graphics.png') }}" alt="graphics" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/info.png') }}" alt="info" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/batch.png') }}" alt="batch" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/report.png') }}" alt="report" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/information.png') }}" alt="information" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/maintain.png') }}" alt="maintain" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/schedule.png') }}" alt="schedule" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/schedule.png') }}" alt="schedule" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/data.png') }}" alt="data" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/data.png') }}" alt="data" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/search.png') }}" alt="search" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/table.png') }}" alt="table" /> </li>
+                        <li> <img src="{{ url_for('static', filename='img/toolbar/help.png') }}" alt="help" /> </li>
+                    </ul>
+                </div>
+                <div class="maxwidth">
+                    {% if tree is defined %}
+                        <div class="equal_container">
+                            {% include 'widgets/leftcontent.html' %}
+                            <div class="col-md-8 equal_col">
+                    {% else %}
+                            <div class="col-md-12">
+                    {% endif %}
+                            <div class="maxwidth">
+                                <h1>Welcome</h1>
+                                <p class="lead"> to admin panel </p>
+                                <p> Help information </p>
+                            </div>
 
-                        <div class="row margin-bottom-xs padding-top-lg">
-                            <form class="" method="post" id="treeView" action="#" >
-                                {{ tree_view.hidden_tag() }}
-                                <div class="form-group">
-                                    <label for="view">Select View</label>
-                                    {{ tree_view.view(class_="form-control") }}
-                                    {{ tree_view.node_id() }}
-                                </div>
-                                <div class="form-group">
-                                    <label for="tooltip">Update ToolTip</label>
-                                    {{ tree_view.tooltip(class_="form-control") }}
-                                </div>
-                                <button type="submit" class="btn btn-default">Submit</button>
-                            </form>
+                            <div class="maxwidth margin-bottom-xs padding-top-lg">
+                                <form class="" method="post" id="treeView" action="#" >
+                                    {{ tree_view.hidden_tag() }}
+                                    <div class="form-group">
+                                        <label for="view">Select View</label>
+                                        {{ tree_view.view(class_="form-control") }}
+                                        {{ tree_view.node_id() }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tooltip">Update ToolTip</label>
+                                        {{ tree_view.tooltip(class_="form-control") }}
+                                    </div>
+                                    <button type="submit" class="btn btn-default">Submit</button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                {% if tree is defined %}
-                    </div>
-                {% endif %}
+                    {% if tree is defined %}
+                        </div>
+                    {% endif %}
+                </div>
                 {% include 'admin/tabs.html' %}
+                {% include 'admin/popups.html' %}
+
             {% else %}
             <form method="POST" action="">
                 {{ form.hidden_tag() if form.hidden_tag }}

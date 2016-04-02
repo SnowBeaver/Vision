@@ -1,0 +1,196 @@
+<div class="modal fade" id="addForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Insertion of a new test </h4>
+            </div>
+            <div class="modal-body">
+                <div class="maxwidth">
+                    <div>
+                        <button class="btn btn-default pull-right margin-right-xs">
+                            Create
+                        </button>
+                        <button class="btn btn-default pull-right margin-right-xs" class="close" data-dismiss="modal">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                <p class="">
+                    <ul id="tabs" class="nav nav-tabs " data-tabs="tabs">
+                        <li class="active"> <a href="#new-tabs-1" data-toggle="tab"> Description </a> </li>
+                        <li> <a href="#new-tabs-2" data-toggle="tab"> Electrical: as per user </a> </li>
+                        <li> <a href="#new-tabs-3" data-toggle="tab"> Fluid: as per user </a> </li>
+                        <li> <a href="#new-tabs-4" data-toggle="tab"> Test profile </a> </li>
+                    </ul>
+                    <div id="my-tab-content" class="tab-content maxwidth">
+                        <div id="new-tabs-1" role="tabpanel" class="tab-pane active ">
+                            <form class="" method="post" action="#" >
+                                <div class="maxwidth">
+                                    <div class="col-md-9 nopadding padding-right-xs">
+                                        <div class="maxwidth">
+                                            <div class="col-md-4 nopadding padding-right-xs">
+                                                {{ popups.add.description.equipment.label }}
+                                                {{ popups.add.description.equipment(class_="form-control" , placeholder = "") }}
+                                            </div>
+                                            <div class="col-md-4 nopadding padding-right-xs">
+                                                {{ popups.add.description.position.label }}
+                                                {{ popups.add.description.position(class_="form-control" , placeholder = "") }}
+                                            </div>
+                                            <div class="col-md-4 nopadding">
+                                                {{ popups.add.description.fluid.label }}
+                                                {{ popups.add.description.fluid(class_="form-control" , placeholder = "") }}
+                                            </div>
+                                        </div>
+                                        <div class="maxwidth">
+                                            <div class="col-md-4 nopadding padding-right-xs">
+                                                {{ popups.add.description.lab.label }}
+                                                <div class="form-inline">
+                                                        {{ popups.add.description.lab(class_="form-control") }}
+                                                        <button class="btn btn-default pull-right margin-right-xs"> ... </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 nopadding padding-right-xs">
+                                                {{ popups.add.description.contract.label }}
+                                                {{ popups.add.description.contract(class_="form-control") }}
+                                            </div>
+                                            <div class="col-md-4 nopadding">
+                                                {{ popups.add.description.lab_no.label }}
+                                                {{ popups.add.description.lab_no(class_="form-control") }}
+                                            </div>
+                                        </div>
+                                        <div class="maxwidth">
+                                            <div class="col-md-5 nopadding padding-right-xs">
+                                                {{ popups.add.description.date.label }}
+                                                <div class="datetimepicker input-group date">
+                                                    {{ popups.add.description.date(class_="form-control" ) }}
+                                                    <span class="input-group-addon">
+                                                        <span class="glyphicon glyphicon-calendar"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 nopadding padding-right-xs">
+                                                {{ popups.add.description.testing.label }}
+                                                {{ popups.add.description.testing(class_="form-control") }}
+                                            </div>
+                                            <div class="col-md-2 nopadding">
+                                                {{ popups.add.description.initials.label }}
+                                                {{ popups.add.description.initials(class_="form-control") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 nopadding">
+                                        <div>
+                                            Current test profiles <br>
+                                            Fluid : None <br>
+                                            Electrical : None
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="new-tabs-2" role="tabpanel" class="tab-pane">
+                            <div class="maxwidth">
+                                <form class="" method="post" action="#" >
+                                    <fieldset class="scheduler-border">
+                                        <legend class="scheduler-border">Tests requested</legend>
+                                        <div class="control-group">
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.electrical.bushing(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.bushing.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.electrical.insulation(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.insulation.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.electrical.degree(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.degree.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.electrical.winding(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.winding.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.electrical.visual(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.visual.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.electrical.turns(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.turns.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.electrical.winding_doble(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.winding_doble.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.electrical.resistance(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.resistance.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="new-tabs-3" role="tabpanel" class="tab-pane">
+                            <form class="" method="post" action="#" >
+                                <fieldset class="scheduler-border">
+                                    <legend class="scheduler-border">Syringe - Test requested</legend>
+                                    <div class="control-group">
+                                        <div class="col-md-8 nopadding padding-right-xs">
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.gas(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.gas.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.furans(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.furans.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.fluid.pcb(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.pcb.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.water(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.water.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.inhibitor(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.inhibitor.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 nopadding">
+                                            <div class="col-md-2 nopadding padding-right-xs">
+                                                {{ popups.add.fluid.qty.label }}
+                                                {{ popups.add.fluid.qty() }}
+                                            </div>
+                                            <div class="col-md-10 nopadding">
+                                                {{ popups.add.fluid.sampling.label }}
+                                                {{ popups.add.fluid.sampling() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div id="new-tabs-4" role="tabpanel" class="tab-pane">
+
+                        </div>
+                    </div>
+                </p>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer"> </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
