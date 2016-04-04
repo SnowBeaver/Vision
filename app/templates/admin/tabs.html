@@ -1,216 +1,216 @@
-    <div class="row padding-top-lg margin-bottom-xs">
-        <ul id="tabs" class="nav nav-tabs " data-tabs="tabs">
-            <li class="active"> <a href="#tabs-1" data-toggle="tab"> Identification </a> </li>
-            <li> <a href="#tabs-2" data-toggle="tab"> Test repair notes </a> </li>
-            <li> <a href="#tabs-3" data-toggle="tab"> Future </a> </li>
-            <li> <a href="#tabs-4" data-toggle="tab"> Diagnosis and recommendations </a> </li>
-        </ul>
-        <div id="my-tab-content" class="tab-content col-lg-12 nopadding" style="position:relative;">
-            <div id="tabs-1" class="tab-pane active ">
-                <form class="" method="post" action="#" >
-                    {{ identification.hidden_tag() }}
-                    <div class="tab_row text-center">
-                        <!-- first row -->
-                        <div class="col-lg-12 nopadding">
+<div class="maxwidth padding-top-lg margin-bottom-xs">
+    <ul id="tabs" class="nav nav-tabs " data-tabs="tabs">
+        <li class="active"> <a href="#tabs-1" data-toggle="tab"> Identification </a> </li>
+        <li> <a href="#tabs-2" data-toggle="tab"> Test repair notes </a> </li>
+        <li> <a href="#tabs-3" data-toggle="tab"> Records diagnostic </a> </li>
+        <li> <a href="#tabs-4" data-toggle="tab"> Diagnosis and recommendations </a> </li>
+    </ul>
+    <div id="my-tab-content" class="tab-content col-lg-12 nopadding" style="position:relative;">
+        <div id="tabs-1" role="tabpanel" class="tab-pane active ">
+            <form class="" method="post" action="#" >
+                {{ identification.hidden_tag() }}
+                <div class="tab_row text-center">
+                    <!-- first row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-6 nopadding padding-right-xs">
+                            {{ identification.analysis_type.label }}
+                            {{ identification.analysis_type(class_="form-control" , placeholder = "Dissolved gas") }}
+                        </div>
+                        <div class="col-lg-6 nopadding">
                             <div class="col-lg-6 nopadding padding-right-xs">
-                                {{ identification.analysis_type.label }}
-                                {{ identification.analysis_type(class_="form-control" , placeholder = "Dissolved gas") }}
+                                {{ identification.initials.label }}
+                                {{ identification.initials(class_="form-control" , placeholder = "MI") }}
                             </div>
                             <div class="col-lg-6 nopadding">
-                                <div class="col-lg-6 nopadding padding-right-xs">
-                                    {{ identification.initials.label }}
-                                    {{ identification.initials(class_="form-control" , placeholder = "MI") }}
-                                </div>
-                                <div class="col-lg-6 nopadding">
-                                    {{ identification.acq_date.label }}
-                                    <div class="datetimepicker input-group date">
-                                        {{ identification.acq_date(class_="form-control" , placeholder = "20/03/1999 8:00 AM") }}
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- second row -->
-                        <div class="col-lg-12 nopadding">
-                            <div class="col-lg-6 nopadding padding-right-xs">
-                                {{ identification.reason.label }}
-                                {{ identification.reason(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-6 nopadding">
-                                <div class="col-lg-6 nopadding padding-right-xs">
-                                    {{ identification.stage.label }}
-                                    {{ identification.stage(class_="form-control") }}
-                                </div>
-                                <div class="col-lg-6 nopadding">
-                                    {{ identification.temp.label }}
-                                    {{ identification.temp(class_="form-control" , placeholder = 25 ) }}
-                                </div>
-                            </div>
-                        </div>
-                        <!-- third row -->
-                        <div class="col-lg-12 nopadding">
-                            <div class="col-lg-6 nopadding">
-                                <div class="col-lg-6 nopadding padding-right-xs">
-                                    {{ identification.insulating.label }}
-                                    {{ identification.insulating(class_="form-control" , placeholder = "Oil" ) }}
-                                </div>
-                                <div class="col-lg-6 nopadding padding-right-xs">
-                                    {{ identification.contract.label }}
-                                    {{ identification.contract(class_="form-control" , placeholder = "LA-654" ) }}
-                                </div>
-                            </div>
-                            <div class="col-lg-6 nopadding">
-                                {{ identification.grouping.label }}
-                                {{ identification.grouping(class_="form-control") }}
-                            </div>
-                        </div>
-                        <!-- fourth row -->
-                        <div class="col-lg-12 nopadding">
-                            <div class="col-lg-2 nopadding padding-right-xs">
-                                {{ identification.sampling.label }}
-                                {{ identification.sampling(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-3 nopadding padding-right-xs">
-                                {{ identification.syringe.label }}
-                                {{ identification.syringe(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-2 nopadding padding-right-xs">
-                                {{ identification.analysis_no.label }}
-                                {{ identification.analysis_no(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-3 nopadding padding-right-xs">
-                                {{ identification.lab_date.label }}
+                                {{ identification.acq_date.label }}
                                 <div class="datetimepicker input-group date">
-                                    {{ identification.lab_date(class_="form-control" ) }}
+                                    {{ identification.acq_date(class_="form-control" , placeholder = "20/03/1999 8:00 AM") }}
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-lg-2 nopadding">
-                                {{ identification.lab_date.label }}
-                                {{ identification.load_mva(class_="form-control" , placeholder = 1.2 ) }}
-                            </div>
-                        </div>
-                        <!-- fifth row -->
-                        <div class="col-lg-12 nopadding">
-                            <div class="col-lg-3 nopadding padding-right-xs">
-                                {{ identification.equipment.label }}
-                                {{ identification.equipment(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-3 nopadding padding-right-xs">
-                                {{ identification.order_status.label }}
-                                {{ identification.order_status(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-3 nopadding padding-right-xs">
-                                {{ identification.order_status.label }}
-                                {{ identification.lab_no(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-3 nopadding">
-                                {{ identification.laboratory.label }}
-                                {{ identification.laboratory(class_="form-control") }}
-                            </div>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div id="tabs-2" class="tab-pane margin-top-xs">
-                <form class="" method="post" action="#" >
-                    {{ test_repair.hidden_tag() }}
-                    <div class="tab_row">
-                        <!-- first row -->
-                        <div class="col-lg-12 nopadding">
-                            <div class="col-lg-6 nopadding padding-right-xs">
-                                {{ test_repair.comments.label }}
-                                {{ test_repair.comments(class_="form-control") }}
-                            </div>
-                            <div class="col-lg-6 nopadding ">
-                                {{ test_repair.notes.label }}
-                                {{ test_repair.notes(class_="form-control") }}
-                            </div>
+                    <!-- second row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-6 nopadding padding-right-xs">
+                            {{ identification.reason.label }}
+                            {{ identification.reason(class_="form-control") }}
                         </div>
-                        <!-- second row -->
-                        <div class="col-lg-12 nopadding">
+                        <div class="col-lg-6 nopadding">
                             <div class="col-lg-6 nopadding padding-right-xs">
-                                {{ test_repair.sampled.label }}
-                                {{ test_repair.sampled(class_="form-control") }}
+                                {{ identification.stage.label }}
+                                {{ identification.stage(class_="form-control") }}
                             </div>
                             <div class="col-lg-6 nopadding">
-                                {{ test_repair.date.label }}
-                                <div class="datepicker input-group date">
-                                    {{ test_repair.date(class_="form-control" ) }}
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
+                                {{ identification.temp.label }}
+                                {{ identification.temp(class_="form-control" , placeholder = 25 ) }}
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div id="tabs-3" class="tab-pane">
-                <form class="" method="post" action="#" >
-                    <div class="tab_row">
-                        {{ records_diagnosis.hidden_tag() }}
-                        <!-- first row -->
-                        <div class="col-lg-12 nopadding">
+                    <!-- third row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-6 nopadding">
                             <div class="col-lg-6 nopadding padding-right-xs">
-                                {{ records_diagnosis.diagnosis.label }}
-                                {{ records_diagnosis.diagnosis(class_="form-control") }}
+                                {{ identification.insulating.label }}
+                                {{ identification.insulating(class_="form-control" , placeholder = "Oil" ) }}
                             </div>
-                            <div class="col-lg-6 nopadding ">
-                                {{ records_diagnosis.recommendations.label }}
-                                {{ records_diagnosis.recommendations(class_="form-control") }}
+                            <div class="col-lg-6 nopadding padding-right-xs">
+                                {{ identification.contract.label }}
+                                {{ identification.contract(class_="form-control" , placeholder = "LA-654" ) }}
                             </div>
                         </div>
-                        <div class="col-lg-12 nopadding">
-                            {{ records_diagnosis.predefined_diag.label }}
-                            {{ records_diagnosis.predefined_diag(class_="form-control") }}
-                        </div>
-                        <div class="col-lg-12 nopadding">
-                            {{ records_diagnosis.predefined_rec.label }}
-                            {{ records_diagnosis.predefined_rec(class_="form-control") }}
-                        </div>
-                        <div class="col-lg-12 nopadding">
-                            <div class="col-lg-9 nopadding padding-right-xs">
-                                {{ records_diagnosis.date.label }}
-                                <div class="datepicker input-group date">
-                                    {{ records_diagnosis.date(class_="form-control" ) }}
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 nopadding">
-                                <label> </label>
-                                <button type="button" class="btn btn-default">Schedule as task</button>
-                            </div>
+                        <div class="col-lg-6 nopadding">
+                            {{ identification.grouping.label }}
+                            {{ identification.grouping(class_="form-control") }}
                         </div>
                     </div>
-                </form>
-            </div>
-            <div id="tabs-4" class="tab-pane">
-                <form class="" method="post" action="#" >
-                    <div class="tab_row">
-                        {{ equipment_diagnosis.hidden_tag() }}
-                        <!-- first row -->
-                        <div class="col-lg-12 nopadding">
-                             {{ equipment_diagnosis.diagnosis.label }}
-                             {{ equipment_diagnosis.diagnosis(class_="form-control") }}
+                    <!-- fourth row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-2 nopadding padding-right-xs">
+                            {{ identification.sampling.label }}
+                            {{ identification.sampling(class_="form-control") }}
                         </div>
-                        <div class="col-lg-12 nopadding">
-                            {{ equipment_diagnosis.indicator.label }}
-                            {{ equipment_diagnosis.indicator(class_="form-control") }}
+                        <div class="col-lg-3 nopadding padding-right-xs">
+                            {{ identification.syringe.label }}
+                            {{ identification.syringe(class_="form-control") }}
                         </div>
-                        <div class="col-lg-12 nopadding">
-                            {{ equipment_diagnosis.condition(class_="pull-left padding-right-xs") }}
-                            {{ equipment_diagnosis.condition.label(class="auto pull-left") }}
-
+                        <div class="col-lg-2 nopadding padding-right-xs">
+                            {{ identification.analysis_no.label }}
+                            {{ identification.analysis_no(class_="form-control") }}
+                        </div>
+                        <div class="col-lg-3 nopadding padding-right-xs">
+                            {{ identification.lab_date.label }}
+                            <div class="datetimepicker input-group date">
+                                {{ identification.lab_date(class_="form-control" ) }}
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 nopadding">
+                            {{ identification.load_mva.label }}
+                            {{ identification.load_mva(class_="form-control" , placeholder = 1.2 ) }}
                         </div>
                     </div>
-                </form>
-            </div>
+                    <!-- fifth row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-3 nopadding padding-right-xs">
+                            {{ identification.equipment.label }}
+                            {{ identification.equipment(class_="form-control") }}
+                        </div>
+                        <div class="col-lg-3 nopadding padding-right-xs">
+                            {{ identification.order_status.label }}
+                            {{ identification.order_status(class_="form-control") }}
+                        </div>
+                        <div class="col-lg-3 nopadding padding-right-xs">
+                            {{ identification.order_status.label }}
+                            {{ identification.lab_no(class_="form-control") }}
+                        </div>
+                        <div class="col-lg-3 nopadding">
+                            {{ identification.laboratory.label }}
+                            {{ identification.laboratory(class_="form-control") }}
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
+        <div id="tabs-2" role="tabpanel" class="tab-pane">
+            <form class="" method="post" action="#" >
+                {{ test_repair.hidden_tag() }}
+                <div class="tab_row">
+                    <!-- first row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-6 nopadding padding-right-xs">
+                            {{ test_repair.comments.label }}
+                            {{ test_repair.comments(class_="form-control") }}
+                        </div>
+                        <div class="col-lg-6 nopadding ">
+                            {{ test_repair.notes.label }}
+                            {{ test_repair.notes(class_="form-control") }}
+                        </div>
+                    </div>
+                    <!-- second row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-6 nopadding padding-right-xs">
+                            {{ test_repair.sampled.label }}
+                            {{ test_repair.sampled(class_="form-control") }}
+                        </div>
+                        <div class="col-lg-6 nopadding">
+                            {{ test_repair.date.label }}
+                            <div class="datepicker input-group date">
+                                {{ test_repair.date(class_="form-control" ) }}
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="tabs-3" role="tabpanel" class="tab-pane">
+            <form class="" method="post" action="#" >
+                <div class="tab_row">
+                    {{ records_diagnosis.hidden_tag() }}
+                    <!-- first row -->
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-6 nopadding padding-right-xs">
+                            {{ records_diagnosis.diagnosis.label }}
+                            {{ records_diagnosis.diagnosis(class_="form-control") }}
+                        </div>
+                        <div class="col-lg-6 nopadding ">
+                            {{ records_diagnosis.recommendations.label }}
+                            {{ records_diagnosis.recommendations(class_="form-control") }}
+                        </div>
+                    </div>
+                    <div class="col-lg-12 nopadding">
+                        {{ records_diagnosis.predefined_diag.label }}
+                        {{ records_diagnosis.predefined_diag(class_="form-control") }}
+                    </div>
+                    <div class="col-lg-12 nopadding">
+                        {{ records_diagnosis.predefined_rec.label }}
+                        {{ records_diagnosis.predefined_rec(class_="form-control") }}
+                    </div>
+                    <div class="col-lg-12 nopadding">
+                        <div class="col-lg-9 nopadding padding-right-xs">
+                            {{ records_diagnosis.date.label }}
+                            <div class="datepicker input-group date">
+                                {{ records_diagnosis.date(class_="form-control" ) }}
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 nopadding">
+                            <label> </label>
+                            <button type="button" class="btn btn-default">Schedule as task</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="tabs-4" role="tabpanel" class="tab-pane">
+            <form class="" method="post" action="#" >
+                <div class="tab_row">
+                    {{ equipment_diagnosis.hidden_tag() }}
+                    <!-- first row -->
+                    <div class="col-lg-12 nopadding">
+                         {{ equipment_diagnosis.diagnosis.label }}
+                         {{ equipment_diagnosis.diagnosis(class_="form-control") }}
+                    </div>
+                    <div class="col-lg-12 nopadding">
+                        {{ equipment_diagnosis.indicator.label }}
+                        {{ equipment_diagnosis.indicator(class_="form-control") }}
+                    </div>
+                    <div class="col-lg-12 nopadding">
+                        {{ equipment_diagnosis.condition(class_="pull-left padding-right-xs") }}
+                        {{ equipment_diagnosis.condition.label(class="auto pull-left") }}
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

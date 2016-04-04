@@ -41,6 +41,7 @@ class LoginForm(form.Form):
     def get_user(self):
         return db.session.query(User).filter_by(email=self.email.data).first()
 
+from .forms import IdentificationViewForm , TestRepairViewForm , RecordsDiagnosticViewForm , EquipmentDiagnosisViewForm , NewTestDescription , NewTestElectrical, NewTestFluid, NewTestProfile
 
 from .forms import IdentificationViewForm, TestRepairViewForm, RecordsDiagnosticViewForm, EquipmentDiagnosisViewForm
 
@@ -52,6 +53,15 @@ class MyAdminIndexView(admin.AdminIndexView):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
 
+        popups = {
+             'add' : {
+                  'description' : NewTestDescription()
+                 ,'electrical' : NewTestElectrical()
+                 ,'fluid' : NewTestFluid()
+                 ,'profile' : NewTestProfile()
+             },
+        }
+
         self._template_args['tree'] = get_tree()
         self._template_args['tree_view'] = TreeView()
         # front page views
@@ -59,6 +69,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['test_repair'] = TestRepairViewForm()
         self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
         self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
+        self._template_args['popups'] = popups
 
         return super(MyAdminIndexView, self).index()
 
