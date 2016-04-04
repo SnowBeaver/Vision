@@ -141,4 +141,3 @@ class NewTestProfile(Form):
     enable_fl = BooleanField( 'Enable the selection of test according to profile' , validators=[ Optional() ])
     profile_fl = SelectField('Profile selection' , choices = profile_choice , validators = [Required()] )
     description_fl = TextField('Description' , validators=[ Required() ] )
->>>>>>> 07eeb131ae5201c12a6b83880bc919a803a69a07
