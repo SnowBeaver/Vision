@@ -78,7 +78,7 @@ def get_pages_by_tag(tag):
 # get page by slug
 def get_page_by_slug(slug):
     try:
-        res = Pages.query.filter_by(slug = slug).first()
+        res = Pages.query.filter_by(slug=slug).first()
     except Exception as e:
         import logging
         logging.error(e)
@@ -159,45 +159,47 @@ def store_form_data(blog_form ,user ,page):
     # page_id = page.get("id")
     page_id = page.id if page.id is not None else None
 
-    pid = save_page(  title = title
-                     ,text = text
-                     ,slug = slug
-                     ,tag = tag
-                     ,author_id = author_id
-                     ,created_on = created_on
-                     ,updated_on = updated_on
-                     ,page_id = page_id
+    pid = save_page(
+        title=title
+        ,text=text
+        ,slug=slug
+        ,tag=tag
+        ,author_id=author_id
+        ,created_on=created_on
+        ,updated_on=updated_on
+        ,page_id=page_id
     )
 
     return pid
 
-def save_page(title ,text, slug ,tag, author_id ,created_on,updated_on,page_id):
+def save_page(title, text, slug, tag, author_id, created_on, updated_on, page_id):
     try:
         if page_id is not None:
             currentPage = Pages.query.filter_by(id = page_id).first()
             page_id = page_id if currentPage else None
 
         if page_id is None:
-            currentPage = Pages(  title = title
-                                 ,text = text
-                                 ,slug = slug
-                                 ,tag = tag
-                                 ,created_on = created_on
-                                 ,updated_on = updated_on
-                                 ,author_id = author_id
+            currentPage = Pages(
+                title=title
+                ,text=text
+                ,slug=slug
+                ,tag=tag
+                ,created_on=created_on
+                ,updated_on=updated_on
+                ,author_id=author_id
             )
 
             if get_locale() is not currentPage.get_locale():
                 currentPage.translations[currentPage.get_locale()].title = title
                 currentPage.translations[currentPage.get_locale()].text = text
         else:
-            currentPage.title = title;
-            currentPage.text = text;
-            currentPage.slug = slug;
-            currentPage.tag = tag;
-            currentPage.created_on = created_on;
-            currentPage.updated_on = updated_on;
-            currentPage.author_id = author_id;
+            currentPage.title = title
+            currentPage.text = text
+            currentPage.slug = slug
+            currentPage.tag = tag
+            currentPage.created_on = created_on
+            currentPage.updated_on = updated_on
+            currentPage.author_id = author_id
 
         db.session.add(currentPage)
         db.session.commit()
@@ -211,14 +213,17 @@ def save_page(title ,text, slug ,tag, author_id ,created_on,updated_on,page_id):
 
     return page_id
 
+
 def construct_url(page_id):
     url = url_for("pages.page", page_id = page_id)
     return url
+
 
 def render_text(page):
     md = markdown.Markdown(extensions = _markdown_extensions)
     page.rendered_text = md.convert(page.text)
     page.meta = md.Meta
+
 
 def process_page(page, render):
     page.editable = is_author(page.author_id)

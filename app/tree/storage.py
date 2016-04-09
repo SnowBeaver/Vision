@@ -7,8 +7,10 @@ from app import app
 from sqlalchemy.orm.session import make_transient
 import json
 
+
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
+
 
 def get_locale():
     if 'locale' in session:
@@ -17,11 +19,12 @@ def get_locale():
 
     return 'en'
 
-#return all tree
+
+# return all tree
 def get_tree():
     try:
         # .options(joinedload_all("children", "children", "children", "children"))
-        tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children"))\
+        tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
             .filter(TreeNode.text == u'Vision Diagnostic').first()
         res = None
         if tree is not None:
@@ -29,8 +32,8 @@ def get_tree():
             res += create_tree(tree)
             res += "</ul>"
 
-        # print(tree.dump())
-        # print(res)
+            # print(tree.dump())
+            # print(res)
     except Exception as e:
         import logging
         logging.error(e)
@@ -38,13 +41,14 @@ def get_tree():
 
     return res
 
+
 # create generate tree
-def create_node(parent, text, icon , type , tooltip):
+def create_node(parent, text, icon, type, tooltip):
     try:
         # options(joinedload_all("children", "children", "children", "children")).
         parent = db.session.query(TreeNode).filter(TreeNode.id == parent).first()
-        node = TreeNode(icon = icon, parent = parent , type = type)
-        #think of a different solution how to extract node.id
+        node = TreeNode(icon=icon, parent=parent, type=type)
+        # think of a different solution how to extract node.id
         db.session.commit()
 
         node.text = text + str(node.id)
@@ -52,7 +56,7 @@ def create_node(parent, text, icon , type , tooltip):
 
         if get_locale() is not node.get_locale():
             node.translations[node.get_locale()].text = text + str(node.id)
-            node.translations[node.get_locale()].tooltip = tooltip  + str(node.id)
+            node.translations[node.get_locale()].tooltip = tooltip + str(node.id)
 
         # parent.append(node)
         # parent.children[text + str(node.id)] = node
@@ -65,8 +69,9 @@ def create_node(parent, text, icon , type , tooltip):
 
     return res
 
-#rename tree element
-def rename_node(id , text):
+
+# rename tree element
+def rename_node(id, text):
     try:
         node = db.session.query(TreeNode).filter(TreeNode.id == id).first()
         node.text = text
@@ -78,7 +83,8 @@ def rename_node(id , text):
         res = False
     return res
 
-#delete node element
+
+# delete node element
 def delete_node(id):
     try:
         node = db.session.query(TreeNode).filter(TreeNode.id == id).first()
@@ -92,11 +98,12 @@ def delete_node(id):
 
     return res
 
+
 # get view by id
 def get_view_by_id(id):
     try:
         node = db.session.query(TreeNode).filter(TreeNode.id == id).first()
-        res = (node.view , node.tooltip)
+        res = (node.view, node.tooltip)
     except Exception as e:
         import logging
         logging.error(e)
@@ -104,8 +111,9 @@ def get_view_by_id(id):
 
     return res
 
-#update node tree
-def update_node(node_id,view , tooltip):
+
+# update node tree
+def update_node(node_id, view, tooltip):
     try:
         node = db.session.query(TreeNode).filter(TreeNode.id == node_id).first()
         node.view = view
@@ -119,10 +127,11 @@ def update_node(node_id,view , tooltip):
 
     return res
 
-#move node tree
-def move_node(node_id,parent_id):
+
+# move node tree
+def move_node(node_id, parent_id):
     try:
-        db.session.query(TreeNode).filter(TreeNode.id == node_id).update({ 'parent_id' : parent_id })
+        db.session.query(TreeNode).filter(TreeNode.id == node_id).update({'parent_id': parent_id})
         db.session.commit()
         res = True
     except Exception as e:
@@ -131,6 +140,7 @@ def move_node(node_id,parent_id):
         res = None
 
     return res
+
 
 def change_status(node_id, status):
     try:
@@ -141,19 +151,19 @@ def change_status(node_id, status):
             to_rep = '_b.ico'
             if '_y.ico' in node.icon:
                 to_rep = '_y.ico'
-            node.icon = node.icon.replace( to_rep , '_r.ico')
+            node.icon = node.icon.replace(to_rep, '_r.ico')
         elif int(status) == 2:
             node.status = 0
             to_rep = '_b.ico'
             if '_r.ico' in node.icon:
                 to_rep = '_r.ico'
-            node.icon = node.icon.replace( to_rep, '_y.ico')
+            node.icon = node.icon.replace(to_rep, '_y.ico')
         elif int(status) == 1:
             node.status = 1
             to_rep = '_r.ico'
             if '_y.ico' in node.icon:
                 to_rep = '_y.ico'
-            node.icon = node.icon.replace(to_rep , '_b.ico')
+            node.icon = node.icon.replace(to_rep, '_b.ico')
 
         db.session.commit()
         res = node.icon
@@ -164,10 +174,11 @@ def change_status(node_id, status):
 
     return res
 
+
 def join_node(node_id, to_join):
     try:
         res = []
-        ids =  json.loads(to_join)
+        ids = json.loads(to_join)
 
         for id in ids:
             node = db.session.query(TreeNode).filter(TreeNode.id == id).first()
@@ -182,8 +193,9 @@ def join_node(node_id, to_join):
 
     return res
 
-#copy node tree
-def copy_node(node_id,parent_id):
+
+# copy node tree
+def copy_node(node_id, parent_id):
     try:
         node = db.session.query(TreeNode).filter(TreeNode.id == node_id).first()
         db.session.expunge(node)
@@ -196,7 +208,6 @@ def copy_node(node_id,parent_id):
         if get_locale() is not node.get_locale():
             node.translations[node.get_locale()].text = node.text + 'Copy'
 
-
         db.session.add(node)
         db.session.commit()
         db.session.flush()
@@ -208,6 +219,7 @@ def copy_node(node_id,parent_id):
         res = None
 
     return res
+
 
 def render_tree_li(tree):
     data = "<li data-jstree='{"
@@ -225,20 +237,20 @@ def render_tree_li(tree):
 
     return data
 
+
 def create_tree(tree):
     data = render_tree_li(tree)
     if tree.children:
-        data+= "<ul>"
+        data += "<ul>"
         for chd in tree.children:
             if tree.children[chd].children:
-                data+= create_tree(tree.children[chd])
+                data += create_tree(tree.children[chd])
             else:
                 data += render_tree_li(tree.children[chd])
                 data += "</li>"
-        data+= "</ul>"
-    data+= "</li>"
+        data += "</ul>"
+    data += "</li>"
     return data
-
 
 
 @app.template_filter('render_tree')

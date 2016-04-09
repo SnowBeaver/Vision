@@ -13,6 +13,7 @@ users_roles = db.Table(
     db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
 )
 
+
 class Role(db.Model, RoleMixin):
     """
     Class Role
@@ -35,6 +36,7 @@ class Role(db.Model, RoleMixin):
     # __hash__ is required to avoid the exception TypeError: unhashable type: 'Role' when saving a User
     def __hash__(self):
         return hash(self.name)
+
 
 class User(db.Model, UserMixin):
     """
@@ -107,5 +109,4 @@ class User(db.Model, UserMixin):
 
     def avatar(self, size):
         return 'http://www.gravatar.com/avatar/' + \
-            md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
-
+               md5(self.email).hexdigest() + '?d=mm&s=' + str(size)

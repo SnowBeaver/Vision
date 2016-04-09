@@ -4,9 +4,11 @@ from wtforms import TextAreaField, FileField, HiddenField
 from wtforms.validators import Required, EqualTo, Email, Length, Optional
 from app.users.utils import check_password
 
+
 class LoginForm(Form):
     email = TextField('Email address', [Required(), Email()])
     password = PasswordField('Password', [Required()])
+
 
 class RegisterForm(Form):
     name = TextField('Full Name', [Required()])
@@ -17,6 +19,7 @@ class RegisterForm(Form):
         EqualTo('password', message='Passwords must match')
     ])
     accept_tos = BooleanField('', [Required()])
+
     # recaptcha = RecaptchaField()
 
     @staticmethod
@@ -36,7 +39,6 @@ class ForgotForm(Form):
 
 
 class ProfileForm(Form):
-
     name = TextField('Full Name', [
         Required(),
         Length(min=4, max=50),
@@ -53,11 +55,6 @@ class ProfileForm(Form):
             Length(min=4, max=250)
         ],
         description="example: http://www.example.com"
-    )
-    description = TextAreaField(
-        'Description',
-        [Length(min=4, max=950)],
-        description='Describe yourself, bio, interests'
     )
 
     description = TextAreaField()

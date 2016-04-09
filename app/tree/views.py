@@ -7,11 +7,11 @@ from .storage import *
 from flask import jsonify
 from .forms import TreeView
 from app import admin_per
-from flask import redirect , url_for
+from flask import redirect, url_for
 import json
 
-
 mod = Blueprint('tree', __name__, url_prefix='/admin/tree')
+
 
 @mod.before_app_request
 def before_request():
@@ -21,18 +21,20 @@ def before_request():
         if session['user_id'] is not None:
             g.user = User.query.get(session['user_id'])
 
+
 @mod.route("/rename/", methods=['POST'])
 def rename():
     if request.is_xhr:
         success = False
         if admin_per.require().can():
             if request.form['id']:
-                success = rename_node(id = request.form['id'] , text = request.form['text'])
+                success = rename_node(id=request.form['id'], text=request.form['text'])
 
-        return jsonify({ 'success' : success })
+        return jsonify({'success': success})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/create/", methods=['POST'])
 def create():
@@ -40,13 +42,15 @@ def create():
         id = None
         if admin_per.require().can():
             if request.form['parent']:
-                id = create_node(parent = request.form['parent'] , text = request.form['text']
-                                 , icon = request.form['icon'], type = request.form['type'] , tooltip = request.form['tooltip'])
+                id = create_node(parent=request.form['parent'], text=request.form['text']
+                                 , icon=request.form['icon'], type=request.form['type'],
+                                 tooltip=request.form['tooltip'])
 
-        return jsonify({ 'id' : id })
+        return jsonify({'id': id})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/delete/", methods=['POST'])
 def delete():
@@ -54,12 +58,13 @@ def delete():
         id = None
         if admin_per.require().can():
             if request.form['id']:
-                id = delete_node(id = request.form['id'])
+                id = delete_node(id=request.form['id'])
 
-        return jsonify({ 'id' : id })
+        return jsonify({'id': id})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/update/", methods=['POST'])
 def update():
@@ -70,15 +75,16 @@ def update():
         if admin_per.require().can():
             form = TreeView(request.form)
             if form.validate():
-                res = update_node(request.form['node_id'], request.form['view'] , request.form['tooltip'] )
+                res = update_node(request.form['node_id'], request.form['view'], request.form['tooltip'])
                 if res is not None:
                     ret_id = request.form['node_id']
                     tooltip = request.form['tooltip']
                     status = "OK"
-        return jsonify( { 'status' : status, 'id' : ret_id , 'tooltip' : tooltip } )
+        return jsonify({'status': status, 'id': ret_id, 'tooltip': tooltip})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/getview/", methods=['POST'])
 def getview():
@@ -89,12 +95,13 @@ def getview():
             if request.form['node_id']:
                 res = get_view_by_id(request.form['node_id'])
                 if res is not None:
-                    retView , tooltip  = res
+                    retView, tooltip = res
 
-        return jsonify( { 'view' : retView  , 'tooltip' :  tooltip } )
+        return jsonify({'view': retView, 'tooltip': tooltip})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/renderview/", methods=['POST'])
 def renderview():
@@ -110,18 +117,20 @@ def renderview():
         # redirect to home
         return redirect(url_for('home.home'))
 
+
 @mod.route("/move/", methods=['POST'])
 def move():
     if request.is_xhr:
         status = "NOK"
         if request.form['node_id']:
-            res = move_node(request.form['node_id'],request.form['parent_id'])
+            res = move_node(request.form['node_id'], request.form['parent_id'])
             if res is not None:
                 status = "OK"
-        return jsonify({ 'status' : status })
+        return jsonify({'status': status})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/copy/", methods=['POST'])
 def copy():
@@ -132,10 +141,11 @@ def copy():
             if res is not None:
                 status = "OK"
 
-        return jsonify({ 'status' : status })
+        return jsonify({'status': status})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/join/", methods=['POST'])
 def join():
@@ -146,10 +156,11 @@ def join():
             if res is not None:
                 status = "OK"
 
-        return jsonify({ 'status' : status , 'joined' : res })
+        return jsonify({'status': status, 'joined': res})
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
 
 @mod.route("/status/", methods=['POST'])
 def status():
@@ -157,12 +168,12 @@ def status():
         status = "NOK"
         src = ''
         if request.form['node_id']:
-            res = change_status(request.form['node_id'] , request.form['status'])
+            res = change_status(request.form['node_id'], request.form['status'])
             if res is not None:
                 status = "OK"
                 src = res
 
-        return jsonify({ 'status' : status , 'src' : src })
+        return jsonify({'status': status, 'src': src})
     else:
         # redirect to home
         return redirect(url_for('home.home'))

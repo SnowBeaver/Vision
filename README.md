@@ -34,7 +34,23 @@ Download and install from http://www.microsoft.com/en-us/download/confirmation.a
 
 MacOSX
 ======
-
+1. Install brew
+2. brew install
+   vagrant
+   python
+   pip
+   fabric
+   unipath
+3. $ sudo bash
+4. $ echo "192.168.88.88 dev.vision.local" >> /etc/hosts
+5. $ exit
+6. $ cd yourprojectsdir
+7. $ mkdir vision && cd vision
+8. $ git clone https://github.com/SnowBeaver/Vision.git project
+9. $ cd project
+10. $ vagrant up
+11. fab setup_dev
+12. Open browser and type in url: http://dev.vision.local
 
 
 Ubuntu Linux

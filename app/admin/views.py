@@ -1,26 +1,28 @@
 import os
 import os.path as op
-from flask import Flask
-from flask import Blueprint, request, render_template
+# from flask import Flask
+# from flask import Blueprint, request, render_template
 from flask.ext.admin.contrib import sqla
 from app import db
 from app.users.models import User, Role
 from flask import flash, g, session, redirect, url_for
 from flask.ext.admin.contrib.sqla import ModelView
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.admin.contrib.sqla import filters
+#from flask.ext.sqlalchemy import SQLAlchemy
+# from flask.ext.admin.contrib.sqla import filters
 from flask.ext.admin import helpers, expose
 from flask.ext import admin, login
 from wtforms import form, fields, validators
 from flask import current_app
 from werkzeug.security import check_password_hash
-from app import admin_per , user_per , guest_per , blogger_per
+from app import admin_per
+# from app import , user_per, guest_per, blogger_per
 from app.tree.storage import get_tree
 from app.tree.forms import TreeView
 from .models import File, Image
 from jinja2 import Markup
 from flask_admin import BaseView
 from flask import jsonify
+
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -42,9 +44,8 @@ class LoginForm(form.Form):
 from .forms import IdentificationViewForm , TestRepairViewForm , RecordsDiagnosticViewForm , EquipmentDiagnosisViewForm , NewTestDescription , NewTestElectrical, NewTestFluid, NewTestProfile
 
 class MyAdminIndexView(admin.AdminIndexView):
-
     @expose('/')
-    @admin_per.require(http_exception = 403)
+    @admin_per.require(http_exception=403)
     def index(self):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
@@ -60,7 +61,7 @@ class MyAdminIndexView(admin.AdminIndexView):
 
         self._template_args['tree'] = get_tree()
         self._template_args['tree_view'] = TreeView()
-        #front page views
+        # front page views
         self._template_args['identification'] = IdentificationViewForm()
         self._template_args['test_repair'] = TestRepairViewForm()
         self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
@@ -89,19 +90,15 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['link'] = link
         return super(MyAdminIndexView, self).index()
 
-
-
     @expose('/logout/')
-    @admin_per.require(http_exception = 403)
+    @admin_per.require(http_exception=403)
     def logout_view(self):
         login.logout_user()
         return redirect(url_for('home.home'))
 
 
 class MyModelView(ModelView):
-
     def is_accessible(self):
-
         if not login.current_user.is_authenticated():
             return False
 
@@ -111,11 +108,8 @@ class MyModelView(ModelView):
 
 
 class RoleAdmin(MyModelView):
-
     def __init__(self, dbsession):
         super(RoleAdmin, self).__init__(Role, dbsession)
-
-
 
 
 class UserAdmin(MyModelView):
@@ -158,11 +152,12 @@ class UserAdmin(MyModelView):
 
 
 from sqlalchemy.event import listens_for
-from flask_admin.form import ImageUploadField,FileUploadField , thumbgen_filename
+from flask_admin.form import ImageUploadField, FileUploadField, thumbgen_filename
 
 PROJECT = 'vision'
-env_dir = '/home/%s/www'%PROJECT
+env_dir = '/home/%s/www' % PROJECT
 file_path = env_dir + '/app/static/img/uploads/'
+
 
 class FileView(sqla.ModelView):
     # Override form field to use Flask-Admin FileUploadField
@@ -179,13 +174,14 @@ class FileView(sqla.ModelView):
         }
     }
 
+
 class ImageView(sqla.ModelView):
     def _list_thumbnail(view, context, model, name):
         if not model.path:
             return ''
 
         prefix = 'img/uploads/'
-        return Markup('<img src="%s">' % url_for('static', filename = thumbgen_filename(prefix + model.path)))
+        return Markup('<img src="%s">' % url_for('static', filename=thumbgen_filename(prefix + model.path)))
 
     column_formatters = {
         'path': _list_thumbnail
@@ -194,8 +190,9 @@ class ImageView(sqla.ModelView):
     # Alternative way to contribute field is to override it completely.
     # In this case, Flask-Admin won't attempt to merge various parameters for the field.
     form_extra_fields = {
-        'path': ImageUploadField('Image', base_path = file_path, thumbnail_size = (100, 100, True))
+        'path': ImageUploadField('Image', base_path=file_path, thumbnail_size=(100, 100, True))
     }
+
 
 @listens_for(File, 'after_delete')
 def del_file(mapper, connection, target):
@@ -205,6 +202,7 @@ def del_file(mapper, connection, target):
         except OSError:
             # Don't care if was not deleted because it does not exist
             pass
+
 
 @listens_for(Image, 'after_delete')
 def del_image(mapper, connection, target):
@@ -222,10 +220,12 @@ def del_image(mapper, connection, target):
         except OSError:
             pass
 
+
 from .storage import *
 from .forms import MenuViewForm
 from app.pages.models import Pages
 from app.tree.storage import get_locale
+
 
 class MenuView(BaseView):
     # @expose.before_app_request
@@ -233,7 +233,7 @@ class MenuView(BaseView):
     #     set_locale()
 
     @expose('/')
-    @admin_per.require(http_exception = 403)
+    @admin_per.require(http_exception=403)
     def index(self):
         if not login.current_user.is_authenticated():
             return redirect(url_for('users.login'))
@@ -244,12 +244,13 @@ class MenuView(BaseView):
         # for page in Pages.query.order_by(Pages.updated_on.desc()).all():
         #     myChoices.append( (page.translations[page.get_locale()].title , page.translations[get_locale()].title) )
 
-        myChoices = [ ( 0 , '...') ] + [ ( page.id , page.translations[get_locale()].title) for page in Pages.query.order_by(Pages.updated_on.desc()).all() ]
+        myChoices = [(0, '...')] + [(page.id, page.translations[get_locale()].title) for page in
+                                    Pages.query.order_by(Pages.updated_on.desc()).all()]
         form.page_view.choices = myChoices
 
         self._template_args['menu'] = get_menu()
         self._template_args['menu_view'] = form
-        #print get_menu()
+        # print get_menu()
         return self.render('admin/menu.html')
 
     @expose('/create/', methods=['POST'])
@@ -258,12 +259,12 @@ class MenuView(BaseView):
             id = None
             if admin_per.require().can():
                 if request.form['parent']:
-                    id = create_node(parent = request.form['parent'] , text = request.form['text'] , type = request.form['type'] )
-            return jsonify({ 'id' : id })
+                    id = create_node(parent=request.form['parent'], text=request.form['text'],
+                                     type=request.form['type'])
+            return jsonify({'id': id})
         else:
             # redirect to home
             return redirect(url_for('.index'))
-
 
     @expose('/delete/', methods=['POST'])
     def delete(self):
@@ -271,9 +272,9 @@ class MenuView(BaseView):
             id = None
             if admin_per.require().can():
                 if request.form['id']:
-                    id = delete_node(id = request.form['id'])
+                    id = delete_node(id=request.form['id'])
 
-            return jsonify({ 'id' : id })
+            return jsonify({'id': id})
         else:
             # redirect to home
             return redirect(url_for('.index'))
@@ -284,23 +285,22 @@ class MenuView(BaseView):
             success = False
             if admin_per.require().can():
                 if request.form['id']:
-                    success = rename_node(id = request.form['id'] , text = request.form['text'])
+                    success = rename_node(id=request.form['id'], text=request.form['text'])
 
-            return jsonify({ 'success' : success })
+            return jsonify({'success': success})
         else:
             # redirect to home
             return redirect(url_for('.index'))
 
-
-    @expose('/move/' , methods=['POST'])
+    @expose('/move/', methods=['POST'])
     def move(self):
         if request.is_xhr:
             status = "NOK"
             if request.form['node_id']:
-                res = move_node(request.form['node_id'],request.form['parent_id'])
+                res = move_node(request.form['node_id'], request.form['parent_id'])
                 if res is not None:
                     status = "OK"
-            return jsonify({ 'status' : status })
+            return jsonify({'status': status})
         else:
             # redirect to home
             return redirect(url_for('.index'))
@@ -309,18 +309,17 @@ class MenuView(BaseView):
     def copy(self):
         pass
 
-
     @expose('/getview/', methods=['POST'])
     def getview(self):
         if request.is_xhr:
-            retView = 0
+            retview = 0
             if admin_per.require().can():
                 if request.form['node_id']:
                     res = get_view_by_id(request.form['node_id'])
                     if res is not None:
-                        retView  = res
+                        retview = res
 
-            return jsonify( { 'view' : retView } )
+            return jsonify({'view': retview})
         else:
             # redirect to home
             return redirect(url_for('.index'))
@@ -333,11 +332,12 @@ class MenuView(BaseView):
             if admin_per.require().can():
                 form = MenuViewForm(request.form)
 
-                myChoices = [ ( '0' , '...') ] + [ ( str(page.id) , page.translations[get_locale()].title) for page in Pages.query.order_by(Pages.updated_on.desc()).all() ]
+                myChoices = [('0', '...')] + [(str(page.id), page.translations[get_locale()].title) for page in
+                                              Pages.query.order_by(Pages.updated_on.desc()).all()]
                 form.page_view.choices = myChoices
 
                 if form.validate():
-                    res = update_node(request.form['node_id'], request.form['page_view'] )
+                    res = update_node(request.form['node_id'], request.form['page_view'])
                     if res is not None:
                         ret_id = request.form['node_id']
                         status = "OK"
@@ -345,15 +345,11 @@ class MenuView(BaseView):
                     data = []
                     for field, errors in form.errors.items():
                         for error in errors:
-                            data.append( (getattr(form, field).label.text , error) )
+                            data.append((getattr(form, field).label.text, error))
 
                     status = data
-            return jsonify( { 'status' : status, 'id' : ret_id } )
+            return jsonify({'status': status, 'id': ret_id})
 
         else:
             # redirect to home
             return redirect(url_for('.index'))
-
-
-
-
