@@ -106,6 +106,7 @@ class NewTestFluid(Form):
     # jar
     dielec = BooleanField( 'Dielec.D1816(1mm)(kV)' , validators=[ Optional() ])
     acidity = BooleanField( 'Acidity(D974)' , validators=[ Optional() ])
+    density = BooleanField( 'Density(D1298)' , validators=[ Optional() ])
     pcb_jar = BooleanField( 'PCB' , validators=[ Optional() ])
     inhibitor_jar = BooleanField( 'Inhibitor' , validators=[ Optional() ])
     point = BooleanField( 'Pour point' , validators=[ Optional() ])
@@ -140,6 +141,3 @@ class NewTestProfile(Form):
     enable_fl = BooleanField( 'Enable the selection of test according to profile' , validators=[ Optional() ])
     profile_fl = SelectField('Profile selection' , choices = profile_choice , validators = [Required()] )
     description_fl = TextField('Description' , validators=[ Required() ] )
-    diagnosis = TextAreaField('Equipment diagnosis', validators=[Required()])
-    indicator = TextField('Condition indicator', validators=[Required()])
-    condition = BooleanField('Equipment in questionable condition or out of service', validators=[Optional()])

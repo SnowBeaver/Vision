@@ -19,7 +19,12 @@
                                 </button>
                             </a>
                         </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/delete.png') }}" alt="delete" /> </li>
+                        <li>
+                            <button class="btn btn-default nopadding" id="delete_btn">
+                                <img src="{{ url_for('static', filename='img/toolbar/delete.png') }}" alt="delete" />
+                            </button>
+
+                        </li>
                         <li> <img src="{{ url_for('static', filename='img/toolbar/graphics.png') }}" alt="graphics" /> </li>
                         <li> <img src="{{ url_for('static', filename='img/toolbar/info.png') }}" alt="info" /> </li>
                         <li> <img src="{{ url_for('static', filename='img/toolbar/batch.png') }}" alt="batch" /> </li>

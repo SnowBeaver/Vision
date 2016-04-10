@@ -137,7 +137,7 @@
 
 {% block tail %}
     <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
     <script type="text/javascript">
         $(function () {
             $('.datetimepicker').datetimepicker();
@@ -196,9 +196,13 @@
                     // in case of 'rename_node' node_position is filled with the new node name
                     var res = true;
                     if(operation === 'delete_node'){
-                        if(confirm("Are you sure you want to delete the element?")){
+                        if(node.hasOwnProperty('immediate') == true){
+                            <!-- delete node immediately  -->
                         } else {
-                            res = false;
+                            if(confirm("Are you sure you want to delete the element?")){}
+                            else {
+                                res = false;
+                            }
                         }
                     }
                     return res;
@@ -869,6 +873,18 @@
               var v = $('#plugins4_q').val();
               $('#tree').jstree(true).search(v);
             }, 250);
+        });
+
+        $( document ).ready(function(){
+            $('#delete_btn').click(function(){
+                var current = $('#tree').jstree(true).get_selected('full',true)[0];
+                if(current != 'undefined'){
+                    if(confirm("Are you sure you want to delete " + current.text + " ?")){
+                        current.immediate = true;
+                        $('#tree').jstree(true).delete_node(current);
+                    }
+                }
+            });
         });
 
     </script>

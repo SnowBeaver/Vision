@@ -181,10 +181,213 @@
                                         </div>
                                     </div>
                                 </fieldset>
+                                <fieldset class="scheduler-border">
+                                    <legend class="scheduler-border">Jar - Tests requested</legend>
+                                    <div class="control-group">
+                                        <div class="col-md-8 nopadding padding-right-xs">
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.dielec(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.dielec.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.dielec_2(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.dielec_2.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.fluid.dielec_d(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.dielec_d.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.acidity(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.acidity.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.color(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.color.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.fluid.ift(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.ift.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.density(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.density.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.pf(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.pf.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.fluid.pf_100(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.pf_100.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.pcb_jar(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.pcb_jar.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.particles(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.particles.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.fluid.furans_f(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.furans_f.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.inhibitor_jar(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.inhibitor_jar.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.metals(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.metals.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.fluid.water_w(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.water_w.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.point(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.point.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.viscosity(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.viscosity.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-4 nopadding">
+                                                    {{ popups.add.fluid.corr(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.fluid.corr.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 nopadding">
+                                            <div class="maxwidth">
+                                                {{ popups.add.fluid.dielec_i(class_="pull-left padding-right-xs") }}
+                                                {{ popups.add.fluid.dielec_i.label(class_="auto pull-left") }}
+                                            </div>
+                                            <div class="maxwidth">
+                                                {{ popups.add.fluid.visual(class_="pull-left padding-right-xs") }}
+                                                {{ popups.add.fluid.visual.label(class_="auto pull-left") }}
+                                            </div>
+                                            <div class="maxwidth">
+                                                <div class="col-md-2 nopadding padding-right-xs">
+                                                    {{ popups.add.fluid.qty_jar.label }}
+                                                    {{ popups.add.fluid.qty_jar() }}
+                                                </div>
+                                                <div class="col-md-10 nopadding">
+                                                    {{ popups.add.fluid.ampling_jar.label }}
+                                                    {{ popups.add.fluid.ampling_jar() }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <!-- TODO 4-ml -->
+                                <fieldset class="scheduler-border">
+                                    <legend class="scheduler-border">4-ml vial - Tests requested</legend>
+                                    <div class="control-group">
+                                        <div class="col-md-8 nopadding padding-right-xs">
+                                            <div class="maxwidth">
+                                                {{ popups.add.fluid.pcb_vial(class_="pull-left padding-right-xs") }}
+                                                {{ popups.add.fluid.pcb_vial.label(class_="auto pull-left") }}
+                                            </div>
+                                            <div class="maxwidth">
+                                                {{ popups.add.fluid.antioxydant(class_="pull-left padding-right-xs") }}
+                                                {{ popups.add.fluid.antioxydant.label(class_="auto pull-left") }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 nopadding">
+                                            <div class="col-md-2 nopadding padding-right-xs">
+                                                {{ popups.add.fluid.qty_vial.label }}
+                                                {{ popups.add.fluid.qty_vial() }}
+                                            </div>
+                                            <div class="col-md-10 nopadding">
+                                                {{ popups.add.fluid.ampling_vial.label }}
+                                                {{ popups.add.fluid.ampling_vial() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </form>
                         </div>
                         <div id="new-tabs-4" role="tabpanel" class="tab-pane">
+                            <form class="" method="post" action="#" >
+                                <div class="col-md-6 nopadding padding-right-xs">
+                                    <div class="maxwidth">
+                                        {{ popups.add.profile.enable_elc(class_="pull-left padding-right-xs") }}
+                                        {{ popups.add.profile.enable_elc.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border">Electrical</legend>
+                                            <div class="control-group">
+                                                <div class="maxwidth">
+                                                    {{ popups.add.profile.profile_elc.label(class_="") }}
+                                                    {{ popups.add.profile.profile_elc(class_="form-control") }}
+                                                </div>
+                                                <div class="maxwidth">
+                                                    {{ popups.add.profile.description_elc.label(class_="") }}
+                                                    {{ popups.add.profile.description_elc(class_="form-control") }}
+                                                </div>
+                                                <div class="maxwidth padding-top-xs">
+                                                    <div class="maxwidth text-center">
+                                                        <button class="btn btn-default margin-right-xs"> Modify </button>
+                                                        <button class="btn btn-default margin-right-xs"> Create </button>
+                                                        <button class="btn btn-default "> Delete </button>
+                                                    </div>
+                                                    <div class="maxwidth text-center padding-top-xs">
+                                                        <button class="btn btn-default margin-right-xs"> Cancel </button>
+                                                        <button class="btn btn-default margin-right-xs"> Save </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 nopadding">
+                                    <div class="maxwidth">
+                                        {{ popups.add.profile.enable_fl(class_="pull-left padding-right-xs") }}
+                                        {{ popups.add.profile.enable_fl.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border">Fluid</legend>
+                                            <div class="control-group">
+                                                <div class="maxwidth">
+                                                    {{ popups.add.profile.profile_fl.label(class_="") }}
+                                                    {{ popups.add.profile.profile_fl(class_="form-control") }}
 
+                                                </div>
+                                                <div class="maxwidth">
+                                                    {{ popups.add.profile.description_fl.label(class_="") }}
+                                                    {{ popups.add.profile.description_fl(class_="form-control") }}
+                                                </div>
+                                                <div class="maxwidth padding-top-xs">
+                                                    <div class="maxwidth text-center">
+                                                        <button class="btn btn-default margin-right-xs"> Modify </button>
+                                                        <button class="btn btn-default margin-right-xs"> Create </button>
+                                                        <button class="btn btn-default"> Delete </button>
+                                                    </div>
+                                                    <div class="maxwidth text-center padding-top-xs">
+                                                        <button class="btn btn-default margin-right-xs"> Cancel </button>
+                                                        <button class="btn btn-default margin-right-xs"> Save </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </p>
