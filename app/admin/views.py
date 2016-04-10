@@ -41,7 +41,8 @@ class LoginForm(form.Form):
     def get_user(self):
         return db.session.query(User).filter_by(email=self.email.data).first()
 
-from .forms import IdentificationViewForm , TestRepairViewForm , RecordsDiagnosticViewForm , EquipmentDiagnosisViewForm , NewTestDescription , NewTestElectrical, NewTestFluid, NewTestProfile
+from .forms import IdentificationViewForm , TestRepairViewForm , RecordsDiagnosticViewForm , EquipmentDiagnosisViewForm , NewTestDescription , NewTestElectrical, NewTestFluid, \
+    NewTestProfile , BatchViewForm , EquipmentTestReportViewForm
 
 class MyAdminIndexView(admin.AdminIndexView):
     @expose('/')
@@ -67,6 +68,8 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
         self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
         self._template_args['popups'] = popups
+        self._template_args['batch'] = BatchViewForm()
+        self._template_args['report'] = EquipmentTestReportViewForm()
 
         return super(MyAdminIndexView, self).index()
 

@@ -79,6 +79,10 @@
             height: 150px;
         }
 
+        .vertical_textarea{
+            resize: vertical;
+        }
+
         .auto{
             width: auto !important;
         }
@@ -878,11 +882,28 @@
         $( document ).ready(function(){
             $('#delete_btn').click(function(){
                 var current = $('#tree').jstree(true).get_selected('full',true)[0];
-                if(current != 'undefined'){
+                if(current != undefined){
                     if(confirm("Are you sure you want to delete " + current.text + " ?")){
                         current.immediate = true;
                         $('#tree').jstree(true).delete_node(current);
                     }
+                }
+            });
+
+            $('#graphics_btn').click(function(){
+                var current = $('#tree').jstree(true).get_selected('full',true)[0];
+                if(current != undefined){
+                    $('#test_map_name').html(current.text);
+                }
+            });
+
+            $('#info_btn').click(function(){
+                var current = $('#tree').jstree(true).get_selected('full',true)[0];
+                if(current != undefined){
+                    var data = '<p class="text-center">North Huron\\' + current.text + '\\' + 'TODO' +  ', Oil' + '<br>';
+                    data +='Transformer Sealed, Pri. voltage (V):' + 'TODO' + ', BIL (kV): : ' + 'TODO' + '</p>';
+                    data +='<p class="text-center"> TODO </p>'
+                    $('#infoForm .modal-body').html(data);
                 }
             });
         });

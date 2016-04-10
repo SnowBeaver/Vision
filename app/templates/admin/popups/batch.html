@@ -1,0 +1,147 @@
+<div class="modal fade" id="batchForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Automatic diagnosis , Batch processing.</h4>
+            </div>
+            <div class="modal-body">
+                <form class="" method="post" action="#" >
+                    <div class="maxwidth">
+                        <fieldset class="scheduler-border">
+                            <legend class="scheduler-border">Equipment selection</legend>
+                            <div class="control-group">
+                                <img src="{{ url_for('static', filename='img/earth.png') }}" class="pull-left padding-right-xs" alt="earth" style="padding-top: 10px;" />
+                                {{ batch.equipment_sel(class_="pull-left list-unstyled nopadding") }}
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="maxwidth">
+                        <fieldset class="scheduler-border">
+                            <legend class="scheduler-border">Data selection</legend>
+                            <div class="control-group">
+                                <div class="maxwidth">
+                                     {{ batch.months(class_="pull-left col-md-2 margin-right-xs", ) }}
+                                     {{ batch.months.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="maxwidth">
+                                    <div class="col-md-6 nopadding padding-right-xs">
+                                        <div class="maxwidth">
+                                            {{ batch.gasses(class_="pull-left padding-right-xs") }}
+                                            {{ batch.gasses.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.oil(class_="pull-left padding-right-xs") }}
+                                            {{ batch.oil.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.water(class_="pull-left padding-right-xs") }}
+                                            {{ batch.water.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.oxidation(class_="pull-left padding-right-xs") }}
+                                            {{ batch.oxidation.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.furans(class_="pull-left padding-right-xs") }}
+                                            {{ batch.furans.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.electrical(class_="pull-left padding-right-xs") }}
+                                            {{ batch.electrical.label(class_="auto pull-left") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 nopadding">
+                                        <div class="maxwidth">
+                                            {{ batch.acquisition(class_="pull-left padding-right-xs") }}
+                                            {{ batch.acquisition.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.lab(class_="pull-left padding-right-xs") }}
+                                            {{ batch.lab.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.diagnosis(class_="pull-left padding-right-xs") }}
+                                            {{ batch.diagnosis.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.recommendation(class_="pull-left padding-right-xs") }}
+                                            {{ batch.recommendation.label(class_="auto pull-left") }}
+                                        </div>
+                                        <div class="maxwidth">
+                                            {{ batch.completed(class_="pull-left padding-right-xs") }}
+                                            {{ batch.completed.label(class_="auto pull-left") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="maxwidth">
+                        <div class="col-md-6 nopadding padding-right-xs">
+                            <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Selection of cases for the report</legend>
+                                <div class="control-group">
+                                    <div class="maxwidth">
+                                        {{ batch.rush(class_="pull-left padding-right-xs") }}
+                                        {{ batch.rush.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ batch.follow(class_="pull-left padding-right-xs") }}
+                                        {{ batch.follow.label(class_="auto pull-left") }}
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-6 nopadding">
+                            <fieldset class="scheduler-border">
+                                <legend class="scheduler-border">Validation of selections</legend>
+                                <div class="control-group">
+                                    <span class="col-md-4 padding-right-xs padding-top-sm">
+                                        <button class="btn btn-default"> Apply </button>
+                                    </span>
+                                    <span class="col-md-4 text-center padding-right-xs">
+                                        <p> Equipment records </p>
+                                        <p> 0 </p>
+                                    </span>
+                                    <span class="col-md-4 text-center">
+                                        <p> Test records </p>
+                                        <p> 0 </p>
+                                    </span>
+                                </div>
+                            </fieldset>
+                         </div>
+                    </div>
+                    <div class="maxwidth">
+                        <fieldset class="scheduler-border">
+                            <legend class="scheduler-border">Recording of results</legend>
+                            <div class="control-group">
+                                <div class="maxwidth">
+                                    {{ batch.abnormal(class_="pull-left padding-right-xs") }}
+                                    {{ batch.abnormal.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="maxwidth">
+                                    {{ batch.normal(class_="pull-left padding-right-xs") }}
+                                    {{ batch.normal.label(class_="auto pull-left") }}
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-3 nopadding padding-right-xs text-center">
+                    <p>
+                        <button class="btn btn-default"> Print </button>
+                        <button class="btn btn-default"> Exit </button>
+                    </p>
+                    <p>
+                        <button class="btn btn-default"> Start </button>
+                        <button class="btn btn-default"> Re-do </button>
+                    </p>
+                </div>
+            </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
