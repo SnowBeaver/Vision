@@ -1,0 +1,194 @@
+<div class="modal fade" id="reportForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Print Report </h4>
+            </div>
+            <div class="modal-body">
+                <div class="maxwidth">
+                    <fieldset class="scheduler-border">
+                        <legend class="scheduler-border"> Equipment </legend>
+                        <div class="control-group">
+                            <div class="maxwidth">
+                                {{ report.site.label(class_="") }}
+                                {{ report.site(class_="") }}
+                            </div>
+                            <div class="maxwidth">
+                                <div class="col-md-6 nopadding padding-right-xs">
+                                    {{ report.generate(class_="pull-left padding-right-xs") }}
+                                    {{ report.generate.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="col-md-6 nopadding padding-right-xs">
+                                    <div class="col-md-10 nopadding padding-right-xs">
+                                        {{ report.contact(class_="maxwidth") }}
+                                    </div>
+                                    <div class="col-md-2 nopadding padding-right-xs center-text">
+                                        <button class="btn btn-default margin-right-xs"> Gen. </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="maxwidth">
+                                <div class="col-md-6 nopadding padding-right-xs">
+                                    {{ report.contract_list.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="col-md-6 nopadding">
+                                    {{ report.contract_list(class_="pull-left maxwidth") }}
+                                </div>
+                            </div>
+                            <div class="maxwidth">
+                                <div class="col-md-6 nopadding padding-right-xs">
+                                    <button class="btn btn-default margin-right-xs pull-right"> Move Up </button>
+                                    <button class="btn btn-default margin-right-xs pull-right"> Move Down </button>
+                                </div>
+                                <div class="col-md-6 nopadding">
+                                    {{ report.above(class_="pull-left maxwidth vertical_textarea") }}
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="maxwidth">
+                    <fieldset class="scheduler-border">
+                        <legend class="scheduler-border"> Reports </legend>
+                        <div class="control-group">
+                            <div class="col-md-4 nopadding padding-right-xs">
+                                <div class="maxwidth">
+                                    {{ report.bushing(class_="pull-left padding-right-xs") }}
+                                    {{ report.bushing.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="maxwidth">
+                                    <span class="">
+                                        {{ report.cap(class_="pull-left padding-right-xs") }}
+                                        {{ report.cap.label(class_="auto pull-left") }}
+                                    </span>
+                                    <span>
+                                        {{ report.double(class_="pull-left padding-right-xs") }}
+                                        {{ report.double.label(class_="auto pull-left") }}
+                                    </span>
+                                </div>
+                                <div class="maxwidth">
+                                    {{ report.resistance(class_="pull-left padding-right-xs") }}
+                                    {{ report.resistance.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="maxwdith">
+                                    {{ report.inspection(class_="pull-left padding-right-xs") }}
+                                    {{ report.inspection.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="maxwidth">
+                                    {{ report.winding(class_="pull-left padding-right-xs") }}
+                                    {{ report.winding.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="maxwidth">
+                                    {{ report.ratio(class_="pull-left padding-right-xs") }}
+                                    {{ report.ratio.label(class_="auto pull-left") }}
+                                </div>
+                                <div class="maxwidth">
+                                    {{ report.sampling(class_="pull-left padding-right-xs") }}
+                                    {{ report.sampling.label(class_="auto pull-left") }}
+                                </div>
+                                <div>
+                                    {{ report.evaluation(class_="pull-left padding-right-xs") }}
+                                    {{ report.evaluation.label(class_="auto pull-left") }}
+                                </div>
+                            </div>
+                            <div class="col-md-8 nopadding padding-right-xs">
+                                <div class="col-md-4 nopadding padding-right-xs">
+                                    <div class="maxwidth">
+                                        {{ report.color(class_="pull-left padding-right-xs") }}
+                                        {{ report.color.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.dissolved(class_="pull-left padding-right-xs") }}
+                                        {{ report.dissolved.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.fluid(class_="pull-left padding-right-xs") }}
+                                        {{ report.fluid.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.water(class_="pull-left padding-right-xs") }}
+                                        {{ report.water.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.inhibitor(class_="pull-left padding-right-xs") }}
+                                        {{ report.inhibitor.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.furans(class_="pull-left padding-right-xs") }}
+                                        {{ report.furans.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.metals(class_="pull-left padding-right-xs") }}
+                                        {{ report.metals.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.pcb(class_="pull-left padding-right-xs") }}
+                                        {{ report.pcb.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.particles(class_="pull-left padding-right-xs") }}
+                                        {{ report.particles.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="maxwidth">
+                                        {{ report.degree(class_="pull-left padding-right-xs") }}
+                                        {{ report.degree.label(class_="auto pull-left") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-2 nopadding padding-right-xs text-center">
+                                    <div> Log </div>
+                                    <div> {{ report.log_1(class_="") }} </div>
+                                    <div> {{ report.log_2(class_="") }} </div>
+                                    <div> {{ report.log_3(class_="") }} </div>
+                                    <div> {{ report.log_4(class_="") }} </div>
+                                    <div> {{ report.log_5(class_="") }} </div>
+                                    <div> {{ report.log_6(class_="") }} </div>
+                                    <div> {{ report.log_7(class_="") }} </div>
+                                </div>
+                                <div class="col-md-2 nopadding padding-right-xs text-center">
+                                    <div> Percent </div>
+                                    <div> {{ report.percent_1(class_="") }} </div>
+                                    <div> {{ report.percent_2(class_="") }} </div>
+                                    <div> {{ report.percent_3(class_="") }} </div>
+                                    <div> {{ report.percent_4(class_="") }} </div>
+                                    <div> {{ report.percent_5(class_="") }} </div>
+                                    <div> {{ report.percent_6(class_="") }} </div>
+                                    <div> {{ report.percent_7(class_="") }} </div>
+                                </div>
+                                <div class="col-md-2 nopadding padding-right-xs text-center">
+                                    <div> Alignment </div>
+                                    <div> {{ report.alignment_1(class_="") }} </div>
+                                    <div> {{ report.alignment_2(class_="") }} </div>
+                                    <div> {{ report.alignment_3(class_="") }} </div>
+                                    <div> {{ report.alignment_4(class_="") }} </div>
+                                    <div> {{ report.alignment_5(class_="") }} </div>
+                                    <div> {{ report.alignment_6(class_="") }} </div>
+                                    <div> {{ report.alignment_7(class_="") }} </div>
+                                </div>
+                                <div class="col-md-2 nopadding padding-right-xs text-center">
+                                    <div> Borders </div>
+                                    <div> {{ report.border_1(class_="") }} </div>
+                                    <div> {{ report.border_2(class_="") }} </div>
+                                    <div> {{ report.border_3(class_="") }} </div>
+                                    <div> {{ report.border_4(class_="") }} </div>
+                                    <div> {{ report.border_5(class_="") }} </div>
+                                    <div> {{ report.border_6(class_="") }} </div>
+                                    <div> {{ report.border_7(class_="") }} </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer text-center">
+                <div class="col-md-6 nopadding padding-right-xs">
+                    <button class="btn btn-default pull-left"> Print Report </button>
+                </div>
+                <div class="col-md-6 nopadding padding-right-xs">
+                    <button type="button" class="btn btn-default margin-right-xs" data-dismiss="modal">Exit</button>
+                </div>
+            </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

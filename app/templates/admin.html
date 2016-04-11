@@ -79,6 +79,10 @@
             height: 150px;
         }
 
+        .vertical_textarea{
+            resize: vertical;
+        }
+
         .auto{
             width: auto !important;
         }
@@ -137,7 +141,7 @@
 
 {% block tail %}
     <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
     <script type="text/javascript">
         $(function () {
             $('.datetimepicker').datetimepicker();
@@ -196,9 +200,13 @@
                     // in case of 'rename_node' node_position is filled with the new node name
                     var res = true;
                     if(operation === 'delete_node'){
-                        if(confirm("Are you sure you want to delete the element?")){
+                        if(node.hasOwnProperty('immediate') == true){
+                            <!-- delete node immediately  -->
                         } else {
-                            res = false;
+                            if(confirm("Are you sure you want to delete the element?")){}
+                            else {
+                                res = false;
+                            }
                         }
                     }
                     return res;
@@ -869,6 +877,35 @@
               var v = $('#plugins4_q').val();
               $('#tree').jstree(true).search(v);
             }, 250);
+        });
+
+        $( document ).ready(function(){
+            $('#delete_btn').click(function(){
+                var current = $('#tree').jstree(true).get_selected('full',true)[0];
+                if(current != undefined){
+                    if(confirm("Are you sure you want to delete " + current.text + " ?")){
+                        current.immediate = true;
+                        $('#tree').jstree(true).delete_node(current);
+                    }
+                }
+            });
+
+            $('#graphics_btn').click(function(){
+                var current = $('#tree').jstree(true).get_selected('full',true)[0];
+                if(current != undefined){
+                    $('#test_map_name').html(current.text);
+                }
+            });
+
+            $('#info_btn').click(function(){
+                var current = $('#tree').jstree(true).get_selected('full',true)[0];
+                if(current != undefined){
+                    var data = '<p class="text-center">North Huron\\' + current.text + '\\' + 'TODO' +  ', Oil' + '<br>';
+                    data +='Transformer Sealed, Pri. voltage (V):' + 'TODO' + ', BIL (kV): : ' + 'TODO' + '</p>';
+                    data +='<p class="text-center"> TODO </p>'
+                    $('#infoForm .modal-body').html(data);
+                }
+            });
         });
 
     </script>

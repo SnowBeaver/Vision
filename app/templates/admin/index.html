@@ -19,11 +19,39 @@
                                 </button>
                             </a>
                         </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/delete.png') }}" alt="delete" /> </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/graphics.png') }}" alt="graphics" /> </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/info.png') }}" alt="info" /> </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/batch.png') }}" alt="batch" /> </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/report.png') }}" alt="report" /> </li>
+                        <li>
+                            <button class="btn btn-default nopadding" id="delete_btn">
+                                <img src="{{ url_for('static', filename='img/toolbar/delete.png') }}" alt="delete" />
+                            </button>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#graphicsForm" class="nopadding">
+                                <button class="btn btn-default nopadding" id="graphics_btn">
+                                    <img src="{{ url_for('static', filename='img/toolbar/graphics.png') }}" alt="graphics" />
+                                </button>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#infoForm" class="nopadding">
+                                <button class="btn btn-default nopadding" id="info_btn">
+                                    <img src="{{ url_for('static', filename='img/toolbar/info.png') }}" alt="info" />
+                                </button>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#batchForm" class="nopadding">
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/batch.png') }}" alt="batch" />
+                                </button>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#reportForm" class="nopadding">
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/report.png') }}" alt="report" />
+                                </button>
+                            </a>
+                        </li>
                         <li> <img src="{{ url_for('static', filename='img/toolbar/information.png') }}" alt="information" /> </li>
                         <li> <img src="{{ url_for('static', filename='img/toolbar/maintain.png') }}" alt="maintain" /> </li>
                         <li> <img src="{{ url_for('static', filename='img/toolbar/schedule.png') }}" alt="schedule" /> </li>
