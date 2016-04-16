@@ -906,6 +906,16 @@
                     $('#infoForm .modal-body').html(data);
                 }
             });
+
+            $("#manage_show").click(function(e){
+                $("#manage_add_form").removeClass('hidden');
+                e.preventDefault();
+            });
+
+            $("#manage_cancel").click(function(e){
+                $("#manage_add_form").addClass('hidden');
+                e.preventDefault();
+            });
         });
 
     </script>

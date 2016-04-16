@@ -42,7 +42,7 @@ class LoginForm(form.Form):
         return db.session.query(User).filter_by(email=self.email.data).first()
 
 from .forms import IdentificationViewForm , TestRepairViewForm , RecordsDiagnosticViewForm , EquipmentDiagnosisViewForm , NewTestDescription , NewTestElectrical, NewTestFluid, \
-    NewTestProfile , BatchViewForm , EquipmentTestReportViewForm
+    NewTestProfile , BatchViewForm , EquipmentTestReportViewForm, ManageCustomersViewForm
 
 class MyAdminIndexView(admin.AdminIndexView):
     @expose('/')
@@ -70,6 +70,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['popups'] = popups
         self._template_args['batch'] = BatchViewForm()
         self._template_args['report'] = EquipmentTestReportViewForm()
+        self._template_args['costumer'] = ManageCustomersViewForm()
 
         return super(MyAdminIndexView, self).index()
 

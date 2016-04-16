@@ -1,0 +1,118 @@
+<div class="modal fade" id="maintainForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Manage Customers</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12 nopadding">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cust. No.</th>
+                                    <th>Customer</th>
+                                    <th>Contact</th>
+                                    <th>Tel.</th>
+                                    <th>Fax</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12 nopadding hidden" id="manage_add_form">
+                    <form action="#" method="post">
+                        <div class="col-md-6 nopadding padding-right-xs">
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.cust_no.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.cust_no(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.customer.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.customer(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.contact.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.contact(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.street.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.street(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.city.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.city(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.state.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.state(class_="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 nopadding">
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                <div class="col-md-6 nopadding padding-right-xs">
+                                    {{ costumer.tel.label(class_="col-sm-3") }}
+                                    <div class="col-sm-9">
+                                        {{ costumer.tel(class_="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 nopadding">
+                                    {{ costumer.ext.label(class_="col-sm-3") }}
+                                    <div class="col-sm-9">
+                                        {{ costumer.ext(class_="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.fax.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.fax(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                {{ costumer.email.label(class_="col-sm-3") }}
+                                <div class="col-sm-9">
+                                    {{ costumer.email(class_="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-12 nopadding padding-top-xs">
+                                <div class="col-md-6 nopadding padding-right-xs">
+                                    {{ costumer.zip.label(class_="col-sm-3") }}
+                                    <div class="col-sm-9">
+                                        {{ costumer.zip(class_="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6 nopadding">
+                                    <div class="col-md-12 nopadding text-center"> <button class="btn btn-default"> Add </button> </div>
+                                    <div class="col-md-12 nopadding text-center padding-top-xs"> <button class="btn btn-default" id="manage_cancel"> Cancel </button> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default pull-left" id="manage_show"> Add </button>
+                <button class="btn btn-default pull-left"> Delete </button>
+                <button class="btn btn-default pull-left"> Modify </button>
+                <button class="btn btn-default pull-left" class="close" data-dismiss="modal"> Close </button>
+            </div>
+        </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

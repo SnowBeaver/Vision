@@ -237,3 +237,23 @@ class EquipmentTestReportViewForm(Form):
     preview = BooleanField('Preview' , validators=[ Optional() ])
     numbering = TextField('Start of page numbering' , validators=[Required()])
     rtf = BooleanField('RTF' , validators=[ Optional() ])
+
+class ManageCustomersViewForm(Form):
+    cust_no = TextField('Cust. No.' , validators=[ Required() ])
+    customer = TextField('Customer' , validators=[ Optional() ])
+    contact = TextField('Contact' , validators=[ Optional() ])
+    street = TextField('Street' , validators=[ Optional() ])
+    city = TextField('City' , validators=[ Optional() ])
+    state = TextField('Prov./State' , validators=[ Optional() ])
+    tel = TextField('Tel.' , validators=[ Optional() ])
+    ext = TextField('Ext.' , validators=[ Optional() ])
+    fax = TextField('Fax' , validators=[ Optional() ])
+    email = TextField('E-mail' , validators=[ Optional() ])
+    zip = TextField('E-mail' , validators=[ Optional() ])
+
+
+
+
+
+
+
