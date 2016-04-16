@@ -213,9 +213,9 @@ def update_flaskbb():
                 run(env.bbpip + ' install uwsgi')
                 run(env.bbpip + ' install -r requirements.txt')
 
-def update_remote():
+def update_remote(branch='master'):
     with cd(env.directory):
-        run('git pull origin master')
+        run('git pull origin %s' % branch)
         with source_virtualenv():
             run(env.pip + ' install -r requirements.txt')
             run('find . -name "*.pyc" -exec rm -rf {} \;')

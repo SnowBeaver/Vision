@@ -27,8 +27,8 @@ class Image(db.Model):
     def serialize(self):
         return {
             'id': self.id
-            , 'name': self.name
-            , 'path': self.path
+            ,'name': self.name
+            ,'path': self.path
         }
 
 
@@ -39,8 +39,8 @@ make_translatable(options={'locales': ['en', 'fr', 'es']})
 class MenuItemsNode(Translatable, Base):
     __tablename__ = 'menu_items'
     __translatable__ = {
-        'locales': ['en', 'fr', 'es']
-        , 'dynamic_source_locale': True
+        'locales': ['en', 'fr', 'es'],
+        'dynamic_source_locale': True
     }
 
     locale = 'en'  # this defines the default locale
@@ -73,8 +73,8 @@ class MenuItemsNode(Translatable, Base):
     def get_locale(self):
         return self.locale
 
-    def __init__(self, text='', parent=None, opened=True, disabled=False
-                 , selected=False, type='parent', tag='', slug=''):
+    def __init__(self, text='', parent=None, opened=True, disabled=False,
+                 selected=False, type='parent', tag='', slug=''):
         self.text = text
         self.parent = parent
         # icon="glyphicon glyphicon-folder"
