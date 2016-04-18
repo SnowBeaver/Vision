@@ -41,8 +41,7 @@ class LoginForm(form.Form):
     def get_user(self):
         return db.session.query(User).filter_by(email=self.email.data).first()
 
-from .forms import IdentificationViewForm , TestRepairViewForm , RecordsDiagnosticViewForm , EquipmentDiagnosisViewForm , NewTestDescription , NewTestElectrical, NewTestFluid, \
-    NewTestProfile , BatchViewForm , EquipmentTestReportViewForm, ManageCustomersViewForm
+from .forms import *
 
 class MyAdminIndexView(admin.AdminIndexView):
     @expose('/')
@@ -52,12 +51,23 @@ class MyAdminIndexView(admin.AdminIndexView):
             return redirect(url_for('.login_view'))
 
         popups = {
-             'add' : {
-                  'description' : NewTestDescription()
-                 ,'electrical' : NewTestElectrical()
-                 ,'fluid' : NewTestFluid()
-                 ,'profile' : NewTestProfile()
-             },
+            'add' : {
+                 'description' : NewTestDescription()
+                ,'electrical' : NewTestElectrical()
+                ,'fluid' : NewTestFluid()
+                ,'profile' : NewTestProfile()
+            },
+        }
+
+        info = {
+             'identification' : IdentificationInfoViewForm()
+            ,'validation' : ValidationInfoViewForm()
+            ,'nameplate' : NameplateInfoViewForm()
+            ,'bushing' : BushingInfoViewForm()
+            ,'taps' : TapsInfoViewForm()
+            ,'norms' : NormsInfoViewForm()
+            ,'loading' : LoadInfoViewForm()
+            ,'doc' : DocInfoViewForm()
         }
 
         self._template_args['tree'] = get_tree()
@@ -71,6 +81,9 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['batch'] = BatchViewForm()
         self._template_args['report'] = EquipmentTestReportViewForm()
         self._template_args['costumer'] = ManageCustomersViewForm()
+        self._template_args['search'] = SearchViewForm()
+        self._template_args['data'] = DataViewForm()
+        self._template_args['info'] = info
 
         return super(MyAdminIndexView, self).index()
 

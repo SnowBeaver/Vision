@@ -1,0 +1,367 @@
+<div class="modal fade" id="informationForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Equipment manager </h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12 nopadding">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Add</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Delete</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Modify</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Duplicate</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+                <div class="col-md-12 nopadding padding-top-xs">
+                    <ul id="tabs" class="nav nav-tabs " data-tabs="tabs">
+                        <li class="active"> <a href="#info-tabs-1" data-toggle="tab"> Identification </a> </li>
+                        <li> <a href="#info-tabs-2" data-toggle="tab"> Notes and Validation </a> </li>
+                        <li> <a href="#info-tabs-3" data-toggle="tab"> Nameplate Information </a> </li>
+                        <li> <a href="#info-tabs-4" data-toggle="tab"> Bushing. Serial No. </a> </li>
+                        <li> <a href="#info-tabs-5" data-toggle="tab"> Taps voltage </a> </li>
+                        <li> <a href="#info-tabs-6" data-toggle="tab"> Norms </a> </li>
+                        <li> <a href="#info-tabs-7" data-toggle="tab"> Load </a> </li>
+                        <li> <a href="#info-tabs-8" data-toggle="tab"> Doc </a> </li>
+                    </ul>
+                    <div id="my-tab-content" class="tab-content maxwidth padding-top-xs">
+                        <div id="info-tabs-1" role="tabpanel" class="tab-pane active ">
+                            <form action="#" method="post">
+                                <div class="col-md-12 nopadding">
+                                    <div class="col-md-5 nopadding padding-right-xs text-center"> Upstream equipment </div>
+                                    <div class="col-md-7 nopadding">
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border"> Designation </legend>
+                                            <div class="control-group">
+                                                <div class="col-md-6 nopadding padding-right-xs">
+                                                    {{ info.identification.equipment.label() }}
+                                                    {{ info.identification.equipment(class_="form-control") }}
+                                                </div>
+                                                <div class="col-md-6 nopadding">
+                                                    {{ info.identification.serial.label() }}
+                                                    {{ info.identification.serial(class_="form-control") }}
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-8 nopadding padding-right-xs">
+                                        <div class="col-md-8 nopadding padding-right-xs">
+                                            {{ info.identification.type.label() }}
+                                            {{ info.identification.type(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-4 nopadding">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding">
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border"> Information for printed reports </legend>
+                                            <div class="control-group">
+                                                <div class="col-md-6 nopadding padding-right-xs">
+                                                    {{ info.identification.site.label() }}
+                                                    {{ info.identification.site(class_="form-control") }}
+                                                </div>
+                                                <div class="col-md-6 nopadding">
+                                                    {{ info.identification.substation.label() }}
+                                                    {{ info.identification.substation(class_="form-control") }}
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-8 nopadding padding-right-xs">
+                                        {{ info.identification.manufacturer.label() }}
+                                        {{ info.identification.manufacturer(class_="form-control") }}
+                                    </div>
+                                    <div class="col-md-4 nopadding">
+                                        {{ info.identification.year.label() }}
+                                        {{ info.identification.year(class_="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-8 nopadding padding-right-xs">
+                                        {{ info.identification.position.label() }}
+                                        {{ info.identification.position(class_="form-control") }}
+                                    </div>
+                                    <div class="col-md-4 nopadding">
+                                        {{ info.identification.description.label() }}
+                                        {{ info.identification.description(class_="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-8 nopadding padding-right-xs">
+                                        <div class="col-md-8 nopadding">
+                                            {{ info.identification.analyzer.label() }}
+                                            {{ info.identification.analyzer(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-4 nopadding">
+                                            <button type="button" class="btn btn-default margin-button" data-dismiss="modal">...</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding">
+                                        <div class="col-md-5 nopadding padding-right-xs">
+                                            <div class="col-md-8 nopadding">
+                                                {{ info.identification.cust.label() }}
+                                                {{ info.identification.cust(class_="form-control") }}
+                                            </div>
+                                            <div class="col-md-4 nopadding">
+                                                <button type="button" class="btn btn-default margin-button" data-dismiss="modal">...</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7 nopadding">
+                                            {{ info.identification.cus_ds(class_="form-control margin-button") }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="info-tabs-2" role="tabpanel" class="tab-pane">
+                            <form action="#" method="post">
+                                <div class="col-md-12 nopadding">
+                                    {{ info.validation.transformer(class_="form-control") }}
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <fieldset class="scheduler-border">
+                                        <legend class="scheduler-border"> Designation </legend>
+                                        <div class="control-group">
+                                            <div class="col-md-5 nopadding padding-right-xs">
+                                                <div class="col-md-12 nopadding">
+                                                    {{ info.validation.validated(class_="pull-left padding-right-xs") }}
+                                                    {{ info.validation.validated.label(class_="auto pull-left") }}
+                                                </div>
+                                                <div class="col-md-12 nopadding">
+                                                    {{ info.validation.validated_info(class_="pull-left padding-right-xs") }}
+                                                    {{ info.validation.validated_info.label(class_="auto pull-left") }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7 nopadding">
+                                                <div class="col-md-6 nopadding padding-right-xs">
+                                                    {{ info.validation.equipment.label() }}
+                                                    {{ info.validation.equipment(class_="form-control") }}
+                                                </div>
+                                                <div class="col-md-6 nopadding">
+                                                    {{ info.validation.serial.label() }}
+                                                    {{ info.validation.serial(class_="form-control") }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="info-tabs-3" role="tabpanel" class="tab-pane">
+                            <form action="#" method="post">
+                                <div class="col-md-12 nopadding">
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-6 nopadding padding-right-xs">
+                                            {{ info.nameplate.winding.label() }}
+                                        </div>
+                                        <div class="col-md-6 nopadding">
+                                            {{ info.nameplate.winding(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 nopadding padding-right-xs">
+                                         {{ info.nameplate.phase(class_="pull-left padding-right-xs") }}
+                                         {{ info.nameplate.phase.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="col-md-2 nopadding padding-right-xs">
+                                         {{ info.nameplate.transf(class_="pull-left padding-right-xs") }}
+                                         {{ info.nameplate.transf.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="col-md-2 nopadding padding-right-xs">
+                                        {{ info.nameplate.sealed(class_="pull-left padding-right-xs") }}
+                                        {{ info.nameplate.sealed.label(class_="auto pull-left") }}
+                                    </div>
+                                    <div class="col-md-2 nopadding padding-right-xs">
+                                        {{ info.nameplate.cover(class_="pull-left padding-right-xs") }}
+                                        {{ info.nameplate.cover.label(class_="auto pull-left") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="underline"></div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-10 nopadding text-center">
+                                        <div class="col-md-12 nopadding">
+                                            <div class="col-md-3"> Voltage (V) </div>
+                                            <div class="col-md-3"> Power (MVA) </div>
+                                            <div class="col-md-4"> BIL (kV) Elect. shield No. of taps </div>
+                                            <div class="col-md-2"> Winding conn. </div>
+                                        </div>
+                                        <div class="col-md-12 nopadding text-center">
+                                            Base / Forced 1 / Forced 2
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 nopadding"> Neutral bushing </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-12 nopadding">
+                                        <div class="col-md-1 nopadding padding-right-xs"> Pri. </div>
+                                        <div class="col-md-2 nopadding padding-right-xs">
+                                            {{ info.nameplate.pri_1(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.pri_2(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.pri_3(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.pri_4(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.pri_5(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs text-center">
+                                            {{ info.nameplate.shield_1(class_="margin-check") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.taps_1(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-2 nopadding padding-right-xs">
+                                            <div class="col-md-8 nopadding padding-right-xs">
+                                                {{ info.nameplate.conn_1(class_="form-control") }}
+                                            </div>
+                                            <div class="cold-md-2 nopadding padding-right-xs">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">...</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 nopadding padding-top-xs">
+                                        <div class="col-md-1 nopadding padding-right-xs"> Sec. </div>
+                                        <div class="col-md-2 nopadding padding-right-xs">
+                                            {{ info.nameplate.sec_1(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.sec_2(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.sec_3(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.sec_4(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.sec_5(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs text-center">
+                                            {{ info.nameplate.shield_2(class_="margin-check") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.taps_2(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-2 nopadding padding-right-xs">
+                                            <div class="col-md-8 nopadding padding-right-xs">
+                                                {{ info.nameplate.conn_2(class_="form-control") }}
+                                            </div>
+                                            <div class="cold-md-2 nopadding padding-right-xs">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">...</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 nopadding padding-top-xs">
+                                        <div class="col-md-1 nopadding padding-right-xs"> Tert. </div>
+                                        <div class="col-md-2 nopadding padding-right-xs">
+                                            {{ info.nameplate.tert_1(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.tert_2(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.tert_3(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.tert_4(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.tert_5(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs text-center">
+                                            {{ info.nameplate.shield_3(class_="margin-check") }}
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs">
+                                            {{ info.nameplate.taps_3(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-2 nopadding padding-right-xs">
+                                            <div class="col-md-8 nopadding padding-right-xs">
+                                                {{ info.nameplate.conn_3(class_="form-control") }}
+                                            </div>
+                                            <div class="cold-md-2 nopadding padding-right-xs">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">...</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 nopadding padding-right-xs text-center">
+                                            {{ info.nameplate.bushing(class_="margin-check") }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="underline"></div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-12 nopadding">
+                                            {{ info.nameplate.insulating.label() }}
+                                            {{ info.nameplate.insulating(class_="form-control") }}
+                                        </div>
+                                        <div class="col-md-12 nopadding">
+                                            <div class="col-md-5 nopadding padding-right-xs">
+                                                {{ info.nameplate.rise.label() }}
+                                            </div>
+                                            <div class="col-md-7 nopadding">
+                                                {{ info.nameplate.rise(class_="list-unstyled inline-li") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-12 nopadding text-center"> Impedance </div>
+                                        <div class="col-md-12 nopadding"> <div class="underline"></div> </div>
+                                        <div class="col-md-12 nopadding">
+                                            <div class="col-md-6 nopadding padding-right-xs">
+                                                {{ info.nameplate.mva.label(class_="text-center") }}
+                                                {{ info.nameplate.mva(class_="form-control") }}
+                                                {{ info.nameplate.mva_1(class_="form-control padding-top-xs") }}
+                                            </div>
+                                            <div class="col-md-6 nopadding ">
+                                                {{ info.nameplate.mva_pro.label(class_="text-center") }}
+                                                {{ info.nameplate.mva_pro(class_="form-control") }}
+                                                {{ info.nameplate.mva_pro_1(class_="form-control padding-top-xs") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        {{ info.nameplate.qty.label() }}
+                                        {{ info.nameplate.qty(class_="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-2 nopadding padding-right-xs">
+                                        {{ info.nameplate.wire.label() }}
+                                        {{ info.nameplate.wire(class_="form-control") }}
+                                    </div>
+                                    <div class="col-md-6 nopadding padding-right-xs">
+                                        {{ info.nameplate.maint.label() }}
+                                        {{ info.nameplate.maint(class_="form-control") }}
+                                    </div>
+                                    <div class="col-md-4 nopadding">
+                                        {{ info.nameplate.freq.label() }}
+                                        {{ info.nameplate.freq(class_="form-control") }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="info-tabs-4" role="tabpanel" class="tab-pane active ">
+                            <form action="#" method="post">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer text-center"> </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

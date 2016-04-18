@@ -1,0 +1,180 @@
+<div class="modal fade" id="tableForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Data </h4>
+            </div>
+            <div class="modal-body">
+                <form action="#" method="post">
+                    <fieldset class="scheduler-border">
+                        <legend class="scheduler-border"> Dissolved gas concentrations (ppm) </legend>
+                        <div class="control-group">
+                            <div class="col-md-8 nopadding padding-right-xs">
+                                <div class="col-md-12 nopadding">
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.hydrogen_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.hydrogen_h2.label() }}
+                                            {{ data.hydrogen_h2(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.oxygen_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.oxygen_o2.label() }}
+                                            {{ data.oxygen_o2(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.nitrogen_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.nitrogen.label() }}
+                                            {{ data.nitrogen(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.co_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.co.label() }}
+                                            {{ data.co(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.methane_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.methane.label() }}
+                                            {{ data.methane(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.co2_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.co2.label() }}
+                                            {{ data.co2(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.ethylene_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.ethylene.label() }}
+                                            {{ data.ethylene(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.acethylene_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.acethylene.label() }}
+                                            {{ data.acethylene(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 nopadding padding-right-xs">
+                                        <div class="col-md-4 nopadding margin-center">
+                                            {{ data.ethylene_c2_check() }}
+                                            <i class="glyphicon glyphicon-chevron-left font-i"></i>
+                                        </div>
+                                        <div class="col-md-8 nopadding text-center">
+                                            {{ data.ethylene_c2.label() }}
+                                            {{ data.ethylene_c2(class_="form-control") }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-12 nopadding text-center"> Gas alarm detail: None </div>
+                                    <div class="col-md-12 nopadding padding-top-xs">
+                                        <div class="col-md-6 nopadding padding-right-xs">
+                                            <div class="col-md-4 nopadding text-center"> {{ data.status_1.label() }} </div>
+                                            <div class="col-md-8 nopadding"> {{ data.status_1(class_="form-control") }}  </div>
+                                        </div>
+                                        <div class="col-md-6 nopadding">
+                                            <div class="col-md-4 nopadding text-center"> {{ data.status_2.label() }} </div>
+                                            <div class="col-md-8 nopadding"> {{ data.status_2(class_="form-control") }}  </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 nopadding">
+                                <div class="col-md-12 nopadding">
+                                    <fieldset class="scheduler-border">
+                                        <legend class="scheduler-border"> Gaz analyzer: <br> concentration (ppm) </legend>
+                                        <div class="control-group">
+                                            <div class="col-md-12 nopadding">
+                                                <div class="col-md-6 nopadding pull-right text-center">
+                                                    {{ data.calculated_minus.label() }}
+                                                    {{ data.calculated_minus(class_="form-control") }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 nopadding padding-top-xs">
+                                                <div class="col-md-6 nopadding padding-right-xs text-center">
+                                                    {{ data.measured.label() }}
+                                                    {{ data.measured(class_="form-control") }}
+                                                </div>
+                                                <div class="col-md-6 nopadding text-center">
+                                                    {{ data.calculated_plus.label() }}
+                                                    {{ data.calculated_plus(class_="form-control") }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-6 nopadding padding-right-xs text-center">
+                                        {{ data.tdcg.label() }}
+                                        {{ data.tdcg(class_="form-control") }}
+                                    </div>
+                                    <div class="col-md-6 nopadding text-center">
+                                        {{ data.total.label() }}
+                                        {{ data.total(class_="form-control") }}
+                                    </div>
+                                </div>
+                                <div class="col-md-12 nopadding padding-top-xs">
+                                    <div class="col-md-9 nopadding pull-right">
+                                        <div class="col-md-12 nopaddig text-center"> {{ data.gas_1.label() }}  </div>
+                                        <div class="col-md-12 nopadding padding-top-xs">
+                                            <div class="col-md-6 nopadding padding-right-xs">
+                                                {{ data.gas_1(class_="form-control") }}
+                                            </div>
+                                            <div class="col-md-6 nopadding">
+                                                {{ data.gas_2(class_="form-control") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer text-center"> </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

@@ -52,7 +52,13 @@
                                 </button>
                             </a>
                         </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/information.png') }}" alt="information" /> </li>
+                        <li>
+                             <a data-toggle="modal" data-target="#informationForm" class="nopadding">
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/information.png') }}" alt="information" />
+                                </button>
+                             </a>
+                        </li>
                         <li>
                             <a data-toggle="modal" data-target="#maintainForm" class="nopadding">
                                 <button class="btn btn-default nopadding">
@@ -62,10 +68,39 @@
                         </li>
                         <li> <img src="{{ url_for('static', filename='img/toolbar/schedule.png') }}" alt="schedule" /> </li>
 
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/data.png') }}" alt="data" /> </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/search.png') }}" alt="search" /> </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/table.png') }}" alt="table" /> </li>
-                        <li> <img src="{{ url_for('static', filename='img/toolbar/help.png') }}" alt="help" /> </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#visualizeForm" class="nopadding">
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/data.png') }}" alt="data" />
+                                </button>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#searchForm" class="nopadding">
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/search.png') }}" alt="search" />
+                                </button>
+                            </a>
+                        </li>
+                        <li>
+                            <a data-toggle="modal" data-target="#tableForm" class="nopadding">
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/table.png') }}" alt="table" />
+                                </button>
+                            </a>
+                        </li>
+                        <li>
+                            <!-- TODO check the langugage -->
+                            {% if g.locale == 'fr'  %}
+                                <a href="{{ url_for('static', filename='download/Percep_fra.chm') }}" target="_blank" class="nopadding">
+                            {% else  %}
+                                <a href="{{ url_for('static', filename='download/Percep_eng.chm') }}" target="_blank" class="nopadding">
+                            {% endif %}
+                                <button class="btn btn-default nopadding">
+                                    <img src="{{ url_for('static', filename='img/toolbar/help.png') }}" alt="help" />
+                                </button>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div class="maxwidth">

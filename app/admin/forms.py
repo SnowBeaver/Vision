@@ -274,3 +274,156 @@ class ManageCustomersViewForm(Form):
     preview = BooleanField('Preview', validators=[Optional()])
     numbering = TextField('Start of page numbering', validators=[Required()])
     rtf = BooleanField('RTF', validators=[Optional()])
+
+class SearchViewForm(Form):
+    equipment = TextField('Search' , validators=[ Required() ])
+
+class DataViewForm(Form):
+    hydrogen_check = BooleanField('Hydrogen', validators=[Optional()])
+    hydrogen_h2 = IntegerField('Hydrogen-H2' , validators=[ Required() ])
+    oxygen_check = BooleanField('Oxygen', validators=[Optional()])
+    oxygen_o2 = IntegerField('Oxygen-O2' , validators=[ Required() ])
+    nitrogen_check = BooleanField('Nitrogen', validators=[Optional()])
+    nitrogen = IntegerField('Nitrogen-N2' , validators=[ Required() ])
+    co_check = BooleanField('CO', validators=[Optional()])
+    co = IntegerField('CO' , validators=[ Required() ])
+    methane_check = BooleanField('Methane', validators=[Optional()])
+    methane = IntegerField('Methane-CH4' , validators=[ Required() ])
+    co2_check = BooleanField('CO2', validators=[Optional()])
+    co2 = IntegerField('C02' , validators=[ Required() ])
+    ethylene_check = BooleanField('Ethylene', validators=[Optional()])
+    ethylene = IntegerField('Ethylene-C2H4' , validators=[ Required() ])
+    ethylene_c2_check = BooleanField('Ethylene', validators=[Optional()])
+    ethylene_c2 = IntegerField('Ethylene-C2H6' , validators=[ Required() ])
+    acethylene_check = BooleanField('Acethylene', validators=[Optional()])
+    acethylene = IntegerField('Acethylene-C2H2' , validators=[ Required() ])
+    status_1 = TextField('Status 1' , validators=[ Required() ])
+    status_2 = TextField('Status 2' , validators=[ Required() ])
+    measured = IntegerField('Measured' , validators=[ Required() ])
+    calculated_minus = TextField('-Calculated' , validators=[ Required() ])
+    calculated_plus = TextField('+Calculated' , validators=[ Required() ])
+    tdcg = IntegerField('TDCG' , validators=[ Required() ])
+    total = IntegerField('Total hydrocarbons' , validators=[ Required() ])
+    gas_1 = FloatField('Gas content(%)' , validators=[ Required() ])
+    gas_2 = FloatField('Gas content(%)' , validators=[ Required() ])
+
+
+type_choice =  [('Transformer', 'Transformer'), ]
+manufacturer_choice = [('TODO', 'TODO'), ]
+
+class IdentificationInfoViewForm(Form):
+    # Designation
+    equipment = TextField('Equipment No.' , validators = [ Required() ])
+    serial = TextField('Serial No.' , validators = [ Required() ])
+    type = SelectField('Type', choices = type_choice, validators = [Required()])
+    # information for printed reports
+    site = TextField('Site' , validators = [ Required() ])
+    substation = TextField('Substation' , validators = [ Required() ])
+    manufacturer = SelectField('Manufacturer', choices = manufacturer_choice, validators = [Required()])
+    year = IntegerField('Year' , validators=[ Required() ])
+    position = TextField('Position No.' , validators = [ Required() ])
+    description = TextField('Description' , validators = [ Required() ])
+    analyzer = TextField('Dissolved gas analyzed' , validators = [ Required() ])
+    cust = TextField('Cust. No' , validators = [ Required() ])
+    cus_ds = TextField('Cust. No1' , validators = [ Required() ])
+
+class ValidationInfoViewForm(Form):
+    transformer = TextAreaField('Mobile transformer' , validators = [ Required() ])
+    # information validated with the laboratory
+    validated = BooleanField('Information validated' , validators = [ Optional() ])
+    validated_info = BooleanField('Information being validated' , validators = [ Optional() ])
+    equipment = TextField('Previous equipment No.' , validators = [ Required() ])
+    serial = TextField('Previous serial No.' , validators = [ Required() ])
+
+winding_choice = [('TODO', 'TODO'), ]
+wire_choice =  [('TODO', 'TODO'), ]
+insulating_choice =  [('Oil', 'Oil'), ]
+rise_choice = [ ( 55 , 55 ), (65, 65), ]
+
+class NameplateInfoViewForm(Form):
+    winding =  SelectField('Winding', choices = winding_choice , validators = [Required()])
+    phase = BooleanField('Three-phase' , validators = [Optional()])
+    transf = BooleanField('Auto-transf.', validators = [Optional()])
+    sealed = BooleanField('Sealed', validators = [Optional()])
+    cover = BooleanField('Welded cover', validators = [Optional()])
+    pri_1 = IntegerField('Pri.' , validators = [ Required() ])
+    pri_2 = IntegerField('Pri.' , validators = [ Required() ])
+    pri_3 = IntegerField('Pri.' , validators = [ Required() ])
+    pri_4 = IntegerField('Pri.' , validators = [ Required() ])
+    pri_5 = IntegerField('Pri.' , validators = [ Required() ])
+    sec_1 = IntegerField('Sec.' , validators = [ Required() ])
+    sec_2 = IntegerField('Sec.' , validators = [ Required() ])
+    sec_3 = IntegerField('Sec.' , validators = [ Required() ])
+    sec_4 = IntegerField('Sec.' , validators = [ Required() ])
+    sec_5 = IntegerField('Sec.' , validators = [ Required() ])
+    tert_1 = IntegerField('Tert.' , validators = [ Required() ])
+    tert_2 = IntegerField('Tert.' , validators = [ Required() ])
+    tert_3 = IntegerField('Tert.' , validators = [ Required() ])
+    tert_4 = IntegerField('Tert.' , validators = [ Required() ])
+    tert_5 = IntegerField('Tert.' , validators = [ Required() ])
+    shield_1 = BooleanField('Eelect. shield', validators = [Optional()])
+    shield_2 = BooleanField('Eelect. shield', validators = [Optional()])
+    shield_3 = BooleanField('Eelect. shield', validators = [Optional()])
+    taps_1 = IntegerField('No. of taps', validators = [Optional()])
+    taps_2 = IntegerField('No. of taps', validators = [Optional()])
+    taps_3 = IntegerField('No. of taps', validators = [Optional()])
+    conn_1 = TextField('Winding conn.' , validators = [ Required() ])
+    conn_2 = TextField('Winding conn.' , validators = [ Required() ])
+    conn_3 = TextField('Winding conn.' , validators = [ Required() ])
+    bushing = BooleanField('Neutral Bushing.' , validators = [ Required() ])
+    insulating = SelectField('Insulating fluid', choices = insulating_choice, validators = [Required()])
+    mva = IntegerField('Base MVA' , validators = [ Required() ])
+    mva_1 = IntegerField('Base MVA' , validators = [ Required() ])
+    mva_pro = IntegerField('%' , validators = [ Required() ])
+    mva_pro_1 = IntegerField('%' , validators = [ Required() ])
+    qty = IntegerField('Oil qty. (liters)', validators = [Optional()])
+    rise = RadioField('Temp. rise(C)', choices = rise_choice , validators = [Optional()])
+    wire = SelectField('Winding wire.', choices = winding_choice , validators = [ Required() ])
+    maint = IntegerField('No. of op. between maint' , validators = [ Required() ])
+    freq = IntegerField('Freq. (Hz)' , validators = [ Required() ])
+
+class BushingInfoViewForm(Form):
+    primary_1 = IntegerField('Primary (H)', validators = [Optional()])
+    primary_2 = IntegerField('Primary (H)', validators = [Optional()])
+    primary_3 = IntegerField('Primary (H)', validators = [Optional()])
+    manufacturer = TextField('Manufacturer' , validators = [ Required() ])
+    type = TextField('Type' , validators = [ Required() ])
+    secondary_1 = IntegerField('Secondary (X)', validators = [Optional()])
+    secondary_2 = IntegerField('Secondary (X)', validators = [Optional()])
+    secondary_3 = IntegerField('Secondary (X)', validators = [Optional()])
+    manufacturer_1 = TextField('Manufacturer' , validators = [ Required() ])
+    type_1 = TextField('Type' , validators = [ Required() ])
+    tertiary_1 = IntegerField('Tertiary (T)', validators = [Optional()])
+    tertiary_2 = IntegerField('Tertiary (T)', validators = [Optional()])
+    tertiary_3 = IntegerField('Tertiary (T)', validators = [Optional()])
+    manufacturer_2 = TextField('Manufacturer' , validators = [ Required() ])
+    type_2 = TextField('Type' , validators = [ Required() ])
+
+class TapsInfoViewForm(Form):
+    phase_x_1 =  TextField('Phase 1' , validators = [ Required() ])
+    phase_x_2 =  TextField('Phase 2' , validators = [ Required() ])
+    phase_x_3 =  TextField('Phase 3' , validators = [ Required() ])
+    phase_t_1 =  TextField('Phase 1' , validators = [ Required() ])
+    phase_t_2 =  TextField('Phase 2' , validators = [ Required() ])
+    phase_t_3 =  TextField('Phase 3' , validators = [ Required() ])
+
+
+class NormsInfoViewForm(Form):
+    oil = TextField('Oil Quality' , validators = [ Required() ])
+    gas = TextField('Dissolved Gases' , validators = [ Required() ])
+    furnas = TextField('Furans' , validators = [ Required() ])
+
+class LoadInfoViewForm(Form):
+    mw_actual = IntegerField('MW', validators = [Optional()])
+    mvar_actual = IntegerField('MVAR', validators = [Optional()])
+    mw_reserved = IntegerField('MW', validators = [Optional()])
+    mvar_reserved = IntegerField('MVAR', validators = [Optional()])
+    mw_maximum = IntegerField('MW', validators = [Optional()])
+    mvar_maximum = IntegerField('MVAR', validators = [Optional()])
+    data = IntegerField('Design and tests data', validators = [Optional()])
+
+class DocInfoViewForm(Form):
+    from_1 = TextField('From:' , validators = [ Required() ])
+    from_2 = TextField('From:' , validators = [ Required() ])
+    to_1 = TextField('To:' , validators = [ Required() ])
+    to_2 = TextField('To:' , validators = [ Required() ])
