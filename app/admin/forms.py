@@ -420,7 +420,7 @@ class LoadInfoViewForm(Form):
     mvar_reserved = IntegerField('MVAR', validators = [Optional()])
     mw_maximum = IntegerField('MW', validators = [Optional()])
     mvar_maximum = IntegerField('MVAR', validators = [Optional()])
-    data = IntegerField('Design and tests data', validators = [Optional()])
+    data = TextAreaField('Design and tests data', validators = [Optional()])
 
 class DocInfoViewForm(Form):
     from_1 = TextField('From:' , validators = [ Required() ])
