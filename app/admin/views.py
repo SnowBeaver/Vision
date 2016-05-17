@@ -22,7 +22,7 @@ from .models import File, Image
 from jinja2 import Markup
 from flask_admin import BaseView
 from flask import jsonify
-
+from app.popups.forms import *
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -84,6 +84,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['search'] = SearchViewForm()
         self._template_args['data'] = DataViewForm()
         self._template_args['info'] = info
+        self._template_args['lab'] = LabManagerView()
 
         return super(MyAdminIndexView, self).index()
 
@@ -242,7 +243,6 @@ from .storage import *
 from .forms import MenuViewForm
 from app.pages.models import Pages
 from app.tree.storage import get_locale
-
 
 class MenuView(BaseView):
     # @expose.before_app_request

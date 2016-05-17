@@ -2,8 +2,6 @@ from flask.ext.wtf import Form
 from wtforms import SelectField, HiddenField, TextField, DateField, IntegerField, FloatField, TextAreaField, \
     BooleanField, RadioField
 from wtforms.validators import Required, Length, Optional
-from app.pages.models import Pages
-from app.tree.storage import get_locale
 
 # myChoices = [ ('' , '...') ] + [ (page.translations[page.get_locale()].title , page.translations[get_locale()].title) for page in Pages.query.order_by(Pages.updated_on.desc()).all() ]
 myChoices = []
@@ -64,8 +62,13 @@ class EquipmentDiagnosisViewForm(Form):
     condition = BooleanField('Equipment in questionable condition or out of service', validators=[Optional()])
 
 
+from app.popups.models import LabManager
+from app import db
+
 # Create new test
-lab_choice = [('Lab-1', 'Lab-1'), ('Lab-2', 'Lab-2')]
+lab_choice = [
+    (x.id, x.analyser ) for x in db.session.query(LabManager).all()
+]
 
 testing_choice = [
     ('Preventive', 'Preventive'), ('Reception', 'Reception'), ('Commissioning', 'Commissioning'),
@@ -427,3 +430,4 @@ class DocInfoViewForm(Form):
     from_2 = TextField('From:' , validators = [ Required() ])
     to_1 = TextField('To:' , validators = [ Required() ])
     to_2 = TextField('To:' , validators = [ Required() ])
+

@@ -1,0 +1,54 @@
+<div class="modal fade" id="labForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Laboratory / On-line analyser manager </h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12 nopadding">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Lab./On-line analyser</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab_body">
+                            <!-- TODO -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-12 nopadding" id="labFooter">
+                    <button type="button" class="btn btn-default margin-button pull-left" id="labAdd" >Add</button>
+                    <button type="button" class="btn btn-default margin-button pull-left" id="labDelete" >Delete</button>
+                    <button type="button" class="btn btn-default margin-button pull-left" id="labModify">Modify</button>
+                    <button type="button" class="btn btn-default margin-button pull-left" data-dismiss="modal" id="closeLab" >Close</button>
+                    <button type="button" class="btn btn-default margin-button pull-left" id="labSelect" >Select</button>
+                </div>
+                <div class="col-md-12 nopadding padding-top-xs hidden" id="labData">
+                    <input type="hidden" value="0" id="labActionType">
+                    <form action="" method="post" id="LabFormData">
+                        <div class="col-md-9 nopadding padding-right-xs">
+                            <div class="col-md-3 nopadding padding-right-xs">
+                                {{ lab.code.label(class_="pull-left") }}
+                                {{ lab.code(class_="form-control") }}
+                            </div>
+                            <div class="col-md-9 nopadding padding-right-xs">
+                                {{ lab.analyser.label(class_="pull-left") }}
+                                {{ lab.analyser(class_="form-control") }}
+                            </div>
+                        </div>
+                        <div class="col-md-2 nopadding">
+                            <button type="submit" class="btn btn-default margin-button pull-left">Ok</button>
+                            <button type="button" class="btn btn-default margin-button pull-left" id="CancelLab" >Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>

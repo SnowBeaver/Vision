@@ -154,6 +154,13 @@
 {% block tail %}
     <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/popups/lab.js') }}"></script>
+    <script type="text/javascript">
+       LAB.init([ '{{ url_for("lab.create") }}' , '{{ url_for("lab.get_all") }}'
+       , '{{ url_for("lab.delete") }}' ,  '{{ url_for("lab.modify") }}' ,  ]);
+    </script>
+
     <script type="text/javascript">
         $(function () {
             $('.datetimepicker').datetimepicker();
