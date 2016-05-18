@@ -7,7 +7,7 @@ from app import db
 from app.users.models import User, Role
 from flask import flash, g, session, redirect, url_for
 from flask.ext.admin.contrib.sqla import ModelView
-#from flask.ext.sqlalchemy import SQLAlchemy
+# from flask.ext.sqlalchemy import SQLAlchemy
 # from flask.ext.admin.contrib.sqla import filters
 from flask.ext.admin import helpers, expose
 from flask.ext import admin, login
@@ -41,7 +41,9 @@ class LoginForm(form.Form):
     def get_user(self):
         return db.session.query(User).filter_by(email=self.email.data).first()
 
+
 from .forms import *
+
 
 class MyAdminIndexView(admin.AdminIndexView):
     @expose('/')
@@ -51,23 +53,23 @@ class MyAdminIndexView(admin.AdminIndexView):
             return redirect(url_for('.login_view'))
 
         popups = {
-            'add' : {
-                 'description' : NewTestDescription()
-                ,'electrical' : NewTestElectrical()
-                ,'fluid' : NewTestFluid()
-                ,'profile' : NewTestProfile()
+            'add': {
+                'description': NewTestDescription()
+                , 'electrical': NewTestElectrical()
+                , 'fluid': NewTestFluid()
+                , 'profile': NewTestProfile()
             },
         }
 
         info = {
-             'identification' : IdentificationInfoViewForm()
-            ,'validation' : ValidationInfoViewForm()
-            ,'nameplate' : NameplateInfoViewForm()
-            ,'bushing' : BushingInfoViewForm()
-            ,'taps' : TapsInfoViewForm()
-            ,'norms' : NormsInfoViewForm()
-            ,'loading' : LoadInfoViewForm()
-            ,'doc' : DocInfoViewForm()
+            'identification': IdentificationInfoViewForm()
+            , 'validation': ValidationInfoViewForm()
+            , 'nameplate': NameplateInfoViewForm()
+            , 'bushing': BushingInfoViewForm()
+            , 'taps': TapsInfoViewForm()
+            , 'norms': NormsInfoViewForm()
+            , 'loading': LoadInfoViewForm()
+            , 'doc': DocInfoViewForm()
         }
 
         self._template_args['tree'] = get_tree()
