@@ -179,7 +179,7 @@ env_dir = '/home/%s/www' % PROJECT
 file_path = env_dir + '/app/static/img/uploads/'
 
 
-class FileView(sqla.ModelView):
+class FileView(ModelView):
     # Override form field to use Flask-Admin FileUploadField
     form_overrides = {
         'path': FileUploadField
@@ -195,7 +195,7 @@ class FileView(sqla.ModelView):
     }
 
 
-class ImageView(sqla.ModelView):
+class ImageView(ModelView):
     def _list_thumbnail(view, context, model, name):
         if not model.path:
             return ''

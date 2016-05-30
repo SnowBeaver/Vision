@@ -66,3 +66,148 @@ def modify_lab(id, code, analyser):
         res = None
 
     return res
+
+def create_electrical_profile(data):
+    try:
+        node = ElectricalProfile(data = data)
+        # think of a different solution how to extract node.id
+        db.session.add(node)
+        db.session.commit()
+        res = node.id
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def create_fluid_profile(data):
+    try:
+        node = FluidProfile(data = data)
+        # think of a different solution how to extract node.id
+        db.session.add(node)
+        db.session.commit()
+        res = node.id
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def get_selections(model):
+    try:
+        res = []
+        nodes = db.session.query(model).with_entities(model.selection, model.description).all()
+        #nodes =  db.session.query(ElectricalProfile).all()
+        for node in nodes:
+            res.append({
+                 'selection' : node.selection
+                ,'description' : node.description
+            })
+
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def delete_electrical_profile(profile):
+    try:
+        node = db.session.query(ElectricalProfile).filter(ElectricalProfile.selection == profile).first()
+        db.session.delete(node)
+        db.session.commit()
+        res = node.id
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def delete_fluid_profile(profile):
+    try:
+        node = db.session.query(FluidProfile).filter(FluidProfile.selection == profile).first()
+        db.session.delete(node)
+        db.session.commit()
+        res = node.id
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def modify_electrical_profile(data):
+    try:
+        #print data['selection']
+        node = db.session.query(ElectricalProfile).filter(ElectricalProfile.selection == data['selection']).first()
+        res = None
+        if node:
+            node.clear_data()
+            node.add_data(data)
+
+            db.session.add(node)
+            db.session.commit()
+            res = node.id
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def modify_fluid_profile(data):
+    try:
+        node = db.session.query(FluidProfile).filter(FluidProfile.selection == data['selection']).first()
+        res = None
+        if node:
+            node.clear_data()
+            node.add_data(data)
+
+            db.session.add(node)
+            db.session.commit()
+            res = node.id
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def get_electrical_profile(selection):
+    try:
+        res = None
+        node = db.session.query(ElectricalProfile).filter(ElectricalProfile.selection == selection).first()
+        if node:
+            out = {}
+            for key  in node.__dict__:
+                if key not in [ '_sa_instance_state' , 'id' , 'selection' ]:
+                    out[key] =  getattr(node, key)
+
+            res = out
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res
+
+def get_fluid_profile(selection):
+    try:
+        res = None
+        node = db.session.query(FluidProfile).filter(FluidProfile.selection == selection).first()
+        if node:
+            out = {}
+            for key  in node.__dict__:
+                if key not in [ '_sa_instance_state', 'id' , 'selection' ]:
+                    out[key] =  getattr(node, key)
+
+            res = out
+    except Exception as e:
+        import logging
+        logging.error(e)
+        res = None
+
+    return res

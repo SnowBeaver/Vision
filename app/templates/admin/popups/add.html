@@ -93,7 +93,7 @@
                         </div>
                         <div id="new-tabs-2" role="tabpanel" class="tab-pane">
                             <div class="maxwidth">
-                                <form class="" method="post" action="#" >
+                                <form class="" method="post" action="#" id="electrical_profile">
                                     <fieldset class="scheduler-border">
                                         <legend class="scheduler-border">Tests requested</legend>
                                         <div class="control-group">
@@ -127,8 +127,8 @@
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ popups.add.electrical.winding_doble(class_="pull-left padding-right-xs") }}
-                                                    {{ popups.add.electrical.winding_doble.label(class_="auto pull-left") }}
+                                                    {{ popups.add.electrical.winding_double(class_="pull-left padding-right-xs") }}
+                                                    {{ popups.add.electrical.winding_double.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
                                                     {{ popups.add.electrical.resistance(class_="pull-left padding-right-xs") }}
@@ -141,7 +141,7 @@
                             </div>
                         </div>
                         <div id="new-tabs-3" role="tabpanel" class="tab-pane">
-                            <form class="" method="post" action="#" >
+                            <form class="" method="post" action="#" id="fluid_profile" >
                                 <fieldset class="scheduler-border">
                                     <legend class="scheduler-border">Syringe - Test requested</legend>
                                     <div class="control-group">
@@ -174,11 +174,11 @@
                                         <div class="col-md-4 nopadding">
                                             <div class="col-md-2 nopadding padding-right-xs">
                                                 {{ popups.add.fluid.qty.label }}
-                                                {{ popups.add.fluid.qty() }}
+                                                {{ popups.add.fluid.qty(class="form-control") }}
                                             </div>
                                             <div class="col-md-10 nopadding">
                                                 {{ popups.add.fluid.sampling.label }}
-                                                {{ popups.add.fluid.sampling() }}
+                                                {{ popups.add.fluid.sampling(class="form-control") }}
                                             </div>
                                         </div>
                                     </div>
@@ -284,11 +284,11 @@
                                             <div class="maxwidth">
                                                 <div class="col-md-2 nopadding padding-right-xs">
                                                     {{ popups.add.fluid.qty_jar.label }}
-                                                    {{ popups.add.fluid.qty_jar() }}
+                                                    {{ popups.add.fluid.qty_jar(class="form-control") }}
                                                 </div>
                                                 <div class="col-md-10 nopadding">
-                                                    {{ popups.add.fluid.ampling_jar.label }}
-                                                    {{ popups.add.fluid.ampling_jar() }}
+                                                    {{ popups.add.fluid.sampling_jar.label }}
+                                                    {{ popups.add.fluid.sampling_jar(class="form-control") }}
                                                 </div>
                                             </div>
                                         </div>
@@ -303,18 +303,18 @@
                                                 {{ popups.add.fluid.pcb_vial.label(class_="auto pull-left") }}
                                             </div>
                                             <div class="maxwidth">
-                                                {{ popups.add.fluid.antioxydant(class_="pull-left padding-right-xs") }}
-                                                {{ popups.add.fluid.antioxydant.label(class_="auto pull-left") }}
+                                                {{ popups.add.fluid.antioxidant(class_="pull-left padding-right-xs") }}
+                                                {{ popups.add.fluid.antioxidant.label(class_="auto pull-left") }}
                                             </div>
                                         </div>
                                         <div class="col-md-4 nopadding">
                                             <div class="col-md-2 nopadding padding-right-xs">
                                                 {{ popups.add.fluid.qty_vial.label }}
-                                                {{ popups.add.fluid.qty_vial() }}
+                                                {{ popups.add.fluid.qty_vial(class="form-control") }}
                                             </div>
                                             <div class="col-md-10 nopadding">
-                                                {{ popups.add.fluid.ampling_vial.label }}
-                                                {{ popups.add.fluid.ampling_vial() }}
+                                                {{ popups.add.fluid.sampling_vial.label }}
+                                                {{ popups.add.fluid.sampling_vial(class="form-control") }}
                                             </div>
                                         </div>
                                     </div>
@@ -322,7 +322,7 @@
                             </form>
                         </div>
                         <div id="new-tabs-4" role="tabpanel" class="tab-pane">
-                            <form class="" method="post" action="#" >
+                            <form class="" method="post" action="#" id="TestProfile">
                                 <div class="col-md-6 nopadding padding-right-xs">
                                     <div class="maxwidth">
                                         {{ popups.add.profile.enable_elc(class_="pull-left padding-right-xs") }}
@@ -334,22 +334,23 @@
                                             <div class="control-group">
                                                 <div class="maxwidth">
                                                     {{ popups.add.profile.profile_elc.label(class_="") }}
-                                                    {{ popups.add.profile.profile_elc(class_="form-control") }}
+                                                    {{ popups.add.profile.profile_elc() }}
                                                 </div>
                                                 <div class="maxwidth">
                                                     {{ popups.add.profile.description_elc.label(class_="") }}
                                                     {{ popups.add.profile.description_elc(class_="form-control") }}
                                                 </div>
-                                                <div class="maxwidth padding-top-xs">
+                                                <div class="maxwidth padding-top-xs" id="electrical" name="electrical">
                                                     <div class="maxwidth text-center">
-                                                        <button class="btn btn-default margin-right-xs"> Modify </button>
-                                                        <button class="btn btn-default margin-right-xs"> Create </button>
-                                                        <button class="btn btn-default "> Delete </button>
+                                                        <button class="btn btn-default margin-right-xs" id="electrical_modify"> Modify </button>
+                                                        <button class="btn btn-default margin-right-xs" id="electrical_create"> Create </button>
+                                                        <button class="btn btn-default " id="electrical_delete"> Delete </button>
                                                     </div>
                                                     <div class="maxwidth text-center padding-top-xs">
-                                                        <button class="btn btn-default margin-right-xs"> Cancel </button>
-                                                        <button class="btn btn-default margin-right-xs"> Save </button>
+                                                        <button class="btn btn-default margin-right-xs" id="electrical_cancel"> Cancel </button>
+                                                        <button class="btn btn-default margin-right-xs" id="electrical_save"> Save </button>
                                                     </div>
+                                                    <input type="hidden" value="" name="electrical_select" id="electrical_select">
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -373,16 +374,17 @@
                                                     {{ popups.add.profile.description_fl.label(class_="") }}
                                                     {{ popups.add.profile.description_fl(class_="form-control") }}
                                                 </div>
-                                                <div class="maxwidth padding-top-xs">
+                                                <div class="maxwidth padding-top-xs" id="fluid" name="fluid">
                                                     <div class="maxwidth text-center">
-                                                        <button class="btn btn-default margin-right-xs"> Modify </button>
-                                                        <button class="btn btn-default margin-right-xs"> Create </button>
-                                                        <button class="btn btn-default"> Delete </button>
+                                                        <button class="btn btn-default margin-right-xs" id="fluid_modify"> Modify </button>
+                                                        <button class="btn btn-default margin-right-xs" id="fluid_create"> Create </button>
+                                                        <button class="btn btn-default" id="fluid_delete"> Delete </button>
                                                     </div>
                                                     <div class="maxwidth text-center padding-top-xs">
-                                                        <button class="btn btn-default margin-right-xs"> Cancel </button>
-                                                        <button class="btn btn-default margin-right-xs"> Save </button>
+                                                        <button class="btn btn-default margin-right-xs" id="fluid_cancel"> Cancel </button>
+                                                        <button class="btn btn-default margin-right-xs" id="fluid_save"> Save </button>
                                                     </div>
+                                                    <input type="hidden" value="" name="fluid_select" id="fluid_select">
                                                 </div>
                                             </div>
                                         </fieldset>

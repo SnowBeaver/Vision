@@ -62,7 +62,7 @@ class EquipmentDiagnosisViewForm(Form):
     condition = BooleanField('Equipment in questionable condition or out of service', validators=[Optional()])
 
 
-from app.popups.models import LabManager
+from app.popups.models import *
 from app import db
 
 # Create new test
@@ -78,12 +78,17 @@ testing_choice = [
 ]
 
 point_choice = [
-    ('Main tank-Bottom', 'Main tank-Bottom'), ('Undetermined', 'Undetermined'),
-    ('Main tank-Top', 'Main tank-Top'), ('Gas relay', 'Gas relay'), ('Other', 'Other')
+    ( 0, 'Main tank-Bottom'), ( 1 , 'Undetermined'),
+    ( 2, 'Main tank-Top'), ( 3 , 'Gas relay'), ( 4, 'Other')
 ]
 
-profile_choice = [('EEVAL', 'EEVAL'), ]
+profile_choice = [
+    (x.selection, x.selection) for x in db.session.query(ElectricalProfile).all()
+]
 
+fluid_choice = [
+    (x.selection, x.selection) for x in db.session.query(FluidProfile).all()
+]
 
 class NewTestDescription(Form):
     equipment = TextField('Equipment No.', validators=[Required()])
@@ -100,7 +105,7 @@ class NewTestDescription(Form):
 class NewTestElectrical(Form):
     bushing = BooleanField('Bushing Cap. and PF', validators=[Optional()])
     winding = BooleanField('Winding Cap. and PF', validators=[Optional()])
-    winding_doble = BooleanField('Winding Cap. and PF Doble', validators=[Optional()])
+    winding_double = BooleanField('Winding Cap. and PF Doble', validators=[Optional()])
     insulation = BooleanField('Insulation resistance', validators=[Optional()])
     visual = BooleanField('Visual inspection', validators=[Optional()])
     resistance = BooleanField('Resistance; winding/contact', validators=[Optional()])
@@ -139,22 +144,22 @@ class NewTestFluid(Form):
     dielec_i = BooleanField('Dielec. IEC-156(kV)', validators=[Optional()])
     visual = BooleanField('Visual (D1524)', validators=[Optional()])
     qty_jar = IntegerField('Qty', validators=[Optional()])
-    ampling_jar = SelectField('Sampling point', choices=point_choice, validators=[Required()])
+    sampling_jar = SelectField('Sampling point', choices=point_choice, validators=[Required()])
     # vial
     pcb_vial = BooleanField('PCB', validators=[Optional()])
-    antioxydant = BooleanField('Antioxidant', validators=[Optional()])
+    antioxidant = BooleanField('Antioxidant', validators=[Optional()])
     qty_vial = IntegerField('Qty', validators=[Optional()])
-    ampling_vial = SelectField('Sampling point', choices=point_choice, validators=[Required()])
+    sampling_vial = SelectField('Sampling point', choices=point_choice, validators=[Required()])
 
 
 class NewTestProfile(Form):
     # electrical
     enable_elc = BooleanField('Enable the selection of test according to profile', validators=[Optional()])
-    profile_elc = SelectField('Profile selection', choices=profile_choice, validators=[Required()])
+    profile_elc = SelectField('Profile selection', choices = profile_choice , validators=[Required()])
     description_elc = TextField('Description', validators=[Required()])
     # fluid
     enable_fl = BooleanField('Enable the selection of test according to profile', validators=[Optional()])
-    profile_fl = SelectField('Profile selection', choices=profile_choice, validators=[Required()])
+    profile_fl = SelectField('Profile selection', choices = fluid_choice , validators=[Required()])
     description_fl = TextField('Description', validators=[Required()])
 
 

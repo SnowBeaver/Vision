@@ -172,8 +172,3 @@ var LAB = LAB || (function(){
 
     };
 }());
-
-$(document).ready(function(){
-
-
-});

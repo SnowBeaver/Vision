@@ -3,6 +3,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jstree.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
 
     <style type="text/css">
         .fa-large{
@@ -157,9 +158,23 @@
 
     <script src="{{ url_for('static', filename='js/popups/lab.js') }}"></script>
     <script type="text/javascript">
-       LAB.init([ '{{ url_for("lab.create") }}' , '{{ url_for("lab.get_all") }}'
-       , '{{ url_for("lab.delete") }}' ,  '{{ url_for("lab.modify") }}' ,  ]);
+        LAB.init([ '{{ url_for("lab.create") }}' , '{{ url_for("lab.get_all") }}'
+        , '{{ url_for("lab.delete") }}' ,  '{{ url_for("lab.modify") }}' ,  ]);
     </script>
+    <script src="{{ url_for('static', filename='js/popups/test_profile.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
+    <script type="text/javascript">
+        var urls = {
+             create : '{{ url_for("test_profile.create") }}'
+            ,get_value : '{{ url_for("test_profile.get_value") }}'
+            ,delete : '{{ url_for("test_profile.delete") }}'
+            ,modify : '{{ url_for("test_profile.modify") }}'
+            ,get_profile : '{{ url_for("test_profile.get_profile") }}'
+        }
+        Test_Profile.init(urls);
+    </script>
+
 
     <script type="text/javascript">
         $(function () {

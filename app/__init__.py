@@ -125,8 +125,10 @@ app.register_blueprint(treeModule)
 
 # register Lab Manager
 from app.popups.views import lab as labModule
-app.register_blueprint(labModule)
+from app.popups.views import test_profile as Test_Profile
 
+app.register_blueprint(labModule)
+app.register_blueprint(Test_Profile)
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
 from app.admin.models import File, Image
@@ -142,6 +144,7 @@ backend.add_view(MenuView(name="Menu"))
 # create tree table
 from app.tree.models import Base
 Base.metadata.create_all(engine)
+
 #create lab table
 from app.popups.models import BaseManager
 BaseManager.metadata.create_all(engine)
