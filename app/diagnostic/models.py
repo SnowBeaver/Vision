@@ -196,6 +196,9 @@ class GasSensor(BaseManager):
     # percentError. Calculated error in percent
     percentError = sqla.Column(db.Float(53), server_default=db.text("0"))
 
+    def __repr__(self):
+        return "G"
+
 
 class Transformer(BaseManager):
     __tablename__ = u'transformer'
@@ -221,6 +224,8 @@ class Transformer(BaseManager):
         backref=backref('transformer', order_by=id)
     )
 
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
+
     Windings = sqla.Column(db.Integer)  # Windings. Number of windings in transformer
     Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
     PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
@@ -232,6 +237,7 @@ class Transformer(BaseManager):
 
     # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
     WeldedCover = sqla.Column(db.Boolean)
+
     PrimaryTension = sqla.Column(db.Float(53))  # Volt1. Primary voltage in kV
     SecondaryTension = sqla.Column(db.Float(53))  # Volt2. Secondary voltage in kV
     TertiaryTension = sqla.Column(db.Float(53))  # Volt3. Tertiary voltage in kV
@@ -242,12 +248,16 @@ class Transformer(BaseManager):
 
     AutoTransformer = sqla.Column(db.Boolean)  # Autotransformer. True if it is
 
+    # is a separate device
     PrimaryWindingConnection = sqla.Column(
         db.Integer)  # PrimConnection. Primary windings connection on a multi phase transformer
     SecondaryWindingConnection = sqla.Column(
         db.Integer)  # SecConnection. Secondary windings connection on a multi phase transformer
     TertiaryWindingConnection = sqla.Column(
         db.Integer)  # TertConnection. Tertiary windings connection on a multi phase transformer
+
+    # winding metal is a property of winding
+    WindindMetal = sqla.Column(db.Integer)  # WindingMetal. Copper or aluminium
 
     BIL1 = sqla.Column(db.Float(53))  # BIL1. Primary Insulation level in kV
     BIL2 = sqla.Column(db.Float(53))  # BIL2. Secondary Insulation level in kV
@@ -257,11 +267,92 @@ class Transformer(BaseManager):
     StaticShield2 = sqla.Column(db.Boolean)  # StaticShield2. true with secondary electrostatic shield is present
     StaticShield3 = sqla.Column(db.Boolean)  # StaticShield3. true with tertiary electrostatic shield is present
 
+    # it's tranformer property
+    BushingNeutral1 = sqla.Column(db.Float(53))
+    BushingNeutral2 = sqla.Column(db.Float(53))
+    BushingNeutral3 = sqla.Column(db.Float(53))
+    BushingNeutral4 = sqla.Column(db.Float(53))
+
     LTC1 = sqla.Column(db.Float(53))  # LTC1.
     LTC2 = sqla.Column(db.Float(53))  # LTC2
     LTC3 = sqla.Column(db.Float(53))  # LTC3
 
     TemperatureRise = sqla.Column(db.Integer)  # TemperatureRise. Transformer temperature rise
+
+    # it can be a property and also can be tested
+    Impedance1 = sqla.Column(db.Float(53))  # Impedance1. Impedance at base MVA
+    Imp_Base1 = sqla.Column(db.Float(53))  # ImpBasedMVA1
+
+    Impedance2 = sqla.Column(db.Float(53))  # Impedance2. Impedance at first forced cooling MVA
+    Imp_Base2 = sqla.Column(db.Float(53))  # ImpBasedMVA2
+
+    MVAForced11 = sqla.Column(db.Float(53))  # MVAForced11
+    MVAForced12 = sqla.Column(db.Float(53))  # MVAForced12
+    MVAForced13 = sqla.Column(db.Float(53))  # MVAForced13
+    MVAForced14 = sqla.Column(db.Float(53))  # MVAForced14
+    MVAForced21 = sqla.Column(db.Float(53))  # MVAForced21
+    MVAForced22 = sqla.Column(db.Float(53))  # MVAForced22
+    MVAForced23 = sqla.Column(db.Float(53))  # MVAForced23
+    MVAForced24 = sqla.Column(db.Float(53))  # MVAForced24
+
+    Impedance3 = sqla.Column(db.Float(53))  # Impedance3. Impedance at third forced cooling MVA
+    ImpBasedMVA3 = sqla.Column(db.Float(53))  # ImpBasedMVA3
+
+    # it belongs to transformer , tap voltage, it s a part of the test process
+    FormulaRatio2 = sqla.Column(db.Integer)  # RatioFormula2. Formula used for TTR
+
+    # it belongs to transformer , tap voltage, it s a part of the test process
+    FormulaRatio = sqla.Column(db.Integer)  # RatioFormula. Formula used for TTR
+    RatioTag1 = sqla.Column(db.String(20))  # RatioTag1. Tag use for TTR
+    RatioTag2 = sqla.Column(db.String(20))  # RatioTag2. Tag use for TTR
+    RatioTag3 = sqla.Column(db.String(20))  # RatioTag3. Tag use for TTR
+    RatioTag4 = sqla.Column(db.String(20))  # RatioTag4. Tag use for TTR
+    RatioTag5 = sqla.Column(db.String(20))  # RatioTag5. Tag use for TTR
+    RatioTag6 = sqla.Column(db.String(20))  # RatioTag6. Tag use for TTR
+    FluidType = sqla.Column(db.Integer)  # FluidType. Insulating fluid used in equipment
+
+
+    # it's a relation to bushing table column "serial number"
+    BushingSerial1 = sqla.Column(db.String(15))  # BushingSerial1.
+    BushingSerial2 = sqla.Column(db.String(15))  # BushingSerial2.
+    BushingSerial3 = sqla.Column(db.String(15))  # BushingSerial3.
+    BushingSerial4 = sqla.Column(db.String(15))  # BushingSerial4.
+    BushingSerial5 = sqla.Column(db.String(15))  # BushingSerial5.
+    BushingSerial6 = sqla.Column(db.String(15))  # BushingSerial6.
+    BushingSerial7 = sqla.Column(db.String(15))  # BushingSerial7.
+    BushingSerial8 = sqla.Column(db.String(15))  # BushingSerial8.
+    BushingSerial9 = sqla.Column(db.String(15))  # BushingSerial9.
+    BushingSerial10 = sqla.Column(db.String(15))  # BushingSerial10.
+    BushingSerial11 = sqla.Column(db.String(15))  # BushingSerial11.
+    BushingSerial12 = sqla.Column(db.String(15))  # BushingSerial12.
+
+    # device property ,  for  transformer
+    MVAActual = sqla.Column(db.Float(53))  # MVAActual. Actual MVA used
+    MVARActual = sqla.Column(db.Float(53))  # MVARActual. Actual MVA used
+    MWReserve = sqla.Column(db.Float(53))  # MWReserve. How much MW in reserve for backup
+    MVARReserve = sqla.Column(db.Float(53))  # MVARReserve. How much MVAR in reserve for backup
+    MWUltime = sqla.Column(db.Float(53))  # MWUltima. How much MW can ultimately be used in emergency
+    MVARUltime = sqla.Column(db.Float(53))  # MVARUltima. How much MVAR can ultimately be used in emergency
+
+    # transformer device property
+    MVA4 = sqla.Column(db.Float(53))  # MVA4
+
+    # it transformer property
+    # QuatConnection. Quaternary windings connection on a multi phase transformer
+    QuaternaryWindingConnection = sqla.Column(db.Float(53))
+
+    # tranformer property
+    BIL4 = sqla.Column(db.Float(53))  # BIL4. Tertiary Insulation level in kV
+    # tranformer property
+    StaticShield4 = sqla.Column(db.Float(53))  # StaticShield4. true with tertiary electrostatic shield is present
+
+    # tranformer property
+    RatioTag7 = sqla.Column(db.Float(53))  # RatioTag7. Tag use for TTR
+    RatioTag8 = sqla.Column(db.Float(53))  # RatioTag8. Tag use for TTR
+    FormulaRatio3 = sqla.Column(db.Float(53))  # RatioFormula3
+
+    def __repr__(self):
+        return "T"
 
 
 class Breaker(BaseManager):
@@ -284,12 +375,16 @@ class Breaker(BaseManager):
     )
 
     PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
     Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
     Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
     Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
 
     # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
     WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return "B"
 
 
 class LoadTapChanger(BaseManager):
@@ -306,6 +401,7 @@ class LoadTapChanger(BaseManager):
         Manufacturer,
         backref=backref('tap_changer', order_by=id)
     )
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
     Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
     PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
@@ -313,11 +409,29 @@ class LoadTapChanger(BaseManager):
     # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
     WeldedCover = sqla.Column(db.Boolean)
 
+    # it should be a test value
+    # Filter. What condition is the filter. We must make this field a selection choice such Good, bad, replace etc..
+    Filter = sqla.Column(db.String(30))
+
+    # so this is test value (inspection)
+    Counter = sqla.Column(db.Integer)  # Counter. Used for load tap changer or arrester (ligthning)
+
+    # tap changer property property
+    LTC4 = sqla.Column(db.Float(53))  # LTC4
+
+
+    def __repr__(self):
+        return "L"
+
+
+
+
 
 class Bushing(BaseManager):
     __tablename__ = u'bushing'
 
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Type = ['phase', 'Neutral']
     Name = sqla.Column(db.String(50))
     Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
     Manufacturer = relationship(
@@ -325,6 +439,7 @@ class Bushing(BaseManager):
         backref=backref('bushing', order_by=id)
     )
     Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
     PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
     BushingManufacturerH1 = sqla.Column(db.String(25))  # Bushing manufacturer for H1
@@ -353,7 +468,14 @@ class Bushing(BaseManager):
     BushingType_QN = sqla.Column(db.String(25))  # Bushing type for QN
 
 
+    def __repr__(self):
+        return "B"
+
+
 class Location(BaseManager):
+    # PhyPosition GPS location
+    __tablename__ = u'location'
+
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
     # Site. What is the name of the site.
     # Example. A company may have a assembly plants in several cities,
@@ -362,8 +484,70 @@ class Location(BaseManager):
 
 
 class Manufacturer(BaseManager):
+    __tablename__ = u'manufacturer'
+
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
     Name = sqla.Column(db.String(50))
+
+
+class Norms(BaseManager):
+    __tablename__ = u'norms'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50), index=True)  # should be relation
+
+
+    # NormPHY.  Fluid physical properties norms
+    # NormDissolvedGas. Fluid dissolved gas norms
+    # NormFluid# NormFur. Fluid furan norms
+
+
+class Upstream(BaseManager):
+    __tablename__ = u'upstream'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50), index=True)  # should be relation
+
+
+class Downstream(BaseManager):
+    __tablename__ = u'downstream'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50), index=True)  # should be relation
+
+
+class NormParameter(BaseManager):
+    __tablename__ = u'norms_params'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    Norm = db.Column(
+        'norm_id',
+        db.ForeignKey("norms.id"),
+        nullable=False
+    )
+    Name = sqla.Column(db.String(50), index=True)  # should be relation
+
+    Parameters = relationship(
+        Norms,
+        backref=backref('norms', order_by=Name)
+    )
+
+class NeutralResistance(BaseManager):
+
+    __tablename__ = u'resistance'
+    # its a separate device should be splitted into another table
+    NeutralResistance = sqla.Column(db.Float(53))   # NeutralResistance1.
+    NeutralResistance1 = sqla.Column(db.Float(53))  # NeutralResistance1.
+    NeutralResistance0 = sqla.Column(db.Boolean)    # NeutralResistance0
+    NeutralResistance2 = sqla.Column(db.Float(53))  # NeutralResistance2
+    NeutralResistance3 = sqla.Column(db.Float(53))  # NeutralResistance3
+
+    # it's status or mode  of a resistance
+    NeutralResistanceOpen1 = sqla.Column(db.Boolean)  # NeutralResistanceOpen1
+    NeutralResistanceOpen2 = sqla.Column(db.Boolean)  # NeutralResistanceOpen2
+    # property of resistence, it's status
+    NeutralResistanceOpen3 = sqla.Column(db.Float(53))  # NeutralResistanceOpen3
 
 
 class Equipment(BaseManager):
@@ -377,15 +561,6 @@ dot it? I would split in Transformer, breaker, load tap changer, bushing sub tab
 
     """
     __tablename__ = u'equipment'
-    __table_args__ = (
-        sqla.Index(u'Equipment_ParentsSer', u'LocAmont3', u'LocAmont2'),
-        # EquipmentUpstreamSerial. List upstream equipment by serial number and their upstream location
-        sqla.Index(u'Equipment_SiteEquipe', u'Site', u'NoEquipment'),
-        # EquipmentSiteNoEquip. list equipment by Site and Equipment number
-        sqla.Index(u'Equipment_ParentsEquip', u'LocAmont2', u'LocAmont3'),
-        # EquipmentUpstreamNoEquip. List equipment by upstream equipment
-        sqla.Index(u'Equipment_SiteSerie', u'Site', u'NoSerieEquipe')  # EquipmentSiteSerial. List Site by serial number
-    )
 
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
 
@@ -414,62 +589,21 @@ dot it? I would split in Transformer, breaker, load tap changer, bushing sub tab
 
     Comments = sqla.Column(db.Text)  # Comments relation
 
+    # these fields should be related to every components test , it's not a preperty of the device its a test
     VisualDate = sqla.Column(db.Datetime)  # VisualDate.  Date where was done the last visual inspection.
     VisualInspectionBy = sqla.Column(db.String(30))  # VisualInspectionBy. Who made the visual inspection. user relation
     VisualInspectionComments = sqla.Column(db.Text)  # VisualInspectionComments. Visual inspection comments,
 
-    Counter = sqla.Column(db.Integer)  # Counter. Used for load tap changer or arrester (ligthning)
-
-    # Filter. What condition is the filter. We must make this field a selection choice such Good, bad, replace etc..
-    Filter = sqla.Column(db.String(30))
-
-    BushingNeutral1 = sqla.Column(db.Float(53))  # BushingNeutral1
-    BushingNeutral2 = sqla.Column(db.Float(53))  # BushingNeutral2
-    BushingNeutral3 = sqla.Column(db.Float(53))  # BushingNeutral3
-
-    NeutralResistance = sqla.Column(db.Float(53))  # NeutralResistance1.
-    NeutralResistanceOpen1 = sqla.Column(db.Boolean)  # NeutralResistanceOpen1
-    NeutralResistance2 = sqla.Column(db.Float(53))  # NeutralResistance2
-    NeutralResistanceOpen2 = sqla.Column(db.Boolean)  # NeutralResistanceOpen2
-
-    WindindMetal = sqla.Column(db.Integer)  # WindingMetal. Copper or aluminium
-    FormulaRatio = sqla.Column(db.Integer)  # RatioFormula. Formula used for TTR
-    RatioTag1 = sqla.Column(db.String(20))  # RatioTag1. Tag use for TTR
-    RatioTag2 = sqla.Column(db.String(20))  # RatioTag2. Tag use for TTR
-    RatioTag3 = sqla.Column(db.String(20))  # RatioTag3. Tag use for TTR
-
-    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
-    Impedance1 = sqla.Column(db.Float(53))  # Impedance1. Impedance at base MVA
-    Imp_Base1 = sqla.Column(db.Float(53))  # ImpBasedMVA1
-    Impedance2 = sqla.Column(db.Float(53))  # Impedance2. Impedance at first forced cooling MVA
-    Imp_Base2 = sqla.Column(db.Float(53))  # ImpBasedMVA2
-
+    # test inspection of tap changer or characteristic ?
     NbrOfTapChangeLTC = sqla.Column(db.Integer)  # NbrTapChange.  Number of tap change on LTC
-    NormFluidPhysicalProp = sqla.Column(db.String(20))  # NormPHY.  Fluid physical properties norms
-    NormDissolvedGas = sqla.Column(db.String(20))  # NormDG.   Fluid dissolved gas norms
-    NormFluid = sqla.Column(db.String(20))  # NormFur.   Fluid furan norms
 
-    FormulaRatio2 = sqla.Column(db.Integer)  # RatioFormula2. Formula used for TTR
-    RatioTag4 = sqla.Column(db.String(20))  # RatioTag4. Tag use for TTR
-    RatioTag5 = sqla.Column(db.String(20))  # RatioTag5. Tag use for TTR
-    RatioTag6 = sqla.Column(db.String(20))  # RatioTag6. Tag use for TTR
-    FluidType = sqla.Column(db.Integer)  # FluidType. Insulating fluid used in equipment
-    NeutralResistance1 = sqla.Column(db.Float(53))  # NeutralResistance1.
-    NeutralResistance0 = sqla.Column(db.Boolean)  # NeutralResistance0
+    # its a separate norms table for all devices
+    Norms = relationship(
+        Norms,
+        backref('equipment', order_by=id)
+    )
 
-    BushingSerial1 = sqla.Column(db.String(15))  # BushingSerial1.
-    BushingSerial2 = sqla.Column(db.String(15))  # BushingSerial2.
-    BushingSerial3 = sqla.Column(db.String(15))  # BushingSerial3.
-    BushingSerial4 = sqla.Column(db.String(15))  # BushingSerial4.
-    BushingSerial5 = sqla.Column(db.String(15))  # BushingSerial5.
-    BushingSerial6 = sqla.Column(db.String(15))  # BushingSerial6.
-    BushingSerial7 = sqla.Column(db.String(15))  # BushingSerial7.
-    BushingSerial8 = sqla.Column(db.String(15))  # BushingSerial8.
-    BushingSerial9 = sqla.Column(db.String(15))  # BushingSerial9.
-    BushingSerial10 = sqla.Column(db.String(15))  # BushingSerial10.
-    BushingSerial11 = sqla.Column(db.String(15))  # BushingSerial11.
-    BushingSerial12 = sqla.Column(db.String(15))  # BushingSerial12.
-
+    # its a state of a transformer / breaker /switch /motor / cable  not
     Upstream1 = sqla.Column(db.String(100))  # Upstream1. Upstream device name
     Upstream2 = sqla.Column(db.String(100))  # Upstream2. Upstream device name
     Upstream3 = sqla.Column(db.String(100))  # Upstream3. Upstream device name
@@ -482,45 +616,16 @@ dot it? I would split in Transformer, breaker, load tap changer, bushing sub tab
     Downstream4 = sqla.Column(db.String(100))  # Downstream4. Downstream device name
     Downstream5 = sqla.Column(db.String(100))  # Downstream5. Downstream device name
 
-    TieLocation = sqla.Column(db.Boolean)  # TieLocation. Tie device location
+    TieLocation = sqla.Column(db.Boolean)          # TieLocation. Tie device location
     TieMaintenanceState = sqla.Column(db.Integer)  # TieMaintenanceState. Tie is open or closed during maintenance
-    TieAnalysisState = sqla.Column(db.Integer)  # TieAnalysisState.
+    TieAnalysisState = sqla.Column(db.Integer)     # TieAnalysisState.
 
-    LocPos = sqla.Column(db.Integer)  # LocationPos
-    PhysPosition = sqla.Column(db.Integer)  # PhyPosition
+    PhysPosition = sqla.Column(db.Integer)
 
-    MVAActual = sqla.Column(db.Float(53))  # MVAActual. Actual MVA used
-    MVARActual = sqla.Column(db.Float(53))  # MVARActual. Actual MVA used
-    MWReserve = sqla.Column(db.Float(53))  # MWReserve. How much MW in reserve for backup
-    MVARReserve = sqla.Column(db.Float(53))  # MVARReserve. How much MVAR in reserve for backup
-    MWUltime = sqla.Column(db.Float(53))  # MWUltima. How much MW can ultimately be used in emergency
-    MVARUltime = sqla.Column(db.Float(53))  # MVARUltima. How much MVAR can ultimately be used in emergency
+    # device property for all equipment
     Tension4 = sqla.Column(db.Float(53))  # Voltage4
-    MVA4 = sqla.Column(db.Float(53))  # MVA4
-    QuaternaryWindingConnection = sqla.Column(
-        db.Float(53))  # QuatConnection. Quaternary windings connection on a multi phase transformer
-    BIL4 = sqla.Column(db.Float(53))  # BIL4. Tertiary Insulation level in kV
-    StaticShield4 = sqla.Column(db.Float(53))  # StaticShield4. true with tertiary electrostatic shield is present
-    LTC4 = sqla.Column(db.Float(53))  # LTC4
-    BushingNeutral4 = sqla.Column(db.Float(53))  # BushingNeutral4
-    NeutralResistance3 = sqla.Column(db.Float(53))  # NeutralResistance3
-    RatioTag7 = sqla.Column(db.Float(53))  # RatioTag7. Tag use for TTR
-    RatioTag8 = sqla.Column(db.Float(53))  # RatioTag8. Tag use for TTR
-    NeutralResistanceOpen3 = sqla.Column(db.Float(53))  # NeutralResistanceOpen3
-    FormulaRatio3 = sqla.Column(db.Float(53))  # RatioFormula3
-    MVAForced11 = sqla.Column(db.Float(53))  # MVAForced11
-    MVAForced12 = sqla.Column(db.Float(53))  # MVAForced12
-    MVAForced13 = sqla.Column(db.Float(53))  # MVAForced13
-    MVAForced14 = sqla.Column(db.Float(53))  # MVAForced14
-    MVAForced21 = sqla.Column(db.Float(53))  # MVAForced21
-    MVAForced22 = sqla.Column(db.Float(53))  # MVAForced22
-    MVAForced23 = sqla.Column(db.Float(53))  # MVAForced23
-    MVAForced24 = sqla.Column(db.Float(53))  # MVAForced24
-    Impedance3 = sqla.Column(db.Float(53))  # Impedance3. Impedance at third forced cooling MVA
-    ImpBasedMVA3 = sqla.Column(db.Float(53))  # ImpBasedMVA3
 
     # Validated. Indicate equipment info has been validated and can be imported.
-    # PrevSerielNum and PrevEquipmentNum should be updated to current value.
     Validated = sqla.Column(db.Boolean)
 
     # InValidation. If true, equipment information from lab must be updated before get imported into the main DB
@@ -534,4 +639,5 @@ dot it? I would split in Transformer, breaker, load tap changer, bushing sub tab
     PrevEquipmentNumber = sqla.Column(db.String(50))
 
     # Sibling. Unique Common Index with the other siblings.  If 0 then no sibling
+    # id of a similar equipment
     Sibling = sqla.Column(db.Integer)

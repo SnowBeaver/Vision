@@ -26,7 +26,7 @@ blog = BloggingEngine(app, sql_storage)
 meta.create_all(bind=engine)
 
 #create lab table
-from app.popups.models import BaseManager
+from app.diagnostic.models import BaseManager
 BaseManager.metadata.create_all(engine)
 db.create_all()
 
@@ -127,8 +127,8 @@ from app.tree.views import mod as treeModule
 app.register_blueprint(treeModule)
 
 # register Lab Manager
-from app.popups.views import lab as labModule
-from app.popups.views import test_profile as Test_Profile
+from app.diagnostic.views import lab as labModule
+from app.diagnostic.views import test_profile as Test_Profile
 
 app.register_blueprint(labModule)
 app.register_blueprint(Test_Profile)
