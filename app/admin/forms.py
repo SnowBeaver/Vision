@@ -90,6 +90,11 @@ fluid_choice = [
     (x.selection, x.selection) for x in db.session.query(FluidProfile).all()
 ]
 
+from app.users.models import User
+initials_choice = [
+    (x.id, x.name ) for x in db.session.query(User).all()
+]
+
 class NewTestDescription(Form):
     equipment = TextField('Equipment No.', validators=[Required()])
     position = TextField('Position No.', validators=[Required()])
@@ -99,7 +104,7 @@ class NewTestDescription(Form):
     lab_no = TextField('Lab P.O No.', validators=[Required()])
     date = DateField('Acquisition date', validators=[Optional()], format='%m/%d/%Y %H:%M:%S')
     testing = SelectField('Reason for testing', choices=testing_choice, validators=[Required()])
-    initials = TextField('Initials', validators=[Required()])
+    initials = SelectField('Initials', choices=initials_choice, validators=[Required()])
 
 
 class NewTestElectrical(Form):

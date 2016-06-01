@@ -25,6 +25,9 @@ sql_storage = SQLAStorage(engine, metadata=meta)
 blog = BloggingEngine(app, sql_storage)
 meta.create_all(bind=engine)
 
+#create lab table
+from app.popups.models import BaseManager
+BaseManager.metadata.create_all(engine)
 db.create_all()
 
 mail = Mail(app)
@@ -145,9 +148,6 @@ backend.add_view(MenuView(name="Menu"))
 from app.tree.models import Base
 Base.metadata.create_all(engine)
 
-#create lab table
-from app.popups.models import BaseManager
-BaseManager.metadata.create_all(engine)
 
 
 # if app.config['DEBUG']:
