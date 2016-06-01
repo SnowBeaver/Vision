@@ -10,3 +10,6 @@ flaskbb
 flaskbb.xml
 *.mo
 app/messages.pot
+blenv
+Flask-Blogging
+flask-blog

@@ -24,6 +24,7 @@ from flask_admin import BaseView
 from flask import jsonify
 from app.popups.forms import *
 
+
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
     email = fields.TextField(validators=[validators.required()])
@@ -245,6 +246,7 @@ from .storage import *
 from .forms import MenuViewForm
 from app.pages.models import Pages
 from app.tree.storage import get_locale
+
 
 class MenuView(BaseView):
     # @expose.before_app_request

@@ -319,7 +319,7 @@ class DataViewForm(Form):
     gas_2 = FloatField('Gas content(%)', validators=[Required()])
 
 
-type_choice = [('Transformer', 'Transformer'), ]
+type_choice = [('Transformer', 'Transformer'), ('Switcher', 'Switcher2')]
 manufacturer_choice = [('TODO', 'TODO'), ]
 
 
