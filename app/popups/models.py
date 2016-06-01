@@ -7,21 +7,20 @@ from sqlalchemy_i18n import (
 , Translatable
 )
 from app import db
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.orm.collections import attribute_mapped_collection
-import json
 
 from sqlalchemy.ext.declarative import declarative_base
+
 BaseManager = declarative_base()
+
 
 class LabManager(BaseManager):
     __tablename__ = 'lab_manager'
 
-    id = sqla.Column(sqla.Integer, primary_key = True)
+    id = sqla.Column(sqla.Integer, primary_key=True)
     code = sqla.Column(db.Integer)
     analyser = sqla.Column(sqla.Unicode(256))
 
-    def __init__(self, code = 0, analyser = ''):
+    def __init__(self, code=0, analyser=''):
         self.code = code
         self.analyser = analyser
 
@@ -39,17 +38,14 @@ class LabManager(BaseManager):
             self.analyser
         )
 
-import inspect
-import json
 
 class ElectricalProfile(BaseManager):
     __tablename__ = 'electrical_profile'
 
-    id = sqla.Column(sqla.Integer, primary_key = True)
+    id = sqla.Column(sqla.Integer, primary_key=True)
 
     selection = sqla.Column(sqla.Unicode(256))
     description = sqla.Column(sqla.Unicode(1024))
-
     bushing = sqla.Column(sqla.Boolean(False))
     winding = sqla.Column(sqla.Boolean(False))
     winding_double = sqla.Column(sqla.Boolean(False))
@@ -66,37 +62,38 @@ class ElectricalProfile(BaseManager):
                    [c.dump(_indent + 1) for c in self.children.values()]
                )
 
-    def parsedata(self , data ):
+    def parsedata(self, data):
         if data:
             for key in data.keys():
                 # print key + ' ' + data[key]
                 if hasattr(self, key):
                     if key == 'selection' or key == 'description':
                         if data[key]:
-                            setattr( self, key , data[key] )
+                            setattr(self, key, data[key])
                     else:
-                        setattr( self, key , True if data[key] == 'y' else False )
+                        setattr(self, key, True if data[key] == 'y' else False)
 
-    def __init__(self, data = None):
+    def __init__(self, data=None):
         self.parsedata(data)
         # print getattr(self, key)
 
     def clear_data(self):
         for attr in self.__dict__:
-            if attr not in [ 'id' , '_sa_instance_state' ]:
-                #print attr
+            if attr not in ['id', '_sa_instance_state']:
+                # print attr
                 if attr == 'selection' or attr == 'description':
-                    setattr( self, attr , '' )
+                    setattr(self, attr, '')
                 else:
-                    setattr( self, attr , False )
+                    setattr(self, attr, False)
 
     def add_data(self, data):
         self.parsedata(data)
 
+
 class FluidProfile(BaseManager):
     __tablename__ = 'fluid_profile'
 
-    id = sqla.Column(sqla.Integer, primary_key = True)
+    id = sqla.Column(sqla.Integer, primary_key=True)
 
     selection = sqla.Column(sqla.Unicode(256))
     description = sqla.Column(sqla.Unicode(1024))
@@ -138,30 +135,30 @@ class FluidProfile(BaseManager):
     qty_vial = sqla.Column(sqla.Integer)
     sampling_vial = sqla.Column(sqla.Integer)
 
-    def parsedata(self , data ):
+    def parsedata(self, data):
         if data:
             for key in data.keys():
                 if hasattr(self, key):
-                    if key in [ 'selection', 'description' ,'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
+                    if key in ['selection', 'description', 'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial',
+                               'sampling_vial', 'sampling_vial']:
                         if data[key]:
-                            setattr( self, key , data[key] )
+                            setattr(self, key, data[key])
                     else:
-                        setattr( self, key , True if data[key] == 'y' else False )
+                        setattr(self, key, True if data[key] == 'y' else False)
 
-    def __init__(self, data = None):
+    def __init__(self, data=None):
         self.parsedata(data)
-
 
     def clear_data(self):
         for attr in self.__dict__:
-            if attr not in [ 'id' , '_sa_instance_state' ]:
-                #print attr
+            if attr not in ['id', '_sa_instance_state']:
+                # print attr
                 if attr == 'selection' and attr == 'description':
-                    setattr( self, attr , '' )
-                if attr in [ 'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
-                    setattr( self, attr , 0 )
+                    setattr(self, attr, '')
+                if attr in ['qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
+                    setattr(self, attr, 0)
                 else:
-                    setattr( self, attr , False )
+                    setattr(self, attr, False)
 
     def add_data(self, data):
         self.parsedata(data)
