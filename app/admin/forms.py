@@ -62,7 +62,7 @@ class EquipmentDiagnosisViewForm(Form):
     condition = BooleanField('Equipment in questionable condition or out of service', validators=[Optional()])
 
 
-from app.popups.models import *
+from app.diagnostic.models import *
 from app import db
 
 # Create new test
@@ -324,7 +324,7 @@ class DataViewForm(Form):
     gas_2 = FloatField('Gas content(%)', validators=[Required()])
 
 
-type_choice = [('Transformer', 'Transformer'), ]
+type_choice = [('Transformer', 'Transformer'), ('Switcher', 'Switcher2')]
 manufacturer_choice = [('TODO', 'TODO'), ]
 
 

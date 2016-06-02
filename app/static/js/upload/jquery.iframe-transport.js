@@ -39,7 +39,7 @@
     $.ajaxTransport('iframe', function (options) {
         if (options.async) {
             // javascript:false as initial iframe src
-            // prevents warning popups on HTTPS in IE6:
+            // prevents warning diagnostic on HTTPS in IE6:
             /*jshint scripturl: true */
             var initialIframeSrc = options.initialIframeSrc || 'javascript:false;',
             /*jshint scripturl: false */
@@ -164,7 +164,7 @@
                 abort: function () {
                     if (iframe) {
                         // javascript:false as iframe src aborts the request
-                        // and prevents warning popups on HTTPS in IE6.
+                        // and prevents warning diagnostic on HTTPS in IE6.
                         // concat is used to avoid the "Script URL" JSLint error:
                         iframe
                             .unbind('load')

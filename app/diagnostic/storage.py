@@ -7,9 +7,10 @@ from app import app
 from sqlalchemy.orm.session import make_transient
 import json
 
-def add_lab(code , analyser):
+
+def add_lab(code, analyser):
     try:
-        node = LabManager(code = code, analyser = analyser)
+        node = LabManager(code=code, analyser=analyser)
         # think of a different solution how to extract node.id
         db.session.add(node)
         db.session.commit()
@@ -21,6 +22,7 @@ def add_lab(code , analyser):
 
     return res
 
+
 def get_labs():
     try:
         res = []
@@ -28,9 +30,9 @@ def get_labs():
 
         for node in out:
             res.append({
-                 'id' : node.id
-                ,'code': node.code
-                ,'analyser' : node.analyser
+                'id': node.id
+                , 'code': node.code
+                , 'analyser': node.analyser
             })
     except Exception as e:
         import logging
@@ -38,6 +40,7 @@ def get_labs():
         res = None
 
     return res
+
 
 def delete_lab(id):
     try:
@@ -51,6 +54,7 @@ def delete_lab(id):
         res = None
 
     return res
+
 
 def modify_lab(id, code, analyser):
     try:
@@ -67,9 +71,10 @@ def modify_lab(id, code, analyser):
 
     return res
 
+
 def create_electrical_profile(data):
     try:
-        node = ElectricalProfile(data = data)
+        node = ElectricalProfile(data=data)
         # think of a different solution how to extract node.id
         db.session.add(node)
         db.session.commit()
@@ -80,10 +85,11 @@ def create_electrical_profile(data):
         res = None
 
     return res
+
 
 def create_fluid_profile(data):
     try:
-        node = FluidProfile(data = data)
+        node = FluidProfile(data=data)
         # think of a different solution how to extract node.id
         db.session.add(node)
         db.session.commit()
@@ -94,16 +100,17 @@ def create_fluid_profile(data):
         res = None
 
     return res
+
 
 def get_selections(model):
     try:
         res = []
         nodes = db.session.query(model).with_entities(model.selection, model.description).all()
-        #nodes =  db.session.query(ElectricalProfile).all()
+        # nodes =  db.session.query(ElectricalProfile).all()
         for node in nodes:
             res.append({
-                 'selection' : node.selection
-                ,'description' : node.description
+                'selection': node.selection
+                , 'description': node.description
             })
 
     except Exception as e:
@@ -112,6 +119,7 @@ def get_selections(model):
         res = None
 
     return res
+
 
 def delete_electrical_profile(profile):
     try:
@@ -126,6 +134,7 @@ def delete_electrical_profile(profile):
 
     return res
 
+
 def delete_fluid_profile(profile):
     try:
         node = db.session.query(FluidProfile).filter(FluidProfile.selection == profile).first()
@@ -139,9 +148,10 @@ def delete_fluid_profile(profile):
 
     return res
 
+
 def modify_electrical_profile(data):
     try:
-        #print data['selection']
+        # print data['selection']
         node = db.session.query(ElectricalProfile).filter(ElectricalProfile.selection == data['selection']).first()
         res = None
         if node:
@@ -157,6 +167,7 @@ def modify_electrical_profile(data):
         res = None
 
     return res
+
 
 def modify_fluid_profile(data):
     try:
@@ -176,15 +187,16 @@ def modify_fluid_profile(data):
 
     return res
 
+
 def get_electrical_profile(selection):
     try:
         res = None
         node = db.session.query(ElectricalProfile).filter(ElectricalProfile.selection == selection).first()
         if node:
             out = {}
-            for key  in node.__dict__:
-                if key not in [ '_sa_instance_state' , 'id' , 'selection' ]:
-                    out[key] =  getattr(node, key)
+            for key in node.__dict__:
+                if key not in ['_sa_instance_state', 'id', 'selection']:
+                    out[key] = getattr(node, key)
 
             res = out
     except Exception as e:
@@ -194,15 +206,16 @@ def get_electrical_profile(selection):
 
     return res
 
+
 def get_fluid_profile(selection):
     try:
         res = None
         node = db.session.query(FluidProfile).filter(FluidProfile.selection == selection).first()
         if node:
             out = {}
-            for key  in node.__dict__:
-                if key not in [ '_sa_instance_state', 'id' , 'selection' ]:
-                    out[key] =  getattr(node, key)
+            for key in node.__dict__:
+                if key not in ['_sa_instance_state', 'id', 'selection']:
+                    out[key] = getattr(node, key)
 
             res = out
     except Exception as e:
