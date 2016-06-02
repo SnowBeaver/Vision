@@ -13,8 +13,8 @@ from sqlalchemy.ext.declarative import declarative_base
 BaseManager = declarative_base()
 
 
-class LabManager(BaseManager):
-    __tablename__ = 'lab_manager'
+class Lab(BaseManager):
+    __tablename__ = 'lab'
 
     id = sqla.Column(sqla.Integer, primary_key=True)
     code = sqla.Column(db.Integer)
@@ -32,7 +32,7 @@ class LabManager(BaseManager):
                )
 
     def __repr__(self):
-        return "LabManager(id=%r, code=%r, analyser=%r)" % (
+        return "Lab(id=%r, code=%r, analyser=%r)" % (
             self.id,
             self.code,
             self.analyser
@@ -88,6 +88,7 @@ class ElectricalProfile(BaseManager):
 
     def add_data(self, data):
         self.parsedata(data)
+
 
 
 class FluidProfile(BaseManager):
@@ -164,6 +165,36 @@ class FluidProfile(BaseManager):
         self.parsedata(data)
 
 
+class Location(BaseManager):
+    # PhyPosition GPS location
+    __tablename__ = u'location'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    # Site. What is the name of the site.
+    # Example. A company may have a assembly plants in several cities,
+    # therefore each site is named after each city where the plant is.
+    Name = sqla.Column(db.String(50), index=True)  # should be relation
+
+
+class Manufacturer(BaseManager):
+    __tablename__ = u'manufacturer'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50))
+
+
+class Norms(BaseManager):
+    __tablename__ = u'norms'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50), index=True)  # should be relation
+
+
+    # NormPHY.  Fluid physical properties norms
+    # NormDissolvedGas. Fluid dissolved gas norms
+    # NormFluid# NormFur. Fluid furan norms
+
+
 class GasSensor(BaseManager):
     """
     GasSensor. List gas sensor with their respective sensitivity to each measured gas
@@ -176,10 +207,12 @@ class GasSensor(BaseManager):
     Name = sqla.Column(db.String(50))
     Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
 
-    Manufacturer = relationship(
-        Manufacturer,
-        backref=backref('gas_sensor', order_by=id)
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
     )
+
     H2 = sqla.Column(db.Float(53), server_default=db.text("0"))  # Remaining are equivalent
     CH4 = sqla.Column(db.Float(53), server_default=db.text("0"))
     C2H2 = sqla.Column(db.Float(53), server_default=db.text("0"))
@@ -214,18 +247,19 @@ class Transformer(BaseManager):
     # Index key, along with Equipment number to uniquely identify equipment
     Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
 
-    Manufacturer = relationship(
-        Manufacturer,
-        backref=backref('transformer', order_by=id)
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
     )
 
-    GasSensor = relationship(
-        GasSensor,
-        backref=backref('transformer', order_by=id)
+    GasSensor = db.Column(
+        'gas_sensor_id',
+        db.ForeignKey("gas_sensor.id"),
+        nullable=False
     )
 
     Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
-
     Windings = sqla.Column(db.Integer)  # Windings. Number of windings in transformer
     Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
     PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
@@ -369,9 +403,10 @@ class Breaker(BaseManager):
     # Index key, along with Equipment number to uniquely identify equipment
     Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
 
-    Manufacturer = relationship(
-        Manufacturer,
-        backref=backref('breaker', order_by=id)
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
     )
 
     PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
@@ -397,12 +432,14 @@ class LoadTapChanger(BaseManager):
     # Production because equipment can changed over the years and associate wrong diagnostic
     Name = sqla.Column(db.String(50))
     Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
-    Manufacturer = relationship(
-        Manufacturer,
-        backref=backref('tap_changer', order_by=id)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
     )
-    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
     Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
     PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
     Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
@@ -424,9 +461,6 @@ class LoadTapChanger(BaseManager):
         return "L"
 
 
-
-
-
 class Bushing(BaseManager):
     __tablename__ = u'bushing'
 
@@ -434,9 +468,11 @@ class Bushing(BaseManager):
     Type = ['phase', 'Neutral']
     Name = sqla.Column(db.String(50))
     Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
-    Manufacturer = relationship(
-        Manufacturer,
-        backref=backref('bushing', order_by=id)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
     )
     Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
     Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
@@ -472,36 +508,6 @@ class Bushing(BaseManager):
         return "B"
 
 
-class Location(BaseManager):
-    # PhyPosition GPS location
-    __tablename__ = u'location'
-
-    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
-    # Site. What is the name of the site.
-    # Example. A company may have a assembly plants in several cities,
-    # therefore each site is named after each city where the plant is.
-    Name = sqla.Column(db.String(50), index=True)  # should be relation
-
-
-class Manufacturer(BaseManager):
-    __tablename__ = u'manufacturer'
-
-    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
-    Name = sqla.Column(db.String(50))
-
-
-class Norms(BaseManager):
-    __tablename__ = u'norms'
-
-    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
-    Name = sqla.Column(db.String(50), index=True)  # should be relation
-
-
-    # NormPHY.  Fluid physical properties norms
-    # NormDissolvedGas. Fluid dissolved gas norms
-    # NormFluid# NormFur. Fluid furan norms
-
-
 class Upstream(BaseManager):
     __tablename__ = u'upstream'
 
@@ -528,14 +534,20 @@ class NormParameter(BaseManager):
     )
     Name = sqla.Column(db.String(50), index=True)  # should be relation
 
-    Parameters = relationship(
-        Norms,
-        backref=backref('norms', order_by=Name)
-    )
 
 class NeutralResistance(BaseManager):
 
     __tablename__ = u'resistance'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50))
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
     # its a separate device should be splitted into another table
     NeutralResistance = sqla.Column(db.Float(53))   # NeutralResistance1.
     NeutralResistance1 = sqla.Column(db.Float(53))  # NeutralResistance1.
@@ -552,17 +564,15 @@ class NeutralResistance(BaseManager):
 
 class Equipment(BaseManager):
     """
-    Equipment.  records all information about the equipment. Vasili we found over time that we need to enter
-specific information sometimes that is not share with other equipment.  In the past we kept adding more field to accommodate new modern options.
-We should change this model to be splitted in a main equipment description, then several satellite table defining specific type of equipment rather
-than having one large equipment table covering all type of equipemnt.  I remember that we tried that in the past, but for performance reasons
-we could not.  Could be that we were novice on database and approach this in the wrong way or that Microsoft Database engine could simple not
-dot it? I would split in Transformer, breaker, load tap changer, bushing sub table at this point with the ability to add more sub table easily.
-
+    Equipment.  records all information about the equipment.
     """
     __tablename__ = u'equipment'
 
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # EquipmentNumber: Equipment ID given by equipment owner.
+    # Equipment number to uniquely identify equipment
+    EquipmentCode = sqla.Column(db.Integer, nullable=False, index=True)  # relation to equipemt
 
     # EquipmentType. Define equipment by a single letter code. T:transformer, D; breaker etc...
     TypeEquipment = sqla.Column(db.String(50))
@@ -570,17 +580,10 @@ dot it? I would split in Transformer, breaker, load tap changer, bushing sub tab
     # Location. Indicate the named placed where the equipement is.
     # Example, a main transformer is at site Budapest, and at localisation Church street.
     # Its the equivalent of the substation name.
-    Location = relationship(
-        Location,
-        backref=backref('equipment', order_by=id)
-    )
-    # EquipmentNumber: Equipment ID given by equipment owner.
-    # Equipment number to uniquely identify equipment
-    Equipment = sqla.Column(db.Integer, nullable=False, index=True)  # relation to equipemt
-
-    Manufacturer = relationship(
-        Manufacturer,
-        backref=backref('equipment', order_by=id)
+    Location = db.Column(
+        'location_id',
+        db.ForeignKey("location.id"),
+        nullable=False
     )
 
     # EditedInfo. False no changes.  True Indicates the equipment info have changed and should update information
@@ -590,7 +593,7 @@ dot it? I would split in Transformer, breaker, load tap changer, bushing sub tab
     Comments = sqla.Column(db.Text)  # Comments relation
 
     # these fields should be related to every components test , it's not a preperty of the device its a test
-    VisualDate = sqla.Column(db.Datetime)  # VisualDate.  Date where was done the last visual inspection.
+    VisualDate = sqla.Column(db.DateTime)  # VisualDate.  Date where was done the last visual inspection.
     VisualInspectionBy = sqla.Column(db.String(30))  # VisualInspectionBy. Who made the visual inspection. user relation
     VisualInspectionComments = sqla.Column(db.Text)  # VisualInspectionComments. Visual inspection comments,
 
@@ -598,9 +601,10 @@ dot it? I would split in Transformer, breaker, load tap changer, bushing sub tab
     NbrOfTapChangeLTC = sqla.Column(db.Integer)  # NbrTapChange.  Number of tap change on LTC
 
     # its a separate norms table for all devices
-    Norms = relationship(
-        Norms,
-        backref('equipment', order_by=id)
+    Norm = db.Column(
+        'norm_id',
+        db.ForeignKey("norms.id"),
+        nullable=False
     )
 
     # its a state of a transformer / breaker /switch /motor / cable  not
