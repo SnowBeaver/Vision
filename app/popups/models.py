@@ -225,11 +225,11 @@ class Analysis(BaseManager):
     ErrorState            = Column(Integer, server_default=sqla.text("0"))   # ErrorState: Need to look into
     ErrorCode             = Column(Integer, server_default=sqla.text("0"))   # ErrorCode: Need to look into
     AmbientAirTemperature = Column(Float(53), server_default=sqla.text("0")) # AmbientAirTemperature: Ambient air temperature at sampling time
-    contract_id           = Column(Integer, ForeignKey("contracts.id"))
-    equipment_id          = Column(Integer, ForeignKey("equipment.id"))
+    ContractID            = Column(Integer, ForeignKey("contracts.id"))
+    EquipmentID           = Column(Integer, ForeignKey("equipment.id"))
 
-    contract  = relationship("Contract", foreign_keys=[contract_id])
-    equipment = relationship("Equipment", foreign_keys=[equipment_id])
+    contract  = relationship("Contract", foreign_keys=[ContractID])
+    equipment = relationship("Equipment", foreign_keys=[EquipmentID])
 
 class Equipment(BaseManager):
     """
@@ -237,7 +237,7 @@ class Equipment(BaseManager):
     """
     __tablename__ = u'equipment'
     __table_args__ = (
-        Index(u'Analysis_EquipmentNumber', u'EquipmentNumber', u'EquipmentSerialNum')
+        Index(u'Analysis_EquipmentNumber', u'EquipmentNumber', u'EquipmentSerialNum'),
     )
     id                 = Column(Integer, primary_key=True)
     EquipmentSerialNum = Column(String(50),index=True)              # EquipmentSerialNum: Equipment ID given by manufacturer. Index key, along with Equipment number to uniquely identify equipment
