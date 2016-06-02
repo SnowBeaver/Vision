@@ -167,7 +167,6 @@ class ElectricalProfile(BaseManager):
         self.parsedata(data)
 
 
-
 class FluidProfile(BaseManager):
     __tablename__ = 'fluid_profile'
 
@@ -307,7 +306,7 @@ class GasSensor(BaseManager):
     percentError = sqla.Column(db.Float(53), server_default=db.text("0"))
 
     def __repr__(self):
-        return "G"
+        return self.__tablename__
 
 
 class Transformer(BaseManager):
@@ -463,7 +462,7 @@ class Transformer(BaseManager):
     FormulaRatio3 = sqla.Column(db.Float(53))  # RatioFormula3
 
     def __repr__(self):
-        return "T"
+        return self.__tablename__
 
 
 class Breaker(BaseManager):
@@ -496,7 +495,7 @@ class Breaker(BaseManager):
     WeldedCover = sqla.Column(db.Boolean)
 
     def __repr__(self):
-        return "B"
+        return self.__tablename__
 
 
 class LoadTapChanger(BaseManager):
@@ -533,9 +532,8 @@ class LoadTapChanger(BaseManager):
     # tap changer property property
     LTC4 = sqla.Column(db.Float(53))  # LTC4
 
-
     def __repr__(self):
-        return "L"
+        return self.__tablename__
 
 
 class Bushing(BaseManager):
@@ -580,9 +578,8 @@ class Bushing(BaseManager):
     BushingType_Q = sqla.Column(db.String(25))  # Bushing type for Q
     BushingType_QN = sqla.Column(db.String(25))  # Bushing type for QN
 
-
     def __repr__(self):
-        return "B"
+        return self.__tablename__
 
 
 class Upstream(BaseManager):
@@ -637,6 +634,323 @@ class NeutralResistance(BaseManager):
     NeutralResistanceOpen2 = sqla.Column(db.Boolean)  # NeutralResistanceOpen2
     # property of resistence, it's status
     NeutralResistanceOpen3 = sqla.Column(db.Float(53))  # NeutralResistanceOpen3
+
+    def __repr__(self):
+        return self.__tablename__
+
+
+class AirCircuitBreaker(BaseManager):
+
+    __tablename__ = u'air_breaker'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+
+class Capacitor(BaseManager):
+
+    __tablename__ = u'capacitor'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+
+class PowerSource(BaseManager):
+    __tablename__ = u'powersource'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    PhaseNumber = sqla.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    Frequency = sqla.Column(db.Integer)  # Frequency. Operating frequency
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+
+class SwitchGear(BaseManager):
+    __tablename__ = u'switchgear'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+
+class InductionMachine(BaseManager):
+    __tablename__ = u'induction_machine'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+class SynchronousMachine(BaseManager):
+    __tablename__ = u'synchronous_machine'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+
+class Rectifier(BaseManager):
+    __tablename__ = u'rectifier'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+class Tank(BaseManager):
+    __tablename__ = u'tank'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+class Switch(BaseManager):
+    __tablename__ = u'switch'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    # WeldedCover. Is cover welded. Important to planned work as it is much longer to remove cover
+    WeldedCover = sqla.Column(db.Boolean)
+
+    def __repr__(self):
+        return self.__tablename__
+
+
+class Cable(BaseManager):
+
+    __tablename__ = u'cable'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+
+    # Assigned name given by production.
+    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # Production because equipment can changed over the years and associate wrong diagnostic
+    Name = sqla.Column(db.String(50))
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+
+    Manufacturer = db.Column(
+        'manufacturer_id',
+        db.ForeignKey("manufacturer.id"),
+        nullable=False
+    )
+
+    Sealed = sqla.Column(db.Boolean)  # Sealed. Is equipment sealed.
+    Manufactured = sqla.Column(db.Integer)  # ManuYear. Year manufactured
+    Description = sqla.Column(db.String(50))  # Description. Describe the equipment function
+
+    def __repr__(self):
+        return self.__tablename__
+
 
 
 class Equipment(BaseManager):
