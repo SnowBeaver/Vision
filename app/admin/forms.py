@@ -67,7 +67,7 @@ from app import db
 
 # Create new test
 lab_choice = [
-    (x.id, x.analyser ) for x in db.session.query(LabManager).all()
+    (x.id, x.analyser ) for x in db.session.query(Lab).all()
 ]
 
 testing_choice = [

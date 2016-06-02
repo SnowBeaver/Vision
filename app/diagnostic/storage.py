@@ -10,7 +10,7 @@ import json
 
 def add_lab(code, analyser):
     try:
-        node = LabManager(code=code, analyser=analyser)
+        node = Lab(code=code, analyser=analyser)
         # think of a different solution how to extract node.id
         db.session.add(node)
         db.session.commit()
@@ -26,7 +26,7 @@ def add_lab(code, analyser):
 def get_labs():
     try:
         res = []
-        out = db.session.query(LabManager).all()
+        out = db.session.query(Lab).all()
 
         for node in out:
             res.append({
@@ -44,7 +44,7 @@ def get_labs():
 
 def delete_lab(id):
     try:
-        node = db.session.query(LabManager).filter(LabManager.id == id).first()
+        node = db.session.query(Lab).filter(Lab.id == id).first()
         db.session.delete(node)
         db.session.commit()
         res = node.id
@@ -58,7 +58,7 @@ def delete_lab(id):
 
 def modify_lab(id, code, analyser):
     try:
-        node = db.session.query(LabManager).filter(LabManager.id == id).first()
+        node = db.session.query(Lab).filter(Lab.id == id).first()
         node.code = code
         node.analyser = analyser
         db.session.commit()

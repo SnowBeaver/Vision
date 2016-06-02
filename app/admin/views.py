@@ -87,7 +87,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['search'] = SearchViewForm()
         self._template_args['data'] = DataViewForm()
         self._template_args['info'] = info
-        self._template_args['lab'] = LabManagerView()
+        self._template_args['lab'] = Lab()
 
         return super(MyAdminIndexView, self).index()
 
