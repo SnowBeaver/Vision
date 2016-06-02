@@ -13,3 +13,4 @@ app/messages.pot
 blenv
 Flask-Blogging
 flask-blog
+*.sql

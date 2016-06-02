@@ -200,7 +200,7 @@ class GasSensor(BaseManager):
      """
     __tablename__ = u'gas_sensor'
 
-    id = sqla.Column(db.String(25), primary_key=True)
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
 
     # Sensor. Sensor commercial name
     Name = sqla.Column(db.String(50))
