@@ -33,6 +33,7 @@
                     <input type="hidden" value="0" id="labActionType">
                     <form action="" method="post" id="LabFormData">
                         <div class="col-md-9 nopadding padding-right-xs">
+                            {% if lab.code %}
                             <div class="col-md-3 nopadding padding-right-xs">
                                 {{ lab.code.label(class_="pull-left") }}
                                 {{ lab.code(class_="form-control") }}
@@ -41,6 +42,7 @@
                                 {{ lab.analyser.label(class_="pull-left") }}
                                 {{ lab.analyser(class_="form-control") }}
                             </div>
+                            {% endif %}
                         </div>
                         <div class="col-md-2 nopadding">
                             <button type="submit" class="btn btn-default margin-button pull-left">Ok</button>

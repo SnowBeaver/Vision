@@ -32,6 +32,7 @@ def create():
 
 @lab.route("/get_all/", methods=['POST'])
 def get_all():
+    labs = []
     if request.is_xhr:
         success = False
         if admin_per.require().can():
