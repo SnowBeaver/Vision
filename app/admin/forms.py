@@ -2,6 +2,9 @@ from flask.ext.wtf import Form
 from wtforms import SelectField, HiddenField, TextField, DateField, IntegerField, FloatField, TextAreaField, \
     BooleanField, RadioField
 from wtforms.validators import Required, Length, Optional
+from app.diagnostic.models import *
+from app import db
+from app.users.models import User
 
 # myChoices = [ ('' , '...') ] + [ (page.translations[page.get_locale()].title , page.translations[get_locale()].title) for page in Pages.query.order_by(Pages.updated_on.desc()).all() ]
 myChoices = []
@@ -18,11 +21,13 @@ stage_choice = [('Completed', 'Completed'), ]
 sampling_choice = [('Main tank-Bottom', 'Main tank-Bottom'), ]
 order_status_choice = [('Paid', 'Paid'), ]
 laboratory_choice = [('* Aucun', '* Aucun'), ]
-
+initials_choice = [
+    (x.id, x.name ) for x in db.session.query(User).all()
+]
 
 class IdentificationViewForm(Form):
     analysis_type = TextField('Analysis Type', validators=[Required()])
-    initials = TextField('Initials', validators=[Required()])
+    initials = SelectField('Initials', choices=initials_choice, validators=[Required()])
     acq_date = DateField('Acquisition date', validators=[Optional()], format='%m/%d/%Y %H:%M A')
     reason = SelectField('Reason for analysis', choices=reason_choice, validators=[Required()])
     stage = SelectField('Analysis stage', choices=stage_choice, validators=[Required()])
@@ -61,10 +66,6 @@ class EquipmentDiagnosisViewForm(Form):
     indicator = TextField('Condition indicator', validators=[Required()])
     condition = BooleanField('Equipment in questionable condition or out of service', validators=[Optional()])
 
-
-from app.diagnostic.models import *
-from app import db
-
 # Create new test
 lab_choice = [
     (x.id, x.analyser ) for x in db.session.query(Lab).all()
@@ -88,11 +89,6 @@ profile_choice = [
 
 fluid_choice = [
     (x.selection, x.selection) for x in db.session.query(FluidProfile).all()
-]
-
-from app.users.models import User
-initials_choice = [
-    (x.id, x.name ) for x in db.session.query(User).all()
 ]
 
 class NewTestDescription(Form):

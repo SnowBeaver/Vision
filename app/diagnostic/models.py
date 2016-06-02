@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from sqlalchemy import Index, ForeignKey, Column, Integer, String, Text, DateTime, Boolean, Float
 import sqlalchemy as sqla
 from sqlalchemy_i18n import (
     make_translatable
@@ -37,6 +38,82 @@ class Lab(BaseManager):
             self.code,
             self.analyser
         )
+
+class SamplingCampaign(BaseManager):
+    """SamplingCampaign:
+    Contain current analysis results, who did it and why.
+    It also contain analysis management and statuses
+    If a test is done on the equipment, then an Analysis record is created
+    """
+
+    __tablename__ = u'SamplingCampaign'
+    __table_args__ = (
+        Index(u'SamplingDate_EquipmentID_TypeAnal_key'    , u'SamplingDate', u'EquipmentID', u'Type', u'Key', unique=True),
+        Index(u'EquipmentID_SamplingDate_ClefAnal_key'    , u'EquipmentID', u'SamplingDate', u'Key', u'Type', unique=True),
+        Index(u'SerieDate',                                 u'EquipmentID', u'SamplingDate', u'Key', u'Type'),
+        Index(u'Type_EquipmentID_DatePrelevem_key',         u'Type', u'EquipmentID', u'SamplingDate', u'Key', unique=True),
+        Index(u'EquipmentID_AnalysisType_DatePrelevem_key', u'EquipmentID', u'Type', u'SamplingDate', u'Key', unique=True),
+        Index(u'DateSerie'                                , u'SamplingDate', u'EquipmentID', u'Type', u'Key'),
+        # Index(u'Condition_douteuse'                       , u'EquipmentID', u'If_OK', u'SamplingDate'),
+        Index(u'Condition_douteuse'                       , u'EquipmentID', u'SamplingDate')
+    )
+
+    Key                   = Column(String(50), primary_key=True, index=True)  # Index key for all tests results
+    Date                  = Column(DateTime, index=True)                      # Date the analysis was performed
+    Type                  = Column(String(4),index=True)                      # Analysis type performed on equipment: chemical , electrical etc...
+    Number                = Column(String(15), index=True)                    # Auto increment number assigne when record is created
+    MaterialCode          = Column(Integer)                                   # Define the type of material analysed: copper, sand, paper, etc..
+    MotiveCode            = Column(Integer, server_default=sqla.text("0"))    # Code indicating why the analysis was performed. Mainly use for oil sampling. We should add a table that defines these code.
+    PointCode             = Column(Integer, server_default=sqla.text("0"))    # Code indicating where the oil sample was done
+    PercentRatio          = Column(Boolean)                                   # Indicate if the TTR was done using Percent ratio or Ratio. Used with TTR table
+    OilType               = Column(Integer, server_default=sqla.text("0"))    # What type of insulating material is used: Mineral oil, Silicone, Vegetable oil, etc..
+    Load                  = Column(Float(53))                                 # Load: what was the equipment loading at the time of sampling
+    SamplingDate          = Column(DateTime, index=True)                      # SamplingDate: Date of sampling
+    Remark                = Column(Text)                                      # Remark: Any pertiment remark related to sampling or equipment status
+    SampledBy             = Column(String(50))                                # SampledBy: Who did the sampling
+    Modify                = Column(Boolean)                                   # Modify: Bolean field to indicate record has changed, and foreign database need updates
+    Transmission          = Column(Boolean)                                   # Transmission: Sampled information and material has been sent to the laboratory
+    Laboratory            = Column(String(20), index=True)                    # Laboratory: Company that perform the analysis.  Used with Laboratory table
+    DateRepair            = Column(DateTime)                                  # DateRepair: What date was repair done last time
+    RepairDescription     = Column(Text)                                      # RepairDescription: Describe what was doen during repair
+    # If_REM                = Column(String(5))                                 # Bolean field that may no longer be required
+    # If_OK                 = Column(String(5))                                 # Bolean field that may no longer be required
+    RecommendationCode    = Column(Integer)                                   # RecommendationCode: Used with Recommendation Table, where a list of recomended action are suggested
+    RecommendationWritten = Column(Text)                                      # RecommendationWritten: The analyser gather all his though in this field to explain what should be done in plain that
+    DateApplication       = Column(DateTime)                                  # DateApplication: When recommendation was written
+    Comments              = Column(Text)                                      # Comments: Any comments other than recommendations.
+    AnalysisStateCode     = Column(Integer)                                   # AnalysisStateCode: Code indicating the Analysis status.  Analysis is a process with several steps and each one has a code.
+    MWs                   = Column(Float(53), server_default=sqla.text("0"))  # MWs: Equipment loading in MWatt
+    Temperature           = Column(Float(53))                                 # Temperature: Equipement temperature at sampling time
+    TestEquipNum          = Column(String(25))                                # TestEquipNum: What is the serial number of the test equipement.  Sometimes it is mandatory to enter the test equipment information so same one can be used next time
+    SamplingCardPrint     = Column(Boolean)                                   # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
+    ContainerNbr          = Column(Float(53), server_default=sqla.text("1"))  # ContainerNbr: How many containers are required
+    SamplingCardGathered  = Column(Integer)                                   # SamplingCardGathered: Used for printing the card in batch
+    GatheredTestType      = Column(String(50))                                # GatheredTestType: Indicates the tests that are grouped for each equipment that need work on
+    ContractLabNum        = Column(String(50))                                # ContractLabNum: What is the contract number with laboratory
+    SeringeNum            = Column(String(50))                                # SeringeNum: Seringe number as printed
+    DataValid             = Column(Integer, server_default=sqla.text("0"))    # DataValid: Need to look into
+    Status1               = Column(Integer, server_default=sqla.text("0"))    # Status1: Need to look into
+    Status2               = Column(Integer, server_default=sqla.text("0"))    # Status2:	 Need to look into
+    ErrorState            = Column(Integer, server_default=sqla.text("0"))    # ErrorState: Need to look into
+    ErrorCode             = Column(Integer, server_default=sqla.text("0"))    # ErrorCode: Need to look into
+    AmbientAirTemperature = Column(Float(53), server_default=sqla.text("0"))  # AmbientAirTemperature: Ambient air temperature at sampling time
+    ContractID            = Column(Integer, ForeignKey("contracts.id"))
+    EquipmentID           = Column(Integer, ForeignKey("equipment.id"))
+
+    contract  = relationship("Contract", foreign_keys=[ContractID])
+    equipment = relationship("Equipment", foreign_keys=[EquipmentID])
+
+
+class Contract(BaseManager):
+    """
+    Class Contract
+    """
+    __tablename__ = u'contracts'
+
+    id             = Column(Integer, primary_key=True)
+    ContractNum    = Column(String(25))                         # ContractNum: What is the contract number within the company
+    ContractStatus = Column(Integer)                            # ContractStatus: What is the status of the contract
 
 
 class ElectricalProfile(BaseManager):
@@ -201,11 +278,11 @@ class GasSensor(BaseManager):
      """
     __tablename__ = u'gas_sensor'
 
-    id = sqla.Column(db.String(25), primary_key=True)
+    id = sqla.Column(db.String(25), primary_key=True, unique=True)
 
     # Sensor. Sensor commercial name
     Name = sqla.Column(db.String(50))
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    # Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
