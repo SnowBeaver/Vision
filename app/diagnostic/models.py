@@ -277,7 +277,7 @@ class GasSensor(BaseManager):
      """
     __tablename__ = u'gas_sensor'
 
-    id = sqla.Column(Integer, primary_key=True)
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
 
     # Sensor. Sensor commercial name
     Name = sqla.Column(db.String(50))
@@ -321,7 +321,7 @@ class Transformer(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -477,7 +477,7 @@ class Breaker(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -507,7 +507,7 @@ class LoadTapChanger(BaseManager):
     # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
     # Production because equipment can changed over the years and associate wrong diagnostic
     Name = sqla.Column(db.String(50))
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -542,7 +542,7 @@ class Bushing(BaseManager):
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
     Type = ['phase', 'Neutral']
     Name = sqla.Column(db.String(50))
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -615,7 +615,7 @@ class NeutralResistance(BaseManager):
 
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
     Name = sqla.Column(db.String(50))
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -652,7 +652,7 @@ class AirCircuitBreaker(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -686,7 +686,7 @@ class Capacitor(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -719,7 +719,7 @@ class PowerSource(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -752,7 +752,7 @@ class SwitchGear(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -783,7 +783,7 @@ class InductionMachine(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -813,7 +813,7 @@ class SynchronousMachine(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -844,7 +844,7 @@ class Rectifier(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -874,7 +874,7 @@ class Tank(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -904,7 +904,7 @@ class Switch(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
@@ -936,7 +936,7 @@ class Cable(BaseManager):
 
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    Serial = sqla.Column(db.String(50), primary_key=True, nullable=False, index=True)
+    Serial = sqla.Column(db.String(50), nullable=False, index=True, unique=True)
 
     Manufacturer = db.Column(
         'manufacturer_id',
