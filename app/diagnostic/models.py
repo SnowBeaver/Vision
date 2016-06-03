@@ -163,6 +163,14 @@ class FluidProfile(BaseManager):
     def add_data(self, data):
         self.parsedata(data)
 
+class EquipmentType(BaseManager):
+
+    __tablename__ = u'equipment_type'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50))
+    Code = sqla.Column(db.String(50))
+
 
 class Location(BaseManager):
     # PhyPosition GPS location
@@ -180,18 +188,6 @@ class Manufacturer(BaseManager):
 
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
     Name = sqla.Column(db.String(50))
-
-
-class Norms(BaseManager):
-    __tablename__ = u'norms'
-
-    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
-    Name = sqla.Column(db.String(50), index=True)  # should be relation
-
-
-    # NormPHY.  Fluid physical properties norms
-    # NormDissolvedGas. Fluid dissolved gas norms
-    # NormFluid# NormFur. Fluid furan norms
 
 
 class GasSensor(BaseManager):
@@ -509,27 +505,14 @@ class Upstream(BaseManager):
     __tablename__ = u'upstream'
 
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
-    Name = sqla.Column(db.String(50), index=True)  # should be relation
+    Name = sqla.Column(db.String(50), index=True)
 
 
 class Downstream(BaseManager):
     __tablename__ = u'downstream'
 
     id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
-    Name = sqla.Column(db.String(50), index=True)  # should be relation
-
-
-class NormParameter(BaseManager):
-    __tablename__ = u'norms_params'
-
-    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
-
-    Norm = db.Column(
-        'norm_id',
-        db.ForeignKey("norms.id"),
-        nullable=False
-    )
-    Name = sqla.Column(db.String(50), index=True)  # should be relation
+    Name = sqla.Column(db.String(50), index=True)
 
 
 class NeutralResistance(BaseManager):
@@ -875,7 +858,6 @@ class Cable(BaseManager):
         return self.__tablename__
 
 
-
 class Equipment(BaseManager):
     """
     Equipment.  records all information about the equipment.
@@ -886,10 +868,14 @@ class Equipment(BaseManager):
 
     # EquipmentNumber: Equipment ID given by equipment owner.
     # Equipment number to uniquely identify equipment
-    EquipmentCode = sqla.Column(db.Integer, nullable=False, index=True)  # relation to equipemt
+    Code = sqla.Column(db.Integer, nullable=False, index=True)
 
     # EquipmentType. Define equipment by a single letter code. T:transformer, D; breaker etc...
-    TypeEquipment = sqla.Column(db.String(50))
+    Type = db.Column(
+        'equipment_type_id',
+        db.ForeignKey("equipment_type.id"),
+        nullable=False
+    )
 
     # Location. Indicate the named placed where the equipement is.
     # Example, a main transformer is at site Budapest, and at localisation Church street.
@@ -917,7 +903,7 @@ class Equipment(BaseManager):
     # its a separate norms table for all devices
     Norm = db.Column(
         'norm_id',
-        db.ForeignKey("norms.id"),
+        db.ForeignKey("norm.id"),
         nullable=False
     )
 
@@ -959,3 +945,65 @@ class Equipment(BaseManager):
     # Sibling. Unique Common Index with the other siblings.  If 0 then no sibling
     # id of a similar equipment
     Sibling = sqla.Column(db.Integer)
+
+
+class NormType(BaseManager):
+    __tablename__ = u'norm_type'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50), index=True)
+
+    # NormPHY.  Fluid physical properties norms
+    # NormDissolvedGas. Fluid dissolved gas norms
+    # NormFluid# NormFur. Fluid furan norms
+
+
+class Norm(BaseManager):
+    __tablename__ = u'norm'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50), index=True)
+    NormType = db.Column(
+        'norm_type_id',
+        db.ForeignKey("norm_type.id"),
+        nullable=False
+    )
+
+    # NormPHY.  Fluid physical properties norms
+    # NormDissolvedGas. Fluid dissolved gas norms
+    # NormFluid# NormFur. Fluid furan norms
+
+
+class NormParameter(BaseManager):
+    __tablename__ = u'norm_parameter'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    Name = sqla.Column(db.String(50), index=True)
+
+
+class NormParameterValue(BaseManager):
+
+    __tablename__ = u'norm_parameter_value'
+
+    id = sqla.Column(db.Integer(), primary_key=True, nullable=False)
+    parameter = db.Column(
+        'param_id',
+        db.ForeignKey('norm_parameter.id'),
+        nullable=False
+    )
+
+    Norm = db.Column(
+        'norm_id',
+        db.ForeignKey("norm.id"),
+        nullable=False
+    )
+
+    equipment_type_id = db.Column(
+        'equipment_type_id',
+        db.ForeignKey('equipment_type.id'),
+        nullable=False
+    )
+
+    value_type = sqla.Column(db.String(50), index=True)
+    value = sqla.Column(db.String(50), index=True)
+
