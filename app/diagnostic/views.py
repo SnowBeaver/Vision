@@ -8,7 +8,6 @@ from flask import jsonify
 from .forms import *
 from app import admin_per
 from flask import redirect, url_for
-import json
 
 lab = Blueprint('lab', __name__, url_prefix='/admin/lab')
 

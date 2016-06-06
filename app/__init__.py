@@ -23,12 +23,6 @@ engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 meta = MetaData()
 sql_storage = SQLAStorage(engine, metadata=meta)
 blog = BloggingEngine(app, sql_storage)
-meta.create_all(bind=engine)
-
-#create lab table
-from app.diagnostic.models import BaseManager
-BaseManager.metadata.create_all(engine)
-db.create_all()
 
 mail = Mail(app)
 babel = Babel(app)
@@ -62,6 +56,15 @@ apps_permissions = [
 ]
 
 Principal(app)
+
+
+from app.users.models import User
+
+#create diagnostics table
+from app.diagnostic.models import *
+db.create_all(app=app)
+
+
 
 from app.admin.views import MyAdminIndexView
 
@@ -145,9 +148,8 @@ backend.add_view(ImageView(Image, db.session))
 backend.add_view(MenuView(name="Menu"))
 
 # create tree table
-from app.tree.models import Base
-Base.metadata.create_all(engine)
-
+from app.tree.models import BaseManager
+BaseManager.metadata.create_all(engine)
 
 
 # if app.config['DEBUG']:
