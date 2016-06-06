@@ -87,6 +87,23 @@ class ElectricalProfile(db.Model):
         self.parsedata(data)
 
 
+class CampaignStatus(db.Model):
+
+    __tablename__ = 'campaign_status'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    code = db.Column(db.String(50), index=True)
+    name = db.Column(db.String(50), index=True)
+
+
+class TestReason(db.Model):
+
+    __tablename__ = 'test_reason'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(50), index=True)
+
+
 class Campaign(db.Model):
     """
     Campaign: Contain current analysis results, who did it and why. It also contain analysis management and statuses
@@ -235,9 +252,13 @@ class Campaign(db.Model):
     Comments = db.Column(db.Text)
 
 
-    # AnalysisStateCode: Code indicating the Analysis status.
+    # Status: Code indicating the Analysis status.
     # Analysis is a process with several steps and each one has a code.
-    Status = db.Column(db.Integer)
+    Status = db.Column(
+        'status_id',
+        sqla.ForeignKey("compaign_status.id"),
+        nullable=True
+    )
 
     # Same like load, actual MW of the equipment
     #MWs: Equipment loading in MWatt
