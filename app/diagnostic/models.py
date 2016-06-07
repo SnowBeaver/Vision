@@ -1305,3 +1305,88 @@ class NormParameterValue(db.Model):
     value = db.Column(db.String(50), index=True)
 
 
+class Syringe(db.Model):
+
+    __tablename__ = u'syringe'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    lab = db.Column(
+        'lab_id',
+        db.ForeignKey('lab.id'),
+        nullable=False
+    )
+
+
+class TestSchedule(db.Model):
+    """
+    Schedule. List work, periodic or not, to be done on individual equipment.
+    Tests profile are used to define the work to be done.
+    If work are very specific, then use description to detail the work required.
+    """
+
+    __tablename__ = u'schedule'
+
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    # NoSerieEquipe = Column(String(50), primary_key=True,
+    #                        nullable=False)
+    # EquipmentNumber: Equipment ID given by equipment owner.
+    # Index key, along with Equipment number to uniquely identify equipment
+    # NoEquipement = Column(String(50), primary_key=True,
+    #                       nullable=False)
+
+    equipment = db.Column('equipment_id', sqla.ForeignKey("equipment.id"), nullable=False)
+
+    start_date = db.Column(db.DateTime, primary_key=True, nullable=False)  # StartDate. Starting date of periodic task
+    period_years = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of year between tasks
+    period_months = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of month between tasks
+    period_days = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of days between tasks
+
+    # Worker. Who did the work or was responsible for
+    assigned_to = db.Column(
+        'assigned_to_id',
+        db.ForeignKey("users_user.id"),
+        nullable=False
+    )
+
+    recurring = db.Column(db.Boolean)  # RecurrentTask. Indicate if task takes place periodically
+
+    # RecallDays. How many days ahead message before work takes place
+    notify_before_in_days = db.Column(db.Integer, server_default=db.text("0"))
+
+    description = db.Column(db.Text)  # Description. Describe task
+
+    # prof_fluid = Column(String(25))  # Prof_Fluid. Which fluid tests profile should be used
+    # prof_elec = Column(String(25))  # Prof_Elec.  Which electrical tests profile should be used
+    # prof_mec = Column(String(25))  # Prof_Mec.  Which mechanical tests profile should be used
+
+    tests_to_perform = db.Column(db.Integer, db.ForeignKey('test_type.id'))
+    tests = relationship("TestType")
+
+    order = db.Column(db.Integer, primary_key=True, nullable=False)  # WorkOrderNum
+
+
+class TestType(db.Model):
+
+    __tablename__ = u'test_type'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(50), nullable=False, index=True, unique=True)
+
+
+class TestParam(db.Model):
+
+    __tablename__ = u'test_param'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(50), nullable=False, index=True, unique=True)
+
+
+class TestTypeParam(db.Model):
+
+    __tablename__ = u'test_type_param'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    type = db.Column('test_type_id', db.ForeignKey('test_type.id'), nullable=False)
+    param = db.Column('test_param_id', db.ForeignKey('test_param.id'), nullable=False)
