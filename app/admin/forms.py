@@ -68,7 +68,7 @@ class EquipmentDiagnosisViewForm(Form):
 
 # Create new test
 lab_choice = [
-    (x.id, x.analyser ) for x in db.session.query(Lab).all()
+    (x.id, x.name ) for x in db.session.query(Lab).all()
 ]
 
 testing_choice = [

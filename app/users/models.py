@@ -110,3 +110,5 @@ class User(db.Model, UserMixin):
     def avatar(self, size):
         return 'http://www.gravatar.com/avatar/' + \
                md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
+
+

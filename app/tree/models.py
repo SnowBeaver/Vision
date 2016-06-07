@@ -6,17 +6,17 @@ from sqlalchemy_i18n import (
 , translation_base
 , Translatable
 )
-from app import db
+
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
-
 from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+BaseManager = declarative_base()
+
 make_translatable(options={'locales': ['en', 'fr', 'es']})
 
 
-class TreeNode(Translatable, Base):
+class TreeNode(Translatable, BaseManager):
     # class TreeNode(Translatable , db.Model):
     __tablename__ = 'tree'
     __translatable__ = {
