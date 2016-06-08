@@ -120,9 +120,9 @@ def upgrade():
     #     ]
     # )
 
-    # move test_type specifik connections from campaign to test_results
+    # move test_type specific connections from campaign to test_results
     # we drop tables and on start app will create them from models
-    # move test_type specifik connections from campaign to test_results
+    # move test_type specific connections from campaign to test_results
     # op.drop_column('campaign', 'test_type_id')
     op.drop_column('campaign', 'sampling_point_id')
     op.drop_column('campaign', 'test_reason_id')
