@@ -8,13 +8,6 @@ from fabric.api import settings
 class FabricException(Exception):
     pass
 
-# the servers where the commands are executed
-# the user to use for the remote commands
-# env.hosts = ['192.168.88.88']
-# env.user = 'vagrant'
-
-env.user = 'vision'
-env.hosts = ['159.203.28.93']
 
 PROJECT = 'vision'
 
@@ -48,8 +41,8 @@ def source_bb_virtualenv():
     with prefix(env.bbactivate):
         yield
 
+
 def setup_dev():
-    local('cd %s && vagrant up' % LOCAL_PROJECT_DIR)
     sudo("mkdir -p %s/var/logs" % env.directory, user="vision")
     sudo("mkdir -p %s/var/uploads" % env.directory, user="vision")
     sudo("chmod -R g+wrx %s/var/logs" % env.directory, user="vision")
@@ -63,7 +56,6 @@ def setup_dev():
     sudo("pip install virtualenv")
     sudo("pip install gunicorn")
 
-
     with settings(abort_exception = FabricException):
         try:
             sudo("rm -rf %s"  % env.venv)
@@ -71,18 +63,12 @@ def setup_dev():
             pass
 
     sudo("mkdir -p %s" % env.directory, user="vision")
-    with cd(env.directory):
-        run('git pull origin master')
-        run('virtualenv env --always-copy')
-        with source_virtualenv():
-            run(env.pip + ' install uwsgi')
-            run(env.pip + ' install -r requirements.txt')
 
     deploy_nginx()
     deploy_supervisor()
-
     setup_dev_app()
     setup_blogging()
+    setup_flaskbb()
     restart_services()
     deploy()
 
@@ -137,7 +123,16 @@ def deploy_nginx():
          (nginx_conf, PROJECT))
     sudo("service nginx restart")
 
+
 def setup_dev_app():
+
+    with cd(env.directory):
+        local('git pull origin master')
+        run('virtualenv env --always-copy')
+        with source_virtualenv():
+            run(env.pip + ' install uwsgi')
+            run(env.pip + ' install -r requirements.txt')
+
     with cd(env.directory):
         run('cp config.py.dist config.py')
         with source_virtualenv():
@@ -145,10 +140,12 @@ def setup_dev_app():
             #run('python manage.py db init')
             run('python manage.py db upgrade')
 
+
 def provision():
     with cd(env.directory):
         with source_virtualenv():
             run('python manage.py db migrate')
+
 
 def first_deploy():
     if 'vagrant' in env.user:
