@@ -1319,11 +1319,28 @@ class NormParameterValue(db.Model):
     equipment_type_id = db.Column(
         'equipment_type_id',
         db.ForeignKey('equipment_type.id'),
-        nullable=False
+        nullable=True
     )
+
+    # fluid_type = db.Column(
+    #     'fluid_type_id',
+    #     db.ForeignKey('fluid_type.id'),
+    #     nullable=True
+    # )
+
+    fluid_type = db.Column(db.Integer(), nullable=True)  # no idea yet is this a level number or an id
+    condition = db.Column(db.Integer(), nullable=True)
 
     value_type = db.Column(db.String(50), index=True)
     value = db.Column(db.String(50), index=True)
+
+
+class GasLevel():
+   # 0-normal, 1-caution, 2- danger and 3-extreme
+   __tablename__ = u'gas_level'
+
+   id = db.Column(db.Integer(), primary_key=True, nullable=False)
+   name = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
 
 class Syringe(db.Model):
