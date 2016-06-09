@@ -17,7 +17,6 @@ from sqlalchemy.sql import table, column
 from sqlalchemy import String, Integer, Date
 
 
-
 def upgrade():
 
     # Create an ad-hoc table to use for the insert statement.
