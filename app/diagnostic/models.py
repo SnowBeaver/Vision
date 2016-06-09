@@ -1255,16 +1255,16 @@ class Equipment(db.Model):
     sibling = db.Column(db.Integer)
 
 
-class NormType(db.Model):
-
-    __tablename__ = u'norm_type'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-
-    # NormPHY.  Fluid physical properties norms
-    # NormDissolvedGas. Fluid dissolved gas norms
-    # NormFluid# NormFur. Fluid furan norms
+# class NormType(db.Model):
+#
+#     __tablename__ = u'norm_type'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     name = db.Column(db.String(50), index=True)
+#
+#     # NormPHY.  Fluid physical properties norms
+#     # NormDissolvedGas. Fluid dissolved gas norms
+#     # NormFluid# NormFur. Fluid furan norms
 
 
 class Recommendation(db.Model):
@@ -1276,63 +1276,63 @@ class Recommendation(db.Model):
     description = db.Column(db.Text)
 
 
-class Norm(db.Model):
-    __tablename__ = u'norm'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-    type = db.Column(
-        'norm_type_id',
-        db.ForeignKey("norm_type.id"),
-        nullable=False
-    )
-
-    # NormPHY.  Fluid physical properties norms
-    # NormDissolvedGas. Fluid dissolved gas norms
-    # NormFluid# NormFur. Fluid furan norms
-
-
-class NormParameter(db.Model):
-    __tablename__ = u'norm_parameter'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-
-
-class NormParameterValue(db.Model):
-
-    __tablename__ = u'norm_parameter_value'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    parameter = db.Column(
-        'param_id',
-        db.ForeignKey('norm_parameter.id'),
-        nullable=False
-    )
-
-    norm = db.Column(
-        'norm_id',
-        db.ForeignKey("norm.id"),
-        nullable=False
-    )
-
-    equipment_type_id = db.Column(
-        'equipment_type_id',
-        db.ForeignKey('equipment_type.id'),
-        nullable=True
-    )
-
-    # fluid_type = db.Column(
-    #     'fluid_type_id',
-    #     db.ForeignKey('fluid_type.id'),
-    #     nullable=True
-    # )
-
-    fluid_type = db.Column(db.Integer(), nullable=True)  # no idea yet is this a level number or an id
-    condition = db.Column(db.Integer(), nullable=True)
-
-    value_type = db.Column(db.String(50), index=True)
-    value = db.Column(db.String(50), index=True)
+# class Norm(db.Model):
+#     __tablename__ = u'norm'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     name = db.Column(db.String(50), index=True)
+#     type = db.Column(
+#         'norm_type_id',
+#         db.ForeignKey("norm_type.id"),
+#         nullable=False
+#     )
+#
+#     # NormPHY.  Fluid physical properties norms
+#     # NormDissolvedGas. Fluid dissolved gas norms
+#     # NormFluid# NormFur. Fluid furan norms
+#
+#
+# class NormParameter(db.Model):
+#     __tablename__ = u'norm_parameter'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     name = db.Column(db.String(50), index=True)
+#
+#
+# class NormParameterValue(db.Model):
+#
+#     __tablename__ = u'norm_parameter_value'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     parameter = db.Column(
+#         'param_id',
+#         db.ForeignKey('norm_parameter.id'),
+#         nullable=False
+#     )
+#
+#     norm = db.Column(
+#         'norm_id',
+#         db.ForeignKey("norm.id"),
+#         nullable=False
+#     )
+#
+#     equipment_type_id = db.Column(
+#         'equipment_type_id',
+#         db.ForeignKey('equipment_type.id'),
+#         nullable=True
+#     )
+#
+#     # fluid_type = db.Column(
+#     #     'fluid_type_id',
+#     #     db.ForeignKey('fluid_type.id'),
+#     #     nullable=True
+#     # )
+#
+#     fluid_type = db.Column(db.Integer(), nullable=True)  # no idea yet is this a level number or an id
+#     condition = db.Column(db.Integer(), nullable=True)
+#
+#     value_type = db.Column(db.String(50), index=True)
+#     value = db.Column(db.String(50), index=True)
 
 
 class GasLevel(db.Model):
