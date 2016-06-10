@@ -404,7 +404,7 @@ class Location(db.Model):
     name = db.Column(db.String(50), index=True)  # should be relation
 
 
-class manufacturer(db.Model):
+class Manufacturer(db.Model):
     __tablename__ = u'manufacturer'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
@@ -1170,7 +1170,8 @@ class Equipment(db.Model):
     prev_serial_number = db.Column(db.String(50))
 
     # PrevEquipmentNum.
-    # If InValidation is true, indicate what was the previous value to retreive the correct equipment information from Lab
+    # If InValidation is true,
+    # indicate what was the previous value to retreive the correct equipment information from Lab
     prev_equipment_number = db.Column(db.String(50))
 
     # Sibling. Unique Common Index with the other siblings.  If 0 then no sibling
@@ -1349,19 +1350,12 @@ class TestType(db.Model):
     is_group = db.Column(Boolean, nullable=False, default=False)
 
 
-class TestParam(db.Model):
-    __tablename__ = u'test_param'
+class TestTypeResultTable(db.Model):
+    __tablename__ = u'test_type_result_table'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-
-class TestTypeParam(db.Model):
-    __tablename__ = u'test_type_param'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    type = db.Column('test_type_id', db.ForeignKey('test_type.id'), nullable=False)
-    param = db.Column('test_param_id', db.ForeignKey('test_param.id'), nullable=False)
+    test_type_id = db.Column(Integer, db.ForeignKey('test_type.id'), nullable=False)
+    test_result_table_name = db.Column(String(100), nullable=False)
 
 
 class TestResult(db.Model):
@@ -1381,7 +1375,8 @@ class TestResult(db.Model):
     # AnalysisDate: Date the analysis was performed
     date_analyse = db.Column(db.DateTime, index=True)
 
-    # # AnalysisType: Analysis type performed on equipment: (insulating fluid  material from equipment , it should be a relation )
+    # AnalysisType: Analysis type performed on equipment:
+    # (insulating fluid  material from equipment , it should be a relation )
     test_type_id = db.Column(db.Integer, index=True)
 
     # PointCode: Code indicating where the oil sample was done
@@ -1390,18 +1385,6 @@ class TestResult(db.Model):
     # Status: Code indicating the Analysis status.
     # Analysis is a process with several steps and each one has a code.
     status = db.Column('status_id', sqla.ForeignKey("test_status.id"), nullable=True)
-
-
-class TestResultParamValues(db.Model):
-    """
-    TestResultsParamValues. Table of values of individual for test type params.
-    """
-    __tablename__ = 'test_result_param_values'
-
-    id = db.Column(Integer, primary_key=True)
-    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
-    test_param_id = db.Column(Integer, ForeignKey("test_param.id"))
-    test_param_value = db.Column(String(100))
 
 
 class GasketCondition(db.Model):
@@ -1516,9 +1499,170 @@ class HeatingCondition(db.Model):
     name = db.Column(String(25))
 
 
-class VisualInspection(db.Model):
+class BushingTest(db.Model):
+    """Bushing. Bushing test result"""
+
+    __tablename__ = u'bushing_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    h1 = Column(Float(53))  # Remaining are as is
+    h2 = Column(Float(53))
+    h3 = Column(Float(53))
+    hn = Column(Float(53))
+    h1c1 = Column(Float(53))
+    h2c1 = Column(Float(53))
+    h3c1 = Column(Float(53))
+    hnc1 = Column(Float(53))
+    h1c2 = Column(Float(53))
+    h2c2 = Column(Float(53))
+    h3c2 = Column(Float(53))
+    hnc2 = Column(Float(53))
+    x1 = Column(Float(53))
+    x2 = Column(Float(53))
+    x3 = Column(Float(53))
+    xn = Column(Float(53))
+    x1c1 = Column(Float(53))
+    x2c1 = Column(Float(53))
+    x3c1 = Column(Float(53))
+    xnc1 = Column(Float(53))
+    x1c2 = Column(Float(53))
+    x2c2 = Column(Float(53))
+    x3c2 = Column(Float(53))
+    xnc2 = Column(Float(53))
+    t1 = Column(Float(53))
+    t2 = Column(Float(53))
+    t3 = Column(Float(53))
+    tn = Column(Float(53))
+    t1c1 = Column(Float(53))
+    t2c1 = Column(Float(53))
+    t3c1 = Column(Float(53))
+    tnc1 = Column(Float(53))
+    t1c2 = Column(Float(53))
+    t2c2 = Column(Float(53))
+    t3c2 = Column(Float(53))
+    tnc2 = Column(Float(53))
+    temperature = Column(Float(53))
+    facteur = Column(Float(53))
+    facteur1 = Column(Float(53))
+    facteur2 = Column(Float(53))
+    q1 = Column(Float(53))
+    q2 = Column(Float(53))
+    q3 = Column(Float(53))
+    qn = Column(Float(53))
+    q1c1 = Column(Float(53))
+    q2c1 = Column(Float(53))
+    q3c1 = Column(Float(53))
+    qnc1 = Column(Float(53))
+    q1c2 = Column(Float(53))
+    q2c2 = Column(Float(53))
+    q3c2 = Column(Float(53))
+    qnc2 = Column(Float(53))
+    facteur3 = Column(Float(53))
+    humidity = Column(Float(53))
+
+    test_kv_h1 = Column(Float(53))
+    test_kv_h2 = Column(Float(53))
+    test_kv_h3 = Column(Float(53))
+    test_kv_hn = Column(Float(53))
+    test_kv_x1 = Column(Float(53))
+    test_kv_x2 = Column(Float(53))
+    test_kv_x3 = Column(Float(53))
+    test_kv_xn = Column(Float(53))
+    test_kv_t1 = Column(Float(53))
+    test_kv_t2 = Column(Float(53))
+    test_kv_t3 = Column(Float(53))
+    test_kv_tn = Column(Float(53))
+    test_kv_q1 = Column(Float(53))
+    test_kv_q2 = Column(Float(53))
+    test_kv_q3 = Column(Float(53))
+    test_kv_qn = Column(Float(53))
+
+    test_pfc2_h1 = Column(Float(53))
+    test_pfc2_h2 = Column(Float(53))
+    test_pfc2_h3 = Column(Float(53))
+    test_pfc2_hn = Column(Float(53))
+    test_pfc2_x1 = Column(Float(53))
+    test_pfc2_x2 = Column(Float(53))
+    test_pfc2_x3 = Column(Float(53))
+    test_pfc2_xn = Column(Float(53))
+    test_pfc2_t1 = Column(Float(53))
+    test_pfc2_t2 = Column(Float(53))
+    test_pfc2_t3 = Column(Float(53))
+    test_pfc2_tn = Column(Float(53))
+    test_pfc2_q1 = Column(Float(53))
+    test_pfc2_q2 = Column(Float(53))
+    test_pfc2_q3 = Column(Float(53))
+    test_pfc2_qn = Column(Float(53))
+    facteurn = Column(Float(53))
+    facteurn1 = Column(Float(53))
+    facteurn2 = Column(Float(53))
+    facteurn3 = Column(Float(53))
+
+
+class WindingTest(db.Model):
+    """Bushing data and test results"""
+    __tablename__ = u'winding_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    test_kv1 = Column(Float(53))  # Remaining field names are equivalent
+    test_kv2 = Column(Float(53))
+    test_kv3 = Column(Float(53))
+    test_kv4 = Column(Float(53))
+    test_kv5 = Column(Float(53))
+    test_kv6 = Column(Float(53))
+    test_kv7 = Column(Float(53))
+    test_kv8 = Column(Float(53))
+    test_kv9 = Column(Float(53))
+    test_kv10 = Column(Float(53))
+    m_meter1 = Column(Float(53))
+    m_meter2 = Column(Float(53))
+    m_meter3 = Column(Float(53))
+    m_meter4 = Column(Float(53))
+    m_meter5 = Column(Float(53))
+    m_meter6 = Column(Float(53))
+    m_meter7 = Column(Float(53))
+    m_meter8 = Column(Float(53))
+    m_meter9 = Column(Float(53))
+    m_meter10 = Column(Float(53))
+    m_multiplier1 = Column(Float(53))
+    m_multiplier2 = Column(Float(53))
+    m_multiplier3 = Column(Float(53))
+    m_multiplier4 = Column(Float(53))
+    m_multiplier5 = Column(Float(53))
+    m_multiplier6 = Column(Float(53))
+    m_multiplier7 = Column(Float(53))
+    m_multiplier8 = Column(Float(53))
+    m_multiplier9 = Column(Float(53))
+    m_multiplier10 = Column(Float(53))
+    w_meter1 = Column(Float(53))
+    w_meter2 = Column(Float(53))
+    w_meter3 = Column(Float(53))
+    w_meter4 = Column(Float(53))
+    w_meter5 = Column(Float(53))
+    w_meter6 = Column(Float(53))
+    w_meter7 = Column(Float(53))
+    w_meter8 = Column(Float(53))
+    w_meter9 = Column(Float(53))
+    w_meter10 = Column(Float(53))
+    w_multiplier1 = Column(Float(53))
+    w_multiplier2 = Column(Float(53))
+    w_multiplier3 = Column(Float(53))
+    w_multiplier4 = Column(Float(53))
+    w_multiplier5 = Column(Float(53))
+    w_multiplier6 = Column(Float(53))
+    w_multiplier7 = Column(Float(53))
+    w_multiplier8 = Column(Float(53))
+    w_multiplier9 = Column(Float(53))
+    w_multiplier10 = Column(Float(53))
+    type_doble = Column(Boolean)
+    humidity = Column(Float(53))  # Humidity
+
+
+class VisualInspectionTest(db.Model):
     """ Visual inspection test result """
-    __tablename__ = u'visual_inspection'
+    __tablename__ = u'visual_inspection_test'
 
     id = db.Column(Integer, primary_key=True)
     test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
@@ -1589,11 +1733,290 @@ class VisualInspection(db.Model):
     misc_temp_ambiant = db.Column(Float(53))  # AmbiantTemperature
     misc_load = db.Column(Float(53))  # Load
 
-    # Cuve_Temp_Bob_Decl1 = db.Column(Float(53), server_default=text("0"))#TankTemperatureWindingTrip1
-    # Cuve_Temp_Bob_Decl2 = db.Column(Float(53), server_default=text("0"))#TankTemperatureWindingTrip2
-    # Cuve_Temp_Bob_Decl3 = db.Column(Float(53), server_default=text("0"))#TankTemperatureWindingTrip4
-    # Cuve_Temp_Liq_Decl1 = db.Column(Float(53), server_default=text("0"))#TankTemperatureOilTrip1
-    # Cuve_Temp_Liq_Decl2 = db.Column(Float(53), server_default=text("0"))#TankTemperatureOilTrip2
-    # Cuve_Temp_Liq_Decl3 = db.Column(Float(53), server_default=text("0"))#TankTemperatureOilTrip3
+    # Cuve_Temp_Bob_Decl1 = db.Column(Float(53))#TankTemperatureWindingTrip1
+    # Cuve_Temp_Bob_Decl2 = db.Column(Float(53))#TankTemperatureWindingTrip2
+    # Cuve_Temp_Bob_Decl3 = db.Column(Float(53))#TankTemperatureWindingTrip4
+    # Cuve_Temp_Liq_Decl1 = db.Column(Float(53))#TankTemperatureOilTrip1
+    # Cuve_Temp_Liq_Decl2 = db.Column(Float(53))#TankTemperatureOilTrip2
+    # Cuve_Temp_Liq_Decl3 = db.Column(Float(53))#TankTemperatureOilTrip3
     # Cuve_TempContact_Bob_Decl1 = db.Column(Boolean)#TankTemperatureContactWindingTrip1
     # Cuve_TempContact_Liq_Decl1 = db.Column(Boolean)#TankTemperatureContactOilTrip11
+
+
+class InsulationResistanceTest(db.Model):
+    __tablename__ = u'insulation_resistance_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    test_kv1 = db.Column(Float(53))
+    resistance1 = db.Column(Float(53))  # in megohm
+    multiplier1 = db.Column(Float(53))
+    test_kv2 = db.Column(Float(53))
+    resistance2 = db.Column(Float(53))  # in megohm
+    multiplier2 = db.Column(Float(53))
+    test_kv3 = db.Column(Float(53))
+    resistance3 = db.Column(Float(53))  # in megohm
+    multiplier3 = db.Column(Float(53))
+    test_kv4 = db.Column(Float(53))
+    resistance4 = db.Column(Float(53))  # in megohm
+    multiplier4 = db.Column(Float(53))
+    test_kv5 = db.Column(Float(53))
+    resistance5 = db.Column(Float(53))  # in megohm
+    multiplier5 = db.Column(Float(53))
+
+
+class PolymerisationDegreeTest(db.Model):
+    """DP. Degree of polymerisation of paper results"""
+    __tablename__ = u'polymerisation_degree_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    phase_a1 = db.Column(Float(53))  # Remaining are equivalent
+    phase_a2 = db.Column(Float(53))
+    phase_a3 = db.Column(Float(53))
+    phase_b1 = db.Column(Float(53))
+    phase_b2 = db.Column(Float(53))
+    phase_b3 = db.Column(Float(53))
+    phase_c1 = db.Column(Float(53))
+    phase_c2 = db.Column(Float(53))
+    phase_c3 = db.Column(Float(53))
+
+
+class TransformerTurnRatioTest(db.Model):
+    """TTR.  Transformer Turn Ratio test result
+     It could by more then one string of TTR related with one test_result"""
+    __tablename__ = u'transformer_turn_ratio_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    winding = db.Column(Integer, nullable=False)  # Winding. Winding, primary, secondary, etc. been measured
+    tap_position = db.Column(Integer)  # Tap position.
+    measured_current1 = db.Column(Float(53))  # Measured ratio of phase 1
+    measured_current2 = db.Column(Float(53))  # Measured ratio of phase 2
+    measured_current3 = db.Column(Float(53))  # Measured ratio of phase 3
+    calculated_current1 = db.Column(Float(53))  # Measured excitation current phase 1
+    calculated_current2 = db.Column(Float(53))  # Measured excitation current phase 2
+    calculated_current3 = db.Column(Float(53))  # Measured excitation current phase 3
+    error1 = db.Column(Float(53))  # Ratio error between calculated and measured on phase 1
+    error2 = db.Column(Float(53))  # Ratio error between calculated and measured on phase 2
+    error3 = db.Column(Float(53))  # Ratio error between calculated and measured on phase 3
+    ratio = db.Column(Float(53))  # Calculated ratio
+    select = db.Column(Boolean)  # TapPos. Tap position during normal operation.
+
+
+class WindingResistanceTest(db.Model):
+    """WindingResistanceTest.  Resistance; winding/contact. Winding resistance test results.
+    It could by more then one string of winding resistance related with one test_result"""
+    __tablename__ = u'winding_resistance_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    winding = db.Column(Integer, nullable=False)  # Winding. Winding, primary, secondary, etc. been measured
+    tap_position = db.Column(Integer)  # Tap position.
+    mesure1 = db.Column(Float(53))  # Measure1
+    temp1 = db.Column(Float(53))  # Temperature1. In Celsius
+    corr1 = db.Column(Float(53))  # Correction1
+    mesure2 = db.Column(Float(53))  # Measure2
+    temp2 = db.Column(Float(53))  # Temperature2
+    corr2 = db.Column(Float(53))  # Correction2
+    mesure3 = db.Column(Float(53))  # Measure3
+    temp3 = db.Column(Float(53))  # Temperature3
+    corr3 = db.Column(Float(53))  # Correction3
+
+
+class DissolvedGasTest(db.Model):
+    """DissolvedGasTest. Dissolved gas results.
+    We should add sub-table to store results to specific online gas sensor,
+    such as Kelman acoustic sensor data.
+    """
+    __tablename__ = u'dissolved_gas_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    h2 = db.Column(Float(53))  # H2, Hydrogen (ppm)
+    o2 = db.Column(Float(53))  # O2, Oxygen (ppm)
+    n2 = db.Column(Float(53))  # N2, Nitrogen (ppm)
+    co = db.Column(Float(53))  # CO, Carbon monoxide (ppm)
+    ch4 = db.Column(Float(53))  # CH4, Methane (ppm)
+    co2 = db.Column(Float(53))  # CO2, Carbon dioxide (ppm)
+    c2h2 = db.Column(Float(53))  # C2H2, Acetylene (ppm)
+    c2h4 = db.Column(Float(53))  # C2H4, Ethylene (ppm)
+    c2h6 = db.Column(Float(53))  # C2H6, Ethane (ppm)
+    h2_flag = db.Column(Boolean)  # true if not detectable
+    o2_flag = db.Column(Boolean)  # true if not detectable
+    n2_flag = db.Column(Boolean)  # true if not detectable
+    co_flag = db.Column(Boolean)  # true if not detectable
+    ch4_flag = db.Column(Boolean)  # true if not detectable
+    co2_flag = db.Column(Boolean)  # true if not detectable
+    c2h2_flag = db.Column(Boolean)  # true if not detectable
+    c2h4_flag = db.Column(Boolean)  # true if not detectable
+    c2h6_flag = db.Column(Boolean)  # true if not detectable
+    cap_gaz = db.Column(Float(53))  # GasSensor, value of gas sensor at time of sampling
+    content_gaz = db.Column(Float(53))  # TCG. Total Gas content
+    # Noise = db.Column(Float(53))             #Kelman acoustic sensor
+    # Tzone1 = db.Column(Float(53))            #Kelman acoustic sensor
+    # Tzone2 = db.Column(Float(53))            #Kelman acoustic sensor
+    # Flow_gas = db.Column(Float(53)           #Kelman acoustic sensor
+    # Pcell = db.Column(Float(53))             #Kelman acoustic sensor
+    # Toil_hs = db.Column(Float(53)            #Kelman acoustic sensor
+    # Tpga = db.Column(Float(53))              #Kelman acoustic sensor
+    # RH_pga = db.Column(Float(53)             #Kelman acoustic sensor
+    # Normalization_Temperature = db.Column(Float(53))#Kelman acoustic sensor
+    # Oil_Pressure = db.Column(Float(53))      #Kelman acoustic sensor
+    # Poil_pump = db.Column(Float(53))         #Kelman acoustic sensor
+    # Toil_cond = db.Column(Float(53))         #Kelman acoustic sensor
+    # Oil_Temperature = db.Column(Float(53))   #Kelman acoustic sensor
+    # N_fill = db.Column(Float(53))            #Kelman acoustic sensor
+    # N_drain = db.Column(Float(53))           #Kelman acoustic sensor
+    # Mic1 = db.Column(Float(53))              #Kelman acoustic sensor
+    # Mic2 = db.Column(Float(53))              #Kelman acoustic sensor
+    # opt_36 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_37 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_38 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_39 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_40 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_41 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_42 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_43 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_44 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_45 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_46 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_47 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_48 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_49 = db.Column(Float(53))            #Kelman acoustic sensor
+    # opt_50 = db.Column(Float(53))            #Kelman acoustic sensor
+
+
+class WaterTest(db.Model):
+    """Water. Dissolved and free water content in oil test results"""
+    __tablename__ = u'water_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    water_flag = db.Column(Boolean)  # FreeWater. Indicates if free water is present.
+    water = db.Column(Float(53))  # Water. Dissolved water content in the insulated fluid
+    remark = db.Column(String(80))  # Remark.
+
+
+class FuranTest(db.Model):
+    """FuranTest.  Furan test results."""
+    __tablename__ = u'furan_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    hmf = db.Column(Float(53))  # HMF, Hydroxymethylfurfural test in ppm
+    fol = db.Column(Float(53))  # FOL, Furfurol
+    fal = db.Column(Float(53))  # FAL, Furfural
+    acf = db.Column(Float(53))  # ACF, Acetyl Furan
+    mef = db.Column(Float(53))  # MEF, Methyl furan
+    hmf_flag = db.Column(Boolean)  # HMF flag, true if not detectable
+    fol_flag = db.Column(Boolean)  # FOL flag, true if not detectable
+    fal_flag = db.Column(Boolean)  # FAL flag, true if not detectable
+    acf_flag = db.Column(Boolean)  # ACF flag, true if not detectable
+    mef_flag = db.Column(Boolean)  # MEF flag, true if not detectable
+
+
+class InhibitorTest(db.Model):
+    """DPCB results. InhibitorTest. AntioxidantTest"""
+    __tablename__ = u'inhibitor_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    inhibitor = db.Column(Float(53))  # Remaining are equivalent
+    remark = db.Column(String(80))
+    inhibitor_flag = db.Column(Boolean)
+
+
+class PCBTest(db.Model):
+    """PCBTest fluid test results"""
+    __tablename__ = u'pcb_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    aroclor_1242 = db.Column(Float(53))  # Remaining are equivalent
+    aroclor_1254 = db.Column(Float(53))
+    aroclor_1260 = db.Column(Float(53))
+    aroclor_1242_flag = db.Column(Boolean)
+    aroclor_1254_flag = db.Column(Boolean)
+    aroclor_1260_flag = db.Column(Boolean)
+    pcb_total = db.Column(Float(53))
+    total_flag = db.Column(Boolean)
+
+
+class ParticleTest(db.Model):
+    """ParticleTest. Number and sized of particles found in the fluid """
+    __tablename__ = u'particle_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    _2um = db.Column(u'2um', Float(53))  # _2um
+    _5um = db.Column(u'5um', Float(53))  # _5um
+    _10um = db.Column(u'10um', Float(53))  # _10um
+    _15um = db.Column(u'15um', Float(53))  # _15um
+    _25um = db.Column(u'25um', Float(53))  # _25um
+    _50um = db.Column(u'50um', Float(53))  # _50um
+    _100um = db.Column(u'100um', Float(53))  # _100um
+    nas1638 = db.Column(Float(53))  # NAS1638
+    iso4406_1 = db.Column(Float(53))  # ISO4406_1
+    iso4406_2 = db.Column(Float(53))  # ISO4406_2
+    iso4406_3 = db.Column(Float(53))  # ISO4406_3
+
+
+class MetalsInOilTest(db.Model):
+    """MetalInFluid. Dissolved metal in insulated fluid test results."""
+    __tablename__ = u'metals_in_oil_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    iron = db.Column(Float(53))  # Iron
+    nickel = db.Column(Float(53))  # Nickel
+    aluminium = db.Column(Float(53))  # Aluminium
+    copper = db.Column(Float(53))  # Copper
+    tin = db.Column(Float(53))  # Tin
+    silver = db.Column(Float(53))  # Silver
+    lead = db.Column(Float(53))  # Lead
+    zinc = db.Column(Float(53))  # Zinc
+    arsenic = db.Column(Float(53))
+    cadmium = db.Column(Float(53))
+    chrome = db.Column(Float(53))
+    iron_flag = db.Column(
+        Boolean)  # bAluminium. Boolean are used to indicate non detectable concentration rather than use 0
+    nickel_flag = db.Column(Boolean)  # bIron
+    aluminium_flag = db.Column(Boolean)  # bTin
+    copper_flag = db.Column(Boolean)  # bZinc
+    tin_flag = db.Column(Boolean)  # bNickel
+    silver_flag = db.Column(Boolean)  # bSilver
+    lead_flag = db.Column(Boolean)  # bLead
+    zinc_flag = db.Column(Boolean)  # bCopperarsenic
+    arsenic_flag = db.Column(Boolean)
+    cadmium_flag = db.Column(Boolean)
+    chrome_flag = db.Column(Boolean)
+
+
+class FluidTest(db.Model):
+    """PHY. Fluid physical properties test results"""
+    __tablename__ = u'fluid_test'
+
+    id = db.Column(Integer, primary_key=True)
+    test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
+    dielectric_1816 = db.Column(Float(53))  # D1816
+    dielectric_1816_2 = db.Column(Float(53))  # D1816_2
+    dielectric_877 = db.Column(Float(53))  # D877
+    dielectric_iec_156 = db.Column(Float(53))  # CEI156
+    acidity = db.Column(Float(53))  # Acid
+    color = db.Column(Float(53))  # Color
+    ift = db.Column(Float(53))  # IFT
+    visual = db.Column(String(25))  # Visual
+    density = db.Column(Float(53))  # Density
+    pf20c = db.Column(Float(53))  # PF20C
+    pf100c = db.Column(Float(53))  # PF100C
+    sludge = db.Column(Float(53))  # Sludge
+    aniline_point = db.Column(Float(53))  # AnilinePoint
+    corrosive_sulfur = db.Column(String(25))  # CorrosiveSulfur
+    viscosity = db.Column(Float(53))  # Viscosity
+    flash_point = db.Column(Float(53))  # FlashPoint
+    pour_point = db.Column(Float(53))  # PourPoint
+    dielectric_1816_flag = db.Column(Boolean)  # b1816
+    dielectric_1816_2_flag = db.Column(Boolean)  # bD1816_2
+    dielectric_877_flag = db.Column(Boolean)  # bD877
+    dielectric_iec_156_flag = db.Column(Boolean)  # bCEI156

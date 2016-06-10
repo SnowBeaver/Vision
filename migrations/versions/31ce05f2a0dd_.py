@@ -202,18 +202,70 @@ def upgrade():
         ]
     )
 
+    op.drop_table('test_type_param_value')
+    op.drop_table('test_type_param')
+    op.drop_table('test_result_param_values')
+    op.drop_table('test_param')
+
+    test_type_result_table_table = table(
+        'test_type_result_table',
+        column('id', Integer),
+        column('test_type_id', Integer),
+        column('test_result_table_name', String),
+    )
+    op.bulk_insert(
+        test_type_result_table_table, [
+            {'id': 1, 'test_type_id': 2, 'test_result_table_name': u'bushing_test'},
+            {'id': 2, 'test_type_id': 3, 'test_result_table_name': u'winding_test'},
+            {'id': 3, 'test_type_id': 4, 'test_result_table_name': u'winding_test'},
+            {'id': 4, 'test_type_id': 5, 'test_result_table_name': u'insulation_resistance_test'},
+            {'id': 5, 'test_type_id': 6, 'test_result_table_name': u'visual_inspection_test'},
+            {'id': 6, 'test_type_id': 7, 'test_result_table_name': u'winding_resistance_test'},
+            {'id': 7, 'test_type_id': 8, 'test_result_table_name': u'polymerisation_degree_test'},
+            {'id': 8, 'test_type_id': 9, 'test_result_table_name': u'transformer_turn_ratio_test'},
+            {'id': 9, 'test_type_id': 12, 'test_result_table_name': u'dissolved_gas_test'},
+            {'id': 10, 'test_type_id': 13, 'test_result_table_name': u'water_test'},
+            {'id': 11, 'test_type_id': 14, 'test_result_table_name': u'furan_test'},
+            {'id': 12, 'test_type_id': 15, 'test_result_table_name': u'inhibitor_test'},
+            {'id': 13, 'test_type_id': 16, 'test_result_table_name': u'pcb_test'},
+            {'id': 14, 'test_type_id': 18, 'test_result_table_name': u'fluid_test'},
+            {'id': 15, 'test_type_id': 19, 'test_result_table_name': u'fluid_test'},
+            {'id': 16, 'test_type_id': 20, 'test_result_table_name': u'fluid_test'},
+            {'id': 17, 'test_type_id': 21, 'test_result_table_name': u'pcb_test'},
+            {'id': 18, 'test_type_id': 22, 'test_result_table_name': u'inhibitor_test'},
+            {'id': 19, 'test_type_id': 23, 'test_result_table_name': u'fluid_test'},
+            {'id': 20, 'test_type_id': 24, 'test_result_table_name': u'fluid_test'},
+            {'id': 21, 'test_type_id': 25, 'test_result_table_name': u'fluid_test'},
+            {'id': 22, 'test_type_id': 26, 'test_result_table_name': u'fluid_test'},
+            {'id': 23, 'test_type_id': 27, 'test_result_table_name': u'particle_test'},
+            {'id': 24, 'test_type_id': 28, 'test_result_table_name': u'metals_in_oil_test'},
+            {'id': 25, 'test_type_id': 29, 'test_result_table_name': u'fluid_test'},
+            {'id': 26, 'test_type_id': 30, 'test_result_table_name': u'fluid_test'},
+            {'id': 27, 'test_type_id': 31, 'test_result_table_name': u'fluid_test'},
+            {'id': 28, 'test_type_id': 32, 'test_result_table_name': u'fluid_test'},
+            {'id': 29, 'test_type_id': 33, 'test_result_table_name': u'furan_test'},
+            {'id': 30, 'test_type_id': 34, 'test_result_table_name': u'water_test'},
+            {'id': 31, 'test_type_id': 35, 'test_result_table_name': u'fluid_test'},
+            {'id': 32, 'test_type_id': 36, 'test_result_table_name': u'fluid_test'},
+            {'id': 33, 'test_type_id': 37, 'test_result_table_name': u'fluid_test'},
+            {'id': 34, 'test_type_id': 39, 'test_result_table_name': u'pcb_test'},
+            {'id': 35, 'test_type_id': 40, 'test_result_table_name': u'inhibitor_test'},
+        ]
+    )
+
 def downgrade():
-    op.execute(sql="TRUNCATE gasket_condition;")
-    op.execute(sql="TRUNCATE gas_relay;")
-    op.execute(sql="TRUNCATE fluid_level;")
-    op.execute(sql="TRUNCATE pressure_unit;")
-    op.execute(sql="TRUNCATE valve_condition;")
-    op.execute(sql="TRUNCATE pump_condition;")
-    op.execute(sql="TRUNCATE overall_condition;")
-    op.execute(sql="TRUNCATE paint_types;")
-    op.execute(sql="TRUNCATE tap_counter_status;")
-    op.execute(sql="TRUNCATE tap_filter_condition;")
-    op.execute(sql="TRUNCATE fan_condition;")
-    op.execute(sql="TRUNCATE connection_condition;")
-    op.execute(sql="TRUNCATE foundation_condition;")
-    op.execute(sql="TRUNCATE heating_condition;")
+    op.execute(sql="TRUNCATE gasket_condition CASCADE;")
+    op.execute(sql="TRUNCATE gas_relay CASCADE;")
+    op.execute(sql="TRUNCATE fluid_level CASCADE;")
+    op.execute(sql="TRUNCATE pressure_unit CASCADE;")
+    op.execute(sql="TRUNCATE valve_condition CASCADE;")
+    op.execute(sql="TRUNCATE pump_condition CASCADE;")
+    op.execute(sql="TRUNCATE overall_condition CASCADE;")
+    op.execute(sql="TRUNCATE paint_types CASCADE;")
+    op.execute(sql="TRUNCATE tap_counter_status CASCADE;")
+    op.execute(sql="TRUNCATE tap_filter_condition CASCADE;")
+    op.execute(sql="TRUNCATE fan_condition CASCADE;")
+    op.execute(sql="TRUNCATE connection_condition CASCADE;")
+    op.execute(sql="TRUNCATE foundation_condition CASCADE;")
+    op.execute(sql="TRUNCATE heating_condition CASCADE;")
+    op.execute(sql="TRUNCATE test_type_result_table;")
