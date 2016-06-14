@@ -138,6 +138,7 @@ class Campaign(db.Model):
     # )
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    date = db.Column(db.DateTime, index=True) # date of campaign start
 
     # created_by - relation to user table  #user one  (manager group)
     created_by = db.Column(
@@ -146,7 +147,7 @@ class Campaign(db.Model):
         nullable=False
     )
 
-    code = db.Column(db.String(50), index=True)  # AnalysisKey: Index key for all tests results
+    # code = db.Column(db.String(50), index=True)  # AnalysisKey: Index key for all tests results - id can be used
 
     # Sometimes it is mandatory to enter the test equipment information so same one can be used next time
     equipment = db.Column(

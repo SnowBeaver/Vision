@@ -16,6 +16,7 @@ class MenuViewForm(Form):
 
 
 # front page forms
+# TODO choises must be filled from db,  not hardcode
 stage_choice = [(x.id, x.name ) for x in db.session.query(CampaignStatus).all()]
 order_status_choice = [('Paid', 'Paid'), ]
 initials_choice = [(x.id, x.name ) for x in db.session.query(User).all()]
@@ -24,6 +25,15 @@ point_choice = [(x.id, x.name) for x in db.session.query(SamplingPoint).all()]
 testing_choice = [(x.id, x.name) for x in db.session.query(TestReason).all()]
 profile_choice = [(x.selection, x.selection) for x in db.session.query(ElectricalProfile).all()]
 fluid_choice = [(x.selection, x.selection) for x in db.session.query(FluidProfile).all()]
+equipment_sel_choice = [('all', 'All sites'), ('selected', 'Equipment under selected site')]
+winding_choice = [('TODO', 'TODO'), ]
+wire_choice = [('TODO', 'TODO'), ]
+insulating_choice = [('Oil', 'Oil'), ]
+rise_choice = [(55, 55), (65, 65), ]
+site_report_choices = [('todo', 'TODO')]
+list_choices = [('today', 'Starting as of today'), ('from', 'Starting as of'), ('list', 'Tests list')]
+type_choice = [('Transformer', 'Transformer'), ('Switcher', 'Switcher2')]
+manufacturer_choice = [('TODO', 'TODO'), ]
 
 class IdentificationViewForm(Form):
     analysis_type = TextField('Analysis Type', validators=[Required()])
@@ -140,9 +150,6 @@ class NewTestProfile(Form):
     description_fl = TextField('Description', validators=[Required()])
 
 
-equipment_sel_choice = [('all', 'All sites'), ('selected', 'Equipment under selected site')]
-
-
 class BatchViewForm(Form):
     # equipment selection
     equipment_sel = RadioField('Equipment Selection', choices=equipment_sel_choice)
@@ -168,10 +175,6 @@ class BatchViewForm(Form):
     # recording of results
     abnormal = BooleanField('If condition is abnormal, set "Doubtful Condition(DC)" flag', validators=[Optional()])
     normal = BooleanField('If condition is normal, set the analysis status to "Completed"', validators=[Optional()])
-
-
-site_report_choices = [('todo', 'TODO')]
-list_choices = [('today', 'Starting as of today'), ('from', 'Starting as of'), ('list', 'Tests list')]
 
 
 class EquipmentTestReportViewForm(Form):
@@ -296,10 +299,6 @@ class DataViewForm(Form):
     gas_2 = FloatField('Gas content(%)', validators=[Required()])
 
 
-type_choice = [('Transformer', 'Transformer'), ('Switcher', 'Switcher2')]
-manufacturer_choice = [('TODO', 'TODO'), ]
-
-
 class IdentificationInfoViewForm(Form):
     # Designation
     equipment = TextField('Equipment No.', validators=[Required()])
@@ -324,12 +323,6 @@ class ValidationInfoViewForm(Form):
     validated_info = BooleanField('Information being validated', validators=[Optional()])
     equipment = TextField('Previous equipment No.', validators=[Required()])
     serial = TextField('Previous serial No.', validators=[Required()])
-
-
-winding_choice = [('TODO', 'TODO'), ]
-wire_choice = [('TODO', 'TODO'), ]
-insulating_choice = [('Oil', 'Oil'), ]
-rise_choice = [(55, 55), (65, 65), ]
 
 
 class NameplateInfoViewForm(Form):

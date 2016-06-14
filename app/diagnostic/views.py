@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Blueprint, request, render_template
-from flask import flash, g, session
-from app.users.models import User
 from .storage import *
 from flask import jsonify
 from .forms import *
 from app import admin_per
 from flask import redirect, url_for
+from flask.ext.wtf import Form
+from wtforms.ext.appengine.db import model_form
 
 lab = Blueprint('lab', __name__, url_prefix='/admin/lab')
 
@@ -169,3 +169,76 @@ def get_profile():
     else:
         # redirect to home
         return redirect(url_for('home.home'))
+
+
+campaign_profile = Blueprint('campaign_profile', __name__, url_prefix='/admin/campaign')
+
+@campaign_profile.route("/", methods=['GET'])
+def campaign_list():
+    campaign = db.session.query(Campaign).all()
+    keys = ['id','created_by', 'equipment', 'lab', 'lab_no', 'date', 'contract_id]']
+    return render_template("admin/diagnostic/items_list.html", table_title='Campaign', items=campaign, keys=keys)
+
+@campaign_profile.route("/add", methods=['POST', 'GET'])
+def add_campaign():
+    form = NewCampaignView()
+    if form.validate_on_submit():
+        campaign = Campaign()
+        campaign.created_by = form.created_by.data
+        campaign.equipment = form.equipment.data
+        campaign.lab = form.lab.data
+        campaign.lab_no = form.lab_no.data
+        campaign.date = form.date.data
+        campaign.contract_id = form.contract_id.data
+        db.session.add(campaign)
+        db.session.commit()
+        return redirect('/admin')
+    return render_template('admin/diagnostic/add.html', title='Create campaign', form=form)
+
+
+equipment_profile = Blueprint('equipment_profile', __name__, url_prefix='/admin/equipment')
+
+
+@equipment_profile.route("/", methods=['GET'])
+def equipment_list():
+    equipment = db.session.query(Equipment).all()
+    keys = ['id','type', 'visual_date', 'modifier', 'location', 'equipment_number']
+    return render_template("admin/diagnostic/items_list.html", table_title='Equipment', items=equipment, keys=keys)
+
+
+@equipment_profile.route("/add", methods=['POST', 'GET'])
+def equipment_add():
+    EqForm = model_form(Equipment, Form)
+    model = Equipment()
+    form = EqForm(request.form, model)
+
+    if form.validate_on_submit():
+        form.populate_obj(model)
+        model.put()
+        flash("Equipment added")
+        return redirect(url_for("index"))
+    return render_template("admin/diagnostic/equipment_add.html", form=form)
+
+
+@equipment_profile.route("/edit<id>", methods=['POST', 'GET'])
+def equipment_edit(id):
+    EqForm = model_form(Equipment, Form)
+    model = Equipment.get(id)
+    form = EqForm(request.form, model)
+
+    if form.validate_on_submit():
+        form.populate_obj(model)
+        model.put()
+        flash("Equipment updated")
+        return redirect(url_for("index"))
+    return render_template('admin/diagnostic/equipment_edit.html', form=form)
+
+equipment_profile = Blueprint('equipment_profile', __name__, url_prefix='/admin/equipment')
+
+
+contract_profile = Blueprint('contract_profile', __name__, url_prefix='/admin/contract')
+@contract_profile.route("/", methods=['GET'])
+def contract_list():
+    contract = db.session.query(Contract).all()
+    keys = ['id','name', 'code']
+    return render_template("admin/diagnostic/items_list.html", table_title='Contract', items=contract, keys=keys)
