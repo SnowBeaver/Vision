@@ -1,15 +1,14 @@
 # French translations for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
+# Copyright (C) 2016 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-11-25 11:23-0500\n"
-"PO-Revision-Date: 2015-11-25 11:23-0500\n"
+"POT-Creation-Date: 2016-06-08 15:27+0300\n"
+"PO-Revision-Date: 2016-06-08 15:27+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -17,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.1.1\n"
+"Generated-By: Babel 2.3.4\n"
 
 #: app/pages/forms.py:14
 msgid "submit"
@@ -36,7 +35,7 @@ msgid "Could not delete page"
 msgstr ""
 
 #: app/pages/views.py:51 app/pages/views.py:54 app/pages/views.py:97
-#: app/pages/views.py:119 app/pages/views.py:129
+#: app/pages/views.py:104 app/pages/views.py:127 app/pages/views.py:137
 msgid "warning"
 msgstr ""
 
@@ -49,39 +48,43 @@ msgid "Page successfully added!"
 msgstr ""
 
 #: app/pages/views.py:97
+msgid "Tag {0} is forbidden"
+msgstr ""
+
+#: app/pages/views.py:104
 msgid "There were errors in page submission"
 msgstr ""
 
-#: app/pages/views.py:119
+#: app/pages/views.py:127
 msgid "You do not have the rights to edit this page"
 msgstr ""
 
-#: app/pages/views.py:129
+#: app/pages/views.py:137
 msgid "You do not have permissions to create or edit pages"
 msgstr ""
 
-#: app/templates/blogging/editor.html:14
+#: app/templates/blogging/editor.html:30
 msgid "Blog Editor"
 msgstr ""
 
-#: app/templates/blogging/editor.html:18 app/templates/blogging/editor.html:21
-#: app/templates/pages/editor.html:18 app/templates/pages/editor.html:21
+#: app/templates/blogging/editor.html:34 app/templates/blogging/editor.html:37
+#: app/templates/pages/editor.html:43 app/templates/pages/editor.html:46
 msgid "Title"
 msgstr ""
 
-#: app/templates/blogging/editor.html:27
+#: app/templates/blogging/editor.html:49
 msgid "Blog text"
 msgstr ""
 
-#: app/templates/blogging/editor.html:29 app/templates/pages/editor.html:36
+#: app/templates/blogging/editor.html:51 app/templates/pages/editor.html:99
 msgid "Learn more about"
 msgstr ""
 
-#: app/templates/blogging/editor.html:35
+#: app/templates/blogging/editor.html:57
 msgid "Tags"
 msgstr ""
 
-#: app/templates/blogging/editor.html:38
+#: app/templates/blogging/editor.html:59
 msgid "Comma separated tags"
 msgstr ""
 
@@ -143,15 +146,23 @@ msgstr ""
 msgid "For Fluid Insulated Equipment"
 msgstr ""
 
-#: app/templates/pages/editor.html:15
+#: app/templates/pages/editor.html:35
 msgid "Page Editor"
 msgstr ""
 
-#: app/templates/pages/editor.html:26 app/templates/pages/editor.html:29
+#: app/templates/pages/editor.html:57 app/templates/pages/editor.html:61
 msgid "Slug"
 msgstr ""
 
-#: app/templates/pages/editor.html:34
+#: app/templates/pages/editor.html:74
+msgid "Category"
+msgstr ""
+
+#: app/templates/pages/editor.html:77
+msgid "Tag"
+msgstr ""
+
+#: app/templates/pages/editor.html:97
 msgid "Page text"
 msgstr ""
 
@@ -159,19 +170,11 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: app/templates/widgets/footer.html:14
-msgid "Wiki Users"
-msgstr ""
-
-#: app/templates/widgets/footer.html:15
-msgid "Wiki Developers"
-msgstr ""
-
-#: app/templates/widgets/footer.html:16 app/templates/widgets/topmenu.html:34
+#: app/templates/widgets/footer.html:15 app/templates/widgets/topmenu.html:29
 msgid "Register"
 msgstr ""
 
-#: app/templates/widgets/footer.html:17 app/templates/widgets/topmenu.html:35
+#: app/templates/widgets/footer.html:16 app/templates/widgets/topmenu.html:30
 msgid "Login"
 msgstr ""
 
@@ -183,23 +186,15 @@ msgstr ""
 msgid "Forum"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:21
-msgid "Wiki"
+#: app/templates/widgets/topmenu.html:20
+msgid "Transformer thermal model simulator"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:23
-msgid "Users"
-msgstr ""
-
-#: app/templates/widgets/topmenu.html:24
-msgid "Developers"
-msgstr ""
-
-#: app/templates/widgets/topmenu.html:31
+#: app/templates/widgets/topmenu.html:26
 msgid "Dashboard"
 msgstr ""
 
-#: app/templates/widgets/topmenu.html:32
+#: app/templates/widgets/topmenu.html:27
 msgid "Logout"
 msgstr ""
 
@@ -215,42 +210,42 @@ msgid ""
 "\t"
 msgstr ""
 
-#: app/users/views.py:65
+#: app/users/views.py:68
 msgid "The confirmation link is invalid or has expired."
 msgstr ""
 
-#: app/users/views.py:70
+#: app/users/views.py:73
 msgid "Account already confirmed. Please login."
 msgstr ""
 
-#: app/users/views.py:75
+#: app/users/views.py:78
 msgid "You have confirmed your account. Thanks!"
 msgstr ""
 
-#: app/users/views.py:114
+#: app/users/views.py:117
 msgid "Please confirm your account at vision website"
 msgstr ""
 
-#: app/users/views.py:175
+#: app/users/views.py:178
 msgid "Welcome"
 msgstr ""
 
-#: app/users/views.py:177
+#: app/users/views.py:180
 msgid "Wrong email or password"
 msgstr ""
 
-#: app/users/views.py:216
+#: app/users/views.py:219
 #, python-format
 msgid ""
 "User with this e-mail was registered already. If you forgot your password"
 " click <a href=\"%s\">remind password</a>"
 msgstr ""
 
-#: app/users/views.py:266
+#: app/users/views.py:269
 msgid "Thanks for registering"
 msgstr ""
 
-#: app/users/views.py:327 app/users/views.py:348
+#: app/users/views.py:330 app/users/views.py:351
 msgid "Profile updated"
 msgstr ""
 
