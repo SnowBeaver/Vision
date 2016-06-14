@@ -16,26 +16,26 @@ class MenuViewForm(Form):
 
 
 # front page forms
-reason_choice = [('Preventive', 'Preventive'), ]
-stage_choice = [('Completed', 'Completed'), ]
-sampling_choice = [('Main tank-Bottom', 'Main tank-Bottom'), ]
+stage_choice = [(x.id, x.name ) for x in db.session.query(CampaignStatus).all()]
 order_status_choice = [('Paid', 'Paid'), ]
-laboratory_choice = [('* Aucun', '* Aucun'), ]
-initials_choice = [
-    (x.id, x.name ) for x in db.session.query(User).all()
-]
+initials_choice = [(x.id, x.name ) for x in db.session.query(User).all()]
+lab_choice = [(x.id, x.name ) for x in db.session.query(Lab).all()]
+point_choice = [(x.id, x.name) for x in db.session.query(SamplingPoint).all()]
+testing_choice = [(x.id, x.name) for x in db.session.query(TestReason).all()]
+profile_choice = [(x.selection, x.selection) for x in db.session.query(ElectricalProfile).all()]
+fluid_choice = [(x.selection, x.selection) for x in db.session.query(FluidProfile).all()]
 
 class IdentificationViewForm(Form):
     analysis_type = TextField('Analysis Type', validators=[Required()])
     initials = SelectField('Initials', choices=initials_choice, validators=[Required()])
     acq_date = DateField('Acquisition date', validators=[Optional()], format='%m/%d/%Y %H:%M A')
-    reason = SelectField('Reason for analysis', choices=reason_choice, validators=[Required()])
+    reason = SelectField('Reason for analysis', choices=testing_choice, validators=[Required()])
     stage = SelectField('Analysis stage', choices=stage_choice, validators=[Required()])
     temp = IntegerField('Fluid temp.(*C)', validators=[Required()])
     insulating = IntegerField('Insulating fluid', validators=[Required()])
     contract = TextField('Contract No.', validators=[Required()])
     grouping = TextField('Test grouping', validators=[Required()])
-    sampling = SelectField('Sampling point', choices=sampling_choice, validators=[Required()])
+    sampling = SelectField('Sampling point', choices=point_choice, validators=[Required()])
     syringe = TextField('Syringe No. / jar No. ', validators=[Required()])
     analysis_no = IntegerField('Analysis No.', validators=[Required()])
     lab_date = DateField('Lab analysis date', validators=[Optional()], format='%m/%d/%Y %H:%M:%S')
@@ -43,7 +43,7 @@ class IdentificationViewForm(Form):
     equipment = TextField('Test equipment', validators=[Required()])
     order_status = SelectField('Lad order status', choices=order_status_choice, validators=[Required()])
     lab_no = TextField('Lab P.O. No.', validators=[Required()])
-    laboratory = SelectField('Laboratory', choices=laboratory_choice, validators=[Required()])
+    laboratory = SelectField('Laboratory', choices=lab_choice, validators=[Required()])
 
 
 class TestRepairViewForm(Form):
@@ -67,30 +67,6 @@ class EquipmentDiagnosisViewForm(Form):
     condition = BooleanField('Equipment in questionable condition or out of service', validators=[Optional()])
 
 # Create new test
-lab_choice = [
-    (x.id, x.name ) for x in db.session.query(Lab).all()
-]
-
-testing_choice = [
-    ('Preventive', 'Preventive'), ('Reception', 'Reception'), ('Commissioning', 'Commissioning'),
-    ('Study', 'Study'), ('Fault', 'Fault'), ('After degassing', 'After degassing'),
-    ('After Fuller earth', 'After Fuller earth'), ('New oil', 'New oil'),
-    ('Replace the oil', 'Replace the oil'), ('Other', 'Other')
-]
-
-point_choice = [
-    ( 0, 'Main tank-Bottom'), ( 1 , 'Undetermined'),
-    ( 2, 'Main tank-Top'), ( 3 , 'Gas relay'), ( 4, 'Other')
-]
-
-profile_choice = [
-    (x.selection, x.selection) for x in db.session.query(ElectricalProfile).all()
-]
-
-fluid_choice = [
-    (x.selection, x.selection) for x in db.session.query(FluidProfile).all()
-]
-
 class NewTestDescription(Form):
     equipment = TextField('Equipment No.', validators=[Required()])
     position = TextField('Position No.', validators=[Required()])

@@ -1292,6 +1292,14 @@ class TestStatus(db.Model):
     name = db.Column(db.String(50), index=True)
 
 
+class CampaignStatus(db.Model):
+    __tablename__ = 'campaign_status'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    code = db.Column(db.String(50), index=True)
+    name = db.Column(db.String(50), index=True)
+
+
 class TestSchedule(db.Model):
     """
     Schedule. List work, periodic or not, to be done on individual equipment.
