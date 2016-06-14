@@ -16,26 +16,36 @@ class MenuViewForm(Form):
 
 
 # front page forms
-reason_choice = [('Preventive', 'Preventive'), ]
-stage_choice = [('Completed', 'Completed'), ]
-sampling_choice = [('Main tank-Bottom', 'Main tank-Bottom'), ]
+# TODO choises must be filled from db,  not hardcode
+stage_choice = [(x.id, x.name ) for x in db.session.query(CampaignStatus).all()]
 order_status_choice = [('Paid', 'Paid'), ]
-laboratory_choice = [('* Aucun', '* Aucun'), ]
-initials_choice = [
-    (x.id, x.name ) for x in db.session.query(User).all()
-]
+initials_choice = [(x.id, x.name ) for x in db.session.query(User).all()]
+lab_choice = [(x.id, x.name ) for x in db.session.query(Lab).all()]
+point_choice = [(x.id, x.name) for x in db.session.query(SamplingPoint).all()]
+testing_choice = [(x.id, x.name) for x in db.session.query(TestReason).all()]
+profile_choice = [(x.selection, x.selection) for x in db.session.query(ElectricalProfile).all()]
+fluid_choice = [(x.selection, x.selection) for x in db.session.query(FluidProfile).all()]
+equipment_sel_choice = [('all', 'All sites'), ('selected', 'Equipment under selected site')]
+winding_choice = [('TODO', 'TODO'), ]
+wire_choice = [('TODO', 'TODO'), ]
+insulating_choice = [('Oil', 'Oil'), ]
+rise_choice = [(55, 55), (65, 65), ]
+site_report_choices = [('todo', 'TODO')]
+list_choices = [('today', 'Starting as of today'), ('from', 'Starting as of'), ('list', 'Tests list')]
+type_choice = [('Transformer', 'Transformer'), ('Switcher', 'Switcher2')]
+manufacturer_choice = [('TODO', 'TODO'), ]
 
 class IdentificationViewForm(Form):
     analysis_type = TextField('Analysis Type', validators=[Required()])
     initials = SelectField('Initials', choices=initials_choice, validators=[Required()])
     acq_date = DateField('Acquisition date', validators=[Optional()], format='%m/%d/%Y %H:%M A')
-    reason = SelectField('Reason for analysis', choices=reason_choice, validators=[Required()])
+    reason = SelectField('Reason for analysis', choices=testing_choice, validators=[Required()])
     stage = SelectField('Analysis stage', choices=stage_choice, validators=[Required()])
     temp = IntegerField('Fluid temp.(*C)', validators=[Required()])
     insulating = IntegerField('Insulating fluid', validators=[Required()])
     contract = TextField('Contract No.', validators=[Required()])
     grouping = TextField('Test grouping', validators=[Required()])
-    sampling = SelectField('Sampling point', choices=sampling_choice, validators=[Required()])
+    sampling = SelectField('Sampling point', choices=point_choice, validators=[Required()])
     syringe = TextField('Syringe No. / jar No. ', validators=[Required()])
     analysis_no = IntegerField('Analysis No.', validators=[Required()])
     lab_date = DateField('Lab analysis date', validators=[Optional()], format='%m/%d/%Y %H:%M:%S')
@@ -43,7 +53,7 @@ class IdentificationViewForm(Form):
     equipment = TextField('Test equipment', validators=[Required()])
     order_status = SelectField('Lad order status', choices=order_status_choice, validators=[Required()])
     lab_no = TextField('Lab P.O. No.', validators=[Required()])
-    laboratory = SelectField('Laboratory', choices=laboratory_choice, validators=[Required()])
+    laboratory = SelectField('Laboratory', choices=lab_choice, validators=[Required()])
 
 
 class TestRepairViewForm(Form):
@@ -67,30 +77,6 @@ class EquipmentDiagnosisViewForm(Form):
     condition = BooleanField('Equipment in questionable condition or out of service', validators=[Optional()])
 
 # Create new test
-lab_choice = [
-    (x.id, x.name ) for x in db.session.query(Lab).all()
-]
-
-testing_choice = [
-    ('Preventive', 'Preventive'), ('Reception', 'Reception'), ('Commissioning', 'Commissioning'),
-    ('Study', 'Study'), ('Fault', 'Fault'), ('After degassing', 'After degassing'),
-    ('After Fuller earth', 'After Fuller earth'), ('New oil', 'New oil'),
-    ('Replace the oil', 'Replace the oil'), ('Other', 'Other')
-]
-
-point_choice = [
-    ( 0, 'Main tank-Bottom'), ( 1 , 'Undetermined'),
-    ( 2, 'Main tank-Top'), ( 3 , 'Gas relay'), ( 4, 'Other')
-]
-
-profile_choice = [
-    (x.selection, x.selection) for x in db.session.query(ElectricalProfile).all()
-]
-
-fluid_choice = [
-    (x.selection, x.selection) for x in db.session.query(FluidProfile).all()
-]
-
 class NewTestDescription(Form):
     equipment = TextField('Equipment No.', validators=[Required()])
     position = TextField('Position No.', validators=[Required()])
@@ -164,9 +150,6 @@ class NewTestProfile(Form):
     description_fl = TextField('Description', validators=[Required()])
 
 
-equipment_sel_choice = [('all', 'All sites'), ('selected', 'Equipment under selected site')]
-
-
 class BatchViewForm(Form):
     # equipment selection
     equipment_sel = RadioField('Equipment Selection', choices=equipment_sel_choice)
@@ -192,10 +175,6 @@ class BatchViewForm(Form):
     # recording of results
     abnormal = BooleanField('If condition is abnormal, set "Doubtful Condition(DC)" flag', validators=[Optional()])
     normal = BooleanField('If condition is normal, set the analysis status to "Completed"', validators=[Optional()])
-
-
-site_report_choices = [('todo', 'TODO')]
-list_choices = [('today', 'Starting as of today'), ('from', 'Starting as of'), ('list', 'Tests list')]
 
 
 class EquipmentTestReportViewForm(Form):
@@ -320,10 +299,6 @@ class DataViewForm(Form):
     gas_2 = FloatField('Gas content(%)', validators=[Required()])
 
 
-type_choice = [('Transformer', 'Transformer'), ('Switcher', 'Switcher2')]
-manufacturer_choice = [('TODO', 'TODO'), ]
-
-
 class IdentificationInfoViewForm(Form):
     # Designation
     equipment = TextField('Equipment No.', validators=[Required()])
@@ -348,12 +323,6 @@ class ValidationInfoViewForm(Form):
     validated_info = BooleanField('Information being validated', validators=[Optional()])
     equipment = TextField('Previous equipment No.', validators=[Required()])
     serial = TextField('Previous serial No.', validators=[Required()])
-
-
-winding_choice = [('TODO', 'TODO'), ]
-wire_choice = [('TODO', 'TODO'), ]
-insulating_choice = [('Oil', 'Oil'), ]
-rise_choice = [(55, 55), (65, 65), ]
 
 
 class NameplateInfoViewForm(Form):

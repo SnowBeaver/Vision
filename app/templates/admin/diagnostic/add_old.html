@@ -1,89 +1,83 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="row-fluid" id="addForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="false">
-    <div>
+<div class="modal fade" id="addForm" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <form class="" method="post" action="#" >
-                {{form.hidden_tag()}}
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"> Insertion of a new sampling compaign </h4>
-                </div>
-                {% for error in form.errors  %}
-                    <span style="color: red;">[{{error}}]</span>
-                {% endfor %}<br>
-                <div class="modal-body">
-                    <div class="maxwidth">
-                        <div>
-                            <button class="btn btn-default pull-right margin-right-xs" class="submit">
-                                Create
-                            </button>
-                            <button class="btn btn-default pull-right margin-right-xs" class="close" data-dismiss="modal">
-                                Cancel
-                            </button>
-                        </div>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> Insertion of a new sampling compaign </h4>
+            </div>
+            <div class="modal-body">
+                <div class="maxwidth">
+                    <div>
+                        <button class="btn btn-default pull-right margin-right-xs">
+                            Create
+                        </button>
+                        <button class="btn btn-default pull-right margin-right-xs" class="close" data-dismiss="modal">
+                            Cancel
+                        </button>
                     </div>
-                    <p>
-                        <ul id="tabs" class="nav nav-tabs " data-tabs="tabs">
-                            <li class="active"> <a href="#new-tabs-1" data-toggle="tab"> Description </a> </li>
-                            <li> <a href="#new-tabs-2" data-toggle="tab"> Electrical: as per user </a> </li>
-                            <li> <a href="#new-tabs-3" data-toggle="tab"> Fluid: as per user </a> </li>
-                            <li> <a href="#new-tabs-4" data-toggle="tab"> Test profile </a> </li>
-                        </ul>
-                        <div id="my-tab-content" class="tab-content maxwidth">
-                            <div id="new-tabs-1" role="tabpanel" class="tab-pane active ">
+                </div>
+                <p>
+                    <ul id="tabs" class="nav nav-tabs " data-tabs="tabs">
+                        <li class="active"> <a href="#new-tabs-1" data-toggle="tab"> Description </a> </li>
+                        <li> <a href="#new-tabs-2" data-toggle="tab"> Electrical: as per user </a> </li>
+                        <li> <a href="#new-tabs-3" data-toggle="tab"> Fluid: as per user </a> </li>
+                        <li> <a href="#new-tabs-4" data-toggle="tab"> Test profile </a> </li>
+                    </ul>
+                    <div id="my-tab-content" class="tab-content maxwidth">
+                        <div id="new-tabs-1" role="tabpanel" class="tab-pane active ">
+                            <form class="" method="post" action="#" >
                                 <div class="maxwidth">
                                     <div class="col-md-9 nopadding padding-right-xs">
                                         <div class="maxwidth">
                                             <div class="col-md-4 nopadding padding-right-xs">
-                                                {{ form.equipment.label }}
-                                                {{ form.equipment(class_="form-control" , placeholder = "") }}
+                                                {{ diagnostic.add.description.equipment.label }}
+                                                {{ diagnostic.add.description.equipment(class_="form-control" , placeholder = "") }}
                                             </div>
                                             <div class="col-md-4 nopadding padding-right-xs">
-                                                {{ form.position.label }}
-                                                {{ form.position(class_="form-control" , placeholder = "") }}
+                                                {{ diagnostic.add.description.position.label }}
+                                                {{ diagnostic.add.description.position(class_="form-control" , placeholder = "") }}
                                             </div>
                                             <div class="col-md-4 nopadding">
-                                                {{ form.fluid.label }}
-                                                {{ form.fluid(class_="form-control" , placeholder = "") }}
+                                                {{ diagnostic.add.description.fluid.label }}
+                                                {{ diagnostic.add.description.fluid(class_="form-control" , placeholder = "") }}
                                             </div>
                                         </div>
                                         <div class="maxwidth">
                                             <div class="col-md-4 nopadding padding-right-xs">
-                                                {{ form.lab.label }}
+                                                {{ diagnostic.add.description.lab.label }}
                                                 <div class="form-inline">
-                                                        {{ form.lab(class_="form-control") }}
+                                                        {{ diagnostic.add.description.lab(class_="form-control") }}
                                                         <a data-toggle="modal" data-target="#labForm" class="nopadding">
                                                             <button class="btn btn-default pull-right margin-right-xs"> ... </button>
                                                         </a>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 nopadding padding-right-xs">
-                                                {{ form.contract_id.label }}
-                                                {{ form.contract_id(class_="form-control") }}
+                                                {{ diagnostic.add.description.contract.label }}
+                                                {{ diagnostic.add.description.contract(class_="form-control") }}
                                             </div>
                                             <div class="col-md-4 nopadding">
-                                                {{ form.lab_no.label }}
-                                                {{ form.lab_no(class_="form-control") }}
+                                                {{ diagnostic.add.description.lab_no.label }}
+                                                {{ diagnostic.add.description.lab_no(class_="form-control") }}
                                             </div>
                                         </div>
                                         <div class="maxwidth">
                                             <div class="col-md-5 nopadding padding-right-xs">
-                                                {{ form.date.label }}
+                                                {{ diagnostic.add.description.date.label }}
                                                 <div class="datetimepicker input-group date">
-                                                    {{ form.date(class_="form-control" ) }}
+                                                    {{ diagnostic.add.description.date(class_="form-control" ) }}
                                                     <span class="input-group-addon">
                                                         <span class="glyphicon glyphicon-calendar"></span>
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="col-md-5 nopadding padding-right-xs">
-                                                {{ form.testing.label }}
-                                                {{ form.testing(class_="form-control") }}
+                                                {{ diagnostic.add.description.testing.label }}
+                                                {{ diagnostic.add.description.testing(class_="form-control") }}
                                             </div>
                                             <div class="col-md-2 nopadding">
-                                                {{ form.created_by.label }}
-                                                {{ form.created_by(class_="form-control") }}
+                                                {{ diagnostic.add.description.initials.label }}
+                                                {{ diagnostic.add.description.initials(class_="form-control") }}
                                             </div>
                                         </div>
                                     </div>
@@ -95,92 +89,96 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="new-tabs-2" role="tabpanel" class="tab-pane">
-                                <div class="maxwidth">
+                            </form>
+                        </div>
+                        <div id="new-tabs-2" role="tabpanel" class="tab-pane">
+                            <div class="maxwidth">
+                                <form class="" method="post" action="#" id="electrical_profile">
                                     <fieldset class="scheduler-border">
                                         <legend class="scheduler-border">Tests requested</legend>
                                         <div class="control-group">
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.bushing(class_="pull-left padding-right-xs") }}
-                                                    {{ form.bushing.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.bushing(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.bushing.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.insulation(class_="pull-left padding-right-xs") }}
-                                                    {{ form.insulation.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.insulation(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.insulation.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.degree(class_="pull-left padding-right-xs") }}
-                                                    {{ form.degree.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.degree(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.degree.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.winding(class_="pull-left padding-right-xs") }}
-                                                    {{ form.winding.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.winding(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.winding.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.visual(class_="pull-left padding-right-xs") }}
-                                                    {{ form.visual.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.visual(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.visual.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.turns(class_="pull-left padding-right-xs") }}
-                                                    {{ form.turns.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.turns(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.turns.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.winding_double(class_="pull-left padding-right-xs") }}
-                                                    {{ form.winding_double.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.winding_double(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.winding_double.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.resistance(class_="pull-left padding-right-xs") }}
-                                                    {{ form.resistance.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.electrical.resistance(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.electrical.resistance.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                         </div>
                                     </fieldset>
-                                </div>
+                                </form>
                             </div>
-                            <div id="new-tabs-3" role="tabpanel" class="tab-pane">
+                        </div>
+                        <div id="new-tabs-3" role="tabpanel" class="tab-pane">
+                            <form class="" method="post" action="#" id="fluid_profile" >
                                 <fieldset class="scheduler-border">
                                     <legend class="scheduler-border">Syringe - Test requested</legend>
                                     <div class="control-group">
                                         <div class="col-md-8 nopadding padding-right-xs">
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.gas(class_="pull-left padding-right-xs") }}
-                                                    {{ form.gas.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.gas(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.gas.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.furans(class_="pull-left padding-right-xs") }}
-                                                    {{ form.furans.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.furans(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.furans.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.pcb(class_="pull-left padding-right-xs") }}
-                                                    {{ form.pcb.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.pcb(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.pcb.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.water(class_="pull-left padding-right-xs") }}
-                                                    {{ form.water.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.water(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.water.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.inhibitor(class_="pull-left padding-right-xs") }}
-                                                    {{ form.inhibitor.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.inhibitor(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.inhibitor.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 nopadding">
                                             <div class="col-md-2 nopadding padding-right-xs">
-                                                {{ form.qty.label }}
-                                                {{ form.qty(class="form-control") }}
+                                                {{ diagnostic.add.fluid.qty.label }}
+                                                {{ diagnostic.add.fluid.qty(class="form-control") }}
                                             </div>
                                             <div class="col-md-10 nopadding">
-                                                {{ form.sampling.label }}
-                                                {{ form.sampling(class="form-control") }}
+                                                {{ diagnostic.add.fluid.sampling.label }}
+                                                {{ diagnostic.add.fluid.sampling(class="form-control") }}
                                             </div>
                                         </div>
                                     </div>
@@ -191,106 +189,106 @@
                                         <div class="col-md-8 nopadding padding-right-xs">
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.dielec(class_="pull-left padding-right-xs") }}
-                                                    {{ form.dielec.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.dielec(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.dielec.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.dielec_2(class_="pull-left padding-right-xs") }}
-                                                    {{ form.dielec_2.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.dielec_2(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.dielec_2.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.dielec_d(class_="pull-left padding-right-xs") }}
-                                                    {{ form.dielec_d.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.dielec_d(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.dielec_d.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.acidity(class_="pull-left padding-right-xs") }}
-                                                    {{ form.acidity.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.acidity(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.acidity.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.color(class_="pull-left padding-right-xs") }}
-                                                    {{ form.color.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.color(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.color.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.ift(class_="pull-left padding-right-xs") }}
-                                                    {{ form.ift.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.ift(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.ift.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.density(class_="pull-left padding-right-xs") }}
-                                                    {{ form.density.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.density(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.density.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.pf(class_="pull-left padding-right-xs") }}
-                                                    {{ form.pf.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.pf(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.pf.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.pf_100(class_="pull-left padding-right-xs") }}
-                                                    {{ form.pf_100.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.pf_100(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.pf_100.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.pcb_jar(class_="pull-left padding-right-xs") }}
-                                                    {{ form.pcb_jar.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.pcb_jar(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.pcb_jar.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.particles(class_="pull-left padding-right-xs") }}
-                                                    {{ form.particles.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.particles(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.particles.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.furans_f(class_="pull-left padding-right-xs") }}
-                                                    {{ form.furans_f.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.furans_f(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.furans_f.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.inhibitor_jar(class_="pull-left padding-right-xs") }}
-                                                    {{ form.inhibitor_jar.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.inhibitor_jar(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.inhibitor_jar.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.metals(class_="pull-left padding-right-xs") }}
-                                                    {{ form.metals.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.metals(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.metals.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.water_w(class_="pull-left padding-right-xs") }}
-                                                    {{ form.water_w.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.water_w(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.water_w.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.point(class_="pull-left padding-right-xs") }}
-                                                    {{ form.point.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.point(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.point.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding padding-right-xs">
-                                                    {{ form.viscosity(class_="pull-left padding-right-xs") }}
-                                                    {{ form.viscosity.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.viscosity(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.viscosity.label(class_="auto pull-left") }}
                                                 </div>
                                                 <div class="col-md-4 nopadding">
-                                                    {{ form.corr(class_="pull-left padding-right-xs") }}
-                                                    {{ form.corr.label(class_="auto pull-left") }}
+                                                    {{ diagnostic.add.fluid.corr(class_="pull-left padding-right-xs") }}
+                                                    {{ diagnostic.add.fluid.corr.label(class_="auto pull-left") }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 nopadding">
                                             <div class="maxwidth">
-                                                {{ form.dielec_i(class_="pull-left padding-right-xs") }}
-                                                {{ form.dielec_i.label(class_="auto pull-left") }}
+                                                {{ diagnostic.add.fluid.dielec_i(class_="pull-left padding-right-xs") }}
+                                                {{ diagnostic.add.fluid.dielec_i.label(class_="auto pull-left") }}
                                             </div>
                                             <div class="maxwidth">
-                                                {{ form.fluid_visual(class_="pull-left padding-right-xs") }}
-                                                {{ form.fluid_visual.label(class_="auto pull-left") }}
+                                                {{ diagnostic.add.fluid.visual(class_="pull-left padding-right-xs") }}
+                                                {{ diagnostic.add.fluid.visual.label(class_="auto pull-left") }}
                                             </div>
                                             <div class="maxwidth">
                                                 <div class="col-md-2 nopadding padding-right-xs">
-                                                    {{ form.qty_jar.label }}
-                                                    {{ form.qty_jar(class="form-control") }}
+                                                    {{ diagnostic.add.fluid.qty_jar.label }}
+                                                    {{ diagnostic.add.fluid.qty_jar(class="form-control") }}
                                                 </div>
                                                 <div class="col-md-10 nopadding">
-                                                    {{ form.sampling_jar.label }}
-                                                    {{ form.sampling_jar(class="form-control") }}
+                                                    {{ diagnostic.add.fluid.sampling_jar.label }}
+                                                    {{ diagnostic.add.fluid.sampling_jar(class="form-control") }}
                                                 </div>
                                             </div>
                                         </div>
@@ -301,44 +299,46 @@
                                     <div class="control-group">
                                         <div class="col-md-8 nopadding padding-right-xs">
                                             <div class="maxwidth">
-                                                {{ form.pcb_vial(class_="pull-left padding-right-xs") }}
-                                                {{ form.pcb_vial.label(class_="auto pull-left") }}
+                                                {{ diagnostic.add.fluid.pcb_vial(class_="pull-left padding-right-xs") }}
+                                                {{ diagnostic.add.fluid.pcb_vial.label(class_="auto pull-left") }}
                                             </div>
                                             <div class="maxwidth">
-                                                {{ form.antioxidant(class_="pull-left padding-right-xs") }}
-                                                {{ form.antioxidant.label(class_="auto pull-left") }}
+                                                {{ diagnostic.add.fluid.antioxidant(class_="pull-left padding-right-xs") }}
+                                                {{ diagnostic.add.fluid.antioxidant.label(class_="auto pull-left") }}
                                             </div>
                                         </div>
                                         <div class="col-md-4 nopadding">
                                             <div class="col-md-2 nopadding padding-right-xs">
-                                                {{ form.qty_vial.label }}
-                                                {{ form.qty_vial(class="form-control") }}
+                                                {{ diagnostic.add.fluid.qty_vial.label }}
+                                                {{ diagnostic.add.fluid.qty_vial(class="form-control") }}
                                             </div>
                                             <div class="col-md-10 nopadding">
-                                                {{ form.sampling_vial.label }}
-                                                {{ form.sampling_vial(class="form-control") }}
+                                                {{ diagnostic.add.fluid.sampling_vial.label }}
+                                                {{ diagnostic.add.fluid.sampling_vial(class="form-control") }}
                                             </div>
                                         </div>
                                     </div>
                                 </fieldset>
-                            </div>
-                            <div id="new-tabs-4" role="tabpanel" class="tab-pane">
+                            </form>
+                        </div>
+                        <div id="new-tabs-4" role="tabpanel" class="tab-pane">
+                            <form class="" method="post" action="#" id="TestProfile">
                                 <div class="col-md-6 nopadding padding-right-xs">
                                     <div class="maxwidth">
-                                        {{ form.enable_elc(class_="pull-left padding-right-xs") }}
-                                        {{ form.enable_elc.label(class_="auto pull-left") }}
+                                        {{ diagnostic.add.profile.enable_elc(class_="pull-left padding-right-xs") }}
+                                        {{ diagnostic.add.profile.enable_elc.label(class_="auto pull-left") }}
                                     </div>
                                     <div class="maxwidth">
                                         <fieldset class="scheduler-border">
                                             <legend class="scheduler-border">Electrical</legend>
                                             <div class="control-group">
                                                 <div class="maxwidth">
-                                                    {{ form.profile_elc.label(class_="") }}
-                                                    {{ form.profile_elc() }}
+                                                    {{ diagnostic.add.profile.profile_elc.label(class_="") }}
+                                                    {{ diagnostic.add.profile.profile_elc() }}
                                                 </div>
                                                 <div class="maxwidth">
-                                                    {{ form.description_elc.label(class_="") }}
-                                                    {{ form.description_elc(class_="form-control") }}
+                                                    {{ diagnostic.add.profile.description_elc.label(class_="") }}
+                                                    {{ diagnostic.add.profile.description_elc(class_="form-control") }}
                                                 </div>
                                                 <div class="maxwidth padding-top-xs" id="electrical" name="electrical">
                                                     <div class="maxwidth text-center">
@@ -358,21 +358,21 @@
                                 </div>
                                 <div class="col-md-6 nopadding">
                                     <div class="maxwidth">
-                                        {{ form.enable_fl(class_="pull-left padding-right-xs") }}
-                                        {{ form.enable_fl.label(class_="auto pull-left") }}
+                                        {{ diagnostic.add.profile.enable_fl(class_="pull-left padding-right-xs") }}
+                                        {{ diagnostic.add.profile.enable_fl.label(class_="auto pull-left") }}
                                     </div>
                                     <div class="maxwidth">
                                         <fieldset class="scheduler-border">
                                             <legend class="scheduler-border">Fluid</legend>
                                             <div class="control-group">
                                                 <div class="maxwidth">
-                                                    {{ form.profile_fl.label(class_="") }}
-                                                    {{ form.profile_fl(class_="form-control") }}
+                                                    {{ diagnostic.add.profile.profile_fl.label(class_="") }}
+                                                    {{ diagnostic.add.profile.profile_fl(class_="form-control") }}
 
                                                 </div>
                                                 <div class="maxwidth">
-                                                    {{ form.description_fl.label(class_="") }}
-                                                    {{ form.description_fl(class_="form-control") }}
+                                                    {{ diagnostic.add.profile.description_fl.label(class_="") }}
+                                                    {{ diagnostic.add.profile.description_fl(class_="form-control") }}
                                                 </div>
                                                 <div class="maxwidth padding-top-xs" id="fluid" name="fluid">
                                                     <div class="maxwidth text-center">
@@ -390,14 +390,13 @@
                                         </fieldset>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
-                    </p>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="modal-footer"> </div>
-            </form>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+                    </div>
+                </p>
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer"> </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div>
-{% endblock %}

@@ -131,10 +131,13 @@ app.register_blueprint(treeModule)
 
 # register Lab Manager
 from app.diagnostic.views import lab as labModule
-from app.diagnostic.views import test_profile as Test_Profile
+from app.diagnostic.views import test_profile, campaign_profile, equipment_profile, contract_profile
 
 app.register_blueprint(labModule)
-app.register_blueprint(Test_Profile)
+app.register_blueprint(test_profile)
+app.register_blueprint(campaign_profile)
+app.register_blueprint(equipment_profile)
+app.register_blueprint(contract_profile)
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
 from app.admin.models import File, Image
