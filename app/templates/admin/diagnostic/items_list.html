@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
-    <h2>{{ table_title }} list</h2>
+    <h2>{{ data['table_title'] }} list</h2>
     <table class="table">
         <thead>
             <tr>
-                {% for key in keys %}
-                    <th>{{ key }}</th>
+                {% for key in data['keys'] %}
+                    <th>{{ data['names'][key] }}</th>
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
-            {% for item in items %}
+            {% for item in data['items'] %}
                 <tr>
-                    {% for key in keys %}
+                    {% for key in data['keys'] %}
                         <td>{{ item[key] }}</td>
                     {% endfor %}
+                    <td><a href="edit/{{ item['id'] }}">edit</a></td>
                 </tr>
             {% endfor %}
         </tbody>

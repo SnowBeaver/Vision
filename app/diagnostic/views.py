@@ -175,9 +175,30 @@ campaign_profile = Blueprint('campaign_profile', __name__, url_prefix='/admin/ca
 
 @campaign_profile.route("/", methods=['GET'])
 def campaign_list():
-    campaign = db.session.query(Campaign).all()
-    keys = ['id','created_by', 'equipment', 'lab', 'lab_no', 'date', 'contract_id]']
-    return render_template("admin/diagnostic/items_list.html", table_title='Campaign', items=campaign, keys=keys)
+    result = (db.session.query(Campaign, Equipment, User, Lab, Contract)
+              .join(Equipment, Equipment.id == Campaign.equipment)
+              .join(User, User.id == Campaign.created_by)
+              .join(Lab, Lab.id == Campaign.lab)
+              .join(Contract, Contract.id == Campaign.contract_id).all()
+              )
+    keys = ['created_by', 'equipment', 'lab', 'date', 'contract_id']
+    items = []
+    for campaign, equipment, user, lab, contract in result:
+        items.append({'id': campaign.id,
+                      'created_by': user.name,
+                      'equipment': equipment.equipment_number,
+                      'lab': lab.name,
+                      'date': campaign.date,
+                      'contract_id': contract.name
+                      })
+    names = {'created_by': 'created by',
+             'equipment': 'equipment',
+             'lab': 'laboratory',
+             'date': 'date',
+             'contract_id': 'contract'
+             }
+    data = {'table_title': 'Campaign', 'keys': keys, 'names': names, 'items': items}
+    return render_template("admin/diagnostic/items_list.html", data=data)
 
 @campaign_profile.route("/add", methods=['POST', 'GET'])
 def add_campaign():
@@ -185,6 +206,7 @@ def add_campaign():
     if form.validate_on_submit():
         campaign = Campaign()
         campaign.created_by = form.created_by.data
+        campaign.performed_by = form.created_by.data
         campaign.equipment = form.equipment.data
         campaign.lab = form.lab.data
         campaign.lab_no = form.lab_no.data
@@ -201,9 +223,25 @@ equipment_profile = Blueprint('equipment_profile', __name__, url_prefix='/admin/
 
 @equipment_profile.route("/", methods=['GET'])
 def equipment_list():
-    equipment = db.session.query(Equipment).all()
-    keys = ['id','type', 'visual_date', 'modifier', 'location', 'equipment_number']
-    return render_template("admin/diagnostic/items_list.html", table_title='Equipment', items=equipment, keys=keys)
+    result = db.session.query(Equipment, EquipmentType, Location).join(EquipmentType).join(Location).all()
+    keys = ['equipment_number', 'equipment_type', 'visual_date', 'modifier', 'location']
+    items = []
+    for equipment, equip_type, location in result:
+        items.append({'id': equipment.id,
+                      'equipment_number': equipment.equipment_number,
+                      'equipment_type': equip_type.name,
+                      'location': location.name,
+                      'visual_date': equipment.visual_date,
+                      'modifier': equipment.modifier,
+                      })
+    names = {'equipment_number': 'number',
+             'equipment_type': 'type',
+             'location': 'location',
+             'visual_date': 'visual date',
+             'modifier': 'modifier'
+             }
+    data = {'table_title': 'Equipment', 'keys': keys, 'names': names, 'items': items}
+    return render_template("admin/diagnostic/items_list.html", data=data)
 
 
 @equipment_profile.route("/add", methods=['POST', 'GET'])
@@ -220,7 +258,7 @@ def equipment_add():
     return render_template("admin/diagnostic/equipment_add.html", form=form)
 
 
-@equipment_profile.route("/edit<id>", methods=['POST', 'GET'])
+@equipment_profile.route("/edit/<id>", methods=['POST', 'GET'])
 def equipment_edit(id):
     EqForm = model_form(Equipment, Form)
     model = Equipment.get(id)
@@ -233,12 +271,18 @@ def equipment_edit(id):
         return redirect(url_for("index"))
     return render_template('admin/diagnostic/equipment_edit.html', form=form)
 
-equipment_profile = Blueprint('equipment_profile', __name__, url_prefix='/admin/equipment')
-
 
 contract_profile = Blueprint('contract_profile', __name__, url_prefix='/admin/contract')
 @contract_profile.route("/", methods=['GET'])
 def contract_list():
-    contract = db.session.query(Contract).all()
-    keys = ['id','name', 'code']
-    return render_template("admin/diagnostic/items_list.html", table_title='Contract', items=contract, keys=keys)
+    result = db.session.query(Contract, ContractStatus).join(ContractStatus).all()
+    keys = ['name', 'code', 'status']
+    items = []
+    for contract, status in result:
+        items.append({'id': contract.id,
+                      'name': contract.name,
+                      'code': contract.code,
+                      'status': status.name
+                      })
+    data = {'table_title': 'Contract', 'keys': keys, 'names': zip(keys, keys), 'items': items}
+    return render_template("admin/diagnostic/items_list.html", data=data)
