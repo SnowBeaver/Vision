@@ -9,10 +9,47 @@ from flask import redirect, url_for
 from flask.ext.wtf import Form
 from wtforms.ext.appengine.db import model_form
 
-lab = Blueprint('lab', __name__, url_prefix='/admin/lab')
+
+lab_profile = Blueprint('lab_profile', __name__, url_prefix='/admin/lab')
+test_profile = Blueprint('test_profile', __name__, url_prefix='/admin/test_profile')
+campaign_profile = Blueprint('campaign_profile', __name__, url_prefix='/admin/campaign')
+equipment_profile = Blueprint('equipment_profile', __name__, url_prefix='/admin/equipment')
+contract_profile = Blueprint('contract_profile', __name__, url_prefix='/admin/contract')
+fluid_profile = Blueprint('fluid_profile', __name__, url_prefix='/admin/fluid_profile')
+test_type_profile = Blueprint('test_type_profile', __name__, url_prefix='/admin/test_type')
+test_type_result_table_profile = Blueprint('test_type_result_table_profile', __name__, url_prefix='/admin/test_type_result_table')
+
+# simple tables
+blueprints = ({'table': 'TestReason', 'table_title': 'test_reason', 'hname': 'Test_reason'},
+              {'table': 'GasLevel', 'table_title': 'gas_level', 'hname': 'Gas level'},
+              {'table': 'PaintTypes', 'table_title': 'paint_types', 'hname': 'Paint types'},
+              {'table': 'FanCondition', 'table_title': 'fan_condition', 'hname': 'Fan condition'},
+              {'table': 'HeatingCondition', 'table_title': 'heating_condition', 'hname': 'Heating condition'},
+              {'table': 'FoundationCondition', 'table_title': 'foundation_condition', 'hname': 'Foundation condition'},
+              {'table': 'ConnectionCondition', 'table_title': 'connection_condition', 'hname': 'Connection condition'},
+              {'table': 'TapFilterCondition', 'table_title': 'tap_filter_condition', 'hname': 'Tap filter condition'},
+              {'table': 'TapCounterStatus', 'table_title': 'tap_counter_status', 'hname': 'Tap counter status'},
+              {'table': 'OverallCondition', 'table_title': 'overall_condition', 'hname': 'Overall condition'},
+              {'table': 'GasketCondition', 'table_title': 'gasket_condition', 'hname': 'Gasket condition'},
+              {'table': 'ValveCondition', 'table_title': 'valve_condition', 'hname': 'Valve condition'},
+              {'table': 'PumpCondition', 'table_title': 'pump_condition', 'hname': 'Pump condition'},
+              {'table': 'PressureUnit', 'table_title': 'pressure_unit', 'hname': 'Pressure unit'},
+              {'table': 'FluidLevel', 'table_title': 'fluid_level', 'hname': 'Fluid level'},
+              {'table': 'GasRelay', 'table_title': 'gas_relay', 'hname': 'Gas relay'},
+              )
+for item in blueprints:
+    table = item['table']
+    table_title = item['table_title']
+    hname = item['hname']
+    exec("{func}_profile = Blueprint('{func}_profile', __name__, url_prefix='/admin/{func}')".format(func=table_title))
+    exec('''@{func}_profile.route("/", methods=["GET"])
+def {func}_list():
+    result = db.session.query({class_name}).all()
+    keys = ["name"]
+    return items_list(table_title="{name}", keys=keys, names={{"name": "name"}}, items=result)'''.format(func=table_title, class_name=table, name=hname))
 
 
-@lab.route("/create/", methods=['POST'])
+@lab_profile.route("/create/", methods=['POST'])
 def create():
     if request.is_xhr:
         success = False
@@ -29,7 +66,7 @@ def create():
         return redirect(url_for('home.home'))
 
 
-@lab.route("/get_all/", methods=['POST'])
+@lab_profile.route("/get_all/", methods=['POST'])
 def get_all():
     labs = []
     if request.is_xhr:
@@ -45,7 +82,7 @@ def get_all():
         return redirect(url_for('home.home'))
 
 
-@lab.route("/delete/", methods=['POST'])
+@lab_profile.route("/delete/", methods=['POST'])
 def delete():
     if request.is_xhr:
         success = False
@@ -62,7 +99,7 @@ def delete():
         return redirect(url_for('home.home'))
 
 
-@lab.route("/modify/", methods=['POST'])
+@lab_profile.route("/modify/", methods=['POST'])
 def modify():
     if request.is_xhr:
         success = False
@@ -74,9 +111,6 @@ def modify():
     else:
         # redirect to home
         return redirect(url_for('home.home'))
-
-
-test_profile = Blueprint('test_profile', __name__, url_prefix='/admin/test_profile')
 
 
 @test_profile.route("/get_value/", methods=['POST'])
@@ -116,16 +150,13 @@ def create():
 @test_profile.route("/delete/", methods=['POST'])
 def delete():
     if request.is_xhr:
-        success = False
+        res = None
         if admin_per.require().can():
             if request.form['select'] == 'electrical':
                 res = delete_electrical_profile(request.form['profile'])
             elif request.form['select'] == 'fluid':
                 res = delete_fluid_profile(request.form['profile'])
-
-            if res is not None:
-                success = True
-
+        success = res is not None
         return jsonify({'success': success, 'profile': request.form['profile']})
     else:
         # redirect to home
@@ -135,16 +166,13 @@ def delete():
 @test_profile.route("/modify/", methods=['POST'])
 def modify():
     if request.is_xhr:
-        success = False
+        res = None
         if admin_per.require().can():
             if request.form['select'] == 'electrical':
                 res = modify_electrical_profile(request.form)
             elif request.form['select'] == 'fluid':
                 res = modify_fluid_profile(request.form)
-
-            if res is not None:
-                success = True
-
+        success = res is not None
         return jsonify({'success': success})
     else:
         # redirect to home
@@ -171,7 +199,10 @@ def get_profile():
         return redirect(url_for('home.home'))
 
 
-campaign_profile = Blueprint('campaign_profile', __name__, url_prefix='/admin/campaign')
+def items_list(table_title, keys, names, items):
+    data = {'table_title': table_title, 'keys': keys, 'names': names, 'items': items}
+    return render_template("admin/diagnostic/items_list.html", data=data)
+
 
 @campaign_profile.route("/", methods=['GET'])
 def campaign_list():
@@ -197,8 +228,7 @@ def campaign_list():
              'date': 'date',
              'contract_id': 'contract'
              }
-    data = {'table_title': 'Campaign', 'keys': keys, 'names': names, 'items': items}
-    return render_template("admin/diagnostic/items_list.html", data=data)
+    return items_list(table_title='Campaign', keys=keys, names=names, items=items)
 
 @campaign_profile.route("/add", methods=['POST', 'GET'])
 def add_campaign():
@@ -216,9 +246,6 @@ def add_campaign():
         db.session.commit()
         return redirect('/admin')
     return render_template('admin/diagnostic/add.html', title='Create campaign', form=form)
-
-
-equipment_profile = Blueprint('equipment_profile', __name__, url_prefix='/admin/equipment')
 
 
 @equipment_profile.route("/", methods=['GET'])
@@ -240,8 +267,7 @@ def equipment_list():
              'visual_date': 'visual date',
              'modifier': 'modifier'
              }
-    data = {'table_title': 'Equipment', 'keys': keys, 'names': names, 'items': items}
-    return render_template("admin/diagnostic/items_list.html", data=data)
+    return items_list(table_title='Equipment', keys=keys, names=names, items=items)
 
 
 @equipment_profile.route("/add", methods=['POST', 'GET'])
@@ -272,7 +298,6 @@ def equipment_edit(id):
     return render_template('admin/diagnostic/equipment_edit.html', form=form)
 
 
-contract_profile = Blueprint('contract_profile', __name__, url_prefix='/admin/contract')
 @contract_profile.route("/", methods=['GET'])
 def contract_list():
     result = db.session.query(Contract, ContractStatus).join(ContractStatus).all()
@@ -284,5 +309,40 @@ def contract_list():
                       'code': contract.code,
                       'status': status.name
                       })
-    data = {'table_title': 'Contract', 'keys': keys, 'names': zip(keys, keys), 'items': items}
-    return render_template("admin/diagnostic/items_list.html", data=data)
+    return items_list(table_title='Contract', keys=keys, names=zip(keys, keys), items=items)
+
+
+@lab_profile.route("/", methods=['GET'])
+def lab_list():
+    result = db.session.query(Lab).all()
+    keys = ['name', 'code', 'analyzer']
+    return items_list(table_title='Laboratory', keys=keys, names=zip(keys, keys), items=result)
+
+
+@fluid_profile.route("/", methods=['GET'])
+def fliud_list():
+    result = db.session.query(FluidProfile).all()
+    keys = ['selection', 'description']
+    return items_list(table_title='Fluid profile', keys=keys, names=zip(keys, keys), items=result)
+
+
+@test_type_profile.route("/", methods=['GET'])
+def test_type_list():
+    result = db.session.query(TestType).all()
+    keys = ['name', 'group_id', 'is_group']
+    names = {'name': 'name', 'group_id': 'group id', 'is_group': 'is group'}
+    return items_list(table_title='Test type', keys=keys, names=names, items=result)
+
+
+@test_type_result_table_profile.route("/", methods=['GET'])
+def test_type_result_table_list():
+    result = db.session.query(TestTypeResultTable, TestType).join(TestType).all()
+    keys = ['test_type', 'test_result_table_name']
+    names = {'test_type': 'test type', 'test_result_table_name': 'result table name'}
+    items = []
+    for type_result, type in result:
+        items.append({'id': type_result.id,
+                      'test_type': type.name,
+                      'test_result_table_name': type_result.test_result_table_name
+                      })
+    return items_list(table_title='Test type result table', keys=keys, names=names, items=items)
