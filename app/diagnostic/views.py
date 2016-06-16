@@ -8,6 +8,9 @@ from app import admin_per
 from flask import redirect, url_for
 from flask.ext.wtf import Form
 from wtforms.ext.appengine.db import model_form
+#from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext import login
 
 
 lab_profile = Blueprint('lab_profile', __name__, url_prefix='/admin/lab')
@@ -48,6 +51,15 @@ def {func}_list():
     keys = ["name"]
     return items_list(table_title="{name}", keys=keys, names={{"name": "name"}}, items=result)'''.format(func=table_title, class_name=table, name=hname))
 
+
+class MyModelView(ModelView):
+    def is_accessible(self):
+        if not login.current_user.is_authenticated():
+            return False
+
+        # Prevent administration of Roles unless the
+        # currently logged-in user has the "admin" role
+        return login.current_user.has_role('admin')
 
 @lab_profile.route("/create/", methods=['POST'])
 def create():
@@ -346,3 +358,26 @@ def test_type_result_table_list():
                       'test_result_table_name': type_result.test_result_table_name
                       })
     return items_list(table_title='Test type result table', keys=keys, names=names, items=items)
+
+
+class EquipmentView(MyModelView):
+    """
+    Equipment management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    form_excluded_columns = (
+        'id',
+        'location_id',
+        'equipment_number',
+    )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('id')
+    #
+    # column_searchable_list = ('equipment_number', 'location_id', 'id')
+
+    def __init__(self, dbsession):
+        super(EquipmentView, self).__init__(Equipment, dbsession)

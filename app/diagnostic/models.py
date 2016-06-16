@@ -1200,64 +1200,6 @@ class Recommendation(db.Model):
     description = db.Column(db.Text)
 
 
-class Norm(db.Model):
-    __tablename__ = u'norm'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-    type = db.Column(
-        'norm_type_id',
-        db.ForeignKey("norm_type.id"),
-        nullable=False
-    )
-
-    # NormPHY.  Fluid physical properties norms
-    # NormDissolvedGas. Fluid dissolved gas norms
-    # NormFluid# NormFur. Fluid furan norms
-
-
-class NormParameter(db.Model):
-    __tablename__ = u'norm_parameter'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-
-
-class NormParameterValue(db.Model):
-    __tablename__ = u'norm_parameter_value'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    parameter = db.Column(
-        'param_id',
-        db.ForeignKey('norm_parameter.id'),
-        nullable=False
-    )
-
-    norm = db.Column(
-        'norm_id',
-        db.ForeignKey("norm.id"),
-        nullable=False
-    )
-
-    equipment_type_id = db.Column(
-        'equipment_type_id',
-        db.ForeignKey('equipment_type.id'),
-        nullable=True
-    )
-
-    # fluid_type = db.Column(
-    #     'fluid_type_id',
-    #     db.ForeignKey('fluid_type.id'),
-    #     nullable=True
-    # )
-
-    fluid_type = db.Column(db.Integer(), nullable=True)  # no idea yet is this a level number or an id
-    condition = db.Column(db.Integer(), nullable=True)
-
-    value_type = db.Column(db.String(50), index=True)
-    value = db.Column(db.String(50), index=True)
-
-
 class GasLevel(db.Model):
     # 0-normal, 1-caution, 2- danger and 3-extreme
     __tablename__ = u'gas_level'
@@ -2006,7 +1948,7 @@ class FluidTest(db.Model):
     """PHY. Fluid physical properties test results"""
     __tablename__ = u'fluid_test'
 
-    id = db.Column(Integer, primary_key=True)
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
     test_result_id = db.Column(Integer, ForeignKey("test_result.id"))
     dielectric_1816 = db.Column(Float(53))  # D1816
     dielectric_1816_2 = db.Column(Float(53))  # D1816_2
@@ -2029,3 +1971,83 @@ class FluidTest(db.Model):
     dielectric_1816_2_flag = db.Column(Boolean)  # bD1816_2
     dielectric_877_flag = db.Column(Boolean)  # bD877
     dielectric_iec_156_flag = db.Column(Boolean)  # bCEI156
+
+
+class NormPhysic(db.Model):
+
+    __tablename__ = 'norm_physic'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(20), nullable=False, index=True)
+    equipment_id = Column(db.Integer, nullable=False)
+    acid_min = db.Column(db.Float(53))
+    acid_max = db.Column(db.Float(53))
+    ift_min = db.Column(db.Float(53))
+    ift_max = db.Column(db.Float(53))
+    d1816_min = db.Column(db.Float(53))
+    d1816_max = db.Column(db.Float(53))
+    d877_min = db.Column(db.Float(53))
+    d877_max = db.Column(db.Float(53))
+    color_min = db.Column(db.Float(53))
+    color_max = db.Column(db.Float(53))
+    density_min = db.Column(db.Float(53))
+    density_max = db.Column(db.Float(53))
+    pf20_min = db.Column(db.Float(53))
+    pf20_max = db.Column(db.Float(53))
+    water_min = db.Column(db.Float(53))
+    water_max = db.Column(db.Float(53))
+    flashpoint_min = db.Column(db.Float(53))
+    flashpoint_max = db.Column(db.Float(53))
+    pourpoint_min = db.Column(db.Float(53))
+    pourpoint_max = db.Column(db.Float(53))
+    viscosity_min = db.Column(db.Float(53))
+    viscosity_max = db.Column(db.Float(53))
+    d1816_2_min = db.Column(db.Float(53))
+    d1816_2_max = db.Column(db.Float(53), server_default=db.text("0"))
+    p100_min = db.Column(db.Float(53))
+    p100_max = db.Column(db.Float(53))
+    fluid_type_id = db.Column(db.Integer, server_default=db.text("0"))
+    cei156_min = db.Column(db.Integer, server_default=db.text("0"))
+    cei156_max = db.Column(db.Integer, server_default=db.text("0"))
+
+
+class NormGas(db.Model):
+
+    __tablename__ = 'norm_gas'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column('name', String(50), index=True)
+    condition = db.Column('condition', db.Integer, server_default=db.text("0"))
+    h2 = db.Column('h2', db.Float(53), server_default=db.text("0"))
+    ch4 = db.Column('ch4', db.Float(53), server_default=db.text("0"))
+    c2h2 = db.Column('c2h2', db.Float(53), server_default=db.text("0"))
+    c2h4 = db.Column('c2h4', db.Float(53), server_default=db.text("0"))
+    c2h6 = db.Column('c2h6', db.Float(53), server_default=db.text("0"))
+    co = db.Column('co', db.Float(53), server_default=db.text("0"))
+    co2 = db.Column('co2', db.Float(53), server_default=db.text("0"))
+    tdcg = db.Column('tdcg', db.Float(53), server_default=db.text("0"))
+    fluid_level = db.Column('fluid_level', db.Integer, server_default=db.text("0"))
+    #db.Index('norm_gas_condition_key', 'name', 'condition', unique=True)
+
+
+class NormIsolation(db.Model):
+
+    __tablename__ = 'norm_isolation'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    c = db.Column('c', Float(53), server_default=db.text("0"))
+    f = db.Column('f', Float(53), server_default=db.text("0"))
+    notseal = db.Column('notseal', Float(53), server_default=db.text("0"))
+    seal = db.Column('seal', Float(53), server_default=db.text("0"))
+
+
+class NormFuran(db.Model):
+
+    __tablename__ = 'norm_furan'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(String(50), index=True)
+    c1 = db.Column(db.Float(53), server_default=db.text("0"))
+    c2 = db.Column(db.Float(53), server_default=db.text("0"))
+    c3 = db.Column(db.Float(53), server_default=db.text("0"))
+    c4 = db.Column(db.Float(53), server_default=db.text("0"))

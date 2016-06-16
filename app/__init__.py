@@ -131,13 +131,14 @@ app.register_blueprint(treeModule)
 
 # register Lab Manager
 from app.diagnostic.views import lab_profile, test_type_profile, fluid_profile
-from app.diagnostic.views import test_type_result_table_profile
+from app.diagnostic.views import test_type_result_table_profile, EquipmentView
 from app.diagnostic.views import test_profile, campaign_profile, equipment_profile, contract_profile, blueprints
 
 app.register_blueprint(lab_profile)
 app.register_blueprint(test_profile)
 app.register_blueprint(campaign_profile)
-app.register_blueprint(equipment_profile)
+backend.add_view(EquipmentView(db.session))
+# app.register_blueprint(equipment_profile)
 app.register_blueprint(contract_profile)
 app.register_blueprint(test_type_profile)
 app.register_blueprint(fluid_profile)
