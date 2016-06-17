@@ -97,7 +97,8 @@ def lang(lang):
 # @guest_per.require(http_exception = 403)
 def home():
     """docstring for home."""
-    posts = _get_news(current_user)
+    # posts = _get_news(current_user)
+    posts = []
     meta = _get_blog_meta()
 
     page = get_page_by_slug(u'vision-diagnostic')

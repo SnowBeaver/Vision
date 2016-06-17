@@ -124,15 +124,15 @@ def upgrade():
     # we drop tables and on start app will create them from models
     # move test_type specific connections from campaign to test_results
     # op.drop_column('campaign', 'test_type_id')
-    op.drop_column('campaign', 'sampling_point_id')
-    op.drop_column('campaign', 'test_reason_id')
-    op.drop_column('campaign', 'date_analyse')
+    # op.drop_column('campaign', 'sampling_point_id')
+    # op.drop_column('campaign', 'test_reason_id')
+    # op.drop_column('campaign', 'date_analyse')
     # op.drop_column('campaign', 'campaign_status_id')
     # op.rename_table('campaign_status', 'test_status')
     op.add_column('test_result', sa.Column('tests_type_id', Integer))
-    op.add_column('test_result', sa.Column('sampling_point_id', Integer))
-    op.add_column('test_result', sa.Column('test_reason_id', Integer))
-    op.add_column('test_result', sa.Column('date_analyse', DateTime, index=True))
+    # op.add_column('test_result', sa.Column('sampling_point_id', Integer))
+    # op.add_column('test_result', sa.Column('test_reason_id', Integer))
+    # op.add_column('test_result', sa.Column('date_analyse', DateTime, index=True))
     op.add_column('test_result', sa.Column('test_status_id', Integer))
     # add new table of individual for test type params
     # op.create_table('test_result_param_values',

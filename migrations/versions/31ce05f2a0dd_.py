@@ -8,7 +8,7 @@ Create Date: 2016-06-09 10:53:49.639226
 
 # revision identifiers, used by Alembic.
 revision = '31ce05f2a0dd'
-down_revision = '33bdcd4ac40e'
+down_revision = '5968a1fac1ed'
 
 from alembic import op
 # import sqlalchemy as sa
@@ -202,10 +202,10 @@ def upgrade():
         ]
     )
 
-    op.drop_table('test_type_param_value')
-    op.drop_table('test_type_param')
-    op.drop_table('test_result_param_values')
-    op.drop_table('test_param')
+    # op.drop_table('test_type_param_value')
+    # op.drop_table('test_type_param')
+    # op.drop_table('test_result_param_values')
+    # op.drop_table('test_param')
 
     test_type_result_table_table = table(
         'test_type_result_table',

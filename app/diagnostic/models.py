@@ -2067,3 +2067,12 @@ class NormFuran(db.Model):
     c2 = db.Column(db.Float(53), server_default=db.text("0"))
     c3 = db.Column(db.Float(53), server_default=db.text("0"))
     c4 = db.Column(db.Float(53), server_default=db.text("0"))
+
+
+class Norm(db.Model):
+    __tablename__ = 'norm'
+
+    id = db.Column(Integer, primary_key=True)
+    norm_type = db.Column('norm_type_id', db.ForeignKey("norm_type.id"), nullable=False)
+    name = db.Column(String(25))
+    code = db.Column(String(25))
