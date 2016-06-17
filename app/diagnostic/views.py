@@ -844,3 +844,70 @@ class InductionMachineView(MyModelView):
         super(InductionMachineView, self).__init__(
             InductionMachine, dbsession, name="Induction machine", category="Equipment"
         )
+
+class GasSensorView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(GasSensorView, self).__init__(
+            GasSensor, dbsession, name="Gas sensor", category="Equipment"
+        )
+
+
+class TransformerView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_list = (
+        'id', 'name', 'serial', 'manufacturer_id', 'fluid_type',
+        'gassensor_id', 'manufactured', 'phase_number', 'sealed',
+        'welded_cover', 'windings', 'fluid_volume', 'frequency',
+        'autotransformer'
+    )
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = (
+        'id', 'name', 'serial', 'manufacturer_id', 'fluid_type',
+        'gassensor_id', 'manufactured', 'phase_number', 'sealed',
+        'welded_cover', 'windings', 'fluid_volume', 'frequency',
+        'autotransformer'
+    )
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'gas_sensor': {
+            'style': 'width: 250px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(TransformerView, self).__init__(
+            Transformer, dbsession, name="Transformer", category="Equipment"
+        )
