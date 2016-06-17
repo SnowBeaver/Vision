@@ -459,6 +459,22 @@ class NormGasView(MyModelView):
         super(NormGasView, self).__init__(NormGas, dbsession, name="Norms gas", category="Norms")
 
 
+class ManufacturerView(MyModelView):
+    """
+    Manufacturer management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', )
+    column_searchable_list = ('name', )
+
+    def __init__(self, dbsession):
+        super(ManufacturerView, self).__init__(
+            Manufacturer, dbsession, name="Manufacturer", category="Settings"
+        )
+
 class AirCircuitBreakerView(MyModelView):
     """
     Airbreaker management view
@@ -470,11 +486,14 @@ class AirCircuitBreakerView(MyModelView):
     # )
     # column_exclude_list = [
     # ]
-    # form_widget_args = {
-    #     'frequency': {
-    #         'width': '50px'
-    #     }
-    # }
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        }
+    }
 
     # # List of columns that can be sorted.
     column_sortable_list = ('name', 'serial', 'phase_number', 'frequency', 'sealed', 'manufactured', 'welded_cover')

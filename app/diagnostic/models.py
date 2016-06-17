@@ -409,8 +409,22 @@ class Location(db.Model):
 class Manufacturer(db.Model):
     __tablename__ = u'manufacturer'
 
+    def __init__(self, code=0, name=''):
+        self.code = code
+        self.name = name
+
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
+
+    def dump(self, _indent=0):
+        return "   " * _indent + repr(self) + \
+               "\n" + \
+               "".join(
+                   [c.dump(_indent + 1) for c in self.children.values()]
+               )
+
+    def __repr__(self):
+        return self.name
 
 
 class GasSensor(db.Model):
@@ -786,11 +800,12 @@ class AirCircuitBreaker(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    Manufacturer = db.relationship('Manufacturer', backref="air_breaker")
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
