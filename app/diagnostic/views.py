@@ -381,3 +381,106 @@ class EquipmentView(MyModelView):
 
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession)
+
+
+class NormFuranView(MyModelView):
+    """
+    NormType management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    def __init__(self, dbsession):
+        super(NormFuranView, self).__init__(NormFuran, dbsession, name="Norms furan", category="Norms")
+
+
+class NormIsolationView(MyModelView):
+    """
+    NormIsolation management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('c', 'f', 'notseal', 'seal')
+    column_searchable_list = ('c', 'f')
+
+    def __init__(self, dbsession, **kwargs):
+        super(NormIsolationView, self).__init__(NormIsolation, dbsession, name="Norms isolation", category='Norms')
+
+
+class NormPhysicView(MyModelView):
+    """
+    NormPhysic management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    def __init__(self, dbsession):
+        super(NormPhysicView, self).__init__(NormPhysic, dbsession, name="Norms physic", category='Norms')
+
+
+class NormGasView(MyModelView):
+    """
+    NormGasView management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    def __init__(self, dbsession):
+        super(NormGasView, self).__init__(NormGas, dbsession, name="Norms gas", category="Norms")
+
+
+class AirCircuitBreakerView(MyModelView):
+    """
+    Airbreaker management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+    # form_widget_args = {
+    #     'frequency': {
+    #         'width': '50px'
+    #     }
+    # }
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', 'serial', 'phase_number', 'frequency', 'sealed', 'manufactured', 'welded_cover')
+    column_searchable_list = ('name', 'serial')
+
+    def __init__(self, dbsession):
+        super(AirCircuitBreakerView, self).__init__(
+            AirCircuitBreaker, dbsession, name="Air circuit breaker", category="Equipment"
+        )

@@ -11,6 +11,7 @@ from app import db
 from sqlalchemy.orm import relationship, relation
 
 
+
 class Lab(db.Model):
     __tablename__ = 'lab'
 
@@ -791,11 +792,11 @@ class AirCircuitBreaker(db.Model):
         nullable=False
     )
 
-    phase_number = db.Column(db.Boolean)  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    frequency = db.Column(db.Integer)  # frequency. Operating frequency
+    phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.String(50))  # description. Describe the equipment function
+    description = db.Column(db.Unicode())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
