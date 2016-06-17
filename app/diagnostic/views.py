@@ -606,3 +606,91 @@ class RectifierView(MyModelView):
         super(RectifierView, self).__init__(
             Rectifier, dbsession, name="Rectifier", category="Equipment"
         )
+
+
+class NeutralResistanceView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    def __init__(self, dbsession):
+        super(NeutralResistanceView, self).__init__(
+            NeutralResistance, dbsession, name="Neutral resistance", category="Equipment"
+        )
+
+
+class TankView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 250px'
+        },
+        'description': {
+        }
+    }
+
+    def __init__(self, dbsession):
+        super(TankView, self).__init__(
+            Tank, dbsession, name="Tank", category="Equipment"
+        )
+
+class LoadTapChangerView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'description': {
+        }
+    }
+
+    def __init__(self, dbsession):
+        super(LoadTapChangerView, self).__init__(
+            LoadTapChanger, dbsession, name="Tap changer", category="Equipment"
+        )
+
+class BreakerView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'description': {
+        }
+    }
+
+    def __init__(self, dbsession):
+        super(BreakerView, self).__init__(
+            Breaker, dbsession, name="Breaker", category="Equipment"
+        )

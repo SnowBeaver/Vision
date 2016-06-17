@@ -417,13 +417,6 @@ class Manufacturer(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
 
-    def dump(self, _indent=0):
-        return "   " * _indent + repr(self) + \
-               "\n" + \
-               "".join(
-                   [c.dump(_indent + 1) for c in self.children.values()]
-               )
-
     def __repr__(self):
         return self.name
 
@@ -643,18 +636,19 @@ class Breaker(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    manufacturer = relationship('Manufacturer', backref='breaker')
+    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     #manufactured = db.Column(db.Enum(",".join(years), name="Years"))  # ManuYear. Year manufactured
     # manufactured = db.Column(db.Enum([], name="Years"), nullable=True)  # ManuYear. Year manufactured
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
     description = db.Column(db.UnicodeText)
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
@@ -675,12 +669,14 @@ class LoadTapChanger(db.Model):
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    manufacturer = relationship('Manufacturer', backref='tap_changer')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -774,11 +770,14 @@ class NeutralResistance(db.Model):
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    manufacturer = relationship('Manufacturer', backref='resistance')
+    manufactured = db.Column(db.Integer)
+
     # its a separate device should be splitted into another table
     neutral_resistance = db.Column(db.Float(53))  # NeutralResistance1.
     neutral_resistance1 = db.Column(db.Float(53))  # NeutralResistance1.
@@ -1040,11 +1039,12 @@ class Tank(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    manufacturer = relationship('Manufacturer', backref="tank")
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured

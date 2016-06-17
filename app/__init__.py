@@ -161,6 +161,10 @@ backend.add_view(BushingView(db.session))
 backend.add_view(CableView(db.session))
 backend.add_view(CapacitorView(db.session))
 backend.add_view(RectifierView(db.session))
+backend.add_view(NeutralResistanceView(db.session))
+backend.add_view(TankView(db.session))
+backend.add_view(LoadTapChangerView(db.session))
+backend.add_view(BreakerView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
