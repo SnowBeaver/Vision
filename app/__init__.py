@@ -165,6 +165,9 @@ backend.add_view(NeutralResistanceView(db.session))
 backend.add_view(TankView(db.session))
 backend.add_view(LoadTapChangerView(db.session))
 backend.add_view(BreakerView(db.session))
+backend.add_view(SwitchGearView(db.session))
+backend.add_view(SynchronousMachineView(db.session))
+backend.add_view(InductionMachineView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

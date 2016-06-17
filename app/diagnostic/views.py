@@ -772,3 +772,75 @@ class SwitchView(MyModelView):
         super(SwitchView, self).__init__(
             Switch, dbsession, name="Switch", category="Equipment"
         )
+
+
+class SwitchGearView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(SwitchGearView, self).__init__(
+            SwitchGear, dbsession, name="Switch gear", category="Equipment"
+        )
+
+
+class SynchronousMachineView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(SynchronousMachineView, self).__init__(
+            SynchronousMachine, dbsession, name="Synchronous machine", category="Equipment"
+        )
+
+
+class InductionMachineView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(InductionMachineView, self).__init__(
+            InductionMachine, dbsession, name="Induction machine", category="Equipment"
+        )
