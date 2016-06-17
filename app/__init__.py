@@ -157,6 +157,10 @@ backend.add_view(NormIsolationView(db.session))
 backend.add_view(NormGasView(db.session))
 backend.add_view(AirCircuitBreakerView(db.session))
 backend.add_view(ManufacturerView(db.session))
+backend.add_view(BushingView(db.session))
+backend.add_view(CableView(db.session))
+backend.add_view(CapacitorView(db.session))
+backend.add_view(RectifierView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

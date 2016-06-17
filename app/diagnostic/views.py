@@ -61,6 +61,7 @@ class MyModelView(ModelView):
         # currently logged-in user has the "admin" role
         return login.current_user.has_role('admin')
 
+
 @lab_profile.route("/create/", methods=['POST'])
 def create():
     if request.is_xhr:
@@ -475,6 +476,8 @@ class ManufacturerView(MyModelView):
             Manufacturer, dbsession, name="Manufacturer", category="Settings"
         )
 
+
+
 class AirCircuitBreakerView(MyModelView):
     """
     Airbreaker management view
@@ -494,6 +497,10 @@ class AirCircuitBreakerView(MyModelView):
             'style': 'width: 50px'
         }
     }
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
 
     # # List of columns that can be sorted.
     column_sortable_list = ('name', 'serial', 'phase_number', 'frequency', 'sealed', 'manufactured', 'welded_cover')
@@ -502,4 +509,100 @@ class AirCircuitBreakerView(MyModelView):
     def __init__(self, dbsession):
         super(AirCircuitBreakerView, self).__init__(
             AirCircuitBreaker, dbsession, name="Air circuit breaker", category="Equipment"
+        )
+
+
+class BushingView(MyModelView):
+    column_hide_backrefs = False
+    column_list = ('id', 'name', 'serial', 'manufactured', 'frequency', 'phase_number')
+    column_searchable_list = ('name', 'serial', 'manufactured', 'frequency')
+    column_sortable_list = ('id', 'name', 'serial', 'manufactured', 'frequency', 'phase_number')
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'description': {
+
+        }
+    }
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    def __init__(self, dbsession):
+        super(BushingView, self).__init__(
+            Bushing, dbsession, name="Bushing", category="Equipment"
+        )
+
+
+class CableView(MyModelView):
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    def __init__(self, dbsession):
+        super(CableView, self).__init__(
+            Cable, dbsession, name="Cable", category="Equipment"
+        )
+
+
+class CapacitorView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'description': {
+
+        }
+    }
+
+    def __init__(self, dbsession):
+        super(CapacitorView, self).__init__(
+            Capacitor, dbsession, name="Capacitor", category="Equipment"
+        )
+
+
+class RectifierView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'description': {
+        }
+    }
+
+    def __init__(self, dbsession):
+        super(RectifierView, self).__init__(
+            Rectifier, dbsession, name="Rectifier", category="Equipment"
         )
