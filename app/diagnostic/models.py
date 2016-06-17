@@ -913,11 +913,12 @@ class SwitchGear(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    manufacturer = relationship('Manufacturer', backref="switchgear")
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
@@ -927,7 +928,7 @@ class SwitchGear(db.Model):
     welded_cover = db.Column(db.Boolean)
 
     def __repr__(self):
-        return self.__tablename__
+        return self.serial
 
 
 class InductionMachine(db.Model):
@@ -1071,11 +1072,12 @@ class Switch(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    manufacturer = relationship('Manufacturer', backref="switch")
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
@@ -1085,7 +1087,7 @@ class Switch(db.Model):
     welded_cover = db.Column(db.Boolean)
 
     def __repr__(self):
-        return self.__tablename__
+        return self.serial
 
 
 class Cable(db.Model):
