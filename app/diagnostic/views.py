@@ -473,9 +473,25 @@ class ManufacturerView(MyModelView):
 
     def __init__(self, dbsession):
         super(ManufacturerView, self).__init__(
-            Manufacturer, dbsession, name="Manufacturer", category="Settings"
+            Manufacturer, dbsession, name="Manufacturer", category="Options"
         )
 
+
+class FluidTypeView(MyModelView):
+    """
+    Manufacturer management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', )
+    column_searchable_list = ('name', )
+
+    def __init__(self, dbsession):
+        super(FluidTypeView, self).__init__(
+            FluidType, dbsession, name="Fluid type", category="Options"
+        )
 
 
 class AirCircuitBreakerView(MyModelView):

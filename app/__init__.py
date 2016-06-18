@@ -170,6 +170,7 @@ backend.add_view(SynchronousMachineView(db.session))
 backend.add_view(InductionMachineView(db.session))
 backend.add_view(TransformerView(db.session))
 backend.add_view(GasSensorView(db.session))
+backend.add_view(FluidTypeView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

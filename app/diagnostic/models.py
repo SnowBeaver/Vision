@@ -380,6 +380,9 @@ class EquipmentType(db.Model):
     name = db.Column(db.String(50))
     code = db.Column(db.String(50))
 
+    def __repr__(self):
+        return self.name
+
 
 class Material(db.Model):
     __tablename__ = u'material'
@@ -388,12 +391,18 @@ class Material(db.Model):
     name = db.Column(db.String(50))
     code = db.Column(db.String(50))
 
+    def __repr__(self):
+        return self.name
+
 
 class FluidType(db.Model):
     __tablename__ = u'fluid_type'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
+
+    def __repr__(self):
+        return self.name
 
 
 class Location(db.Model):
@@ -405,6 +414,9 @@ class Location(db.Model):
     # Example. A company may have a assembly plants in several cities,
     # therefore each site is named after each city where the plant is.
     name = db.Column(db.String(50), index=True)  # should be relation
+
+    def __repr__(self):
+        return self.name
 
 
 class Manufacturer(db.Model):
@@ -578,11 +590,13 @@ class Transformer(db.Model):
     ratio_tag6 = db.Column(db.String(20))  # RatioTag6. Tag use for TTR
 
     # FluidType. Insulating fluid used in equipment
-    fluid_type = db.Column(
+    fluid_type_id = db.Column(
         'fluid_type_id',
         db.ForeignKey("fluid_type.id"),
         nullable=False
     )
+
+    fluid_type = relationship('FluidType', backref='transformer')
 
     # it's a relation to bushing table column "serial number"
     # bushing_serial1 = db.Column(db.String(15))  # BushingSerial1.
