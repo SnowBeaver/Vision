@@ -136,20 +136,6 @@ app.register_blueprint(treeModule)
 # from app.diagnostic.views import blueprints, EquipmentView, NormFuranView, NormPhysicView
 # from app.diagnostic.views import NormFuranView, NormGasView, NormIsolationView
 from app.diagnostic.views import *
-
-app.register_blueprint(lab_profile)
-app.register_blueprint(test_profile)
-app.register_blueprint(campaign_profile)
-app.register_blueprint(equipment_profile)
-app.register_blueprint(contract_profile)
-app.register_blueprint(test_type_profile)
-app.register_blueprint(fluid_profile)
-app.register_blueprint(test_type_result_table_profile)
-for item in blueprints:
-    exec("from app.diagnostic.views import {func}_profile".format(func=item['table_title']))
-    exec("app.register_blueprint({func}_profile)".format(func=item['table_title']))
-
-
 backend.add_view(EquipmentView(db.session))
 backend.add_view(NormFuranView(db.session))
 backend.add_view(NormPhysicView(db.session))
@@ -168,6 +154,15 @@ backend.add_view(BreakerView(db.session))
 backend.add_view(SwitchGearView(db.session))
 backend.add_view(SynchronousMachineView(db.session))
 backend.add_view(InductionMachineView(db.session))
+for item in my_simple_views:
+    exec('''backend.add_view({model}View(db.session))'''.format(model=item['model']))
+
+backend.add_view(LabView(db.session))
+backend.add_view(CampaignView(db.session))
+backend.add_view(ContractView(db.session))
+backend.add_view(FluidProfileView(db.session))
+backend.add_view(TestTypeView(db.session))
+backend.add_view(TestTypeResultTableView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

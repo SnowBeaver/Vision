@@ -113,11 +113,15 @@ class Contract(db.Model):
     # user 1 enters manually
     # ContractNum: What is the contract number within the company
     # ContractStatus: What is the status of the contract
-    status = db.Column(
+    status_id = db.Column(
         'contract_status_id',
         db.ForeignKey("contract_status.id"),
         nullable=False
     )
+    status = relationship(ContractStatus, backref="contract")
+
+    def __repr__(self):
+        return self.name
 
 
 class Campaign(db.Model):
@@ -1337,7 +1341,12 @@ class TestType(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), nullable=False, index=True)
     group_id = db.Column(Integer)
+    # group_id = db.Column(Integer, db.ForeignKey('test_type.id'), nullable=True)
+    # group = relationship('TestType', backref="test_type")
     is_group = db.Column(Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return self.name
 
 
 class TestTypeResultTable(db.Model):
@@ -1345,6 +1354,7 @@ class TestTypeResultTable(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     test_type_id = db.Column(Integer, db.ForeignKey('test_type.id'), nullable=False)
+    test_type = relationship('TestType', backref="test_type_result_table")
     test_result_table_name = db.Column(String(100), nullable=False)
 
 

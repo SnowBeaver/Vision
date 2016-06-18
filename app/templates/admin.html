@@ -164,16 +164,7 @@
     <script src="{{ url_for('static', filename='js/diagnostic/test_profile.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
-    <script type="text/javascript">
-        var urls = {
-             create : '{{ url_for("test_profile.create") }}'
-            ,get_value : '{{ url_for("test_profile.get_value") }}'
-            ,delete : '{{ url_for("test_profile.delete") }}'
-            ,modify : '{{ url_for("test_profile.modify") }}'
-            ,get_profile : '{{ url_for("test_profile.get_profile") }}'
-        }
-        Test_Profile.init(urls);
-    </script>
+
 
 
     <script type="text/javascript">
