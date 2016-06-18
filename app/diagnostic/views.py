@@ -57,19 +57,28 @@ class EquipmentView(MyModelView):
     Equipment management view
     """
     # Visible columns in the list view
-    column_hide_backrefs = False
-    form_excluded_columns = (
-        'id',
-        'location_id',
-        'equipment_number',
+    column_list = (
+        'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status', 'modifier'
     )
+    # List of columns that can be sorted.
+    column_sortable_list = (
+        'id', 'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
+    )
+
+    column_searchable_list = ('equipment_number', )
+
+    column_hide_backrefs = False
+
+    # form_excluded_columns = (
+    #     'id',
+    #     'location_id',
+    #     'equipment_number',
+    # )
     # column_exclude_list = [
     # ]
 
-    # # List of columns that can be sorted.
-    # column_sortable_list = ('id')
-    #
-    # column_searchable_list = ('equipment_number', 'location_id', 'id')
 
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession)
@@ -164,9 +173,25 @@ class ManufacturerView(MyModelView):
 
     def __init__(self, dbsession):
         super(ManufacturerView, self).__init__(
-            Manufacturer, dbsession, name="Manufacturer", category="Settings"
+            Manufacturer, dbsession, name="Manufacturer", category="Options"
         )
 
+
+class FluidTypeView(MyModelView):
+    """
+    Manufacturer management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', )
+    column_searchable_list = ('name', )
+
+    def __init__(self, dbsession):
+        super(FluidTypeView, self).__init__(
+            FluidType, dbsession, name="Fluid type", category="Options"
+        )
 
 
 class AirCircuitBreakerView(MyModelView):
@@ -534,6 +559,87 @@ class InductionMachineView(MyModelView):
     def __init__(self, dbsession):
         super(InductionMachineView, self).__init__(
             InductionMachine, dbsession, name="Induction machine", category="Equipment"
+        )
+
+
+class GasSensorView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(GasSensorView, self).__init__(
+            GasSensor, dbsession, name="Gas sensor", category="Equipment"
+        )
+
+
+class TransformerView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_list = (
+        'id', 'name', 'serial', 'manufacturer_id', 'fluid_type',
+        'gassensor_id', 'manufactured', 'phase_number', 'sealed',
+        'welded_cover', 'windings', 'fluid_volume', 'frequency',
+        'autotransformer'
+    )
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = (
+        'id', 'name', 'serial', 'manufacturer_id', 'fluid_type',
+        'gassensor_id', 'manufactured', 'phase_number', 'sealed',
+        'welded_cover', 'windings', 'fluid_volume', 'frequency',
+        'autotransformer'
+    )
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'gas_sensor': {
+            'style': 'width: 250px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(TransformerView, self).__init__(
+            Transformer, dbsession, name="Transformer", category="Equipment"
+        )
+
+
+class LocationView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name',)
+    column_sortable_list = ('id', 'name')
+
+    def __init__(self, dbsession):
+        super(LocationView, self).__init__(
+            Location, dbsession, name="Location", category="Options"
         )
 
 

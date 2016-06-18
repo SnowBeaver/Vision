@@ -154,6 +154,10 @@ backend.add_view(BreakerView(db.session))
 backend.add_view(SwitchGearView(db.session))
 backend.add_view(SynchronousMachineView(db.session))
 backend.add_view(InductionMachineView(db.session))
+backend.add_view(TransformerView(db.session))
+backend.add_view(GasSensorView(db.session))
+backend.add_view(FluidTypeView(db.session))
+backend.add_view(LocationView(db.session))
 for item in my_simple_views:
     exec('''backend.add_view({model}View(db.session))'''.format(model=item['model']))
 

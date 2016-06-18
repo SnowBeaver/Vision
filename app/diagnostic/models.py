@@ -384,6 +384,9 @@ class EquipmentType(db.Model):
     name = db.Column(db.String(50))
     code = db.Column(db.String(50))
 
+    def __repr__(self):
+        return self.name
+
 
 class Material(db.Model):
     __tablename__ = u'material'
@@ -392,12 +395,18 @@ class Material(db.Model):
     name = db.Column(db.String(50))
     code = db.Column(db.String(50))
 
+    def __repr__(self):
+        return self.name
+
 
 class FluidType(db.Model):
     __tablename__ = u'fluid_type'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
+
+    def __repr__(self):
+        return self.name
 
 
 class Location(db.Model):
@@ -409,6 +418,9 @@ class Location(db.Model):
     # Example. A company may have a assembly plants in several cities,
     # therefore each site is named after each city where the plant is.
     name = db.Column(db.String(50), index=True)  # should be relation
+
+    def __repr__(self):
+        return self.name
 
 
 class Manufacturer(db.Model):
@@ -437,11 +449,13 @@ class GasSensor(db.Model):
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
+    manufacturer = relationship('Manufacturer', backref='gas_sensor')
+    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     h2 = db.Column(db.Float(53), server_default=db.text("0"))  # Remaining are equivalent
     ch4 = db.Column(db.Float(53), server_default=db.text("0"))
@@ -460,7 +474,7 @@ class GasSensor(db.Model):
     percent_error = db.Column(db.Float(53), server_default=db.text("0"))
 
     def __repr__(self):
-        return self.__tablename__
+        return self.serial
 
 
 class Transformer(db.Model):
@@ -477,17 +491,21 @@ class Transformer(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
-    manufacturer = db.Column(
+    manufacturer_id = db.Column(
         'manufacturer_id',
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
 
-    GasSensor = db.Column(
+    manufacturer = relationship('Manufacturer', backref='transformer')
+    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    gassensor_id = db.Column(
         'gas_sensor_id',
         db.ForeignKey("gas_sensor.id"),
         nullable=False
     )
+
+    gas_sensor = relationship('GasSensor', backref='transformer')
 
     windings = db.Column(db.Integer)  # Windings. Number of windings in transformer
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -532,7 +550,7 @@ class Transformer(db.Model):
     static_shield2 = db.Column(db.Boolean)  # StaticShield2. true with secondary electrostatic shield is present
     static_shield3 = db.Column(db.Boolean)  # StaticShield3. true with tertiary electrostatic shield is present
 
-    # it's tranformer property
+    # it's transformer property
     bushing_neutral1 = db.Column(db.Float(53))
     bushing_neutral2 = db.Column(db.Float(53))
     bushing_neutral3 = db.Column(db.Float(53))
@@ -576,25 +594,112 @@ class Transformer(db.Model):
     ratio_tag6 = db.Column(db.String(20))  # RatioTag6. Tag use for TTR
 
     # FluidType. Insulating fluid used in equipment
-    fluid_type = db.Column(
+    fluid_type_id = db.Column(
         'fluid_type_id',
         db.ForeignKey("fluid_type.id"),
         nullable=False
     )
 
+    fluid_type = relationship('FluidType', backref='transformer')
+
     # it's a relation to bushing table column "serial number"
-    bushing_serial1 = db.Column(db.String(15))  # BushingSerial1.
-    bushing_serial2 = db.Column(db.String(15))  # BushingSerial2.
-    bushing_serial3 = db.Column(db.String(15))  # BushingSerial3.
-    bushing_serial4 = db.Column(db.String(15))  # BushingSerial4.
-    bushing_serial5 = db.Column(db.String(15))  # BushingSerial5.
-    bushing_serial6 = db.Column(db.String(15))  # BushingSerial6.
-    bushing_serial7 = db.Column(db.String(15))  # BushingSerial7.
-    bushing_serial8 = db.Column(db.String(15))  # BushingSerial8.
-    bushing_serial9 = db.Column(db.String(15))  # BushingSerial9.
-    bushing_serial10 = db.Column(db.String(15))  # BushingSerial10.
-    bushing_serial11 = db.Column(db.String(15))  # BushingSerial11.
-    bushing_serial12 = db.Column(db.String(15))  # BushingSerial12.
+    # bushing_serial1 = db.Column(db.String(15))  # BushingSerial1.
+    # bushing_serial2 = db.Column(db.String(15))  # BushingSerial2.
+    # bushing_serial3 = db.Column(db.String(15))  # BushingSerial3.
+    # bushing_serial4 = db.Column(db.String(15))  # BushingSerial4.
+    # bushing_serial5 = db.Column(db.String(15))  # BushingSerial5.
+    # bushing_serial6 = db.Column(db.String(15))  # BushingSerial6.
+    # bushing_serial7 = db.Column(db.String(15))  # BushingSerial7.
+    # bushing_serial8 = db.Column(db.String(15))  # BushingSerial8.
+    # bushing_serial9 = db.Column(db.String(15))  # BushingSerial9.
+    # bushing_serial10 = db.Column(db.String(15))  # BushingSerial10.
+    # bushing_serial11 = db.Column(db.String(15))  # BushingSerial11.
+    # bushing_serial12 = db.Column(db.String(15))  # BushingSerial12.
+
+    bushing_serial1_id = db.Column(
+        'bushing_serial1',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial1 = relationship('Bushing', foreign_keys="Transformer.bushing_serial1_id")
+
+    bushing_serial2_id = db.Column(
+        'bushing_serial2',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial2 = relationship('Bushing', foreign_keys="Transformer.bushing_serial2_id")
+
+    bushing_serial3_id = db.Column(
+        'bushing_serial3',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial3 = relationship('Bushing', foreign_keys="Transformer.bushing_serial3_id")
+
+    bushing_serial4_id = db.Column(
+        'bushing_serial4',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial4 = relationship('Bushing', foreign_keys="Transformer.bushing_serial4_id")
+
+    bushing_serial5_id = db.Column(
+        'bushing_serial5',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial5 = relationship('Bushing', foreign_keys="Transformer.bushing_serial5_id")
+
+
+    bushing_serial6_id = db.Column(
+        'bushing_serial6',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial6 = relationship('Bushing', foreign_keys="Transformer.bushing_serial6_id")
+
+    bushing_serial7_id = db.Column(
+        'bushing_serial7',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial7 = relationship('Bushing', foreign_keys="Transformer.bushing_serial7_id")
+
+    bushing_serial8_id = db.Column(
+        'bushing_serial8',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial8 = relationship('Bushing', foreign_keys="Transformer.bushing_serial8_id")
+
+    bushing_serial9_id = db.Column(
+        'bushing_serial9',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial9 = relationship('Bushing', foreign_keys="Transformer.bushing_serial9_id")
+
+    bushing_serial10_id = db.Column(
+        'bushing_serial10',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial10 = relationship('Bushing', foreign_keys="Transformer.bushing_serial10_id")
+
+    bushing_serial11_id = db.Column(
+        'bushing_serial11',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial11 = relationship('Bushing', foreign_keys="Transformer.bushing_serial11_id")
+
+    bushing_serial12_id = db.Column(
+        'bushing_serial12',
+        db.ForeignKey("bushing.id"),
+        nullable=True
+    )
+    bushing_serial12 = relationship('Bushing', foreign_keys="Transformer.bushing_serial12_id")
 
     # device property ,  for  transformer
     mvaactual = db.Column(db.Float(53))  # MVAActual. Actual MVA used
@@ -750,7 +855,7 @@ class Bushing(db.Model):
     bushing_type_qn = db.Column(db.String(25))  # Bushing type for QN
 
     def __repr__(self):
-        return self.__tablename__
+        return self.serial
 
 
 class Upstream(db.Model):
@@ -1146,14 +1251,17 @@ class Equipment(db.Model):
         nullable=False
     )
     eqtype = relation(EquipmentType, backref='equipment')
+
     # Location. Indicate the named placed where the equipement is.
     # Example, a main transformer is at site Budapest, and at localisation Church street.
     # Its the equivalent of the substation name.
-    location = db.Column(
+    location_id = db.Column(
         'location_id',
         db.ForeignKey("location.id"),
         nullable=False
     )
+
+    location = relationship('Location', backref='transformer')
 
     # EditedInfo. False no changes.  True Indicates the equipment info have changed and should update information
     # while importing data from Lab.
@@ -1164,22 +1272,33 @@ class Equipment(db.Model):
     # these fields should be related to every components test , it's not a preperty of the device its a test
     visual_date = db.Column(db.DateTime)  # VisualDate.  Date where was done the last visual inspection.
     # VisualInspectionBy. Who made the visual inspection. user relation
-    visual_inspection_by = db.Column(
+    visual_inspection_by_id = db.Column(
         'visual_inspection_by_id',
         sqla.ForeignKey("users_user.id"),
         nullable=False
     )
+    visual_inspection_by = relationship('User', foreign_keys="Equipment.visual_inspection_by_id")
+
+    assigned_to_id = db.Column(
+        'assigned_to_id',
+        db.ForeignKey("users_user.id"),
+        nullable=False
+    )
+    assigned_to = relationship('User', foreign_keys="Equipment.assigned_to_id")
+
     visual_inspection_comments = db.Column(db.Text)  # VisualInspectionComments. Visual inspection comments,
 
     # test inspection of tap changer or characteristic ?
     nbr_of_tap_change_ltc = db.Column(db.Integer)  # NbrTapChange.  Number of tap change on LTC
 
     # its a separate norms table for all devices
-    norm = db.Column(
+    norm_id = db.Column(
         'norm_id',
         db.ForeignKey("norm.id"),
         nullable=False
     )
+
+    norm = relationship('Norm', foreign_keys='Equipment.norm_id')
 
     # its a state of a transformer / breaker /switch /motor / cable  not
     upstream1 = db.Column(db.String(100))  # Upstream1. Upstream device name
@@ -1221,6 +1340,23 @@ class Equipment(db.Model):
     # Sibling. Unique Common Index with the other siblings.  If 0 then no sibling
     # id of a similar equipment
     sibling = db.Column(db.Integer)
+
+
+class Norm(db.Model):
+    __tablename__ = u'norm'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(50), index=True)
+    type = db.Column(
+        'norm_type_id',
+        db.ForeignKey("norm_type.id"),
+        nullable=False
+    )
+
+    # NormPHY.  Fluid physical properties norms
+    # NormDissolvedGas. Fluid dissolved gas norms
+    # NormFluid# NormFur. Fluid furan norms
+
 
 
 class NormType(db.Model):
@@ -2100,12 +2236,3 @@ class NormFuran(db.Model):
     c2 = db.Column(db.Float(53), server_default=db.text("0"))
     c3 = db.Column(db.Float(53), server_default=db.text("0"))
     c4 = db.Column(db.Float(53), server_default=db.text("0"))
-
-
-class Norm(db.Model):
-    __tablename__ = 'norm'
-
-    id = db.Column(Integer, primary_key=True)
-    norm_type = db.Column('norm_type_id', db.ForeignKey("norm_type.id"), nullable=False)
-    name = db.Column(String(25))
-    code = db.Column(String(25))
