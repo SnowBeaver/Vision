@@ -261,54 +261,54 @@ def add_campaign():
     return render_template('admin/diagnostic/add.html', title='Create campaign', form=form)
 
 
-@equipment_profile.route("/", methods=['GET'])
-def equipment_list():
-    result = db.session.query(Equipment, EquipmentType, Location).join(EquipmentType).join(Location).all()
-    keys = ['equipment_number', 'equipment_type', 'visual_date', 'modifier', 'location']
-    items = []
-    for equipment, equip_type, location in result:
-        items.append({'id': equipment.id,
-                      'equipment_number': equipment.equipment_number,
-                      'equipment_type': equip_type.name,
-                      'location': location.name,
-                      'visual_date': equipment.visual_date,
-                      'modifier': equipment.modifier,
-                      })
-    names = {'equipment_number': 'number',
-             'equipment_type': 'type',
-             'location': 'location',
-             'visual_date': 'visual date',
-             'modifier': 'modifier'
-             }
-    return items_list(table_title='Equipment', keys=keys, names=names, items=items)
-
-
-@equipment_profile.route("/add", methods=['POST', 'GET'])
-def equipment_add():
-    EqForm = model_form(Equipment, Form)
-    model = Equipment()
-    form = EqForm(request.form, model)
-
-    if form.validate_on_submit():
-        form.populate_obj(model)
-        model.put()
-        flash("Equipment added")
-        return redirect(url_for("index"))
-    return render_template("admin/diagnostic/equipment_add.html", form=form)
-
-
-@equipment_profile.route("/edit/<id>", methods=['POST', 'GET'])
-def equipment_edit(id):
-    EqForm = model_form(Equipment, Form)
-    model = Equipment.get(id)
-    form = EqForm(request.form, model)
-
-    if form.validate_on_submit():
-        form.populate_obj(model)
-        model.put()
-        flash("Equipment updated")
-        return redirect(url_for("index"))
-    return render_template('admin/diagnostic/equipment_edit.html', form=form)
+# @equipment_profile.route("/", methods=['GET'])
+# def equipment_list():
+#     result = db.session.query(Equipment, EquipmentType, Location).join(EquipmentType).join(Location).all()
+#     keys = ['equipment_number', 'equipment_type', 'visual_date', 'modifier', 'location']
+#     items = []
+#     for equipment, equip_type, location in result:
+#         items.append({'id': equipment.id,
+#                       'equipment_number': equipment.equipment_number,
+#                       'equipment_type': equip_type.name,
+#                       'location': location.name,
+#                       'visual_date': equipment.visual_date,
+#                       'modifier': equipment.modifier,
+#                       })
+#     names = {'equipment_number': 'number',
+#              'equipment_type': 'type',
+#              'location': 'location',
+#              'visual_date': 'visual date',
+#              'modifier': 'modifier'
+#              }
+#     return items_list(table_title='Equipment', keys=keys, names=names, items=items)
+#
+#
+# @equipment_profile.route("/add", methods=['POST', 'GET'])
+# def equipment_add():
+#     EqForm = model_form(Equipment, Form)
+#     model = Equipment()
+#     form = EqForm(request.form, model)
+#
+#     if form.validate_on_submit():
+#         form.populate_obj(model)
+#         model.put()
+#         flash("Equipment added")
+#         return redirect(url_for("index"))
+#     return render_template("admin/diagnostic/equipment_add.html", form=form)
+#
+#
+# @equipment_profile.route("/edit/<id>", methods=['POST', 'GET'])
+# def equipment_edit(id):
+#     EqForm = model_form(Equipment, Form)
+#     model = Equipment.get(id)
+#     form = EqForm(request.form, model)
+#
+#     if form.validate_on_submit():
+#         form.populate_obj(model)
+#         model.put()
+#         flash("Equipment updated")
+#         return redirect(url_for("index"))
+#     return render_template('admin/diagnostic/equipment_edit.html', form=form)
 
 
 @contract_profile.route("/", methods=['GET'])
@@ -366,19 +366,28 @@ class EquipmentView(MyModelView):
     Equipment management view
     """
     # Visible columns in the list view
-    column_hide_backrefs = False
-    form_excluded_columns = (
-        'id',
-        'location_id',
-        'equipment_number',
+    column_list = (
+        'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status', 'modifier'
     )
+    # List of columns that can be sorted.
+    column_sortable_list = (
+        'id', 'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
+    )
+
+    column_searchable_list = ('equipment_number', )
+
+    column_hide_backrefs = False
+
+    # form_excluded_columns = (
+    #     'id',
+    #     'location_id',
+    #     'equipment_number',
+    # )
     # column_exclude_list = [
     # ]
 
-    # # List of columns that can be sorted.
-    # column_sortable_list = ('id')
-    #
-    # column_searchable_list = ('equipment_number', 'location_id', 'id')
 
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession)
@@ -926,4 +935,17 @@ class TransformerView(MyModelView):
     def __init__(self, dbsession):
         super(TransformerView, self).__init__(
             Transformer, dbsession, name="Transformer", category="Equipment"
+        )
+
+
+class LocationView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name',)
+    column_sortable_list = ('id', 'name')
+
+    def __init__(self, dbsession):
+        super(LocationView, self).__init__(
+            Location, dbsession, name="Location", category="Options"
         )

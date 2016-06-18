@@ -140,7 +140,7 @@ from app.diagnostic.views import *
 app.register_blueprint(lab_profile)
 app.register_blueprint(test_profile)
 app.register_blueprint(campaign_profile)
-app.register_blueprint(equipment_profile)
+# app.register_blueprint(equipment_profile)
 app.register_blueprint(contract_profile)
 app.register_blueprint(test_type_profile)
 app.register_blueprint(fluid_profile)
@@ -171,6 +171,7 @@ backend.add_view(InductionMachineView(db.session))
 backend.add_view(TransformerView(db.session))
 backend.add_view(GasSensorView(db.session))
 backend.add_view(FluidTypeView(db.session))
+backend.add_view(LocationView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

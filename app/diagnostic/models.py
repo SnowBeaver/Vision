@@ -1247,14 +1247,17 @@ class Equipment(db.Model):
         nullable=False
     )
     eqtype = relation(EquipmentType, backref='equipment')
+
     # Location. Indicate the named placed where the equipement is.
     # Example, a main transformer is at site Budapest, and at localisation Church street.
     # Its the equivalent of the substation name.
-    location = db.Column(
+    location_id = db.Column(
         'location_id',
         db.ForeignKey("location.id"),
         nullable=False
     )
+
+    location = relationship('Location', backref='transformer')
 
     # EditedInfo. False no changes.  True Indicates the equipment info have changed and should update information
     # while importing data from Lab.
@@ -1265,22 +1268,33 @@ class Equipment(db.Model):
     # these fields should be related to every components test , it's not a preperty of the device its a test
     visual_date = db.Column(db.DateTime)  # VisualDate.  Date where was done the last visual inspection.
     # VisualInspectionBy. Who made the visual inspection. user relation
-    visual_inspection_by = db.Column(
+    visual_inspection_by_id = db.Column(
         'visual_inspection_by_id',
         sqla.ForeignKey("users_user.id"),
         nullable=False
     )
+    visual_inspection_by = relationship('User', foreign_keys="Equipment.visual_inspection_by_id")
+
+    assigned_to_id = db.Column(
+        'assigned_to_id',
+        db.ForeignKey("users_user.id"),
+        nullable=False
+    )
+    assigned_to = relationship('User', foreign_keys="Equipment.assigned_to_id")
+
     visual_inspection_comments = db.Column(db.Text)  # VisualInspectionComments. Visual inspection comments,
 
     # test inspection of tap changer or characteristic ?
     nbr_of_tap_change_ltc = db.Column(db.Integer)  # NbrTapChange.  Number of tap change on LTC
 
     # its a separate norms table for all devices
-    norm = db.Column(
+    norm_id = db.Column(
         'norm_id',
         db.ForeignKey("norm.id"),
         nullable=False
     )
+
+    norm = relationship('Norm', foreign_keys='Equipment.norm_id')
 
     # its a state of a transformer / breaker /switch /motor / cable  not
     upstream1 = db.Column(db.String(100))  # Upstream1. Upstream device name
@@ -1322,6 +1336,23 @@ class Equipment(db.Model):
     # Sibling. Unique Common Index with the other siblings.  If 0 then no sibling
     # id of a similar equipment
     sibling = db.Column(db.Integer)
+
+
+class Norm(db.Model):
+    __tablename__ = u'norm'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(50), index=True)
+    type = db.Column(
+        'norm_type_id',
+        db.ForeignKey("norm_type.id"),
+        nullable=False
+    )
+
+    # NormPHY.  Fluid physical properties norms
+    # NormDissolvedGas. Fluid dissolved gas norms
+    # NormFluid# NormFur. Fluid furan norms
+
 
 
 class NormType(db.Model):
