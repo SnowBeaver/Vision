@@ -172,6 +172,7 @@ backend.add_view(TestResultView(db.session))
 backend.add_view(EquipmentTypeView(db.session))
 backend.add_view(ElectricalProfileView(db.session))
 backend.add_view(MaterialView(db.session))
+backend.add_view(PowerSourceView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

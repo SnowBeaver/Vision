@@ -742,7 +742,6 @@ class Transformer(db.Model):
         return self.__tablename__
 
 
-
 class Breaker(db.Model):
     __tablename__ = u'breaker'
 
@@ -1017,7 +1016,7 @@ class PowerSource(db.Model):
     welded_cover = db.Column(db.Boolean)
 
     def __repr__(self):
-        return self.__tablename__
+        return self.name
 
 
 class SwitchGear(db.Model):

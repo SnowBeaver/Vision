@@ -11,6 +11,8 @@ my_simple_views = ({'model': 'TestReason', 'hname': 'Test_reason', 'category': '
                    {'model': 'GasRelay', 'hname': 'Gas relay', 'category': 'Types'},
                    {'model': 'PaintTypes', 'hname': 'Paint types', 'category': 'Types'},
                    {'model': 'SamplingPoint', 'hname': 'Sampling point', 'category': 'Types'},
+                   {'model': 'Upstream', 'hname': 'Upstream', 'category': 'Types'},
+                   {'model': 'Downstream', 'hname': 'Downstream', 'category': 'Types'},
                    {'model': 'FanCondition', 'hname': 'Fan condition', 'category': 'Conditions'},
                    {'model': 'HeatingCondition', 'hname': 'Heating condition', 'category': 'Conditions'},
                    {'model': 'FoundationCondition', 'hname': 'Foundation condition', 'category': 'Conditions'},
@@ -839,4 +841,22 @@ class MaterialView(MyModelView):
     def __init__(self, dbsession):
         super(MaterialView, self).__init__(
             Material, dbsession, name="Material", category="Equipment"
+        )
+
+
+class PowerSourceView(MyModelView):
+    """
+    PowerSource management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('name', 'serial', 'manufacturer')
+
+    def __init__(self, dbsession):
+        super(PowerSourceView, self).__init__(
+            PowerSource, dbsession, name="Power source", category="Types"
         )
