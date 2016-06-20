@@ -5,31 +5,6 @@ from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext import login
 
 
-# simple tables
-my_simple_views = ({'model': 'TestReason', 'hname': 'Test_reason', 'category': 'Types'},
-                   {'model': 'PressureUnit', 'hname': 'Pressure unit', 'category': 'Types'},
-                   {'model': 'GasRelay', 'hname': 'Gas relay', 'category': 'Types'},
-                   {'model': 'PaintTypes', 'hname': 'Paint types', 'category': 'Types'},
-                   {'model': 'SamplingPoint', 'hname': 'Sampling point', 'category': 'Types'},
-                   {'model': 'Upstream', 'hname': 'Upstream', 'category': 'Types'},
-                   {'model': 'Downstream', 'hname': 'Downstream', 'category': 'Types'},
-                   {'model': 'NormType', 'hname': 'Norm type', 'category': 'Types'},
-                   {'model': 'FanCondition', 'hname': 'Fan condition', 'category': 'Conditions'},
-                   {'model': 'HeatingCondition', 'hname': 'Heating condition', 'category': 'Conditions'},
-                   {'model': 'FoundationCondition', 'hname': 'Foundation condition', 'category': 'Conditions'},
-                   {'model': 'ConnectionCondition', 'hname': 'Connection condition', 'category': 'Conditions'},
-                   {'model': 'TapFilterCondition', 'hname': 'Tap filter condition', 'category': 'Conditions'},
-                   {'model': 'OverallCondition', 'hname': 'Overall condition', 'category': 'Conditions'},
-                   {'model': 'GasketCondition', 'hname': 'Gasket condition', 'category': 'Conditions'},
-                   {'model': 'ValveCondition', 'hname': 'Valve condition', 'category': 'Conditions'},
-                   {'model': 'PumpCondition', 'hname': 'Pump condition', 'category': 'Conditions'},
-                   {'model': 'ContractStatus', 'hname': 'Contract status', 'category': 'Statuses'},
-                   {'model': 'TapCounterStatus', 'hname': 'Tap counter status', 'category': 'Statuses'},
-                   {'model': 'GasLevel', 'hname': 'Gas level', 'category': 'Statuses'},
-                   {'model': 'FluidLevel', 'hname': 'Fluid level', 'category': 'Statuses'},
-                   )
-
-
 class MyModelView(ModelView):
     def is_accessible(self):
         if not login.current_user.is_authenticated():
@@ -38,23 +13,6 @@ class MyModelView(ModelView):
         # Prevent administration of Roles unless the
         # currently logged-in user has the "admin" role
         return login.current_user.has_role('admin')
-
-
-for item in my_simple_views:
-    exec('''class {model}View(MyModelView):
-    """
-    {model} management view
-    """
-    # Visible columns in the list view
-    column_hide_backrefs = False
-
-    # # List of columns that can be sorted.
-    column_sortable_list = ('name',)
-    column_searchable_list = ('name',)
-
-    def __init__(self, dbsession):
-        super({model}View, self).__init__({model}, dbsession, name="{name}", category="{category}")'''
-         .format(model=item['model'], name=item['hname'], category=item['category']))
 
 
 class EquipmentView(MyModelView):
@@ -953,6 +911,250 @@ class TestScheduleView(MyModelView):
         )
 
 
+class MySimpleView(MyModelView):
+    """
+    Simple models management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+
+class MySimpleTypesView(MySimpleView):
+    def __init__(self, model_class, dbsession, name):
+        super(MySimpleTypesView, self).__init__(
+            model_class, dbsession, name=name, category="Types"
+        )
+
+
+class TestReasonView(MySimpleTypesView):
+    """
+    TestReason management view
+    """
+    def __init__(self, dbsession):
+        super(TestReasonView, self).__init__(
+            TestReason, dbsession, name="Test reason"
+        )
+
+
+class PressureUnitView(MySimpleTypesView):
+    """
+    PressureUnit management view
+    """
+    def __init__(self, dbsession):
+        super(PressureUnitView, self).__init__(
+            PressureUnit, dbsession, name="Pressure unit"
+        )
+
+
+class GasRelayView(MySimpleTypesView):
+    """
+    GasRelay management view
+    """
+    def __init__(self, dbsession):
+        super(GasRelayView, self).__init__(
+            GasRelay, dbsession, name="Gas relay"
+        )
+
+
+class PaintTypesView(MySimpleTypesView):
+    """
+    PaintTypes management view
+    """
+    def __init__(self, dbsession):
+        super(PaintTypesView, self).__init__(
+            PaintTypes, dbsession, name="Paint types"
+        )
+
+
+class SamplingPointView(MySimpleTypesView):
+    """
+    SamplingPoint management view
+    """
+    def __init__(self, dbsession):
+        super(SamplingPointView, self).__init__(
+            SamplingPoint, dbsession, name="Sampling point"
+        )
+
+
+class UpstreamView(MySimpleTypesView):
+    """
+    Upstream management view
+    """
+    def __init__(self, dbsession):
+        super(UpstreamView, self).__init__(
+            Upstream, dbsession, name="Upstream"
+        )
+
+
+class DownstreamView(MySimpleTypesView):
+    """
+    Downstream management view
+    """
+    def __init__(self, dbsession):
+        super(DownstreamView, self).__init__(
+            Downstream, dbsession, name="Downstream"
+        )
+
+
+class NormTypeView(MySimpleTypesView):
+    """
+    NormType management view
+    """
+    def __init__(self, dbsession):
+        super(NormTypeView, self).__init__(
+            NormType, dbsession, name="Norm type"
+        )
+
+
+class MySimpleConditionsView(MySimpleView):
+    def __init__(self, model_class, dbsession, name):
+        super(MySimpleConditionsView, self).__init__(
+            model_class, dbsession, name=name, category="Conditions"
+        )
+
+
+class PumpConditionView(MySimpleConditionsView):
+    """
+    PumpCondition management view
+    """
+    def __init__(self, dbsession):
+        super(PumpConditionView, self).__init__(
+            PumpCondition, dbsession, name="Pump condition"
+        )
+
+
+class ValveConditionView(MySimpleConditionsView):
+    """
+    ValveCondition management view
+    """
+    def __init__(self, dbsession):
+        super(ValveConditionView, self).__init__(
+            ValveCondition, dbsession, name="Valve condition"
+        )
+
+
+class GasketConditionView(MySimpleConditionsView):
+    """
+    GasketCondition management view
+    """
+    def __init__(self, dbsession):
+        super(GasketConditionView, self).__init__(
+            GasketCondition, dbsession, name="Gasket condition"
+        )
+
+
+class OverallConditionView(MySimpleConditionsView):
+    """
+    OverallCondition management view
+    """
+    def __init__(self, dbsession):
+        super(OverallConditionView, self).__init__(
+            OverallCondition, dbsession, name="Overall condition"
+        )
+
+
+class TapFilterConditionView(MySimpleConditionsView):
+    """
+    TapFilterCondition management view
+    """
+    def __init__(self, dbsession):
+        super(TapFilterConditionView, self).__init__(
+            TapFilterCondition, dbsession, name="TapFilter condition"
+        )
+
+
+class ConnectionConditionView(MySimpleConditionsView):
+    """
+    ConnectionCondition management view
+    """
+    def __init__(self, dbsession):
+        super(ConnectionConditionView, self).__init__(
+            ConnectionCondition, dbsession, name="Connection condition"
+        )
+
+
+class FoundationConditionView(MySimpleConditionsView):
+    """
+    FoundationCondition management view
+    """
+    def __init__(self, dbsession):
+        super(FoundationConditionView, self).__init__(
+            FoundationCondition, dbsession, name="Foundation condition"
+        )
+
+
+class HeatingConditionView(MySimpleConditionsView):
+    """
+    HeatingCondition management view
+    """
+    def __init__(self, dbsession):
+        super(HeatingConditionView, self).__init__(
+            HeatingCondition, dbsession, name="Heating condition"
+        )
+
+
+class FanConditionView(MySimpleConditionsView):
+    """
+    FanCondition management view
+    """
+    def __init__(self, dbsession):
+        super(FanConditionView, self).__init__(
+            FanCondition, dbsession, name="Fan condition"
+        )
+
+
+class MySimpleStatusesView(MySimpleView):
+    def __init__(self, model_class, dbsession, name):
+        super(MySimpleStatusesView, self).__init__(
+            model_class, dbsession, name=name, category="Statuses"
+        )
+
+
+class FluidLevelView(MySimpleStatusesView):
+    """
+    FluidLevel management view
+    """
+    def __init__(self, dbsession):
+        super(FluidLevelView, self).__init__(
+            FluidLevel, dbsession, name="Fluid level"
+        )
+
+
+class GasLevelView(MySimpleStatusesView):
+    """
+    GasLevel management view
+    """
+    def __init__(self, dbsession):
+        super(GasLevelView, self).__init__(
+            GasLevel, dbsession, name="Gas level"
+        )
+
+
+class TapCounterStatusView(MySimpleStatusesView):
+    """
+    TapCounterStatus management view
+    """
+    def __init__(self, dbsession):
+        super(TapCounterStatusView, self).__init__(
+            TapCounterStatus, dbsession, name="Tap counter status"
+        )
+
+
+class ContractStatusView(MySimpleStatusesView):
+    """
+    ContractStatus management view
+    """
+    def __init__(self, dbsession):
+        super(ContractStatusView, self).__init__(
+            ContractStatus, dbsession, name="Contract status"
+        )
+
+
 class MyTestView(MyModelView):
     """
     Test management view
@@ -1117,6 +1319,12 @@ class FluidTestView(MyTestView):
         )
 
 
+simple_views = {TestReasonView, PressureUnitView, GasRelayView, PaintTypesView, SamplingPointView, UpstreamView,
+                DownstreamView, NormTypeView, FanConditionView, HeatingConditionView, FoundationConditionView,
+                ConnectionConditionView, TapFilterConditionView, OverallConditionView, GasketConditionView,
+                ValveConditionView, PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
+                FluidLevelView
+                }
 test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
               PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
               DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView, FluidTestView,

@@ -158,9 +158,6 @@ backend.add_view(TransformerView(db.session))
 backend.add_view(GasSensorView(db.session))
 backend.add_view(FluidTypeView(db.session))
 backend.add_view(LocationView(db.session))
-for item in my_simple_views:
-    exec('''backend.add_view({model}View(db.session))'''.format(model=item['model']))
-
 backend.add_view(LabView(db.session))
 backend.add_view(CampaignView(db.session))
 backend.add_view(ContractView(db.session))
@@ -179,8 +176,8 @@ backend.add_view(SyringeView(db.session))
 backend.add_view(CampaignStatusView(db.session))
 backend.add_view(TestScheduleView(db.session))
 
-from app.diagnostic.views import test_views
-for view_class in test_views:
+from app.diagnostic.views import test_views, simple_views
+for view_class in test_views.union(simple_views):
     backend.add_view(view_class(db.session))
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
