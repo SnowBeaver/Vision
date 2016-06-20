@@ -444,6 +444,9 @@ class Manufacturer(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
+    markings = db.Column(db.UnicodeText)
+    location = db.Column(db.Unicode(256))
+    description = db.Column(db.UnicodeText)
 
     def __repr__(self):
         return self.name
