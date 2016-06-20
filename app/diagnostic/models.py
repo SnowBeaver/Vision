@@ -1369,7 +1369,6 @@ class Norm(db.Model):
     # NormFluid# NormFur. Fluid furan norms
 
 
-
 class NormType(db.Model):
     __tablename__ = u'norm_type'
 

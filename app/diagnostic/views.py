@@ -13,6 +13,7 @@ my_simple_views = ({'model': 'TestReason', 'hname': 'Test_reason', 'category': '
                    {'model': 'SamplingPoint', 'hname': 'Sampling point', 'category': 'Types'},
                    {'model': 'Upstream', 'hname': 'Upstream', 'category': 'Types'},
                    {'model': 'Downstream', 'hname': 'Downstream', 'category': 'Types'},
+                   {'model': 'NormType', 'hname': 'Norm type', 'category': 'Types'},
                    {'model': 'FanCondition', 'hname': 'Fan condition', 'category': 'Conditions'},
                    {'model': 'HeatingCondition', 'hname': 'Heating condition', 'category': 'Conditions'},
                    {'model': 'FoundationCondition', 'hname': 'Foundation condition', 'category': 'Conditions'},
@@ -89,7 +90,7 @@ class EquipmentView(MyModelView):
 
 class NormFuranView(MyModelView):
     """
-    NormType management view
+    NormFuran management view
     """
     # Visible columns in the list view
     column_hide_backrefs = False
@@ -853,10 +854,47 @@ class PowerSourceView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = ('name', 'serial', 'manufacturer')
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
     column_searchable_list = ('name', 'serial', 'manufacturer')
 
     def __init__(self, dbsession):
         super(PowerSourceView, self).__init__(
             PowerSource, dbsession, name="Power source", category="Types"
         )
+
+
+class NormView(MyModelView):
+    """
+    Norm management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('name', 'type')
+
+    def __init__(self, dbsession):
+        super(NormView, self).__init__(
+            Norm, dbsession, name="Norm", category="Types"
+        )
+
+
+class RecommendationView(MyModelView):
+    """
+    Recommendation management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('name', 'code', 'description')
+
+    def __init__(self, dbsession):
+        super(RecommendationView, self).__init__(
+            Recommendation, dbsession, name="Recommendation", category="Types"
+        )
+
