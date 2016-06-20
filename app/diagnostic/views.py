@@ -43,7 +43,7 @@ class EquipmentView(MyModelView):
     # ]
 
     def __init__(self, dbsession):
-        super(EquipmentView, self).__init__(Equipment, dbsession)
+        super(EquipmentView, self).__init__(Equipment, dbsession, name="Equipment", category="Equipment")
 
 
 class NormFuranView(MyModelView):
@@ -619,7 +619,7 @@ class LabView(MyModelView):
 
     def __init__(self, dbsession):
         super(LabView, self).__init__(
-            Lab, dbsession, name="Lab", category="Equipment"
+            Lab, dbsession, name="Laboratory", category="Campaign"
         )
 
 
@@ -637,7 +637,7 @@ class CampaignView(MyModelView):
 
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
-            Campaign, dbsession, name="Campaign", category="Equipment"
+            Campaign, dbsession, name="Campaign", category="Campaign"
         )
 
 
@@ -655,7 +655,7 @@ class ContractView(MyModelView):
 
     def __init__(self, dbsession):
         super(ContractView, self).__init__(
-            Contract, dbsession, name="Contract", category="Equipment"
+            Contract, dbsession, name="Contract", category="Campaign"
         )
 
 
@@ -799,7 +799,7 @@ class MaterialView(MyModelView):
 
     def __init__(self, dbsession):
         super(MaterialView, self).__init__(
-            Material, dbsession, name="Material", category="Equipment"
+            Material, dbsession, name="Material", category="Options"
         )
 
 
