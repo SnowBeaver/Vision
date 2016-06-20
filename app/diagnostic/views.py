@@ -1053,7 +1053,7 @@ class WaterTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(WaterTestView, self).__init__(
-            WaterTest, dbsession, name="WaterTest"
+            WaterTest, dbsession, name="Water test"
         )
 
 
@@ -1063,7 +1063,7 @@ class FuranTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(FuranTestView, self).__init__(
-            FuranTest, dbsession, name="FuranTest"
+            FuranTest, dbsession, name="Furan test"
         )
 
 
@@ -1073,7 +1073,7 @@ class InhibitorTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(InhibitorTestView, self).__init__(
-            InhibitorTest, dbsession, name="InhibitorTest"
+            InhibitorTest, dbsession, name="Inhibitor test"
         )
 
 
@@ -1083,11 +1083,42 @@ class PCBTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(PCBTestView, self).__init__(
-            PCBTest, dbsession, name="PCBTest"
+            PCBTest, dbsession, name="PCB test"
+        )
+
+
+class ParticleTestView(MyTestView):
+    """
+    ParticleTest management view
+    """
+    def __init__(self, dbsession):
+        super(ParticleTestView, self).__init__(
+            ParticleTest, dbsession, name="Particle test"
+        )
+
+
+class MetalsInOilTestView(MyTestView):
+    """
+    MetalsInOilTest management view
+    """
+    def __init__(self, dbsession):
+        super(MetalsInOilTestView, self).__init__(
+            MetalsInOilTest, dbsession, name="Metals in oil test"
+        )
+
+
+class FluidTestView(MyTestView):
+    """
+    FluidTest management view
+    """
+    def __init__(self, dbsession):
+        super(FluidTestView, self).__init__(
+            FluidTest, dbsession, name="Fluid test"
         )
 
 
 test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
               PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
-              DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView
+              DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView, FluidTestView,
+              MetalsInOilTestView, ParticleTestView
               }
