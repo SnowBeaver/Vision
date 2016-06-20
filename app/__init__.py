@@ -179,6 +179,9 @@ backend.add_view(SyringeView(db.session))
 backend.add_view(CampaignStatusView(db.session))
 backend.add_view(TestScheduleView(db.session))
 
+from app.diagnostic.views import test_views
+for view_class in test_views:
+    backend.add_view(view_class(db.session))
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
 from app.admin.models import File, Image

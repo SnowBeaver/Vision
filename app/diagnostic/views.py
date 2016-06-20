@@ -951,3 +951,60 @@ class TestScheduleView(MyModelView):
         super(TestScheduleView, self).__init__(
             TestSchedule, dbsession, name="Test schedule", category="Statuses"
         )
+
+
+class MyTestView(MyModelView):
+    """
+    Test management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    def __init__(self, model_class, dbsession, name):
+        super(MyTestView, self).__init__(
+            model_class, dbsession, name=name, category="Tests"
+        )
+
+
+class BushingTestView(MyTestView):
+    """
+    BushingTest management view
+    """
+    def __init__(self, dbsession):
+        super(BushingTestView, self).__init__(
+            BushingTest, dbsession, name="BushingTest"
+        )
+
+
+class WindingTestView(MyTestView):
+    """
+    WindingTest management view
+    """
+    def __init__(self, dbsession):
+        super(WindingTestView, self).__init__(
+            WindingTest, dbsession, name="WindingTest"
+        )
+
+
+class VisualInspectionTestView(MyTestView):
+    """
+    VisualInspectionTest management view
+    """
+    def __init__(self, dbsession):
+        super(VisualInspectionTestView, self).__init__(
+            VisualInspectionTest, dbsession, name="VisualInspectionTest"
+        )
+
+
+class InsulationResistanceTestView(MyTestView):
+    """
+    InsulationResistanceTest management view
+    """
+    def __init__(self, dbsession):
+        super(InsulationResistanceTestView, self).__init__(
+            InsulationResistanceTest, dbsession, name="InsulationResistanceTest"
+        )
+
+
+test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView}
