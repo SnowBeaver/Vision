@@ -1043,11 +1043,51 @@ class DissolvedGasTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(DissolvedGasTestView, self).__init__(
-            DissolvedGasTest, dbsession, name="DissolvedGasTest"
+            DissolvedGasTest, dbsession, name="Dissolved gas test"
+        )
+
+
+class WaterTestView(MyTestView):
+    """
+    WaterTest management view
+    """
+    def __init__(self, dbsession):
+        super(WaterTestView, self).__init__(
+            WaterTest, dbsession, name="WaterTest"
+        )
+
+
+class FuranTestView(MyTestView):
+    """
+    FuranTest management view
+    """
+    def __init__(self, dbsession):
+        super(FuranTestView, self).__init__(
+            FuranTest, dbsession, name="FuranTest"
+        )
+
+
+class InhibitorTestView(MyTestView):
+    """
+    InhibitorTest management view
+    """
+    def __init__(self, dbsession):
+        super(InhibitorTestView, self).__init__(
+            InhibitorTest, dbsession, name="InhibitorTest"
+        )
+
+
+class PCBTestView(MyTestView):
+    """
+    PCBTest management view
+    """
+    def __init__(self, dbsession):
+        super(PCBTestView, self).__init__(
+            PCBTest, dbsession, name="PCBTest"
         )
 
 
 test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
               PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
-              DissolvedGasTestView
+              DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView
               }
