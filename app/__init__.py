@@ -175,6 +175,9 @@ backend.add_view(MaterialView(db.session))
 backend.add_view(PowerSourceView(db.session))
 backend.add_view(NormView(db.session))
 backend.add_view(RecommendationView(db.session))
+backend.add_view(SyringeView(db.session))
+backend.add_view(CampaignStatusView(db.session))
+backend.add_view(TestScheduleView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

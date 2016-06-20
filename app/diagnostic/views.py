@@ -898,3 +898,56 @@ class RecommendationView(MyModelView):
             Recommendation, dbsession, name="Recommendation", category="Types"
         )
 
+
+class SyringeView(MyModelView):
+    """
+    Syringe management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('serial', 'lab')
+
+    def __init__(self, dbsession):
+        super(SyringeView, self).__init__(
+            Syringe, dbsession, name="Syringe", category="Types"
+        )
+
+
+class CampaignStatusView(MyModelView):
+    """
+    CampaignStatus management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'code')
+    column_searchable_list = ('name', 'code')
+
+    def __init__(self, dbsession):
+        super(CampaignStatusView, self).__init__(
+            CampaignStatus, dbsession, name="Campaign status", category="Statuses"
+        )
+
+
+class TestScheduleView(MyModelView):
+    """
+    TestSchedule management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('equipment', 'start_date', 'assigned_to', 'description')
+    column_searchable_list = ('equipment', 'start_date', 'assigned_to', 'description')
+
+    def __init__(self, dbsession):
+        super(TestScheduleView, self).__init__(
+            TestSchedule, dbsession, name="Test schedule", category="Statuses"
+        )
