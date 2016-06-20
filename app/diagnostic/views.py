@@ -973,7 +973,7 @@ class BushingTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(BushingTestView, self).__init__(
-            BushingTest, dbsession, name="BushingTest"
+            BushingTest, dbsession, name="Bushing test"
         )
 
 
@@ -983,7 +983,7 @@ class WindingTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(WindingTestView, self).__init__(
-            WindingTest, dbsession, name="WindingTest"
+            WindingTest, dbsession, name="Winding test"
         )
 
 
@@ -993,7 +993,7 @@ class VisualInspectionTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(VisualInspectionTestView, self).__init__(
-            VisualInspectionTest, dbsession, name="VisualInspectionTest"
+            VisualInspectionTest, dbsession, name="Visual inspection test"
         )
 
 
@@ -1003,8 +1003,51 @@ class InsulationResistanceTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(InsulationResistanceTestView, self).__init__(
-            InsulationResistanceTest, dbsession, name="InsulationResistanceTest"
+            InsulationResistanceTest, dbsession, name="Insulation resistance test"
         )
 
 
-test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView}
+class PolymerisationDegreeTestView(MyTestView):
+    """
+    PolymerisationDegreeTest management view
+    """
+    def __init__(self, dbsession):
+        super(PolymerisationDegreeTestView, self).__init__(
+            PolymerisationDegreeTest, dbsession, name="Polymerisation degree test"
+        )
+
+
+class TransformerTurnRatioTestView(MyTestView):
+    """
+    TransformerTurnRatioTest management view
+    """
+    def __init__(self, dbsession):
+        super(TransformerTurnRatioTestView, self).__init__(
+            TransformerTurnRatioTest, dbsession, name="Transformer turn ratio test"
+        )
+
+
+class WindingResistanceTestView(MyTestView):
+    """
+    WindingResistanceTest management view
+    """
+    def __init__(self, dbsession):
+        super(WindingResistanceTestView, self).__init__(
+            WindingResistanceTest, dbsession, name="Winding resistance test"
+        )
+
+
+class DissolvedGasTestView(MyTestView):
+    """
+    DissolvedGasTest management view
+    """
+    def __init__(self, dbsession):
+        super(DissolvedGasTestView, self).__init__(
+            DissolvedGasTest, dbsession, name="DissolvedGasTest"
+        )
+
+
+test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
+              PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
+              DissolvedGasTestView
+              }
