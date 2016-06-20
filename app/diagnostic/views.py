@@ -715,6 +715,24 @@ class FluidProfileView(MyModelView):
         )
 
 
+class TestStatusView(MyModelView):
+    """
+    TestStatus management view
+    """
+    # Visible columns in the list view
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['name', 'code'])
+    column_searchable_list = (['name', 'code'])
+
+    def __init__(self, dbsession):
+        super(TestStatusView, self).__init__(
+            TestStatus, dbsession, name="Test status", category="Conditions"
+        )
+
+
 class TestTypeView(MyModelView):
     """
     TestType management view
@@ -748,4 +766,22 @@ class TestTypeResultTableView(MyModelView):
     def __init__(self, dbsession):
         super(TestTypeResultTableView, self).__init__(
             TestTypeResultTable, dbsession, name="Test type result table", category="Conditions"
+        )
+
+
+class TestResultView(MyModelView):
+    """
+    TestResult management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('date_analyse', 'reason', 'test_type_id', 'status', 'sampling_point', 'campaign_id')
+    column_searchable_list = ('date_analyse', 'reason', 'test_type_id', 'status', 'sampling_point', 'campaign_id')
+
+    def __init__(self, dbsession):
+        super(TestResultView, self).__init__(
+            TestResult, dbsession, name="Test result", category="Equipment"
         )

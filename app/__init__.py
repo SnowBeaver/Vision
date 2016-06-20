@@ -165,8 +165,10 @@ backend.add_view(LabView(db.session))
 backend.add_view(CampaignView(db.session))
 backend.add_view(ContractView(db.session))
 backend.add_view(FluidProfileView(db.session))
+backend.add_view(TestStatusView(db.session))
 backend.add_view(TestTypeView(db.session))
 backend.add_view(TestTypeResultTableView(db.session))
+backend.add_view(TestResultView(db.session))
 
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

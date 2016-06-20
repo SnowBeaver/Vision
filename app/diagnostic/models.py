@@ -103,6 +103,9 @@ class SamplingPoint(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
 
+    def __repr__(self):
+        return self.name
+
 
 class Contract(db.Model):
     __tablename__ = 'contract'
@@ -301,6 +304,9 @@ class Campaign(db.Model):
     error_code = db.Column(db.Integer, server_default=db.text("0"))  # ErrorCode: Need to look into
     # AmbientAirTemperature: Ambient air temperature at sampling time
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
+
+    def __repr__(self):
+        return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
 
 
 class FluidProfile(db.Model):
@@ -1405,6 +1411,9 @@ class TestReason(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
 
+    def __repr__(self):
+        return self.name
+
 
 class TestStatus(db.Model):
     __tablename__ = 'test_status'
@@ -1412,6 +1421,9 @@ class TestStatus(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     code = db.Column(db.String(50), index=True)
     name = db.Column(db.String(50), index=True)
+
+    def __repr__(self):
+        return self.name
 
 
 class CampaignStatus(db.Model):
