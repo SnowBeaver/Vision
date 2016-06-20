@@ -673,7 +673,7 @@ class FluidProfileView(MyModelView):
 
     def __init__(self, dbsession):
         super(FluidProfileView, self).__init__(
-            FluidProfile, dbsession, name="Fluid profile", category="Equipment"
+            FluidProfile, dbsession, name="Fluid profile", category="Campaign"
         )
 
 
@@ -745,7 +745,7 @@ class TestResultView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestResultView, self).__init__(
-            TestResult, dbsession, name="Test result", category="Equipment"
+            TestResult, dbsession, name="Test result", category="Campaign"
         )
 
 
@@ -781,7 +781,7 @@ class ElectricalProfileView(MyModelView):
 
     def __init__(self, dbsession):
         super(ElectricalProfileView, self).__init__(
-            ElectricalProfile, dbsession, name="Electrical profile", category="Equipment"
+            ElectricalProfile, dbsession, name="Electrical profile", category="Campaign"
         )
 
 
