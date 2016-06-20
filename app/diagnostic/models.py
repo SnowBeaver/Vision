@@ -92,11 +92,15 @@ class ElectricalProfile(db.Model):
     def __repr__(self):
         return self.selection
 
+
 class ContractStatus(db.Model):
     __tablename__ = 'contract_status'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
+
+    def __repr__(self):
+        return self.name
 
 
 class SamplingPoint(db.Model):

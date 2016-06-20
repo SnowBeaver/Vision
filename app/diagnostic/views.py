@@ -6,22 +6,24 @@ from flask.ext import login
 
 
 # simple tables
-my_simple_views = ({'model': 'TestReason', 'hname': 'Test_reason', 'category': 'Conditions'},
-                   {'model': 'GasLevel', 'hname': 'Gas level', 'category': 'Conditions'},
-                   {'model': 'PaintTypes', 'hname': 'Paint types', 'category': 'Conditions'},
+my_simple_views = ({'model': 'TestReason', 'hname': 'Test_reason', 'category': 'Types'},
+                   {'model': 'PressureUnit', 'hname': 'Pressure unit', 'category': 'Types'},
+                   {'model': 'GasRelay', 'hname': 'Gas relay', 'category': 'Types'},
+                   {'model': 'PaintTypes', 'hname': 'Paint types', 'category': 'Types'},
+                   {'model': 'SamplingPoint', 'hname': 'Sampling point', 'category': 'Types'},
                    {'model': 'FanCondition', 'hname': 'Fan condition', 'category': 'Conditions'},
                    {'model': 'HeatingCondition', 'hname': 'Heating condition', 'category': 'Conditions'},
                    {'model': 'FoundationCondition', 'hname': 'Foundation condition', 'category': 'Conditions'},
                    {'model': 'ConnectionCondition', 'hname': 'Connection condition', 'category': 'Conditions'},
                    {'model': 'TapFilterCondition', 'hname': 'Tap filter condition', 'category': 'Conditions'},
-                   {'model': 'TapCounterStatus', 'hname': 'Tap counter status', 'category': 'Conditions'},
                    {'model': 'OverallCondition', 'hname': 'Overall condition', 'category': 'Conditions'},
                    {'model': 'GasketCondition', 'hname': 'Gasket condition', 'category': 'Conditions'},
                    {'model': 'ValveCondition', 'hname': 'Valve condition', 'category': 'Conditions'},
                    {'model': 'PumpCondition', 'hname': 'Pump condition', 'category': 'Conditions'},
-                   {'model': 'PressureUnit', 'hname': 'Pressure unit', 'category': 'Conditions'},
-                   {'model': 'FluidLevel', 'hname': 'Fluid level', 'category': 'Conditions'},
-                   {'model': 'GasRelay', 'hname': 'Gas relay', 'category': 'Conditions'},
+                   {'model': 'ContractStatus', 'hname': 'Contract status', 'category': 'Statuses'},
+                   {'model': 'TapCounterStatus', 'hname': 'Tap counter status', 'category': 'Statuses'},
+                   {'model': 'GasLevel', 'hname': 'Gas level', 'category': 'Statuses'},
+                   {'model': 'FluidLevel', 'hname': 'Fluid level', 'category': 'Statuses'},
                    )
 
 
@@ -189,7 +191,7 @@ class FluidTypeView(MyModelView):
 
     def __init__(self, dbsession):
         super(FluidTypeView, self).__init__(
-            FluidType, dbsession, name="Fluid type", category="Options"
+            FluidType, dbsession, name="Fluid type", category="Types"
         )
 
 
@@ -728,7 +730,7 @@ class TestStatusView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestStatusView, self).__init__(
-            TestStatus, dbsession, name="Test status", category="Conditions"
+            TestStatus, dbsession, name="Test status", category="Statuses"
         )
 
 
@@ -746,7 +748,7 @@ class TestTypeView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestTypeView, self).__init__(
-            TestType, dbsession, name="Test type", category="Conditions"
+            TestType, dbsession, name="Test type", category="Types"
         )
 
 
@@ -800,7 +802,7 @@ class EquipmentTypeView(MyModelView):
 
     def __init__(self, dbsession):
         super(EquipmentTypeView, self).__init__(
-            EquipmentType, dbsession, name="Equipment type", category="Conditions"
+            EquipmentType, dbsession, name="Equipment type", category="Types"
         )
 
 
@@ -819,4 +821,22 @@ class ElectricalProfileView(MyModelView):
     def __init__(self, dbsession):
         super(ElectricalProfileView, self).__init__(
             ElectricalProfile, dbsession, name="Electrical profile", category="Equipment"
+        )
+
+
+class MaterialView(MyModelView):
+    """
+    Material management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', 'code')
+    column_searchable_list = ('name', 'code')
+
+    def __init__(self, dbsession):
+        super(MaterialView, self).__init__(
+            Material, dbsession, name="Material", category="Equipment"
         )
