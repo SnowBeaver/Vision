@@ -22,7 +22,7 @@ my_simple_views = ({'model': 'TestReason', 'hname': 'Test_reason', 'category': '
                    {'model': 'PressureUnit', 'hname': 'Pressure unit', 'category': 'Conditions'},
                    {'model': 'FluidLevel', 'hname': 'Fluid level', 'category': 'Conditions'},
                    {'model': 'GasRelay', 'hname': 'Gas relay', 'category': 'Conditions'},
-                )
+                   )
 
 
 class MyModelView(ModelView):
@@ -49,7 +49,7 @@ for item in my_simple_views:
 
     def __init__(self, dbsession):
         super({model}View, self).__init__({model}, dbsession, name="{name}", category="{category}")'''
-        .format(model=item['model'], name=item['hname'], category=item['category']))
+         .format(model=item['model'], name=item['hname'], category=item['category']))
 
 
 class EquipmentView(MyModelView):
@@ -78,7 +78,6 @@ class EquipmentView(MyModelView):
     # )
     # column_exclude_list = [
     # ]
-
 
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession)
@@ -784,4 +783,40 @@ class TestResultView(MyModelView):
     def __init__(self, dbsession):
         super(TestResultView, self).__init__(
             TestResult, dbsession, name="Test result", category="Equipment"
+        )
+
+
+class EquipmentTypeView(MyModelView):
+    """
+    EquipmentType management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', 'code')
+    column_searchable_list = ('name', 'code')
+
+    def __init__(self, dbsession):
+        super(EquipmentTypeView, self).__init__(
+            EquipmentType, dbsession, name="Equipment type", category="Conditions"
+        )
+
+
+class ElectricalProfileView(MyModelView):
+    """
+    ElectricalProfile management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double', 'insulation', 'visual', 'resistance', 'degree', 'turns')
+    column_searchable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double', 'insulation', 'visual', 'resistance', 'degree', 'turns')
+
+    def __init__(self, dbsession):
+        super(ElectricalProfileView, self).__init__(
+            ElectricalProfile, dbsession, name="Electrical profile", category="Equipment"
         )

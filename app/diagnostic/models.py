@@ -89,6 +89,8 @@ class ElectricalProfile(db.Model):
     def add_data(self, data):
         self.parsedata(data)
 
+    def __repr__(self):
+        return self.selection
 
 class ContractStatus(db.Model):
     __tablename__ = 'contract_status'
