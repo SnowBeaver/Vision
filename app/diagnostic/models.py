@@ -12,7 +12,6 @@ from datetime import datetime
 from sqlalchemy.orm import relationship, relation
 
 
-
 class Lab(db.Model):
     __tablename__ = 'lab'
 
