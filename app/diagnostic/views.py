@@ -134,6 +134,10 @@ class ManufacturerView(MyModelView):
     column_sortable_list = ('name', )
     column_searchable_list = ('name', )
 
+    inline_models = (GasSensor, Transformer, Breaker, AirCircuitBreaker, Capacitor, PowerSource, SwitchGear, Tank,
+                     InductionMachine, SynchronousMachine, Rectifier, LoadTapChanger, Bushing, NeutralResistance,
+                     Switch, Cable,
+                     )
     def __init__(self, dbsession):
         super(ManufacturerView, self).__init__(
             Manufacturer, dbsession, name="Manufacturer", category="Options"
@@ -635,7 +639,7 @@ class CampaignView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
-    inline_models = (TestResult,)
+    inline_models = (TestResult, )
 
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
@@ -708,6 +712,8 @@ class TestTypeView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = (['name', 'group_id', 'is_group'])
     column_searchable_list = (['name', 'group_id', 'is_group'])
+
+    inline_models = (TestResult,)
 
     def __init__(self, dbsession):
         super(TestTypeView, self).__init__(
@@ -896,6 +902,8 @@ class CampaignStatusView(MyModelView):
     # column_sortable_list = ('name', 'code')
     column_searchable_list = ('name', 'code')
 
+    inline_models = (TestResult,)
+
     def __init__(self, dbsession):
         super(CampaignStatusView, self).__init__(
             CampaignStatus, dbsession, name="Campaign status", category="Statuses"
@@ -944,6 +952,8 @@ class TestReasonView(MySimpleTypesView):
     """
     TestReason management view
     """
+    inline_models = (TestResult,)
+
     def __init__(self, dbsession):
         super(TestReasonView, self).__init__(
             TestReason, dbsession, name="Test reason"
@@ -984,6 +994,8 @@ class SamplingPointView(MySimpleTypesView):
     """
     SamplingPoint management view
     """
+    inline_models = (TestResult,)
+
     def __init__(self, dbsession):
         super(SamplingPointView, self).__init__(
             SamplingPoint, dbsession, name="Sampling point"
@@ -1158,6 +1170,7 @@ class ContractStatusView(MySimpleStatusesView):
     """
     ContractStatus management view
     """
+    inline_models = (Contract,)
     def __init__(self, dbsession):
         super(ContractStatusView, self).__init__(
             ContractStatus, dbsession, name="Contract status"
