@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from .forms import *
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext import login
@@ -632,8 +633,9 @@ class CampaignView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = (['created_by', 'equipment', 'lab', 'date', 'contract_id'])
-    column_searchable_list = (['created_by', 'equipment', 'lab', 'date', 'contract_id'])
+    column_sortable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
+    column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
+    inline_models = (TestResult,)
 
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
@@ -724,6 +726,13 @@ class TestTypeResultTableView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('test_type_id', 'test_result_table_name')
     column_searchable_list = ('test_type_id', 'test_result_table_name')
+    # edit_modal = True
+    # from flask_admin.model.form import InlineFormAdmin
+    #
+    # class MyInlineModelForm(InlineFormAdmin):
+    #     form_columns = ('name')
+    #
+    # inline_models = (TestType,)
 
     def __init__(self, dbsession):
         super(TestTypeResultTableView, self).__init__(
@@ -740,8 +749,8 @@ class TestResultView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = ('date_analyse', 'reason', 'test_type_id', 'status', 'sampling_point', 'campaign_id')
-    column_searchable_list = ('date_analyse', 'reason', 'test_type_id', 'status', 'sampling_point', 'campaign_id')
+    column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id', 'status_id', 'sampling_point_id', 'campaign_id')
+    column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id', 'status_id', 'sampling_point_id', 'campaign_id')
 
     def __init__(self, dbsession):
         super(TestResultView, self).__init__(
@@ -813,7 +822,7 @@ class PowerSourceView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = ('name', 'serial', 'manufacturer')
-    column_searchable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('name', 'serial', 'manufacturer_id')
 
     def __init__(self, dbsession):
         super(PowerSourceView, self).__init__(
@@ -831,7 +840,7 @@ class NormView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = ('name', 'serial', 'manufacturer')
-    column_searchable_list = ('name', 'type')
+    column_searchable_list = ('name', 'type_id')
 
     def __init__(self, dbsession):
         super(NormView, self).__init__(
@@ -867,7 +876,7 @@ class SyringeView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = ('name', 'serial', 'manufacturer')
-    column_searchable_list = ('serial', 'lab')
+    column_searchable_list = ('serial', 'lab_id')
 
     def __init__(self, dbsession):
         super(SyringeView, self).__init__(
@@ -903,7 +912,7 @@ class TestScheduleView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = ('equipment', 'start_date', 'assigned_to', 'description')
-    column_searchable_list = ('equipment', 'start_date', 'assigned_to', 'description')
+    column_searchable_list = ('equipment_id', 'start_date', 'assigned_to_id', 'description')
 
     def __init__(self, dbsession):
         super(TestScheduleView, self).__init__(
