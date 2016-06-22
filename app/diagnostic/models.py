@@ -1512,6 +1512,10 @@ class TestTypeResultTable(db.Model):
     test_result_table_name = db.Column(String(100), nullable=False)
 
 
+    def __repr__(self):
+        return self.test_result_table_name
+
+
 class TestResult(db.Model):
     """
     TestResults. Contains test results. It is a "tablepart" of campaign
