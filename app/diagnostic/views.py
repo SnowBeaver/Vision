@@ -34,6 +34,7 @@ class EquipmentView(MyModelView):
     column_searchable_list = ('equipment_number', )
 
     column_hide_backrefs = False
+    inline_models = (Campaign,)
 
     # form_excluded_columns = (
     #     'id',
@@ -154,6 +155,8 @@ class FluidTypeView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('name', )
     column_searchable_list = ('name', )
+
+    inline_models = (Transformer, Campaign)
 
     def __init__(self, dbsession):
         super(FluidTypeView, self).__init__(
@@ -547,6 +550,8 @@ class GasSensorView(MyModelView):
         },
     }
 
+    inline_models = (Transformer,)
+
     def __init__(self, dbsession):
         super(GasSensorView, self).__init__(
             GasSensor, dbsession, name="Gas sensor", category="Equipment"
@@ -604,6 +609,7 @@ class LocationView(MyModelView):
     column_searchable_list = ('name',)
     column_sortable_list = ('id', 'name')
 
+    inline_models = (Equipment,)
     def __init__(self, dbsession):
         super(LocationView, self).__init__(
             Location, dbsession, name="Location", category="Options"
@@ -621,6 +627,8 @@ class LabView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = (['name', 'code', 'analyser'])
     column_searchable_list = (['name', 'code', 'analyser'])
+
+    inline_models = (Campaign,)
 
     def __init__(self, dbsession):
         super(LabView, self).__init__(
@@ -758,6 +766,11 @@ class TestResultView(MyModelView):
     column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id', 'status_id', 'sampling_point_id', 'campaign_id')
     column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id', 'status_id', 'sampling_point_id', 'campaign_id')
 
+    inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,
+                     TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
+                     InhibitorTest, PCBTest, ParticleTest, MetalsInOilTest, FluidTest
+                     )
+
     def __init__(self, dbsession):
         super(TestResultView, self).__init__(
             TestResult, dbsession, name="Test result", category="Campaign"
@@ -775,6 +788,8 @@ class EquipmentTypeView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('name', 'code')
     column_searchable_list = ('name', 'code')
+
+    inline_models = (Equipment,)
 
     def __init__(self, dbsession):
         super(EquipmentTypeView, self).__init__(
@@ -811,6 +826,8 @@ class MaterialView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('name', 'code')
     column_searchable_list = ('name', 'code')
+
+    inline_models = (Campaign,)
 
     def __init__(self, dbsession):
         super(MaterialView, self).__init__(
@@ -865,6 +882,8 @@ class RecommendationView(MyModelView):
     # # List of columns that can be sorted.
     # column_sortable_list = ('name', 'serial', 'manufacturer')
     column_searchable_list = ('name', 'code', 'description')
+
+    inline_models = (Campaign,)
 
     def __init__(self, dbsession):
         super(RecommendationView, self).__init__(
@@ -1026,6 +1045,8 @@ class NormTypeView(MySimpleTypesView):
     """
     NormType management view
     """
+    inline_models = (Norm,)
+
     def __init__(self, dbsession):
         super(NormTypeView, self).__init__(
             NormType, dbsession, name="Norm type"
@@ -1195,6 +1216,7 @@ class BushingTestView(MyTestView):
     """
     BushingTest management view
     """
+
     def __init__(self, dbsession):
         super(BushingTestView, self).__init__(
             BushingTest, dbsession, name="Bushing test"
@@ -1205,6 +1227,7 @@ class WindingTestView(MyTestView):
     """
     WindingTest management view
     """
+
     def __init__(self, dbsession):
         super(WindingTestView, self).__init__(
             WindingTest, dbsession, name="Winding test"
