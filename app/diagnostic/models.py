@@ -1554,6 +1554,10 @@ class TestTypeResultTable(db.Model):
         return "{} - {}".format(self.test_type, self.test_result_table_name)
 
 
+    def __repr__(self):
+        return self.test_result_table_name
+
+
 class TestResult(db.Model):
     """
     TestResults. Contains test results. It is a "tablepart" of campaign

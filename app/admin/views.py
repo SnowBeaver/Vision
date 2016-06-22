@@ -130,7 +130,7 @@ class MyModelView(ModelView):
 
 class RoleAdmin(MyModelView):
     def __init__(self, dbsession):
-        super(RoleAdmin, self).__init__(Role, dbsession)
+        super(RoleAdmin, self).__init__(Role, dbsession, name="User role", category='System')
 
 
 class UserAdmin(MyModelView):
@@ -169,7 +169,7 @@ class UserAdmin(MyModelView):
     column_searchable_list = ('alias', 'name', 'email', 'id')
 
     def __init__(self, dbsession):
-        super(UserAdmin, self).__init__(User, dbsession)
+        super(UserAdmin, self).__init__(User, dbsession, name="User", category='System')
 
 
 from sqlalchemy.event import listens_for
