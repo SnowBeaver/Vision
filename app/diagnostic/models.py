@@ -1284,7 +1284,7 @@ class Equipment(db.Model):
         nullable=False
     )
 
-    location = relationship('Location', backref='transformer')
+    location = relationship('Location', backref='equipment')
 
     # EditedInfo. False no changes.  True Indicates the equipment info have changed and should update information
     # while importing data from Lab.

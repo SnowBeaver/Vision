@@ -156,7 +156,7 @@ class FluidTypeView(MyModelView):
     column_sortable_list = ('name', )
     column_searchable_list = ('name', )
 
-    inline_models = (Transformer, Campaign)
+    # inline_models = (Transformer, Campaign)
 
     def __init__(self, dbsession):
         super(FluidTypeView, self).__init__(
@@ -609,7 +609,7 @@ class LocationView(MyModelView):
     column_searchable_list = ('name',)
     column_sortable_list = ('id', 'name')
 
-    inline_models = (Equipment,)
+    # inline_models = (Equipment,)
     def __init__(self, dbsession):
         super(LocationView, self).__init__(
             Location, dbsession, name="Location", category="Options"
@@ -628,7 +628,7 @@ class LabView(MyModelView):
     column_sortable_list = (['name', 'code', 'analyser'])
     column_searchable_list = (['name', 'code', 'analyser'])
 
-    inline_models = (Campaign,)
+    # inline_models = (Campaign,)
 
     def __init__(self, dbsession):
         super(LabView, self).__init__(
@@ -721,7 +721,7 @@ class TestTypeView(MyModelView):
     column_sortable_list = (['name', 'group_id', 'is_group'])
     column_searchable_list = (['name', 'group_id', 'is_group'])
 
-    inline_models = (TestResult,)
+    # inline_models = (TestResult,)
 
     def __init__(self, dbsession):
         super(TestTypeView, self).__init__(
@@ -827,7 +827,7 @@ class MaterialView(MyModelView):
     column_sortable_list = ('name', 'code')
     column_searchable_list = ('name', 'code')
 
-    inline_models = (Campaign,)
+    # inline_models = (Campaign,)
 
     def __init__(self, dbsession):
         super(MaterialView, self).__init__(
@@ -849,7 +849,7 @@ class PowerSourceView(MyModelView):
 
     def __init__(self, dbsession):
         super(PowerSourceView, self).__init__(
-            PowerSource, dbsession, name="Power source", category="Types"
+            PowerSource, dbsession, name="Power source", category="Equipment"
         )
 
 
@@ -883,7 +883,7 @@ class RecommendationView(MyModelView):
     # column_sortable_list = ('name', 'serial', 'manufacturer')
     column_searchable_list = ('name', 'code', 'description')
 
-    inline_models = (Campaign,)
+    # inline_models = (Campaign,)
 
     def __init__(self, dbsession):
         super(RecommendationView, self).__init__(
@@ -921,7 +921,7 @@ class CampaignStatusView(MyModelView):
     # column_sortable_list = ('name', 'code')
     column_searchable_list = ('name', 'code')
 
-    inline_models = (TestResult,)
+    # inline_models = (TestResult,)
 
     def __init__(self, dbsession):
         super(CampaignStatusView, self).__init__(
@@ -971,7 +971,7 @@ class TestReasonView(MySimpleTypesView):
     """
     TestReason management view
     """
-    inline_models = (TestResult,)
+    # inline_models = (TestResult,)
 
     def __init__(self, dbsession):
         super(TestReasonView, self).__init__(
@@ -1013,7 +1013,7 @@ class SamplingPointView(MySimpleTypesView):
     """
     SamplingPoint management view
     """
-    inline_models = (TestResult,)
+    # inline_models = (TestResult,)
 
     def __init__(self, dbsession):
         super(SamplingPointView, self).__init__(
@@ -1191,7 +1191,8 @@ class ContractStatusView(MySimpleStatusesView):
     """
     ContractStatus management view
     """
-    inline_models = (Contract,)
+    # inline_models = (Contract,)
+
     def __init__(self, dbsession):
         super(ContractStatusView, self).__init__(
             ContractStatus, dbsession, name="Contract status"
