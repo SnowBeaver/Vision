@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import datetime
-
-from flask import url_for
 from flask.ext.admin.form import rules
 from .forms import *
 from flask.ext.admin.contrib.sqla import ModelView
@@ -88,7 +86,7 @@ class NormIsolationView(MyModelView):
     column_sortable_list = ('c', 'f', 'notseal', 'seal')
     column_searchable_list = ('c', 'f')
 
-    def __init__(self, dbsession, **kwargs):
+    def __init__(self, dbsession):
         super(NormIsolationView, self).__init__(NormIsolation, dbsession, name="Norms isolation", category='Norms')
 
 
@@ -145,6 +143,7 @@ class ManufacturerView(MyModelView):
                      InductionMachine, SynchronousMachine, Rectifier, LoadTapChanger, Bushing, NeutralResistance,
                      Switch, Cable,
                      )
+
     def __init__(self, dbsession):
         super(ManufacturerView, self).__init__(
             Manufacturer, dbsession, name="Manufacturer", category="Options"
@@ -659,20 +658,21 @@ class CampaignView(MyModelView):
     column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     inline_models = (TestResult, )
     column_editable_list = ['created_by']
-    # form_create_rules = (rules.NestedRule(['created_by', rules.HTML('<a href="http://google.com">GOOGLE</a>')], ''), 'equipment', 'lab')
-    # form_create_rules = (rules.NestedRule(['created_by', rules.HTML('<div class="form-group"><div class="col-md-10"><a href="http://google.com">GOOGLE</a></div></div>')], ''), 'equipment', 'lab')
-    # form_create_rules = (rules.FieldSet(['created_by', rules.HTML('<div class="form-group"><div class="col-md-10"><a href="http://google.com">GOOGLE</a></div></div>')], ''), 'equipment', 'lab')
-    fields = ['created_by', 'date', 'equipment', 'material', 'fluid_type', 'lab', 'recommandation', 'date_application',
+    fields = ['created_by', 'date', 'equipment', 'material', 'fluid_type', 'lab', 'recommendation', 'date_application',
               'data_valid', 'date_prelevement', 'analysis_number', 'percent_ratio', 'modifier', 'transmission',
-              'if_rem', 'if_ok', 'repair_date', 'repair_description', 'remark', 'mws', 'temperature', 'comments', 'charge',
-              'ambient_air_temperature', 'containers', 'error_state', 'status1', 'status2', 'recommendationNotes',
-              'gathered_test_type', 'error_code', 'seringe_num', 'sampling_card_print', 'sampling_card_gathered',
-              'test_result'
+              'if_rem', 'if_ok', 'repair_date', 'repair_description', 'remark', 'mws', 'temperature', 'comments',
+              'charge', 'ambient_air_temperature', 'containers', 'error_state', 'status1', 'status2',
+              'recommendationNotes', 'gathered_test_type', 'error_code', 'seringe_num', 'sampling_card_print',
+              'sampling_card_gathered', 'test_result'
               ]
     linkable_fields = {'created_by': ('/admin/user/', 'users'), 'equipment': ('/admin/equipment/', 'equipment'),
                        'material': ('/admin/material/', 'material'), 'fluid_type': ('/admin/fluidtype/', 'fluid type'),
-                       'lab': ('/admin/lab/', 'lab'), 'recommandation': ('/admin/recommendation/', 'recommendation')
+                       'lab': ('/admin/lab/', 'lab'), 'recommendation': ('/admin/recommendation/', 'recommendation')
                        }
+
+    # form_ajax_refs = {'created_by': {'fields': ['name'], 'page_size': 10}
+    #                   }
+
 
     def get_nested_rule(self, rule):
         html_rule = rules.HTML('<a href="{}" target="_blank">List of {}</a>'.format(*self.linkable_fields[rule]))
@@ -794,8 +794,10 @@ class TestResultView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id', 'status_id', 'sampling_point_id', 'campaign_id')
-    column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id', 'status_id', 'sampling_point_id', 'campaign_id')
+    column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id',
+                            'status_id', 'sampling_point_id', 'campaign_id')
+    column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id',
+                              'status_id', 'sampling_point_id', 'campaign_id')
 
     inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,
                      TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
@@ -837,8 +839,10 @@ class ElectricalProfileView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double', 'insulation', 'visual', 'resistance', 'degree', 'turns')
-    column_searchable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double', 'insulation', 'visual', 'resistance', 'degree', 'turns')
+    column_sortable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double',
+                            'insulation', 'visual', 'resistance', 'degree', 'turns')
+    column_searchable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double',
+                              'insulation', 'visual', 'resistance', 'degree', 'turns')
 
     def __init__(self, dbsession):
         super(ElectricalProfileView, self).__init__(
