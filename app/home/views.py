@@ -170,7 +170,7 @@ from app.admin.storage import ul_menu_creation
 
 
 @app.context_processor
-def costum_function():
+def custom_function():
     def ul_menu(tag):
         return ul_menu_creation(tag)
 

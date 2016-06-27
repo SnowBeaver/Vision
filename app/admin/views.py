@@ -130,7 +130,7 @@ class MyModelView(ModelView):
 
 class RoleAdmin(MyModelView):
     def __init__(self, dbsession):
-        super(RoleAdmin, self).__init__(Role, dbsession, name="User role", category='System')
+        super(RoleAdmin, self).__init__(Role, dbsession, name="User role", category='CMS')
 
 
 class UserAdmin(MyModelView):
@@ -169,7 +169,7 @@ class UserAdmin(MyModelView):
     column_searchable_list = ('alias', 'name', 'email', 'id')
 
     def __init__(self, dbsession):
-        super(UserAdmin, self).__init__(User, dbsession, name="User", category='System')
+        super(UserAdmin, self).__init__(User, dbsession, name="User", category='CMS')
 
 
 from sqlalchemy.event import listens_for
@@ -195,6 +195,9 @@ class FileView(ModelView):
         }
     }
 
+    def __init__(self, dbsession):
+        super(FileView, self).__init__(File, dbsession, name="File", category='CMS')
+
 
 class ImageView(ModelView):
     def _list_thumbnail(view, context, model, name):
@@ -213,6 +216,9 @@ class ImageView(ModelView):
     form_extra_fields = {
         'path': ImageUploadField('Image', base_path=file_path, thumbnail_size=(100, 100, True))
     }
+
+    def __init__(self, dbsession):
+        super(ImageView, self).__init__(Image, dbsession, name="Image", category='CMS')
 
 
 @listens_for(File, 'after_delete')

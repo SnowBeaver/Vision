@@ -447,6 +447,7 @@ class Location(db.Model):
 class Manufacturer(db.Model):
     __tablename__ = u'manufacturer'
 
+
     def __init__(self, code=0, name=''):
         self.code = code
         self.name = name
