@@ -182,13 +182,12 @@ for view_class in test_views.union(simple_views):
     backend.add_view(view_class(db.session))
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
-from app.admin.models import File, Image
 
 backend.add_view(UserAdmin(db.session))
 backend.add_view(RoleAdmin(db.session))
 
-backend.add_view(FileView(File, db.session))
-backend.add_view(ImageView(Image, db.session))
+backend.add_view(FileView(db.session))
+backend.add_view(ImageView(db.session))
 
 backend.add_view(MenuView(name="Menu"))
 
