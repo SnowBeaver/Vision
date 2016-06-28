@@ -158,7 +158,7 @@ class Campaign(db.Model):
         sqla.ForeignKey("users_user.id"),
         nullable=False
     )
-    created_by = db.relationship('User', backref='campaign', foreign_keys='Campaign.created_by_id')
+    created_by = db.relationship('User', foreign_keys='Campaign.created_by_id')
 
     # code = db.Column(db.String(50), index=True)  # AnalysisKey: Index key for all tests results - id can be used
 
@@ -168,7 +168,7 @@ class Campaign(db.Model):
         sqla.ForeignKey("equipment.id"),
         nullable=False
     )
-    equipment = db.relationship('Equipment', backref='campaign')
+    equipment = db.relationship('Equipment', foreign_keys='Campaign.equipment_id')
 
     # MaterialCode: Define the type of material analysed: copper, sand, paper, etc..
     material_id = db.Column(
@@ -1289,7 +1289,7 @@ class Equipment(db.Model):
 
     # EditedInfo. False no changes.  True Indicates the equipment info have changed and should update information
     # while importing data from Lab.
-    modifier = db.Column(db.Boolean)
+    modifier = db.Column(db.Boolean, nullable=True)
 
     comments = db.Column(db.Text)  # Comments relation
 

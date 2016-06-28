@@ -10,8 +10,8 @@ from flask.ext import login
 
 
 class MyModelView(ModelView):
-    edit_modal = True
-    create_modal = True
+    # edit_modal = True
+    # create_modal = True
 
     def is_accessible(self):
         if not login.current_user.is_authenticated():
@@ -29,7 +29,7 @@ class EquipmentView(MyModelView):
     # Visible columns in the list view
     column_list = (
         'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
-        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status', 'modifier'
+        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
     )
     # List of columns that can be sorted.
     column_sortable_list = (
@@ -40,15 +40,17 @@ class EquipmentView(MyModelView):
     column_searchable_list = ('equipment_number', )
 
     column_hide_backrefs = False
-    inline_models = (Campaign,)
 
-    # form_excluded_columns = (
-    #     'id',
-    #     'location_id',
-    #     'equipment_number',
-    # )
-    # column_exclude_list = [
-    # ]
+    form_excluded_columns = (
+        #'id',
+        #'location_id',
+        'sibling',
+        'modifier',
+    )
+    column_exclude_list = [
+        'sibling',
+        'modifier'
+    ]
 
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession, name="Equipment", category="Equipment")
@@ -657,7 +659,7 @@ class CampaignView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
-    inline_models = (TestResult, )
+    inline_models = (TestResult,)
     column_editable_list = ['created_by']
     # form_create_rules = (rules.NestedRule(['created_by', rules.HTML('<a href="http://google.com">GOOGLE</a>')], ''), 'equipment', 'lab')
     # form_create_rules = (rules.NestedRule(['created_by', rules.HTML('<div class="form-group"><div class="col-md-10"><a href="http://google.com">GOOGLE</a></div></div>')], ''), 'equipment', 'lab')
@@ -669,6 +671,8 @@ class CampaignView(MyModelView):
               'gathered_test_type', 'error_code', 'seringe_num', 'sampling_card_print', 'sampling_card_gathered',
               'test_result'
               ]
+    column_exclude_list = ['if_rem', 'if_ok']
+
     linkable_fields = {'created_by': ('/admin/user/', 'users'), 'equipment': ('/admin/equipment/', 'equipment'),
                        'material': ('/admin/material/', 'material'), 'fluid_type': ('/admin/fluidtype/', 'fluid type'),
                        'lab': ('/admin/lab/', 'lab'), 'recommandation': ('/admin/recommendation/', 'recommendation')
@@ -682,7 +686,7 @@ class CampaignView(MyModelView):
         self.form_create_rules = [self.get_nested_rule(rule) if rule in self.linkable_fields else rule
                                   for rule in self.fields]
         super(CampaignView, self).__init__(
-            Campaign, dbsession, name="Campaign", category="Campaign"
+            Campaign, dbsession, name="Campaign", category="Campaign",
         )
 
 
