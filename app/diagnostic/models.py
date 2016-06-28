@@ -253,7 +253,7 @@ class Campaign(db.Model):
         db.ForeignKey("recommendation.id"),
         nullable=True
     )
-    recommandation = db.relationship('Recommendation', backref='campaign')
+    recommendation = db.relationship('Recommendation', backref='campaign')
 
     # RecommendationWritten:
     # The analyser gather all his though in this field to explain what should be done in plain that
