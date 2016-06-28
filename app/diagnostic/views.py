@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import datetime
+
+from flask.ext.admin.contrib.sqla.ajax import QueryAjaxModelLoader
 from flask.ext.admin.form import rules
 from .forms import *
 from flask.ext.admin.contrib.sqla import ModelView
@@ -648,7 +650,7 @@ class CampaignView(MyModelView):
     Campaign management view
     """
     # edit_template = 'microblog_edit.html'
-    # create_template = 'admin/diagnostic/campaign_create.html'
+    create_template = 'admin/diagnostic/add_tmp.html'
     # list_template = 'microblog_list.html'
 
     # Visible columns in the list view
@@ -669,17 +671,20 @@ class CampaignView(MyModelView):
               ]
     column_exclude_list = ['if_rem', 'if_ok']
 
-    linkable_fields = {'created_by': ('/admin/user/', 'users'), 'equipment': ('/admin/equipment/', 'equipment'),
-                       'material': ('/admin/material/', 'material'), 'fluid_type': ('/admin/fluidtype/', 'fluid type'),
-                       'lab': ('/admin/lab/', 'lab'), 'recommendation': ('/admin/recommendation/', 'recommendation')
+    linkable_fields = {'created_by': 'users',
+                       'equipment': 'equipment',
+                       'material': 'material',
+                       'fluid_type': 'fluid type',
+                       'lab': 'lab',
+                       'recommendation': 'recommendation'
                        }
 
-    # form_ajax_refs = {'created_by': {'fields': ['name'], 'page_size': 10}
+    # form_ajax_refs = {'created_by': QueryAjaxModelLoader('user', db.session, User, fields=['name'], page_size=10)
     #                   }
 
-
     def get_nested_rule(self, rule):
-        html_rule = rules.HTML('<a href="{}" target="_blank">List of {}</a>'.format(*self.linkable_fields[rule]))
+        html_text = '<input type="button" id="btn_{}" value="{}"/>'
+        html_rule = rules.HTML(html_text.format(rule, self.linkable_fields[rule]))
         return rules.NestedRule([rule, html_rule])
 
     def __init__(self, dbsession):
