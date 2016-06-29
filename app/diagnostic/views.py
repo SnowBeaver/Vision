@@ -6,7 +6,10 @@ from flask.ext.admin.contrib.sqla.ajax import QueryAjaxModelLoader
 from flask.ext.admin.form import rules
 from .forms import *
 from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext.admin.form.fields import Select2Field
+from flask.ext.admin.form.widgets import Select2Widget
 from flask.ext import login
+from app.users.models import User
 
 
 class MyModelView(ModelView):
@@ -649,27 +652,42 @@ class CampaignView(MyModelView):
     """
     Campaign management view
     """
-    # edit_template = 'microblog_edit.html'
-    create_template = 'admin/diagnostic/add_tmp.html'
-    # list_template = 'microblog_list.html'
 
     # Visible columns in the list view
     # can_view_details = True
-    column_hide_backrefs = False
+    column_hide_backrefs = True
 
     # # List of columns that can be sorted.
     column_sortable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     inline_models = (TestResult,)
     column_editable_list = ['created_by']
-    fields = ['created_by', 'date', 'equipment', 'material', 'fluid_type', 'lab', 'recommendation', 'date_application',
-              'data_valid', 'date_prelevement', 'analysis_number', 'percent_ratio', 'modifier', 'transmission',
-              'if_rem', 'if_ok', 'repair_date', 'repair_description', 'remark', 'mws', 'temperature', 'comments',
+
+    fields = ['created_by', 'date', 'equipment', 'performed_by', 'material', 'fluid_type', 'lab', 'recommendation', 'date_application',
+              'date_prelevement', 'analysis_number', 'percent_ratio', 'transmission',
+              'repair_date', 'repair_description', 'remark', 'mws', 'temperature', 'comments',
               'charge', 'ambient_air_temperature', 'containers', 'error_state', 'status1', 'status2',
-              'recommendationNotes', 'gathered_test_type', 'error_code', 'seringe_num', 'sampling_card_print',
+              'recommendationNotes', 'gathered_test_type', 'seringe_num', 'sampling_card_print',
               'sampling_card_gathered', 'test_result'
               ]
-    column_exclude_list = ['if_rem', 'if_ok']
+
+    # column_exclude_list = []
+    # form_excluded_columns = ['if_rem', 'if_ok']
+
+    # form_excluded_columns = (
+    #     #'id',
+    #     #'location_id',
+    #     'if_rem',
+    #     'if_ok',
+    #     'sibling',
+    #     'modifier',
+    # )
+    # column_exclude_list = [
+    #     'sibling',
+    #     'modifier'
+    #     'if_rem',
+    #     'if_ok',
+    # ]
 
     linkable_fields = {'created_by': 'users',
                        'equipment': 'equipment',
@@ -682,14 +700,8 @@ class CampaignView(MyModelView):
     # form_ajax_refs = {'created_by': QueryAjaxModelLoader('user', db.session, User, fields=['name'], page_size=10)
     #                   }
 
-    def get_nested_rule(self, rule):
-        html_text = '<input type="button" id="btn_{}" value="{}"/>'
-        html_rule = rules.HTML(html_text.format(rule, self.linkable_fields[rule]))
-        return rules.NestedRule([rule, html_rule])
 
     def __init__(self, dbsession):
-        self.form_create_rules = [self.get_nested_rule(rule) if rule in self.linkable_fields else rule
-                                  for rule in self.fields]
         super(CampaignView, self).__init__(
             Campaign, dbsession, name="Campaign", category="Campaign",
         )

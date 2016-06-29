@@ -194,7 +194,7 @@ class Campaign(db.Model):
         db.ForeignKey("fluid_type.id"),
         nullable=True
     )
-    fluid_type = db.relationship('FluidType', backref='campaign')
+    fluid_type = db.relationship('FluidType', foreign_keys='Campaign.fluid_type_id')
 
     # Load: what was the equipment loading at the time of sampling
     # MW MVR (Equipment can sustain), charge is the actual MVA MW
@@ -214,7 +214,7 @@ class Campaign(db.Model):
         db.ForeignKey("users_user.id"),
         nullable=True
     )
-    # performed_by = db.relationship('User', backref='campaign')
+    performed_by = db.relationship('User', foreign_keys='Campaign.performed_by_id')
 
     # Modify: Bolean field to indicate record has changed, and foreign database need updates
     modifier = db.Column(db.Boolean)
