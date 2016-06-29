@@ -660,7 +660,7 @@ class CampaignView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
-    inline_models = (TestResult,)
+    # inline_models = (TestResult,)
     column_editable_list = ['created_by']
 
     fields = ['created_by', 'date', 'equipment', 'performed_by', 'material', 'fluid_type', 'lab', 'recommendation', 'date_application',

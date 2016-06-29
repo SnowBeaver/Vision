@@ -114,6 +114,7 @@
   </a>
 {% endmacro %}
 
+
 {# ---------------------- Forms -------------------------- #}
 {% macro render_field(form, field, kwargs={}, caller=None) %}
   {% set direct_error = h.is_field_error(field.errors) %}
@@ -125,7 +126,9 @@
           &nbsp;
         {%- endif %}
     </label>
-  {% if 'QuerySelectField' in field.__class__.__name__ %}
+
+
+{% if 'QuerySelectField' in field.__class__.__name__ %}
       <div class="{{ kwargs.get('column_class', 'col-md-9') }}">
   {% else %}
       <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
@@ -143,11 +146,10 @@
         </ul>
       {% endif %}
     </div>
-        {{ linkable_fields }}
       {% if 'QuerySelectField' in field.__class__.__name__ %}
       <div class="col-md-1">
 {#          <input type="button" class="form-control btn-large" value="{{ _gettext('Manage') }} " id="btn_{{ field.name }}">#}
-          {{ add_modal_button(url='/admin/equipment', title='Manage', content='Manage', modal_window_id='fa_modal_window', btn_class='btn btn-default') }}
+          {{ add_modal_button(url=url_for("{}.index_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())), title='Manage', content='Manage', modal_window_id='fa_modal_window', btn_class='btn btn-default') }}
           {{ add_modal_window() }}
       </div>
       {% endif %}
