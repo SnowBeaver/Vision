@@ -119,12 +119,12 @@ class Contract(db.Model):
     # user 1 enters manually
     # ContractNum: What is the contract number within the company
     # ContractStatus: What is the status of the contract
-    status_id = db.Column(
+    contract_status_id = db.Column(
         'contract_status_id',
         db.ForeignKey("contract_status.id"),
         nullable=False
     )
-    status = relationship(ContractStatus, backref="contract")
+    contract_status = relationship(ContractStatus, backref="contract")
 
     def __repr__(self):
         return self.name
@@ -1568,7 +1568,7 @@ class TestResult(db.Model):
     # Reason: Code indicating why the analysis was performed.
     # Mainly use for oil sampling.
     reason_id = db.Column('test_reason_id', db.ForeignKey("test_reason.id"), nullable=True)
-    reason = db.relationship('TestReason', backref='test_result')
+    test_reason = db.relationship('TestReason', backref='test_result')
 
     # Date filled by labratory when analysis was done
     # AnalysisDate: Date the analysis was performed
@@ -1585,8 +1585,8 @@ class TestResult(db.Model):
 
     # Status: Code indicating the Analysis status.
     # Analysis is a process with several steps and each one has a code.
-    status_id = db.Column('status_id', sqla.ForeignKey("campaign_status.id"), nullable=True)
-    status = db.relationship('CampaignStatus', backref='test_result')
+    campaign_status_id = db.Column('status_id', sqla.ForeignKey("campaign_status.id"), nullable=True)
+    campaign_status = db.relationship('CampaignStatus', backref='test_result')
 
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)

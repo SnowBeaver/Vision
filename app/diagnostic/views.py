@@ -1,20 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import datetime
-
-from flask.ext.admin.contrib.sqla.ajax import QueryAjaxModelLoader
-from flask.ext.admin.form import rules
 from .forms import *
 from flask.ext.admin.contrib.sqla import ModelView
-from flask.ext.admin.form.fields import Select2Field
-from flask.ext.admin.form.widgets import Select2Widget
 from flask.ext import login
-from app.users.models import User
 
 
 class MyModelView(ModelView):
-    # edit_modal = True
-    # create_modal = True
+    edit_modal = True
+    create_modal = True
 
     def is_accessible(self):
         if not login.current_user.is_authenticated():
@@ -45,8 +39,8 @@ class EquipmentView(MyModelView):
     column_hide_backrefs = False
 
     form_excluded_columns = (
-        #'id',
-        #'location_id',
+        # 'id',
+        # 'location_id',
         'sibling',
         'modifier',
     )
@@ -75,7 +69,9 @@ class NormFuranView(MyModelView):
     column_searchable_list = ('name',)
 
     def __init__(self, dbsession):
-        super(NormFuranView, self).__init__(NormFuran, dbsession, name="Norms furan", category="Norms")
+        super(NormFuranView, self).__init__(
+            NormFuran, dbsession, name="Norms furan", category="Norms", endpoint='norm_furan'
+        )
 
 
 class NormIsolationView(MyModelView):
@@ -94,7 +90,9 @@ class NormIsolationView(MyModelView):
     column_searchable_list = ('c', 'f')
 
     def __init__(self, dbsession):
-        super(NormIsolationView, self).__init__(NormIsolation, dbsession, name="Norms isolation", category='Norms')
+        super(NormIsolationView, self).__init__(
+            NormIsolation, dbsession, name="Norms isolation", category='Norms', endpoint='norm_isolation'
+        )
 
 
 class NormPhysicView(MyModelView):
@@ -113,7 +111,9 @@ class NormPhysicView(MyModelView):
     column_searchable_list = ('name',)
 
     def __init__(self, dbsession):
-        super(NormPhysicView, self).__init__(NormPhysic, dbsession, name="Norms physic", category='Norms')
+        super(NormPhysicView, self).__init__(
+            NormPhysic, dbsession, name="Norms physic", category='Norms', endpoint='norm_physic'
+        )
 
 
 class NormGasView(MyModelView):
@@ -132,7 +132,9 @@ class NormGasView(MyModelView):
     column_searchable_list = ('name',)
 
     def __init__(self, dbsession):
-        super(NormGasView, self).__init__(NormGas, dbsession, name="Norms gas", category="Norms")
+        super(NormGasView, self).__init__(
+            NormGas, dbsession, name="Norms gas", category="Norms", endpoint='norm_gas'
+        )
 
 
 class ManufacturerView(MyModelView):
@@ -172,7 +174,7 @@ class FluidTypeView(MyModelView):
 
     def __init__(self, dbsession):
         super(FluidTypeView, self).__init__(
-            FluidType, dbsession, name="Fluid type", category="Types"
+            FluidType, dbsession, name="Fluid type", category="Types", endpoint='fluid_type'
         )
 
 
@@ -212,7 +214,8 @@ class AirCircuitBreakerView(MyModelView):
 
     def __init__(self, dbsession):
         super(AirCircuitBreakerView, self).__init__(
-            AirCircuitBreaker, dbsession, name="Air circuit breaker", category="Equipment"
+            AirCircuitBreaker, dbsession,
+            name="Air circuit breaker", category="Equipment", endpoint='air_circuit_breaker'
         )
 
 
@@ -352,7 +355,7 @@ class NeutralResistanceView(MyModelView):
 
     def __init__(self, dbsession):
         super(NeutralResistanceView, self).__init__(
-            NeutralResistance, dbsession, name="Neutral resistance", category="Equipment"
+            NeutralResistance, dbsession, name="Neutral resistance", category="Equipment", endpoint='neutral_resistance'
         )
 
 
@@ -411,7 +414,7 @@ class LoadTapChangerView(MyModelView):
 
     def __init__(self, dbsession):
         super(LoadTapChangerView, self).__init__(
-            LoadTapChanger, dbsession, name="Tap changer", category="Equipment"
+            LoadTapChanger, dbsession, name="Tap changer", category="Equipment", endpoint='load_tap_changer'
         )
 
 
@@ -492,7 +495,7 @@ class SwitchGearView(MyModelView):
 
     def __init__(self, dbsession):
         super(SwitchGearView, self).__init__(
-            SwitchGear, dbsession, name="Switch gear", category="Equipment"
+            SwitchGear, dbsession, name="Switch gear", category="Equipment", endpoint='switch_gear'
         )
 
 
@@ -516,7 +519,8 @@ class SynchronousMachineView(MyModelView):
 
     def __init__(self, dbsession):
         super(SynchronousMachineView, self).__init__(
-            SynchronousMachine, dbsession, name="Synchronous machine", category="Equipment"
+            SynchronousMachine, dbsession,
+            name="Synchronous machine", category="Equipment", endpoint='synchronous_machine'
         )
 
 
@@ -540,7 +544,8 @@ class InductionMachineView(MyModelView):
 
     def __init__(self, dbsession):
         super(InductionMachineView, self).__init__(
-            InductionMachine, dbsession, name="Induction machine", category="Equipment"
+            InductionMachine, dbsession,
+            name="Induction machine", category="Equipment", endpoint='induction_machine'
         )
 
 
@@ -566,7 +571,7 @@ class GasSensorView(MyModelView):
 
     def __init__(self, dbsession):
         super(GasSensorView, self).__init__(
-            GasSensor, dbsession, name="Gas sensor", category="Equipment"
+            GasSensor, dbsession, name="Gas sensor", category="Equipment", endpoint='gas_sensor'
         )
 
 
@@ -652,7 +657,7 @@ class CampaignView(MyModelView):
     """
     Campaign management view
     """
-
+    create_modal = False
     # Visible columns in the list view
     # can_view_details = True
     column_hide_backrefs = True
@@ -662,44 +667,6 @@ class CampaignView(MyModelView):
     column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     inline_models = (TestResult,)
     column_editable_list = ['created_by']
-
-    fields = ['created_by', 'date', 'equipment', 'performed_by', 'material', 'fluid_type', 'lab', 'recommendation', 'date_application',
-              'date_prelevement', 'analysis_number', 'percent_ratio', 'transmission',
-              'repair_date', 'repair_description', 'remark', 'mws', 'temperature', 'comments',
-              'charge', 'ambient_air_temperature', 'containers', 'error_state', 'status1', 'status2',
-              'recommendationNotes', 'gathered_test_type', 'seringe_num', 'sampling_card_print',
-              'sampling_card_gathered', 'test_result'
-              ]
-
-    # column_exclude_list = []
-    # form_excluded_columns = ['if_rem', 'if_ok']
-
-    # form_excluded_columns = (
-    #     #'id',
-    #     #'location_id',
-    #     'if_rem',
-    #     'if_ok',
-    #     'sibling',
-    #     'modifier',
-    # )
-    # column_exclude_list = [
-    #     'sibling',
-    #     'modifier'
-    #     'if_rem',
-    #     'if_ok',
-    # ]
-
-    linkable_fields = {'created_by': 'users',
-                       'equipment': 'equipment',
-                       'material': 'material',
-                       'fluid_type': 'fluid type',
-                       'lab': 'lab',
-                       'recommendation': 'recommendation'
-                       }
-
-    # form_ajax_refs = {'created_by': QueryAjaxModelLoader('user', db.session, User, fields=['name'], page_size=10)
-    #                   }
-
 
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
@@ -716,8 +683,8 @@ class ContractView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = (['name', 'code', 'status_id'])
-    column_searchable_list = (['name', 'code', 'status_id'])
+    # column_sortable_list = ()
+    column_searchable_list = (['name', 'code', 'contract_status_id'])
 
     def __init__(self, dbsession):
         super(ContractView, self).__init__(
@@ -739,7 +706,7 @@ class FluidProfileView(MyModelView):
 
     def __init__(self, dbsession):
         super(FluidProfileView, self).__init__(
-            FluidProfile, dbsession, name="Fluid profile", category="Campaign"
+            FluidProfile, dbsession, name="Fluid profile", category="Campaign", endpoint='fluid_profile'
         )
 
 
@@ -757,7 +724,7 @@ class TestStatusView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestStatusView, self).__init__(
-            TestStatus, dbsession, name="Test status", category="Statuses"
+            TestStatus, dbsession, name="Test status", category="Statuses", endpoint='test_status'
         )
 
 
@@ -777,7 +744,7 @@ class TestTypeView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestTypeView, self).__init__(
-            TestType, dbsession, name="Test type", category="Types"
+            TestType, dbsession, name="Test type", category="Types", endpoint='test_type'
         )
 
 
@@ -802,7 +769,8 @@ class TestTypeResultTableView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestTypeResultTableView, self).__init__(
-            TestTypeResultTable, dbsession, name="Test type result table", category="Conditions"
+            TestTypeResultTable, dbsession,
+            name="Test type result table", category="Conditions", endpoint='test_type_result_table'
         )
 
 
@@ -816,9 +784,9 @@ class TestResultView(MyModelView):
 
     # # List of columns that can be sorted.
     column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id',
-                            'status_id', 'sampling_point_id', 'campaign_id')
+                            'campaign_status', 'sampling_point_id', 'campaign_id')
     column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id',
-                              'status_id', 'sampling_point_id', 'campaign_id')
+                              'campaign_status_id', 'sampling_point_id', 'campaign_id')
 
     inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,
                      TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
@@ -827,7 +795,7 @@ class TestResultView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestResultView, self).__init__(
-            TestResult, dbsession, name="Test result", category="Campaign"
+            TestResult, dbsession, name="Test result", category="Campaign", endpoint='test_result'
         )
 
 
@@ -847,7 +815,7 @@ class EquipmentTypeView(MyModelView):
 
     def __init__(self, dbsession):
         super(EquipmentTypeView, self).__init__(
-            EquipmentType, dbsession, name="Equipment type", category="Types"
+            EquipmentType, dbsession, name="Equipment type", category="Types", endpoint='equipment_type'
         )
 
 
@@ -867,7 +835,7 @@ class ElectricalProfileView(MyModelView):
 
     def __init__(self, dbsession):
         super(ElectricalProfileView, self).__init__(
-            ElectricalProfile, dbsession, name="Electrical profile", category="Campaign"
+            ElectricalProfile, dbsession, name="Electrical profile", category="Campaign", endpoint='electrical_profile'
         )
 
 
@@ -905,7 +873,7 @@ class PowerSourceView(MyModelView):
 
     def __init__(self, dbsession):
         super(PowerSourceView, self).__init__(
-            PowerSource, dbsession, name="Power source", category="Equipment"
+            PowerSource, dbsession, name="Power source", category="Equipment", endpoint='power_source'
         )
 
 
@@ -981,7 +949,7 @@ class CampaignStatusView(MyModelView):
 
     def __init__(self, dbsession):
         super(CampaignStatusView, self).__init__(
-            CampaignStatus, dbsession, name="Campaign status", category="Statuses"
+            CampaignStatus, dbsession, name="Campaign status", category="Statuses", endpoint='campaign_status'
         )
 
 
@@ -999,7 +967,7 @@ class TestScheduleView(MyModelView):
 
     def __init__(self, dbsession):
         super(TestScheduleView, self).__init__(
-            TestSchedule, dbsession, name="Test schedule", category="Statuses"
+            TestSchedule, dbsession, name="Test schedule", category="Statuses", endpoint='test_schedule'
         )
 
 
@@ -1017,9 +985,9 @@ class MySimpleView(MyModelView):
 
 
 class MySimpleTypesView(MySimpleView):
-    def __init__(self, model_class, dbsession, name):
+    def __init__(self, model_class, dbsession, **kvargs):
         super(MySimpleTypesView, self).__init__(
-            model_class, dbsession, name=name, category="Types"
+            model_class, dbsession, category="Types", **kvargs
         )
 
 
@@ -1031,7 +999,7 @@ class TestReasonView(MySimpleTypesView):
 
     def __init__(self, dbsession):
         super(TestReasonView, self).__init__(
-            TestReason, dbsession, name="Test reason"
+            TestReason, dbsession, name="Test reason", endpoint='test_reason'
         )
 
 
@@ -1041,7 +1009,7 @@ class PressureUnitView(MySimpleTypesView):
     """
     def __init__(self, dbsession):
         super(PressureUnitView, self).__init__(
-            PressureUnit, dbsession, name="Pressure unit"
+            PressureUnit, dbsession, name="Pressure unit", endpoint='pressure_unit'
         )
 
 
@@ -1051,7 +1019,7 @@ class GasRelayView(MySimpleTypesView):
     """
     def __init__(self, dbsession):
         super(GasRelayView, self).__init__(
-            GasRelay, dbsession, name="Gas relay"
+            GasRelay, dbsession, name="Gas relay", endpoint='gas_relay'
         )
 
 
@@ -1061,7 +1029,7 @@ class PaintTypesView(MySimpleTypesView):
     """
     def __init__(self, dbsession):
         super(PaintTypesView, self).__init__(
-            PaintTypes, dbsession, name="Paint types"
+            PaintTypes, dbsession, name="Paint types", endpoint='paint_types'
         )
 
 
@@ -1073,7 +1041,7 @@ class SamplingPointView(MySimpleTypesView):
 
     def __init__(self, dbsession):
         super(SamplingPointView, self).__init__(
-            SamplingPoint, dbsession, name="Sampling point"
+            SamplingPoint, dbsession, name="Sampling point", endpoint='sampling_point'
         )
 
 
@@ -1105,14 +1073,14 @@ class NormTypeView(MySimpleTypesView):
 
     def __init__(self, dbsession):
         super(NormTypeView, self).__init__(
-            NormType, dbsession, name="Norm type"
+            NormType, dbsession, name="Norm type", endpoint='norm_type'
         )
 
 
 class MySimpleConditionsView(MySimpleView):
-    def __init__(self, model_class, dbsession, name):
+    def __init__(self, model_class, dbsession, **kvargs):
         super(MySimpleConditionsView, self).__init__(
-            model_class, dbsession, name=name, category="Conditions"
+            model_class, dbsession, category="Conditions", **kvargs
         )
 
 
@@ -1122,7 +1090,7 @@ class PumpConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(PumpConditionView, self).__init__(
-            PumpCondition, dbsession, name="Pump condition"
+            PumpCondition, dbsession, name="Pump condition", endpoint='pump_condition'
         )
 
 
@@ -1132,7 +1100,7 @@ class ValveConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(ValveConditionView, self).__init__(
-            ValveCondition, dbsession, name="Valve condition"
+            ValveCondition, dbsession, name="Valve condition", endpoint="valve_condition"
         )
 
 
@@ -1142,7 +1110,7 @@ class GasketConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(GasketConditionView, self).__init__(
-            GasketCondition, dbsession, name="Gasket condition"
+            GasketCondition, dbsession, name="Gasket condition", endpoint="gasket_condition"
         )
 
 
@@ -1152,7 +1120,7 @@ class OverallConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(OverallConditionView, self).__init__(
-            OverallCondition, dbsession, name="Overall condition"
+            OverallCondition, dbsession, name="Overall condition", endpoint="overall_condition"
         )
 
 
@@ -1162,7 +1130,7 @@ class TapFilterConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(TapFilterConditionView, self).__init__(
-            TapFilterCondition, dbsession, name="TapFilter condition"
+            TapFilterCondition, dbsession, name="Tap filter condition", endpoint="tap_filter_condition"
         )
 
 
@@ -1172,7 +1140,7 @@ class ConnectionConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(ConnectionConditionView, self).__init__(
-            ConnectionCondition, dbsession, name="Connection condition"
+            ConnectionCondition, dbsession, name="Connection condition", endpoint="connection_condition"
         )
 
 
@@ -1182,7 +1150,7 @@ class FoundationConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(FoundationConditionView, self).__init__(
-            FoundationCondition, dbsession, name="Foundation condition"
+            FoundationCondition, dbsession, name="Foundation condition", endpoint="foundation_condition"
         )
 
 
@@ -1192,7 +1160,7 @@ class HeatingConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(HeatingConditionView, self).__init__(
-            HeatingCondition, dbsession, name="Heating condition"
+            HeatingCondition, dbsession, name="Heating condition", endpoint="heating_condition"
         )
 
 
@@ -1202,14 +1170,14 @@ class FanConditionView(MySimpleConditionsView):
     """
     def __init__(self, dbsession):
         super(FanConditionView, self).__init__(
-            FanCondition, dbsession, name="Fan condition"
+            FanCondition, dbsession, name="Fan condition", endpoint="fan_condition"
         )
 
 
 class MySimpleStatusesView(MySimpleView):
-    def __init__(self, model_class, dbsession, name):
+    def __init__(self, model_class, dbsession, **kvargs):
         super(MySimpleStatusesView, self).__init__(
-            model_class, dbsession, name=name, category="Statuses"
+            model_class, dbsession, category="Statuses", **kvargs
         )
 
 
@@ -1219,7 +1187,7 @@ class FluidLevelView(MySimpleStatusesView):
     """
     def __init__(self, dbsession):
         super(FluidLevelView, self).__init__(
-            FluidLevel, dbsession, name="Fluid level"
+            FluidLevel, dbsession, name="Fluid level", endpoint="fluid_level"
         )
 
 
@@ -1229,7 +1197,7 @@ class GasLevelView(MySimpleStatusesView):
     """
     def __init__(self, dbsession):
         super(GasLevelView, self).__init__(
-            GasLevel, dbsession, name="Gas level"
+            GasLevel, dbsession, name="Gas level", endpoint="gas_level"
         )
 
 
@@ -1239,7 +1207,7 @@ class TapCounterStatusView(MySimpleStatusesView):
     """
     def __init__(self, dbsession):
         super(TapCounterStatusView, self).__init__(
-            TapCounterStatus, dbsession, name="Tap counter status"
+            TapCounterStatus, dbsession, name="Tap counter status", endpoint="tap_counter_status"
         )
 
 
@@ -1251,7 +1219,7 @@ class ContractStatusView(MySimpleStatusesView):
 
     def __init__(self, dbsession):
         super(ContractStatusView, self).__init__(
-            ContractStatus, dbsession, name="Contract status"
+            ContractStatus, dbsession, name="Contract status", endpoint="contract_status"
         )
 
 
@@ -1263,9 +1231,9 @@ class MyTestView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
 
-    def __init__(self, model_class, dbsession, name):
+    def __init__(self, model_class, dbsession, **kvargs):
         super(MyTestView, self).__init__(
-            model_class, dbsession, name=name, category="Tests"
+            model_class, dbsession, category="Tests", **kvargs
         )
 
 
@@ -1276,7 +1244,7 @@ class BushingTestView(MyTestView):
 
     def __init__(self, dbsession):
         super(BushingTestView, self).__init__(
-            BushingTest, dbsession, name="Bushing test"
+            BushingTest, dbsession, name="Bushing test", endpoint="bushing_test"
         )
 
 
@@ -1287,7 +1255,7 @@ class WindingTestView(MyTestView):
 
     def __init__(self, dbsession):
         super(WindingTestView, self).__init__(
-            WindingTest, dbsession, name="Winding test"
+            WindingTest, dbsession, name="Winding test", endpoint="winding_test"
         )
 
 
@@ -1297,7 +1265,7 @@ class VisualInspectionTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(VisualInspectionTestView, self).__init__(
-            VisualInspectionTest, dbsession, name="Visual inspection test"
+            VisualInspectionTest, dbsession, name="Visual inspection test", endpoint="visual_inspection_test"
         )
 
 
@@ -1307,7 +1275,8 @@ class InsulationResistanceTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(InsulationResistanceTestView, self).__init__(
-            InsulationResistanceTest, dbsession, name="Insulation resistance test"
+            InsulationResistanceTest, dbsession,
+            name="Insulation resistance test", endpoint="insulation_resistance_test"
         )
 
 
@@ -1317,7 +1286,8 @@ class PolymerisationDegreeTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(PolymerisationDegreeTestView, self).__init__(
-            PolymerisationDegreeTest, dbsession, name="Polymerisation degree test"
+            PolymerisationDegreeTest, dbsession,
+            name="Polymerisation degree test", endpoint="polymerisation_degree_test"
         )
 
 
@@ -1327,7 +1297,8 @@ class TransformerTurnRatioTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(TransformerTurnRatioTestView, self).__init__(
-            TransformerTurnRatioTest, dbsession, name="Transformer turn ratio test"
+            TransformerTurnRatioTest, dbsession,
+            name="Transformer turn ratio test", endpoint="transformer_turn_ratio_test"
         )
 
 
@@ -1337,7 +1308,7 @@ class WindingResistanceTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(WindingResistanceTestView, self).__init__(
-            WindingResistanceTest, dbsession, name="Winding resistance test"
+            WindingResistanceTest, dbsession, name="Winding resistance test", endpoint="winding_resistance_test"
         )
 
 
@@ -1347,7 +1318,7 @@ class DissolvedGasTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(DissolvedGasTestView, self).__init__(
-            DissolvedGasTest, dbsession, name="Dissolved gas test"
+            DissolvedGasTest, dbsession, name="Dissolved gas test", endpoint="dissolved_gas_test"
         )
 
 
@@ -1357,7 +1328,7 @@ class WaterTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(WaterTestView, self).__init__(
-            WaterTest, dbsession, name="Water test"
+            WaterTest, dbsession, name="Water test", endpoint="water_test"
         )
 
 
@@ -1367,7 +1338,7 @@ class FuranTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(FuranTestView, self).__init__(
-            FuranTest, dbsession, name="Furan test"
+            FuranTest, dbsession, name="Furan test", endpoint="furan_test"
         )
 
 
@@ -1377,7 +1348,7 @@ class InhibitorTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(InhibitorTestView, self).__init__(
-            InhibitorTest, dbsession, name="Inhibitor test"
+            InhibitorTest, dbsession, name="Inhibitor test", endpoint="inhibitor_test"
         )
 
 
@@ -1387,7 +1358,7 @@ class PCBTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(PCBTestView, self).__init__(
-            PCBTest, dbsession, name="PCB test"
+            PCBTest, dbsession, name="PCB test", endpoint="pcb_test"
         )
 
 
@@ -1397,7 +1368,7 @@ class ParticleTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(ParticleTestView, self).__init__(
-            ParticleTest, dbsession, name="Particle test"
+            ParticleTest, dbsession, name="Particle test", endpoint="particle_test"
         )
 
 
@@ -1407,7 +1378,7 @@ class MetalsInOilTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(MetalsInOilTestView, self).__init__(
-            MetalsInOilTest, dbsession, name="Metals in oil test"
+            MetalsInOilTest, dbsession, name="Metals in oil test", endpoint="metals_in_oil_test"
         )
 
 
@@ -1417,7 +1388,7 @@ class FluidTestView(MyTestView):
     """
     def __init__(self, dbsession):
         super(FluidTestView, self).__init__(
-            FluidTest, dbsession, name="Fluid test"
+            FluidTest, dbsession, name="Fluid test", endpoint="fluid_test"
         )
 
 

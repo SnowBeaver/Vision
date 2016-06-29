@@ -115,6 +115,23 @@
 {% endmacro %}
 
 {# ---------------------- Forms -------------------------- #}
+{% macro add_modal_button_if_can(field) %}
+  {% if 'QuerySelectField' in field.__class__.__name__ and field.short_name %}
+    {% set linkable_fields = {'created_by': 'user',
+                              'performed_by': 'user',
+                              } %}
+      {% if field.short_name in linkable_fields %}
+        {% set url_str = url_for("{}.index_view".format(linkable_fields.get(field.short_name))) %}
+      {% else %}
+        {% set url_str = url_for("{}.index_view".format(field.short_name)) %}
+      {% endif %}
+        <div class="col-md-1">
+          {{ add_modal_button(url=url_str, title='Manage', content='Manage', modal_window_id='rel_{}_modal_window'.format(field.short_name), btn_class='btn btn-default') }}
+          {{ add_modal_window('rel_{}_modal_window'.format(field.short_name)) }}
+        </div>
+  {% endif %}
+{% endmacro %}
+
 {% macro render_field(form, field, kwargs={}, caller=None) %}
   {% set direct_error = h.is_field_error(field.errors) %}
   <div class="form-group{{ ' has-error' if direct_error else '' }}">
@@ -143,14 +160,7 @@
         </ul>
       {% endif %}
     </div>
-        {{ linkable_fields }}
-      {% if 'QuerySelectField' in field.__class__.__name__ %}
-      <div class="col-md-1">
-{#          <input type="button" class="form-control btn-large" value="{{ _gettext('Manage') }} " id="btn_{{ field.name }}">#}
-          {{ add_modal_button(url='/admin/equipment', title='Manage', content='Manage', modal_window_id='fa_modal_window', btn_class='btn btn-default') }}
-          {{ add_modal_window() }}
-      </div>
-      {% endif %}
+    {{ add_modal_button_if_can(field) }}
     {% if caller %}
       {{ caller(form, field, direct_error, kwargs) }}
     {% endif %}
