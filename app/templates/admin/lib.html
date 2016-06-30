@@ -147,11 +147,13 @@
       {% endif %}
     </div>
       {% if 'QuerySelectField' in field.__class__.__name__ %}
-      <div class="col-md-1">
-{#          <input type="button" class="form-control btn-large" value="{{ _gettext('Manage') }} " id="btn_{{ field.name }}">#}
-          {{ add_modal_button(url=url_for("{}.index_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())), title='Manage', content='Manage', modal_window_id='fa_modal_window', btn_class='btn btn-default') }}
-          {{ add_modal_window() }}
-      </div>
+          <div class="col-md-1">
+              {#  <input type="button" class="form-control btn-large" value="{{ _gettext('Manage') }} " id="btn_{{ field.name }}">#}
+{#              <a class="form-control btn btn-default" href="{{ url_for("{}.create_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())) }}" target="_blank">{{ _gettext('New') }}</a>#}
+              <a class="form-control btn btn-default" onclick="window.open('{{ url_for("{}.create_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())) }}', 'newwindow', 'width=1000, height=850')" target="_blank">{{ _gettext('New') }}</a>
+{#               {{ add_modal_button(url=url_for("{}.create_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())), title='Manage', content='New', modal_window_id='fa_modal_window{}'.format(field.id), btn_class='btn btn-default') }}#}
+{#              {{ add_modal_window('fa_modal_window{}'.format(field.id)) }}#}
+          </div>
       {% endif %}
     {% if caller %}
       {{ caller(form, field, direct_error, kwargs) }}

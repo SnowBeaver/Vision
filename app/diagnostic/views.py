@@ -140,16 +140,16 @@ class ManufacturerView(MyModelView):
     Manufacturer management view
     """
     # Visible columns in the list view
-    column_hide_backrefs = False
+    column_hide_backrefs = True
 
     # # List of columns that can be sorted.
     column_sortable_list = ('name', )
     column_searchable_list = ('name', )
 
-    inline_models = (GasSensor, Transformer, Breaker, AirCircuitBreaker, Capacitor, PowerSource, SwitchGear, Tank,
-                     InductionMachine, SynchronousMachine, Rectifier, LoadTapChanger, Bushing, NeutralResistance,
-                     Switch, Cable,
-                     )
+    # inline_models = (GasSensor, Transformer, Breaker, AirCircuitBreaker, Capacitor, PowerSource, SwitchGear, Tank,
+    #                  InductionMachine, SynchronousMachine, Rectifier, LoadTapChanger, Bushing, NeutralResistance,
+    #                  Switch, Cable,
+    #                  )
 
     def __init__(self, dbsession):
         super(ManufacturerView, self).__init__(
@@ -674,20 +674,30 @@ class CampaignView(MyModelView):
     # column_exclude_list = []
     # form_excluded_columns = ['if_rem', 'if_ok']
 
-    # form_excluded_columns = (
-    #     #'id',
-    #     #'location_id',
-    #     'if_rem',
-    #     'if_ok',
-    #     'sibling',
-    #     'modifier',
-    # )
-    # column_exclude_list = [
+    form_excluded_columns = (
+        #'id',
+        #'location_id',
+        'if_rem',
+        'if_ok',
+        'sibling',
+        'modifier',
+    )
+    column_list = (
+        'date',
+        'analysis_number',
+        'equipment',
+        'fluid_type',
+        'created_by',
+        'performed_by',
+        'lab',
+        'repair_date',
+    )
+    # column_exclude_list = (
     #     'sibling',
     #     'modifier'
     #     'if_rem',
     #     'if_ok',
-    # ]
+    # )
 
     linkable_fields = {'created_by': 'users',
                        'equipment': 'equipment',
@@ -914,16 +924,17 @@ class NormView(MyModelView):
     Norm management view
     """
     # Visible columns in the list view
+    column_hide_backrefs = True
     can_view_details = True
-    column_hide_backrefs = False
+    column_hide_backrefs = True
 
     # # List of columns that can be sorted.
     # column_sortable_list = ('name', 'serial', 'manufacturer')
-    column_searchable_list = ('name', 'type_id')
+    column_searchable_list = ('name', 'table')
 
     def __init__(self, dbsession):
         super(NormView, self).__init__(
-            Norm, dbsession, name="Norm", category="Types"
+            Norm, dbsession, name="Norm", category="Norms"
         )
 
 
@@ -1094,18 +1105,6 @@ class DownstreamView(MySimpleTypesView):
     def __init__(self, dbsession):
         super(DownstreamView, self).__init__(
             Downstream, dbsession, name="Downstream"
-        )
-
-
-class NormTypeView(MySimpleTypesView):
-    """
-    NormType management view
-    """
-    inline_models = (Norm,)
-
-    def __init__(self, dbsession):
-        super(NormTypeView, self).__init__(
-            NormType, dbsession, name="Norm type"
         )
 
 
@@ -1422,7 +1421,7 @@ class FluidTestView(MyTestView):
 
 
 simple_views = {TestReasonView, PressureUnitView, GasRelayView, PaintTypesView, SamplingPointView, UpstreamView,
-                DownstreamView, NormTypeView, FanConditionView, HeatingConditionView, FoundationConditionView,
+                DownstreamView, FanConditionView, HeatingConditionView, FoundationConditionView,
                 ConnectionConditionView, TapFilterConditionView, OverallConditionView, GasketConditionView,
                 ValveConditionView, PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
                 FluidLevelView
