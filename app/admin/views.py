@@ -119,6 +119,116 @@ class MyAdminIndexView(admin.AdminIndexView):
 
 
 class MyModelView(ModelView):
+    edit_modal = True
+    create_modal = True
+
+    @expose('/modal/')
+    def modal(self):
+        """
+            List view in modal form
+        """
+        if self.column_editable_list:
+            form = self.list_form()
+        else:
+            form = None
+
+        if self.can_delete:
+            delete_form = self.delete_form()
+        else:
+            delete_form = None
+
+        # Grab parameters from URL
+        view_args = self._get_list_extra_args()
+
+        # Map column index to column name
+        sort_column = self._get_column_by_idx(view_args.sort)
+        if sort_column is not None:
+            sort_column = sort_column[0]
+
+        # Get count and data
+        count, data = self.get_list(view_args.page, sort_column, view_args.sort_desc,
+                                    view_args.search, view_args.filters)
+
+        # Calculate number of pages
+        if count is not None:
+            num_pages = count // self.page_size
+            if count % self.page_size != 0:
+                num_pages += 1
+        else:
+            num_pages = None
+
+        # Various URL generation helpers
+        def pager_url(p):
+            # Do not add page number if it is first page
+            if p == 0:
+                p = None
+
+            return self._get_list_url(view_args.clone(page=p))
+
+        def sort_url(column, invert=False):
+            desc = None
+
+            if invert and not view_args.sort_desc:
+                desc = 1
+
+            return self._get_list_url(view_args.clone(sort=column, sort_desc=desc))
+
+        # Actions
+        actions, actions_confirmation = self.get_actions_list()
+
+        clear_search_url = self._get_list_url(view_args.clone(page=0,
+                                                              sort=view_args.sort,
+                                                              sort_desc=view_args.sort_desc,
+                                                              search=None,
+                                                              filters=None))
+        template = '/admin/diagnostic/modal_list.html'
+
+        return self.render(
+            template,
+            data=data,
+            form=form,
+            delete_form=delete_form,
+
+            # List
+            list_columns=self._list_columns,
+            sortable_columns=self._sortable_columns,
+            editable_columns=self.column_editable_list,
+
+            # Pagination
+            count=count,
+            pager_url=pager_url,
+            num_pages=num_pages,
+            page=view_args.page,
+            page_size=self.page_size,
+
+            # Sorting
+            sort_column=view_args.sort,
+            sort_desc=view_args.sort_desc,
+            sort_url=sort_url,
+
+            # Search
+            search_supported=self._search_supported,
+            clear_search_url=clear_search_url,
+            search=view_args.search,
+
+            # Filters
+            filters=self._filters,
+            filter_groups=self._get_filter_groups(),
+            active_filters=view_args.filters,
+
+            # Actions
+            actions=actions,
+            actions_confirmation=actions_confirmation,
+
+            # Misc
+            enumerate=enumerate,
+            get_pk_value=self.get_pk_value,
+            get_value=self.get_list_value,
+            return_url=self._get_list_url(view_args),
+        )
+
+
+
     def is_accessible(self):
         if not login.current_user.is_authenticated():
             return False

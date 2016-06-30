@@ -1,22 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from flask.ext.admin import expose
 from .forms import *
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext import login
-
-
-class MyModelView(ModelView):
-    edit_modal = True
-    create_modal = True
-
-    def is_accessible(self):
-        if not login.current_user.is_authenticated():
-            return False
-
-        # Prevent administration of Roles unless the
-        # currently logged-in user has the "admin" role
-        return login.current_user.has_role('admin')
+from app.admin.views import MyModelView
 
 
 class EquipmentView(MyModelView):

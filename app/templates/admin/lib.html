@@ -121,9 +121,9 @@
                               'performed_by': 'user',
                               } %}
       {% if field.short_name in linkable_fields %}
-        {% set url_str = url_for("{}.index_view".format(linkable_fields.get(field.short_name))) %}
+        {% set url_str = url_for("{}.modal".format(linkable_fields.get(field.short_name))) %}
       {% else %}
-        {% set url_str = url_for("{}.index_view".format(field.short_name)) %}
+        {% set url_str = url_for("{}.modal".format(field.short_name)) %}
       {% endif %}
         <div class="col-md-1">
           {{ add_modal_button(url=url_str, title='Manage', content='Manage', modal_window_id='rel_{}_modal_window'.format(field.short_name), btn_class='btn btn-default') }}
