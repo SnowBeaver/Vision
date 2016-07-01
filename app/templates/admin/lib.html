@@ -114,24 +114,8 @@
   </a>
 {% endmacro %}
 
-{# ---------------------- Forms -------------------------- #}
-{% macro add_modal_button_if_can(field) %}
-  {% if 'QuerySelectField' in field.__class__.__name__ and field.short_name %}
-    {% set linkable_fields = {'created_by': 'user',
-                              'performed_by': 'user',
-                              } %}
-      {% if field.short_name in linkable_fields %}
-        {% set url_str = url_for("{}.modal".format(linkable_fields.get(field.short_name))) %}
-      {% else %}
-        {% set url_str = url_for("{}.modal".format(field.short_name)) %}
-      {% endif %}
-        <div class="col-md-1">
-          {{ add_modal_button(url=url_str, title='Manage', content='Manage', modal_window_id='rel_{}_modal_window'.format(field.short_name), btn_class='btn btn-default') }}
-          {{ add_modal_window('rel_{}_modal_window'.format(field.short_name)) }}
-        </div>
-  {% endif %}
-{% endmacro %}
 
+{# ---------------------- Forms -------------------------- #}
 {% macro render_field(form, field, kwargs={}, caller=None) %}
   {% set direct_error = h.is_field_error(field.errors) %}
   <div class="form-group{{ ' has-error' if direct_error else '' }}">
@@ -142,11 +126,11 @@
           &nbsp;
         {%- endif %}
     </label>
-  {% if 'QuerySelectField' in field.__class__.__name__ %}
-      <div class="{{ kwargs.get('column_class', 'col-md-9') }}">
-  {% else %}
-      <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
-  {% endif %}
+      {% if 'QuerySelectField' in field.__class__.__name__ %}
+          <div class="{{ kwargs.get('column_class', 'col-md-9') }}">
+      {% else %}
+          <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
+      {% endif %}
       {% set _dummy = kwargs.setdefault('class', 'form-control') %}
       {{ field(**kwargs)|safe }}
       {% if field.description %}
@@ -160,7 +144,15 @@
         </ul>
       {% endif %}
     </div>
-    {{ add_modal_button_if_can(field) }}
+      {% if 'QuerySelectField' in field.__class__.__name__ %}
+          <div class="col-md-1">
+              {#  <input type="button" class="form-control btn-large" value="{{ _gettext('Manage') }} " id="btn_{{ field.name }}">#}
+{#              <a class="form-control btn btn-default" href="{{ url_for("{}.create_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())) }}" target="_blank">{{ _gettext('New') }}</a>#}
+              <a class="form-control btn btn-default" onclick="window.open('{{ url_for("{}.modal".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())) }}', 'newwindow', 'width=1000, height=850')" target="_blank">{{ _gettext('New') }}</a>
+{#               {{ add_modal_button(url=url_for("{}.create_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())), title='Manage', content='New', modal_window_id='fa_modal_window{}'.format(field.id), btn_class='btn btn-default') }}#}
+{#              {{ add_modal_window('fa_modal_window{}'.format(field.id)) }}#}
+          </div>
+      {% endif %}
     {% if caller %}
       {{ caller(form, field, direct_error, kwargs) }}
     {% endif %}

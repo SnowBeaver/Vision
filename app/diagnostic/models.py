@@ -30,11 +30,12 @@ class Lab(db.Model):
                )
 
     def __repr__(self):
-        return "Lab(id=%r, code=%r, name=%r)" % (
-            self.id,
-            self.code,
-            self.name
-        )
+        return self.name
+        # return "Lab(id=%r, code=%r, name=%r)" % (
+        #     self.id,
+        #     self.code,
+        #     self.name
+        # )
 
 
 class ElectricalProfile(db.Model):
@@ -479,7 +480,7 @@ class GasSensor(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref='gas_sensor')
+    manufacturer = relationship('Manufacturer', foreign_keys='GasSensor.manufacturer_id')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     h2 = db.Column(db.Float(53), server_default=db.text("0"))  # Remaining are equivalent
@@ -522,7 +523,7 @@ class Transformer(db.Model):
         nullable=False
     )
 
-    manufacturer = relationship('Manufacturer', backref='transformer')
+    manufacturer = relationship('Manufacturer', foreign_keys='Transformer.manufacturer_id')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
     gassensor_id = db.Column(
         'gas_sensor_id',
@@ -773,7 +774,7 @@ class Breaker(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref='breaker')
+    manufacturer = relationship('Manufacturer', foreign_keys='Breaker.manufacturer_id')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
@@ -806,7 +807,7 @@ class LoadTapChanger(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref='tap_changer')
+    manufacturer = relationship('Manufacturer', foreign_keys='LoadTapChanger.manufacturer_id')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
@@ -843,7 +844,7 @@ class Bushing(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = db.relationship('Manufacturer', backref='bushing')
+    manufacturer = relationship('Manufacturer', foreign_keys='Bushing.manufacturer_id')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
@@ -907,7 +908,7 @@ class NeutralResistance(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref='resistance')
+    manufacturer = relationship('Manufacturer', foreign_keys='NeutralResistance.manufacturer_id')
     manufactured = db.Column(db.Integer)
 
     # its a separate device should be splitted into another table
@@ -946,7 +947,7 @@ class AirCircuitBreaker(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    Manufacturer = db.relationship('Manufacturer', backref="air_breaker")
+    manufacturer = relationship('Manufacturer', foreign_keys='AirCircuitBreaker.manufacturer_id')
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
@@ -980,7 +981,7 @@ class Capacitor(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref='capacitor')
+    manufacturer = relationship('Manufacturer', foreign_keys='Capacitor.manufacturer_id')
 
     # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
@@ -1017,8 +1018,8 @@ class PowerSource(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = db.relationship('Manufacturer', backref='powersource')
 
+    manufacturer = relationship('Manufacturer', foreign_keys='PowerSource.manufacturer_id')
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -1051,7 +1052,7 @@ class SwitchGear(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref="switchgear")
+    manufacturer = relationship('Manufacturer', foreign_keys='SwitchGear.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
@@ -1083,7 +1084,7 @@ class InductionMachine(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref="induction_machine")
+    manufacturer = relationship('Manufacturer', foreign_keys='InductionMachine.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
@@ -1115,7 +1116,7 @@ class SynchronousMachine(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref="synchronous_machine")
+    manufacturer = relationship('Manufacturer', foreign_keys='SynchronousMachine.manufacturer_id')
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
     description = db.Column(db.UnicodeText())  # description. Describe the equipment function
@@ -1147,7 +1148,7 @@ class Rectifier(db.Model):
         nullable=False
     )
 
-    manufacturer = relationship('Manufacturer', backref="rectifier")
+    manufacturer = relationship('Manufacturer', foreign_keys='Rectifier.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
@@ -1179,7 +1180,7 @@ class Tank(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref="tank")
+    manufacturer = relationship('Manufacturer', foreign_keys='Tank.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
@@ -1211,7 +1212,7 @@ class Switch(db.Model):
         db.ForeignKey("manufacturer.id"),
         nullable=False
     )
-    manufacturer = relationship('Manufacturer', backref="switch")
+    manufacturer = relationship('Manufacturer', foreign_keys='Switch.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
@@ -1244,7 +1245,7 @@ class Cable(db.Model):
         nullable=False
     )
 
-    manufacturer = db.relationship("Manufacturer", backref='cable')
+    manufacturer = relationship('Manufacturer', foreign_keys='Cable.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     # Year manufactured
@@ -1374,25 +1375,8 @@ class Norm(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
-    type_id = db.Column(
-        'norm_type_id',
-        db.ForeignKey("norm_type.id"),
-        nullable=False
-    )
-    type = db.relationship('NormType', backref='norm')
-
-    # NormPHY.  Fluid physical properties norms
-    # NormDissolvedGas. Fluid dissolved gas norms
-    # NormFluid# NormFur. Fluid furan norms
-    def __repr__(self):
-        return self.name
-
-
-class NormType(db.Model):
-    __tablename__ = u'norm_type'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
+    table = db.Column(db.String(50), index=True)
+    # type = db.relationship('NormType', backref='norm')
 
     # NormPHY.  Fluid physical properties norms
     # NormDissolvedGas. Fluid dissolved gas norms
