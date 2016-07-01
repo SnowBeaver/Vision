@@ -654,6 +654,25 @@ class CampaignView(MyModelView):
     # inline_models = (TestResult,)
     column_editable_list = ['created_by']
 
+    form_excluded_columns = (
+      # 'id',
+      # 'location_id',
+        'if_rem',
+        'if_ok',
+        'sibling',
+        'modifier',
+    )
+    column_list = (
+        'date',
+        'analysis_number',
+        'equipment',
+        'fluid_type',
+        'created_by',
+        'performed_by',
+        'lab',
+        'repair_date',
+    )
+
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
             Campaign, dbsession, name="Campaign", category="Campaign",
