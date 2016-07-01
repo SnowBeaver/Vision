@@ -661,6 +661,11 @@ class CampaignView(MyModelView):
         'if_ok',
         'sibling',
         'modifier',
+        'data_valid',
+        'status1',
+        'status2',
+        'error_state',
+        'error_code',
     )
     column_list = (
         'date',
@@ -672,6 +677,16 @@ class CampaignView(MyModelView):
         'lab',
         'repair_date',
     )
+    column_filters = [
+        'date',
+        'analysis_number',
+        'equipment',
+        'fluid_type',
+        'created_by',
+        'performed_by',
+        'lab',
+        'repair_date',
+    ]
 
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
@@ -712,24 +727,6 @@ class FluidProfileView(MyModelView):
     def __init__(self, dbsession):
         super(FluidProfileView, self).__init__(
             FluidProfile, dbsession, name="Fluid profile", category="Campaign"
-        )
-
-
-class TestStatusView(MyModelView):
-    """
-    TestStatus management view
-    """
-    # Visible columns in the list view
-    # can_view_details = True
-    column_hide_backrefs = False
-
-    # # List of columns that can be sorted.
-    column_sortable_list = (['name', 'code'])
-    column_searchable_list = (['name', 'code'])
-
-    def __init__(self, dbsession):
-        super(TestStatusView, self).__init__(
-            TestStatus, dbsession, name="Test status", category="Statuses"
         )
 
 
@@ -789,9 +786,9 @@ class TestResultView(MyModelView):
 
     # # List of columns that can be sorted.
     column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id',
-                            'campaign_status', 'sampling_point_id', 'campaign_id')
+                            'test_status', 'sampling_point_id', 'campaign_id')
     column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id',
-                              'campaign_status_id', 'sampling_point_id', 'campaign_id')
+                              'test_status_id', 'sampling_point_id', 'campaign_id')
 
     inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,
                      TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
@@ -938,23 +935,21 @@ class SyringeView(MyModelView):
         )
 
 
-class CampaignStatusView(MyModelView):
+class TestStatusView(MyModelView):
     """
-    CampaignStatus management view
+    TestStatus management view
     """
     # Visible columns in the list view
-    can_view_details = True
+    # can_view_details = True
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    # column_sortable_list = ('name', 'code')
-    column_searchable_list = ('name', 'code')
-
-    # inline_models = (TestResult,)
+    column_sortable_list = (['name', 'code'])
+    column_searchable_list = (['name', 'code'])
 
     def __init__(self, dbsession):
-        super(CampaignStatusView, self).__init__(
-            CampaignStatus, dbsession, name="Campaign status", category="Statuses"
+        super(TestStatusView, self).__init__(
+            CampaignStatus, dbsession, name="Test status", category="Statuses"
         )
 
 
@@ -1396,3 +1391,11 @@ test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, Insula
               DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView, FluidTestView,
               MetalsInOilTestView, ParticleTestView
               }
+other_views = {EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, NormGasView, AirCircuitBreakerView,
+               ManufacturerView, BushingView, CableView, CapacitorView, RectifierView, NeutralResistanceView, TankView,
+               LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView,
+               InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
+               ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
+               EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
+               SyringeView, TestScheduleView
+               }

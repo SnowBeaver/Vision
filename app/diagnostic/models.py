@@ -310,11 +310,11 @@ class Campaign(db.Model):
     # Seringe number as printed
     seringe_num = db.Column(db.String(50))
 
-    data_valid = db.Column(db.Integer, server_default=db.text("0"))  # DataValid: Need to look into
-    status1 = db.Column(db.Integer, server_default=db.text("0"))  # Status1: Need to look into
-    status2 = db.Column(db.Integer, server_default=db.text("0"))  # Status2:	 Need to look into
-    error_state = db.Column(db.Integer, server_default=db.text("0"))  # ErrorState: Need to look into
-    error_code = db.Column(db.Integer, server_default=db.text("0"))  # ErrorCode: Need to look into
+    data_valid = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # DataValid: Need to look into
+    status1 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status1: Need to look into
+    status2 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status2:	 Need to look into
+    error_state = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorState: Need to look into
+    error_code = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorCode: Need to look into
     # AmbientAirTemperature: Ambient air temperature at sampling time
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
 
@@ -1392,6 +1392,8 @@ class Recommendation(db.Model):
     name = db.Column(db.String(50), index=True)
     code = db.Column(db.String(50), index=True)
     description = db.Column(db.UnicodeText())
+    test_type_id = db.Column(db.Integer, db.ForeignKey('test_type.id'))
+    test_type = relationship('TestType', foreign_keys='Recommendation.test_type_id')
 
     def __repr__(self):
         return self.name
@@ -1428,19 +1430,6 @@ class TestReason(db.Model):
     __tablename__ = 'test_reason'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-
-    def __repr__(self):
-        return self.name
-
-
-class TestStatus(db.Model):
-    # TODO delete if no needed
-    # campaign_status is the replacement for this
-    __tablename__ = 'test_status'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    code = db.Column(db.String(50), index=True)
     name = db.Column(db.String(50), index=True)
 
     def __repr__(self):
@@ -1569,8 +1558,8 @@ class TestResult(db.Model):
 
     # Status: Code indicating the Analysis status.
     # Analysis is a process with several steps and each one has a code.
-    campaign_status_id = db.Column('status_id', sqla.ForeignKey("campaign_status.id"), nullable=True)
-    campaign_status = db.relationship('CampaignStatus', backref='test_result')
+    test_status_id = db.Column('status_id', sqla.ForeignKey("campaign_status.id"), nullable=True)
+    test_status = db.relationship('CampaignStatus', backref='test_result')
 
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
