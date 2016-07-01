@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sqlalchemy as sqla
-# from sqlalchemy_i18n import (
-#     make_translatable
-# , translation_base
-# , Translatable
-# )
 from app import db
 from sqlalchemy.orm import relationship, relation
 
@@ -1436,8 +1431,8 @@ class TestReason(db.Model):
         return self.name
 
 
-class CampaignStatus(db.Model):
-    __tablename__ = 'campaign_status'
+class TestStatus(db.Model):
+    __tablename__ = 'test_status'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     code = db.Column(db.String(50), index=True)
@@ -1558,8 +1553,8 @@ class TestResult(db.Model):
 
     # Status: Code indicating the Analysis status.
     # Analysis is a process with several steps and each one has a code.
-    test_status_id = db.Column('status_id', sqla.ForeignKey("campaign_status.id"), nullable=True)
-    test_status = db.relationship('CampaignStatus', backref='test_result')
+    test_status_id = db.Column('status_id', sqla.ForeignKey("test_status.id"), nullable=True)
+    test_status = db.relationship('TestStatus', backref='test_result')
 
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
