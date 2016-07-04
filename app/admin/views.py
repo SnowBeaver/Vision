@@ -53,43 +53,45 @@ class MyAdminIndexView(admin.AdminIndexView):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
 
-        popups = {
-            'add': {
-                'description': NewTestDescription()
-                , 'electrical': NewTestElectrical()
-                , 'fluid': NewTestFluid()
-                , 'profile': NewTestProfile()
-            },
-        }
+        return redirect(url_for('campaign.index_view'))
 
-        info = {
-            'identification': IdentificationInfoViewForm()
-            , 'validation': ValidationInfoViewForm()
-            , 'nameplate': NameplateInfoViewForm()
-            , 'bushing': BushingInfoViewForm()
-            , 'taps': TapsInfoViewForm()
-            , 'norms': NormsInfoViewForm()
-            , 'loading': LoadInfoViewForm()
-            , 'doc': DocInfoViewForm()
-        }
-
-        self._template_args['tree'] = get_tree()
-        self._template_args['tree_view'] = TreeView()
-        # front page views
-        self._template_args['identification'] = IdentificationViewForm()
-        self._template_args['test_repair'] = TestRepairViewForm()
-        self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
-        self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
-        self._template_args['diagnostic'] = popups
-        self._template_args['batch'] = BatchViewForm()
-        self._template_args['report'] = EquipmentTestReportViewForm()
-        self._template_args['costumer'] = ManageCustomersViewForm()
-        self._template_args['search'] = SearchViewForm()
-        self._template_args['data'] = DataViewForm()
-        self._template_args['info'] = info
-        self._template_args['lab'] = Lab()
-
-        return super(MyAdminIndexView, self).index()
+        # popups = {
+        #     'add': {
+        #         'description': NewTestDescription()
+        #         , 'electrical': NewTestElectrical()
+        #         , 'fluid': NewTestFluid()
+        #         , 'profile': NewTestProfile()
+        #     },
+        # }
+        #
+        # info = {
+        #     'identification': IdentificationInfoViewForm()
+        #     , 'validation': ValidationInfoViewForm()
+        #     , 'nameplate': NameplateInfoViewForm()
+        #     , 'bushing': BushingInfoViewForm()
+        #     , 'taps': TapsInfoViewForm()
+        #     , 'norms': NormsInfoViewForm()
+        #     , 'loading': LoadInfoViewForm()
+        #     , 'doc': DocInfoViewForm()
+        # }
+        #
+        # self._template_args['tree'] = get_tree()
+        # self._template_args['tree_view'] = TreeView()
+        # # front page views
+        # self._template_args['identification'] = IdentificationViewForm()
+        # self._template_args['test_repair'] = TestRepairViewForm()
+        # self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
+        # self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
+        # self._template_args['diagnostic'] = popups
+        # self._template_args['batch'] = BatchViewForm()
+        # self._template_args['report'] = EquipmentTestReportViewForm()
+        # self._template_args['costumer'] = ManageCustomersViewForm()
+        # self._template_args['search'] = SearchViewForm()
+        # self._template_args['data'] = DataViewForm()
+        # self._template_args['info'] = info
+        # self._template_args['lab'] = Lab()
+        #
+        # return super(MyAdminIndexView, self).index()
 
     @expose('/login/', methods=('GET', 'POST'))
     def login_view(self):

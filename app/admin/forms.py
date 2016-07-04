@@ -17,7 +17,7 @@ class MenuViewForm(Form):
 
 # front page forms
 # TODO choises must be filled from db,  not hardcode
-stage_choice = [(x.id, x.name ) for x in db.session.query(CampaignStatus).all()]
+stage_choice = [(x.id, x.name ) for x in db.session.query(TestStatus).all()]
 order_status_choice = [('Paid', 'Paid'), ]
 initials_choice = [(x.id, x.name ) for x in db.session.query(User).all()]
 lab_choice = [(x.id, x.name ) for x in db.session.query(Lab).all()]
