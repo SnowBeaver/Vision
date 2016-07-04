@@ -271,7 +271,7 @@ class Campaign(db.Model):
     # user 2 has to print small form
     sampling_card_print = db.Column(db.Boolean)
 
-    contract_id = db.Column('contract_id', db.ForeignKey("contract.id"), nullable=False)
+    contract_id = db.Column('contract_id', db.ForeignKey("contract.id"), nullable=True)
     contract = db.relationship('Contract', foreign_keys='Campaign.contract_id')
 
     # Containers: How many containers are required
@@ -284,12 +284,8 @@ class Campaign(db.Model):
     gathered_test_type = db.Column(db.String(50))
 
     # contract with laboratory
-    lab_contract_id = db.Column(
-        'lab_contract_id',
-        db.ForeignKey("contract.id"),
-        nullable=True
-    )
-    # lab_contract = db.relationship(Contract, backref='campaign')
+    lab_contract_id = db.Column('lab_contract_id', db.ForeignKey("contract.id"), nullable=True)
+    lab_contract = db.relationship('Contract', foreign_keys='Campaign.lab_contract_id')
     # Seringe number as printed
     seringe_num = db.Column(db.String(50))
 
