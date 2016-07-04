@@ -645,7 +645,7 @@ class CampaignView(MyModelView):
     """
     create_modal = False
     # Visible columns in the list view
-    # can_view_details = True
+    can_view_details = True
     column_hide_backrefs = True
 
     # # List of columns that can be sorted.
