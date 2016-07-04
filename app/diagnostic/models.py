@@ -1398,11 +1398,7 @@ class Syringe(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    lab_id = db.Column(
-        'lab_id',
-        db.ForeignKey('lab.id'),
-        nullable=False
-    )
+    lab_id = db.Column('lab_id', db.ForeignKey('lab.id'), nullable=True)
     lab = db.relationship('Lab', backref='syringe')
 
     def __repr__(self):
