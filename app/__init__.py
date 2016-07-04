@@ -129,21 +129,17 @@ app.register_blueprint(pageModule)
 from app.tree.views import mod as treeModule
 app.register_blueprint(treeModule)
 
-# register Lab Manager
-from app.diagnostic.views import lab as labModule
-from app.diagnostic.views import test_profile as Test_Profile
-
-app.register_blueprint(labModule)
-app.register_blueprint(Test_Profile)
+from app.diagnostic.views import test_views, simple_views, other_views
+for view_class in test_views.union(simple_views).union(other_views):
+    backend.add_view(view_class(db.session))
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
-from app.admin.models import File, Image
 
 backend.add_view(UserAdmin(db.session))
 backend.add_view(RoleAdmin(db.session))
 
-backend.add_view(FileView(File, db.session))
-backend.add_view(ImageView(Image, db.session))
+backend.add_view(FileView(db.session))
+backend.add_view(ImageView(db.session))
 
 backend.add_view(MenuView(name="Menu"))
 

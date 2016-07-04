@@ -1,171 +1,1435 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import Blueprint, request, render_template
-from flask import flash, g, session
-from app.users.models import User
-from .storage import *
-from flask import jsonify
+from datetime import datetime
 from .forms import *
-from app import admin_per
-from flask import redirect, url_for
-
-lab = Blueprint('lab', __name__, url_prefix='/admin/lab')
+from app.admin.views import MyModelView
 
 
-@lab.route("/create/", methods=['POST'])
-def create():
-    if request.is_xhr:
-        success = False
-        id = 0
-        if admin_per.require().can():
-            if request.form['code'] and request.form['analyser']:
-                id = add_lab(request.form['code'], request.form['analyser'])
-                if id is not None:
-                    success = True
+class EquipmentView(MyModelView):
+    """
+    Equipment management view
+    """
+    # Visible columns in the list view
+    column_list = (
+        'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
+    )
+    # List of columns that can be sorted.
+    column_sortable_list = (
+        'id', 'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
+    )
 
-        return jsonify({'success': success, 'id': id})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    column_searchable_list = ('equipment_number',)
 
+    column_hide_backrefs = False
 
-@lab.route("/get_all/", methods=['POST'])
-def get_all():
-    labs = []
-    if request.is_xhr:
-        success = False
-        if admin_per.require().can():
-            labs = get_labs()
-            if labs is not None:
-                success = True
+    form_excluded_columns = (
+        # 'id',
+        # 'location_id',
+        'sibling',
+        'modifier',
+    )
+    column_exclude_list = [
+        'sibling',
+        'modifier'
+    ]
 
-        return jsonify({'success': success, 'labs': labs})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
-
-
-@lab.route("/delete/", methods=['POST'])
-def delete():
-    if request.is_xhr:
-        success = False
-        id = 0
-        if admin_per.require().can():
-            if request.form['id']:
-                id = delete_lab(request.form['id'])
-                if id is not None:
-                    success = True
-
-        return jsonify({'success': success, 'id': id})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    def __init__(self, dbsession):
+        super(EquipmentView, self).__init__(Equipment, dbsession, name="Equipment", category="Equipment")
 
 
-@lab.route("/modify/", methods=['POST'])
-def modify():
-    if request.is_xhr:
-        success = False
-        if admin_per.require().can():
-            if request.form['id'] and request.form['code'] and request.form['analyser']:
-                success = modify_lab(request.form['id'], request.form['code'], request.form['analyser'])
+class NormFuranView(MyModelView):
+    """
+    NormFuran management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
 
-        return jsonify({'success': success})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    def __init__(self, dbsession):
+        super(NormFuranView, self).__init__(
+            NormFuran, dbsession, name="Norms furan", category="Norms"
+        )
 
 
-test_profile = Blueprint('test_profile', __name__, url_prefix='/admin/test_profile')
+class NormIsolationView(MyModelView):
+    """
+    NormIsolation management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('c', 'f', 'notseal', 'seal')
+    column_searchable_list = ('c', 'f')
+
+    def __init__(self, dbsession):
+        super(NormIsolationView, self).__init__(
+            NormIsolation, dbsession, name="Norms isolation", category='Norms'
+        )
 
 
-@test_profile.route("/get_value/", methods=['POST'])
-def get_value():
-    if request.is_xhr:
-        data = {
-            'electrical': get_selections(ElectricalProfile)
-            , 'fluid': get_selections(FluidProfile)
+class NormPhysicView(MyModelView):
+    """
+    NormPhysic management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    def __init__(self, dbsession):
+        super(NormPhysicView, self).__init__(
+            NormPhysic, dbsession, name="Norms physic", category='Norms'
+        )
+
+
+class NormGasView(MyModelView):
+    """
+    NormGasView management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    def __init__(self, dbsession):
+        super(NormGasView, self).__init__(
+            NormGas, dbsession, name="Norms gas", category="Norms"
+        )
+
+
+class ManufacturerView(MyModelView):
+    """
+    Manufacturer management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = True
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    # inline_models = (GasSensor, Transformer, Breaker, AirCircuitBreaker, Capacitor, PowerSource, SwitchGear, Tank,
+    #                  InductionMachine, SynchronousMachine, Rectifier, LoadTapChanger, Bushing, NeutralResistance,
+    #                  Switch, Cable,
+    #                  )
+
+    def __init__(self, dbsession):
+        super(ManufacturerView, self).__init__(
+            Manufacturer, dbsession, name="Manufacturer", category="Options"
+        )
+
+
+class FluidTypeView(MyModelView):
+    """
+    Manufacturer management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+    # inline_models = (Transformer, Campaign)
+
+    def __init__(self, dbsession):
+        super(FluidTypeView, self).__init__(
+            FluidType, dbsession, name="Fluid type", category="Types"
+        )
+
+
+class AirCircuitBreakerView(MyModelView):
+    """
+    Airbreaker management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = False
+
+    # form_excluded_columns = (
+    # )
+    # column_exclude_list = [
+    # ]
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {
+        'manufactured': {'coerce': int}
+    }
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', 'serial', 'phase_number', 'frequency', 'sealed', 'manufactured',
+                            'welded_cover', 'manufacturer_id')
+    column_searchable_list = ('name', 'serial')
+
+    def __init__(self, dbsession):
+        super(AirCircuitBreakerView, self).__init__(
+            AirCircuitBreaker, dbsession,
+            name="Air circuit breaker", category="Equipment"
+        )
+
+
+class BushingView(MyModelView):
+    column_hide_backrefs = False
+    column_list = ('id', 'name', 'serial', 'manufactured', 'frequency', 'phase_number')
+    column_searchable_list = ('name', 'serial', 'manufactured', 'frequency')
+    column_sortable_list = ('id', 'name', 'serial', 'manufactured', 'frequency', 'phase_number')
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    def __init__(self, dbsession):
+        super(BushingView, self).__init__(
+            Bushing, dbsession, name="Bushing", category="Equipment"
+        )
+
+
+class CableView(MyModelView):
+    # can_view_details = True
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufactured', 'sealed')
+
+    column_hide_backrefs = False
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(CableView, self).__init__(
+            Cable, dbsession, name="Cable", category="Equipment"
+        )
+
+
+class CapacitorView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+        'description': {
         }
-        return jsonify({'data': data})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    }
+
+    def __init__(self, dbsession):
+        super(CapacitorView, self).__init__(
+            Capacitor, dbsession, name="Capacitor", category="Equipment"
+        )
 
 
-@test_profile.route("/create/", methods=['POST'])
-def create():
-    if request.is_xhr:
-        success = False
-        res = None
-        if admin_per.require().can():
-            if request.form['select'] == 'electrical':
-                res = create_electrical_profile(request.form)
-            elif request.form['select'] == 'fluid':
-                # print request.form
-                res = create_fluid_profile(request.form)
+class RectifierView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
 
-            if res is not None:
-                success = True
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
 
-        return jsonify({'success': success})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
 
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+        'description': {
+        }
+    }
 
-@test_profile.route("/delete/", methods=['POST'])
-def delete():
-    if request.is_xhr:
-        success = False
-        if admin_per.require().can():
-            if request.form['select'] == 'electrical':
-                res = delete_electrical_profile(request.form['profile'])
-            elif request.form['select'] == 'fluid':
-                res = delete_fluid_profile(request.form['profile'])
-
-            if res is not None:
-                success = True
-
-        return jsonify({'success': success, 'profile': request.form['profile']})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    def __init__(self, dbsession):
+        super(RectifierView, self).__init__(
+            Rectifier, dbsession, name="Rectifier", category="Equipment"
+        )
 
 
-@test_profile.route("/modify/", methods=['POST'])
-def modify():
-    if request.is_xhr:
-        success = False
-        if admin_per.require().can():
-            if request.form['select'] == 'electrical':
-                res = modify_electrical_profile(request.form)
-            elif request.form['select'] == 'fluid':
-                res = modify_fluid_profile(request.form)
+class NeutralResistanceView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
 
-            if res is not None:
-                success = True
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured')
 
-        return jsonify({'success': success})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(NeutralResistanceView, self).__init__(
+            NeutralResistance, dbsession, name="Neutral resistance", category="Equipment"
+        )
 
 
-@test_profile.route("/get_profile/", methods=['POST'])
-def get_profile():
-    if request.is_xhr:
-        success = False
-        node = None
-        if admin_per.require().can():
-            if request.form['select'] == 'electrical':
-                node = get_electrical_profile(request.form['selection'])
-            elif request.form['select'] == 'fluid':
-                node = get_fluid_profile(request.form['selection'])
+class TankView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
 
-            if node is not None:
-                success = True
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
 
-        return jsonify({'success': success, 'node': node})
-    else:
-        # redirect to home
-        return redirect(url_for('home.home'))
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+        'description': {
+        }
+    }
+
+    def __init__(self, dbsession):
+        super(TankView, self).__init__(
+            Tank, dbsession, name="Tank", category="Equipment"
+        )
+
+
+class LoadTapChangerView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured', 'filter')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured',
+                            'sealed', 'welded_cover', 'counter', 'phase_number', 'ltc4')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'description': {
+        },
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(LoadTapChangerView, self).__init__(
+            LoadTapChanger, dbsession, name="Tap changer", category="Equipment"
+        )
+
+
+class BreakerView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover',
+                            'phase_number', 'frequency', 'manufacturer_id')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'description': {
+        },
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(BreakerView, self).__init__(
+            Breaker, dbsession, name="Breaker", category="Equipment"
+        )
+
+
+class SwitchView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(SwitchView, self).__init__(
+            Switch, dbsession, name="Switch", category="Equipment"
+        )
+
+
+class SwitchGearView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(SwitchGearView, self).__init__(
+            SwitchGear, dbsession, name="Switch gear", category="Equipment"
+        )
+
+
+class SynchronousMachineView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(SynchronousMachineView, self).__init__(
+            SynchronousMachine, dbsession,
+            name="Synchronous machine", category="Equipment"
+        )
+
+
+class InductionMachineView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured', 'sealed', 'welded_cover')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(InductionMachineView, self).__init__(
+            InductionMachine, dbsession,
+            name="Induction machine", category="Equipment"
+        )
+
+
+class GasSensorView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = ('id', 'name', 'serial', 'manufacturer_id', 'manufactured')
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+    }
+
+    inline_models = (Transformer,)
+
+    def __init__(self, dbsession):
+        super(GasSensorView, self).__init__(
+            GasSensor, dbsession, name="Gas sensor", category="Equipment"
+        )
+
+
+class TransformerView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_list = (
+        'id', 'name', 'serial', 'manufacturer_id', 'fluid_type',
+        'gassensor_id', 'manufactured', 'phase_number', 'sealed',
+        'welded_cover', 'windings', 'fluid_volume', 'frequency',
+        'autotransformer'
+    )
+    column_searchable_list = ('name', 'serial', 'manufactured')
+    column_sortable_list = (
+        'id', 'name', 'serial', 'manufacturer_id', 'fluid_type',
+        'gassensor_id', 'manufactured', 'phase_number', 'sealed',
+        'welded_cover', 'windings', 'fluid_volume', 'frequency',
+        'autotransformer'
+    )
+
+    form_choices = {
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+    }
+    form_args = {'manufactured': {'coerce': int}}
+
+    form_widget_args = {
+        'manufactured': {
+            'style': 'width: 80px'
+        },
+        'phase_number': {
+            'style': 'width: 50px'
+        },
+        'frequency': {
+            'style': 'width: 50px'
+        },
+        'gas_sensor': {
+            'style': 'width: 250px'
+        },
+    }
+
+    def __init__(self, dbsession):
+        super(TransformerView, self).__init__(
+            Transformer, dbsession, name="Transformer", category="Equipment"
+        )
+
+
+class LocationView(MyModelView):
+    can_view_details = True
+    column_hide_backrefs = False
+
+    column_searchable_list = ('name',)
+    column_sortable_list = ('id', 'name')
+
+    # inline_models = (Equipment,)
+    def __init__(self, dbsession):
+        super(LocationView, self).__init__(
+            Location, dbsession, name="Location", category="Options"
+        )
+
+
+class LabView(MyModelView):
+    """
+    Lab management view
+    """
+    # Visible columns in the list view
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['name', 'code', 'analyser'])
+    column_searchable_list = (['name', 'code', 'analyser'])
+
+    # inline_models = (Campaign,)
+
+    def __init__(self, dbsession):
+        super(LabView, self).__init__(
+            Lab, dbsession, name="Laboratory", category="Campaign"
+        )
+
+
+class CampaignView(MyModelView):
+    """
+    Campaign management view
+    """
+    create_modal = False
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = True
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
+    column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
+    # inline_models = (TestResult,)
+    column_editable_list = ['created_by']
+
+    form_excluded_columns = (
+        # 'id',
+        # 'location_id',
+        'if_rem',
+        'if_ok',
+        'sibling',
+        'modifier',
+        'data_valid',
+        'status1',
+        'status2',
+        'error_state',
+        'error_code',
+    )
+    column_list = (
+        'date',
+        'analysis_number',
+        'equipment',
+        'fluid_type',
+        'created_by',
+        'performed_by',
+        'lab',
+        'repair_date',
+    )
+    column_filters = [
+        'date',
+        'analysis_number',
+        'equipment',
+        'fluid_type',
+        'created_by',
+        'performed_by',
+        'lab',
+        'repair_date',
+    ]
+
+    def __init__(self, dbsession):
+        super(CampaignView, self).__init__(
+            Campaign, dbsession, name="Campaign", category="Campaign",
+        )
+
+
+class ContractView(MyModelView):
+    """
+    Contract management view
+    """
+    # Visible columns in the list view
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ()
+    column_searchable_list = (['name', 'code', 'contract_status_id'])
+
+    def __init__(self, dbsession):
+        super(ContractView, self).__init__(
+            Contract, dbsession, name="Contract", category="Campaign"
+        )
+
+
+class FluidProfileView(MyModelView):
+    """
+    FluidProfile management view
+    """
+    # Visible columns in the list view
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['selection', 'description'])
+    column_searchable_list = (['selection', 'description'])
+
+    def __init__(self, dbsession):
+        super(FluidProfileView, self).__init__(
+            FluidProfile, dbsession, name="Fluid profile", category="Campaign"
+        )
+
+
+class TestTypeView(MyModelView):
+    """
+    TestType management view
+    """
+    # Visible columns in the list view
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['name', 'group_id', 'is_group'])
+    column_searchable_list = (['name', 'group_id', 'is_group'])
+
+    # inline_models = (TestResult,)
+
+    def __init__(self, dbsession):
+        super(TestTypeView, self).__init__(
+            TestType, dbsession, name="Test type", category="Types"
+        )
+
+
+class TestTypeResultTableView(MyModelView):
+    """
+    TestTypeResultTable management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('test_type_id', 'test_result_table_name')
+    column_searchable_list = ('test_type_id', 'test_result_table_name')
+
+    # edit_modal = True
+    # from flask_admin.model.form import InlineFormAdmin
+    #
+    # class MyInlineModelForm(InlineFormAdmin):
+    #     form_columns = ('name')
+    #
+    # inline_models = (TestType,)
+
+    def __init__(self, dbsession):
+        super(TestTypeResultTableView, self).__init__(
+            TestTypeResultTable, dbsession,
+            name="Test type result table", category="Conditions"
+        )
+
+
+class TestResultView(MyModelView):
+    """
+    TestResult management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id',
+                            'test_status', 'sampling_point_id', 'campaign_id')
+    column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id',
+                              'test_status_id', 'sampling_point_id', 'campaign_id')
+
+    inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,
+                     TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
+                     InhibitorTest, PCBTest, ParticleTest, MetalsInOilTest, FluidTest
+                     )
+
+    def __init__(self, dbsession):
+        super(TestResultView, self).__init__(
+            TestResult, dbsession, name="Test result", category="Campaign"
+        )
+
+
+class EquipmentTypeView(MyModelView):
+    """
+    EquipmentType management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', 'code')
+    column_searchable_list = ('name', 'code')
+
+    inline_models = (Equipment,)
+
+    def __init__(self, dbsession):
+        super(EquipmentTypeView, self).__init__(
+            EquipmentType, dbsession, name="Equipment type", category="Types"
+        )
+
+
+class ElectricalProfileView(MyModelView):
+    """
+    ElectricalProfile management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double',
+                            'insulation', 'visual', 'resistance', 'degree', 'turns')
+    column_searchable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double',
+                              'insulation', 'visual', 'resistance', 'degree', 'turns')
+
+    def __init__(self, dbsession):
+        super(ElectricalProfileView, self).__init__(
+            ElectricalProfile, dbsession, name="Electrical profile", category="Campaign"
+        )
+
+
+class MaterialView(MyModelView):
+    """
+    Material management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = ('name', 'code')
+    column_searchable_list = ('name', 'code')
+
+    # inline_models = (Campaign,)
+
+    def __init__(self, dbsession):
+        super(MaterialView, self).__init__(
+            Material, dbsession, name="Material", category="Options"
+        )
+
+
+class PowerSourceView(MyModelView):
+    """
+    PowerSource management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('name', 'serial', 'manufacturer_id')
+
+    def __init__(self, dbsession):
+        super(PowerSourceView, self).__init__(
+            PowerSource, dbsession, name="Power source", category="Equipment"
+        )
+
+
+class NormView(MyModelView):
+    """
+    Norm management view
+    """
+    # Visible columns in the list view
+    column_hide_backrefs = True
+    can_view_details = True
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('name', 'table')
+
+    def __init__(self, dbsession):
+        super(NormView, self).__init__(
+            Norm, dbsession, name="Norm", category="Norms"
+        )
+
+
+class RecommendationView(MyModelView):
+    """
+    Recommendation management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('name', 'code', 'description')
+
+    # inline_models = (Campaign,)
+
+    def __init__(self, dbsession):
+        super(RecommendationView, self).__init__(
+            Recommendation, dbsession, name="Recommendation", category="Types"
+        )
+
+
+class SyringeView(MyModelView):
+    """
+    Syringe management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
+    column_searchable_list = ('serial', 'lab_id')
+
+    def __init__(self, dbsession):
+        super(SyringeView, self).__init__(
+            Syringe, dbsession, name="Syringe", category="Types"
+        )
+
+
+class TestStatusView(MyModelView):
+    """
+    TestStatus management view
+    """
+    # Visible columns in the list view
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['name', 'code'])
+    column_searchable_list = (['name', 'code'])
+
+    def __init__(self, dbsession):
+        super(TestStatusView, self).__init__(
+            TestStatus, dbsession, name="Test status", category="Statuses"
+        )
+
+
+class TestScheduleView(MyModelView):
+    """
+    TestSchedule management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    # column_sortable_list = ('equipment', 'start_date', 'assigned_to', 'description')
+    column_searchable_list = ('equipment_id', 'start_date', 'assigned_to_id', 'description')
+
+    def __init__(self, dbsession):
+        super(TestScheduleView, self).__init__(
+            TestSchedule, dbsession, name="Test schedule", category="Statuses"
+        )
+
+
+class MySimpleView(MyModelView):
+    """
+    Simple models management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    # List of columns that can be sorted.
+    column_sortable_list = ('name',)
+    column_searchable_list = ('name',)
+
+
+class MySimpleTypesView(MySimpleView):
+    def __init__(self, model_class, dbsession, **kvargs):
+        super(MySimpleTypesView, self).__init__(
+            model_class, dbsession, category="Types", **kvargs
+        )
+
+
+class TestReasonView(MySimpleTypesView):
+    """
+    TestReason management view
+    """
+
+    # inline_models = (TestResult,)
+
+    def __init__(self, dbsession):
+        super(TestReasonView, self).__init__(
+            TestReason, dbsession, name="Test reason"
+        )
+
+
+class PressureUnitView(MySimpleTypesView):
+    """
+    PressureUnit management view
+    """
+
+    def __init__(self, dbsession):
+        super(PressureUnitView, self).__init__(
+            PressureUnit, dbsession, name="Pressure unit"
+        )
+
+
+class GasRelayView(MySimpleTypesView):
+    """
+    GasRelay management view
+    """
+
+    def __init__(self, dbsession):
+        super(GasRelayView, self).__init__(
+            GasRelay, dbsession, name="Gas relay"
+        )
+
+
+class PaintTypesView(MySimpleTypesView):
+    """
+    PaintTypes management view
+    """
+
+    def __init__(self, dbsession):
+        super(PaintTypesView, self).__init__(
+            PaintTypes, dbsession, name="Paint types"
+        )
+
+
+class SamplingPointView(MySimpleTypesView):
+    """
+    SamplingPoint management view
+    """
+
+    # inline_models = (TestResult,)
+
+    def __init__(self, dbsession):
+        super(SamplingPointView, self).__init__(
+            SamplingPoint, dbsession, name="Sampling point"
+        )
+
+
+class UpstreamView(MySimpleTypesView):
+    """
+    Upstream management view
+    """
+
+    def __init__(self, dbsession):
+        super(UpstreamView, self).__init__(
+            Upstream, dbsession, name="Upstream"
+        )
+
+
+class DownstreamView(MySimpleTypesView):
+    """
+    Downstream management view
+    """
+
+    def __init__(self, dbsession):
+        super(DownstreamView, self).__init__(
+            Downstream, dbsession, name="Downstream"
+        )
+
+
+class MySimpleConditionsView(MySimpleView):
+    def __init__(self, model_class, dbsession, **kvargs):
+        super(MySimpleConditionsView, self).__init__(
+            model_class, dbsession, category="Conditions", **kvargs
+        )
+
+
+class PumpConditionView(MySimpleConditionsView):
+    """
+    PumpCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(PumpConditionView, self).__init__(
+            PumpCondition, dbsession, name="Pump condition"
+        )
+
+
+class ValveConditionView(MySimpleConditionsView):
+    """
+    ValveCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(ValveConditionView, self).__init__(
+            ValveCondition, dbsession, name="Valve condition"
+        )
+
+
+class GasketConditionView(MySimpleConditionsView):
+    """
+    GasketCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(GasketConditionView, self).__init__(
+            GasketCondition, dbsession, name="Gasket condition"
+        )
+
+
+class OverallConditionView(MySimpleConditionsView):
+    """
+    OverallCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(OverallConditionView, self).__init__(
+            OverallCondition, dbsession, name="Overall condition"
+        )
+
+
+class TapFilterConditionView(MySimpleConditionsView):
+    """
+    TapFilterCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(TapFilterConditionView, self).__init__(
+            TapFilterCondition, dbsession, name="Tap filter condition"
+        )
+
+
+class ConnectionConditionView(MySimpleConditionsView):
+    """
+    ConnectionCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(ConnectionConditionView, self).__init__(
+            ConnectionCondition, dbsession, name="Connection condition"
+        )
+
+
+class FoundationConditionView(MySimpleConditionsView):
+    """
+    FoundationCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(FoundationConditionView, self).__init__(
+            FoundationCondition, dbsession, name="Foundation condition"
+        )
+
+
+class HeatingConditionView(MySimpleConditionsView):
+    """
+    HeatingCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(HeatingConditionView, self).__init__(
+            HeatingCondition, dbsession, name="Heating condition"
+        )
+
+
+class FanConditionView(MySimpleConditionsView):
+    """
+    FanCondition management view
+    """
+
+    def __init__(self, dbsession):
+        super(FanConditionView, self).__init__(
+            FanCondition, dbsession, name="Fan condition"
+        )
+
+
+class MySimpleStatusesView(MySimpleView):
+    def __init__(self, model_class, dbsession, **kvargs):
+        super(MySimpleStatusesView, self).__init__(
+            model_class, dbsession, category="Statuses", **kvargs
+        )
+
+
+class FluidLevelView(MySimpleStatusesView):
+    """
+    FluidLevel management view
+    """
+
+    def __init__(self, dbsession):
+        super(FluidLevelView, self).__init__(
+            FluidLevel, dbsession, name="Fluid level"
+        )
+
+
+class GasLevelView(MySimpleStatusesView):
+    """
+    GasLevel management view
+    """
+
+    def __init__(self, dbsession):
+        super(GasLevelView, self).__init__(
+            GasLevel, dbsession, name="Gas level"
+        )
+
+
+class TapCounterStatusView(MySimpleStatusesView):
+    """
+    TapCounterStatus management view
+    """
+
+    def __init__(self, dbsession):
+        super(TapCounterStatusView, self).__init__(
+            TapCounterStatus, dbsession, name="Tap counter status"
+        )
+
+
+class ContractStatusView(MySimpleStatusesView):
+    """
+    ContractStatus management view
+    """
+
+    # inline_models = (Contract,)
+
+    def __init__(self, dbsession):
+        super(ContractStatusView, self).__init__(
+            ContractStatus, dbsession, name="Contract status"
+        )
+
+
+class MyTestView(MyModelView):
+    """
+    Test management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    def __init__(self, model_class, dbsession, **kvargs):
+        super(MyTestView, self).__init__(
+            model_class, dbsession, category="Tests", **kvargs
+        )
+
+
+class BushingTestView(MyTestView):
+    """
+    BushingTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(BushingTestView, self).__init__(
+            BushingTest, dbsession, name="Bushing test"
+        )
+
+
+class WindingTestView(MyTestView):
+    """
+    WindingTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(WindingTestView, self).__init__(
+            WindingTest, dbsession, name="Winding test"
+        )
+
+
+class VisualInspectionTestView(MyTestView):
+    """
+    VisualInspectionTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(VisualInspectionTestView, self).__init__(
+            VisualInspectionTest, dbsession, name="Visual inspection test"
+        )
+
+
+class InsulationResistanceTestView(MyTestView):
+    """
+    InsulationResistanceTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(InsulationResistanceTestView, self).__init__(
+            InsulationResistanceTest, dbsession,
+            name="Insulation resistance test"
+        )
+
+
+class PolymerisationDegreeTestView(MyTestView):
+    """
+    PolymerisationDegreeTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(PolymerisationDegreeTestView, self).__init__(
+            PolymerisationDegreeTest, dbsession,
+            name="Polymerisation degree test"
+        )
+
+
+class TransformerTurnRatioTestView(MyTestView):
+    """
+    TransformerTurnRatioTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(TransformerTurnRatioTestView, self).__init__(
+            TransformerTurnRatioTest, dbsession,
+            name="Transformer turn ratio test"
+        )
+
+
+class WindingResistanceTestView(MyTestView):
+    """
+    WindingResistanceTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(WindingResistanceTestView, self).__init__(
+            WindingResistanceTest, dbsession, name="Winding resistance test"
+        )
+
+
+class DissolvedGasTestView(MyTestView):
+    """
+    DissolvedGasTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(DissolvedGasTestView, self).__init__(
+            DissolvedGasTest, dbsession, name="Dissolved gas test"
+        )
+
+
+class WaterTestView(MyTestView):
+    """
+    WaterTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(WaterTestView, self).__init__(
+            WaterTest, dbsession, name="Water test"
+        )
+
+
+class FuranTestView(MyTestView):
+    """
+    FuranTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(FuranTestView, self).__init__(
+            FuranTest, dbsession, name="Furan test"
+        )
+
+
+class InhibitorTestView(MyTestView):
+    """
+    InhibitorTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(InhibitorTestView, self).__init__(
+            InhibitorTest, dbsession, name="Inhibitor test"
+        )
+
+
+class PCBTestView(MyTestView):
+    """
+    PCBTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(PCBTestView, self).__init__(
+            PCBTest, dbsession, name="PCB test"
+        )
+
+
+class ParticleTestView(MyTestView):
+    """
+    ParticleTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(ParticleTestView, self).__init__(
+            ParticleTest, dbsession, name="Particle test"
+        )
+
+
+class MetalsInOilTestView(MyTestView):
+    """
+    MetalsInOilTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(MetalsInOilTestView, self).__init__(
+            MetalsInOilTest, dbsession, name="Metals in oil test"
+        )
+
+
+class FluidTestView(MyTestView):
+    """
+    FluidTest management view
+    """
+
+    def __init__(self, dbsession):
+        super(FluidTestView, self).__init__(
+            FluidTest, dbsession, name="Fluid test"
+        )
+
+
+simple_views = {TestReasonView, PressureUnitView, GasRelayView, PaintTypesView, SamplingPointView, UpstreamView,
+                DownstreamView, FanConditionView, HeatingConditionView, FoundationConditionView,
+                ConnectionConditionView, TapFilterConditionView, OverallConditionView, GasketConditionView,
+                ValveConditionView, PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
+                FluidLevelView
+                }
+test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
+              PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
+              DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView, FluidTestView,
+              MetalsInOilTestView, ParticleTestView
+              }
+other_views = {EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, NormGasView, AirCircuitBreakerView,
+               ManufacturerView, BushingView, CableView, CapacitorView, RectifierView, NeutralResistanceView, TankView,
+               LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView,
+               InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
+               ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
+               EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
+               SyringeView, TestScheduleView
+               }

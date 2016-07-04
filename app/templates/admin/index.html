@@ -13,7 +13,7 @@
                             </button>
                         </li>
                         <li>
-                            <a data-toggle="modal" data-target="#addForm" class="nopadding">
+                            <a href="campaign/new" class="nopadding">
                                 <button class="btn btn-default nopadding">
                                     <img src="{{ url_for('static', filename='img/toolbar/add.png') }}" alt="add" />
                                 </button>
@@ -53,7 +53,7 @@
                             </a>
                         </li>
                         <li>
-                             <a data-toggle="modal" data-target="#informationForm" class="nopadding">
+                             <a href="equipment" class="nopadding">
                                 <button class="btn btn-default nopadding">
                                     <img src="{{ url_for('static', filename='img/toolbar/information.png') }}" alt="information" />
                                 </button>
@@ -154,7 +154,6 @@
                     {% endif %}
                 </div>
                 {% include 'admin/tabs.html' %}
-                {% include 'admin/popups.html' %}
 
             {% else %}
             <form method="POST" action="">

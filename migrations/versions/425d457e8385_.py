@@ -17,7 +17,6 @@ from sqlalchemy.sql import table, column
 from sqlalchemy import String, Integer, Date
 
 
-
 def upgrade():
 
     # Create an ad-hoc table to use for the insert statement.
@@ -41,21 +40,21 @@ def upgrade():
         column('code', String)
     )
 
-    parameter_table = table(
-        'norm_parameter',
-        column('id', Integer),
-        column('norm_id', Integer),
-        column('name', String),
-    )
+    # parameter_table = table(
+    #     'norm_parameter',
+    #     column('id', Integer),
+    #     column('norm_id', Integer),
+    #     column('name', String),
+    # )
 
-    parameter_value_table = table(
-        'norm_parameter_value',
-        column('id', Integer),
-        column('param_id', Integer),
-        column('equipment_type_id', Integer),
-        column('value_type', String),
-        column('value', String)
-    )
+    # parameter_value_table = table(
+    #     'norm_parameter_value',
+    #     column('id', Integer),
+    #     column('param_id', Integer),
+    #     column('equipment_type_id', Integer),
+    #     column('value_type', String),
+    #     column('value', String)
+    # )
     op.bulk_insert(
         equipment_type, [
             {'id': 1, 'name': 'Air circuit breaker', 'code': 'A'},
@@ -119,64 +118,64 @@ def upgrade():
         ],
     )
 
-    op.bulk_insert(
-        parameter_table, [
-            {'id': 1, 'name': 'Celcius'},
-            {'id': 2, 'name': 'Fahrenheit'},
-            {'id': 3, 'name': 'NotSeal'},
-            {'id': 4, 'name': 'Seal'},
-            {'id': 5, 'name': 'name'},
-            {'id': 6, 'name': 'Acid Min'},
-            {'id': 7, 'name': 'Acid Max'},
-            {'id': 8, 'name': 'IFT Min'},
-            {'id': 9, 'name': 'IFT Max'},
-            {'id': 10, 'name': 'D1816 Min'},
-            {'id': 11, 'name': 'D1816 Max'},
-            {'id': 12, 'name': 'D877 Min'},
-            {'id': 13, 'name': 'D877 Max'},
-            {'id': 14, 'name': 'Color Min'},
-            {'id': 15, 'name': 'Color Max'},
-            {'id': 16, 'name': 'Density Min'},
-            {'id': 17, 'name': 'Density Max'},
-            {'id': 18, 'name': 'PF20 Min'},
-            {'id': 19, 'name': 'PF20 Max'},
-            {'id': 20, 'name': 'Water Min'},
-            {'id': 21, 'name': 'Water Max'},
-            {'id': 22, 'name': 'FlashPoint Min'},
-            {'id': 23, 'name': 'FlashPoint Max'},
-            {'id': 24, 'name': 'PourPoint Min'},
-            {'id': 25, 'name': 'PourPoint Max'},
-            {'id': 26, 'name': 'Viscosity Min'},
-            {'id': 27, 'name': 'Viscosity Max'},
-            {'id': 28, 'name': 'D1816_2 MIN'},
-            {'id': 29, 'name': 'D1816_2 MAX'},
-            {'id': 30, 'name': 'P100 MIN'},
-            {'id': 31, 'name': 'P100 MAX'},
-            {'id': 32, 'name': 'FluidType'},
-            {'id': 33, 'name': 'CEI156 Min'},
-            {'id': 34, 'name': 'CEI156 Max'},
-            {'id': 35, 'name': 'name'},
-            {'id': 36, 'name': 'C1'},
-            {'id': 37, 'name': 'C2'},
-            {'id': 38, 'name': 'C3'},
-            {'id': 39, 'name': 'C4'},
-            {'id': 40, 'name': 'name'},
-            {'id': 41, 'name': 'H2'},
-            {'id': 42, 'name': 'C2H2'},
-            {'id': 43, 'name': 'C2H4'},
-            {'id': 44, 'name': 'C2H6'},
-            {'id': 45, 'name': 'CO'},
-            {'id': 46, 'name': 'CO2'},
-            {'id': 47, 'name': 'TDCG'},
-            {'id': 48, 'name': 'H2'},
-            {'id': 49, 'name': 'CH4'},
-            # Level. Any gas above listed level indicate this condition
-            {'id': 50, 'name': 'Level'},
-            # FluidType. A different sets of levels exist for different type of insulating fluid
-            {'id': 51, 'name': 'Fluid Type'},
-            {'id': 52, 'name': 'name'}
-        ],
-    )
+    # op.bulk_insert(
+    #     parameter_table, [
+    #         {'id': 1, 'name': 'Celcius'},
+    #         {'id': 2, 'name': 'Fahrenheit'},
+    #         {'id': 3, 'name': 'NotSeal'},
+    #         {'id': 4, 'name': 'Seal'},
+    #         {'id': 5, 'name': 'name'},
+    #         {'id': 6, 'name': 'Acid Min'},
+    #         {'id': 7, 'name': 'Acid Max'},
+    #         {'id': 8, 'name': 'IFT Min'},
+    #         {'id': 9, 'name': 'IFT Max'},
+    #         {'id': 10, 'name': 'D1816 Min'},
+    #         {'id': 11, 'name': 'D1816 Max'},
+    #         {'id': 12, 'name': 'D877 Min'},
+    #         {'id': 13, 'name': 'D877 Max'},
+    #         {'id': 14, 'name': 'Color Min'},
+    #         {'id': 15, 'name': 'Color Max'},
+    #         {'id': 16, 'name': 'Density Min'},
+    #         {'id': 17, 'name': 'Density Max'},
+    #         {'id': 18, 'name': 'PF20 Min'},
+    #         {'id': 19, 'name': 'PF20 Max'},
+    #         {'id': 20, 'name': 'Water Min'},
+    #         {'id': 21, 'name': 'Water Max'},
+    #         {'id': 22, 'name': 'FlashPoint Min'},
+    #         {'id': 23, 'name': 'FlashPoint Max'},
+    #         {'id': 24, 'name': 'PourPoint Min'},
+    #         {'id': 25, 'name': 'PourPoint Max'},
+    #         {'id': 26, 'name': 'Viscosity Min'},
+    #         {'id': 27, 'name': 'Viscosity Max'},
+    #         {'id': 28, 'name': 'D1816_2 MIN'},
+    #         {'id': 29, 'name': 'D1816_2 MAX'},
+    #         {'id': 30, 'name': 'P100 MIN'},
+    #         {'id': 31, 'name': 'P100 MAX'},
+    #         {'id': 32, 'name': 'FluidType'},
+    #         {'id': 33, 'name': 'CEI156 Min'},
+    #         {'id': 34, 'name': 'CEI156 Max'},
+    #         {'id': 35, 'name': 'name'},
+    #         {'id': 36, 'name': 'C1'},
+    #         {'id': 37, 'name': 'C2'},
+    #         {'id': 38, 'name': 'C3'},
+    #         {'id': 39, 'name': 'C4'},
+    #         {'id': 40, 'name': 'name'},
+    #         {'id': 41, 'name': 'H2'},
+    #         {'id': 42, 'name': 'C2H2'},
+    #         {'id': 43, 'name': 'C2H4'},
+    #         {'id': 44, 'name': 'C2H6'},
+    #         {'id': 45, 'name': 'CO'},
+    #         {'id': 46, 'name': 'CO2'},
+    #         {'id': 47, 'name': 'TDCG'},
+    #         {'id': 48, 'name': 'H2'},
+    #         {'id': 49, 'name': 'CH4'},
+    #         # Level. Any gas above listed level indicate this condition
+    #         {'id': 50, 'name': 'Level'},
+    #         # FluidType. A different sets of levels exist for different type of insulating fluid
+    #         {'id': 51, 'name': 'Fluid Type'},
+    #         {'id': 52, 'name': 'name'}
+    #     ],
+    # )
 
 
 def downgrade():
