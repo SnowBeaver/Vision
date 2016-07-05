@@ -66,7 +66,7 @@ def upgrade():
     op.create_table(
         'campaign_status',
         sa.Column('id', sa.INTEGER(), autoincrement=False, nullable=False),
-        sa.Column('code', sa.VARCHAR(length=10), autoincrement=False, nullable=False),
+        sa.Column('code', sa.VARCHAR(length=50), autoincrement=False, nullable=False),
         sa.Column('name', sa.VARCHAR(length=255), autoincrement=False, nullable=True),
     )
 
