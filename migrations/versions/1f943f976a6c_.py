@@ -11,8 +11,12 @@ revision = '1f943f976a6c'
 down_revision = '4b6647d0a365'
 
 from alembic import op
+from sqlalchemy.dialects import postgresql
 
 def upgrade():
+
+    op.alter_column(table_name='syringe', column_name='lab_id', type_=postgresql.INTEGER, nullable=True)
+
     sql = """INSERT INTO public."syringe" ("serial") VALUES ('Y2830');
 INSERT INTO public."syringe" ("serial") VALUES ('Y2616');
 INSERT INTO public."syringe" ("serial") VALUES ('X 8639');
