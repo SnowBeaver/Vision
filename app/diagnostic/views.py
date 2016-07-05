@@ -890,8 +890,8 @@ class NormView(MyModelView):
     can_view_details = True
 
     # # List of columns that can be sorted.
-    # column_sortable_list = ('name', 'serial', 'manufacturer')
-    column_searchable_list = ('name', 'table')
+    column_sortable_list = ('name', )
+    column_searchable_list = ('name', 'name', 'table_name')
 
     def __init__(self, dbsession):
         super(NormView, self).__init__(
