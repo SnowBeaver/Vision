@@ -9,10 +9,18 @@ Create Date: 2016-07-01 18:15:00.553566
 # revision identifiers, used by Alembic.
 revision = '4b6647d0a365'
 down_revision = '3988ab56982f'
+from sqlalchemy.sql import table, column
+from sqlalchemy import String, Integer, Boolean, DateTime, Date
+from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
 def upgrade():
+
+
+    op.alter_column(table_name='recommendation', column_name='name', type_=postgresql.VARCHAR(255), nullable=False)
+
+    # Test types must be added automatical
     sql = """INSERT INTO public."recommendation" ("test_type_id", "code", "name") VALUES (16, 1, 'Less than 50 ppm --> Not contaminated');
 INSERT INTO public."recommendation" ("test_type_id", "code", "name") VALUES (16, 2, 'More than 50 ppm --> Contaminated');
 INSERT INTO public."recommendation" ("test_type_id", "code", "name") VALUES (22, 1, 'No action');

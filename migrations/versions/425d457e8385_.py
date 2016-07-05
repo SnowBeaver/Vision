@@ -18,28 +18,28 @@ from sqlalchemy import String, Integer, Date
 
 
 def upgrade():
-
+    pass
     # Create an ad-hoc table to use for the insert statement.
-    equipment_type = table(
-        'equipment_type',
-        column('id', Integer),
-        column('name', String),
-        column('code', String)
-    )
-    norm_type_table = table(
-        'norm_type',
-        column('id', Integer),
-        column('name', String),
-    )
-
-    norm_table = table(
-        'norm',
-        column('id', Integer),
-        column('norm_type_id', String),
-        column('name', String),
-        column('code', String)
-    )
-
+    # equipment_type = table(
+    #     'equipment_type',
+    #     column('id', Integer),
+    #     column('name', String),
+    #     column('code', String)
+    # )
+    # norm_type_table = table(
+    #     'norm_type',
+    #     column('id', Integer),
+    #     column('name', String),
+    # )
+    #
+    # norm_table = table(
+    #     'norm',
+    #     column('id', Integer),
+    #     column('norm_type_id', String),
+    #     column('name', String),
+    #     column('code', String)
+    # )
+    #
     # parameter_table = table(
     #     'norm_parameter',
     #     column('id', Integer),
@@ -55,68 +55,70 @@ def upgrade():
     #     column('value_type', String),
     #     column('value', String)
     # )
-    op.bulk_insert(
-        equipment_type, [
-            {'id': 1, 'name': 'Air circuit breaker', 'code': 'A'},
-            {'id': 2, 'name': 'Bushing', 'code': 'B'},
-            {'id': 3, 'name': 'Capacitor', 'code': 'C'},
-            {'id': 4, 'name': 'Breaker', 'code': 'D'},
-            {'id': 5, 'name': 'Power Source', 'code': 'E'},
-            {'id': 6, 'name': 'Cable', 'code': 'G'},
-            {'id': 7, 'name': 'Switchgear', 'code': 'H'},
-            {'id': 8, 'name': 'Induction machine', 'code': 'I'},
-            {'id': 9, 'name': 'Synchronous machine', 'code': 'J'},
-            {'id': 10, 'name': 'Localization', 'code': 'L'},
-            {'id': 11, 'name': 'Tap changer', 'code': 'P'},
-            {'id': 12, 'name': 'Rectifier', 'code': 'R'},
-            {'id': 13, 'name': 'Site', 'code': 'S'},
-            {'id': 14, 'name': 'Transformer', 'code': 'T'},
-            {'id': 15, 'name': 'Tank', 'code': 'Y'},
-            {'id': 16, 'name': 'Switch', 'code': 'Z'},
-        ])
 
-    op.bulk_insert(
-        norm_type_table, [
-            {'id': 1, 'name': 'Isolation', 'code': 'Isolation'},
-            {'id': 2, 'name': 'Physical', 'code': 'Physical'},
-            {'id': 3, 'name': 'Furann', 'code': 'Furann'},
-            {'id': 4, 'name': 'Gas', 'code': 'Gas'},
-        ]
-    )
-
-    isolation = []  # key is temperature in celsius
-    i = 0
-    for i in range(1, 81):
-        isolation.append({'id': i, 'name': "%s" % i, 'norm_type_id': 1})
-
-    isolation.append({'id': i + 1, 'name': "0", 'norm_type_id': 1})
-
-    op.bulk_insert(
-        norm_table, isolation
-    )
-
-    op.bulk_insert(
-        norm_table, [
-            {'id': 82, 'name': 'DEFAULT D', 'norm_type_id': 2},
-            {'id': 83, 'name': 'DEFAULT P', 'norm_type_id': 2},
-            {'id': 84, 'name': 'DEFAULT-H T', 'norm_type_id': 2},
-            {'id': 85, 'name': 'DEFAULT-R T', 'norm_type_id': 2},
-            {'id': 86, 'name': 'DEFAULT-S T', 'norm_type_id': 2},
-            {'id': 87, 'name': 'NONE/AUCUN', 'norm_type_id': 2},
-            {'id': 88, 'name': 'NONE/AUCUN-R', 'norm_type_id': 2},
-            {'id': 89, 'name': 'NONE/AUCUN-S', 'norm_type_id': 2},
-            {'id': 90, 'name': 'S.D.MYERS', 'norm_type_id': 2},
-
-            # furann norms
-            {'id': 91, 'name': 'DOBLE', 'norm_type_id': 3},
-            {'id': 92, 'name': 'NONE/AUCUN', 'norm_type_id': 3},
-
-            # gas norms
-            {'id': 93, 'name': 'C57104', 'norm_type_id': 4},
-            {'id': 94, 'name': 'C57104-R', 'norm_type_id': 4},
-            {'id': 95, 'name': 'CNONE/AUCUN', 'norm_type_id': 4},
-        ],
-    )
+    # op.bulk_insert(
+    #     equipment_type, [
+    #         {'id': 1, 'name': 'Air circuit breaker', 'code': 'A'},
+    #         {'id': 2, 'name': 'Bushing', 'code': 'B'},
+    #         {'id': 3, 'name': 'Capacitor', 'code': 'C'},
+    #         {'id': 4, 'name': 'Breaker', 'code': 'D'},
+    #         {'id': 5, 'name': 'Power Source', 'code': 'E'},
+    #         {'id': 6, 'name': 'Cable', 'code': 'G'},
+    #         {'id': 7, 'name': 'Switchgear', 'code': 'H'},
+    #         {'id': 8, 'name': 'Induction machine', 'code': 'I'},
+    #         {'id': 9, 'name': 'Synchronous machine', 'code': 'J'},
+    #         {'id': 10, 'name': 'Localization', 'code': 'L'},
+    #         {'id': 11, 'name': 'Tap changer', 'code': 'P'},
+    #         {'id': 12, 'name': 'Rectifier', 'code': 'R'},
+    #         {'id': 13, 'name': 'Site', 'code': 'S'},
+    #         {'id': 14, 'name': 'Transformer', 'code': 'T'},
+    #         {'id': 15, 'name': 'Tank', 'code': 'Y'},
+    #         {'id': 16, 'name': 'Switch', 'code': 'Z'},
+    #     ])
+    #
+    # op.bulk_insert(
+    #     norm_type_table, [
+    #         {'id': 1, 'name': 'Isolation', 'code': 'Isolation'},
+    #         {'id': 2, 'name': 'Physical', 'code': 'Physical'},
+    #         {'id': 3, 'name': 'Furann', 'code': 'Furann'},
+    #         {'id': 4, 'name': 'Gas', 'code': 'Gas'},
+    #     ]
+    # )
+    #
+    # isolation = []  # key is temperature in celsius
+    # i = 0
+    # for i in range(1, 81):
+    #     isolation.append({'id': i, 'name': "%s" % i, 'norm_type_id': 1})
+    #
+    # isolation.append({'id': i + 1, 'name': "0", 'norm_type_id': 1})
+    #
+    # op.bulk_insert(
+    #     norm_table, isolation
+    # )
+    #
+    #
+    # op.bulk_insert(
+    #     norm_table, [
+    #         {'id': 82, 'name': 'DEFAULT D', 'norm_type_id': 2},
+    #         {'id': 83, 'name': 'DEFAULT P', 'norm_type_id': 2},
+    #         {'id': 84, 'name': 'DEFAULT-H T', 'norm_type_id': 2},
+    #         {'id': 85, 'name': 'DEFAULT-R T', 'norm_type_id': 2},
+    #         {'id': 86, 'name': 'DEFAULT-S T', 'norm_type_id': 2},
+    #         {'id': 87, 'name': 'NONE/AUCUN', 'norm_type_id': 2},
+    #         {'id': 88, 'name': 'NONE/AUCUN-R', 'norm_type_id': 2},
+    #         {'id': 89, 'name': 'NONE/AUCUN-S', 'norm_type_id': 2},
+    #         {'id': 90, 'name': 'S.D.MYERS', 'norm_type_id': 2},
+    #
+    #         # furann norms
+    #         {'id': 91, 'name': 'DOBLE', 'norm_type_id': 3},
+    #         {'id': 92, 'name': 'NONE/AUCUN', 'norm_type_id': 3},
+    #
+    #         # gas norms
+    #         {'id': 93, 'name': 'C57104', 'norm_type_id': 4},
+    #         {'id': 94, 'name': 'C57104-R', 'norm_type_id': 4},
+    #         {'id': 95, 'name': 'CNONE/AUCUN', 'norm_type_id': 4},
+    #     ],
+    # )
 
     # op.bulk_insert(
     #     parameter_table, [
@@ -180,4 +182,4 @@ def upgrade():
 
 def downgrade():
     op.execute(sql='TRUNCATE TABLE norm CASCADE;')
-    op.execute(sql='TRUNCATE TABLE norm_parameter CASCADE;')
+    # op.execute(sql='TRUNCATE TABLE norm_parameter CASCADE;')

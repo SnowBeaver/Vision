@@ -15,6 +15,8 @@ import sqlalchemy as sa
 
 
 def upgrade():
+
+    op.execute("TRUNCATE manufacturer CASCADE")
     sql = """
 INSERT INTO public.manufacturer (id, name, markings, location, description) VALUES (11604, 'A. E. Co. Inc. [see Automatic Electric Co.]', 'A. E. Co. Inc.', '', '-');
 INSERT INTO public.manufacturer (id, name, markings, location, description) VALUES (11605, 'A. J. Wilkinson &amp; Co.', '', 'Boston, MA', '-');
