@@ -721,8 +721,9 @@ class FluidProfileView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = (['selection', 'description'])
-    column_searchable_list = (['selection', 'description'])
+    column_sortable_list = (['selection'])
+    column_searchable_list = (['selection'])
+    column_exclude_list = (['description'])
 
     def __init__(self, dbsession):
         super(FluidProfileView, self).__init__(
