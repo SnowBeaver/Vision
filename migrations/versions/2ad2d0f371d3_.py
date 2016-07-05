@@ -22,7 +22,7 @@ def upgrade():
 
     op.create_table(
         'manufacturer',
-        sa.Column('id', sa.INTEGER(), server_default="nextval('tree_id_seq'::regclass)", nullable=False),
+        sa.Column('id', sa.INTEGER(), primary_key=True, nullable=False),
         sa.Column('name', sa.VARCHAR(length=255), nullable=False),
         sa.Column('markings', sa.Unicode(255), nullable=True),
         sa.Column('location', sa.Unicode(255), nullable=True),

@@ -8,7 +8,7 @@ Create Date: 2016-07-04 14:59:55.002040
 
 # revision identifiers, used by Alembic.
 revision = '2f6416a498e8'
-down_revision = '1f943f976a6c'
+down_revision = '4b6647d0a365'
 
 from alembic import op
 from sqlalchemy.dialects import postgresql
@@ -19,11 +19,6 @@ from sqlalchemy import String, Integer, Date
 
 def upgrade():
 
-    # op.drop_column('public.norm', 'table')
-    # op.add_column(
-    #     'public.norm'
-    #    ,sa.Column('table_name', sa.Unicode(255), nullable=False)
-    # )
     op.create_table(
         'norm',
         sa.Column('id', Integer, primary_key=True),
@@ -43,4 +38,4 @@ INSERT INTO public.norm (id, name, table_name) VALUES (1, 'Norms furan ', 'norm_
 
 
 def downgrade():
-    op.execute(sql='TRUNCATE TABLE norm CASCADE;')
+    op.execute(sql='DROP TABLE norm CASCADE;')
