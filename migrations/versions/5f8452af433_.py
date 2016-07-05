@@ -15,7 +15,7 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.execute(sql='DROP TABLE norm_type CASCADE;')
+    # op.execute(sql='DROP TABLE norm_type CASCADE;')
 
     sql = """
 INSERT INTO public.norm (id, name, "table") VALUES (2, 'Norms gas', 'norm_gas');
