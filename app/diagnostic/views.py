@@ -652,7 +652,7 @@ class CampaignView(MyModelView):
     column_sortable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     column_searchable_list = (['created_by_id', 'equipment_id', 'lab_id', 'date', 'contract_id'])
     # inline_models = (TestResult,)
-    column_editable_list = ['created_by']
+    # column_editable_list = ['created_by']
 
     form_excluded_columns = (
         # 'id',
@@ -687,7 +687,18 @@ class CampaignView(MyModelView):
         'lab',
         'repair_date',
     ]
-
+    form_ajax_refs = {
+        'created_by': {'fields': (User.name,)},
+        'performed_by': {'fields': (User.name,)},
+        'recommended_by': {'fields': (User.name,)},
+        'recommendation': {'fields': (Recommendation.name,)},
+        # 'equipment': {'fields': (Equipment.equipment_number,)},
+        'material': {'fields': (Material.name,)},
+        'fluid_type': {'fields': (FluidType.name,)},
+        'lab': {'fields': (Lab.name,)},
+        'contract': {'fields': (Contract.name,)},
+        'lab_contract': {'fields': (Contract.name,)},
+    }
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
             Campaign, dbsession, name="Campaign", category="Campaign",
