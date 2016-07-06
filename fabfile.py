@@ -189,15 +189,16 @@ def first_deploy():
             deploy_supervisor()
             restart_services()
 
-def deploy():
+def deploy(branch='master'):
     with cd(env.directory):
-        run('git pull origin master')
+        run('git reset --hard origin/{}'.format(branch))
         with source_virtualenv():
             run(env.pip + ' install -r requirements.txt')
             update_trans()
             compile_trans()
             run('find . -name "*.pyc" -exec rm -rf {} \;')
-            run('python -c "from app import db;db.create_all()"')
+            # run('python -c "from app import db;db.create_all()"')
+            run('python manage.py db upgrade')
     restart_services()
 
 
@@ -216,7 +217,8 @@ def update_remote(branch='master'):
         with source_virtualenv():
             run(env.pip + ' install -r requirements.txt')
             run('find . -name "*.pyc" -exec rm -rf {} \;')
-            run('python -c "from app import db;db.create_all()"')
+            #run('python -c "from app import db;db.create_all()"')
+            run('python manage.py db upgrade')
             restart_services()
 
 def setup_redis():

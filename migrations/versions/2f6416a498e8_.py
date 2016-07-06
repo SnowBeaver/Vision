@@ -19,11 +19,6 @@ from sqlalchemy import String, Integer, Date
 
 def upgrade():
 
-    # op.drop_column('public.norm', 'table')
-    # op.add_column(
-    #     'public.norm'
-    #    ,sa.Column('table_name', sa.Unicode(255), nullable=False)
-    # )
     op.create_table(
         'norm',
         sa.Column('id', Integer, primary_key=True),
@@ -43,4 +38,4 @@ INSERT INTO public.norm (id, name, table_name) VALUES (1, 'Norms furan ', 'norm_
 
 
 def downgrade():
-    op.execute(sql='TRUNCATE TABLE norm CASCADE;')
+    op.execute(sql='DROP TABLE norm CASCADE;')
