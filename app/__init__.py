@@ -62,7 +62,7 @@ from app.users.models import User
 
 #create diagnostics table
 from app.diagnostic.models import *
-db.create_all(app=app)
+# db.create_all(app=app)
 
 
 
@@ -145,7 +145,7 @@ backend.add_view(MenuView(name="Menu"))
 
 # create tree table
 from app.tree.models import BaseManager
-BaseManager.metadata.create_all(engine)
+# BaseManager.metadata.create_all(engine)
 
 
 # if app.config['DEBUG']:

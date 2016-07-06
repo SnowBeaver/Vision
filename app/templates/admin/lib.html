@@ -126,7 +126,7 @@
           &nbsp;
         {%- endif %}
     </label>
-      {% if 'QuerySelectField' in field.__class__.__name__ %}
+      {% if field.__class__.__name__ in ('QuerySelectField', 'AjaxSelectField') %}
           <div class="{{ kwargs.get('column_class', 'col-md-9') }}">
       {% else %}
           <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
@@ -144,7 +144,7 @@
         </ul>
       {% endif %}
     </div>
-      {% if 'QuerySelectField' in field.__class__.__name__ %}
+      {% if field.__class__.__name__ in ('QuerySelectField', 'AjaxSelectField') %}
           <div class="col-md-1">
               {#  <input type="button" class="form-control btn-large" value="{{ _gettext('Manage') }} " id="btn_{{ field.name }}">#}
 {#              <a class="form-control btn btn-default" href="{{ url_for("{}.create_view".format(g._admin_view.model[field.name].property.mapper._identity_class.__name__.lower())) }}" target="_blank">{{ _gettext('New') }}</a>#}
@@ -247,7 +247,7 @@
   {% if editable_columns %}
   <script src="{{ admin_static.url(filename='vendor/x-editable/js/bootstrap3-editable.min.js', v='1.5.1.1') }}"></script>
   {% endif %}
-  <script src="{{ admin_static.url(filename='admin/js/form.js', v='1.0.1') }}"></script>
+  <script src="{{ url_for('static', filename='admin/js/form.js', v='1.0.1') }}"></script>
 {% endmacro %}
 
 {% macro extra() %}
