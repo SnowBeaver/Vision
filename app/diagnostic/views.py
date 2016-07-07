@@ -12,7 +12,7 @@ class EquipmentView(MyModelView):
     # Visible columns in the list view
     column_list = (
         'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
-        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
+        'visual_date', 'norm_id',
     )
     # List of columns that can be sorted.
     column_sortable_list = (
@@ -29,6 +29,9 @@ class EquipmentView(MyModelView):
         # 'location_id',
         'sibling',
         'modifier',
+        'tie_location',
+        'tie_status',
+        'tie_maintenance_state'
     )
     column_exclude_list = [
         'sibling',
