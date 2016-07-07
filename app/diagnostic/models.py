@@ -1441,7 +1441,7 @@ class TestSchedule(db.Model):
     #                       nullable=False)
 
     equipment_id = db.Column('equipment_id', sqla.ForeignKey("equipment.id"), nullable=False)
-    equipment = db.relationship('Equipment', backref='schedule')
+    equipment = db.relationship('Equipment', foreign_keys='TestSchedule.equipment_id')
 
     start_date = db.Column(db.DateTime, primary_key=True, nullable=False)  # StartDate. Starting date of periodic task
     period_years = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of year between tasks
