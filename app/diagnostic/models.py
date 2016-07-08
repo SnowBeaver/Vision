@@ -1873,67 +1873,67 @@ class VisualInspectionTest(db.Model):
     notes = db.Column(db.String(1000))
 
     # Tank subgroup
-    tank_cover_gasket = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # TankCoverGasket
-    tank_manhole_gasket = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # TankManHole
-    tank_gas_relay = db.Column(db.Integer, db.ForeignKey("gas_relay.id"))  # TankGasRelay
-    tank_oil_level = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # TankLevel
+    tank_cover_gasket_id = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # TankCoverGasket
+    tank_manhole_gasket_id = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # TankManHole
+    tank_gas_relay_id = db.Column(db.Integer, db.ForeignKey("gas_relay.id"))  # TankGasRelay
+    tank_oil_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # TankLevel
     tank_winding_temp_max = db.Column(db.Float(10))  # TankWindingTemp
     tank_winding_temp_actual = db.Column(db.Float(10))  # TankWindingTemp2
     tank_oil_temp_max = db.Column(db.Float(10))  # TankOilTemp
-    tank_Oil_temp_actual = db.Column(db.Float(10))  # TankOilTemp2
+    tank_oil_temp_actual = db.Column(db.Float(10))  # TankOilTemp2
     tank_winding_flag = db.Column(db.Boolean)  # TankVent
     tank_oil_flag = db.Column(db.Boolean)  # TankHeatings
-    tank_pressure_unit = db.Column(db.Integer, db.ForeignKey("pressure_unit.id"))  # TankPressureUnit
+    tank_pressure_unit_id = db.Column(db.Integer, db.ForeignKey("pressure_unit.id"))  # TankPressureUnit
     tank_pressure = db.Column(db.Float(10))  # TankPressure
-    tank_overpressure_valve = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TankOverPressureValve
-    tank_ampling_valve = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TankSamplingValve
-    tank_oil_pump = db.Column(db.Integer, db.ForeignKey("pump_condition.id"))  # TankOilPump
+    tank_overpressure_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TankOverPressureValve
+    tank_ampling_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TankSamplingValve
+    tank_oil_pump_id = db.Column(db.Integer, db.ForeignKey("pump_condition.id"))  # TankOilPump
     tank_gas_analyser = db.Column(db.Float(10))  # TankGasSensor
-    tank_overall_condition = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # TankPaint
+    tank_overall_condition_id = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # TankPaint
 
     # Expansion/Conservator tank subgroup
-    exp_tank_pipe_gasket = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # ExpTankPipeGasket
-    exp_tank_oil_level = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # ExpTankLevel
-    exp_tank_paint = db.Column(db.Integer, db.ForeignKey("paint_types.id"))  # ExpTankPaint
-    exp_tank_overall_condition = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # ExpTankDessicant
+    exp_tank_pipe_gasket_id = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # ExpTankPipeGasket
+    exp_tank_oil_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # ExpTankLevel
+    exp_tank_paint_id = db.Column(db.Integer, db.ForeignKey("paint_types.id"))  # ExpTankPaint
+    exp_tank_overall_condition_id = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # ExpTankDessicant
 
     # Bushing + arrester subgroup
-    bushing_gasket = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # BushingGasket
-    bushing_oil_level = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # BushingLevel
-    bushing_overall_condition = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # BushingCleaniness
+    bushing_gasket_id = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # BushingGasket
+    bushing_oil_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # BushingLevel
+    bushing_overall_condition_id = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # BushingCleaniness
 
     # Tap changer subgroup
-    tap_changer_gasket = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # TCGasket
-    tap_changer_oil_level = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # TCLevel
+    tap_changer_gasket_id = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # TCGasket
+    tap_changer_oil_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))  # TCLevel
     tap_changer_temp_max = db.Column(db.Float(10))  # TCTemperature
     tap_changer_temp_actual = db.Column(db.Float(10))  # TCTemperature2
     tap_changer_pressure_max = db.Column(db.Float(10))  # TCPressure
     tap_changer_pressure_actual = db.Column(db.Float(10))  # TCPressure2
-    tap_changer_pressure_unit = db.Column(db.Integer, db.ForeignKey("pressure_unit.id"))  # TCPressureUnit
+    tap_changer_pressure_unit_id = db.Column(db.Integer, db.ForeignKey("pressure_unit.id"))  # TCPressureUnit
     tap_changer_tap_position = db.Column(db.Float(10))  # TCTapPosition
-    tap_changer_overpressure_valve = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TCOverPressureValve
-    tap_changer_ampling_valve = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TCSamplingGasket
+    tap_changer_overpressure_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TCOverPressureValve
+    tap_changer_ampling_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TCSamplingGasket
     tap_changer_operation_counter = db.Column(db.Integer)  # TCOperationCounter
-    tap_changer_counter = db.Column(db.Integer, db.ForeignKey("tap_counter_status.id"))  # TCCounter
-    tap_changer_filter = db.Column(db.Integer, db.ForeignKey("tap_filter_condition.id"))  # TCFilter
-    tap_changer_overall_condition = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # TCPaint
+    tap_changer_counter_id = db.Column(db.Integer, db.ForeignKey("tap_counter_status.id"))  # TCCounter
+    tap_changer_filter_id = db.Column(db.Integer, db.ForeignKey("tap_filter_condition.id"))  # TCFilter
+    tap_changer_overall_condition_id = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # TCPaint
 
     # Radiator subgroup
-    radiator_fan = db.Column(db.Integer, db.ForeignKey("fan_condition.id"))  # RadiatorFan
-    radiator_gasket = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # RadiatorGasket
-    radiator_overall_condition = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # RadiatorGeneralCondition
+    radiator_fan_id = db.Column(db.Integer, db.ForeignKey("fan_condition.id"))  # RadiatorFan
+    radiator_gasket_id = db.Column(db.Integer, db.ForeignKey("gasket_condition.id"))  # RadiatorGasket
+    radiator_overall_condition_id = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # RadiatorGeneralCondition
 
     # Control cabinet subgroup
-    control_cab_connection = db.Column(db.Integer, db.ForeignKey("connection_condition.id"))  # PhaseElectricalConnection
-    control_cab_heating = db.Column(db.Integer, db.ForeignKey("heating_condition.id"))  # SSIndicator
-    control_cab_overall_condition = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # PhaseGeneralCondition
+    control_cab_connection_id = db.Column(db.Integer, db.ForeignKey("connection_condition.id"))  # PhaseElectricalConnection
+    control_cab_heating_id = db.Column(db.Integer, db.ForeignKey("heating_condition.id"))  # SSIndicator
+    control_cab_overall_condition_id = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # PhaseGeneralCondition
 
     # Grounding
     grounding_value = db.Column(db.Float(53))  # GroundingValue
-    grounding_connection = db.Column(db.Integer, db.ForeignKey("connection_condition.id"))  # GroundingConnection
+    grounding_connection_id = db.Column(db.Integer, db.ForeignKey("connection_condition.id"))  # GroundingConnection
 
     # Miscellaneous
-    misc_foundation = db.Column(db.Integer, db.ForeignKey("foundation_condition.id"))  # foundation_condition
+    misc_foundation_id = db.Column(db.Integer, db.ForeignKey("foundation_condition.id"))  # foundation_condition
     misc_temp_ambiant = db.Column(db.Float(53))  # AmbiantTemperature
     misc_load = db.Column(db.Float(53))  # Load
 
@@ -1945,6 +1945,40 @@ class VisualInspectionTest(db.Model):
     # Cuve_Temp_Liq_Decl3 = db.Column(db.Float(53))#TankTemperatureOilTrip3
     # Cuve_TempContact_Bob_Decl1 = db.Column(db.Boolean)#TankTemperatureContactWindingTrip1
     # Cuve_TempContact_Liq_Decl1 = db.Column(db.Boolean)#TankTemperatureContactOilTrip11
+
+    # relationships
+    tank_cover_gasket = db.relationship('GasketCondition', foreign_keys='VisualInspectionTest.tank_cover_gasket_id')
+    tank_manhole_gasket = db.relationship('GasketCondition', foreign_keys='VisualInspectionTest.tank_manhole_gasket_id')
+    tank_gas_relay = db.relationship('GasRelay', foreign_keys='VisualInspectionTest.tank_gas_relay_id')
+    tank_oil_level = db.relationship('FluidLevel', foreign_keys='VisualInspectionTest.tank_oil_level_id')
+    tank_pressure_unit = db.relationship('PressureUnit', foreign_keys='VisualInspectionTest.tank_pressure_unit_id')
+    tank_overpressure_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tank_overpressure_valve_id')
+    tank_ampling_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tank_ampling_valve_id')
+    tank_oil_pump = db.relationship('PumpCondition', foreign_keys='VisualInspectionTest.tank_oil_pump_id')
+    tank_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.tank_overall_condition_id')
+    exp_tank_pipe_gasket = db.relationship('GasketCondition', foreign_keys='VisualInspectionTest.exp_tank_pipe_gasket_id')
+    exp_tank_oil_level = db.relationship('FluidLevel', foreign_keys='VisualInspectionTest.exp_tank_oil_level_id')
+    exp_tank_paint = db.relationship('PaintTypes', foreign_keys='VisualInspectionTest.exp_tank_paint_id')
+    exp_tank_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.exp_tank_overall_condition_id')
+    bushing_gasket = db.relationship('GasketCondition', foreign_keys='VisualInspectionTest.bushing_gasket_id')
+    bushing_oil_level = db.relationship('FluidLevel', foreign_keys='VisualInspectionTest.bushing_oil_level_id')
+    bushing_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.bushing_overall_condition_id')
+    tap_changer_gasket = db.relationship('GasketCondition', foreign_keys='VisualInspectionTest.tap_changer_gasket_id')
+    tap_changer_oil_level = db.relationship('FluidLevel', foreign_keys='VisualInspectionTest.tap_changer_oil_level_id')
+    tap_changer_pressure_unit = db.relationship('PressureUnit', foreign_keys='VisualInspectionTest.tap_changer_pressure_unit_id')
+    tap_changer_overpressure_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tap_changer_overpressure_valve_id')
+    tap_changer_ampling_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tap_changer_ampling_valve_id')
+    tap_changer_counter = db.relationship('TapCounterStatus', foreign_keys='VisualInspectionTest.tap_changer_counter_id')
+    tap_changer_filter = db.relationship('TapFilterCondition', foreign_keys='VisualInspectionTest.tap_changer_filter_id')
+    tap_changer_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.tap_changer_overall_condition_id')
+    radiator_fan = db.relationship('FanCondition', foreign_keys='VisualInspectionTest.radiator_fan_id')
+    radiator_gasket = db.relationship('GasketCondition', foreign_keys='VisualInspectionTest.radiator_gasket_id')
+    radiator_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.radiator_overall_condition_id')
+    control_cab_connection = db.relationship('ConnectionCondition', foreign_keys='VisualInspectionTest.control_cab_connection_id')
+    control_cab_heating = db.relationship('HeatingCondition', foreign_keys='VisualInspectionTest.control_cab_heating_id')
+    control_cab_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.control_cab_overall_condition_id')
+    grounding_connection = db.relationship('ConnectionCondition', foreign_keys='VisualInspectionTest.grounding_connection_id')
+    misc_foundation = db.relationship('FoundationCondition', foreign_keys='VisualInspectionTest.misc_foundation_id')
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
