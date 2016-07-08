@@ -315,7 +315,7 @@ class FluidProfile(db.Model):
     furans = db.Column(db.Boolean(False))
     inhibitor = db.Column(db.Boolean(False))
     pcb = db.Column(db.Boolean(False))
-    qty = db.Column(db.Integer)
+    qty = db.Column(db.Integer) # qty Syringe
     sampling = db.Column(db.Integer)
     # jar
     dielec = db.Column(db.Boolean(False))
