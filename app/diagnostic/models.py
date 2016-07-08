@@ -450,17 +450,17 @@ class GasSensor(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Sensor. Sensor commercial name
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='GasSensor.manufacturer_id')
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # # Sensor. Sensor commercial name
+    # name = db.Column(db.String(50))
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='GasSensor.manufacturer_id')
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     h2 = db.Column(db.Float(53), server_default=db.text("0"))  # Remaining are equivalent
     ch4 = db.Column(db.Float(53), server_default=db.text("0"))
@@ -490,20 +490,20 @@ class Transformer(db.Model):
     # Assigned name given by production.
     # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
     # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-
-    manufacturer = relationship('Manufacturer', foreign_keys='Transformer.manufacturer_id')
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    #
+    # manufacturer = relationship('Manufacturer', foreign_keys='Transformer.manufacturer_id')
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
     gassensor_id = db.Column(
         'gas_sensor_id',
         db.ForeignKey("gas_sensor.id"),
@@ -520,8 +520,8 @@ class Transformer(db.Model):
     # FluidVolume. Quantity of insulating fluid in equipment in litre
     fluid_volume = db.Column(db.Float(53))
 
-    # description. Describe the equipment function
-    description = db.Column(db.UnicodeText)
+    # # description. Describe the equipment function
+    # description = db.Column(db.UnicodeText)
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -599,13 +599,10 @@ class Transformer(db.Model):
     ratio_tag6 = db.Column(db.String(20))  # RatioTag6. Tag use for TTR
 
     # FluidType. Insulating fluid used in equipment
-    fluid_type_id = db.Column(
-        'fluid_type_id',
-        db.ForeignKey("fluid_type.id"),
-        nullable=False
-    )
-
+    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=False)
     fluid_type = relationship('FluidType', backref='transformer')
+    fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
+    fluid_level = db.relationship('FluidLevel', foreign_keys='Transformer.fluid_level_id')
 
     # it's a relation to bushing table column "serial number"
     # bushing_serial1 = db.Column(db.String(15))  # BushingSerial1.
@@ -739,32 +736,36 @@ class Breaker(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='Breaker.manufacturer_id')
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='Breaker.manufacturer_id')
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    #manufactured = db.Column(db.Enum(",".join(years), name="Years"))  # ManuYear. Year manufactured
-    # manufactured = db.Column(db.Enum([], name="Years"), nullable=True)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText)
+    # #manufactured = db.Column(db.Enum(",".join(years), name="Years"))  # ManuYear. Year manufactured
+    # # manufactured = db.Column(db.Enum([], name="Years"), nullable=True)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText)
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
+    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
+    fluid_type = db.relationship('FluidType', foreign_keys='Breaker.fluid_type_id')
+    fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
+    fluid_level = db.relationship('FluidLevel', foreign_keys='Breaker.fluid_level_id')
 
     def __repr__(self):
         return self.__tablename__
@@ -775,24 +776,24 @@ class LoadTapChanger(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='LoadTapChanger.manufacturer_id')
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='LoadTapChanger.manufacturer_id')
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
+    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    description = db.Column(db.UnicodeText)
+    # description = db.Column(db.UnicodeText)
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
 
@@ -805,6 +806,10 @@ class LoadTapChanger(db.Model):
 
     # tap changer property property
     ltc4 = db.Column(db.Float(53))  # LTC4
+    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
+    fluid_type = db.relationship('FluidType', foreign_keys='LoadTapChanger.fluid_type_id')
+    fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
+    fluid_level = db.relationship('FluidLevel', foreign_keys='LoadTapChanger.fluid_level_id')
 
     def __repr__(self):
         return self.__tablename__
@@ -815,23 +820,20 @@ class Bushing(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     type = ['phase', 'Neutral']
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='Bushing.manufacturer_id')
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-
-    # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
-
-    # frequency. Operating frequency
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
-    description = db.Column(sqla.UnicodeText())  # description. Describe the equipment function
+    # name = db.Column(db.String(50))
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column('manufacturer_id', db.ForeignKey("manufacturer.id"), nullable=False)
+    # manufacturer = relationship('Manufacturer', foreign_keys='Bushing.manufacturer_id')
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    #
+    # # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
+    #
+    # # frequency. Operating frequency
+    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
+    # description = db.Column(sqla.UnicodeText())  # description. Describe the equipment function
+    winding = db.Column(db.Integer, nullable=False)  # Winding. Winding, primary, secondary, etc. been measured
     bushing_manufacturer_h1 = db.Column(db.String(25))  # Bushing manufacturer for H1
     bushing_manufacturer_h2 = db.Column(db.String(25))  # Bushing manufacturer for H2
     bushing_manufacturer_h3 = db.Column(db.String(25))  # Bushing manufacturer for H3
@@ -879,16 +881,16 @@ class NeutralResistance(db.Model):
     __tablename__ = u'resistance'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='NeutralResistance.manufacturer_id')
-    manufactured = db.Column(db.Integer)
+    # name = db.Column(db.String(50))
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='NeutralResistance.manufacturer_id')
+    # manufactured = db.Column(db.Integer)
 
     # its a separate device should be splitted into another table
     neutral_resistance = db.Column(db.Float(53))  # NeutralResistance1.
@@ -912,27 +914,27 @@ class AirCircuitBreaker(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='AirCircuitBreaker.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='AirCircuitBreaker.manufacturer_id')
 
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
+    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText)
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText)
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -946,30 +948,30 @@ class Capacitor(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='Capacitor.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='Capacitor.manufacturer_id')
 
     # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
 
     # frequency. Operating frequency
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
+    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -983,27 +985,27 @@ class PowerSource(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-
-    manufacturer = relationship('Manufacturer', foreign_keys='PowerSource.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    #
+    # manufacturer = relationship('Manufacturer', foreign_keys='PowerSource.manufacturer_id')
     phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
+    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -1017,25 +1019,25 @@ class SwitchGear(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='SwitchGear.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='SwitchGear.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -1049,25 +1051,25 @@ class InductionMachine(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='InductionMachine.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='InductionMachine.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -1081,24 +1083,24 @@ class SynchronousMachine(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='SynchronousMachine.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='SynchronousMachine.manufacturer_id')
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -1112,29 +1114,33 @@ class Rectifier(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-
-    manufacturer = relationship('Manufacturer', foreign_keys='Rectifier.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    #
+    # manufacturer = relationship('Manufacturer', foreign_keys='Rectifier.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
+    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
+    fluid_type = db.relationship('FluidType', foreign_keys='Rectifier.fluid_type_id')
+    fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
+    fluid_level = db.relationship('FluidLevel', foreign_keys='Rectifier.fluid_level_id')
 
     def __repr__(self):
         return self.serial
@@ -1145,28 +1151,32 @@ class Tank(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='Tank.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='Tank.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
+    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
+    fluid_type = db.relationship('FluidType', foreign_keys='Tank.fluid_type_id')
+    fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
+    fluid_level = db.relationship('FluidLevel', foreign_keys='Tank.fluid_level_id')
 
     def __repr__(self):
         return self.__tablename__
@@ -1177,25 +1187,25 @@ class Switch(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
-
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-    manufacturer = relationship('Manufacturer', foreign_keys='Switch.manufacturer_id')
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
+    #
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    # manufacturer = relationship('Manufacturer', foreign_keys='Switch.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -1209,28 +1219,28 @@ class Cable(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
 
-    # Assigned name given by production.
-    # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
-    # Production because equipment can changed over the years and associate wrong diagnostic
-    name = db.Column(db.String(50))
+    # # Assigned name given by production.
+    # # Production name never change but equipment may moved around. Must be careful applying a diagnostic related to a
+    # # Production because equipment can changed over the years and associate wrong diagnostic
+    # name = db.Column(db.String(50))
 
-    # EquipmentSerialNum: Equipment ID given by manufacturer.
-    # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    manufacturer_id = db.Column(
-        'manufacturer_id',
-        db.ForeignKey("manufacturer.id"),
-        nullable=False
-    )
-
-    manufacturer = relationship('Manufacturer', foreign_keys='Cable.manufacturer_id')
+    # # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # # Index key, along with Equipment number to uniquely identify equipment
+    # serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    #
+    # manufacturer_id = db.Column(
+    #     'manufacturer_id',
+    #     db.ForeignKey("manufacturer.id"),
+    #     nullable=False
+    # )
+    #
+    # manufacturer = relationship('Manufacturer', foreign_keys='Cable.manufacturer_id')
 
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # Year manufactured
-    # manufactured = db.Column(db.Enum(",".join(map(str, range(1970, datetime.now().year))), name="years"))
-    manufactured = db.Column(db.Integer())
-    description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    # # Year manufactured
+    # # manufactured = db.Column(db.Enum(",".join(map(str, range(1970, datetime.now().year))), name="years"))
+    # manufactured = db.Column(db.Integer())
+    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     def __repr__(self):
         return self.__tablename__
@@ -1243,19 +1253,22 @@ class Equipment(db.Model):
     __tablename__ = u'equipment'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-
+    name = db.Column(db.String(50))
     # EquipmentNumber: Equipment ID given by equipment owner.
     # Equipment number to uniquely identify equipment
     equipment_number = db.Column(db.Integer, nullable=False, index=True)
-
+    # EquipmentSerialNum: Equipment ID given by manufacturer.
+    # Index key, along with Equipment number to uniquely identify equipment
+    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     # EquipmentType. Define equipment by a single letter code. T:transformer, D; breaker etc...
-    type = db.Column(
-        'equipment_type_id',
-        db.ForeignKey("equipment_type.id"),
-        nullable=False
-    )
+    type = db.Column('equipment_type_id', db.ForeignKey("equipment_type.id"), nullable=False)
     eqtype = relation('EquipmentType', backref='equipment')
 
+    manufacturer_id = db.Column('manufacturer_id', db.ForeignKey("manufacturer.id"), nullable=False)
+    manufacturer = relationship('Manufacturer', foreign_keys='Equipment.manufacturer_id')
+    manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
+    description = db.Column(db.UnicodeText)
     # Location. Indicate the named placed where the equipement is.
     # Example, a main transformer is at site Budapest, and at localisation Church street.
     # Its the equivalent of the substation name.

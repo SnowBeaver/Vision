@@ -1046,17 +1046,6 @@ class GasRelayView(MySimpleTypesView):
         )
 
 
-class PaintTypesView(MySimpleTypesView):
-    """
-    PaintTypes management view
-    """
-
-    def __init__(self, dbsession):
-        super(PaintTypesView, self).__init__(
-            PaintTypes, dbsession, name="Paint types"
-        )
-
-
 class SamplingPointView(MySimpleTypesView):
     """
     SamplingPoint management view
@@ -1198,14 +1187,18 @@ class FanConditionView(MySimpleConditionsView):
         )
 
 
-class MySimpleStatusesView(MySimpleView):
-    def __init__(self, model_class, dbsession, **kvargs):
-        super(MySimpleStatusesView, self).__init__(
-            model_class, dbsession, category="Statuses", **kvargs
+class PaintTypesView(MySimpleConditionsView):
+    """
+    PaintTypes management view
+    """
+
+    def __init__(self, dbsession):
+        super(PaintTypesView, self).__init__(
+            PaintTypes, dbsession, name="Paint types"
         )
 
 
-class FluidLevelView(MySimpleStatusesView):
+class FluidLevelView(MySimpleConditionsView):
     """
     FluidLevel management view
     """
@@ -1216,7 +1209,7 @@ class FluidLevelView(MySimpleStatusesView):
         )
 
 
-class GasLevelView(MySimpleStatusesView):
+class GasLevelView(MySimpleConditionsView):
     """
     GasLevel management view
     """
@@ -1227,7 +1220,7 @@ class GasLevelView(MySimpleStatusesView):
         )
 
 
-class TapCounterStatusView(MySimpleStatusesView):
+class TapCounterStatusView(MySimpleConditionsView):
     """
     TapCounterStatus management view
     """
@@ -1235,6 +1228,13 @@ class TapCounterStatusView(MySimpleStatusesView):
     def __init__(self, dbsession):
         super(TapCounterStatusView, self).__init__(
             TapCounterStatus, dbsession, name="Tap counter status"
+        )
+
+
+class MySimpleStatusesView(MySimpleView):
+    def __init__(self, model_class, dbsession, **kvargs):
+        super(MySimpleStatusesView, self).__init__(
+            model_class, dbsession, category="Statuses", **kvargs
         )
 
 
