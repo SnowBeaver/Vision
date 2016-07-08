@@ -1279,7 +1279,7 @@ class WindingTestView(MyTestView):
 
     def __init__(self, dbsession):
         super(WindingTestView, self).__init__(
-            WindingTest, dbsession, name="Winding test"
+            WindingTest, dbsession, name="Winding PF"
         )
 
 
