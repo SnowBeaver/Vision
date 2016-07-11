@@ -766,6 +766,7 @@ class Breaker(db.Model):
     fluid_type = db.relationship('FluidType', foreign_keys='Breaker.fluid_type_id')
     fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
     fluid_level = db.relationship('FluidLevel', foreign_keys='Breaker.fluid_level_id')
+    open = db.Column(db.Boolean, default=True)
 
     def __repr__(self):
         return self.__tablename__
