@@ -781,6 +781,23 @@ class TestTypeView(MyModelView):
             TestType, dbsession, name="Test type", category="Types"
         )
 
+class InhibitorTypeView(MyModelView):
+    """
+       InhibitorType management view
+       """
+    # Visible columns in the list view
+    # can_view_details = True
+    # column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['name'])
+    column_searchable_list = (['name'])
+
+    def __init__(self, dbsession):
+        super(InhibitorTypeView, self).__init__(
+            InhibitorType, dbsession, name="Inhibitor type", category="Types"
+        )
+
 
 class TestTypeResultTableView(MyModelView):
     """
@@ -1466,5 +1483,5 @@ other_views = {EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, 
                InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
                ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
                EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
-               SyringeView, TestScheduleView
+               SyringeView, TestScheduleView, InhibitorTypeView
                }

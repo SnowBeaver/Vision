@@ -2205,12 +2205,26 @@ class InhibitorTest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
     test_result = db.relationship('TestResult', backref='inhibitor_test')
+    inhibitor_type_id = db.Column(db.Integer, db.ForeignKey("inhibitor_type.id"))
+    inhibitor_type = db.relationship('InhibitorType', foreign_keys='InhibitorTest.inhibitor_type_id')
+
     inhibitor = db.Column(db.Float(53))  # Remaining are equivalent
     remark = db.Column(db.String(80))
     inhibitor_flag = db.Column(db.Boolean)
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+class InhibitorType(db.Model):
+    """Inhibitor types database"""
+    __tablename__ = u'inhibitor_type'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(10))
+
+    def __repr__(self):
+        return self.name
+
 
 
 class PCBTest(db.Model):
