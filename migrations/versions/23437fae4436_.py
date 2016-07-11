@@ -38,7 +38,6 @@ def upgrade():
     """
     op.execute(sql=sql)
 
-
     sql = """
     ALTER TABLE public.breaker ADD open BOOLEAN DEFAULT TRUE NULL;
     ALTER TABLE public.breaker ADD fluid_type_id INT NULL;
@@ -46,8 +45,8 @@ def upgrade():
     ALTER TABLE public.breaker ADD CONSTRAINT breaker_fluid_type_id_fk FOREIGN KEY (fluid_type_id) REFERENCES fluid_type (id);
     ALTER TABLE public.breaker ADD CONSTRAINT breaker_fluid_level_id_fk FOREIGN KEY (fluid_level_id) REFERENCES fluid_level (id);
     """
-
     op.execute(sql=sql)
+
     sql = """
     ALTER TABLE public.tank ADD fluid_type_id INT NULL;
     ALTER TABLE public.tank ADD fluid_level_id INT NULL;
@@ -55,6 +54,7 @@ def upgrade():
     ALTER TABLE public.tank ADD CONSTRAINT tank_fluid_level_id_fk FOREIGN KEY (fluid_level_id) REFERENCES fluid_level (id);
     """
     op.execute(sql=sql)
+
     sql = """
     ALTER TABLE public.transformer ADD fluid_type_id INT NULL;
     ALTER TABLE public.transformer ADD fluid_level_id INT NULL;
@@ -62,6 +62,7 @@ def upgrade():
     ALTER TABLE public.transformer ADD CONSTRAINT transformer_fluid_level_id_fk FOREIGN KEY (fluid_level_id) REFERENCES fluid_level (id);
     """
     op.execute(sql=sql)
+
     sql = """
     ALTER TABLE public.tap_changer ADD fluid_type_id INT NULL;
     ALTER TABLE public.tap_changer ADD fluid_level_id INT NULL;
@@ -69,12 +70,16 @@ def upgrade():
     ALTER TABLE public.tap_changer ADD CONSTRAINT tap_changer_fluid_level_id_fk FOREIGN KEY (fluid_level_id) REFERENCES fluid_level (id);
     """
     op.execute(sql=sql)
+
     sql = """
     ALTER TABLE public.rectifier ADD fluid_type_id INT NULL;
     ALTER TABLE public.rectifier ADD fluid_level_id INT NULL;
     ALTER TABLE public.rectifier ADD CONSTRAINT rectifier_fluid_type_id_fk FOREIGN KEY (fluid_type_id) REFERENCES fluid_type (id);
     ALTER TABLE public.rectifier ADD CONSTRAINT rectifier_fluid_level_id_fk FOREIGN KEY (fluid_level_id) REFERENCES fluid_level (id);
         """
+    op.execute(sql=sql)
+
+    sql = """ALTER TABLE public.switch ADD threephase BOOLEAN NULL;"""
     op.execute(sql=sql)
 
 def downgrade():
