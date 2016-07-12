@@ -56,9 +56,7 @@ def upgrade():
     op.execute(sql=sql)
 
     sql = """
-    ALTER TABLE public.transformer ADD fluid_type_id INT NULL;
     ALTER TABLE public.transformer ADD fluid_level_id INT NULL;
-    ALTER TABLE public.transformer ADD CONSTRAINT transformer_fluid_type_id_fk FOREIGN KEY (fluid_type_id) REFERENCES fluid_type (id);
     ALTER TABLE public.transformer ADD CONSTRAINT transformer_fluid_level_id_fk FOREIGN KEY (fluid_level_id) REFERENCES fluid_level (id);
     """
     op.execute(sql=sql)
