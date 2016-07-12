@@ -114,7 +114,7 @@ def upgrade():
             {'id': 1, 'name': 'Good'},
             {'id': 2, 'name': 'Leak-wet'},
             {'id': 3, 'name': 'Leak-flowing'},
-            {'id': 4, 'name': 'Unavalable'},
+            {'id': 4, 'name': 'Unavailable'},
             {'id': 5, 'name': 'Not-visible'},
             {'id': 6, 'name': 'Not appl.'},
             {'id': 7, 'name': 'See notes'},
