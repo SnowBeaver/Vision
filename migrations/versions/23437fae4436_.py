@@ -23,7 +23,7 @@ def upgrade():
     INSERT INTO public.fluid_type (id, name) VALUES (5, 'Soybean');
     INSERT INTO public.fluid_type (id, name) VALUES (6, 'Sunflower');
     INSERT INTO public.fluid_type (id, name) VALUES (7, 'Synthetic vegetable');
-                """
+    """
     op.execute(sql=sql)
 
     sql = """
@@ -33,7 +33,7 @@ def upgrade():
     ALTER TABLE public.equipment ADD serial VARCHAR(50) NULL;
     ALTER TABLE public.equipment ADD name VARCHAR(50) NULL;
     ALTER TABLE public.equipment ADD manufacturer_id INT NULL;
-    CONSTRAINT equipment_manufacturer_id_fk FOREIGN KEY (manufacturer_id) REFERENCES manufacturer (id);
+    ALTER TABLE public.equipment ADD CONSTRAINT equipment_manufacturer_id_fk FOREIGN KEY (manufacturer_id) REFERENCES manufacturer (id);
     ALTER TABLE public.bushing ADD winding INT NULL;
     """
     op.execute(sql=sql)
