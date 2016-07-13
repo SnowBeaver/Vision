@@ -142,6 +142,15 @@ class NormGasView(MyModelView):
         )
 
 
+class NormParticlesView(MyModelView):
+    column_searchable_list = ('name',)
+
+    def __init__(self, dbsession):
+        super(NormParticlesView, self).__init__(
+            NormParticles, dbsession, name="Norms gas", category="Norms"
+        )
+
+
 class ManufacturerView(MyModelView):
     """
     Manufacturer management view
@@ -211,11 +220,7 @@ class AirCircuitBreakerView(MyModelView):
     # form_args = {
     #     'manufactured': {'coerce': int}
     # }
-
-    # # List of columns that can be sorted.
-    # column_sortable_list = ('name', 'serial', 'phase_number', 'frequency', 'sealed', 'manufactured',
-    #                         'welded_cover', 'manufacturer_id')
-    # column_searchable_list = ('name', 'serial')
+    column_searchable_list = ('name', 'serial')
 
     def __init__(self, dbsession):
         super(AirCircuitBreakerView, self).__init__(
@@ -337,6 +342,15 @@ class RectifierView(MyModelView):
     def __init__(self, dbsession):
         super(RectifierView, self).__init__(
             Rectifier, dbsession, name="Rectifier", category="Equipment"
+        )
+
+
+class InductanceView(MyModelView):
+    column_searchable_list = ('name', 'serial')
+
+    def __init__(self, dbsession):
+        super(InductanceView, self).__init__(
+            Inductance, dbsession, name="Inductance", category="Equipment"
         )
 
 
@@ -882,11 +896,11 @@ class ElectricalProfileView(MyModelView):
     # # List of columns that can be sorted.
     # column_sortable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double',
     #                         'insulation', 'visual', 'resistance', 'degree', 'turns')
-    column_searchable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double',
+    column_searchable_list = ('selection', 'description', 'bushing', 'winding', 'insulation_pf',
                               'insulation', 'visual', 'resistance', 'degree', 'turns')
 
     # form_args = {'winding_double': {'label': 'Winding Doble', }}
-    column_labels = {'winding_double': 'Winding Doble'}
+    column_labels = {'insulation_pf': 'Insulation PF'}
 
     def __init__(self, dbsession):
         super(ElectricalProfileView, self).__init__(
@@ -1111,6 +1125,31 @@ class DownstreamView(MySimpleTypesView):
     def __init__(self, dbsession):
         super(DownstreamView, self).__init__(
             Downstream, dbsession, name="Downstream"
+        )
+
+
+class InterruptingMediumView(MySimpleTypesView):
+    def __init__(self, dbsession):
+        super(InterruptingMediumView, self).__init__(
+            InterruptingMedium, dbsession, name="Interrupting medium"
+        )
+
+
+class InsulationView(MySimpleTypesView):
+    def __init__(self, dbsession):
+        super(InsulationView, self).__init__(
+            Insulation, dbsession, name="Insulation"
+        )
+
+
+class BreakerMechanismView(MySimpleTypesView):
+    """
+    Downstream management view
+    """
+
+    def __init__(self, dbsession):
+        super(BreakerMechanismView, self).__init__(
+            BreakerMechanism, dbsession, name="Breaker mechanism"
         )
 
 
@@ -1467,10 +1506,10 @@ class FluidTestView(MyTestView):
 
 
 simple_views = {TestReasonView, PressureUnitView, GasRelayView, PaintTypesView, SamplingPointView, UpstreamView,
-                DownstreamView, FanConditionView, HeatingConditionView, FoundationConditionView,
-                ConnectionConditionView, TapFilterConditionView, OverallConditionView, GasketConditionView,
-                ValveConditionView, PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
-                FluidLevelView
+                DownstreamView, InterruptingMediumView, InsulationView, BreakerMechanismView, FanConditionView,
+                HeatingConditionView, FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
+                OverallConditionView, GasketConditionView, ValveConditionView, PumpConditionView, ContractStatusView,
+                TapCounterStatusView, GasLevelView, FluidLevelView
                 }
 test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
               PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
@@ -1479,7 +1518,7 @@ test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, Insula
               }
 other_views = {EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, NormGasView, AirCircuitBreakerView,
                ManufacturerView, BushingView, CableView, CapacitorView, RectifierView, NeutralResistanceView, TankView,
-               LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView,
+               LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView, InductanceView,
                InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
                ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
                EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
