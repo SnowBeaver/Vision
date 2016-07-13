@@ -46,13 +46,34 @@ def upgrade():
         column('name', String),
     )
 
-    parameter_value_table = table(
-        'norm_parameter_value',
-        column('id', Integer),
-        column('param_id', Integer),
-        column('equipment_type_id', Integer),
-        column('value_type', String),
-        column('value', String)
+    # parameter_value_table = table(
+    #     'norm_parameter_value',
+    #     column('id', Integer),
+    #     column('param_id', Integer),
+    #     column('equipment_type_id', Integer),
+    #     column('value_type', String),
+    #     column('value', String)
+    # )
+
+    op.create_table(
+        'equipment_type',
+        sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
+        sa.Column('code', sa.VARCHAR(length=50),  nullable=False),
+        sa.Column('name', sa.VARCHAR(length=255), nullable=False),
+    )
+
+    op.create_table(
+        'norm_type',
+        sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
+        sa.Column('name', sa.VARCHAR(length=255), nullable=False),
+    )
+
+    op.create_table(
+        'norm',
+        sa.Column('id', sa.INTEGER(), autoincrement=True, nullable=False),
+        sa.Column('norm_type_id', sa.VARCHAR(length=50),  nullable=False),
+        sa.Column('code', sa.VARCHAR(length=50),  nullable=False),
+        sa.Column('name', sa.VARCHAR(length=255), nullable=False),
     )
 
     op.bulk_insert(
@@ -94,7 +115,6 @@ def upgrade():
     op.bulk_insert(
         norm_table, isolation
     )
-
 
     op.bulk_insert(
         norm_table, [
@@ -180,5 +200,7 @@ def upgrade():
 
 
 def downgrade():
-    op.execute(sql=' TABLE norm CASCADE;')
+    op.execute(sql='DROP TABLE norm CASCADE;')
+    op.execute(sql='DROP TABLE norm_type CASCADE;')
+    op.execute(sql='DROP TABLE equipment_type CASCADE;')
     # op.execute(sql='TRUNCATE TABLE norm_parameter CASCADE;')
