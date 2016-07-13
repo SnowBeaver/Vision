@@ -41,7 +41,7 @@ class ElectricalProfile(db.Model):
     description = db.Column(db.Unicode(1024))
     bushing = db.Column(db.Boolean(False))
     winding = db.Column(db.Boolean(False))
-    winding_double = db.Column(db.Boolean(False))
+    insulation_pf = db.Column(db.Boolean(False))
     insulation = db.Column(db.Boolean(False))
     visual = db.Column(db.Boolean(False))
     resistance = db.Column(db.Boolean(False))
@@ -974,13 +974,19 @@ class Rectifier(db.Model):
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
+    windings = db.Column(db.Integer)  # Windings. Number of windings in transformer
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
+
     fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
     fluid_type = db.relationship('FluidType', foreign_keys='Rectifier.fluid_type_id')
+
     fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
     fluid_level = db.relationship('FluidLevel', foreign_keys='Rectifier.fluid_level_id')
+
+    gassensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
+    gas_sensor = relationship('GasSensor', foreign_keys='Rectifier.gas_sensor_id')
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
