@@ -710,7 +710,7 @@ class Breaker(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    current_rating = db.Column(db.Integer)
+    current_rating = db.Column(db.Numeric(6))
     open = db.Column(db.Boolean, default=True)
 
     fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
@@ -782,7 +782,7 @@ class Bushing(db.Model):
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     current = db.Column(db.Integer)
     fluid_volume = db.Column(db.Float)
-    bil = db.Column(db.Float)
+    bil = db.Column(db.Numeric(8))
     c1 = db.Column(db.Float)
     c1pf = db.Column(db.Float)
     c2 = db.Column(db.Float)
@@ -861,7 +861,7 @@ class NeutralResistance(db.Model):
     # property of resistence, it's status
     neutral_resistance_open3 = db.Column(db.Float(53))  # NeutralResistanceOpen3
     kv = db.Column(db.Float)  # voltage
-    bil = db.Column(db.Integer)  # voltage
+    bil = db.Column(db.Numeric(8))
     open = db.Column(db.Boolean)
 
     def __repr__(self):
@@ -874,7 +874,7 @@ class AirCircuitBreaker(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    current_rating = db.Column(db.Integer)
+    current_rating = db.Column(db.Numeric(6))
 
     # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -892,7 +892,7 @@ class Capacitor(db.Model):
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     kv = db.Column(db.Float)  # voltage
     kvar = db.Column(db.Float)  # voltage
-    bil = db.Column(db.Float)
+    bil = db.Column(db.Numeric(8))
     # #
     # # manufacturer_id = db.Column(
     # #     'manufacturer_id',
@@ -952,7 +952,7 @@ class SwitchGear(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    current_rating = db.Column(db.Integer())
+    current_rating = db.Column(db.Numeric(6))
 
     insulation_id = db.Column(db.Integer, db.ForeignKey("insulation.id"))
     insulation = db.relationship('Insulation', foreign_keys='SwitchGear.insulation_id')
@@ -971,7 +971,7 @@ class InductionMachine(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    current_rating = db.Column(db.Integer())
+    current_rating = db.Column(db.Numeric(6))
     hp = db.Column(db.String(50))
     kva = db.Column(db.String(50))
     pf = db.Column(db.String(50))
@@ -991,7 +991,7 @@ class SynchronousMachine(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    current_rating = db.Column(db.Integer())
+    current_rating = db.Column(db.Numeric(6))
     hp = db.Column(db.String(50))
     kw = db.Column(db.String(50))
 
@@ -1085,7 +1085,7 @@ class Switch(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-    current_rating = db.Column(db.Integer)
+    current_rating = db.Column(db.Numeric(6))
     threephase = db.Column(db.Boolean)
 
     interrupting_medium_id = db.Column(db.Integer, db.ForeignKey("interrupting_medium.id"))

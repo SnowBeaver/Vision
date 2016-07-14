@@ -79,12 +79,12 @@ def upgrade():
     op.execute(sql=sql)
 
     sql = """
-    ALTER TABLE public.switch ADD current_rating INT NULL;
-    ALTER TABLE public.breaker ADD current_rating INT NULL;
-    ALTER TABLE public.switchgear ADD current_rating INT NULL;
-    ALTER TABLE public.air_breaker ADD current_rating INT NULL;
-    ALTER TABLE public.synchronous_machine ADD current_rating INT NULL;
-    ALTER TABLE public.induction_machine ADD current_rating INT NULL;
+    ALTER TABLE public.switch ADD current_rating NUMERIC(6) NULL;
+    ALTER TABLE public.breaker ADD current_rating NUMERIC(6) NULL;
+    ALTER TABLE public.switchgear ADD current_rating NUMERIC(6) NULL;
+    ALTER TABLE public.air_breaker ADD current_rating NUMERIC(6) NULL;
+    ALTER TABLE public.synchronous_machine ADD current_rating NUMERIC(6) NULL;
+    ALTER TABLE public.induction_machine ADD current_rating NUMERIC(6) NULL;
     """
     op.execute(sql=sql)
 
@@ -155,7 +155,7 @@ def upgrade():
 
     sql = """
     ALTER TABLE public.resistance ADD kv FLOAT NULL;
-    ALTER TABLE public.resistance ADD bil INT NULL;
+    ALTER TABLE public.resistance ADD bil NUMERIC(8) NULL;
     ALTER TABLE public.resistance ADD open BOOLEAN NULL;
     """
     op.execute(sql=sql)
@@ -176,7 +176,7 @@ def upgrade():
     ALTER TABLE public.bushing ADD c1pf FLOAT NULL;
     ALTER TABLE public.bushing ADD c2 FLOAT NULL;
     ALTER TABLE public.bushing ADD c2pf FLOAT NULL;
-    ALTER TABLE public.bushing ADD bil INT NULL;
+    ALTER TABLE public.bushing ADD bil NUMERIC(8) NULL;
     ALTER TABLE public.bushing ADD fluid_type_id INT NULL;
     ALTER TABLE public.bushing ADD CONSTRAINT bushing_fluid_type_id_fk FOREIGN KEY (fluid_type_id) REFERENCES fluid_type (id);
     """
@@ -191,7 +191,7 @@ def upgrade():
     sql = """
     ALTER TABLE public.capacitor ADD kv FLOAT NULL;
     ALTER TABLE public.capacitor ADD kvar FLOAT NULL;
-    ALTER TABLE public.capacitor ADD bil INT NULL;
+    ALTER TABLE public.capacitor ADD bil NUMERIC(8) NULL;
     """
     op.execute(sql=sql)
 
@@ -218,7 +218,7 @@ def upgrade():
     kva1 FLOAT NULL,
     neutral BOOLEAN NULL,
     neutral_resistance FLOAT NULL,
-    bil1 INT NULL,
+    bil1 NUMERIC(8) NULL,
     imp1 FLOAT NULL
     );
     """
