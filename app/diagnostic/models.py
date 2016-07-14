@@ -783,6 +783,10 @@ class Bushing(db.Model):
     current = db.Column(db.Integer)
     fluid_volume = db.Column(db.Float)
     bil = db.Column(db.Float)
+    c1 = db.Column(db.Float)
+    c1pf = db.Column(db.Float)
+    c2 = db.Column(db.Float)
+    c2pf = db.Column(db.Float)
 
     fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
     fluid_type = db.relationship('FluidType', foreign_keys='Bushing.fluid_type_id')

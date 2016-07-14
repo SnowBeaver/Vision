@@ -18,10 +18,10 @@ def upgrade():
     ALTER TABLE public.rectifier ADD gas_sensor_id INT NULL;
     ALTER TABLE public.rectifier ADD CONSTRAINT rectifier_gas_sensor_id_fk FOREIGN KEY (gas_sensor_id) REFERENCES gas_sensor (id);
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """ALTER TABLE public.electrical_profile ADD insulation_pf BOOLEAN NULL;"""
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """CREATE TABLE public.particles (
     id VARCHAR(50) PRIMARY KEY NOT NULL,
@@ -40,24 +40,24 @@ def upgrade():
     CONSTRAINT particles_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id)
     );
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     INSERT INTO public.particles (id, equipment_id, "2um", "5um", "10um", "15um", "25um", "50um", "100um", iso4406_1, iso4406_2, iso4406_3, nas1638)
     VALUES ('ALUSEPMS 000042', NULL, 19919, 7664.5, 2834.5, 1181.5, 316, 38.5, 4.5, 17, 16, 13, 0);
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     INSERT INTO public.norm (id, name, table_name, code) VALUES (5, 'Norms particles', 'particles', null);
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.tap_changer ADD number_of_taps INT NULL;
     ALTER TABLE public.tap_changer ADD model VARCHAR(50) NULL;
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """CREATE TABLE public.interrupting_medium (
     id INT PRIMARY KEY NOT NULL,
@@ -76,7 +76,7 @@ def upgrade():
     ALTER TABLE public.breaker ADD interrupting_medium_id INT NULL;
     ALTER TABLE public.breaker ADD CONSTRAINT breaker_interrupting_medium_id_fk FOREIGN KEY (interrupting_medium_id) REFERENCES interrupting_medium (id);
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.switch ADD current_rating INT NULL;
@@ -86,14 +86,14 @@ def upgrade():
     ALTER TABLE public.synchronous_machine ADD current_rating INT NULL;
     ALTER TABLE public.induction_machine ADD current_rating INT NULL;
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.gas_sensor ADD model VARCHAR(50) NULL;
     ALTER TABLE public.cable ADD model VARCHAR(50) NULL;
     ALTER TABLE public.bushing ADD model VARCHAR(50) NULL;
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """CREATE TABLE public.insulation (
     id INT PRIMARY KEY NOT NULL,
@@ -117,7 +117,7 @@ def upgrade():
     ALTER TABLE public.switchgear ADD insulation_id INT NULL;
     ALTER TABLE public.switchgear ADD CONSTRAINT switchgear_insulation_id_fk FOREIGN KEY (insulation_id) REFERENCES insulation (id);
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.synchronous_machine ADD hp VARCHAR(50) NULL;
@@ -131,7 +131,7 @@ def upgrade():
     ALTER TABLE public.transformer ADD cooling_rating INT NULL;
     ALTER TABLE public.transformer ADD threephase BOOLEAN NULL;
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     CREATE TABLE public.inductance (
@@ -151,45 +151,49 @@ def upgrade():
     CONSTRAINT inductance_gas_sensor_id_fk FOREIGN KEY (gas_sensor_id) REFERENCES gas_sensor (id)
     );
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.resistance ADD kv FLOAT NULL;
     ALTER TABLE public.resistance ADD bil INT NULL;
     ALTER TABLE public.resistance ADD open BOOLEAN NULL;
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.cable ADD threephase BOOLEAN NULL;
     ALTER TABLE public.cable ADD insulation_id INT NULL;
     ALTER TABLE public.cable ADD CONSTRAINT cable_insulation_id_fk FOREIGN KEY (insulation_id) REFERENCES insulation (id);
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.bushing ADD kv FLOAT NULL;
     ALTER TABLE public.bushing ADD sealed BOOLEAN NULL;
     ALTER TABLE public.bushing ADD current INT NULL;
     ALTER TABLE public.bushing ADD fluid_volume FLOAT NULL;
+    ALTER TABLE public.bushing ADD c1 FLOAT NULL;
+    ALTER TABLE public.bushing ADD c1pf FLOAT NULL;
+    ALTER TABLE public.bushing ADD c2 FLOAT NULL;
+    ALTER TABLE public.bushing ADD c2pf FLOAT NULL;
     ALTER TABLE public.bushing ADD bil INT NULL;
     ALTER TABLE public.bushing ADD fluid_type_id INT NULL;
     ALTER TABLE public.bushing ADD CONSTRAINT bushing_fluid_type_id_fk FOREIGN KEY (fluid_type_id) REFERENCES fluid_type (id);
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.powersource ADD kv FLOAT NULL;
     ALTER TABLE public.powersource ADD threephase BOOLEAN NULL;
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.capacitor ADD kv FLOAT NULL;
     ALTER TABLE public.capacitor ADD kvar FLOAT NULL;
     ALTER TABLE public.capacitor ADD bil INT NULL;
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     CREATE TABLE public.cooling_mode (
@@ -202,7 +206,7 @@ def upgrade():
     INSERT INTO public.cooling_mode (id, name) VALUES (3, 'OFAF');
     INSERT INTO public.cooling_mode (id, name) VALUES (4, 'ONWF');
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     CREATE TABLE public.cooling (
@@ -218,7 +222,7 @@ def upgrade():
     imp1 FLOAT NULL
     );
     """
-    # op.execute(sql=sql)
+    op.execute(sql=sql)
 
     sql = """
     ALTER TABLE public.equipment_type ADD table_name VARCHAR(50) NULL;
