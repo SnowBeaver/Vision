@@ -778,38 +778,46 @@ class Bushing(db.Model):
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     model = db.Column(db.String(50))
-    #
-    # # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
-    #
-    # # frequency. Operating frequency
-    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
-    # description = db.Column(sqla.UnicodeText())  # description. Describe the equipment function
-    winding = db.Column(db.Integer, nullable=False)  # Winding. Winding, primary, secondary, etc. been measured
-    bushing_manufacturer_h1 = db.Column(db.String(25))  # Bushing manufacturer for H1
-    bushing_manufacturer_h2 = db.Column(db.String(25))  # Bushing manufacturer for H2
-    bushing_manufacturer_h3 = db.Column(db.String(25))  # Bushing manufacturer for H3
-    bushing_manufacturer_hn = db.Column(db.String(25))  # Bushing manufacturer for HN
-    bushing_manufacturer_x1 = db.Column(db.String(25))  # Bushing manufacturer for X1
-    bushing_manufacturer_x2 = db.Column(db.String(25))  # Bushing manufacturer for X2
-    bushing_manufacturer_x3 = db.Column(db.String(25))  # Bushing manufacturer for X3
-    bushing_manufacturer_xn = db.Column(db.String(25))  # Bushing manufacturer for XN
-    bushing_manufacturer_t1 = db.Column(db.String(25))  # Bushing manufacturer for T1
-    bushing_manufacturer_t2 = db.Column(db.String(25))  # Bushing manufacturer for T2
-    bushing_manufacturer_t3 = db.Column(db.String(25))  # Bushing manufacturer for T3
-    bushing_manufacturer_tn = db.Column(db.String(25))  # Bushing manufacturer for TN
-    bushing_manufacturer_q1 = db.Column(db.String(25))  # Bushing manufacturer for Q1
-    bushing_manufacturer_q2 = db.Column(db.String(25))  # Bushing manufacturer for Q2
-    bushing_manufacturer_q3 = db.Column(db.String(25))  # Bushing manufacturer for Q3
-    bushing_manufacturer_qn = db.Column(db.String(25))  # Bushing manufacturer for QN
-    bushing_type_h = db.Column(db.String(25))  # Bushing type for H
-    bushing_type_hn = db.Column(db.String(25))  # Bushing type for HN
-    bushing_type_x = db.Column(db.String(25))  # Bushing type for X
-    bushing_type_xn = db.Column(db.String(25))  # Bushing type for XN
-    bushing_type_t = db.Column(db.String(25))  # Bushing type for T
-    bushing_type_tn = db.Column(db.String(25))  # Bushing type for TN
-    bushing_type_q = db.Column(db.String(25))  # Bushing type for Q
-    bushing_type_qn = db.Column(db.String(25))  # Bushing type for QN
+    kv = db.Column(db.Float)  # voltage
+    sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
+    current = db.Column(db.Integer)
+    fluid_volume = db.Column(db.Float)
+    bil = db.Column(db.Float)
+
+    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
+    fluid_type = db.relationship('FluidType', foreign_keys='Bushing.fluid_type_id')
+    # #
+    # # # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    # # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
+    # #
+    # # # frequency. Operating frequency
+    # # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
+    # # description = db.Column(sqla.UnicodeText())  # description. Describe the equipment function
+    # winding = db.Column(db.Integer, nullable=False)  # Winding. Winding, primary, secondary, etc. been measured
+    # bushing_manufacturer_h1 = db.Column(db.String(25))  # Bushing manufacturer for H1
+    # bushing_manufacturer_h2 = db.Column(db.String(25))  # Bushing manufacturer for H2
+    # bushing_manufacturer_h3 = db.Column(db.String(25))  # Bushing manufacturer for H3
+    # bushing_manufacturer_hn = db.Column(db.String(25))  # Bushing manufacturer for HN
+    # bushing_manufacturer_x1 = db.Column(db.String(25))  # Bushing manufacturer for X1
+    # bushing_manufacturer_x2 = db.Column(db.String(25))  # Bushing manufacturer for X2
+    # bushing_manufacturer_x3 = db.Column(db.String(25))  # Bushing manufacturer for X3
+    # bushing_manufacturer_xn = db.Column(db.String(25))  # Bushing manufacturer for XN
+    # bushing_manufacturer_t1 = db.Column(db.String(25))  # Bushing manufacturer for T1
+    # bushing_manufacturer_t2 = db.Column(db.String(25))  # Bushing manufacturer for T2
+    # bushing_manufacturer_t3 = db.Column(db.String(25))  # Bushing manufacturer for T3
+    # bushing_manufacturer_tn = db.Column(db.String(25))  # Bushing manufacturer for TN
+    # bushing_manufacturer_q1 = db.Column(db.String(25))  # Bushing manufacturer for Q1
+    # bushing_manufacturer_q2 = db.Column(db.String(25))  # Bushing manufacturer for Q2
+    # bushing_manufacturer_q3 = db.Column(db.String(25))  # Bushing manufacturer for Q3
+    # bushing_manufacturer_qn = db.Column(db.String(25))  # Bushing manufacturer for QN
+    # bushing_type_h = db.Column(db.String(25))  # Bushing type for H
+    # bushing_type_hn = db.Column(db.String(25))  # Bushing type for HN
+    # bushing_type_x = db.Column(db.String(25))  # Bushing type for X
+    # bushing_type_xn = db.Column(db.String(25))  # Bushing type for XN
+    # bushing_type_t = db.Column(db.String(25))  # Bushing type for T
+    # bushing_type_tn = db.Column(db.String(25))  # Bushing type for TN
+    # bushing_type_q = db.Column(db.String(25))  # Bushing type for Q
+    # bushing_type_qn = db.Column(db.String(25))  # Bushing type for QN
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
@@ -878,25 +886,28 @@ class Capacitor(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    kv = db.Column(db.Float)  # voltage
+    kvar = db.Column(db.Float)  # voltage
+    bil = db.Column(db.Float)
+    # #
+    # # manufacturer_id = db.Column(
+    # #     'manufacturer_id',
+    # #     db.ForeignKey("manufacturer.id"),
+    # #     nullable=False
+    # # )
+    # # manufacturer = relationship('Manufacturer', foreign_keys='Capacitor.manufacturer_id')
     #
-    # manufacturer_id = db.Column(
-    #     'manufacturer_id',
-    #     db.ForeignKey("manufacturer.id"),
-    #     nullable=False
-    # )
-    # manufacturer = relationship('Manufacturer', foreign_keys='Capacitor.manufacturer_id')
-
-    # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
-
-    # frequency. Operating frequency
-    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
-    sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
-
-    # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    welded_cover = db.Column(db.Boolean)
+    # # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
+    #
+    # # frequency. Operating frequency
+    # # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
+    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
+    # # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
+    # # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+    #
+    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
+    # welded_cover = db.Column(db.Boolean)
 
     def __repr__(self):
         return self.__tablename__
@@ -908,6 +919,8 @@ class PowerSource(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    kv = db.Column(db.Float)  # voltage
+    threephase = db.Column(db.Boolean)
     #
     # manufacturer_id = db.Column(
     #     'manufacturer_id',
@@ -916,14 +929,14 @@ class PowerSource(db.Model):
     # )
     #
     # manufacturer = relationship('Manufacturer', foreign_keys='PowerSource.manufacturer_id')
-    phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
-    sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
+    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
     # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    welded_cover = db.Column(db.Boolean)
+    # welded_cover = db.Column(db.Boolean)
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)

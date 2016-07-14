@@ -140,6 +140,7 @@ def upgrade():
     serial VARCHAR(50) NULL,
     fluid_volume FLOAT NULL,
     sealed BOOLEAN NULL,
+    winding INTEGER NULL,
     welded_cover BOOLEAN NULL,
     cooling_rating INT,
     fluid_type_id INT,
@@ -163,6 +164,84 @@ def upgrade():
     ALTER TABLE public.cable ADD threephase BOOLEAN NULL;
     ALTER TABLE public.cable ADD insulation_id INT NULL;
     ALTER TABLE public.cable ADD CONSTRAINT cable_insulation_id_fk FOREIGN KEY (insulation_id) REFERENCES insulation (id);
+    """
+    # op.execute(sql=sql)
+
+    sql = """
+    ALTER TABLE public.bushing ADD kv FLOAT NULL;
+    ALTER TABLE public.bushing ADD sealed BOOLEAN NULL;
+    ALTER TABLE public.bushing ADD current INT NULL;
+    ALTER TABLE public.bushing ADD fluid_volume FLOAT NULL;
+    ALTER TABLE public.bushing ADD bil INT NULL;
+    ALTER TABLE public.bushing ADD fluid_type_id INT NULL;
+    ALTER TABLE public.bushing ADD CONSTRAINT bushing_fluid_type_id_fk FOREIGN KEY (fluid_type_id) REFERENCES fluid_type (id);
+    """
+    # op.execute(sql=sql)
+
+    sql = """
+    ALTER TABLE public.powersource ADD kv FLOAT NULL;
+    ALTER TABLE public.powersource ADD threephase BOOLEAN NULL;
+    """
+    # op.execute(sql=sql)
+
+    sql = """
+    ALTER TABLE public.capacitor ADD kv FLOAT NULL;
+    ALTER TABLE public.capacitor ADD kvar FLOAT NULL;
+    ALTER TABLE public.capacitor ADD bil INT NULL;
+    """
+    # op.execute(sql=sql)
+
+    sql = """
+    CREATE TABLE public.cooling_mode (
+    id INT PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NULL
+    );
+
+    INSERT INTO public.cooling_mode (id, name) VALUES (1, 'ONAN');
+    INSERT INTO public.cooling_mode (id, name) VALUES (2, 'ONAF');
+    INSERT INTO public.cooling_mode (id, name) VALUES (3, 'OFAF');
+    INSERT INTO public.cooling_mode (id, name) VALUES (4, 'ONWF');
+    """
+    # op.execute(sql=sql)
+
+    sql = """
+    CREATE TABLE public.cooling (
+    id INT PRIMARY KEY NOT NULL,
+    cooling_mode_id INT NULL,
+    equipment_type_id INT NULL,
+    equipment_id INT NULL,
+    kv1 FLOAT NULL,
+    kva1 FLOAT NULL,
+    neutral BOOLEAN NULL,
+    neutral_resistance FLOAT NULL,
+    bil1 INT NULL,
+    imp1 FLOAT NULL
+    );
+    """
+    # op.execute(sql=sql)
+
+    sql = """
+    ALTER TABLE public.equipment_type ADD table_name VARCHAR(50) NULL;
+    TRUNCATE public.equipment_type CASCADE;
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (1, 'Air circuit breaker', 'A', 'air_breaker');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (2, 'Bushing', 'B', 'bushing');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (3, 'Capacitor', 'C', 'capacitor');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (4, 'Breaker', 'D', 'breaker');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (5, 'Power Source', 'E', 'powersource');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (6, 'Cable', 'G', 'cable');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (7, 'Switchgear', 'H', 'switchgear');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (8, 'Induction machine', 'I', 'induction_machine');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (9, 'Synchronous machine', 'J', 'synchronous_machine');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (10, 'Localization', 'L', 'localization');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (11, 'Tap changer', 'P', 'tap_changer');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (12, 'Rectifier', 'R', 'rectifier');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (13, 'Site', 'S', 'site');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (14, 'Transformer', 'T', 'transformer');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (15, 'Tank', 'Y', 'tank');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (16, 'Switch', 'Z', 'switch');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (17, 'Inductance', '', 'inductance');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (18, 'Neutral resistance', '', 'resistance');
+    INSERT INTO public.equipment_type (id, name, code, table_name) VALUES (19, 'Gas sensor', '', 'gas_sensor');
     """
     op.execute(sql=sql)
 
