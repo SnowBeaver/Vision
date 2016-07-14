@@ -1945,6 +1945,11 @@ class PolymerisationDegreeTest(db.Model):
     phase_c1 = db.Column(db.Float(53))
     phase_c2 = db.Column(db.Float(53))
     phase_c3 = db.Column(db.Float(53))
+    lead_a = db.Column(db.Numeric(4))
+    lead_b = db.Column(db.Numeric(4))
+    lead_c = db.Column(db.Numeric(4))
+    lead_n = db.Column(db.Numeric(4))
+    winding = db.Column(db.Numeric(4))
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
