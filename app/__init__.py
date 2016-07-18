@@ -129,8 +129,8 @@ app.register_blueprint(pageModule)
 from app.tree.views import mod as treeModule
 app.register_blueprint(treeModule)
 
-from app.diagnostic.views import test_views, simple_views, other_views
-for view_class in test_views.union(simple_views).union(other_views):
+from app.diagnostic.views import admin_views
+for view_class in admin_views:
     backend.add_view(view_class(db.session))
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView

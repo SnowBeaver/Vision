@@ -761,6 +761,7 @@ class CampaignView(MyModelView):
         'contract': {'fields': (Contract.name,)},
         'lab_contract': {'fields': (Contract.name,)},
     }
+
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
             Campaign, dbsession, name="Campaign", category="Campaign",
@@ -823,6 +824,7 @@ class TestTypeView(MyModelView):
         super(TestTypeView, self).__init__(
             TestType, dbsession, name="Test type", category="Types"
         )
+
 
 class InhibitorTypeView(MyModelView):
     """
@@ -1541,22 +1543,25 @@ class FluidTestView(MyTestView):
         )
 
 
-simple_views = {TestReasonView, PressureUnitView, GasRelayView, PaintTypesView, SamplingPointView, UpstreamView,
+simple_views = [TestReasonView, PressureUnitView, GasRelayView, PaintTypesView, SamplingPointView, UpstreamView,
                 DownstreamView, InterruptingMediumView, InsulationView, BreakerMechanismView, FanConditionView,
                 HeatingConditionView, FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
                 OverallConditionView, GasketConditionView, ValveConditionView, PumpConditionView, ContractStatusView,
                 TapCounterStatusView, GasLevelView, FluidLevelView
-                }
-test_views = {BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
+                ]
+test_views = [BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
               PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
               DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView, FluidTestView,
               MetalsInOilTestView, ParticleTestView
-              }
-other_views = {EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, NormGasView, AirCircuitBreakerView,
+              ]
+other_views = [EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, NormGasView, AirCircuitBreakerView,
                ManufacturerView, BushingView, CableView, CapacitorView, RectifierView, NeutralResistanceView, TankView,
                LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView, InductanceView,
                InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
                ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
                EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
                SyringeView, TestScheduleView, InhibitorTypeView
-               }
+               ]
+admin_views = simple_views
+admin_views.extend(test_views)
+admin_views.extend(other_views)
