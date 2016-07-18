@@ -297,6 +297,56 @@ class Campaign(db.Model):
     # AmbientAirTemperature: Ambient air temperature at sampling time
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
 
+
+    # electriacal profile fields
+    bushing = db.Column(db.Boolean(False))
+    winding = db.Column(db.Boolean(False))
+    insulation_pf = db.Column(db.Boolean(False))
+    insulation = db.Column(db.Boolean(False))
+    visual_inspection = db.Column(db.Boolean(False))
+    resistance = db.Column(db.Boolean(False))
+    degree = db.Column(db.Boolean(False))
+    turns = db.Column(db.Boolean(False))
+
+    # fluid profile field
+    # syringe
+    gas = db.Column(db.Boolean(False))
+    water = db.Column(db.Boolean(False))
+    furans = db.Column(db.Boolean(False))
+    inhibitor = db.Column(db.Boolean(False))
+    pcb = db.Column(db.Boolean(False))
+    qty = db.Column(db.Integer)  # qty Syringe
+    sampling = db.Column(db.Integer)
+    # jar
+    dielec = db.Column(db.Boolean(False))
+    acidity = db.Column(db.Boolean(False))
+    density = db.Column(db.Boolean(False))
+    pcb_jar = db.Column(db.Boolean(False))
+    inhibitor_jar = db.Column(db.Boolean(False))
+    point = db.Column(db.Boolean(False))
+    dielec_2 = db.Column(db.Boolean(False))
+    color = db.Column(db.Boolean(False))
+    pf = db.Column(db.Boolean(False))
+    particles = db.Column(db.Boolean(False))
+    metals = db.Column(db.Boolean(False))
+    viscosity = db.Column(db.Boolean(False))
+    dielec_d = db.Column(db.Boolean(False))
+    ift = db.Column(db.Boolean(False))
+    pf_100 = db.Column(db.Boolean(False))
+    furans_f = db.Column(db.Boolean(False))
+    water_w = db.Column(db.Boolean(False))
+    corr = db.Column(db.Boolean(False))
+    dielec_i = db.Column(db.Boolean(False))
+    visual = db.Column(db.Boolean(False))
+    qty_jar = db.Column(db.Integer)
+    sampling_jar = db.Column(db.Integer)
+    # vial
+    pcb_vial = db.Column(db.Boolean(False))
+    antioxidant = db.Column(db.Boolean(False))
+    qty_vial = db.Column(db.Integer)
+    sampling_vial = db.Column(db.Integer)
+
+
     def __repr__(self):
         return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
 

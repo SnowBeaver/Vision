@@ -42,6 +42,51 @@ def upgrade():
     INSERT INTO public.users_roles (user_id, role_id) VALUES (7, 1);
     INSERT INTO public.users_roles (user_id, role_id) VALUES (7, 4);
     """
+    # op.execute(sql=sql)
+
+    sql = """
+    ALTER TABLE public.campaign ADD bushing BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD winding BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD insulation_pf BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD insulation BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD visual_inspection BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD resistance BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD degree BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD turns BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD gas BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD water BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD furans BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD inhibitor BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD pcb BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD qty INT NULL;
+    ALTER TABLE public.campaign ADD sampling INT NULL;
+    ALTER TABLE public.campaign ADD dielec BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD acidity BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD density BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD pcb_jar BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD inhibitor_jar BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD point BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD dielec_2 BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD color BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD pf BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD particles BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD metals BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD viscosity BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD dielec_d BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD ift BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD pf_100 BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD furans_f BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD water_w BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD corr BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD dielec_i BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD visual BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD qty_jar INT NULL;
+    ALTER TABLE public.campaign ADD sampling_jar INT NULL;
+    ALTER TABLE public.campaign ADD pcb_vial BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD antioxidant BOOLEAN DEFAULT False NULL;
+    ALTER TABLE public.campaign ADD qty_vial INT NULL;
+    ALTER TABLE public.campaign ADD sampling_vial INT NULL;
+    """
     op.execute(sql=sql)
 
 
