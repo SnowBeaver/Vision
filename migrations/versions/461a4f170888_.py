@@ -23,6 +23,24 @@ def upgrade():
     INSERT INTO public.role (id, name, description) VALUES (4, 'blogger', 'editor');
     INSERT INTO public.role (id, name, description) VALUES (5, 'user_translator', 'edit diagnostic and translation');
     INSERT INTO public.role (id, name, description) VALUES (6, 'expert', 'Can edit norm tables');
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (1, 1);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (2, 1);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (3, 1);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (4, 2);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (2, 4);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (1, 4);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (4, 1);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (3, 1);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (5, 2);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (4, 4);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (3, 4);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (6, 1);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (6, 4);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (7, 2);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (1, 2);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (2, 5);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (7, 1);
+    INSERT INTO public.users_roles (user_id, role_id) VALUES (7, 4);
     """
     op.execute(sql=sql)
 
