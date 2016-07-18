@@ -229,8 +229,6 @@ class MyModelView(ModelView):
             return_url=self._get_list_url(view_args),
         )
 
-
-
     def is_accessible(self):
         if not login.current_user.is_authenticated():
             return False

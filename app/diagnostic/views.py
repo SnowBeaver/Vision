@@ -3,6 +3,7 @@
 from datetime import datetime
 from .forms import *
 from app.admin.views import MyModelView
+from flask.ext import login
 
 
 class EquipmentView(MyModelView):
@@ -73,6 +74,13 @@ class NormFuranView(MyModelView):
     column_sortable_list = ('name',)
     column_searchable_list = ('name',)
 
+    def is_accessible(self):
+        """ Can create and edit norm tables """
+        if login.current_user.is_authenticated():
+            return login.current_user.has_role('expert')
+
+        return False
+
     def __init__(self, dbsession):
         super(NormFuranView, self).__init__(
             NormFuran, dbsession, name="Norms furan", category="Norms"
@@ -93,6 +101,13 @@ class NormIsolationView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('c', 'f', 'notseal', 'seal')
     column_searchable_list = ('c', 'f')
+
+    def is_accessible(self):
+        """ Can create and edit norm tables """
+        if login.current_user.is_authenticated():
+            return login.current_user.has_role('expert')
+
+        return False
 
     def __init__(self, dbsession):
         super(NormIsolationView, self).__init__(
@@ -115,6 +130,13 @@ class NormPhysicView(MyModelView):
     column_sortable_list = ('name',)
     column_searchable_list = ('name',)
 
+    def is_accessible(self):
+        """ Can create and edit norm tables """
+        if login.current_user.is_authenticated():
+            return login.current_user.has_role('expert')
+
+        return False
+
     def __init__(self, dbsession):
         super(NormPhysicView, self).__init__(
             NormPhysic, dbsession, name="Norms physic", category='Norms'
@@ -135,6 +157,13 @@ class NormGasView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('name',)
     column_searchable_list = ('name',)
+
+    def is_accessible(self):
+        """ Can create and edit norm tables """
+        if login.current_user.is_authenticated():
+            return login.current_user.has_role('expert')
+
+        return False
 
     def __init__(self, dbsession):
         super(NormGasView, self).__init__(
@@ -957,6 +986,13 @@ class NormView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('name', )
     column_searchable_list = ('name', 'name', 'table_name')
+
+    def is_accessible(self):
+        """ Can create and edit norm tables """
+        if login.current_user.is_authenticated():
+            return login.current_user.has_role('expert')
+
+        return False
 
     def __init__(self, dbsession):
         super(NormView, self).__init__(
