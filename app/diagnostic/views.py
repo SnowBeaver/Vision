@@ -12,12 +12,12 @@ class EquipmentView(MyModelView):
     """
     # Visible columns in the list view
     column_list = (
-        'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'equipment_number', 'equipment_type_id', 'location_id', 'visual_inspection_by_id',
         'visual_date', 'norm_id',
     )
     # List of columns that can be sorted.
     column_sortable_list = (
-        'id', 'equipment_number', 'eqtype', 'location_id', 'visual_inspection_by_id',
+        'id', 'equipment_number', 'equipment_type', 'location_id', 'visual_inspection_by_id',
         'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
     )
 

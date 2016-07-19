@@ -113,25 +113,20 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
 from app.home.views import mod as homeModule
-
-app.register_blueprint(homeModule)
-
 from app.users.views import mod as userModule
-
-app.register_blueprint(userModule)
-
-# register page
 from app.pages.views import mod as pageModule
-
-app.register_blueprint(pageModule)
-
-# register tree
 from app.tree.views import mod as treeModule
-app.register_blueprint(treeModule)
+app.register_blueprint(homeModule)
+app.register_blueprint(userModule)
+app.register_blueprint(pageModule)  # register page
+app.register_blueprint(treeModule) # register tree
 
 from app.diagnostic.views import admin_views
 for view_class in admin_views:
     backend.add_view(view_class(db.session))
+
+from diagnostic.api import api_blueprint
+app.register_blueprint(api_blueprint)
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
 

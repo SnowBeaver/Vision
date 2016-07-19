@@ -1187,8 +1187,8 @@ class Equipment(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     # EquipmentType. Define equipment by a single letter code. T:transformer, D; breaker etc...
-    type = db.Column('equipment_type_id', db.ForeignKey("equipment_type.id"), nullable=False)
-    eqtype = relation('EquipmentType', backref='equipment')
+    equipment_type_id = db.Column('equipment_type_id', db.ForeignKey("equipment_type.id"), nullable=False)
+    equipment_type = relation('EquipmentType', backref='equipment')
 
     manufacturer_id = db.Column('manufacturer_id', db.ForeignKey("manufacturer.id"), nullable=False)
     manufacturer = relationship('Manufacturer', foreign_keys='Equipment.manufacturer_id')
@@ -1285,7 +1285,7 @@ class Equipment(db.Model):
     sibling = db.Column(db.Integer)
 
     def __repr__(self):
-        return "{} {} {}".format(self.id, self.equipment_number, self.eqtype)
+        return "{} {} {}".format(self.id, self.equipment_number, self.equipment_type)
 
 
 class Norm(db.Model):
