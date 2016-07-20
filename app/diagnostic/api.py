@@ -1,10 +1,24 @@
-from flask import jsonify, Blueprint, abort, make_response
+from flask import jsonify, Blueprint, abort, make_response, request
+from .models import *
 from app import db
-from .models import Equipment, EquipmentType, Manufacturer, Location, Norm
 from app.users.models import User
 
 
-api_blueprint = Blueprint('api_v1_1', __name__, url_prefix='/api/v1.0')
+api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
+
+model_dict = {'equipment': Equipment,
+              'equipment_type': EquipmentType,
+              'campaign': Campaign,
+              'contract': Contract,
+              'norm': Norm,
+              'location': Location,
+              'manufacturer': Manufacturer,
+              'user': User,
+              'assigned_to': User,
+              'visual_inspection_by': User,
+              'electrical_profile': ElectricalProfile,
+              'fluid_profile': FluidProfile,
+              }
 
 
 def row2dict(row):
@@ -14,63 +28,65 @@ def row2dict(row):
     return d
 
 
-def get_item_fields(item):
-    return [{k: str(getattr(item, k)) for k in item.__class__.__dict__.keys() if k[:1] != '_'}]
-
-
-def get_items_list(items_model):
-    return [{'id': item.id, 'name': str(item)} for item in db.session.query(items_model).all()]
-
-
 def return_json(items_name, items_list):
     return jsonify({items_name: items_list})
 
 
-@api_blueprint.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+def get_item_fields(item):
+    return [{k: str(getattr(item, k)) for k in item.__class__.__dict__.keys() if k[:1] != '_'}]
 
 
-@api_blueprint.route('/test/', methods=['GET'])
-def get_tests():
-    return return_json('tests', [{'test1': 'ok'}, {'test2': 'ok'}])
-
-
-@api_blueprint.route('/equipment/', methods=['GET'])
-def get_equipment_list():
-    return return_json('equipment', get_items_list(Equipment))
-
-
-@api_blueprint.route('/equipment/<int:item_id>', methods=['GET'])
-def get_equipment(item_id):
-    item = db.session.query(Equipment).get(item_id)
+def get_item(items_model, item_id=None):
+    if not item_id:
+        return [{'id': item.id, 'name': str(item)} for item in db.session.query(items_model).all()]
+    item = db.session.query(items_model).get(item_id)
     if not item:
         abort(404)
-    return jsonify({'equipment': get_item_fields(item)})
+    return get_item_fields(item)
 
 
-@api_blueprint.route('/equipment_type/', methods=['GET'])
-def get_equipment_type():
-    return return_json('equipment_type', get_items_list(EquipmentType))
+def add_item(items_model):
+    if not request.json:
+        abort(400)
+    param_dict = { k:v for k,v in request.json.items() }
+    item = items_model(**param_dict)
+    db.session.add(item)
+    db.session.commit()
+    return item.id
 
 
-@api_blueprint.route('/manufacturer/', methods=['GET'])
-def get_manufacturer():
-    return return_json('manufacturer', get_items_list(Manufacturer))
+def update_item(items_model, item_id):
+    if not request.json:
+        abort(400)
+    item = db.session.query(items_model).get(item_id)
+    for k, v in request.json.items():
+        setattr(item, k, v)
+    return get_item_fields(item)
 
 
-@api_blueprint.route('/location/', methods=['GET'])
-def get_location():
-    return return_json('location', get_items_list(Location))
+def delete_item(items_model, item_id):
+    rows = db.session.query(items_model).filter(items_model.id == item_id).delete(synchronize_session=False)
+    return rows > 0
 
 
-@api_blueprint.route('/user/', methods=['GET'])
-@api_blueprint.route('/visual_inspection_by/', methods=['GET'])
-@api_blueprint.route('/assigned_to/', methods=['GET'])
-def get_user():
-    return return_json('user', get_items_list(User))
+@api_blueprint.errorhandler(404)
+def not_found(error):
+    return make_response(return_json('error', 'Not found'), 404)
 
 
-@api_blueprint.route('/norm/', methods=['GET'])
-def get_norm():
-    return return_json('norm', get_items_list(Norm))
+@api_blueprint.route('/<path>/', methods=['GET', 'POST'])
+@api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
+def handler(path, item_id=None):
+    if path not in model_dict:
+        abort(404)
+
+    crud_functions = {'GET': get_item,
+                      'POST': add_item,
+                      'PUT': update_item,
+                      'DELETE': delete_item
+                      }
+    crud_func = crud_functions[request.method]
+    args = [model_dict[path]]
+    if item_id:
+        args.append(item_id)
+    return return_json('result', crud_func(*args))

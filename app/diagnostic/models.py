@@ -2176,6 +2176,7 @@ class InhibitorTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+
 class InhibitorType(db.Model):
     """Inhibitor types database"""
     __tablename__ = u'inhibitor_type'
@@ -2185,7 +2186,6 @@ class InhibitorType(db.Model):
 
     def __repr__(self):
         return self.name
-
 
 
 class PCBTest(db.Model):
