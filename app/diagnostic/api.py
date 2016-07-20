@@ -61,6 +61,7 @@ def update_item(items_model, item_id):
     item = db.session.query(items_model).get(item_id)
     for k, v in request.json.items():
         setattr(item, k, v)
+    db.session.commit()
     return get_item_fields(item)
 
 
