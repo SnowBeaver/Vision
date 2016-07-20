@@ -67,6 +67,7 @@ def update_item(items_model, item_id):
 
 def delete_item(items_model, item_id):
     rows = db.session.query(items_model).filter(items_model.id == item_id).delete(synchronize_session=False)
+    db.session.commit()
     return rows > 0
 
 
