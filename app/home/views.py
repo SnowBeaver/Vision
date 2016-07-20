@@ -17,6 +17,7 @@ from flask import Markup
 from app.pages.storage import get_page_by_title, get_page_by_slug, process_page, isblogger
 from app.pages.views import render
 from flask import jsonify, redirect, url_for, abort
+from app.home.utils import crossdomain
 
 mod = Blueprint('home', __name__, url_prefix='')
 
@@ -62,6 +63,9 @@ def get_timezone():
     # translations = [str(translation) for translation in babel.list_translations()]
     # return request.accept_languages.best_match(translations)
 
+@mod.route('/api/v1/manufacturers', methods=['GET'] )
+def manufacturers():
+    return jsonify(first='1900', second='1901')
 
 @mod.route('/lang/<string:lang>', methods=['GET'])
 # @guest_per.require(http_exception = 403)

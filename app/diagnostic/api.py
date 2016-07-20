@@ -51,7 +51,10 @@ def get_equipment(item_id):
 
 @api_blueprint.route('/equipment_type/', methods=['GET'])
 def get_equipment_type():
-    return return_json('equipment_type', get_items_list(EquipmentType))
+    import json
+    # return jsonify(results=db.session.query(EquipmentType).all())
+    return jsonify(equipment_type=[e.serialize() for e in db.session.query(EquipmentType).all()])
+    # return jsonify(get_items_list(EquipmentType))
 
 
 @api_blueprint.route('/manufacturer/', methods=['GET'])

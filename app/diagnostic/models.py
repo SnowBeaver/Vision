@@ -438,6 +438,8 @@ class EquipmentType(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        return dict(id=self.id, name=self.name)
 
 class Material(db.Model):
     __tablename__ = u'material'
