@@ -10,9 +10,13 @@ import AppBar from 'material-ui/AppBar';
 import DatePicker from 'material-ui/DatePicker';
 import AutoComplete from 'material-ui/AutoComplete';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import injectTapEventPlugin from "react-tap-event-plugin";
+injectTapEventPlugin();
+
 var serialize = require('form-serialize')
 
 
+var items = []
 
 var first_year = 1900;
 var current_date = new Date();
@@ -24,61 +28,147 @@ while (first_year != current_year) {
     year_array.push(first_year.toString());
 }
 
-var ManufacturedAutocomplete = React.createClass({
 
 
-
-  getInitialState: function() {
-    return {
-      dataSource:year_array,
-
-    };
+const sstyles = {
+  customWidth: {
+    width: 150,
   },
+};
 
-  // componentDidMount: function() {
-  //   this.serverRequest = $.get(this.props.source, function (result){
-  //       var lastManufacturers = result;
-  //     this.setState({
-  //       dataSource: lastManufacturers,
-  //     });
-  //   }.bind(this), 'json');
-  //
-  // },
-  //
-  // componentWillUnmount: function() {
-  //   this.serverRequest.abort();
-  // },
-  //   const dataSource= year_array.map(String);
 
- render: function() {
-  return (
-      <MuiThemeProvider>
+ class SelectFieldExampleSimple extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {value: 1};
+  }
+
+  handleChange(event, index, value) {
+    this.setState({value});
+};
+
+  render() {
+    return (
       <div>
-        <AutoComplete
-          hintText="Type anything"
-          filter={AutoComplete.noFilter}
-          openOnFocus={true}
-          dataSource={this.state.dataSource}
-          ref="manufactured"
-
-          //onUpdateInput={this.handleUpdateInput.bind(this)}
-        />
+        <SelectField value={this.state.value} onChange={this.handleChange}>
+          <MenuItem value={1} primaryText="Never" />
+          <MenuItem value={2} primaryText="Every Night" />
+          <MenuItem value={3} primaryText="Weeknights" />
+          <MenuItem value={4} primaryText="Weekends" />
+          <MenuItem value={5} primaryText="Weekly" />
+        </SelectField>
+        <br />
       </div>
-      </MuiThemeProvider>
     );
   }
-  
-  //handleUpdateInput: function(){
-  //  this.setState({
-  //    dataSource: [
-  //      value,
-  //      value + value,
-  //      value + value + value,
-  //    ],
-  //  });
-  //};
+}
 
+
+
+
+
+
+
+
+var EquipmentTypeSelectField = React.createClass ({
+
+
+    getInitialState: function(){
+        console.log('initail state');
+        return {
+            items: []
+        };
+    },
+
+    componentDidMount: function(){
+        console.log('component did mount');
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['equipment_type']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    render: function() {
+        var menuItems = [];
+        console.log('component render');
+         for (var key in this.state.items) {
+                menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+         }
+
+        return (
+            <div>
+            <SelectField>
+            {menuItems}
+            </SelectField>
+            </div>
+        );
+    }
 });
+
+
+
+
+// var ManufacturedAutocomplete = React.createClass({
+//
+//   getInitialState: function() {
+//     return {
+//       dataSource:year_array,
+//
+//     };
+//   },
+
+// componentDidMount: function() {
+//   this.serverRequest = $.get(this.props.source, function (result){
+//       var lastManufacturers = result;
+//     this.setState({
+//       dataSource: lastManufacturers,
+//     });
+//   }.bind(this), 'json');
+//
+// },
+//
+// componentWillUnmount: function() {
+//   this.serverRequest.abort();
+// },
+//   const dataSource= year_array.map(String);
+
+// render: function() {
+//  return (
+//      <MuiThemeProvider>
+//      <div>
+//        <AutoComplete
+//          hintText="Type anything"
+//          filter={AutoComplete.noFilter}
+//          openOnFocus={true}
+//          dataSource={this.state.dataSource}
+//          ref="manufactured"
+//
+//          //onUpdateInput={this.handleUpdateInput.bind(this)}
+//        />
+//      </div>
+//      </MuiThemeProvider>
+//    );
+//  }
+
+//handleUpdateInput: function(){
+//  this.setState({
+//    dataSource: [
+//      value,
+//      value + value,
+//      value + value + value,
+//    ],
+//  });
+//};
+
+// });
 
 
 // ReactDOM.render(
@@ -89,87 +179,87 @@ var ManufacturedAutocomplete = React.createClass({
 
 var EqTypeAutocomplete = React.createClass({
 
-  getInitialState: function() {
-    return {
-      dataSource:[]
+    getInitialState: function() {
+        return {
+            dataSource:[]
 
-    };
-  },
+        };
+    },
 
-  componentDidMount: function() {
-    this.serverRequest = $.get(this.props.source, function (result){
-       var eqTypes = (result['equipment_type']);
-        var eqTypes =[];
-        for (var key in result.equipment_type) {
-      eqTypes.push(result.equipment_type[key].name);
-        }
-      this.setState({
-        dataSource: eqTypes,
-      });
-    }.bind(this), 'json');
+    componentDidMount: function() {
+        this.serverRequest = $.get(this.props.source, function (result){
+            var eqTypes = (result['equipment_type']);
+            var eqTypes =[];
+            for (var key in result.equipment_type) {
+                eqTypes.push(result.equipment_type[key].name);
+            }
+            this.setState({
+                dataSource: eqTypes,
+            });
+        }.bind(this), 'json');
 
-  },
+    },
 
-  componentWillUnmount: function() {
-    this.serverRequest.abort();
-  },
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
 
- render: function() {
-  return (
-      <MuiThemeProvider>
-      <span>
-        <SelectField
-          hintText="EqType"
-                  
-        />
-      </span>
-      </MuiThemeProvider>
-    );
-  }
+    render: function() {
+        return (
+            <MuiThemeProvider>
+            <span>
+            <SelectField
+        hintText="EqType"
+
+            />
+            </span>
+            </MuiThemeProvider>
+        );
+    }
 });
 
 var ManfacturerAutocomplete = React.createClass({
 
-  getInitialState: function() {
-    return {
-      dataSource:[]
+    getInitialState: function() {
+        return {
+            dataSource:[]
 
-    };
-  },
+        };
+    },
 
-  componentDidMount: function() {
-    this.serverRequest = $.get(this.props.source, function (result){
-       var manufacturersList = new Object();
-    for (var key in result.equipment_type) {
-      manufacturersList[result.equipment_type[key].id] = result.equipment_type[key].name;
-        }
+    componentDidMount: function() {
+        this.serverRequest = $.get(this.props.source, function (result){
+            var manufacturersList = new Object();
+            for (var key in result.equipment_type) {
+                manufacturersList[result.equipment_type[key].id] = result.equipment_type[key].name;
+            }
 
-console.log(manufacturersList);
-      this.setState({
-        dataSource: manufacturersList,
-      });
-    }.bind(this), 'json');
+            console.log(manufacturersList);
+            this.setState({
+                dataSource: manufacturersList,
+            });
+        }.bind(this), 'json');
 
-  },
+    },
 
-  componentWillUnmount: function() {
-    this.serverRequest.abort();
-  },
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
 
- render: function() {
-  return (
-      <MuiThemeProvider>
-      <span>
-        <AutoComplete
-          hintText="Manufacturer"
-          filter={AutoComplete.noFilter}
-          openOnFocus={true}
-          dataSource={this.state.dataSource}
+    render: function() {
+        return (
+            <MuiThemeProvider>
+            <span>
+            <AutoComplete
+        hintText="Manufacturer"
+        filter={AutoComplete.noFilter}
+        openOnFocus={true}
+        dataSource={this.state.dataSource}
         />
-      </span>
-      </MuiThemeProvider>
-    );
-  }
+        </span>
+        </MuiThemeProvider>
+        );
+    }
 });
 
 
@@ -177,67 +267,67 @@ console.log(manufacturersList);
 
 
 const styles = {
-  block: {
-    maxWidth: 250,
-  },
-  checkbox: {
-    marginBottom: 16,
-  },
+    block: {
+        maxWidth: 250,
+    },
+    checkbox: {
+        marginBottom: 16,
+    },
 };
 
 const ValiadateCheckbox = () => (
-  <div style={styles.block}>
-    <Checkbox
-      label="Valiadated"
-      style={styles.checkbox}
-    />
- </div>
+<div style={styles.block}>
+<Checkbox
+label="Valiadated"
+style={styles.checkbox}
+/>
+</div>
 );
 
 const InvalidationCheckbox = () => (
-  <div style={styles.block}>
-    <Checkbox
-      label="Invalidation"
-      style={styles.checkbox}
-    />
- </div>
+<div style={styles.block}>
+<Checkbox
+label="Invalidation"
+style={styles.checkbox}
+/>
+</div>
 );
 
 const style = {
-  margin: 12,
-  
+    margin: 12,
+
 };
 
 const RaisedNewButton = () => (
-  <span>
-    <RaisedButton label="New" backgroundColor="#b8b8b8" labelColor="#ffffff" style={style}/>
-  </span>
+<span>
+<RaisedButton label="New" backgroundColor="#b8b8b8" labelColor="#ffffff" style={style}/>
+    </span>
 );
 
 const RaisedSaveButton = React.createClass ({
-    render: function () {
-        return (
-            <span>
-            <RaisedButton label="Save" backgroundColor="#2f70a8" labelColor="#ffffff" style={style} type="submit"/>
-            </span>
-        )}
+        render: function () {
+            return (
+                <span>
+                <RaisedButton label="Save" backgroundColor="#2f70a8" labelColor="#ffffff" style={style} type="submit"/>
+                </span>
+            )}
     }
 );
 
 const RaisedCancelButton = () => (
-  <span>
-    <RaisedButton label="Cancel"
-    backgroundColor="#cf4440"
-    labelColor="#ffffff"
-    style={style} />
-  </span>
+<span>
+<RaisedButton label="Cancel"
+backgroundColor="#cf4440"
+labelColor="#ffffff"
+style={style} />
+    </span>
 );
 
 
 const FormBar = () => (
-  <AppBar
-    title="Create Equipment"
-  />
+<AppBar
+title="Create Equipment"
+    />
 );
 
 
@@ -410,95 +500,105 @@ const FormBar = () => (
 
 
 const EquipmentForm = React.createClass({
-  getInitialState: function () {
-    return {loading: false, errors: {}}
-  },
-  _create: function () {
-      return $.ajax({
-      url: '/api/v1.0/equipment',
-      type: 'POST',
-      data: {
-          manufactured: this.refs.manufactured.getDOMNode().value
-      },
-      beforeSend: function () {
-        this.setState({loading: true});
-      }.bind(this)
-    })
-  },
-  _onSubmit: function (e) {
-    e.preventDefault();
-    // var errors = this._validate();
-    // if(Object.keys(errors).length != 0) {
-    //   this.setState({
-    //     errors: errors
-    //   });
-    //    return;
-    // }
-    var xhr = this._create();
-    xhr.done(this._onSuccess)
-    .fail(this._onError)
-    .always(this.hideLoading)
-  },
-  hideLoading: function () {
-    this.setState({loading: false});
-  },
-  _onSuccess: function (data) {
-    this.refs.user_form.getDOMNode().reset();
-    this.setState(this.getInitialState());
-    // show success message
-  },
-  _onError: function (data) {
-    var message = "Failed to create";
-    var res = data.responseJSON;
-    if(res.message) {
-      message = data.responseJSON.message;
-    }
-    if(res.errors) {
-      this.setState({
-        errors: res.errors
-      });
-    }
-  },
-  _onChange: function (e) {
-    var state = {};
-    state[e.target.name] =  $.trim(e.target.value);
-    this.setState(state);
-  },
-  _validate: function () {
-    var errors = {}
-    // if(this.state.username == "") {
-    //   errors.username = "Username is required";
-    // }
-    // if(this.state.email == "") {
-    //   errors.email = "Email is required";
-    // }
-    // if(this.state.password == "") {
-    //   errors.password = "Password is required";
-    // }
-    // return errors;
-  },
-  _formGroupClass: function (field) {
-    var className = "form-group ";
-    if(field) {
-      className += " has-error"
-    }
-    return className;
-  },
-  render: function() {
-    return (
-        <div className="form-container">
-        <form ref='eqtype_form' onSubmit={this._onSubmit}>
-            <FormBar/>
-            <ManufacturedAutocomplete source="http://dev.vision.local:5000/api/v1/manufacturers" />
-            <EqTypeAutocomplete source="http://dev.vision.local:5000/api/v1.0/equipment_type" />
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {}
+        }
+    },
+    _create: function () {
+        return $.ajax({
+            url: '/api/v1.0/equipment',
+            type: 'POST',
+            data: {
+                manufactured: this.refs.manufactured.getDOMNode().value
+            },
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        // var errors = this._validate();
+        // if(Object.keys(errors).length != 0) {
+        //   this.setState({
+        //     errors: errors
+        //   });
+        //    return;
+        // }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+    _onSuccess: function (data) {
+        this.refs.user_form.getDOMNode().reset();
+        this.setState(this.getInitialState());
+        // show success message
+    },
+    _onError: function (data) {
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if(res.message) {
+            message = data.responseJSON.message;
+        }
+        if(res.errors) {
+            this.setState({
+                errors: res.errors
+            });
+        }
+    },
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] =  $.trim(e.target.value);
+        this.setState(state);
+    },
+    _validate: function () {
+        var errors = {}
+        // if(this.state.username == "") {
+        //   errors.username = "Username is required";
+        // }
+        // if(this.state.email == "") {
+        //   errors.email = "Email is required";
+        // }
+        // if(this.state.password == "") {
+        //   errors.password = "Password is required";
+        // }
+        // return errors;
+    },
+    _formGroupClass: function (field) {
+        var className = "form-group ";
+        if(field) {
+            className += " has-error"
+        }
+        return className;
+    },
+    render: function() {
+        return (
+             <div className="form-container">
+
+            <form ref='eqtype_form' onSubmit={this._onSubmit}>
+
+        <FormBar/>
+
+        <br/>
+             <br/>
+                <SelectFieldExampleSimple/>
+                <br/>
+                <br/>
+                <br/>
+        <EquipmentTypeSelectField source="http://dev.vision.local:5000/api/v1.0/equipment_type" />
             <RaisedNewButton/>
-           <ManfacturerAutocomplete source="http://dev.vision.local:5000/api/v1.0/manufacturer" />
             <RaisedNewButton/>
             <RaisedSaveButton/><RaisedCancelButton/>
-          </form>
-      </div>
-    );
-  }
+            </form>
+             </div>
+        );
+    }
 });
 export default EquipmentForm;
 
