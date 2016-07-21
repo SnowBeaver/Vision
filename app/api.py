@@ -24,13 +24,6 @@ model_dict = {'equipment': Equipment,
               }
 
 
-def row2dict(row):
-    d = {}
-    for column in row.__table__.columns:
-        d[column.name] = str(getattr(row, column.name))
-    return d
-
-
 def return_json(items_name, items_list):
     return jsonify({items_name: items_list})
 
@@ -41,11 +34,13 @@ def get_item_fields(item):
 
 def get_item(items_model, item_id=None):
     if not item_id:
-        return [{'id': item.id, 'name': str(item)} for item in db.session.query(items_model).all()]
+        # return [{'id': item.id, 'name': str(item)} for item in db.session.query(items_model).all()]
+        return [item.serialize() for item in db.session.query(items_model).all()]
     item = db.session.query(items_model).get(item_id)
     if not item:
         abort(404)
-    return get_item_fields(item)
+    # return get_item_fields(item)
+    return item.serialize()
 
 
 def add_item(items_model):
@@ -65,7 +60,8 @@ def update_item(items_model, item_id):
     for k, v in request.json.items():
         setattr(item, k, v)
     db.session.commit()
-    return get_item_fields(item)
+    # return get_item_fields(item)
+    return item.serialize()
 
 
 def delete_item(items_model, item_id):

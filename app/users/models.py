@@ -14,6 +14,13 @@ users_roles = db.Table(
 )
 
 
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+
+
 class Role(db.Model, RoleMixin):
     """
     Class Role
@@ -36,6 +43,13 @@ class Role(db.Model, RoleMixin):
     # __hash__ is required to avoid the exception TypeError: unhashable type: 'Role' when saving a User
     def __hash__(self):
         return hash(self.name)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'description': self.description,
+                }
 
 
 class User(db.Model, UserMixin):
@@ -110,5 +124,27 @@ class User(db.Model, UserMixin):
     def avatar(self, size):
         return 'http://www.gravatar.com/avatar/' + \
                md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'alias': self.alias,
+                'email': self.email,
+                'password': self.password,
+                'roles': [ item.serialize for item in self.roles],
+                'status': self.status,
+                'address': self.address,
+                'mobile': self.mobile,
+                'website': self.website,
+                'country': self.country,
+                'photo': self.photo,
+                'description': self.description,
+                'active': self.active,
+                'confirmed': self.confirmed,
+                'confirmed_at': dump_datetime(self.confirmed_at),
+                'created': dump_datetime(self.created),
+                'updated': dump_datetime(self.updated),
+                }
 
 
