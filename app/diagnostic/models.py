@@ -5,6 +5,13 @@ from app import db
 from sqlalchemy.orm import relationship, relation
 
 
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+
+
 class Lab(db.Model):
     __tablename__ = 'lab'
 
@@ -31,6 +38,14 @@ class Lab(db.Model):
         #     self.code,
         #     self.name
         # )
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code,
+                'analyser': self.analyser,
+                }
 
 
 class ElectricalProfile(db.Model):
@@ -85,6 +100,21 @@ class ElectricalProfile(db.Model):
     def __repr__(self):
         return self.selection
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'selection': self.selection,
+                'description': self.description,
+                'bushing': self.bushing,
+                'winding': self.winding,
+                'insulation_pf': self.insulation_pf,
+                'insulation': self.insulation,
+                'visual': self.visual,
+                'resistance': self.resistance,
+                'degree': self.degree,
+                'turns': self.turns,
+                }
+
 
 class ContractStatus(db.Model):
     __tablename__ = 'contract_status'
@@ -95,6 +125,10 @@ class ContractStatus(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class SamplingPoint(db.Model):
     __tablename__ = 'sampling_point'
@@ -104,6 +138,10 @@ class SamplingPoint(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class Contract(db.Model):
@@ -124,6 +162,15 @@ class Contract(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code,
+                'contract_status_id': self.contract_status_id,
+                'contract_status': self.contract_status.serialize()
+                }
 
 
 class Campaign(db.Model):
@@ -350,6 +397,100 @@ class Campaign(db.Model):
     def __repr__(self):
         return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'date': dump_datetime(self.date),
+                'created_by_id': self.created_by_id,
+                'created_by': self.created_by.serialize(),
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment.serialize(),
+                'material_id': self.material_id,
+                'material': self.material.serialize(),
+                'analysis_number': self.analysis_number,
+                'percent_ratio': self.percent_ratio,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                'charge': self.charge,
+                'date_prelevement': dump_datetime(self.date_prelevement),
+                'remark': self.remark,
+                'performed_by_id': self.performed_by_id,
+                'performed_by': self.performed_by.serialize(),
+                'modifier': self.modifier,
+                'transmission': self.transmission,
+                'lab_id': self.lab_id,
+                'lab': self.lab.serialize(),
+                'repair_date': dump_datetime(self.repair_date),
+                'repair_description': self.repair_description,
+                'if_rem': self.if_rem,
+                'if_ok': self.if_ok,
+                'recommandation_id': self.recommandation_id,
+                'recommendation': self.recommendation.serialize(),
+                'recommendationNotes': self.recommendationNotes,
+                'recommended_by_id': self.recommended_by_id,
+                'recommended_by': self.recommended_by.serialize(),
+                'date_application': self.date_application,
+                'comments': self.comments,
+                'mws': self.mws,
+                'temperature': self.temperature,
+                'sampling_card_print': self.sampling_card_print,
+                'contract_id': self.contract_id,
+                'contract': self.contract.serialize(),
+                'containers': self.containers,
+                'sampling_card_gathered': self.sampling_card_gathered,
+                'gathered_test_type': self.gathered_test_type,
+                'lab_contract_id': self.lab_contract_id,
+                'lab_contract': self.lab_contract.serialize(),
+                'seringe_num': self.seringe_num,
+                'data_valid': self.data_valid,
+                'status1': self.status1,
+                'status2': self.status2,
+                'error_state': self.error_state,
+                'error_code': self.error_code,
+                'ambient_air_temperature': self.ambient_air_temperature,
+                'bushing': self.bushing,
+                'winding': self.winding,
+                'insulation_pf': self.insulation_pf,
+                'insulation': self.insulation,
+                'visual_inspection': self.visual_inspection,
+                'resistance': self.resistance,
+                'degree': self.degree,
+                'turns': self.turns,
+                'gas': self.gas,
+                'water': self.water,
+                'furans': self.furans,
+                'inhibitor': self.inhibitor,
+                'pcb': self.pcb,
+                'qty': self.qty,
+                'sampling': self.sampling,
+                'dielec': self.dielec,
+                'acidity': self.acidity,
+                'density': self.density,
+                'pcb_jar': self.pcb_jar,
+                'inhibitor_jar': self.inhibitor_jar,
+                'point': self.point,
+                'dielec_2': self.dielec_2,
+                'color': self.color,
+                'pf': self.pf,
+                'particles': self.particles,
+                'metals': self.metals,
+                'viscosity': self.viscosity,
+                'dielec_d': self.dielec_d,
+                'ift': self.ift,
+                'pf_100': self.pf_100,
+                'furans_f': self.furans_f,
+                'water_w': self.water_w,
+                'corr': self.corr,
+                'dielec_i': self.dielec_i,
+                'visual': self.visual,
+                'qty_jar': self.qty_jar,
+                'sampling_jar': self.sampling_jar,
+                'pcb_vial': self.pcb_vial,
+                'antioxidant': self.antioxidant,
+                'qty_vial': self.qty_vial,
+                'sampling_vial': self.sampling_vial,
+                }
+
 
 class FluidProfile(db.Model):
     __tablename__ = 'fluid_profile'
@@ -427,6 +568,46 @@ class FluidProfile(db.Model):
     def __repr__(self):
         return self.selection
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'selection': self.selection,
+                'description': self.description,
+                'gas': self.gas,
+                'water': self.water,
+                'furans': self.furans,
+                'inhibitor': self.inhibitor,
+                'pcb': self.pcb,
+                'qty': self.qty,
+                'sampling': self.sampling,
+                'dielec': self.dielec,
+                'acidity': self.acidity,
+                'density': self.density,
+                'pcb_jar': self.pcb_jar,
+                'inhibitor_jar': self.inhibitor_jar,
+                'point': self.point,
+                'dielec_2': self.dielec_2,
+                'color': self.color,
+                'pf': self.pf,
+                'particles': self.particles,
+                'metals': self.metals,
+                'viscosity': self.viscosity,
+                'dielec_d': self.dielec_d,
+                'ift': self.ift,
+                'pf_100': self.pf_100,
+                'furans_f': self.furans_f,
+                'water_w': self.water_w,
+                'corr': self.corr,
+                'dielec_i': self.dielec_i,
+                'visual': self.visual,
+                'qty_jar': self.qty_jar,
+                'sampling_jar': self.sampling_jar,
+                'pcb_vial': self.pcb_vial,
+                'antioxidant': self.antioxidant,
+                'qty_vial': self.qty_vial,
+                'sampling_vial': self.sampling_vial,
+                }
+
 
 class EquipmentType(db.Model):
     __tablename__ = u'equipment_type'
@@ -437,6 +618,13 @@ class EquipmentType(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code
+                }
 
 
 class Material(db.Model):
@@ -449,6 +637,13 @@ class Material(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code
+                }
+
 
 class FluidType(db.Model):
     __tablename__ = u'fluid_type'
@@ -458,6 +653,10 @@ class FluidType(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class Location(db.Model):
@@ -472,6 +671,10 @@ class Location(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class Manufacturer(db.Model):
@@ -490,6 +693,15 @@ class Manufacturer(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'markings': self.markings,
+                'location': self.location,
+                'description': self.description,
+                }
 
 
 class GasSensor(db.Model):
@@ -521,6 +733,25 @@ class GasSensor(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'model': self.model,
+                'h2': self.h2,
+                'ch4': self.ch4,
+                'c2h2': self.c2h2,
+                'c2h4': self.c2h4,
+                'c2h6': self.c2h6,
+                'co': self.co,
+                'co2': self.co2,
+                'o2': self.o2,
+                'n2': self.n2,
+                'ppm_error': self.ppm_error,
+                'percent_error': self.percent_error,
+                }
 
 
 class Transformer(db.Model):
@@ -624,22 +855,6 @@ class Transformer(db.Model):
     ratio_tag4 = db.Column(db.String(20))  # RatioTag4. Tag use for TTR
     ratio_tag5 = db.Column(db.String(20))  # RatioTag5. Tag use for TTR
     ratio_tag6 = db.Column(db.String(20))  # RatioTag6. Tag use for TTR
-
-
-
-    # it's a relation to bushing table column "serial number"
-    # bushing_serial1 = db.Column(db.String(15))  # BushingSerial1.
-    # bushing_serial2 = db.Column(db.String(15))  # BushingSerial2.
-    # bushing_serial3 = db.Column(db.String(15))  # BushingSerial3.
-    # bushing_serial4 = db.Column(db.String(15))  # BushingSerial4.
-    # bushing_serial5 = db.Column(db.String(15))  # BushingSerial5.
-    # bushing_serial6 = db.Column(db.String(15))  # BushingSerial6.
-    # bushing_serial7 = db.Column(db.String(15))  # BushingSerial7.
-    # bushing_serial8 = db.Column(db.String(15))  # BushingSerial8.
-    # bushing_serial9 = db.Column(db.String(15))  # BushingSerial9.
-    # bushing_serial10 = db.Column(db.String(15))  # BushingSerial10.
-    # bushing_serial11 = db.Column(db.String(15))  # BushingSerial11.
-    # bushing_serial12 = db.Column(db.String(15))  # BushingSerial12.
 
     bushing_serial1_id = db.Column(
         'bushing_serial1',
@@ -753,6 +968,111 @@ class Transformer(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'fluid_volume': self.fluid_volume,
+                'sealed': self.sealed,
+                'welded_cover': self.welded_cover,
+                'windings': self.windings,
+                'cooling_rating': self.cooling_rating,
+                'autotransformer': self.autotransformer,
+                'threephase': self.threephase,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                'fluid_level_id': self.fluid_level_id,
+                'fluid_level': self.fluid_level.serialize(),
+                'gassensor_id': self.gassensor_id,
+                'gas_sensor': self.gas_sensor.serialize(),
+                'phase_number': self.phase_number,
+                'frequency': self.frequency,
+                'primary_tension': self.primary_tension,
+                'secondary_tension': self.secondary_tension,
+                'tertiary_tension': self.tertiary_tension,
+                'based_transformerp_ower': self.based_transformerp_ower,
+                'first_cooling_stage_power': self.first_cooling_stage_power,
+                'second_cooling_stage_power': self.second_cooling_stage_power,
+                'primary_winding_connection': self.primary_winding_connection,
+                'secondary_winding_connection': self.secondary_winding_connection,
+                'tertiary_winding_connection': self.tertiary_winding_connection,
+                'windind_metal': self.windind_metal,
+                'bil1': self.bil1,
+                'bil2': self.bil2,
+                'bil3': self.bil3,
+                'static_shield1': self.static_shield1,
+                'static_shield2': self.static_shield2,
+                'static_shield3': self.static_shield3,
+                'bushing_neutral1': self.bushing_neutral1,
+                'bushing_neutral2': self.bushing_neutral2,
+                'bushing_neutral3': self.bushing_neutral3,
+                'bushing_neutral4': self.bushing_neutral4,
+                'ltc1': self.ltc1,
+                'ltc2': self.ltc2,
+                'ltc3': self.ltc3,
+                'temperature_rise': self.temperature_rise,
+                'impedance1': self.impedance1,
+                'imp_base1': self.imp_base1,
+                'impedance2': self.impedance2,
+                'imp_base2': self.imp_base2,
+                'mvaforced11': self.mvaforced11,
+                'mvaforced12': self.mvaforced12,
+                'mvaforced13': self.mvaforced13,
+                'mvaforced14': self.mvaforced14,
+                'mvaforced21': self.mvaforced21,
+                'mvaforced22': self.mvaforced22,
+                'mvaforced23': self.mvaforced23,
+                'mvaforced24': self.mvaforced24,
+                'impedance3': self.impedance3,
+                'impbasedmva3': self.impbasedmva3,
+                'formula_ratio2': self.formula_ratio2,
+                'formula_ratio': self.formula_ratio,
+                'ratio_tag1': self.ratio_tag1,
+                'ratio_tag2': self.ratio_tag2,
+                'ratio_tag3': self.ratio_tag3,
+                'ratio_tag4': self.ratio_tag4,
+                'ratio_tag5': self.ratio_tag5,
+                'ratio_tag6': self.ratio_tag6,
+                'bushing_serial1_id': self.bushing_serial1_id,
+                'bushing_serial1': self.bushing_serial1.serialize(),
+                'bushing_serial2_id': self.bushing_serial2_id,
+                'bushing_serial2': self.bushing_serial2.serialize(),
+                'bushing_serial3_id': self.bushing_serial3_id,
+                'bushing_serial3': self.bushing_serial3.serialize(),
+                'bushing_serial4_id': self.bushing_serial4_id,
+                'bushing_serial4': self.bushing_serial4.serialize(),
+                'bushing_serial5_id': self.bushing_serial5_id,
+                'bushing_serial5': self.bushing_serial5.serialize(),
+                'bushing_serial6_id': self.bushing_serial6_id,
+                'bushing_serial6': self.bushing_serial6.serialize(),
+                'bushing_serial7_id': self.bushing_serial7_id,
+                'bushing_serial7': self.bushing_serial7.serialize(),
+                'bushing_serial8_id': self.bushing_serial8_id,
+                'bushing_serial8': self.bushing_serial8.serialize(),
+                'bushing_serial9_id': self.bushing_serial9_id,
+                'bushing_serial9': self.bushing_serial9.serialize(),
+                'bushing_serial10_id': self.bushing_serial10_id,
+                'bushing_serial10': self.bushing_serial10.serialize(),
+                'bushing_serial11_id': self.bushing_serial11_id,
+                'bushing_serial11': self.bushing_serial11.serialize(),
+                'bushing_serial12_id': self.bushing_serial12_id,
+                'bushing_serial12': self.bushing_serial12.serialize(),
+                'mvaactual': self.mvaactual,
+                'mvaractual': self.mvaractual,
+                'mwreserve': self.mwreserve,
+                'mvarreserve': self.mvarreserve,
+                'mwultime': self.mwultime,
+                'mvarultime': self.mvarultime,
+                'mva4': self.mva4,
+                'quaternary_winding_connection': self.quaternary_winding_connection,
+                'bil4': self.bil4,
+                'static_shield4': self.static_shield4,
+                'ratio_tag7': self.ratio_tag7,
+                'ratiot_ag8': self.ratiot_ag8,
+                'formula_ratio3': self.formula_ratio3,
+                }
+
 
 class Breaker(db.Model):
     __tablename__ = u'breaker'
@@ -782,6 +1102,23 @@ class Breaker(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'current_rating': self.current_rating,
+                'open': self.open,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                'fluid_level_id': self.fluid_level_id,
+                'fluid_level': self.fluid_level.serialize(),
+                'interrupting_medium_id': self.interrupting_medium_id,
+                'interrupting_medium': self.interrupting_medium.serialize(),
+                'breaker_mechanism_id': self.breaker_mechanism_id,
+                'breaker_mechanism': self.breaker_mechanism.serialize(),
+                }
 
 
 class LoadTapChanger(db.Model):
@@ -818,6 +1155,23 @@ class LoadTapChanger(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'filter': self.filter,
+                'counter': self.counter,
+                'number_of_taps': self.number_of_taps,
+                'model': self.model,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                'fluid_level_id': self.fluid_level_id,
+                'fluid_level': self.fluid_level.serialize(),
+                'interrupting_medium_id': self.interrupting_medium_id,
+                'interrupting_medium': self.interrupting_medium.serialize(),
+                }
 
 
 class Bushing(db.Model):
@@ -876,6 +1230,26 @@ class Bushing(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'type': self.type,
+                'name': self.name,
+                'serial': self.serial,
+                'model': self.model,
+                'kv': self.kv,
+                'sealed': self.sealed,
+                'current': self.current,
+                'fluid_volume': self.fluid_volume,
+                'bil': self.bil,
+                'c1': self.c1,
+                'c1pf': self.c1pf,
+                'c2': self.c2,
+                'c2pf': self.c2pf,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                }
+
 
 class Upstream(db.Model):
     __tablename__ = u'upstream'
@@ -883,12 +1257,20 @@ class Upstream(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class Downstream(db.Model):
     __tablename__ = u'downstream'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class NeutralResistance(db.Model):
@@ -917,6 +1299,24 @@ class NeutralResistance(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'neutral_resistance': self.neutral_resistance,
+                'neutral_resistance1': self.neutral_resistance1,
+                'neutral_resistance0': self.neutral_resistance0,
+                'neutral_resistance2': self.neutral_resistance2,
+                'neutral_resistance3': self.neutral_resistance3,
+                'neutral_resistance_open1': self.neutral_resistance_open1,
+                'neutral_resistance_open2': self.neutral_resistance_open2,
+                'neutral_resistance_open3': self.neutral_resistance_open3,
+                'kv': self.kv,
+                'bil': self.bil,
+                'open': self.open,
+                }
+
 
 class AirCircuitBreaker(db.Model):
     __tablename__ = u'air_breaker'
@@ -932,6 +1332,14 @@ class AirCircuitBreaker(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'current_rating': self.current_rating,
+                }
 
 
 class Capacitor(db.Model):
@@ -966,6 +1374,16 @@ class Capacitor(db.Model):
     def __repr__(self):
         return self.__tablename__
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'kv': self.kv,
+                'kvar': self.kvar,
+                'bil': self.bil,
+                }
+
 
 class PowerSource(db.Model):
     __tablename__ = u'powersource'
@@ -995,6 +1413,15 @@ class PowerSource(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'kv': self.kv,
+                'threephase': self.threephase,
+                }
+
 
 class SwitchGear(db.Model):
     __tablename__ = u'switchgear'
@@ -1003,7 +1430,6 @@ class SwitchGear(db.Model):
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
-
     insulation_id = db.Column(db.Integer, db.ForeignKey("insulation.id"))
     insulation = db.relationship('Insulation', foreign_keys='SwitchGear.insulation_id')
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -1013,6 +1439,16 @@ class SwitchGear(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'current_rating': self.current_rating,
+                'insulation_id': self.insulation_id,
+                'insulation': self.insulation,
+                }
 
 
 class InductionMachine(db.Model):
@@ -1034,6 +1470,17 @@ class InductionMachine(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'current_rating': self.current_rating,
+                'hp': self.hp,
+                'kva': self.kva,
+                'pf': self.pf,
+                }
+
 
 class SynchronousMachine(db.Model):
     __tablename__ = u'synchronous_machine'
@@ -1051,6 +1498,16 @@ class SynchronousMachine(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'current_rating': self.current_rating,
+                'hp': self.hp,
+                'kw': self.kw,
+                }
 
 
 class Rectifier(db.Model):
@@ -1079,6 +1536,24 @@ class Rectifier(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'fluid_volume': self.fluid_volume,
+                'sealed': self.sealed,
+                'windings': self.windings,
+                'welded_cover': self.welded_cover,
+                'cooling_rating': self.cooling_rating,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                'fluid_level_id': self.fluid_level_id,
+                'fluid_level': self.fluid_level.serialize(),
+                'gas_sensor_id': self.gas_sensor_id,
+                'gas_sensor': self.gas_sensor.serialize(),
+                }
+
 
 class Inductance(db.Model):
     __tablename__ = u'inductance'
@@ -1105,6 +1580,23 @@ class Inductance(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'fluid_volume': self.fluid_volume,
+                'sealed': self.sealed,
+                'welded_cover': self.welded_cover,
+                'cooling_rating': self.cooling_rating,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                'fluid_level_id': self.fluid_level_id,
+                'fluid_level': self.fluid_level.serialize(),
+                'gas_sensor_id': self.gas_sensor_id,
+                'gas_sensor': self.gas_sensor.serialize(),
+                }
+
 
 class Tank(db.Model):
     __tablename__ = u'tank'
@@ -1128,6 +1620,18 @@ class Tank(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'welded_cover': self.welded_cover,
+                'fluid_type_id': self.fluid_type_id,
+                'fluid_type': self.fluid_type.serialize(),
+                'fluid_level_id': self.fluid_level_id,
+                'fluid_level': self.fluid_level.serialize(),
+                }
+
 
 class Switch(db.Model):
     __tablename__ = u'switch'
@@ -1150,6 +1654,17 @@ class Switch(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'current_rating': self.current_rating,
+                'threephase': self.threephase,
+                'interrupting_medium_id': self.interrupting_medium_id,
+                'interrupting_medium': self.interrupting_medium.serialize(),
+                }
+
 
 class Cable(db.Model):
     __tablename__ = u'cable'
@@ -1170,6 +1685,18 @@ class Cable(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'model': self.model,
+                'sealed': self.sealed,
+                'threephase': self.threephase,
+                'insulation_id': self.insulation_id,
+                'insulation': self.insulation.serialize(),
+                }
 
 
 class Equipment(db.Model):
@@ -1287,6 +1814,54 @@ class Equipment(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.id, self.equipment_number, self.equipment_type)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'serial': self.serial,
+                'equipment_number': self.equipment_number,
+                'equipment_type_id': self.equipment_type_id,
+                'equipment_type': self.equipment_type.serialize(),
+                'manufacturer_id': self.manufacturer_id,
+                'manufacturer': self.manufacturer.serialize(),
+                'manufactured': self.manufactured,
+                'frequency': self.frequency,
+                'description': self.description,
+                'location_id': self.location_id,
+                'location': self.location.serialize(),
+                'modifier': self.modifier,
+                'comments': self.comments,
+                'visual_date': dump_datetime(self.visual_date),
+                'visual_inspection_by_id': self.visual_inspection_by_id,
+                'visual_inspection_by': self.visual_inspection_by.serialize(),
+                'assigned_to_id': self.assigned_to_id,
+                'assigned_to': self.assigned_to.serialize(),
+                'visual_inspection_comments': self.visual_inspection_comments,
+                'nbr_of_tap_change_ltc': self.nbr_of_tap_change_ltc,
+                'norm_id': self.norm_id,
+                'norm': self.norm.serialize(),
+                'upstream1': self.upstream1,
+                'upstream2': self.upstream2,
+                'upstream3': self.upstream3,
+                'upstream4': self.upstream4,
+                'upstream5': self.upstream5,
+                'downstream1': self.downstream1,
+                'downstream2': self.downstream2,
+                'downstream3': self.downstream3,
+                'downstream4': self.downstream4,
+                'downstream5': self.downstream5,
+                'tie_location': self.tie_location,
+                'tie_maintenance_state': self.tie_maintenance_state,
+                'tie_status': self.tie_status,
+                'phys_position': self.phys_position,
+                'tension4': self.tension4,
+                'validated': self.validated,
+                'invalidation': self.invalidation,
+                'prev_serial_number': self.prev_serial_number,
+                'prev_equipment_number': self.prev_equipment_number,
+                'sibling': self.sibling,
+                }
+
 
 class Norm(db.Model):
     __tablename__ = u'norm'
@@ -1302,6 +1877,13 @@ class Norm(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'table_name': self.table_name,
+                }
+
 
 class Recommendation(db.Model):
     __tablename__ = u'recommendation'
@@ -1316,6 +1898,16 @@ class Recommendation(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code,
+                'description': self.description,
+                'test_type_id': self.test_type_id,
+                'test_type': self.test_type.serialize(),
+                }
+
 
 class GasLevel(db.Model):
     # 0-normal, 1-caution, 2- danger and 3-extreme
@@ -1327,6 +1919,10 @@ class GasLevel(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class InterruptingMedium(db.Model):
     __tablename__ = u'interrupting_medium'
@@ -1336,6 +1932,10 @@ class InterruptingMedium(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class BreakerMechanism(db.Model):
@@ -1347,6 +1947,10 @@ class BreakerMechanism(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class Insulation(db.Model):
     __tablename__ = u'insulation'
@@ -1356,6 +1960,10 @@ class Insulation(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class Syringe(db.Model):
@@ -1369,6 +1977,14 @@ class Syringe(db.Model):
     def __repr__(self):
         return self.serial
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'serial': self.serial,
+                'lab_id': self.lab_id,
+                'lab': self.lab.serialize(),
+                }
+
 
 class TestReason(db.Model):
     __tablename__ = 'test_reason'
@@ -1378,6 +1994,10 @@ class TestReason(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class TestStatus(db.Model):
@@ -1389,6 +2009,13 @@ class TestStatus(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code
+                }
 
 
 class TestSchedule(db.Model):
@@ -1443,6 +2070,24 @@ class TestSchedule(db.Model):
     def __repr__(self):
         return "{} {}".format(self.equipment, self.start_date)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'equipment_id': self.equipment_id,
+                'equipment': self.equipment.serialize(),
+                'start_date': dump_datetime(self.start_date),
+                'period_years': self.period_years,
+                'period_months': self.period_months,
+                'period_days': self.period_days,
+                'assigned_to_id': self.assigned_to_id,
+                'assigned_to': self.assigned_to.serialize(),
+                'recurring': self.recurring,
+                'notify_before_in_days': self.notify_before_in_days,
+                'description': self.description,
+                'tests_to_perform': self.tests_to_perform,
+                'tests': self.tests.serialize(),
+                'order': self.order,
+                }
+
 
 class TestType(db.Model):
     __tablename__ = u'test_type'
@@ -1458,6 +2103,14 @@ class TestType(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'group_id': self.group_id,
+                'is_group': self.is_group,
+                }
+
 
 class TestTypeResultTable(db.Model):
     __tablename__ = u'test_type_result_table'
@@ -1470,6 +2123,14 @@ class TestTypeResultTable(db.Model):
 
     def __repr__(self):
         return "{} - {}".format(self.test_type, self.test_result_table_name)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_type_id': self.test_type_id,
+                'test_type': self.test_type.serialize(),
+                'test_result_table_name': self.test_result_table_name,
+                }
 
 
 class TestResult(db.Model):
@@ -1508,6 +2169,22 @@ class TestResult(db.Model):
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'campaign_id': self.campaign_id,
+                'campaign': self.campaign.serialize(),
+                'reason_id': self.reason_id,
+                'test_reason': self.test_reason.serialize(),
+                'date_analyse': dump_datetime(self.date_analyse),
+                'test_type_id': self.test_type_id,
+                'test_type': self.test_type.serialize(),
+                'sampling_point_id': self.sampling_point_id,
+                'sampling_point': self.sampling_point.serialize(),
+                'test_status_id': self.test_status_id,
+                'test_status': self.test_status.serialize(),
+                }
+
 
 class GasketCondition(db.Model):
     """Predefined: (Good, Leak-wet, Leak-flowing, Not-visible, Not appl, See notes)"""
@@ -1518,6 +2195,10 @@ class GasketCondition(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class GasRelay(db.Model):
@@ -1530,6 +2211,10 @@ class GasRelay(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class FluidLevel(db.Model):
     """Predefined: (Good, Very Low, Low, High, Unavailable, Not readable, Not-visible, Not appl, See notes)"""
@@ -1540,6 +2225,10 @@ class FluidLevel(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class PressureUnit(db.Model):
@@ -1552,6 +2241,10 @@ class PressureUnit(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class ValveCondition(db.Model):
     """Predefined: (Good, Leak-wet, Leak-flowing, Unavalable, Not-visible, Not appl, See notes)"""
@@ -1562,6 +2255,10 @@ class ValveCondition(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class PumpCondition(db.Model):
@@ -1574,6 +2271,10 @@ class PumpCondition(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class OverallCondition(db.Model):
     """Predefined: (Good, Dirty, Leak-wet, Rusted, Not appl. See notes)"""
@@ -1584,6 +2285,10 @@ class OverallCondition(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class PaintTypes(db.Model):
@@ -1596,6 +2301,10 @@ class PaintTypes(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class TapCounterStatus(db.Model):
     """Predefined: (Good, Defective, Not readable, Not appl., See notes)"""
@@ -1606,6 +2315,10 @@ class TapCounterStatus(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class TapFilterCondition(db.Model):
@@ -1618,6 +2331,10 @@ class TapFilterCondition(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class FanCondition(db.Model):
     """Predefined: (Working, Inoperable, Vibrating, Noisy, Not appl, See notes)"""
@@ -1628,6 +2345,10 @@ class FanCondition(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class ConnectionCondition(db.Model):
@@ -1640,6 +2361,10 @@ class ConnectionCondition(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class FoundationCondition(db.Model):
     """Predefined: (Good, Not to level, Dirty, Damaged, Not appl, See notes)"""
@@ -1651,6 +2376,10 @@ class FoundationCondition(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
+
 
 class HeatingCondition(db.Model):
     """Predefined: (Good, Defective Res, Thermal_fault, Not appl., See notes)"""
@@ -1661,6 +2390,10 @@ class HeatingCondition(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class BushingTest(db.Model):
@@ -1767,6 +2500,103 @@ class BushingTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'h1': self.h1,
+                'h2': self.h2,
+                'h3': self.h3,
+                'hn': self.hn,
+                'h1c1': self.h1c1,
+                'h2c1': self.h2c1,
+                'h3c1': self.h3c1,
+                'hnc1': self.hnc1,
+                'h1c2': self.h1c2,
+                'h2c2': self.h2c2,
+                'h3c2': self.h3c2,
+                'hnc2': self.hnc2,
+                'x1': self.x1,
+                'x2': self.x2,
+                'x3': self.x3,
+                'xn': self.xn,
+                'x1c1': self.x1c1,
+                'x2c1': self.x2c1,
+                'x3c1': self.x3c1,
+                'xnc1': self.xnc1,
+                'x1c2': self.x1c2,
+                'x2c2': self.x2c2,
+                'x3c2': self.x3c2,
+                'xnc2': self.xnc2,
+                't1': self.t1,
+                't2': self.t2,
+                't3': self.t3,
+                'tn': self.tn,
+                't1c1': self.t1c1,
+                't2c1': self.t2c1,
+                't3c1': self.t3c1,
+                'tnc1': self.tnc1,
+                't1c2': self.t1c2,
+                't2c2': self.t2c2,
+                't3c2': self.t3c2,
+                'tnc2': self.tnc2,
+                'temperature': self.temperature,
+                'facteur': self.facteur,
+                'facteur1': self.facteur1,
+                'facteur2': self.facteur2,
+                'q1': self.q1,
+                'q2': self.q2,
+                'q3': self.q3,
+                'qn': self.qn,
+                'q1c1': self.q1c1,
+                'q2c1': self.q2c1,
+                'q3c1': self.q3c1,
+                'qnc1': self.qnc1,
+                'q1c2': self.q1c2,
+                'q2c2': self.q2c2,
+                'q3c2': self.q3c2,
+                'qnc2': self.qnc2,
+                'facteur3': self.facteur3,
+                'humidity': self.humidity,
+                'test_kv_h1': self.test_kv_h1,
+                'test_kv_h2': self.test_kv_h2,
+                'test_kv_h3': self.test_kv_h3,
+                'test_kv_hn': self.test_kv_hn,
+                'test_kv_x1': self.test_kv_x1,
+                'test_kv_x2': self.test_kv_x2,
+                'test_kv_x3': self.test_kv_x3,
+                'test_kv_xn': self.test_kv_xn,
+                'test_kv_t1': self.test_kv_t1,
+                'test_kv_t2': self.test_kv_t2,
+                'test_kv_t3': self.test_kv_t3,
+                'test_kv_tn': self.test_kv_tn,
+                'test_kv_q1': self.test_kv_q1,
+                'test_kv_q2': self.test_kv_q2,
+                'test_kv_q3': self.test_kv_q3,
+                'test_kv_qn': self.test_kv_qn,
+                'test_pfc2_h1': self.test_pfc2_h1,
+                'test_pfc2_h2': self.test_pfc2_h2,
+                'test_pfc2_h3': self.test_pfc2_h3,
+                'test_pfc2_hn': self.test_pfc2_hn,
+                'test_pfc2_x1': self.test_pfc2_x1,
+                'test_pfc2_x2': self.test_pfc2_x2,
+                'test_pfc2_x3': self.test_pfc2_x3,
+                'test_pfc2_xn': self.test_pfc2_xn,
+                'test_pfc2_t1': self.test_pfc2_t1,
+                'test_pfc2_t2': self.test_pfc2_t2,
+                'test_pfc2_t3': self.test_pfc2_t3,
+                'test_pfc2_tn': self.test_pfc2_tn,
+                'test_pfc2_q1': self.test_pfc2_q1,
+                'test_pfc2_q2': self.test_pfc2_q2,
+                'test_pfc2_q3': self.test_pfc2_q3,
+                'test_pfc2_qn': self.test_pfc2_qn,
+                'facteurn': self.facteurn,
+                'facteurn1': self.facteurn1,
+                'facteurn2': self.facteurn2,
+                'facteurn3': self.facteurn3,
+                }
+
 
 class WindingTest(db.Model):
     """Bushing data and test results"""
@@ -1830,6 +2660,65 @@ class WindingTest(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'test_kv1': self.test_kv1,
+                'test_kv2': self.test_kv2,
+                'test_kv3': self.test_kv3,
+                'test_kv4': self.test_kv4,
+                'test_kv5': self.test_kv5,
+                'test_kv6': self.test_kv6,
+                'test_kv7': self.test_kv7,
+                'test_kv8': self.test_kv8,
+                'test_kv9': self.test_kv9,
+                'test_kv10': self.test_kv10,
+                'm_meter1': self.m_meter1,
+                'm_meter2': self.m_meter2,
+                'm_meter3': self.m_meter3,
+                'm_meter4': self.m_meter4,
+                'm_meter5': self.m_meter5,
+                'm_meter6': self.m_meter6,
+                'm_meter7': self.m_meter7,
+                'm_meter8': self.m_meter8,
+                'm_meter9': self.m_meter9,
+                'm_meter10': self.m_meter10,
+                'm_multiplier1': self.m_multiplier1,
+                'm_multiplier2': self.m_multiplier2,
+                'm_multiplier3': self.m_multiplier3,
+                'm_multiplier4': self.m_multiplier4,
+                'm_multiplier5': self.m_multiplier5,
+                'm_multiplier6': self.m_multiplier6,
+                'm_multiplier7': self.m_multiplier7,
+                'm_multiplier8': self.m_multiplier8,
+                'm_multiplier9': self.m_multiplier9,
+                'm_multiplier10': self.m_multiplier10,
+                'w_meter1': self.w_meter1,
+                'w_meter2': self.w_meter2,
+                'w_meter3': self.w_meter3,
+                'w_meter4': self.w_meter4,
+                'w_meter5': self.w_meter5,
+                'w_meter6': self.w_meter6,
+                'w_meter7': self.w_meter7,
+                'w_meter8': self.w_meter8,
+                'w_meter9': self.w_meter9,
+                'w_meter10': self.w_meter10,
+                'w_multiplier1': self.w_multiplier1,
+                'w_multiplier2': self.w_multiplier2,
+                'w_multiplier3': self.w_multiplier3,
+                'w_multiplier4': self.w_multiplier4,
+                'w_multiplier5': self.w_multiplier5,
+                'w_multiplier6': self.w_multiplier6,
+                'w_multiplier7': self.w_multiplier7,
+                'w_multiplier8': self.w_multiplier8,
+                'w_multiplier9': self.w_multiplier9,
+                'w_multiplier10': self.w_multiplier10,
+                'type_doble': self.type_doble,
+                'humidity': self.humidity,
+                }
 
 
 class VisualInspectionTest(db.Model):
@@ -1952,6 +2841,95 @@ class VisualInspectionTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'notes': self.notes,
+                'tank_cover_gasket_id': self.tank_cover_gasket_id,
+                'tank_manhole_gasket_id': self.tank_manhole_gasket_id,
+                'tank_gas_relay_id': self.tank_gas_relay_id,
+                'tank_oil_level_id': self.tank_oil_level_id,
+                'tank_winding_temp_max': self.tank_winding_temp_max,
+                'tank_winding_temp_actual': self.tank_winding_temp_actual,
+                'tank_oil_temp_max': self.tank_oil_temp_max,
+                'tank_oil_temp_actual': self.tank_oil_temp_actual,
+                'tank_winding_flag': self.tank_winding_flag,
+                'tank_oil_flag': self.tank_oil_flag,
+                'tank_pressure_unit_id': self.tank_pressure_unit_id,
+                'tank_pressure': self.tank_pressure,
+                'tank_overpressure_valve_id': self.tank_overpressure_valve_id,
+                'tank_ampling_valve_id': self.tank_ampling_valve_id,
+                'tank_oil_pump_id': self.tank_oil_pump_id,
+                'tank_gas_analyser': self.tank_gas_analyser,
+                'tank_overall_condition_id': self.tank_overall_condition_id,
+                'exp_tank_pipe_gasket_id': self.exp_tank_pipe_gasket_id,
+                'exp_tank_oil_level_id': self.exp_tank_oil_level_id,
+                'exp_tank_paint_id': self.exp_tank_paint_id,
+                'exp_tank_overall_condition_id': self.exp_tank_overall_condition_id,
+                'bushing_gasket_id': self.bushing_gasket_id,
+                'bushing_oil_level_id': self.bushing_oil_level_id,
+                'bushing_overall_condition_id': self.bushing_overall_condition_id,
+                'tap_changer_gasket_id': self.tap_changer_gasket_id,
+                'tap_changer_oil_level_id': self.tap_changer_oil_level_id,
+                'tap_changer_temp_max': self.tap_changer_temp_max,
+                'tap_changer_temp_actual': self.tap_changer_temp_actual,
+                'tap_changer_pressure_max': self.tap_changer_pressure_max,
+                'tap_changer_pressure_actual': self.tap_changer_pressure_actual,
+                'tap_changer_pressure_unit_id': self.tap_changer_pressure_unit_id,
+                'tap_changer_tap_position': self.tap_changer_tap_position,
+                'tap_changer_overpressure_valve_id': self.tap_changer_overpressure_valve_id,
+                'tap_changer_ampling_valve_id': self.tap_changer_ampling_valve_id,
+                'tap_changer_operation_counter': self.tap_changer_operation_counter,
+                'tap_changer_counter_id': self.tap_changer_counter_id,
+                'tap_changer_filter_id': self.tap_changer_filter_id,
+                'tap_changer_overall_condition_id': self.tap_changer_overall_condition_id,
+                'radiator_fan_id': self.radiator_fan_id,
+                'radiator_gasket_id': self.radiator_gasket_id,
+                'radiator_overall_condition_id': self.radiator_overall_condition_id,
+                'control_cab_connection_id': self.control_cab_connection_id,
+                'control_cab_heating_id': self.control_cab_heating_id,
+                'control_cab_overall_condition_id': self.control_cab_overall_condition_id,
+                'grounding_value': self.grounding_value,
+                'grounding_connection_id': self.grounding_connection_id,
+                'misc_foundation_id': self.misc_foundation_id,
+                'misc_temp_ambiant': self.misc_temp_ambiant,
+                'misc_load': self.misc_load,
+                'tank_cover_gasket': self.tank_cover_gasket.serialize(),
+                'tank_manhole_gasket': self.tank_manhole_gasket.serialize(),
+                'tank_gas_relay': self.tank_gas_relay.serialize(),
+                'tank_oil_level': self.tank_oil_level.serialize(),
+                'tank_pressure_unit': self.tank_pressure_unit.serialize(),
+                'tank_overpressure_valve': self.tank_overpressure_valve.serialize(),
+                'tank_ampling_valve': self.tank_ampling_valve.serialize(),
+                'tank_oil_pump': self.tank_oil_pump.serialize(),
+                'tank_overall_condition': self.tank_overall_condition.serialize(),
+                'exp_tank_pipe_gasket': self.exp_tank_pipe_gasket.serialize(),
+                'exp_tank_oil_level': self.exp_tank_oil_level.serialize(),
+                'exp_tank_paint': self.exp_tank_paint.serialize(),
+                'exp_tank_overall_condition': self.exp_tank_overall_condition.serialize(),
+                'bushing_gasket': self.bushing_gasket.serialize(),
+                'bushing_oil_level': self.bushing_oil_level.serialize(),
+                'bushing_overall_condition': self.bushing_overall_condition.serialize(),
+                'tap_changer_gasket': self.tap_changer_gasket.serialize(),
+                'tap_changer_oil_level': self.tap_changer_oil_level.serialize(),
+                'tap_changer_pressure_unit': self.tap_changer_pressure_unit.serialize(),
+                'tap_changer_overpressure_valve': self.tap_changer_overpressure_valve.serialize(),
+                'tap_changer_ampling_valve': self.tap_changer_ampling_valve.serialize(),
+                'tap_changer_counter': self.tap_changer_counter.serialize(),
+                'tap_changer_filter': self.tap_changer_filter.serialize(),
+                'tap_changer_overall_condition': self.tap_changer_overall_condition.serialize(),
+                'radiator_fan': self.radiator_fan.serialize(),
+                'radiator_gasket': self.radiator_gasket.serialize(),
+                'radiator_overall_condition': self.radiator_overall_condition.serialize(),
+                'control_cab_connection': self.control_cab_connection.serialize(),
+                'control_cab_heating': self.control_cab_heating.serialize(),
+                'control_cab_overall_condition': self.control_cab_overall_condition.serialize(),
+                'grounding_connection': self.grounding_connection.serialize(),
+                'misc_foundation': self.misc_foundation.serialize(),
+                }
+
 
 class InsulationResistanceTest(db.Model):
     __tablename__ = u'insulation_resistance_test'
@@ -1977,6 +2955,28 @@ class InsulationResistanceTest(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'test_kv1': self.test_kv1,
+                'resistance1': self.resistance1,
+                'multiplier1': self.multiplier1,
+                'test_kv2': self.test_kv2,
+                'resistance2': self.resistance2,
+                'multiplier2': self.multiplier2,
+                'test_kv3': self.test_kv3,
+                'resistance3': self.resistance3,
+                'multiplier3': self.multiplier3,
+                'test_kv4': self.test_kv4,
+                'resistance4': self.resistance4,
+                'multiplier4': self.multiplier4,
+                'test_kv5': self.test_kv5,
+                'resistance5': self.resistance5,
+                'multiplier5': self.multiplier5,
+                }
 
 
 class PolymerisationDegreeTest(db.Model):
@@ -2004,6 +3004,27 @@ class PolymerisationDegreeTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'phase_a1': self.phase_a1,
+                'phase_a2': self.phase_a2,
+                'phase_a3': self.phase_a3,
+                'phase_b1': self.phase_b1,
+                'phase_b2': self.phase_b2,
+                'phase_b3': self.phase_b3,
+                'phase_c1': self.phase_c1,
+                'phase_c2': self.phase_c2,
+                'phase_c3': self.phase_c3,
+                'lead_a': self.lead_a,
+                'lead_b': self.lead_b,
+                'lead_c': self.lead_c,
+                'lead_n': self.lead_n,
+                'winding': self.winding,
+                }
+
 
 class TransformerTurnRatioTest(db.Model):
     """TTR.  Transformer Turn Ratio test result
@@ -2030,6 +3051,26 @@ class TransformerTurnRatioTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'winding': self.winding,
+                'tap_position': self.tap_position,
+                'measured_current1': self.measured_current1,
+                'measured_current2': self.measured_current2,
+                'measured_current3': self.measured_current3,
+                'calculated_current1': self.calculated_current1,
+                'calculated_current2': self.calculated_current2,
+                'calculated_current3': self.calculated_current3,
+                'error1': self.error1,
+                'error2': self.error2,
+                'error3': self.error3,
+                'ratio': self.ratio,
+                'select': self.select,
+                }
+
 
 class WindingResistanceTest(db.Model):
     """WindingResistanceTest.  Resistance; winding/contact. Winding resistance test results.
@@ -2053,6 +3094,24 @@ class WindingResistanceTest(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'winding': self.winding,
+                'tap_position': self.tap_position,
+                'mesure1': self.mesure1,
+                'temp1': self.temp1,
+                'corr1': self.corr1,
+                'mesure2': self.mesure2,
+                'temp2': self.temp2,
+                'corr2': self.corr2,
+                'mesure3': self.mesure3,
+                'temp3': self.temp3,
+                'corr3': self.corr3,
+                }
 
 
 class DissolvedGasTest(db.Model):
@@ -2121,6 +3180,33 @@ class DissolvedGasTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'h2': self.h2,
+                'o2': self.o2,
+                'n2': self.n2,
+                'co': self.co,
+                'ch4': self.ch4,
+                'co2': self.co2,
+                'c2h2': self.c2h2,
+                'c2h4': self.c2h4,
+                'c2h6': self.c2h6,
+                'h2_flag': self.h2_flag,
+                'o2_flag': self.o2_flag,
+                'n2_flag': self.n2_flag,
+                'co_flag': self.co_flag,
+                'ch4_flag': self.ch4_flag,
+                'co2_flag': self.co2_flag,
+                'c2h2_flag': self.c2h2_flag,
+                'c2h4_flag': self.c2h4_flag,
+                'c2h6_flag': self.c2h6_flag,
+                'cap_gaz': self.cap_gaz,
+                'content_gaz': self.content_gaz,
+                }
+
 
 class WaterTest(db.Model):
     """Water. Dissolved and free water content in oil test results"""
@@ -2135,6 +3221,16 @@ class WaterTest(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'water_flag': self.water_flag,
+                'water': self.water,
+                'remark': self.remark,
+                }
 
 
 class FuranTest(db.Model):
@@ -2158,6 +3254,23 @@ class FuranTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'hmf': self.hmf,
+                'fol': self.fol,
+                'fal': self.fal,
+                'acf': self.acf,
+                'mef': self.mef,
+                'hmf_flag': self.hmf_flag,
+                'fol_flag': self.fol_flag,
+                'fal_flag': self.fal_flag,
+                'acf_flag': self.acf_flag,
+                'mef_flag': self.mef_flag,
+                }
+
 
 class InhibitorTest(db.Model):
     """DPCB results. InhibitorTest. AntioxidantTest"""
@@ -2176,6 +3289,18 @@ class InhibitorTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'inhibitor_type_id': self.inhibitor_type_id,
+                'inhibitor_type': self.inhibitor_type.serialize(),
+                'inhibitor': self.inhibitor,
+                'remark': self.remark,
+                'inhibitor_flag': self.inhibitor_flag,
+                }
+
 
 class InhibitorType(db.Model):
     """Inhibitor types database"""
@@ -2186,6 +3311,10 @@ class InhibitorType(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id, 'name': self.name}
 
 
 class PCBTest(db.Model):
@@ -2206,6 +3335,21 @@ class PCBTest(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'aroclor_1242': self.aroclor_1242,
+                'aroclor_1254': self.aroclor_1254,
+                'aroclor_1260': self.aroclor_1260,
+                'aroclor_1242_flag': self.aroclor_1242_flag,
+                'aroclor_1254_flag': self.aroclor_1254_flag,
+                'aroclor_1260_flag': self.aroclor_1260_flag,
+                'pcb_total': self.pcb_total,
+                'total_flag': self.total_flag,
+                }
 
 
 class ParticleTest(db.Model):
@@ -2229,6 +3373,24 @@ class ParticleTest(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                '_2um': self._2um,
+                '_5um': self._5um,
+                '_10um': self._10um,
+                '_15um': self._15um,
+                '_25um': self._25um,
+                '_50um': self._50um,
+                '_100um': self._100um,
+                'nas1638': self.nas1638,
+                'iso4406_1': self.iso4406_1,
+                'iso4406_2': self.iso4406_2,
+                'iso4406_3': self.iso4406_3,
+                }
 
 
 class MetalsInOilTest(db.Model):
@@ -2265,6 +3427,35 @@ class MetalsInOilTest(db.Model):
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'iron': self.iron,
+                'nickel': self.nickel,
+                'aluminium': self.aluminium,
+                'copper': self.copper,
+                'tin': self.tin,
+                'silver': self.silver,
+                'lead': self.lead,
+                'zinc': self.zinc,
+                'arsenic': self.arsenic,
+                'cadmium': self.cadmium,
+                'chrome': self.chrome,
+                'iron_flag': self.iron_flag,
+                'nickel_flag': self.nickel_flag,
+                'aluminium_flag': self.aluminium_flag,
+                'copper_flag': self.copper_flag,
+                'tin_flag': self.tin_flag,
+                'silver_flag': self.silver_flag,
+                'lead_flag': self.lead_flag,
+                'zinc_flag': self.zinc_flag,
+                'arsenic_flag': self.arsenic_flag,
+                'cadmium_flag': self.cadmium_flag,
+                'chrome_flag': self.chrome_flag,
+                }
+
 
 class FluidTest(db.Model):
     """PHY. Fluid physical properties test results"""
@@ -2297,6 +3488,34 @@ class FluidTest(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.id, self.test_result)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result.serialize(),
+                'dielectric_1816': self.dielectric_1816,
+                'dielectric_1816_2': self.dielectric_1816_2,
+                'dielectric_877': self.dielectric_877,
+                'dielectric_iec_156': self.dielectric_iec_156,
+                'acidity': self.acidity,
+                'color': self.color,
+                'ift': self.ift,
+                'visual': self.visual,
+                'density': self.density,
+                'pf20c': self.pf20c,
+                'pf100c': self.pf100c,
+                'sludge': self.sludge,
+                'aniline_point': self.aniline_point,
+                'corrosive_sulfur': self.corrosive_sulfur,
+                'viscosity': self.viscosity,
+                'flash_point': self.flash_point,
+                'pour_point': self.pour_point,
+                'dielectric_1816_flag': self.dielectric_1816_flag,
+                'dielectric_1816_2_flag': self.dielectric_1816_2_flag,
+                'dielectric_877_flag': self.dielectric_877_flag,
+                'dielectric_iec_156_flag': self.dielectric_iec_156_flag,
+                }
 
 
 class NormPhysic(db.Model):
@@ -2339,6 +3558,42 @@ class NormPhysic(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'equipment_id': self.equipment_id,
+                'acid_min': self.acid_min,
+                'acid_max': self.acid_max,
+                'ift_min': self.ift_min,
+                'ift_max': self.ift_max,
+                'd1816_min': self.d1816_min,
+                'd1816_max': self.d1816_max,
+                'd877_min': self.d877_min,
+                'd877_max': self.d877_max,
+                'color_min': self.color_min,
+                'color_max': self.color_max,
+                'density_min': self.density_min,
+                'density_max': self.density_max,
+                'pf20_min': self.pf20_min,
+                'pf20_max': self.pf20_max,
+                'water_min': self.water_min,
+                'water_max': self.water_max,
+                'flashpoint_min': self.flashpoint_min,
+                'flashpoint_max': self.flashpoint_max,
+                'pourpoint_min': self.pourpoint_min,
+                'pourpoint_max': self.pourpoint_max,
+                'viscosity_min': self.viscosity_min,
+                'viscosity_max': self.viscosity_max,
+                'd1816_2_min': self.d1816_2_min,
+                'd1816_2_max': self.d1816_2_max,
+                'p100_min': self.p100_min,
+                'p100_max': self.p100_max,
+                'fluid_type_id': self.fluid_type_id,
+                'cei156_min': self.cei156_min,
+                'cei156_max': self.cei156_max,
+                }
+
 
 class NormGas(db.Model):
 
@@ -2360,6 +3615,22 @@ class NormGas(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'condition': self.condition,
+                'h2': self.h2,
+                'ch4': self.ch4,
+                'c2h2': self.c2h2,
+                'c2h4': self.c2h4,
+                'c2h6': self.c2h6,
+                'co': self.co,
+                'co2': self.co2,
+                'tdcg': self.tdcg,
+                'fluid_level': self.fluid_level,
+                }
 
 
 class NormParticles(db.Model):
@@ -2383,6 +3654,24 @@ class NormParticles(db.Model):
     def __repr__(self):
         return self.id
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment.serialize(),
+                '_2um': self._2um,
+                '_5um': self._5um,
+                '_10um': self._10um,
+                '_15um': self._15um,
+                '_25um': self._25um,
+                '_50um': self._50um,
+                '_100um': self._100um,
+                'nas1638': self.nas1638,
+                'iso4406_1': self.iso4406_1,
+                'iso4406_2': self.iso4406_2,
+                'iso4406_3': self.iso4406_3,
+                }
+
 
 class NormIsolation(db.Model):
 
@@ -2396,6 +3685,15 @@ class NormIsolation(db.Model):
 
     def __repr__(self):
         return "{} {}".format(self.__tablename__, self.id)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'c': self.c,
+                'f': self.f,
+                'notseal': self.notseal,
+                'seal': self.seal,
+                }
 
 
 class NormFuran(db.Model):
@@ -2411,3 +3709,13 @@ class NormFuran(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'c1': self.c1,
+                'c2': self.c2,
+                'c3': self.c3,
+                'c4': self.c4,
+                }
