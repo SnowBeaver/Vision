@@ -11,12 +11,11 @@ import DatePicker from 'material-ui/DatePicker';
 import AutoComplete from 'material-ui/AutoComplete';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from "react-tap-event-plugin";
+import {findDOMNode} from 'react-dom';
+
 injectTapEventPlugin();
 
-var serialize = require('form-serialize')
-
-
-var items = []
+var items = [];
 
 var first_year = 1900;
 var current_date = new Date();
@@ -29,60 +28,32 @@ while (first_year != current_year) {
 }
 
 
-
 const sstyles = {
-  customWidth: {
-    width: 150,
-  },
+    customWidth: {
+        width: 150
+    }
 };
-
-
- class SelectFieldExampleSimple extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {value: 1};
-  }
-
-  handleChange(event, index, value) {
-    this.setState({value});
-};
-
-  render() {
-    return (
-      <div>
-        <SelectField value={this.state.value} onChange={this.handleChange}>
-          <MenuItem value={1} primaryText="Never" />
-          <MenuItem value={2} primaryText="Every Night" />
-          <MenuItem value={3} primaryText="Weeknights" />
-          <MenuItem value={4} primaryText="Weekends" />
-          <MenuItem value={5} primaryText="Weekly" />
-        </SelectField>
-        <br />
-      </div>
-    );
-  }
-}
-
-
-
-
-
-
 
 
 var EquipmentTypeSelectField = React.createClass ({
 
 
     getInitialState: function(){
-        console.log('initail state');
+        // console.log('initail state');
         return {
             items: []
         };
     },
 
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            eqtype_id: index
+        })
+    }, 
+
     componentDidMount: function(){
-        console.log('component did mount');
+        // console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
             items = (result['equipment_type']);
@@ -98,22 +69,24 @@ var EquipmentTypeSelectField = React.createClass ({
 
     render: function() {
         var menuItems = [];
-        console.log('component render');
-         for (var key in this.state.items) {
-                menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
-         }
+        // console.log('component render');
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+        }
 
         return (
             <div>
-            <SelectField>
-            {menuItems}
-            </SelectField>
+                <SelectField
+                    ref="myselect"
+                    onChange={ this.handleChange }
+                    value={ this.state.value }
+                >
+                    {menuItems}
+                </SelectField>
             </div>
         );
     }
 });
-
-
 
 
 // var ManufacturedAutocomplete = React.createClass({
@@ -177,95 +150,6 @@ var EquipmentTypeSelectField = React.createClass ({
 // );
 
 
-var EqTypeAutocomplete = React.createClass({
-
-    getInitialState: function() {
-        return {
-            dataSource:[]
-
-        };
-    },
-
-    componentDidMount: function() {
-        this.serverRequest = $.get(this.props.source, function (result){
-            var eqTypes = (result['equipment_type']);
-            var eqTypes =[];
-            for (var key in result.equipment_type) {
-                eqTypes.push(result.equipment_type[key].name);
-            }
-            this.setState({
-                dataSource: eqTypes,
-            });
-        }.bind(this), 'json');
-
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    render: function() {
-        return (
-            <MuiThemeProvider>
-            <span>
-            <SelectField
-        hintText="EqType"
-
-            />
-            </span>
-            </MuiThemeProvider>
-        );
-    }
-});
-
-var ManfacturerAutocomplete = React.createClass({
-
-    getInitialState: function() {
-        return {
-            dataSource:[]
-
-        };
-    },
-
-    componentDidMount: function() {
-        this.serverRequest = $.get(this.props.source, function (result){
-            var manufacturersList = new Object();
-            for (var key in result.equipment_type) {
-                manufacturersList[result.equipment_type[key].id] = result.equipment_type[key].name;
-            }
-
-            console.log(manufacturersList);
-            this.setState({
-                dataSource: manufacturersList,
-            });
-        }.bind(this), 'json');
-
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    render: function() {
-        return (
-            <MuiThemeProvider>
-            <span>
-            <AutoComplete
-        hintText="Manufacturer"
-        filter={AutoComplete.noFilter}
-        openOnFocus={true}
-        dataSource={this.state.dataSource}
-        />
-        </span>
-        </MuiThemeProvider>
-        );
-    }
-});
-
-
-
-
-
 const styles = {
     block: {
         maxWidth: 250,
@@ -276,21 +160,21 @@ const styles = {
 };
 
 const ValiadateCheckbox = () => (
-<div style={styles.block}>
-<Checkbox
-label="Valiadated"
-style={styles.checkbox}
-/>
-</div>
+    <div style={styles.block}>
+        <Checkbox
+            label="Valiadated"
+            style={styles.checkbox}
+        />
+    </div>
 );
 
 const InvalidationCheckbox = () => (
-<div style={styles.block}>
-<Checkbox
-label="Invalidation"
-style={styles.checkbox}
-/>
-</div>
+    <div style={styles.block}>
+        <Checkbox
+            label="Invalidation"
+            style={styles.checkbox}
+        />
+    </div>
 );
 
 const style = {
@@ -299,7 +183,7 @@ const style = {
 };
 
 const RaisedNewButton = () => (
-<span>
+    <span>
 <RaisedButton label="New" backgroundColor="#b8b8b8" labelColor="#ffffff" style={style}/>
     </span>
 );
@@ -315,18 +199,18 @@ const RaisedSaveButton = React.createClass ({
 );
 
 const RaisedCancelButton = () => (
-<span>
+    <span>
 <RaisedButton label="Cancel"
-backgroundColor="#cf4440"
-labelColor="#ffffff"
-style={style} />
+              backgroundColor="#cf4440"
+              labelColor="#ffffff"
+              style={style} />
     </span>
 );
 
 
 const FormBar = () => (
-<AppBar
-title="Create Equipment"
+    <AppBar
+        title="Create Equipment"
     />
 );
 
@@ -507,12 +391,13 @@ const EquipmentForm = React.createClass({
         }
     },
     _create: function () {
+        // console.log(this.refs.eqt);
+        // console.log(this.refs.eqt.state.eqtype_id);
+
         return $.ajax({
             url: '/api/v1.0/equipment',
             type: 'POST',
-            data: {
-                manufactured: this.refs.manufactured.getDOMNode().value
-            },
+            data: {'eqtype_id': this.refs.eqt.state.eqtype_id},
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -536,7 +421,7 @@ const EquipmentForm = React.createClass({
         this.setState({loading: false});
     },
     _onSuccess: function (data) {
-        this.refs.user_form.getDOMNode().reset();
+        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
         // show success message
     },
@@ -553,12 +438,13 @@ const EquipmentForm = React.createClass({
         }
     },
     _onChange: function (e) {
+        console.log(e.target.name);
         var state = {};
         state[e.target.name] =  $.trim(e.target.value);
         this.setState(state);
     },
     _validate: function () {
-        var errors = {}
+        var errors = {};
         // if(this.state.username == "") {
         //   errors.username = "Username is required";
         // }
@@ -579,24 +465,15 @@ const EquipmentForm = React.createClass({
     },
     render: function() {
         return (
-             <div className="form-container">
-
-            <form ref='eqtype_form' onSubmit={this._onSubmit}>
-
-        <FormBar/>
-
-        <br/>
-             <br/>
-                <SelectFieldExampleSimple/>
-                <br/>
-                <br/>
-                <br/>
-        <EquipmentTypeSelectField source="http://dev.vision.local:5000/api/v1.0/equipment_type" />
-            <RaisedNewButton/>
-            <RaisedNewButton/>
-            <RaisedSaveButton/><RaisedCancelButton/>
-            </form>
-             </div>
+            <div className="form-container">
+                <FormBar/>
+                <form id="eqtype_form" onSubmit={this._onSubmit}>
+                    <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local:5000/api/v1.0/equipment_type" value={this.state.value}/>
+                    <RaisedNewButton/>
+                    <RaisedNewButton/>
+                    <RaisedSaveButton/><RaisedCancelButton/>
+                </form>
+            </div>
         );
     }
 });

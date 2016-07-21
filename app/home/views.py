@@ -17,7 +17,6 @@ from flask import Markup
 from app.pages.storage import get_page_by_title, get_page_by_slug, process_page, isblogger
 from app.pages.views import render
 from flask import jsonify, redirect, url_for, abort
-from app.home.utils import crossdomain
 
 mod = Blueprint('home', __name__, url_prefix='')
 
