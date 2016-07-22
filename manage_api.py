@@ -1,4 +1,4 @@
-from app.api import app_api as app
+from app.api import api as app
 from flask.ext.script import Manager
 from flask_apidoc.commands import GenerateApiDoc
 

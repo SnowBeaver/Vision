@@ -77,22 +77,174 @@ def not_found(error):
     return make_response(return_json('error', 'Not found'), 404)
 
 
+"""
+@api {get} /user Gets a list of Users
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup User
+"""
+"""
+@api {get} /user/:id Gets an User
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup User
+"""
+"""
+@api {post} /user Adds a new User
+@apiVersion 1.0.0
+@apiName add_item(User)
+@apiGroup User
+"""
+"""
+@api {put} /user/:id Updates an User
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup User
+"""
+"""
+@api {delete} /user/:id Deletes an User
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup User
+
+@apiSuccess {Boolean}    result              True if all ok.
+@apiError UserNotFound   error              "Not found".
+"""
+"""
+@api {get} /equipment Gets a list of Equipment
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup Equipment
+"""
+"""
+@api {get} /equipment/:id Gets an Equipment
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup Equipment
+
+@apiSuccess {Integer}         id
+@apiSuccess {String(50)}      name
+@apiSuccess {Integer}         equipment_number
+@apiSuccess {String(50)}      serial
+@apiSuccess {Integer}         equipment_type_id
+@apiSuccess {Dict}            equipment_type
+@apiSuccess {Integer}         manufacturer_id
+@apiSuccess {Dict}            manufacturer
+@apiSuccess {Integer}         manufactured                Year manufactured, from 1900
+@apiSuccess {String}          frequency                   '25', '50', '60', 'DC'
+@apiSuccess {String}          description
+@apiSuccess {Integer}         location_id
+@apiSuccess {Dict}            location
+@apiSuccess {Boolean}         modifier
+@apiSuccess {String}          comments
+@apiSuccess {String}          visual_date                 Date where was done the last visual inspection.
+@apiSuccess {Integer}         visual_inspection_by_id     User
+@apiSuccess {Dict}            visual_inspection_by
+@apiSuccess {Integer}         assigned_to_id              User
+@apiSuccess {Dict}            assigned_to
+@apiSuccess {String}          visual_inspection_comments  Visual inspection comments,
+@apiSuccess {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
+@apiSuccess {Integer}         norm_id
+@apiSuccess {Dict}            norm
+@apiSuccess {String(100)}     upstream1                   Upstream device name
+@apiSuccess {String(100)}     upstream2                   Upstream device name
+@apiSuccess {String(100)}     upstream3                   Upstream device name
+@apiSuccess {String(100)}     upstream4                   Upstream device name
+@apiSuccess {String(100)}     upstream5                   Upstream device name
+@apiSuccess {String(100)}     downstream1                 Downstream device name
+@apiSuccess {String(100)}     downstream2                 Downstream device name
+@apiSuccess {String(100)}     downstream3                 Downstream device name
+@apiSuccess {String(100)}     downstream4                 Downstream device name
+@apiSuccess {String(100)}     downstream5                 Downstream device name
+@apiSuccess {Boolean}         tie_location                Tie device location
+@apiSuccess {Integer}         tie_maintenance_state       Tie is open or closed during maintenance
+@apiSuccess {Integer}         tie_status                  TieAnalysisState.
+@apiSuccess {Integer}         phys_position
+@apiSuccess {Float}           tension4                    Voltage4
+@apiSuccess {Boolean}         validated
+@apiSuccess {Boolean}         invalidation
+@apiSuccess {String(50)}      prev_serial_number
+@apiSuccess {String(50)}      prev_equipment_number
+@apiSuccess {Integer}         sibling
+"""
+"""
+@api {post} /equipment Adds a new Equipment
+@apiVersion 1.0.0
+@apiName add_item(Equipment)
+@apiGroup Equipment
+
+@apiParam {String(50)}      name                        Required.
+@apiParam {Integer}         equipment_number            Required.
+@apiParam {String(50)}      serial                      Required.
+@apiParam {Integer}         equipment_type_id           Required.
+@apiParam {Integer}         manufacturer_id             Required.
+@apiParam {Integer}         location_id                 Required.
+@apiParam {Integer}         visual_inspection_by_id     Required. User id
+@apiParam {Integer}         assigned_to_id              Required. User id
+@apiParam {Integer}         norm_id                     Required.
+@apiParam {Integer}         manufactured                Year manufactured, from 1900
+@apiParam {String}          frequency                   '25', '50', '60', 'DC'
+@apiParam {String}          description
+@apiParam {Boolean}         modifier
+@apiParam {String}          comments
+@apiParam {String}          visual_date                 Date where was done the last visual inspection.
+@apiParam {String}          visual_inspection_comments  Visual inspection comments,
+@apiParam {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
+@apiParam {String(100)}     upstream1                   Upstream device name
+@apiParam {String(100)}     upstream2                   Upstream device name
+@apiParam {String(100)}     upstream3                   Upstream device name
+@apiParam {String(100)}     upstream4                   Upstream device name
+@apiParam {String(100)}     upstream5                   Upstream device name
+@apiParam {String(100)}     downstream1                 Downstream device name
+@apiParam {String(100)}     downstream2                 Downstream device name
+@apiParam {String(100)}     downstream3                 Downstream device name
+@apiParam {String(100)}     downstream4                 Downstream device name
+@apiParam {String(100)}     downstream5                 Downstream device name
+@apiParam {Boolean}         tie_location                Tie device location
+@apiParam {Integer}         tie_maintenance_state       Tie is open or closed during maintenance
+@apiParam {Integer}         tie_status                  TieAnalysisState.
+@apiParam {Integer}         phys_position
+@apiParam {Float}           tension4                    Voltage4
+@apiParam {Boolean}         validated
+@apiParam {Boolean}         invalidation
+@apiParam {String(50)}      prev_serial_number
+@apiParam {String(50)}      prev_equipment_number
+@apiParam {Integer}         sibling
+
+@apiSuccess {Boolean}       result              True if all ok.
+@apiError   BadRequest      error              "Not found".
+"""
+"""
+@api {put} /equipment/:id Updates an Equipment
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup Equipment
+
+@apiSuccess {Boolean}     result              True if all ok.
+@apiError UserNotFound    error              "Not found".
+"""
+"""
+@api {delete} /equipment/:id Deletes an Equipment
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup Equipment
+
+@apiSuccess {Boolean}    result              True if all ok.
+@apiError UserNotFound    Error "Not found".
+"""
+"""
+@apiParam {String}      username        The user's username.
+@apiParam {String}      first_name      The first name of the User.
+@apiParam {String}      last_name       the last name of the User.
+@apiParam {Object}      profile         The profile data
+@apiParam {Number}      profile.age     The user's age.
+@apiParam {String}      profile.image   The user's avatar-image.
+@apiSuccess {Number}    id              The new user id.
+"""
+
 @api_blueprint.route('/<path>/', methods=['GET', 'POST'])
 @api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
 def handler(path, item_id=None):
-    """
-    @api {post} /user Adds a new User
-    @apiVersion 1.0.0
-    @apiName add_user
-    @apiGroup User
-    @apiParam {String}      username        The user's username.
-    @apiParam {String}      first_name      The first name of the User.
-    @apiParam {String}      last_name       the last name of the User.
-    @apiParam {Object}      profile         The profile data
-    @apiParam {Number}      profile.age     The user's age.
-    @apiParam {String}      profile.image   The user's avatar-image.
-    @apiSuccess {Number}    id              The new user id.
-    """
     if path not in model_dict:
         abort(404)
 
