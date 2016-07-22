@@ -132,7 +132,7 @@ class User(db.Model, UserMixin):
                 'alias': self.alias,
                 'email': self.email,
                 'password': self.password,
-                'roles': [ item.serialize for item in self.roles],
+                'roles': [ item.serialize() for item in self.roles],
                 'status': self.status,
                 'address': self.address,
                 'mobile': self.mobile,

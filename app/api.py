@@ -2,10 +2,12 @@ from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from app.diagnostic.models import *
 from flask.ext.sqlalchemy import SQLAlchemy
 from app.users.models import User
+from flask_apidoc import ApiDoc
 
 
 app_api = Flask(__name__)
 app_api.config.from_object('config')
+doc = ApiDoc(app=app_api)
 db = SQLAlchemy(app_api)
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/v1.0')
 
@@ -78,6 +80,19 @@ def not_found(error):
 @api_blueprint.route('/<path>/', methods=['GET', 'POST'])
 @api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
 def handler(path, item_id=None):
+    """
+    @api {post} /user Adds a new User
+    @apiVersion 1.0.0
+    @apiName add_user
+    @apiGroup User
+    @apiParam {String}      username        The user's username.
+    @apiParam {String}      first_name      The first name of the User.
+    @apiParam {String}      last_name       the last name of the User.
+    @apiParam {Object}      profile         The profile data
+    @apiParam {Number}      profile.age     The user's age.
+    @apiParam {String}      profile.image   The user's avatar-image.
+    @apiSuccess {Number}    id              The new user id.
+    """
     if path not in model_dict:
         abort(404)
 
