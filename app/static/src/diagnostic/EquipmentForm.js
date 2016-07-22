@@ -48,7 +48,7 @@ var EquipmentTypeSelectField = React.createClass ({
         console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
-            items = (result['equipment_type']);
+            items = (result['result']);
             this.setState({
                 items: items
             });
@@ -106,7 +106,7 @@ var ManufacturerSelectField = React.createClass({
                 // console.log('component did mount');
                 this.serverRequest = $.get(this.props.source, function (result) {
 
-                    items = (result['manufacturer']);
+                    items = (result['result']);
                     this.setState({
                         items: items
                     });
@@ -160,7 +160,7 @@ var LocationSelectField = React.createClass ({
         console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
-            items = (result['equipment_type']);
+            items = (result['result']);
             this.setState({
                 items: items
             });
@@ -266,7 +266,7 @@ var AssignedToSelectField = React.createClass ({
         console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
-            items = (result['equipment_type']);
+            items = (result['result']);
             this.setState({
                 items: items
             });
@@ -319,7 +319,7 @@ var NormSelectField = React.createClass ({
         console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
-            items = (result['equipment_type']);
+            items = (result['result']);
             this.setState({
                 items: items
             });
@@ -676,19 +676,19 @@ const FormBar = () => (
                     <div className="form-container">
                         <FormBar/>
                         <form id="eqtype_form" onSubmit={this._onSubmit}>
-                            <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local:5000/api/v1.0/equipment_type" value={this.state.value}/><RaisedNewButton/>
+                            <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/><RaisedNewButton/>
                             <br/>
-                            <ManufacturerSelectField ref="mn" source="http://dev.vision.local:5000/api/v1.0/manufacturer" value={this.state.value} /><RaisedNewButton/>
+                            <ManufacturerSelectField ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value} /><RaisedNewButton/>
                             <br/>
-                            <LocationSelectField ref="loc"  source="http://dev.vision.local:5000/api/v1.0/location" value={this.state.value}   />
+                            <LocationSelectField ref="loc"  source="http://dev.vision.local/api/v1.0/location" value={this.state.value}   />
                             <br/>
-                            <VisualInspectionSelectField ref="vis" source="http://dev.vision.local:5000/api/v1.0/visual_inspection_by" value={this.state.value} />
+                            <VisualInspectionSelectField ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
                             <br/>
-                            <AssignedToSelectField ref="vis" source="http://dev.vision.local:5000/api/v1.0/assigned_to" value={this.state.value} />
+                            <AssignedToSelectField ref="vis" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
                             <br/>
-                            <NormSelectField ref="vis" source="http://dev.vision.local:5000/api/v1.0/norm" value={this.state.value} />
+                            <NormSelectField ref="vis" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
                             <br/>
-                            <DialogEx/>
+
                             <RaisedSaveButton/><RaisedCancelButton/>
                         </form>
                     </div>

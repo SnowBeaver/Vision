@@ -1,6 +1,6 @@
 <uwsgi>
 	<socket>/tmp/vision-api.sock</socket>
-	<pythonpath>/home/vision/www</pythonpath>
+	<pythonpath>/home/vision/www/</pythonpath>
 	<module>app.api:api</module>
 	<processes>1</processes>
 	<chdir>/home/vision/www</chdir>
