@@ -12,7 +12,6 @@ import AutoComplete from 'material-ui/AutoComplete';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from "react-tap-event-plugin";
 import {findDOMNode} from 'react-dom';
-
 injectTapEventPlugin();
 
 var items = [];
@@ -28,15 +27,61 @@ while (first_year != current_year) {
 }
 
 
-const sstyles = {
-    customWidth: {
-        width: 150
-    }
-};
-
-
 var EquipmentTypeSelectField = React.createClass ({
 
+    handleChange(event, index, value) {
+        this.setState({value});
+    },
+
+    getInitialState: function(){
+        console.log('initail state');
+        return {
+            items: []
+        };
+    },
+
+    componentDidMount: function(){
+        console.log('component did mount');
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['equipment_type']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    render: function() {
+        var menuItems = [];
+        console.log('component render');
+         for (var key in this.state.items) {
+                menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+         }
+
+        return (
+            <div>
+            <SelectField
+                value={this.state.value}
+                onChange={this.handleChange}
+                autoWidth={true}
+                hintText="EqType">
+            {menuItems}
+            </SelectField>
+            </div>
+        );
+    }
+});
+
+
+var ManufacturerSelectField = React.createClass ({
+
+    handleChange(event, index, value) {
+        this.setState({value});
+    },
 
     getInitialState: function(){
         // console.log('initail state');
@@ -56,7 +101,7 @@ var EquipmentTypeSelectField = React.createClass ({
         // console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
-            items = (result['equipment_type']);
+            items = (result['manufacturer']);
             this.setState({
                 items: items
             });
@@ -150,13 +195,14 @@ var EquipmentTypeSelectField = React.createClass ({
 // );
 
 
+
 const styles = {
     block: {
-        maxWidth: 250,
+        maxWidth: 250
     },
     checkbox: {
-        marginBottom: 16,
-    },
+        marginBottom: 16
+    }
 };
 
 const ValiadateCheckbox = () => (
@@ -178,7 +224,7 @@ const InvalidationCheckbox = () => (
 );
 
 const style = {
-    margin: 12,
+    margin: 12
 
 };
 
@@ -189,10 +235,15 @@ const RaisedNewButton = () => (
 );
 
 const RaisedSaveButton = React.createClass ({
+
         render: function () {
             return (
                 <span>
-                <RaisedButton label="Save" backgroundColor="#2f70a8" labelColor="#ffffff" style={style} type="submit"/>
+                <RaisedButton label="Save"
+                              backgroundColor="#2f70a8"
+                              labelColor="#ffffff"
+                              style={style}
+                              type="submit"/>
                 </span>
             )}
     }
@@ -477,5 +528,7 @@ const EquipmentForm = React.createClass({
         );
     }
 });
+
+
 export default EquipmentForm;
 
