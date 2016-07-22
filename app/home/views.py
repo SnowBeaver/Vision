@@ -62,6 +62,9 @@ def get_timezone():
     # translations = [str(translation) for translation in babel.list_translations()]
     # return request.accept_languages.best_match(translations)
 
+@mod.route('/api/v1/manufacturers', methods=['GET'] )
+def manufacturers():
+    return jsonify(first='1900', second='1901')
 
 @mod.route('/lang/<string:lang>', methods=['GET'])
 # @guest_per.require(http_exception = 403)

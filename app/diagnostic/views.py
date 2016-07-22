@@ -57,6 +57,7 @@ class EquipmentView(MyModelView):
 
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession, name="Equipment", category="Equipment")
+#
 
 
 class NormFuranView(MyModelView):

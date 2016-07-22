@@ -53,7 +53,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
 
-        return redirect(url_for('campaign.index_view'))
+        # return redirect(url_for('campaign.index_view'))
 
         # popups = {
         #     'add': {
@@ -75,13 +75,13 @@ class MyAdminIndexView(admin.AdminIndexView):
         #     , 'doc': DocInfoViewForm()
         # }
         #
-        # self._template_args['tree'] = get_tree()
-        # self._template_args['tree_view'] = TreeView()
-        # # front page views
-        # self._template_args['identification'] = IdentificationViewForm()
-        # self._template_args['test_repair'] = TestRepairViewForm()
-        # self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
-        # self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
+        self._template_args['tree'] = get_tree()
+        self._template_args['tree_view'] = TreeView()
+        # front page views
+        self._template_args['identification'] = IdentificationViewForm()
+        self._template_args['test_repair'] = TestRepairViewForm()
+        self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
+        self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
         # self._template_args['diagnostic'] = popups
         # self._template_args['batch'] = BatchViewForm()
         # self._template_args['report'] = EquipmentTestReportViewForm()
@@ -91,7 +91,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         # self._template_args['info'] = info
         # self._template_args['lab'] = Lab()
         #
-        # return super(MyAdminIndexView, self).index()
+        return super(MyAdminIndexView, self).index()
 
     @expose('/login/', methods=('GET', 'POST'))
     def login_view(self):
