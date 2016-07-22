@@ -37,3 +37,4 @@ sqlalchemy-i18n
 markdown
 raven
 blinker
+flask-apidoc

@@ -5,7 +5,7 @@ from app.users.models import User
 from flask_apidoc import ApiDoc
 
 
-api = Flask(__name__)
+api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
 db = SQLAlchemy(api)
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
