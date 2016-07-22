@@ -115,9 +115,10 @@ def deploy_supervisor():
 def deploy_nginx():
     nginx_conf = "/etc/nginx/sites-available/%s.conf" % PROJECT
     sudo("rm -f %s" % nginx_conf)
-    put( Path(LOCAL_PROJECT_DIR, 'dep', 'nginx', 'template.conf'), nginx_conf, use_sudo=True)
+    put(Path(LOCAL_PROJECT_DIR, 'dep', 'nginx', 'template.conf'), nginx_conf, use_sudo=True)
 
     sudo("chown root:root %s" % nginx_conf)
+    # recreate symlink
     sudo("rm -f /etc/nginx/sites-enabled/%s.conf" % PROJECT)
     sudo("ln -s %s /etc/nginx/sites-enabled/%s.conf" %
          (nginx_conf, PROJECT))
@@ -259,6 +260,7 @@ def setup_blogging():
                 run('git fetch && git pull origin master')
                 run('python setup.py install')
 
+
 def setup_flaskbb():
     setup_redis()
     sudo("apt-get install -y uwsgi uwsgi-plugin-python ")
@@ -275,6 +277,15 @@ def setup_flaskbb():
                 run(env.bbpip + ' install -r requirements.txt')
                 run(env.bbpython + ' %s/manage.py initdb' % FLASKBB_DIR)
                 run(env.bbpython + ' %s/manage.py populate' % FLASKBB_DIR)
+
+
+def setup_api():
+    uwsgi_local = LOCAL_PROJECT_DIR.child('dep').child('uwsgi')
+    put( Path(uwsgi_local , "vision-api.xml" ), "%s/vision-api.xml" % env.directory)
+    deploy_supervisor()
+    deploy_nginx()
+    restart_services()
+
 
 def menu_root():
     with cd(env.directory):

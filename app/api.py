@@ -4,10 +4,10 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from app.users.models import User
 
 
-app_api = Flask(__name__)
-app_api.config.from_object('config')
-db = SQLAlchemy(app_api)
-api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/v1.0')
+api = Flask(__name__)
+api.config.from_object('config')
+db = SQLAlchemy(api)
+api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 
 model_dict = {'equipment': Equipment,
               'equipment_type': EquipmentType,
@@ -70,7 +70,7 @@ def delete_item(items_model, item_id):
     return rows > 0
 
 
-@app_api.errorhandler(404)
+@api.errorhandler(404)
 def not_found(error):
     return make_response(return_json('error', 'Not found'), 404)
 
@@ -92,4 +92,4 @@ def handler(path, item_id=None):
         args.append(item_id)
     return return_json('result', crud_func(*args))
 
-app_api.register_blueprint(api_blueprint)
+api.register_blueprint(api_blueprint)
