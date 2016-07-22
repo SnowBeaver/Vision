@@ -101,7 +101,7 @@ var ManufacturerSelectField = React.createClass ({
         // console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
-            items = (result['manufacturer']);
+            items = (result['result']);
             this.setState({
                 items: items
             });
@@ -519,7 +519,7 @@ const EquipmentForm = React.createClass({
             <div className="form-container">
                 <FormBar/>
                 <form id="eqtype_form" onSubmit={this._onSubmit}>
-                    <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local:5000/api/v1.0/equipment_type" value={this.state.value}/>
+                    <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type/" value={this.state.value}/>
                     <RaisedNewButton/>
                     <RaisedNewButton/>
                     <RaisedSaveButton/><RaisedCancelButton/>

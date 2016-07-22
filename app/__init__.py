@@ -125,8 +125,8 @@ from app.diagnostic.views import admin_views
 for view_class in admin_views:
     backend.add_view(view_class(db.session))
 
-from diagnostic.api import api_blueprint
-app.register_blueprint(api_blueprint)
+# from diagnostic.api import api_blueprint
+# app.register_blueprint(api_blueprint)
 
 from app.admin.views import UserAdmin, RoleAdmin, FileView, ImageView, MenuView
 
