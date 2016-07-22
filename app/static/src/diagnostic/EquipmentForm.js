@@ -33,19 +33,18 @@ var EquipmentTypeSelectField = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: value,
-            eqtype_id: index
+            eqtype_id: value
         })
+        
     },
 
     getInitialState: function(){
-        console.log('initail state');
         return {
             items: []
         };
     },
 
     componentDidMount: function(){
-        console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
             items = (result['result']);
@@ -61,9 +60,8 @@ var EquipmentTypeSelectField = React.createClass ({
 
     render: function() {
         var menuItems = [];
-        console.log('component render');
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
         }
 
         return (
@@ -72,7 +70,9 @@ var EquipmentTypeSelectField = React.createClass ({
                     value={this.state.value}
                     onChange={this.handleChange}
                     autoWidth={true}
-                    hintText="EqTypeAutocompl">
+                    hintText="EqTypeAutocompl"
+                    errorText="This field is required"
+                    >
                     {menuItems}
                 </SelectField>
             </div>
@@ -86,24 +86,17 @@ var ManufacturerSelectField = React.createClass({
     handleChange: function (event, index, value) {
         this.setState({
             value: value,
-            eqtype_id: index
+            manufac_id: value
         })
+        console.log("manufac console", event, index, value);
     },
 
-    getInitialState: function () {
-        console.log('initail state');
+    getInitialState: function(){
         return {
-
-            handleChange: function (event, index, value) {
-                this.setState({
-                    value: value,
-                    eqtype_id: index
-                })
-            },
-        }
+            items: []
+        };
     },
             componentDidMount: function () {
-                // console.log('component did mount');
                 this.serverRequest = $.get(this.props.source, function (result) {
 
                     items = (result['result']);
@@ -119,9 +112,8 @@ var ManufacturerSelectField = React.createClass({
 
             render: function () {
                 var menuItems = [];
-                // console.log('component render');
                 for (var key in this.state.items) {
-                    menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id}
+                    menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id}
                                              primaryText={`${this.state.items[key].name}`}/>);
                 }
 
@@ -131,7 +123,8 @@ var ManufacturerSelectField = React.createClass({
                             onChange={ this.handleChange }
                             value={ this.state.value}
                             autoWidth={true}
-                            hintText="Manufacturer">
+                            hintText="Manufacturer"
+                            errorText="This field is required">
                             {menuItems}
                         </SelectField>
                     </div>
@@ -145,19 +138,18 @@ var LocationSelectField = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: value,
-            eqtype_id: index
+            location_id: value
         })
+        // console.log("loc log", event,index,value, event.target.index, event.target.value);
     },
 
     getInitialState: function(){
-        console.log('initail state');
         return {
             items: []
         };
     },
 
     componentDidMount: function(){
-        console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
             items = (result['result']);
@@ -173,9 +165,8 @@ var LocationSelectField = React.createClass ({
 
     render: function() {
         var menuItems = [];
-        console.log('component render');
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
         }
 
         return (
@@ -184,7 +175,8 @@ var LocationSelectField = React.createClass ({
                     value={this.state.value}
                     onChange={this.handleChange}
                     autoWidth={true}
-                    hintText="Location">
+                    hintText="Location"
+                    errorText="This field is required">
                     {menuItems}
                 </SelectField>
             </div>
@@ -198,19 +190,18 @@ var VisualInspectionSelectField = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: value,
-            eqtype_id: index
+            visnsp_id: value
         })
+       
     },
 
     getInitialState: function(){
-        console.log('initail state');
         return {
             items: []
         };
     },
 
     componentDidMount: function(){
-        console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
             items = (result['result']);
@@ -226,18 +217,17 @@ var VisualInspectionSelectField = React.createClass ({
 
     render: function() {
         var menuItems = [];
-        console.log('component render');
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
         }
-        console.log("itm", items);
         return (
             <div>
                 <SelectField
                     value={this.state.value}
                     onChange={this.handleChange}
                     autoWidth={true}
-                    hintText="Visual Inspection By">
+                    hintText="Visual Inspection By"
+                    errorText="This field is required">
                     {menuItems}
                 </SelectField>
             </div>
@@ -251,19 +241,18 @@ var AssignedToSelectField = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: value,
-            eqtype_id: index
+            assignedto_id: value
         })
+        
     },
 
     getInitialState: function(){
-        console.log('initail state');
         return {
             items: []
         };
     },
 
     componentDidMount: function(){
-        console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
             items = (result['result']);
@@ -279,18 +268,17 @@ var AssignedToSelectField = React.createClass ({
 
     render: function() {
         var menuItems = [];
-        console.log('component render');
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
         }
-        console.log("itm", items);
         return (
             <div>
                 <SelectField
                     value={this.state.value}
                     onChange={this.handleChange}
                     autoWidth={true}
-                    hintText="Assigned to">
+                    hintText="Assigned to"
+                    errorText="This field is required">
                     {menuItems}
                 </SelectField>
             </div>
@@ -304,19 +292,18 @@ var NormSelectField = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: value,
-            eqtype_id: index
+            norm_id: value
         })
+       
     },
 
     getInitialState: function(){
-        console.log('initail state');
         return {
             items: []
         };
     },
 
     componentDidMount: function(){
-        console.log('component did mount');
         this.serverRequest = $.get(this.props.source, function (result){
 
             items = (result['result']);
@@ -332,18 +319,17 @@ var NormSelectField = React.createClass ({
 
     render: function() {
         var menuItems = [];
-        console.log('component render');
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].name} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
         }
-        console.log("itm", items);
         return (
             <div>
                 <SelectField
                     value={this.state.value}
                     onChange={this.handleChange}
                     autoWidth={true}
-                    hintText="Norm">
+                    hintText="Norm"
+                    errorText="This field is required">
                     {menuItems}
                 </SelectField>
             </div>
@@ -351,6 +337,65 @@ var NormSelectField = React.createClass ({
     }
 });
 
+
+var TextFieldName = React.createClass({
+
+    getInitialState: function(){
+        return {
+            items: []
+        };
+    },
+    
+    render: function() {
+        return(
+            <div>
+            <TextField
+                floatingLabelText="Name"
+                floatingLabelFixed={true}
+            /><br />
+        </div>)
+    }
+});
+
+
+var TextFieldEqNumber = React.createClass({
+
+    getInitialState: function(){
+        return {
+            items: []
+        };
+    },
+
+    render: function() {
+        return(
+            <div>
+            <TextField
+                floatingLabelText="Equipment Number"
+                floatingLabelFixed={true}
+            /><br />
+        </div>)
+    }
+});
+
+
+var TextFieldSerial = React.createClass({
+
+    getInitialState: function(){
+        return {
+            items: []
+        };
+    },
+
+    render: function() {
+        return(
+            <div>
+            <TextField
+                floatingLabelText="Serial"
+                floatingLabelFixed={true}
+            /><br />
+        </div>)
+    }
+});
 
 const styles = {
     block: {
@@ -605,7 +650,13 @@ const FormBar = () => (
                 return $.ajax({
                     url: '/api/v1.0/equipment',
                     type: 'POST',
-                    data: {'eqtype_id': this.refs.eqt.state.eqtype_id},
+                    data: {'eqtype_id': this.refs.eqt.state.eqtype_id,
+                        'manufac_id': this.refs.mn.state.manufac_id,
+                        'location_id': this.refs.loc.state.location_id,
+                        'visnsp_id': this.refs.vis.state.visnsp_id,
+                        'assignedto_id': this.refs.ast.state.assignedto_id,
+                        'norm_id': this.refs.norms.state.norm_id,
+                    },
                     beforeSend: function () {
                         this.setState({loading: true});
                     }.bind(this)
@@ -672,6 +723,7 @@ const FormBar = () => (
                 return className;
             },
             render: function() {
+
                 return (
                     <div className="form-container">
                         <FormBar/>
@@ -684,11 +736,13 @@ const FormBar = () => (
                             <br/>
                             <VisualInspectionSelectField ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
                             <br/>
-                            <AssignedToSelectField ref="vis" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
+                            <AssignedToSelectField ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
                             <br/>
-                            <NormSelectField ref="vis" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
+                            <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
                             <br/>
-
+                            <TextFieldName/>
+                            <TextFieldEqNumber/>
+                            <TextFieldSerial/>
                             <RaisedSaveButton/><RaisedCancelButton/>
                         </form>
                     </div>
