@@ -14,14 +14,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import RaisedButton from 'material-ui/RaisedButton';
 import EquipmentForm from './EquipmentForm';
 
-const App = () => (
-  <MuiThemeProvider>
-    <EquipmentForm />
-  </MuiThemeProvider>
-);
+const App = React.createClass ({
 
+    getInitialState: function(){
+        return {
+            showEquipmentForm: null
+        }
+    },
+    showEquipmentForm: function(){
+        this.setState({showEquipmentForm: true});
+    },
+
+    render: function(){
+        return (
+        <MuiThemeProvider>
+            <div>
+                <RaisedButton label="New equipment" onClick={this.showEquipmentForm} />
+                { this.state.showEquipmentForm ? <EquipmentForm /> : null }
+            </div>
+        </MuiThemeProvider>
+        );
+    }
+
+});
 ReactDOM.render(
   <App />,
   document.getElementById('app')
