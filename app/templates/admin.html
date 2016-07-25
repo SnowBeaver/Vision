@@ -3,8 +3,28 @@
 {% block head %}
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jstree.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/selectize.bootstrap3.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='build/admin.min.css') }}">
+    <script type="text/javascript">
+        var url = {
+            update: '{{ url_for("tree.update") }}',
+            create: '{{ url_for("tree.create") }}',
+            delete: '{{ url_for("tree.delete") }}',
+            rename: '{{ url_for("tree.rename") }}',
+            move: '{{ url_for("tree.move") }}',
+            copy: '{{ url_for("tree.copy") }}',
+            getView: '{{ url_for("tree.getview") }}',
+            treeUpdate: '{{ url_for("tree.update") }}',
+            treeStatus: '{{ url_for("tree.status") }}',
+            treeJoin: '{{ url_for("tree.join") }}',
+            treeCreate: '{{ url_for("tree.create") }}',
+            treeDelete: '{{ url_for("tree.delete") }}',
+            treeRename: '{{ url_for("tree.rename") }}',
+            treeMove: '{{ url_for("tree.move") }}',
+            treeCopy: '{{ url_for("tree.copy") }}',
+            treeGetView: '{{ url_for("tree.getview") }}'
+        };
+    </script>
+
 {% endblock head %}
 
 {% block main_menu %}
@@ -56,7 +76,6 @@
           s.parentNode.insertBefore(wf, s);
         })();
     </script>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='build/main.css') }}">
   <script src="{{ url_for('static', filename='build/app.js') }}"></script>
 
 {% endblock tail %}

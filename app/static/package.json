@@ -29,6 +29,11 @@
   },
   "dependencies": {
     "apidoc": "^0.16.1",
+    "bootstrap": "^3.3.6",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-clean-css": "^2.0.11",
+    "gulp-concat": "^2.6.0",
+    "gulp-minify-css": "^1.2.4",
     "material-ui": "^0.15.0",
     "react": "^15.0.1",
     "react-bootstrap": "^0.30.0-rc.2",

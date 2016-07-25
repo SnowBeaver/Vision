@@ -19,7 +19,7 @@ function stringifyObject ( obj ) {
 $(document).ready(function(){
 
     $("#menuView").submit(function(e){
-        $.post('{{ url_for(".update") }}', $(this).serialize()
+        $.post(url.update, $(this).serialize()
             ,function(data){
                 if(data.status == "OK"){
                     alert("View is updated");
@@ -81,7 +81,7 @@ $(document).ready(function(){
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
 
-                            $.post('{{ url_for(".create") }}', { 'parent' : obj.id , 'text' : "node " , 'type' : 'node'}
+                            $.post(url.create, { 'parent' : obj.id , 'text' : "node " , 'type' : 'node'}
                                 ,function(data){
                                     inst.create_node(obj, { 'id' : data.id , 'text' : 'node' + data.id , type: 'parent' }
                                         , "last", function (new_node) {
@@ -114,14 +114,14 @@ $(document).ready(function(){
 
             }}}).on('delete_node.jstree', function (e, data) {
 
-        $.post('{{url_for(".delete")}}', { 'id' : data.node.id } ,function(data ){
+        $.post(url.delete, { 'id' : data.node.id } ,function(data ){
             //alert(data.id == true );
         }).fail(function () {
             //data.instance.refresh();
         });
     }).on('rename_node.jstree', function (e, data) {
 
-        $.post('{{url_for(".rename")}}', { 'id' : data.node.id, 'text' : data.text } ,function(data){
+        $.post(url.rename, { 'id' : data.node.id, 'text' : data.text } ,function(data){
             //alert(data.success == true );
         }).fail(function () {
             //data.instance.refresh();
@@ -129,7 +129,7 @@ $(document).ready(function(){
 
     }).on('move_node.jstree', function (e, data) {
 
-        $.post('{{url_for(".move")}}', { 'node_id' : data.node.id, 'parent_id' : data.parent } ,function(data ){
+        $.post(url.move, { 'node_id' : data.node.id, 'parent_id' : data.parent } ,function(data ){
             //alert(data.success == true );
         }).fail(function () {
             //data.instance.refresh();
@@ -137,7 +137,7 @@ $(document).ready(function(){
 
     })
         .on('copy_node.jstree', function (e, data){
-//                $.post('{{url_for(".copy")}}', { 'node_id' : data.original.id , 'parent_id' : data.parent } ,function(d){
+//                $.post(url.copy, { 'node_id' : data.original.id , 'parent_id' : data.parent } ,function(d){
 //                    if(d.status == "OK"){
 //                        data.instance.refresh();
 //                    }else{
@@ -150,7 +150,7 @@ $(document).ready(function(){
         }).on('select_node.jstree', function (e, data) {
         $("#menuView #node_id").val(data.node.id);
 
-        $.post('{{ url_for(".getview") }}', { 'node_id' : data.node.id } ,function(res){
+        $.post(url.getView, { 'node_id' : data.node.id } ,function(res){
             $("#menuView #page_view").val(res.view);
         }).fail(function () {
 
@@ -174,7 +174,7 @@ $(document).ready(function(){
     //  next part 
 
     $("#treeView").submit(function(e){
-        $.post('{{ url_for("tree.update") }}', $( this ).serialize()
+        $.post(url.treeUpdate, $( this ).serialize()
         ,function(data){
             if(data.status == "OK"){
                 alert("View is updated");
@@ -311,7 +311,7 @@ $(document).ready(function(){
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
                                     <!-- change status to on -->
-                                    $.post('{{ url_for("tree.status") }}', { 'node_id' : obj.id , 'status' : 1 }
+                                    $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 1 }
                                     ,function(data){
                                         if(data.status == "OK"){
                                             $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
@@ -330,7 +330,7 @@ $(document).ready(function(){
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
                                     <!-- change status to on -->
-                                    $.post('{{ url_for("tree.status") }}', { 'node_id' : obj.id , 'status' : 2 }
+                                    $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 2 }
                                     ,function(data){
                                         if(data.status == "OK"){
                                             $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
@@ -349,7 +349,7 @@ $(document).ready(function(){
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
                                     <!-- change status to off -->
-                                    $.post('{{ url_for("tree.status") }}', { 'node_id' : obj.id , 'status' : 0 }
+                                    $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 0 }
                                     ,function(data){
                                         if(data.status == "OK"){
                                             $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
@@ -393,7 +393,7 @@ $(document).ready(function(){
                                     }
                             });
 
-                            $.post('{{ url_for("tree.join") }}', { 'node_id' : obj.id , 'to_join' : JSON.stringify(ids) }
+                            $.post(url.treeJoin, { 'node_id' : obj.id , 'to_join' : JSON.stringify(ids) }
                             ,function(data){
                                 if(data.status == "OK"){
                                     <!-- TODO -->
@@ -409,7 +409,6 @@ $(document).ready(function(){
 
                         }
                     }
-
                 }
 
                 if(typeof current !== 'undefined'){
@@ -434,7 +433,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "New Main" , 'icon' : '../app/static/img/icons/main_b.ico' , 'type' : 'main' , tooltip : "Main tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "New Main" , 'icon' : '../app/static/img/icons/main_b.ico' , 'type' : 'main' , tooltip : "Main tooltip" }
                             ,function(data){
 
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'New Main' + data.id , 'icon' : '../app/static/img/icons/main_b.ico' , type: 'main' }
@@ -460,7 +459,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Air Bkr" , 'icon' : '../app/static/img/icons/air_bkr_b.ico' , 'type' : 'air_bkr' , tooltip : "Air Bkr tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Air Bkr" , 'icon' : '../app/static/img/icons/air_bkr_b.ico' , 'type' : 'air_bkr' , tooltip : "Air Bkr tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Air Bkr' + data.id , 'icon' : '../app/static/img/icons/air_bkr_b.ico' , type: 'air_bkr' }
                                         , "last", function (new_node) {
@@ -483,7 +482,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Bkr" , 'icon' : '../app/static/img/icons/bkr_b.ico' , 'type' : 'bkr' , tooltip : "Bkr tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Bkr" , 'icon' : '../app/static/img/icons/bkr_b.ico' , 'type' : 'bkr' , tooltip : "Bkr tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Bkr' + data.id , 'icon' : '../app/static/img/icons/bkr_b.ico' , 'type' : 'bkr' }
                                         , "last", function (new_node) {
@@ -506,7 +505,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Bushing" , 'icon' : '../app/static/img/icons/bushing_b.ico' , 'type' : 'bushing' , tooltip : "Bushing tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Bushing" , 'icon' : '../app/static/img/icons/bushing_b.ico' , 'type' : 'bushing' , tooltip : "Bushing tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Bushing' + data.id , 'icon' : '../app/static/img/icons/bushing_b.ico' , 'type' : 'bushing' }
                                         , "last", function (new_node) {
@@ -529,7 +528,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Capacitor" , 'icon' : '../app/static/img/icons/capacitor_b.ico' , 'type' : 'capacitor' , tooltip : "Capacitor tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Capacitor" , 'icon' : '../app/static/img/icons/capacitor_b.ico' , 'type' : 'capacitor' , tooltip : "Capacitor tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Capacitor' + data.id , 'icon' : '../app/static/img/icons/capacitor_b.ico' , 'type' : 'capacitor' }
                                         , "last", function (new_node) {
@@ -552,7 +551,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Induc" , 'icon' : '../app/static/img/icons/induc_b.ico' , 'type' : 'induc' , tooltip : "Induc tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Induc" , 'icon' : '../app/static/img/icons/induc_b.ico' , 'type' : 'induc' , tooltip : "Induc tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Induc' + data.id , 'icon' : '../app/static/img/icons/induc_b.ico' , 'type' : 'induc' }
                                         , "last", function (new_node) {
@@ -575,7 +574,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Mcc" , 'icon' : '../app/static/img/icons/mcc_b.ico' , 'type' : 'mcc' , tooltip : "Mcc tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Mcc" , 'icon' : '../app/static/img/icons/mcc_b.ico' , 'type' : 'mcc' , tooltip : "Mcc tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Mcc' + data.id , 'icon' : '../app/static/img/icons/mcc_b.ico' , 'type' : 'mcc' }
                                         , "last", function (new_node) {
@@ -598,7 +597,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Rect" , 'icon' : '../app/static/img/icons/rect_b.ico' , 'type' : 'rect' , tooltip : "Rect tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Rect" , 'icon' : '../app/static/img/icons/rect_b.ico' , 'type' : 'rect' , tooltip : "Rect tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Rect' + data.id , 'icon' : '../app/static/img/icons/rect_b.ico' , 'type' : 'rect' }
                                         , "last", function (new_node) {
@@ -621,7 +620,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Source" , 'icon' : '../app/static/img/icons/source_b.ico' , 'type' : 'source' , tooltip : "Source tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Source" , 'icon' : '../app/static/img/icons/source_b.ico' , 'type' : 'source' , tooltip : "Source tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Source' + data.id , 'icon' : '../app/static/img/icons/source_b.ico' , 'type' : 'source' }
                                         , "last", function (new_node) {
@@ -644,7 +643,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Switch" , 'icon' : '../app/static/img/icons/switch_b.ico' , 'type' : 'switch' , tooltip : "Switch tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Switch" , 'icon' : '../app/static/img/icons/switch_b.ico' , 'type' : 'switch' , tooltip : "Switch tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Switch' + data.id , 'icon' : '../app/static/img/icons/switch_b.ico' , 'type' : 'switch' }
                                         , "last", function (new_node) {
@@ -667,7 +666,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Synch" , 'icon' : '../app/static/img/icons/synch_b.ico' , 'type' : 'synch' , tooltip : "Synch tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Synch" , 'icon' : '../app/static/img/icons/synch_b.ico' , 'type' : 'synch' , tooltip : "Synch tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Synch' + data.id , 'icon' : '../app/static/img/icons/synch_b.ico' , 'type' : 'synch' }
                                         , "last", function (new_node) {
@@ -690,7 +689,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Tank" , 'icon' : '../app/static/img/icons/tank_b.ico' , 'type' : 'tank' , tooltip : "Tank tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Tank" , 'icon' : '../app/static/img/icons/tank_b.ico' , 'type' : 'tank' , tooltip : "Tank tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'Tank' + data.id , 'icon' : '../app/static/img/icons/tank_b.ico' , 'type' : 'tank' }
                                         , "last", function (new_node) {
@@ -713,7 +712,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Tc" , 'icon' : '../app/static/img/icons/tc_b.ico' , 'type' : 'tc' , tooltip : "Tc tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Tc" , 'icon' : '../app/static/img/icons/tc_b.ico' , 'type' : 'tc' , tooltip : "Tc tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'tc' + data.id , 'icon' : '../app/static/img/icons/tc_b.ico' , 'type' : 'tc' }
                                         , "last", function (new_node) {
@@ -736,7 +735,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Transfo" , 'icon' : '../app/static/img/icons/transfo_b.ico' , 'type' : 'transfo' , tooltip : "Transfo tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Transfo" , 'icon' : '../app/static/img/icons/transfo_b.ico' , 'type' : 'transfo' , tooltip : "Transfo tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'transfo' + data.id , 'icon' : '../app/static/img/icons/transfo_b.ico' , 'type' : 'transfo' }
                                         , "last", function (new_node) {
@@ -759,7 +758,7 @@ $(document).ready(function(){
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                             obj = inst.get_node(data.reference);
-                            $.post('{{ url_for("tree.create") }}', { 'parent' : obj.id , 'text' : "Transfo" , 'icon' : '../app/static/img/icons/cable_b.ico' , 'type' : 'cable' , tooltip : "Cable tooltip" }
+                            $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "Transfo" , 'icon' : '../app/static/img/icons/cable_b.ico' , 'type' : 'cable' , tooltip : "Cable tooltip" }
                             ,function(data){
                                 inst.create_node(obj, { 'id' : data.id , 'text' : 'cable' + data.id , 'icon' : '../app/static/img/icons/cable_b.ico' , 'type' : 'cable' }
                                         , "last", function (new_node) {
@@ -814,20 +813,20 @@ $(document).ready(function(){
             }
         }
     }).on('delete_node.jstree', function (e, data ) {
-            $.post('{{url_for("tree.delete")}}', { 'id' : data.node.id } ,function(data ){
+            $.post(url.treeDelete, { 'id' : data.node.id } ,function(data ){
                 //alert(data.id == true );
             }).fail(function () {
                 data.instance.refresh();
             });
 
          }).on('rename_node.jstree', function (e, data) {
-            $.post('{{url_for("tree.rename")}}', { 'id' : data.node.id, 'text' : data.text } ,function(data){
+            $.post(url.treeRename, { 'id' : data.node.id, 'text' : data.text } ,function(data){
                     //alert(data.success == true );
             }).fail(function () {
                 data.instance.refresh();
             });
         }).on('move_node.jstree', function (e, data) {
-            $.post('{{url_for("tree.move")}}', { 'node_id' : data.node.id, 'parent_id' : data.parent } ,function(data ){
+            $.post(url.treeMove, { 'node_id' : data.node.id, 'parent_id' : data.parent } ,function(data ){
                 //alert(data.success == true );
             }).fail(function () {
                 data.instance.refresh();
@@ -835,7 +834,7 @@ $(document).ready(function(){
 
         })
         .on('copy_node.jstree', function (e, data){
-//                $.post('{{url_for("tree.copy")}}', { 'node_id' : data.original.id , 'parent_id' : data.parent } ,function(d){
+//                $.post(url.treeCopy, { 'node_id' : data.original.id , 'parent_id' : data.parent } ,function(d){
 //                    if(d.status == "OK"){
 //                        data.instance.refresh();
 //                    }else{
@@ -848,7 +847,7 @@ $(document).ready(function(){
         }).on('select_node.jstree', function (e, data) {
                 $("#treeView #node_id").val(data.node.id);
 
-                $.post('{{ url_for("tree.getview") }}', { 'node_id' : data.node.id } ,function(res){
+                $.post(url.treeGetView, { 'node_id' : data.node.id } ,function(res){
                     if(res.view){
                         $("#treeView #view").val(res.view);
                         $("#treeView #tooltip").val(res.tooltip);
@@ -919,8 +918,6 @@ $(document).ready(function(){
             e.preventDefault();
         });
     });
-
-
-         <!-- This script adds the Roboto font to our project. For more detail go to this site:  http://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,500 -->
+<!-- This script adds the Roboto font to our project. For more detail go to this site:  http://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,500 -->
 
 }); 
