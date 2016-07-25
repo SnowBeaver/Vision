@@ -6,29 +6,27 @@ import EquipmentTestForm from './EquipmentTestFormBootstrap';
 
 const App = React.createClass ({
 
-    getInitialState: function(){
-        return {
-            showEquipmentForm: true,
-            showEquipmentList: true,
-            showEquipmentTest: true
-        }
-    },
-    showEquipmentForm: function(){
-        this.setState({showEquipmentForm: true});
-    },
-    showEquipmentList: function(){
-        this.setState({showEquipmentList: true});
-    },
-    showEquipmentTest: function(){
-        this.setState({showEquipmentTest: true});
-    },
+    // getInitialState: function(){
+    //     return {
+    //         showEquipmentForm: true,
+    //         showEquipmentList: true,
+    //         showEquipmentTest: true
+    //     }
+    // },
+    // showEquipmentForm: function(){
+    //     this.setState({showEquipmentForm: true});
+    // },
+    // showEquipmentList: function(){
+    //     this.setState({showEquipmentList: true});
+    // },
+    // showEquipmentTest: function(){
+    //     this.setState({showEquipmentTest: true});
+    // },
 
     render: function(){
         return (
                 <div>
-                    { this.state.showEquipmentList ? <EquipmentList /> : null } 
-                    { this.state.showEquipmentForm ? <EquipmentForm /> : null }
-                    { this.state.showEquipmentTest ? <EquipmentTestForm /> : null } 
+                    <EquipmentForm/>
                 </div>
         );
     }

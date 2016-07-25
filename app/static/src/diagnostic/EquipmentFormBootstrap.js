@@ -6,9 +6,19 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Button from 'react-bootstrap/lib/Button';
+import Form from 'react-bootstrap/lib/Form';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import Col from 'react-bootstrap/lib/Col';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+var DateTimeField = require('react-bootstrap-datetimepicker');
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
+
+
+
 
 var items = [];
 
@@ -22,6 +32,12 @@ while (first_year != current_year) {
     year_array.push(first_year.toString());
 }
 
+
+const buttonsInstance = (
+  <ButtonToolbar>
+    <Button>Default</Button>const buttonsInstance = (
+);</ButtonToolbar>
+);
 
 var EquipmentTypeSelectField = React.createClass ({
 
@@ -57,7 +73,7 @@ var EquipmentTypeSelectField = React.createClass ({
     componentWillUnmount: function() {
         this.serverRequest.abort();
     },
-    
+
     setVisible: function(){
         this.state.isVisible = true;
     },
@@ -84,6 +100,394 @@ var EquipmentTypeSelectField = React.createClass ({
 });
 
 
+var ManufacturerSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            manufac_id: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+        }
+
+        return (
+            <div>
+                <DropdownButton title='manufacturer' key={key} id={`dropdown-basic-2`}>
+                    {menuItems}
+                </DropdownButton>
+            </div>
+        );
+    }
+});
+
+var LocationSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            manufac_id: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+        }
+
+        return (
+            <div>
+                <DropdownButton title='Location' key={key} id={`dropdown-basic-3`}>
+                    {menuItems}
+                </DropdownButton>
+            </div>
+        );
+    }
+});
+
+var VisualInspBySelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            manufac_id: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+        }
+
+        return (
+            <div>
+                <DropdownButton title='Visual Inspection By' key={key} id={`dropdown-basic-3`}>
+                    {menuItems}
+                </DropdownButton>
+            </div>
+        );
+    }
+});
+
+
+var VisualInspBySelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            manufac_id: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+        }
+
+        return (
+            <div>
+                <DropdownButton title='Visual Inspection By' key={key} id={`dropdown-basic-4`}>
+                    {menuItems}
+                </DropdownButton>
+            </div>
+        );
+    }
+});
+
+
+var AssignedToSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            manufac_id: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+        }
+
+        return (
+            <div>
+                <DropdownButton title='Assigned To' key={key} id={`dropdown-basic-5`}>
+                    {menuItems}
+                </DropdownButton>
+            </div>
+        );
+    }
+});
+
+
+var AssignedToSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            manufac_id: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+        }
+
+        return (
+            <div>
+                <DropdownButton title='Assigned To' key={key} id={`dropdown-basic-5`}>
+                    {menuItems}
+                </DropdownButton>
+            </div>
+        );
+    }
+});
+
+
+var NormSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+            manufac_id: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+        }
+
+        return (
+            <div>
+                <DropdownButton title='Norm' key={key} id={`dropdown-basic-6`}>
+                    {menuItems}
+                </DropdownButton>
+            </div>
+        );
+    }
+});
 // var ManufacturerSelectField = React.createClass({
 //
 //     handleChange: function (event, index, value) {
@@ -413,7 +817,7 @@ const EquipmentForm = React.createClass({
                 'description': this.refs.description.getValue(),
                 'comments': this.refs.comments.getValue(),
                 'vis_comments': this.refs.vis_comments.getValue(),
-                'nr_taps': this.refs.nr_taps.getValue(), 
+                'nr_taps': this.refs.nr_taps.getValue(),
                 'upstream1': this.refs.upstream1.getValue(),
                 'upstream2': this.refs.upstream2.getValue(),
                 'upstream3': this.refs.upstream3.getValue(),
@@ -429,8 +833,8 @@ const EquipmentForm = React.createClass({
                 'validated': this.refs.validated.getValue(),
                 'invalidation': this.refs.invalidation.getValue(),
                 'prev_serial': this.refs.prev_serial.getValue(),
-                'prev_eqnumb': this.refs.prev_eqnumb.getValue(), 
-            },  
+                'prev_eqnumb': this.refs.prev_eqnumb.getValue(),
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -500,9 +904,130 @@ const EquipmentForm = React.createClass({
 
         return (
             <div className="form-container">
-                <form id="eqtype_form" onSubmit={this._onSubmit}> 
+                <form id="eqtype_form" onSubmit={this._onSubmit}>
                     <div>
-                        <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/> 
+                        <ButtonToolbar/>
+                        <FormGroup controlId="formControlsSelect">
+                        <ControlLabel>Eqtype</ControlLabel>
+                        <FormControl componentClass="select" placeholder="select" ref="eqt">
+                        <option value="select">select</option>
+                        <option value="other">...</option>
+                        </FormControl>
+                        </FormGroup>
+
+                        <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/>
+                        <ManufacturerSelectField  ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value}/>
+                        <LocationSelectField  ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
+                        <VisualInspBySelectField  ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
+                        <AssignedToSelectField  ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
+                        <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
+
+                        <FormGroup controlId="inputNameForm" type="text" ref="name">
+                        <Col type="text" sm={2}>
+                        Name
+                        </Col>
+                        <Col sm={10}>
+                        <FormControl type="Name" placeholder="Name"/>
+                            </Col>
+                        </FormGroup>
+
+                        <FormGroup controlId="inputEqNumberForm" type="text" ref="number">
+                        <Col type="text" sm={2}>
+                        Equipment Number
+                        </Col>
+                        <Col sm={10}>
+                        <FormControl type="Equipment Number" placeholder="Equipment Number"/>
+                            </Col>
+                        </FormGroup>
+
+                        <FormGroup controlId="inputSerialForm" type="text" ref="serial">
+                        <Col type="text" sm={2}>
+                        Serial
+                        </Col>
+                        <Col sm={10}>
+                        <FormControl type="Serial" placeholder="Serial"/>
+                            </Col>
+                        </FormGroup>
+
+                        <FormGroup controlId="descriptionTextarea">
+                        <ControlLabel>Description</ControlLabel>
+                        <FormControl componentClass="textarea" placeholder="Description" ref="description"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="commentsTextarea">
+                        <ControlLabel>Comments</ControlLabel>
+                        <FormControl componentClass="textarea" placeholder="Comments" ref="comments"/>
+                        </FormGroup>
+
+                        <DateTimeField />
+
+                        <FormGroup controlId="visualInspectionCommentsTextarea">
+                        <ControlLabel>Visual Inspection Comments</ControlLabel>
+                        <FormControl componentClass="textarea" placeholder="VisComments" ref="vis_comments"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="tapChangesTextarea" ref="nr_taps">
+                        <ControlLabel>Nbr of Tap Changes LTC</ControlLabel>
+                        <FormControl componentClass="textarea" placeholder="tap changes" ref="nr_taps"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="upstream1Textarea" >
+                        <ControlLabel>Upstream 1</ControlLabel>
+                        <FormControl type="text" placeholder="upstream 1" ref="upstream1"/>
+                        </FormGroup>
+
+                         <FormGroup controlId="upstream1Textarea" >
+                        <ControlLabel>Upstream 2</ControlLabel>
+                        <FormControl type="text" placeholder="upstream 2" ref="upstream2"/>
+                        </FormGroup>
+
+                         <FormGroup controlId="upstream1Textarea" >
+                        <ControlLabel>Upstream 3</ControlLabel>
+                        <FormControl type="text" placeholder="upstream 3" ref="upstream3"/>
+                        </FormGroup>
+
+                         <FormGroup controlId="upstream1Input" >
+                        <ControlLabel>Upstream 4</ControlLabel>
+                        <FormControl type="text" placeholder="upstream 4" ref="upstream4"/>
+                        </FormGroup>
+
+                         <FormGroup controlId="upstream1Input" ref="upstream5">
+                        <ControlLabel>Upstream 5</ControlLabel>
+                        <FormControl type="text" placeholder="upstream 5" ref="upstream5"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="downstream1Input" >
+                        <ControlLabel>Downstream 1</ControlLabel>
+                        <FormControl type="text" placeholder="downstream 1" ref="downstream1"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="downstream2Input" >
+                        <ControlLabel>Downstream 2</ControlLabel>
+                        <FormControl type="text" placeholder="downstream 2" ref="downstream2"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="downstream3Input" >
+                        <ControlLabel>Downstream 3</ControlLabel>
+                        <FormControl type="text" placeholder="downstream 3" ref="downstream3"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="downstream4Input" >
+                        <ControlLabel>Downstream 4</ControlLabel>
+                        <FormControl type="text" placeholder="downstream 4" ref="downstream4"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="downstream5Input" >
+                        <ControlLabel>Downstream 5</ControlLabel>
+                        <FormControl type="text" placeholder="downstream 5" ref="downstream5"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="physPositionTextarea" >
+                        <ControlLabel>Downstream 1</ControlLabel>
+                        <FormControl type="text" placeholder="downstream 1" ref="downstream1"/>
+                        </FormGroup>
+
+                        <Button bsStyle="success" type="submit">save</Button>
+                        <Button bsStyle="danger" type="close">cancel</Button>
                     </div>
                 </form>
             </div>
