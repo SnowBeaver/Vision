@@ -8,10 +8,8 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import FormControl from 'react-bootstrap/lib/FormControl';
 import Col from 'react-bootstrap/lib/Col';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
 var DateTimeField = require('react-bootstrap-datetimepicker');
 
 import {findDOMNode} from 'react-dom';
@@ -32,12 +30,6 @@ while (first_year != current_year) {
     year_array.push(first_year.toString());
 }
 
-
-const buttonsInstance = (
-  <ButtonToolbar>
-    <Button>Default</Button>const buttonsInstance = (
-);</ButtonToolbar>
-);
 
 var EquipmentTypeSelectField = React.createClass ({
 
@@ -906,7 +898,6 @@ const EquipmentForm = React.createClass({
             <div className="form-container">
                 <form id="eqtype_form" onSubmit={this._onSubmit}>
                     <div>
-                        <ButtonToolbar/>
                         <FormGroup controlId="formControlsSelect">
                         <ControlLabel>Eqtype</ControlLabel>
                         <FormControl componentClass="select" placeholder="select" ref="eqt">
@@ -936,7 +927,7 @@ const EquipmentForm = React.createClass({
                         Equipment Number
                         </Col>
                         <Col sm={10}>
-                        <FormControl type="Equipment Number" placeholder="Equipment Number"/>
+                        <FormControl type="Equipment Number" placeholder="equipment Number"/>
                             </Col>
                         </FormGroup>
 
@@ -951,19 +942,19 @@ const EquipmentForm = React.createClass({
 
                         <FormGroup controlId="descriptionTextarea">
                         <ControlLabel>Description</ControlLabel>
-                        <FormControl componentClass="textarea" placeholder="Description" ref="description"/>
+                        <FormControl componentClass="textarea" placeholder="description" ref="description"/>
                         </FormGroup>
 
                         <FormGroup controlId="commentsTextarea">
                         <ControlLabel>Comments</ControlLabel>
-                        <FormControl componentClass="textarea" placeholder="Comments" ref="comments"/>
+                        <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
                         </FormGroup>
 
                         <DateTimeField />
 
                         <FormGroup controlId="visualInspectionCommentsTextarea">
                         <ControlLabel>Visual Inspection Comments</ControlLabel>
-                        <FormControl componentClass="textarea" placeholder="VisComments" ref="vis_comments"/>
+                        <FormControl componentClass="textarea" placeholder="visComments" ref="vis_comments"/>
                         </FormGroup>
 
                         <FormGroup controlId="tapChangesTextarea" ref="nr_taps">
@@ -971,17 +962,17 @@ const EquipmentForm = React.createClass({
                         <FormControl componentClass="textarea" placeholder="tap changes" ref="nr_taps"/>
                         </FormGroup>
 
-                        <FormGroup controlId="upstream1Textarea" >
+                        <FormGroup controlId="upstream1Input" >
                         <ControlLabel>Upstream 1</ControlLabel>
                         <FormControl type="text" placeholder="upstream 1" ref="upstream1"/>
                         </FormGroup>
 
-                         <FormGroup controlId="upstream1Textarea" >
+                         <FormGroup controlId="upstream1Input" >
                         <ControlLabel>Upstream 2</ControlLabel>
                         <FormControl type="text" placeholder="upstream 2" ref="upstream2"/>
                         </FormGroup>
 
-                         <FormGroup controlId="upstream1Textarea" >
+                         <FormGroup controlId="upstream1Input" >
                         <ControlLabel>Upstream 3</ControlLabel>
                         <FormControl type="text" placeholder="upstream 3" ref="upstream3"/>
                         </FormGroup>
@@ -1021,9 +1012,28 @@ const EquipmentForm = React.createClass({
                         <FormControl type="text" placeholder="downstream 5" ref="downstream5"/>
                         </FormGroup>
 
-                        <FormGroup controlId="physPositionTextarea" >
-                        <ControlLabel>Downstream 1</ControlLabel>
-                        <FormControl type="text" placeholder="downstream 1" ref="downstream1"/>
+                        <FormGroup controlId="physPositionInput" >
+                        <ControlLabel>Phys Position</ControlLabel>
+                        <FormControl type="text" placeholder="phys position " ref="phys_position"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="tensionInput" >
+                        <ControlLabel>Tension4</ControlLabel>
+                        <FormControl type="text" placeholder="tension4 " ref="tension4"/>
+                        </FormGroup>
+
+
+                        <Checkbox ref="validated">Validated</Checkbox>
+                            <Checkbox ref="validation">Invalidation</Checkbox>
+
+                        <FormGroup controlId="prevSerialNumInput" >
+                        <ControlLabel>Prev Serial Number</ControlLabel>
+                        <FormControl type="text" placeholder="prev serial number " ref="prev_serial"/>
+                        </FormGroup>
+
+                        <FormGroup controlId="prevEquipNumInput" >
+                        <ControlLabel>Prev Equipment Number</ControlLabel>
+                        <FormControl type="text" placeholder="prev equipment number " ref="prev_eqnumb"/>
                         </FormGroup>
 
                         <Button bsStyle="success" type="submit">save</Button>
