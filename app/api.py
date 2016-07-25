@@ -33,17 +33,21 @@ def return_json(items_name, items_list):
 
 
 def get_item(items_model, item_id=None):
-    if not item_id:
-        return [item.serialize() for item in db.session.query(items_model).all() if item]
-    item = db.session.query(items_model).get(item_id)
-    if not item:
-        abort(404)
-    return item.serialize()
+    if item_id:
+        item = db.session.query(items_model).get(item_id) or abort(404)
+        return item.serialize()
+    if request.args:
+        kwargs = {key: request.args.get(key) for key in request.args if hasattr(items_model, key)
+                  or abort(400, 'Wrong attribute: {}'.format(key))
+                  }
+        return [item.serialize() for item in db.session.query(items_model).filter_by(**kwargs)]
+    return [item.serialize() for item in db.session.query(items_model).all()]
 
 
 def add_item(items_model):
     if not request.json:
-        abort(400)
+        abort(400, 'JSON not found')
+
     param_dict = { k:v for k,v in request.json.items() }
     item = items_model(**param_dict)
     db.session.add(item)
@@ -53,7 +57,7 @@ def add_item(items_model):
 
 def update_item(items_model, item_id):
     if not request.json:
-        abort(400)
+        abort(400, 'JSON not found')
     item = db.session.query(items_model).get(item_id)
     for k, v in request.json.items():
         setattr(item, k, v)
@@ -74,7 +78,7 @@ def not_found(error):
 
 @api.errorhandler(400)
 def bad_request(error):
-    return make_response(return_json('error', 'JSON not found'), 400)
+    return make_response(return_json('error', error.description), 400)
 
 
 @api_blueprint.route('/<path>/', methods=['GET', 'POST'])
