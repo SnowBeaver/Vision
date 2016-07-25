@@ -51,18 +51,8 @@
 
 {% block tail %}
     <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/datetimepicker.js') }}"></script>
     <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
     <script src="{{ url_for('static', filename='src/diagnostic/Tree.js') }}"></script>
-
-    <script type="text/javascript">
-        $(function () {
-            $('.datetimepicker').datetimepicker();
-            $('.datepicker').datetimepicker({
-                format: 'MM/DD/YYYY'
-            });
-        });
-    </script>
     <script>
         var WebFontConfig = {
           google: { families: [ 'Roboto:400,300,500:latin' ] }

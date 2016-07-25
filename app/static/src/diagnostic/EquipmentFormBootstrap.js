@@ -3,6 +3,9 @@ import injectTapEventPlugin from "react-tap-event-plugin";
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
@@ -62,14 +65,19 @@ var EquipmentTypeSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+            // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <DropdownButton title='equipment' key={key} id={`dropdown-basic-1`}>
-                    {menuItems}
-                </DropdownButton>
+                <FormGroup controlId="formControlsSelect">
+                    <ControlLabel>Select</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select">
+                        <option value="select">select</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
