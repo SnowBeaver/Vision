@@ -36,6 +36,9 @@
     "gulp-concat": "^2.6.0",
     "gulp-minify-css": "^1.2.4",
     "react": "^15.0.1",
+    "react-bootstrap": "^0.30.0-rc.2",
+    "react-bootstrap-datetimepicker": "0.0.22",
+    "react-bootstrap-table": "^2.3.8",
     "react-dom": "^15.0.1",
     "react-tap-event-plugin": "^1.0.0"
   }

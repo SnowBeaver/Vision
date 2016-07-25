@@ -1,0 +1,125 @@
+.fa-large{
+    font-size: 20px;
+}
+.equal_container{
+    position:relative;
+    width:100%;
+    min-height: inherit;
+    height: 100%;
+}
+.equal_col{
+    min-height: inherit;
+    height: 100%;
+}
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.no-gutter > [class*='col-'] {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+.inline-li >li{
+    float:left;
+}
+.margin-bottom-xs {margin-bottom: 1%;}
+.margin-bottom-sm {margin-bottom: 2%;}
+.margin-bottom-md {margin-bottom: 3%;}
+.margin-bottom-lg {margin-bottom: 4%;}
+
+.margin-right-xs {margin-right: 1% !important;}
+.margin-right-sm {margin-right: 2%;}
+.margin-right-md {margin-right: 3%;}
+.margin-right-lg {margin-right: 4%;}
+
+.margin-top-xs {margin-top: 1% !important;}
+.margin-top-sm {margin-top: 2%;}
+.margin-top-md {margin-top: 3%;}
+.margin-top-lg {margin-top: 4%;}
+
+.padding-top-xs {padding-top: 1% !important;}
+.padding-top-sm {padding-top: 2%;}
+.padding-top-md {padding-top: 3%;}
+.padding-top-lg {padding-top: 4% !important;}
+
+.padding-bottom-xs {padding-top: 1% !important;}
+.padding-bottom-sm {padding-top: 2%;}
+.padding-bottom-md {padding-top: 3%;}
+.padding-bottom-lg {padding-top: 4%;}
+
+.padding-right-xs {padding-right: 1% !important;}
+.padding-right-sm {padding-right: 2%;}
+.padding-right-md {padding-right: 3%;}
+.padding-right-lg {padding-right: 4%;}
+
+.underline{
+    width: 100%;
+    border: 2px solid black;
+}
+.margin-center{
+    margin-top: 30px !important;
+}
+.margin-button{
+    margin-top: 25px !important;
+}
+.margin-check{
+    margin-top: 12px !important;
+}
+.font-i{
+    font-size: 22px;
+}
+.tab_row > div {
+    margin-bottom: 1% !important;
+}
+#my-tab-content label{
+    width: 100%;
+}
+#my-tab-content{
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 1% !important ;
+    position: relative;
+}
+#my-tab-content textarea{
+    resize: vertical;
+    height: 150px;
+}
+.vertical_textarea{
+    resize: vertical;
+}
+.auto{
+    width: auto !important;
+}
+.maxwidth{
+    width: 100%;
+    position: relative;
+    float: left;
+}
+fieldset.scheduler-border {
+    border: 1px groove #ddd !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+    box-shadow:  0px 0px 0px 0px #000;
+}
+legend.scheduler-border {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    width:auto;
+    padding:0 10px;
+    border-bottom:none;
+    margin-bottom: 0px;
+}
+
+.modal-dialog{
+    width: 80%;
+    height: 1000px;
+}
+.container {
+    width: 80%;
+}

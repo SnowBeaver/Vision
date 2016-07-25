@@ -8,7 +8,7 @@ const App = React.createClass ({
 
     getInitialState: function(){
         return {
-            showEquipmentForm: true,
+            showEquipmentForm: false,
             showEquipmentList: true,
             showEquipmentTest: true
         }
@@ -26,15 +26,10 @@ const App = React.createClass ({
     render: function(){
         return (
                 <div>
-                    { this.state.showEquipmentList ? <EquipmentList /> : null } 
+                    { this.state.showEquipmentList ? <EquipmentList /> : null }
                     { this.state.showEquipmentForm ? <EquipmentForm /> : null }
-                    { this.state.showEquipmentTest ? <EquipmentTestForm /> : null } 
+                    { this.state.showEquipmentTest ? <EquipmentTestForm /> : null }
                 </div>
         );
     }
 
-});
-ReactDOM.render(
-    <App />,
-    document.getElementById('app')
-);
