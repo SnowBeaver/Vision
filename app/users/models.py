@@ -48,7 +48,7 @@ class Role(db.Model, RoleMixin):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'name': self.name,
-                'description': self.description,
+                'description': self.description
                 }
 
 

@@ -260,7 +260,7 @@ class Campaign(db.Model):
     date_prelevement = db.Column(db.DateTime, index=True)
 
     # Remark: Any pertiment remark related to sampling or equipment status  (can be entered by user1 2 or 3)
-    remark = db.Column(db.Text)
+    remark = db.Column(db.Text, nullable=True)
 
     # SampledBy: Who did the sampling  user 2 relation to users table
     performed_by_id = db.Column(
@@ -410,6 +410,7 @@ class Campaign(db.Model):
 
     def serialize(self):
         """Return object data in easily serializeable format"""
+        print(self.performed_by, self.performed_by_id, self.remark)
         return {'id': self.id,
                 'date': dump_datetime(self.date),
                 'created_by_id': self.created_by_id,
@@ -3239,7 +3240,7 @@ class WaterTest(db.Model):
                 'test_result_id': self.test_result_id,
                 'water_flag': self.water_flag,
                 'water': self.water,
-                'remark': self.remark,
+                'remark': self.remark
                 }
 
 

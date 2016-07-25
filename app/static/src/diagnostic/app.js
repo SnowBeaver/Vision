@@ -6,30 +6,36 @@ import EquipmentTestForm from './EquipmentTestFormBootstrap';
 
 const App = React.createClass ({
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             showEquipmentForm: false,
             showEquipmentList: true,
             showEquipmentTest: true
         }
     },
-    showEquipmentForm: function(){
+    showEquipmentForm: function () {
         this.setState({showEquipmentForm: true});
     },
-    showEquipmentList: function(){
+    showEquipmentList: function () {
         this.setState({showEquipmentList: true});
     },
-    showEquipmentTest: function(){
+    showEquipmentTest: function () {
         this.setState({showEquipmentTest: true});
     },
 
-    render: function(){
+    render: function () {
         return (
-                <div>
-                    { this.state.showEquipmentList ? <EquipmentList /> : null }
-                    { this.state.showEquipmentForm ? <EquipmentForm /> : null }
-                    { this.state.showEquipmentTest ? <EquipmentTestForm /> : null }
-                </div>
+            <div>
+                { this.state.showEquipmentList ?
+                    <EquipmentList source="http://dev.vision.local/api/v1.0/campaign/"/> : null }
+                { this.state.showEquipmentForm ? <EquipmentForm /> : null }
+                { this.state.showEquipmentTest ? <EquipmentTestForm /> : null }
+            </div>
         );
     }
+});
 
+ReactDOM.render(
+    <App />,
+    document.getElementById('app')
+);
