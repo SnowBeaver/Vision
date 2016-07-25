@@ -7,6 +7,7 @@ from flask_apidoc import ApiDoc
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
+doc = ApiDoc(app=api)
 db = SQLAlchemy(api)
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 
@@ -23,6 +24,7 @@ model_dict = {'equipment': Equipment,
               'visual_inspection_by': User,
               'electrical_profile': ElectricalProfile,
               'fluid_profile': FluidProfile,
+              'test_result': TestResult,
               }
 
 
@@ -30,18 +32,12 @@ def return_json(items_name, items_list):
     return jsonify({items_name: items_list})
 
 
-def get_item_fields(item):
-    return [{k: str(getattr(item, k)) for k in item.__class__.__dict__.keys() if k[:1] != '_'}]
-
-
 def get_item(items_model, item_id=None):
     if not item_id:
-        # return [{'id': item.id, 'name': str(item)} for item in db.session.query(items_model).all()]
-        return [item.serialize() for item in db.session.query(items_model).all()]
+        return [item.serialize() for item in db.session.query(items_model).all() if item]
     item = db.session.query(items_model).get(item_id)
     if not item:
         abort(404)
-    # return get_item_fields(item)
     return item.serialize()
 
 
@@ -62,7 +58,6 @@ def update_item(items_model, item_id):
     for k, v in request.json.items():
         setattr(item, k, v)
     db.session.commit()
-    # return get_item_fields(item)
     return item.serialize()
 
 
@@ -77,29 +72,96 @@ def not_found(error):
     return make_response(return_json('error', 'Not found'), 404)
 
 
+@api.errorhandler(400)
+def bad_request(error):
+    return make_response(return_json('error', 'JSON not found'), 400)
+
+
+@api_blueprint.route('/<path>/', methods=['GET', 'POST'])
+@api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
+def handler(path, item_id=None):
+    if path not in model_dict:
+        abort(404)
+
+    crud_functions = {'GET': get_item,
+                      'POST': add_item,
+                      'PUT': update_item,
+                      'DELETE': delete_item
+                      }
+    crud_func = crud_functions[request.method]
+    args = [model_dict[path]]
+    if item_id:
+        args.append(item_id)
+    return return_json('result', crud_func(*args))
+
+
+api.register_blueprint(api_blueprint)
+
+
 """
-@api {get} /user Gets a list of Users
+@apiDefine Version100
+@apiVersion 1.0.0
+"""
+"""
+@apiDefine GetSuccess
+@apiSuccess {Dict}  result  [list of dicts with items parameters].
+"""
+"""
+@apiDefine Error404
+@apiError(Error 404){Dict}  NotFound    {"error": "Not found"}
+"""
+"""
+@apiDefine Error400
+@apiError(Error 400){Dict}  NotFound    {"error": "JSON not found"}
+"""
+
+#### General
+"""
+@api {get} /<path>/ Gets a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup path
+
+@apiUse GetSuccess
+@apiUse Error404
+"""
+
+#### Users
+"""
+@api {get} /user Gets a list of items
 @apiVersion 1.0.0
 @apiName get_items
 @apiGroup User
+
+@apiUse GetSuccess
+@apiUse Error404
 """
 """
-@api {get} /user/:id Gets an User
+@api {get} /user/:id Gets an item by id
 @apiVersion 1.0.0
 @apiName get_item
 @apiGroup User
+
+@apiSuccess         {Dict}                 result { "dict of item's params"}
+@apiUse Error404
 """
 """
 @api {post} /user Adds a new User
 @apiVersion 1.0.0
 @apiName add_item(User)
 @apiGroup User
+
+@apiSuccess {Number}     result              The new item id.
+@apiUse Error400
 """
 """
 @api {put} /user/:id Updates an User
 @apiVersion 1.0.0
 @apiName update_item
 @apiGroup User
+
+@apiSuccess {Number}     result              See {get} /user/:id.
+@apiUse Error400
 """
 """
 @api {delete} /user/:id Deletes an User
@@ -107,17 +169,23 @@ def not_found(error):
 @apiName delete_item
 @apiGroup User
 
-@apiSuccess {Boolean}    result              True if all ok.
-@apiError UserNotFound   error              "Not found".
+@apiSuccess {Boolean}    result              True or False if couldn't delete.
+@apiUse Error404
 """
+
+
+#### Equipment
 """
-@api {get} /equipment Gets a list of Equipment
+@api {get} /equipment Gets a list of items
 @apiVersion 1.0.0
 @apiName get_items
 @apiGroup Equipment
+
+@apiUse GetSuccess
+@apiUse Error404
 """
 """
-@api {get} /equipment/:id Gets an Equipment
+@api {get} /equipment/:id Gets an item by id
 @apiVersion 1.0.0
 @apiName get_item
 @apiGroup Equipment
@@ -166,9 +234,11 @@ def not_found(error):
 @apiSuccess {String(50)}      prev_serial_number
 @apiSuccess {String(50)}      prev_equipment_number
 @apiSuccess {Integer}         sibling
+
+@apiUse Error404
 """
 """
-@api {post} /equipment Adds a new Equipment
+@api {post} /equipment Adds a new item
 @apiVersion 1.0.0
 @apiName add_item(Equipment)
 @apiGroup Equipment
@@ -211,17 +281,17 @@ def not_found(error):
 @apiParam {String(50)}      prev_equipment_number
 @apiParam {Integer}         sibling
 
-@apiSuccess {Boolean}       result              True if all ok.
-@apiError   BadRequest      error              "Not found".
+@apiSuccess {Integer}        result     id of new item.
+@apiUse Error400
 """
 """
-@api {put} /equipment/:id Updates an Equipment
+@api {put} /equipment/:id Updates an item by id
 @apiVersion 1.0.0
 @apiName update_item
 @apiGroup Equipment
 
-@apiSuccess {Boolean}     result              True if all ok.
-@apiError UserNotFound    error              "Not found".
+@apiSuccess {Boolean}        result     True
+@apiUse Error404
 """
 """
 @api {delete} /equipment/:id Deletes an Equipment
@@ -230,33 +300,5 @@ def not_found(error):
 @apiGroup Equipment
 
 @apiSuccess {Boolean}    result              True if all ok.
-@apiError UserNotFound    Error "Not found".
+@apiUse Error404
 """
-"""
-@apiParam {String}      username        The user's username.
-@apiParam {String}      first_name      The first name of the User.
-@apiParam {String}      last_name       the last name of the User.
-@apiParam {Object}      profile         The profile data
-@apiParam {Number}      profile.age     The user's age.
-@apiParam {String}      profile.image   The user's avatar-image.
-@apiSuccess {Number}    id              The new user id.
-"""
-
-@api_blueprint.route('/<path>/', methods=['GET', 'POST'])
-@api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
-def handler(path, item_id=None):
-    if path not in model_dict:
-        abort(404)
-
-    crud_functions = {'GET': get_item,
-                      'POST': add_item,
-                      'PUT': update_item,
-                      'DELETE': delete_item
-                      }
-    crud_func = crud_functions[request.method]
-    args = [model_dict[path]]
-    if item_id:
-        args.append(item_id)
-    return return_json('result', crud_func(*args))
-
-api.register_blueprint(api_blueprint)

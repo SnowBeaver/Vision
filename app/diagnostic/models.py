@@ -12,6 +12,17 @@ def dump_datetime(value):
     return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
 
 
+def get_class_by_tablename(tablename):
+  """Return class reference mapped to table.
+
+  :param tablename: String with name of table.
+  :return: Class reference or None.
+  """
+  for c in db.Model._decl_class_registry.values():
+    if hasattr(c, '__tablename__') and c.__tablename__ == tablename:
+      return c
+
+
 class Lab(db.Model):
     __tablename__ = 'lab'
 
@@ -169,7 +180,7 @@ class Contract(db.Model):
                 'name': self.name,
                 'code': self.code,
                 'contract_status_id': self.contract_status_id,
-                'contract_status': self.contract_status.serialize()
+                'contract_status': self.contract_status and self.contract_status.serialize()
                 }
 
 
@@ -402,45 +413,45 @@ class Campaign(db.Model):
         return {'id': self.id,
                 'date': dump_datetime(self.date),
                 'created_by_id': self.created_by_id,
-                'created_by': self.created_by.serialize(),
+                'created_by': self.created_by and self.created_by.serialize(),
                 'equipment_id': self.equipment_id,
-                'equipment': self.equipment.serialize(),
+                'equipment': self.equipment and self.equipment.serialize(),
                 'material_id': self.material_id,
-                'material': self.material.serialize(),
+                'material': self.material and self.material.serialize(),
                 'analysis_number': self.analysis_number,
                 'percent_ratio': self.percent_ratio,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'charge': self.charge,
                 'date_prelevement': dump_datetime(self.date_prelevement),
                 'remark': self.remark,
                 'performed_by_id': self.performed_by_id,
-                'performed_by': self.performed_by.serialize(),
+                'performed_by': self.performed_by and self.performed_by.serialize(),
                 'modifier': self.modifier,
                 'transmission': self.transmission,
                 'lab_id': self.lab_id,
-                'lab': self.lab.serialize(),
+                'lab': self.lab and self.lab.serialize(),
                 'repair_date': dump_datetime(self.repair_date),
                 'repair_description': self.repair_description,
                 'if_rem': self.if_rem,
                 'if_ok': self.if_ok,
                 'recommandation_id': self.recommandation_id,
-                'recommendation': self.recommendation.serialize(),
+                'recommendation': self.recommendation and self.recommendation.serialize(),
                 'recommendationNotes': self.recommendationNotes,
                 'recommended_by_id': self.recommended_by_id,
-                'recommended_by': self.recommended_by.serialize(),
+                'recommended_by': self.recommended_by and self.recommended_by.serialize(),
                 'date_application': self.date_application,
                 'comments': self.comments,
                 'mws': self.mws,
                 'temperature': self.temperature,
                 'sampling_card_print': self.sampling_card_print,
                 'contract_id': self.contract_id,
-                'contract': self.contract.serialize(),
+                'contract': self.contract and self.contract.serialize(),
                 'containers': self.containers,
                 'sampling_card_gathered': self.sampling_card_gathered,
                 'gathered_test_type': self.gathered_test_type,
                 'lab_contract_id': self.lab_contract_id,
-                'lab_contract': self.lab_contract.serialize(),
+                'lab_contract': self.lab_contract and self.lab_contract.serialize(),
                 'seringe_num': self.seringe_num,
                 'data_valid': self.data_valid,
                 'status1': self.status1,
@@ -489,6 +500,7 @@ class Campaign(db.Model):
                 'antioxidant': self.antioxidant,
                 'qty_vial': self.qty_vial,
                 'sampling_vial': self.sampling_vial,
+                'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
                 }
 
 
@@ -981,11 +993,11 @@ class Transformer(db.Model):
                 'autotransformer': self.autotransformer,
                 'threephase': self.threephase,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level.serialize(),
+                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'gassensor_id': self.gassensor_id,
-                'gas_sensor': self.gas_sensor.serialize(),
+                'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
                 'phase_number': self.phase_number,
                 'frequency': self.frequency,
                 'primary_tension': self.primary_tension,
@@ -1035,29 +1047,29 @@ class Transformer(db.Model):
                 'ratio_tag5': self.ratio_tag5,
                 'ratio_tag6': self.ratio_tag6,
                 'bushing_serial1_id': self.bushing_serial1_id,
-                'bushing_serial1': self.bushing_serial1.serialize(),
+                'bushing_serial1': self.bushing_serial1 and self.bushing_serial1.serialize(),
                 'bushing_serial2_id': self.bushing_serial2_id,
-                'bushing_serial2': self.bushing_serial2.serialize(),
+                'bushing_serial2': self.bushing_serial2 and self.bushing_serial2.serialize(),
                 'bushing_serial3_id': self.bushing_serial3_id,
-                'bushing_serial3': self.bushing_serial3.serialize(),
+                'bushing_serial3': self.bushing_serial3 and self.bushing_serial3.serialize(),
                 'bushing_serial4_id': self.bushing_serial4_id,
-                'bushing_serial4': self.bushing_serial4.serialize(),
+                'bushing_serial4': self.bushing_serial4 and self.bushing_serial4.serialize(),
                 'bushing_serial5_id': self.bushing_serial5_id,
-                'bushing_serial5': self.bushing_serial5.serialize(),
+                'bushing_serial5': self.bushing_serial5 and self.bushing_serial5.serialize(),
                 'bushing_serial6_id': self.bushing_serial6_id,
-                'bushing_serial6': self.bushing_serial6.serialize(),
+                'bushing_serial6': self.bushing_serial6 and self.bushing_serial6.serialize(),
                 'bushing_serial7_id': self.bushing_serial7_id,
-                'bushing_serial7': self.bushing_serial7.serialize(),
+                'bushing_serial7': self.bushing_serial7 and self.bushing_serial7.serialize(),
                 'bushing_serial8_id': self.bushing_serial8_id,
-                'bushing_serial8': self.bushing_serial8.serialize(),
+                'bushing_serial8': self.bushing_serial8 and self.bushing_serial8.serialize(),
                 'bushing_serial9_id': self.bushing_serial9_id,
-                'bushing_serial9': self.bushing_serial9.serialize(),
+                'bushing_serial9': self.bushing_serial9 and self.bushing_serial9.serialize(),
                 'bushing_serial10_id': self.bushing_serial10_id,
-                'bushing_serial10': self.bushing_serial10.serialize(),
+                'bushing_serial10': self.bushing_serial10 and self.bushing_serial10.serialize(),
                 'bushing_serial11_id': self.bushing_serial11_id,
-                'bushing_serial11': self.bushing_serial11.serialize(),
+                'bushing_serial11': self.bushing_serial11 and self.bushing_serial11.serialize(),
                 'bushing_serial12_id': self.bushing_serial12_id,
-                'bushing_serial12': self.bushing_serial12.serialize(),
+                'bushing_serial12': self.bushing_serial12 and self.bushing_serial12.serialize(),
                 'mvaactual': self.mvaactual,
                 'mvaractual': self.mvaractual,
                 'mwreserve': self.mwreserve,
@@ -1111,13 +1123,13 @@ class Breaker(db.Model):
                 'current_rating': self.current_rating,
                 'open': self.open,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level.serialize(),
+                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'interrupting_medium_id': self.interrupting_medium_id,
-                'interrupting_medium': self.interrupting_medium.serialize(),
+                'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
                 'breaker_mechanism_id': self.breaker_mechanism_id,
-                'breaker_mechanism': self.breaker_mechanism.serialize(),
+                'breaker_mechanism': self.breaker_mechanism and self.breaker_mechanism.serialize(),
                 }
 
 
@@ -1166,11 +1178,11 @@ class LoadTapChanger(db.Model):
                 'number_of_taps': self.number_of_taps,
                 'model': self.model,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level.serialize(),
+                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'interrupting_medium_id': self.interrupting_medium_id,
-                'interrupting_medium': self.interrupting_medium.serialize(),
+                'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
                 }
 
 
@@ -1247,7 +1259,7 @@ class Bushing(db.Model):
                 'c2': self.c2,
                 'c2pf': self.c2pf,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 }
 
 
@@ -1547,11 +1559,11 @@ class Rectifier(db.Model):
                 'welded_cover': self.welded_cover,
                 'cooling_rating': self.cooling_rating,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level.serialize(),
+                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'gas_sensor_id': self.gas_sensor_id,
-                'gas_sensor': self.gas_sensor.serialize(),
+                'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
                 }
 
 
@@ -1590,11 +1602,11 @@ class Inductance(db.Model):
                 'welded_cover': self.welded_cover,
                 'cooling_rating': self.cooling_rating,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level.serialize(),
+                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'gas_sensor_id': self.gas_sensor_id,
-                'gas_sensor': self.gas_sensor.serialize(),
+                'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
                 }
 
 
@@ -1627,9 +1639,9 @@ class Tank(db.Model):
                 'serial': self.serial,
                 'welded_cover': self.welded_cover,
                 'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type.serialize(),
+                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level.serialize(),
+                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 }
 
 
@@ -1662,7 +1674,7 @@ class Switch(db.Model):
                 'current_rating': self.current_rating,
                 'threephase': self.threephase,
                 'interrupting_medium_id': self.interrupting_medium_id,
-                'interrupting_medium': self.interrupting_medium.serialize(),
+                'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
                 }
 
 
@@ -1695,7 +1707,7 @@ class Cable(db.Model):
                 'sealed': self.sealed,
                 'threephase': self.threephase,
                 'insulation_id': self.insulation_id,
-                'insulation': self.insulation.serialize(),
+                'insulation': self.insulation and self.insulation.serialize(),
                 }
 
 
@@ -1821,25 +1833,25 @@ class Equipment(db.Model):
                 'serial': self.serial,
                 'equipment_number': self.equipment_number,
                 'equipment_type_id': self.equipment_type_id,
-                'equipment_type': self.equipment_type.serialize(),
+                'equipment_type': self.equipment_type and self.equipment_type.serialize(),
                 'manufacturer_id': self.manufacturer_id,
-                'manufacturer': self.manufacturer.serialize(),
+                'manufacturer': self.manufacturer and self.manufacturer.serialize(),
                 'manufactured': self.manufactured,
                 'frequency': self.frequency,
                 'description': self.description,
                 'location_id': self.location_id,
-                'location': self.location.serialize(),
+                'location': self.location and self.location.serialize(),
                 'modifier': self.modifier,
                 'comments': self.comments,
                 'visual_date': dump_datetime(self.visual_date),
                 'visual_inspection_by_id': self.visual_inspection_by_id,
-                'visual_inspection_by': self.visual_inspection_by.serialize(),
+                'visual_inspection_by': self.visual_inspection_by and self.visual_inspection_by.serialize(),
                 'assigned_to_id': self.assigned_to_id,
-                'assigned_to': self.assigned_to.serialize(),
+                'assigned_to': self.assigned_to and self.assigned_to.serialize(),
                 'visual_inspection_comments': self.visual_inspection_comments,
                 'nbr_of_tap_change_ltc': self.nbr_of_tap_change_ltc,
                 'norm_id': self.norm_id,
-                'norm': self.norm.serialize(),
+                'norm': self.norm and self.norm.serialize(),
                 'upstream1': self.upstream1,
                 'upstream2': self.upstream2,
                 'upstream3': self.upstream3,
@@ -1905,7 +1917,7 @@ class Recommendation(db.Model):
                 'code': self.code,
                 'description': self.description,
                 'test_type_id': self.test_type_id,
-                'test_type': self.test_type.serialize(),
+                'test_type': self.test_type and self.test_type.serialize(),
                 }
 
 
@@ -1982,7 +1994,7 @@ class Syringe(db.Model):
         return {'id': self.id,
                 'serial': self.serial,
                 'lab_id': self.lab_id,
-                'lab': self.lab.serialize(),
+                'lab': self.lab and self.lab.serialize(),
                 }
 
 
@@ -2073,18 +2085,18 @@ class TestSchedule(db.Model):
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'equipment_id': self.equipment_id,
-                'equipment': self.equipment.serialize(),
+                'equipment': self.equipment and self.equipment.serialize(),
                 'start_date': dump_datetime(self.start_date),
                 'period_years': self.period_years,
                 'period_months': self.period_months,
                 'period_days': self.period_days,
                 'assigned_to_id': self.assigned_to_id,
-                'assigned_to': self.assigned_to.serialize(),
+                'assigned_to': self.assigned_to and self.assigned_to.serialize(),
                 'recurring': self.recurring,
                 'notify_before_in_days': self.notify_before_in_days,
                 'description': self.description,
                 'tests_to_perform': self.tests_to_perform,
-                'tests': self.tests.serialize(),
+                'tests': self.tests and self.tests.serialize(),
                 'order': self.order,
                 }
 
@@ -2128,7 +2140,7 @@ class TestTypeResultTable(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_type_id': self.test_type_id,
-                'test_type': self.test_type.serialize(),
+                'test_type': self.test_type and self.test_type.serialize(),
                 'test_result_table_name': self.test_result_table_name,
                 }
 
@@ -2169,20 +2181,27 @@ class TestResult(db.Model):
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
 
+    @property
+    def test_model(self):
+        result_table = db.session.query(TestTypeResultTable).filter_by(test_type_id=self.test_type_id).first()
+        if result_table:
+            return get_class_by_tablename(result_table.test_result_table_name)
+        return ()
+
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'campaign_id': self.campaign_id,
-                'campaign': self.campaign.serialize(),
                 'reason_id': self.reason_id,
-                'test_reason': self.test_reason.serialize(),
+                'test_reason': self.test_reason and self.test_reason.serialize(),
                 'date_analyse': dump_datetime(self.date_analyse),
                 'test_type_id': self.test_type_id,
-                'test_type': self.test_type.serialize(),
+                'test_type': self.test_type and self.test_type.serialize(),
                 'sampling_point_id': self.sampling_point_id,
-                'sampling_point': self.sampling_point.serialize(),
+                'sampling_point': self.sampling_point and self.sampling_point.serialize(),
                 'test_status_id': self.test_status_id,
-                'test_status': self.test_status.serialize(),
+                'test_status': self.test_status and self.test_status.serialize(),
+                'tests': [test.serialize() for test in db.session.query(self.test_model).filter_by(test_result_id=self.id)]
                 }
 
 
@@ -2504,7 +2523,6 @@ class BushingTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'h1': self.h1,
                 'h2': self.h2,
                 'h3': self.h3,
@@ -2665,7 +2683,6 @@ class WindingTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'test_kv1': self.test_kv1,
                 'test_kv2': self.test_kv2,
                 'test_kv3': self.test_kv3,
@@ -2845,7 +2862,6 @@ class VisualInspectionTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'notes': self.notes,
                 'tank_cover_gasket_id': self.tank_cover_gasket_id,
                 'tank_manhole_gasket_id': self.tank_manhole_gasket_id,
@@ -2896,38 +2912,38 @@ class VisualInspectionTest(db.Model):
                 'misc_foundation_id': self.misc_foundation_id,
                 'misc_temp_ambiant': self.misc_temp_ambiant,
                 'misc_load': self.misc_load,
-                'tank_cover_gasket': self.tank_cover_gasket.serialize(),
-                'tank_manhole_gasket': self.tank_manhole_gasket.serialize(),
-                'tank_gas_relay': self.tank_gas_relay.serialize(),
-                'tank_oil_level': self.tank_oil_level.serialize(),
-                'tank_pressure_unit': self.tank_pressure_unit.serialize(),
-                'tank_overpressure_valve': self.tank_overpressure_valve.serialize(),
-                'tank_ampling_valve': self.tank_ampling_valve.serialize(),
-                'tank_oil_pump': self.tank_oil_pump.serialize(),
-                'tank_overall_condition': self.tank_overall_condition.serialize(),
-                'exp_tank_pipe_gasket': self.exp_tank_pipe_gasket.serialize(),
-                'exp_tank_oil_level': self.exp_tank_oil_level.serialize(),
-                'exp_tank_paint': self.exp_tank_paint.serialize(),
-                'exp_tank_overall_condition': self.exp_tank_overall_condition.serialize(),
-                'bushing_gasket': self.bushing_gasket.serialize(),
-                'bushing_oil_level': self.bushing_oil_level.serialize(),
-                'bushing_overall_condition': self.bushing_overall_condition.serialize(),
-                'tap_changer_gasket': self.tap_changer_gasket.serialize(),
-                'tap_changer_oil_level': self.tap_changer_oil_level.serialize(),
-                'tap_changer_pressure_unit': self.tap_changer_pressure_unit.serialize(),
-                'tap_changer_overpressure_valve': self.tap_changer_overpressure_valve.serialize(),
-                'tap_changer_ampling_valve': self.tap_changer_ampling_valve.serialize(),
-                'tap_changer_counter': self.tap_changer_counter.serialize(),
-                'tap_changer_filter': self.tap_changer_filter.serialize(),
-                'tap_changer_overall_condition': self.tap_changer_overall_condition.serialize(),
-                'radiator_fan': self.radiator_fan.serialize(),
-                'radiator_gasket': self.radiator_gasket.serialize(),
-                'radiator_overall_condition': self.radiator_overall_condition.serialize(),
-                'control_cab_connection': self.control_cab_connection.serialize(),
-                'control_cab_heating': self.control_cab_heating.serialize(),
-                'control_cab_overall_condition': self.control_cab_overall_condition.serialize(),
-                'grounding_connection': self.grounding_connection.serialize(),
-                'misc_foundation': self.misc_foundation.serialize(),
+                'tank_cover_gasket': self.tank_cover_gasket and self.tank_cover_gasket.serialize(),
+                'tank_manhole_gasket': self.tank_manhole_gasket and self.tank_manhole_gasket.serialize(),
+                'tank_gas_relay': self.tank_gas_relay and self.tank_gas_relay.serialize(),
+                'tank_oil_level': self.tank_oil_level and self.tank_oil_level.serialize(),
+                'tank_pressure_unit': self.tank_pressure_unit and self.tank_pressure_unit.serialize(),
+                'tank_overpressure_valve': self.tank_overpressure_valve and self.tank_overpressure_valve.serialize(),
+                'tank_ampling_valve': self.tank_ampling_valve and self.tank_ampling_valve.serialize(),
+                'tank_oil_pump': self.tank_oil_pump and self.tank_oil_pump.serialize(),
+                'tank_overall_condition': self.tank_overall_condition and self.tank_overall_condition.serialize(),
+                'exp_tank_pipe_gasket': self.exp_tank_pipe_gasket and self.exp_tank_pipe_gasket.serialize(),
+                'exp_tank_oil_level': self.exp_tank_oil_level and self.exp_tank_oil_level.serialize(),
+                'exp_tank_paint': self.exp_tank_paint and self.exp_tank_paint.serialize(),
+                'exp_tank_overall_condition': self.exp_tank_overall_condition and self.exp_tank_overall_condition.serialize(),
+                'bushing_gasket': self.bushing_gasket and self.bushing_gasket.serialize(),
+                'bushing_oil_level': self.bushing_oil_level and self.bushing_oil_level.serialize(),
+                'bushing_overall_condition': self.bushing_overall_condition and self.bushing_overall_condition.serialize(),
+                'tap_changer_gasket': self.tap_changer_gasket and self.tap_changer_gasket.serialize(),
+                'tap_changer_oil_level': self.tap_changer_oil_level and self.tap_changer_oil_level.serialize(),
+                'tap_changer_pressure_unit': self.tap_changer_pressure_unit and self.tap_changer_pressure_unit.serialize(),
+                'tap_changer_overpressure_valve': self.tap_changer_overpressure_valve and self.tap_changer_overpressure_valve.serialize(),
+                'tap_changer_ampling_valve': self.tap_changer_ampling_valve and self.tap_changer_ampling_valve.serialize(),
+                'tap_changer_counter': self.tap_changer_counter and self.tap_changer_counter.serialize(),
+                'tap_changer_filter': self.tap_changer_filter and self.tap_changer_filter.serialize(),
+                'tap_changer_overall_condition': self.tap_changer_overall_condition and self.tap_changer_overall_condition.serialize(),
+                'radiator_fan': self.radiator_fan and self.radiator_fan.serialize(),
+                'radiator_gasket': self.radiator_gasket and self.radiator_gasket.serialize(),
+                'radiator_overall_condition': self.radiator_overall_condition and self.radiator_overall_condition.serialize(),
+                'control_cab_connection': self.control_cab_connection and self.control_cab_connection.serialize(),
+                'control_cab_heating': self.control_cab_heating and self.control_cab_heating.serialize(),
+                'control_cab_overall_condition': self.control_cab_overall_condition and self.control_cab_overall_condition.serialize(),
+                'grounding_connection': self.grounding_connection and self.grounding_connection.serialize(),
+                'misc_foundation': self.misc_foundation and self.misc_foundation.serialize(),
                 }
 
 
@@ -2960,7 +2976,6 @@ class InsulationResistanceTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'test_kv1': self.test_kv1,
                 'resistance1': self.resistance1,
                 'multiplier1': self.multiplier1,
@@ -3008,7 +3023,6 @@ class PolymerisationDegreeTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'phase_a1': self.phase_a1,
                 'phase_a2': self.phase_a2,
                 'phase_a3': self.phase_a3,
@@ -3055,7 +3069,6 @@ class TransformerTurnRatioTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'winding': self.winding,
                 'tap_position': self.tap_position,
                 'measured_current1': self.measured_current1,
@@ -3099,7 +3112,6 @@ class WindingResistanceTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'winding': self.winding,
                 'tap_position': self.tap_position,
                 'mesure1': self.mesure1,
@@ -3184,7 +3196,6 @@ class DissolvedGasTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'h2': self.h2,
                 'o2': self.o2,
                 'n2': self.n2,
@@ -3226,7 +3237,6 @@ class WaterTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'water_flag': self.water_flag,
                 'water': self.water,
                 'remark': self.remark,
@@ -3258,7 +3268,6 @@ class FuranTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'hmf': self.hmf,
                 'fol': self.fol,
                 'fal': self.fal,
@@ -3293,9 +3302,8 @@ class InhibitorTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'inhibitor_type_id': self.inhibitor_type_id,
-                'inhibitor_type': self.inhibitor_type.serialize(),
+                'inhibitor_type': self.inhibitor_type and self.inhibitor_type.serialize(),
                 'inhibitor': self.inhibitor,
                 'remark': self.remark,
                 'inhibitor_flag': self.inhibitor_flag,
@@ -3340,7 +3348,6 @@ class PCBTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'aroclor_1242': self.aroclor_1242,
                 'aroclor_1254': self.aroclor_1254,
                 'aroclor_1260': self.aroclor_1260,
@@ -3378,7 +3385,6 @@ class ParticleTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 '_2um': self._2um,
                 '_5um': self._5um,
                 '_10um': self._10um,
@@ -3431,7 +3437,6 @@ class MetalsInOilTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'iron': self.iron,
                 'nickel': self.nickel,
                 'aluminium': self.aluminium,
@@ -3493,7 +3498,6 @@ class FluidTest(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'test_result_id': self.test_result_id,
-                'test_result': self.test_result.serialize(),
                 'dielectric_1816': self.dielectric_1816,
                 'dielectric_1816_2': self.dielectric_1816_2,
                 'dielectric_877': self.dielectric_877,
@@ -3658,7 +3662,7 @@ class NormParticles(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'equipment_id': self.equipment_id,
-                'equipment': self.equipment.serialize(),
+                'equipment': self.equipment and self.equipment.serialize(),
                 '_2um': self._2um,
                 '_5um': self._5um,
                 '_10um': self._10um,
