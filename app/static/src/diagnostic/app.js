@@ -8,7 +8,7 @@ const App = React.createClass ({
 
     getInitialState: function () {
         return {
-            showEquipmentForm: false,
+            showEquipmentForm: true,
             showEquipmentList: true,
             showEquipmentTest: true
         }

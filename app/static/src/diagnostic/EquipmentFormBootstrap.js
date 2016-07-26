@@ -37,8 +37,8 @@ var EquipmentTypeSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            eqtype_id: value,
+            value: event.target.value,
+            eqtype_id: event.target.value
         })
     },
 
@@ -82,7 +82,7 @@ var EquipmentTypeSelectField = React.createClass ({
             <div>
                 <FormGroup controlId="formControlsSelect1">
                     <ControlLabel>Equipment type</ControlLabel>
-                    <FormControl componentClass="select" placeholder="equipment type">
+                    <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
                         <option value="select">select equipment type</option>
                         {menuItems}
                     </FormControl>
@@ -173,8 +173,8 @@ var ManufacturerSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            manufac_id: value,
+            value: event.target.value,
+            manufac_id: event.target.value,
         })
 
     },
@@ -218,7 +218,7 @@ var ManufacturerSelectField = React.createClass ({
             <div>
                 <FormGroup controlId="formControlsSelect2">
                     <ControlLabel>Manufacturer</ControlLabel>
-                    <FormControl componentClass="select" placeholder="manufacturer" >
+                    <FormControl componentClass="select" placeholder="manufacturer" onChange={this.handleChange}>
                         <option value="select">select manufacturer</option>
                         {menuItems}
                     </FormControl>
@@ -308,8 +308,8 @@ var LocationSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            manufac_id: value,
+            value: event.target.value,
+            location_id: event.target.value
         })
 
     },
@@ -353,7 +353,7 @@ var LocationSelectField = React.createClass ({
             <div>
                 <FormGroup controlId="formControlsSelect3">
                     <ControlLabel>Location</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select location" >
+                    <FormControl componentClass="select" placeholder="select location" onChange={this.handleChange}>
                         <option value="select">select location</option>
                         {menuItems}
                     </FormControl>
@@ -441,8 +441,7 @@ var VisualInspBySelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            manufac_id: value,
+            value: event.target.value,
         })
 
     },
@@ -486,7 +485,7 @@ var VisualInspBySelectField = React.createClass ({
             <div>
                 <FormGroup controlId="formControlsSelect4">
                     <ControlLabel>Visual Inspected By</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select inspector" >
+                    <FormControl componentClass="select" placeholder="select inspector" onChange={this.handleChange}>
                         <option value="select">select inspector</option>
                         {menuItems}
                     </FormControl>
@@ -574,8 +573,8 @@ var AssignedToSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            manufac_id: value,
+            value: this.target.value,
+            manufac_id: this.target.value,
         })
 
     },
@@ -619,7 +618,7 @@ var AssignedToSelectField = React.createClass ({
             <div>
                 <FormGroup controlId="formControlsSelect5">
                     <ControlLabel>Assigned By</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select person" >
+                    <FormControl componentClass="select" placeholder="select person" onChange={this.handleChange}>
                         <option value="select">select person</option>
                         {menuItems}
                     </FormControl>
@@ -709,8 +708,7 @@ var NormSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            manufac_id: value,
+            value: event.target.value
         })
 
     },
@@ -754,7 +752,7 @@ var NormSelectField = React.createClass ({
             <div>
                 <FormGroup controlId="formControlsSelect6">
                     <ControlLabel>Norm</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select norm" >
+                    <FormControl componentClass="select" placeholder="select norm" onChange={this.handleChange}>
                         <option value="select">select norm</option>
                         {menuItems}
                     </FormControl>
@@ -845,7 +843,7 @@ var FrequencySelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
+            value: event.target.value,
         })
 
     },
@@ -866,7 +864,7 @@ var FrequencySelectField = React.createClass ({
     },
 
     render: function() {
-        options=[];
+        options = [];
         for (var key in this.state.items) {
             options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
         }
@@ -875,7 +873,7 @@ var FrequencySelectField = React.createClass ({
             <div>
                 <FormGroup controlId="frequencySelect6">
                     <ControlLabel>Frequency</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select frequency" >
+                    <FormControl componentClass="select" placeholder="select frequency" onChange={this.handleChange}>
                         <option value="select">select frequency</option>
                         {options}
                     </FormControl>
@@ -889,7 +887,7 @@ var ManufacturedSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
+            value: this.target.value
         })
 
     },
@@ -919,7 +917,7 @@ var ManufacturedSelectField = React.createClass ({
             <div>
                 <FormGroup controlId="formControlsSelect6">
                     <ControlLabel>Manufactured</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select manufactured date" >
+                    <FormControl componentClass="select" placeholder="select manufactured date" onChange={this.handleChange}>
                         <option value="select">select manufactured date</option>
                         {options}
                     </FormControl>
@@ -938,44 +936,45 @@ const EquipmentForm = React.createClass({
         }
     },
     _create: function () {
-        console.log(this.refs);
-
-        console.log(this.refs.name.value);
-        return console.log(this.refs.name);
+        
+        // console.log(this.state);
+        
         return $.ajax({
             url: '/api/v1.0/equipment/',
             type: 'POST',
+            dataType: 'json',
             data: {
                 'equipment_type_id': this.refs.eqt.state.eqtype_id,
                 'manufacturer_id': this.refs.mn.state.manufac_id,
-                'location_id': this.refs.loc.state.location_id,
-                'visual_inspection_by_id': this.refs.vis.state.visnsp_id,
-                'assigned_to_id': this.refs.ast.state.assignedto_id,
-                'norm_id': this.refs.norms.state.norm_id,
-                'name': this.refs.name.getValue(),
-                'serial': this.refs.serial.getValue(),
-                'number': this.refs.number.getValue(),
-                'description': this.refs.description.getValue(),
-                'comments': this.refs.comments.getValue(),
-                'vis_comments': this.refs.vis_comments.getValue(),
-                'nr_taps': this.refs.nr_taps.getValue(),
-                'upstream1': this.refs.upstream1.getValue(),
-                'upstream2': this.refs.upstream2.getValue(),
-                'upstream3': this.refs.upstream3.getValue(),
-                'upstream4': this.refs.upstream4.getValue(),
-                'upstream5': this.refs.upstream5.getValue(),
-                'downstream1': this.refs.downstream1.getValue(),
-                'downstream2': this.refs.downstream2.getValue(),
-                'downstream3': this.refs.downstream3.getValue(),
-                'downstream4': this.refs.downstream4.getValue(),
-                'downstream5': this.refs.downstream5.getValue(),
-                'phys_position': this.refs.phys_position.getValue(),
-                'tension4': this.refs.tension4.getValue(),
-                'validated': this.refs.validated.getValue(),
-                'invalidation': this.refs.invalidation.getValue(),
-                'prev_serial': this.refs.prev_serial.getValue(),
-                'prev_eqnumb': this.refs.prev_eqnumb.getValue(),
+                'location_id': this.refs.loc.state.value,
+                'visual_inspection_by_id': this.refs.vis.state.value,
+                'assigned_to_id': this.refs.ast.state.value,
+                'norm_id': this.refs.norms.state.value,
+                'name': findDOMNode(this.refs.name).value,
+                'serial': findDOMNode(this.refs.serial).value,
+                'number': findDOMNode(this.refs.number).value,
+                'description': findDOMNode(this.refs.description).value,
+                'comments': findDOMNode(this.refs.comments).value,
+                'vis_comments': findDOMNode(this.refs.vis_comments).value,
+                'nr_taps': findDOMNode(this.refs.nr_taps).value,
+                'upstream1': findDOMNode(this.refs.upstream1).value,
+                'upstream2': findDOMNode(this.refs.upstream2).value,
+                'upstream3': findDOMNode(this.refs.upstream3).value,
+                'upstream4': findDOMNode(this.refs.upstream4).value,
+                'upstream5': findDOMNode(this.refs.upstream5).value,
+                'downstream1': findDOMNode(this.refs.downstream1).value,
+                'downstream2': findDOMNode(this.refs.downstream2).value,
+                'downstream3': findDOMNode(this.refs.downstream3).value,
+                'downstream4': findDOMNode(this.refs.downstream4).value,
+                'downstream5': findDOMNode(this.refs.downstream5).value,
+                'phys_position': findDOMNode(this.refs.phys_position).value,
+                'tension4': findDOMNode(this.refs.tension4).value,
+                'validated': findDOMNode(this.refs.validated).value,
+                'invalidation': findDOMNode(this.refs.invalidation).value,
+                'prev_serial': findDOMNode(this.refs.prev_serial).value,
+                'prev_eqnumb': findDOMNode(this.refs.prev_eqnumb).value
             },
+            success: function (data, textStatus) { },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -1045,31 +1044,25 @@ const EquipmentForm = React.createClass({
 
         return (
             <div className="form-container">
-                <form id="eqtype_form" onSubmit={this._onSubmit}>
+                <form id="eqtype_form" onSubmit={this._onSubmit} onchange={this._onChange}>
                     <div>
                         <Panel header="Add Equipment">
 
-                        <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value} display/>
-                            <NewEqModalWin/>
-
-                        <ManufacturerSelectField  ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value}/>
-                            <NewManufacModalWin/>
-
-                        <LocationSelectField  ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
-                            <NewLocationModalWin/>
-
+                        <EquipmentTypeSelectField ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/>
+                        <NewEqModalWin/>
+                        <ManufacturerSelectField ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value}/>
+                        <NewManufacModalWin/>
+                        <LocationSelectField ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
+                        <NewLocationModalWin/>
                         <VisualInspBySelectField  ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
-                            <NewVisualInspByModalWin/>
-
+                        <NewVisualInspByModalWin/>
                         <AssignedToSelectField  ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
-                            <NewAssignedToModalWin/>
-
-                        <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
-                            <NewNormModalWin/>
+                        <NewNormModalWin/>
+                        <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} /> 
 
                         <FormGroup controlId="inputNameField" >
                         <ControlLabel>Name</ControlLabel>
-                        <FormControl type="text" placeholder="name" ref="name"/>
+                        <FormControl type="text" placeholder="name" ref="name" />
                         </FormGroup>
 
                         <FormGroup controlId="EqNumberField" >
@@ -1170,9 +1163,8 @@ const EquipmentForm = React.createClass({
                         <FormControl type="text" placeholder="tension4 " ref="tension4"/>
                         </FormGroup>
 
-                        <Checkbox ref="validated">Validated</Checkbox>
-
-                        <Checkbox ref="validation">Invalidation</Checkbox>
+                        <Checkbox ref="validated">Validated</Checkbox> 
+                        <Checkbox ref="invalidation">Invalidation</Checkbox>
 
                         <FormGroup controlId="prevSerialNumInput" >
                         <ControlLabel>Prev Serial Number</ControlLabel>

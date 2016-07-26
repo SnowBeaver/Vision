@@ -364,18 +364,6 @@ $(document).ready(function(){
                         }
                     };
 
-                    <!--tmp['split'] = {-->
-                         <!--'label' : 'Split'-->
-                        <!--,"separator_before"  : false    // Insert a separator before the item-->
-                        <!--,"separator_after"   : true,     // Insert a separator after the item-->
-                        <!--"action" : function (data) {-->
-                             <!--var inst = $.jstree.reference(data.reference),-->
-                             <!--obj = inst.get_node(data.reference);-->
-
-                             <!--console.log("split " + obj.id);-->
-                        <!--},-->
-                    <!--}-->
-
                     tmp['join'] = {
                         'label' : 'Join'
                         ,"separator_before"  : false    // Insert a separator before the item
@@ -770,6 +758,41 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
+                                console.log(fail);
+                                data.instance.refresh();
+                            });
+                        }
+                    } 
+                    ,'equipment' : {
+                        "separator_after"	    : true
+                        ,"label"				: "Equipment"
+                        ,"action"			    : function (data){
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+
+                            $.post(url.treeCreate, {
+                                    parent: obj.id,
+                                    text: "Transfo",
+                                    icon: '../app/static/img/icons/cable_b.ico',
+                                    type: 'cable',
+                                    tooltip: "Equipment tooltip"
+                                }
+                                ,function(data){
+                                    inst.create_node(obj, {
+                                            'id': data.id,
+                                            'text': 'Equipment' + data.id,
+                                            'icon' : '../app/static/img/icons/cable_b.ico',
+                                            'type' : 'Equipment'
+                                        }
+                                        , "last", function (new_node) {
+
+                                            setTimeout(function () {
+                                                $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Cable tooltip" + data.id }).tooltip({
+                                                    track: true
+                                                });
+                                                inst.edit(new_node); },0);
+                                        });
+                                }).fail(function () {
                                 console.log(fail);
                                 data.instance.refresh();
                             });
