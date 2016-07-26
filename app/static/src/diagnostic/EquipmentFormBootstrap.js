@@ -1,23 +1,17 @@
 import React from 'react';
 import injectTapEventPlugin from "react-tap-event-plugin";
-import DropdownButton from 'react-bootstrap/lib/DropdownButton';
-import MenuItem from 'react-bootstrap/lib/MenuItem';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Form from 'react-bootstrap/lib/Form';
-import Col from 'react-bootstrap/lib/Col';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
-var DateTimeField = require('react-bootstrap-datetimepicker');
+import DateTimePicker from 'react-bootstrap-datetimepicker';
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
 
-
-
-
+var options = [];
 var items = [];
 
 var first_year = 1900;
@@ -79,10 +73,10 @@ var EquipmentTypeSelectField = React.createClass ({
 
         return (
             <div>
-                <FormGroup controlId="formControlsSelect">
-                    <ControlLabel>Select</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select">
-                        <option value="select">select</option>
+                <FormGroup controlId="formControlsSelect1">
+                    <ControlLabel>Equipment type</ControlLabel>
+                    <FormControl componentClass="select" placeholder="equipment type">
+                        <option value="select">select equipment type</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -134,14 +128,18 @@ var ManufacturerSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+           menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <DropdownButton title='manufacturer' key={key} id={`dropdown-basic-2`}>
-                    {menuItems}
-                </DropdownButton>
+                <FormGroup controlId="formControlsSelect2">
+                    <ControlLabel>Manufacturer</ControlLabel>
+                    <FormControl componentClass="select" placeholder="manufacturer" >
+                        <option value="select">select manufacturer</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
@@ -189,14 +187,18 @@ var LocationSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <DropdownButton title='Location' key={key} id={`dropdown-basic-3`}>
-                    {menuItems}
-                </DropdownButton>
+                <FormGroup controlId="formControlsSelect3">
+                    <ControlLabel>Location</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select location" >
+                        <option value="select">select location</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
@@ -244,74 +246,23 @@ var VisualInspBySelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <DropdownButton title='Visual Inspection By' key={key} id={`dropdown-basic-3`}>
-                    {menuItems}
-                </DropdownButton>
+                <FormGroup controlId="formControlsSelect4">
+                    <ControlLabel>Visual Inspected By</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select inspector" >
+                        <option value="select">select inspector</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
 });
 
-
-var VisualInspBySelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: value,
-            manufac_id: value,
-        })
-
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
-        }
-
-        return (
-            <div>
-                <DropdownButton title='Visual Inspection By' key={key} id={`dropdown-basic-4`}>
-                    {menuItems}
-                </DropdownButton>
-            </div>
-        );
-    }
-});
 
 
 var AssignedToSelectField = React.createClass ({
@@ -356,70 +307,18 @@ var AssignedToSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <DropdownButton title='Assigned To' key={key} id={`dropdown-basic-5`}>
-                    {menuItems}
-                </DropdownButton>
-            </div>
-        );
-    }
-});
-
-
-var AssignedToSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: value,
-            manufac_id: value,
-        })
-
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
-        }
-
-        return (
-            <div>
-                <DropdownButton title='Assigned To' key={key} id={`dropdown-basic-5`}>
-                    {menuItems}
-                </DropdownButton>
+                <FormGroup controlId="formControlsSelect5">
+                    <ControlLabel>Assigned By</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select person" >
+                        <option value="select">select person</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
@@ -468,321 +367,111 @@ var NormSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem eventKey={this.state.items[key].id}>{`${this.state.items[key].name}`}</MenuItem>);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <DropdownButton title='Norm' key={key} id={`dropdown-basic-6`}>
-                    {menuItems}
-                </DropdownButton>
+                <FormGroup controlId="formControlsSelect6">
+                    <ControlLabel>Norm</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select norm" >
+                        <option value="select">select norm</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
 });
-// var ManufacturerSelectField = React.createClass({
-//
-//     handleChange: function (event, index, value) {
-//         this.setState({
-//             value: value,
-//             manufac_id: value
-//         })
-//         console.log("manufac console", event, index, value);
-//     },
-//
-//     getInitialState: function(){
-//         return {
-//             items: []
-//         };
-//     },
-//     componentDidMount: function () {
-//         this.serverRequest = $.get(this.props.source, function (result) {
-//
-//             items = (result['result']);
-//             this.setState({
-//                 items: items
-//             });
-//         }.bind(this), 'json');
-//     },
-//
-//     componentWillUnmount: function () {
-//         this.serverRequest.abort();
-//     },
-//
-//     render: function () {
-//         var menuItems = [];
-//         for (var key in this.state.items) {
-//             menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id}
-//                                      primaryText={`${this.state.items[key].name}`}/>);
-//         }
-//
-//         return (
-//             <div>
-//                 <SelectField
-//                     onChange={ this.handleChange }
-//                     value={ this.state.value}
-//                     autoWidth={true}
-//                     hintText="Manufacturer"
-//                     errorText="This field is required">
-//                     {menuItems}
-//                 </SelectField>
-//             </div>
-//         );
-//     }
-// });
-//
-//
-// var LocationSelectField = React.createClass ({
-//
-//     handleChange: function(event, index, value){
-//         this.setState({
-//             value: value,
-//             location_id: value
-//         })
-//     },
-//
-//     getInitialState: function(){
-//         return {
-//             items: []
-//         };
-//     },
-//
-//     componentDidMount: function(){
-//         this.serverRequest = $.get(this.props.source, function (result){
-//
-//             items = (result['result']);
-//             this.setState({
-//                 items: items
-//             });
-//         }.bind(this), 'json');
-//     },
-//
-//     componentWillUnmount: function() {
-//         this.serverRequest.abort();
-//     },
-//
-//     render: function() {
-//         var menuItems = [];
-//         for (var key in this.state.items) {
-//             menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
-//         }
-//
-//         return (
-//             <div>
-//                 <SelectField
-//                     value={this.state.value}
-//                     onChange={this.handleChange}
-//                     autoWidth={true}
-//                     hintText="Location"
-//                     errorText="This field is required">
-//                     {menuItems}
-//                 </SelectField>
-//             </div>
-//         );
-//     }
-// });
-//
-//
-// var VisualInspectionSelectField = React.createClass ({
-//
-//     handleChange: function(event, index, value){
-//         this.setState({
-//             value: value,
-//             visnsp_id: value
-//         })
-//
-//     },
-//
-//     getInitialState: function(){
-//         return {
-//             items: []
-//         };
-//     },
-//
-//     componentDidMount: function(){
-//         this.serverRequest = $.get(this.props.source, function (result){
-//
-//             items = (result['result']);
-//             this.setState({
-//                 items: items
-//             });
-//         }.bind(this), 'json');
-//     },
-//
-//     componentWillUnmount: function() {
-//         this.serverRequest.abort();
-//     },
-//
-//     render: function() {
-//         var menuItems = [];
-//         for (var key in this.state.items) {
-//             menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
-//         }
-//         return (
-//             <div>
-//                 <SelectField
-//                     value={this.state.value}
-//                     onChange={this.handleChange}
-//                     autoWidth={true}
-//                     hintText="Visual Inspection By"
-//                     errorText="This field is required">
-//                     {menuItems}
-//                 </SelectField>
-//             </div>
-//         );
-//     }
-// });
-//
-//
-// var AssignedToSelectField = React.createClass ({
-//
-//     handleChange: function(event, index, value){
-//         this.setState({
-//             value: value,
-//             assignedto_id: value
-//         })
-//
-//     },
-//
-//     getInitialState: function(){
-//         return {
-//             items: []
-//         };
-//     },
-//
-//     componentDidMount: function(){
-//         this.serverRequest = $.get(this.props.source, function (result){
-//
-//             items = (result['result']);
-//             this.setState({
-//                 items: items
-//             });
-//         }.bind(this), 'json');
-//     },
-//
-//     componentWillUnmount: function() {
-//         this.serverRequest.abort();
-//     },
-//
-//     render: function() {
-//         var menuItems = [];
-//         for (var key in this.state.items) {
-//             menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
-//         }
-//         return (
-//             <div>
-//                 <SelectField
-//                     value={this.state.value}
-//                     onChange={this.handleChange}
-//                     autoWidth={true}
-//                     hintText="Assigned to"
-//                     errorText="This field is required">
-//                     {menuItems}
-//                 </SelectField>
-//             </div>
-//         );
-//     }
-// });
-//
-//
-// var NormSelectField = React.createClass ({
-//
-//     handleChange: function(event, index, value){
-//         this.setState({
-//             value: value,
-//             norm_id: value
-//         })
-//
-//     },
-//
-//     getInitialState: function(){
-//         return {
-//             items: []
-//         };
-//     },
-//
-//     componentDidMount: function(){
-//         this.serverRequest = $.get(this.props.source, function (result){
-//
-//             items = (result['result']);
-//             this.setState({
-//                 items: items
-//             });
-//         }.bind(this), 'json');
-//     },
-//
-//     componentWillUnmount: function() {
-//         this.serverRequest.abort();
-//     },
-//
-//     render: function() {
-//         var menuItems = [];
-//         for (var key in this.state.items) {
-//             menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
-//         }
-//         return (
-//             <div>
-//                 <SelectField
-//                     value={this.state.value}
-//                     onChange={this.handleChange}
-//                     autoWidth={true}
-//                     hintText="Norm"
-//                     errorText="This field is required">
-//                     {menuItems}
-//                 </SelectField>
-//             </div>
-//         );
-//     }
-// });
-//
-// const styles = {
-//     block: {
-//         maxWidth: 250
-//     },
-//     checkbox: {
-//         marginBottom: 16
-//     }
-// };
-// const style = {
-//     margin: 12
-// };
-//
-//
-// const RaisedNewButton = () => (
-//     <span><RaisedButton label="New" backgroundColor="#b8b8b8" style={style}/></span>
-// );
-//
-// const RaisedSaveButton = React.createClass ({
-//     render: function () {
-//         return (
-//             <span>
-//                 <RaisedButton label="Save"
-//                               backgroundColor="#2f70a8"
-//                               style={style}
-//                               type="submit"/>
-//             </span>
-//
-//         );
-//     }
-// });
-//
-//
-// const RaisedCancelButton = () => (
-//     <span>
-//         <RaisedButton label="Cancel"
-//               backgroundColor="#cf4440"
-//               style={style} />
-//     </span>
-// );
-//
-//
-// const FormBar = () => (
-//     <AppBar
-//         title="Create Equipment"
-//     />
-// );
 
 
+
+var FrequencySelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [ '25', '50', '60', 'DC' ],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        for (var key in this.state.items) {
+            options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup controlId="frequencySelect6">
+                    <ControlLabel>Frequency</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select frequency" >
+                        <option value="select">select frequency</option>
+                        {options}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
+var ManufacturedSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: value,
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: year_array,
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        options=[];
+        for (var key in this.state.items) {
+            options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup controlId="formControlsSelect6">
+                    <ControlLabel>Manufactured</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select manufactured date" >
+                        <option value="select">select manufactured date</option>
+                        {options}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
 const EquipmentForm = React.createClass({
     getInitialState: function () {
         return {
@@ -898,47 +587,37 @@ const EquipmentForm = React.createClass({
             <div className="form-container">
                 <form id="eqtype_form" onSubmit={this._onSubmit}>
                     <div>
-                        <FormGroup controlId="formControlsSelect">
-                        <ControlLabel>Eqtype</ControlLabel>
-                        <FormControl componentClass="select" placeholder="select" ref="eqt">
-                        <option value="select">select</option>
-                        <option value="other">...</option>
-                        </FormControl>
-                        </FormGroup>
 
                         <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/>
+
                         <ManufacturerSelectField  ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value}/>
+
                         <LocationSelectField  ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
+
                         <VisualInspBySelectField  ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
+
                         <AssignedToSelectField  ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
+
                         <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
 
-                        <FormGroup controlId="inputNameForm" type="text" ref="name">
-                        <Col type="text" sm={2}>
-                        Name
-                        </Col>
-                        <Col sm={10}>
-                        <FormControl type="Name" placeholder="Name"/>
-                            </Col>
+
+                        <FormGroup controlId="inputNameField" >
+                        <ControlLabel>Name</ControlLabel>
+                        <FormControl type="text" placeholder="name" ref="name"/>
                         </FormGroup>
 
-                        <FormGroup controlId="inputEqNumberForm" type="text" ref="number">
-                        <Col type="text" sm={2}>
-                        Equipment Number
-                        </Col>
-                        <Col sm={10}>
-                        <FormControl type="Equipment Number" placeholder="equipment Number"/>
-                            </Col>
+                        <FormGroup controlId="EqNumberField" >
+                        <ControlLabel>Equipment Number</ControlLabel>
+                        <FormControl type="text" placeholder="equipment number" ref="number"/>
                         </FormGroup>
 
-                        <FormGroup controlId="inputSerialForm" type="text" ref="serial">
-                        <Col type="text" sm={2}>
-                        Serial
-                        </Col>
-                        <Col sm={10}>
-                        <FormControl type="Serial" placeholder="Serial"/>
-                            </Col>
+                        <FormGroup controlId="inputSerialField" >
+                        <ControlLabel>Serial</ControlLabel>
+                        <FormControl type="text" placeholder="serial" ref="serial"/>
                         </FormGroup>
+
+                        <FrequencySelectField title="Frequency" id="frequency"></FrequencySelectField>
+                        <ManufacturedSelectField title="Manufactured" id="manufactured"></ManufacturedSelectField>
 
                         <FormGroup controlId="descriptionTextarea">
                         <ControlLabel>Description</ControlLabel>
@@ -950,7 +629,10 @@ const EquipmentForm = React.createClass({
                         <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
                         </FormGroup>
 
-                        <DateTimeField />
+                        <FormGroup controlId="DateTimePicker">
+                        <ControlLabel>Visual Date</ControlLabel>
+                        <DateTimePicker defaultText="Please select a date"/>
+                        </FormGroup>
 
                         <FormGroup controlId="visualInspectionCommentsTextarea">
                         <ControlLabel>Visual Inspection Comments</ControlLabel>
@@ -967,22 +649,22 @@ const EquipmentForm = React.createClass({
                         <FormControl type="text" placeholder="upstream 1" ref="upstream1"/>
                         </FormGroup>
 
-                         <FormGroup controlId="upstream1Input" >
+                         <FormGroup controlId="upstream2Input" >
                         <ControlLabel>Upstream 2</ControlLabel>
                         <FormControl type="text" placeholder="upstream 2" ref="upstream2"/>
                         </FormGroup>
 
-                         <FormGroup controlId="upstream1Input" >
+                         <FormGroup controlId="upstream3Input" >
                         <ControlLabel>Upstream 3</ControlLabel>
                         <FormControl type="text" placeholder="upstream 3" ref="upstream3"/>
                         </FormGroup>
 
-                         <FormGroup controlId="upstream1Input" >
+                         <FormGroup controlId="upstream4Input" >
                         <ControlLabel>Upstream 4</ControlLabel>
                         <FormControl type="text" placeholder="upstream 4" ref="upstream4"/>
                         </FormGroup>
 
-                         <FormGroup controlId="upstream1Input" ref="upstream5">
+                         <FormGroup controlId="upstream5Input" ref="upstream5">
                         <ControlLabel>Upstream 5</ControlLabel>
                         <FormControl type="text" placeholder="upstream 5" ref="upstream5"/>
                         </FormGroup>
@@ -1022,9 +704,9 @@ const EquipmentForm = React.createClass({
                         <FormControl type="text" placeholder="tension4 " ref="tension4"/>
                         </FormGroup>
 
-
                         <Checkbox ref="validated">Validated</Checkbox>
-                            <Checkbox ref="validation">Invalidation</Checkbox>
+
+                        <Checkbox ref="validation">Invalidation</Checkbox>
 
                         <FormGroup controlId="prevSerialNumInput" >
                         <ControlLabel>Prev Serial Number</ControlLabel>
