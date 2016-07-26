@@ -441,7 +441,7 @@ var VisualInspBySelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value,
+            value: event.target.value
         })
 
     },
@@ -573,8 +573,7 @@ var AssignedToSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: this.target.value,
-            manufac_id: this.target.value,
+            value: event.target.value
         })
 
     },
@@ -843,7 +842,7 @@ var FrequencySelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value,
+            value: event.target.value
         })
 
     },
@@ -887,7 +886,7 @@ var ManufacturedSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: this.target.value
+            value: event.target.value
         })
 
     },
@@ -943,7 +942,8 @@ const EquipmentForm = React.createClass({
             url: '/api/v1.0/equipment/',
             type: 'POST',
             dataType: 'json',
-            data: {
+            contentType: 'application/json',
+            data: JSON.stringify({ 
                 'equipment_type_id': this.refs.eqt.state.eqtype_id,
                 'manufacturer_id': this.refs.mn.state.manufac_id,
                 'location_id': this.refs.loc.state.value,
@@ -952,10 +952,11 @@ const EquipmentForm = React.createClass({
                 'norm_id': this.refs.norms.state.value,
                 'name': findDOMNode(this.refs.name).value,
                 'serial': findDOMNode(this.refs.serial).value,
-                'number': findDOMNode(this.refs.number).value,
+                'equipment_number': findDOMNode(this.refs.number).value,
+                'frequency': this.refs.frequency.state.value,
                 'description': findDOMNode(this.refs.description).value,
                 'comments': findDOMNode(this.refs.comments).value,
-                'vis_comments': findDOMNode(this.refs.vis_comments).value,
+                'visual_inspection_comments': findDOMNode(this.refs.vis_comments).value,
                 'nr_taps': findDOMNode(this.refs.nr_taps).value,
                 'upstream1': findDOMNode(this.refs.upstream1).value,
                 'upstream2': findDOMNode(this.refs.upstream2).value,
@@ -971,9 +972,9 @@ const EquipmentForm = React.createClass({
                 'tension4': findDOMNode(this.refs.tension4).value,
                 'validated': findDOMNode(this.refs.validated).value,
                 'invalidation': findDOMNode(this.refs.invalidation).value,
-                'prev_serial': findDOMNode(this.refs.prev_serial).value,
-                'prev_eqnumb': findDOMNode(this.refs.prev_eqnumb).value
-            },
+                'prev_serial_number': findDOMNode(this.refs.prev_serial).value,
+                'prev_equipment_number': findDOMNode(this.refs.prev_eqnumb).value
+            }),
             success: function (data, textStatus) { },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -1054,7 +1055,7 @@ const EquipmentForm = React.createClass({
                         <NewManufacModalWin/>
                         <LocationSelectField ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
                         <NewLocationModalWin/>
-                        <VisualInspBySelectField  ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
+                        <VisualInspBySelectField ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
                         <NewVisualInspByModalWin/>
                         <AssignedToSelectField  ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
                         <NewNormModalWin/>
@@ -1075,7 +1076,7 @@ const EquipmentForm = React.createClass({
                         <FormControl type="text" placeholder="serial" ref="serial"/>
                         </FormGroup>
 
-                        <FrequencySelectField title="Frequency" id="frequency"></FrequencySelectField>
+                        <FrequencySelectField title="Frequency" ref="frequency"></FrequencySelectField>
                         <ManufacturedSelectField title="Manufactured" id="manufactured"></ManufacturedSelectField>
 
                         <FormGroup controlId="descriptionTextarea">

@@ -3,6 +3,9 @@
 import sqlalchemy as sqla
 from app import db
 from sqlalchemy.orm import relationship, relation
+from sqlalchemy.sql.expression import cast
+from sqlalchemy import Enum
+
 
 
 def dump_datetime(value):
@@ -1826,6 +1829,19 @@ class Equipment(db.Model):
 
     def __repr__(self):
         return "{} {} {}".format(self.id, self.equipment_number, self.equipment_type)
+
+    def __init__(self, **kwargs):
+        self.visual_inspection_by_id = int(kwargs.get('visual_inspection_by_id'))
+        self.norm_id = int(kwargs.get('norm_id'))
+        self.equipment_type_id = int(kwargs.get('equipment_type_id'))
+        self.equipment_number = int(kwargs.get('equipment_number'))
+        self.location_id = int(kwargs.get('location_id'))
+        self.manufacturer_id = int(kwargs.get('manufacturer_id'))
+        self.assigned_to_id = int(kwargs.get('assigned_to_id'))
+        self.serial = int(kwargs.get('serial'))
+        self.frequency = cast(kwargs.get('frequency'), Enum(name='Frequency'))
+        # db.Enum('25', '50', '60', 'DC', name="Frequency")
+
 
     def serialize(self):
         """Return object data in easily serializeable format"""

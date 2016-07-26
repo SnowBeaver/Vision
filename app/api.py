@@ -52,7 +52,7 @@ class Tree(db.Model):
     __tablename__ = 'tree'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    # parent_id = db.Column('parent_id', db.ForeignKey("tree.id"), nullable=True)
+    parent_id = db.Column('parent_id', db.ForeignKey("tree.id"), nullable=True)
     equipment_id = db.Column('equipment_id', db.ForeignKey(Equipment.id), nullable=False)
     equipment = db.relationship(Equipment, foreign_keys='Tree.equipment_id')
     icon = db.Column(db.String(126))
@@ -114,11 +114,20 @@ def add_item(items_model):
     db.session.add(item)
     db.session.commit()
     if items_model == Equipment:
-        param_tree_dict = {'equipment_id': item.id, 'icon': '../app/static/img/icons/{0}_b.ico'.format(eq_type_dict.get(item.equipment_type_id, ''))}
+        param_tree_dict = {
+            'equipment_id': item.id,
+            'parent_id': 32,
+            'icon': '../app/static/img/icons/{0}_b.ico'.format(eq_type_dict.get(item.equipment_type_id, '')),
+            'type': '{0}'.format(eq_type_dict.get(item.equipment_type_id, ''))
+        }
         item_tree = Tree(**param_tree_dict)
         db.session.add(item_tree)
         db.session.commit()
-        param_tree_trans_dict = {'id': item_tree.id,'locale': 'en', 'text': param_dict['name'], 'tooltip': param_dict['name']}
+        param_tree_trans_dict = {
+            'id': item_tree.id,'locale': 'en',
+            'text': param_dict['name'],
+            'tooltip': param_dict['name']
+        }
         item_tree_trans = TreeTranslation(**param_tree_trans_dict)
         db.session.add(item_tree_trans)
         db.session.commit()
