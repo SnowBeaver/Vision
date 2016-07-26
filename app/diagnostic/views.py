@@ -886,10 +886,10 @@ class TestResultView(MyModelView):
     column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id',
                               'test_status_id', 'sampling_point_id', 'campaign_id')
 
-    inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,
-                     TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
-                     InhibitorTest, PCBTest, ParticleTest, MetalsInOilTest, FluidTest
-                     )
+    # inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,
+    #                  TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
+    #                  InhibitorTest, PCBTest, ParticleTest, MetalsInOilTest, FluidTest
+    #                  )
 
     def __init__(self, dbsession):
         super(TestResultView, self).__init__(

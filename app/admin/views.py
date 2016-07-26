@@ -121,8 +121,8 @@ class MyAdminIndexView(admin.AdminIndexView):
 
 
 class MyModelView(ModelView):
-    edit_modal = True
-    create_modal = True
+    # edit_modal = True
+    # create_modal = True
 
     @expose('/modal/')
     def modal(self):
