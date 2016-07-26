@@ -32,7 +32,6 @@ var EquipmentTypeSelectField = React.createClass ({
             value: value,
             eqtype_id: value,
         })
-
     },
 
     getInitialState: function(){
@@ -480,8 +479,10 @@ const EquipmentForm = React.createClass({
         }
     },
     _create: function () {
-        // console.log(this.refs);
+        console.log(this.refs);
 
+        console.log(this.refs.name.value);
+        return console.log(this.refs.name);
         return $.ajax({
             url: '/api/v1.0/equipment/',
             type: 'POST',
