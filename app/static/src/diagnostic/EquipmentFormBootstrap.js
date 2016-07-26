@@ -7,6 +7,13 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import DateTimePicker from 'react-bootstrap-datetimepicker';
+import Panel from 'react-bootstrap/lib/Panel';
+import Popover from 'react-bootstrap/lib/Popover';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
+import  Modal from 'react-bootstrap/lib/Modal';
+import Table from 'react-bootstrap/lib/Table';
+
+
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
@@ -23,6 +30,7 @@ while (first_year != current_year) {
     first_year++;
     year_array.push(first_year.toString());
 }
+
 
 
 var EquipmentTypeSelectField = React.createClass ({
@@ -84,6 +92,82 @@ var EquipmentTypeSelectField = React.createClass ({
     }
 });
 
+const NewEqModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Existing equipment</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
+
+
+
 
 var ManufacturerSelectField = React.createClass ({
 
@@ -144,6 +228,82 @@ var ManufacturerSelectField = React.createClass ({
     }
 });
 
+const NewManufacModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Manufacturers Database</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
+
+
+
 var LocationSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
@@ -199,6 +359,80 @@ var LocationSelectField = React.createClass ({
                     </FormControl>
                 </FormGroup>
             </div>
+        );
+    }
+});
+
+const NewLocationModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Locations</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
         );
     }
 });
@@ -262,7 +496,79 @@ var VisualInspBySelectField = React.createClass ({
     }
 });
 
+const NewVisualInspByModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
 
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>List of Inpectors</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
 
 var AssignedToSelectField = React.createClass ({
 
@@ -322,6 +628,81 @@ var AssignedToSelectField = React.createClass ({
         );
     }
 });
+
+const NewAssignedToModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>List oof Assigned Persons</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
+
 
 
 var NormSelectField = React.createClass ({
@@ -383,6 +764,81 @@ var NormSelectField = React.createClass ({
     }
 });
 
+const NewNormModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Norm</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
+
+
 
 
 var FrequencySelectField = React.createClass ({
@@ -410,6 +866,7 @@ var FrequencySelectField = React.createClass ({
     },
 
     render: function() {
+        options=[];
         for (var key in this.state.items) {
             options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
         }
@@ -471,6 +928,8 @@ var ManufacturedSelectField = React.createClass ({
         );
     }
 });
+
+
 const EquipmentForm = React.createClass({
     getInitialState: function () {
         return {
@@ -588,19 +1047,25 @@ const EquipmentForm = React.createClass({
             <div className="form-container">
                 <form id="eqtype_form" onSubmit={this._onSubmit}>
                     <div>
+                        <Panel header="Add Equipment">
 
-                        <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/>
+                        <EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value} display/>
+                            <NewEqModalWin/>
 
                         <ManufacturerSelectField  ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value}/>
+                            <NewManufacModalWin/>
 
                         <LocationSelectField  ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
+                            <NewLocationModalWin/>
 
                         <VisualInspBySelectField  ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
+                            <NewVisualInspByModalWin/>
 
                         <AssignedToSelectField  ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
+                            <NewAssignedToModalWin/>
 
                         <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
-
+                            <NewNormModalWin/>
 
                         <FormGroup controlId="inputNameField" >
                         <ControlLabel>Name</ControlLabel>
@@ -721,6 +1186,7 @@ const EquipmentForm = React.createClass({
 
                         <Button bsStyle="success" type="submit">save</Button>
                         <Button bsStyle="danger" type="close">cancel</Button>
+                        </Panel>
                     </div>
                 </form>
             </div>
