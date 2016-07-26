@@ -8,7 +8,7 @@ from flask_apidoc import ApiDoc
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
 doc = ApiDoc(app=api)
-db = SQLAlchemy(api)
+db = SQLAlchemy(api, session_options={'autoflush':False})
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 
 
