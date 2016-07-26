@@ -209,7 +209,7 @@ class Campaign(db.Model):
     # created_by - relation to user table  #user one  (manager group)
     created_by_id = db.Column(
         'created_by_id',
-        sqla.ForeignKey("users_user.id"),
+        db.ForeignKey("users_user.id"),
         nullable=False
     )
     created_by = db.relationship('User', foreign_keys='Campaign.created_by_id')
@@ -219,7 +219,7 @@ class Campaign(db.Model):
     # Sometimes it is mandatory to enter the test equipment information so same one can be used next time
     equipment_id = db.Column(
         'equipment_id',
-        sqla.ForeignKey("equipment.id"),
+        db.ForeignKey("equipment.id"),
         nullable=False
     )
     equipment = db.relationship('Equipment', foreign_keys='Campaign.equipment_id')
@@ -309,7 +309,7 @@ class Campaign(db.Model):
     # The analyser gather all his though in this field to explain what should be done in plain that
     recommendationNotes = db.Column(db.Text)  # Text are field Reccommandation
     # relation to user who recomends
-    recommended_by_id = db.Column('recommended_by', sqla.ForeignKey("users_user.id"), nullable=True)
+    recommended_by_id = db.Column('recommended_by', db.ForeignKey("users_user.id"), nullable=True)
     recommended_by = db.relationship('User', foreign_keys='Campaign.recommended_by_id')
 
     # DateApplication: When recommendation was written
@@ -792,8 +792,8 @@ class Transformer(db.Model):
     gassensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
     gas_sensor = relationship('GasSensor', backref='transformer')
 
-    phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
+    phase_number = db.Column(db.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
+    frequency = db.Column(db.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
 
 
     primary_tension = db.Column(db.Float(53))  # Volt1. Primary voltage in kV

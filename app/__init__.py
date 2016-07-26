@@ -16,7 +16,7 @@ from raven.contrib.flask import Sentry
 
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
-db = SQLAlchemy(app)
+db = SQLAlchemy(app, session_options={'autoflush':False})
 
 # blogging
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
