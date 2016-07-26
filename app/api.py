@@ -27,6 +27,67 @@ model_dict = {'equipment': Equipment,
               'test_result': TestResult,
               }
 
+eq_type_dict = {1: 'air_bkr',
+                2: 'bushing',
+                3: 'capacitor',
+                4: 'bkr',
+                5: 'source',
+                6: 'cable',
+                # 7: 'Switchgear',
+                # 8: 'Induction machine',
+                9: 'synch',
+                # 10: 'localization'
+                11: 'tc', # tap changer
+                12: 'rect',
+                # 13: 'site',
+                14: 'transfo',
+                15: 'tank',
+                16: 'switch',
+                17: 'induc',
+                # 18: 'neutral resistance',
+                # 19: 'gas sensor',
+                }
+
+class Tree(db.Model):
+    __tablename__ = 'tree'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    # parent_id = db.Column('parent_id', db.ForeignKey("tree.id"), nullable=True)
+    equipment_id = db.Column('equipment_id', db.ForeignKey(Equipment.id), nullable=False)
+    equipment = db.relationship(Equipment, foreign_keys='Tree.equipment_id')
+    icon = db.Column(db.String(126))
+    opened = db.Column(db.Boolean)
+    disabled = db.Column(db.Boolean)
+    selected = db.Column(db.Boolean)
+    type = db.Column(db.String(58))
+    view = db.Column(db.String(126))
+    status = db.Column(db.SMALLINT)
+
+    #
+    # def __repr__(self):
+    #     return "{}".format(self.id)
+    #
+    # def serialize(self):
+    #     """Return object data in easily serializeable format"""
+    #     return {'id': self.id,
+    #             'parent_id': self.parent_id,
+    #             'icon': self.icon,
+    #             'opened': self.opened,
+    #             'disabled': self.disabled,
+    #             'selected': self.selected,
+    #             'type': self.type,
+    #             'view': self.view,
+    #             'status': self.status,
+    #             }
+
+class TreeTranslation(db.Model):
+    __tablename__ = 'tree_translation'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    locale = db.Column(db.String(10))
+    text = db.Column(db.String(250))
+    tooltip = db.Column(db.String(250))
+
 
 def return_json(items_name, items_list):
     return jsonify({items_name: items_list})
@@ -52,6 +113,15 @@ def add_item(items_model):
     item = items_model(**param_dict)
     db.session.add(item)
     db.session.commit()
+    if items_model == Equipment:
+        param_tree_dict = {'equipment_id': item.id, 'icon': '../app/static/img/icons/{0}_b.ico'.format(eq_type_dict.get(item.equipment_type_id, ''))}
+        item_tree = Tree(**param_tree_dict)
+        db.session.add(item_tree)
+        db.session.commit()
+        param_tree_trans_dict = {'id': item_tree.id,'locale': 'en', 'text': param_dict['name'], 'tooltip': param_dict['name']}
+        item_tree_trans = TreeTranslation(**param_tree_trans_dict)
+        db.session.add(item_tree_trans)
+        db.session.commit()
     return item.id
 
 
