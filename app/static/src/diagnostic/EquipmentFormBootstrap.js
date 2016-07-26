@@ -1049,17 +1049,17 @@ const EquipmentForm = React.createClass({
                     <div>
                         <Panel header="Add Equipment">
 
-                        <EquipmentTypeSelectField ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/>
+                        <EquipmentTypeSelectField ref="eqt" source="/api/v1.0/equipment_type" value={this.state.value}/>
                         <NewEqModalWin/>
-                        <ManufacturerSelectField ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value}/>
+                        <ManufacturerSelectField ref="mn" source="/api/v1.0/manufacturer" value={this.state.value}/>
                         <NewManufacModalWin/>
-                        <LocationSelectField ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
+                        <LocationSelectField ref="loc" source="/api/v1.0/location" value={this.state.value}/>
                         <NewLocationModalWin/>
-                        <VisualInspBySelectField ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
+                        <VisualInspBySelectField ref="vis" source="/api/v1.0/visual_inspection_by" value={this.state.value} />
                         <NewVisualInspByModalWin/>
-                        <AssignedToSelectField  ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
+                        <AssignedToSelectField  ref="ast" source="/api/v1.0/assigned_to" value={this.state.value} />
                         <NewNormModalWin/>
-                        <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} /> 
+                        <NormSelectField ref="norms" source="/api/v1.0/norm" value={this.state.value} /> 
 
                         <FormGroup controlId="inputNameField" >
                         <ControlLabel>Name</ControlLabel>
