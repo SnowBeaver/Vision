@@ -49,7 +49,7 @@ class EquipmentView(MyModelView):
     }
 
     form_choices = {
-        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year)]
+        'manufactured': [(int(x), x) for x in range(1900, datetime.now().year + 1)]
     }
     form_args = {
         'manufactured': {'coerce': int}
