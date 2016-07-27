@@ -1,5 +1,7 @@
 import React from 'react';
 import injectTapEventPlugin from "react-tap-event-plugin";
+import EquipmentList from './EquipmentListBootstrap';
+import bootstrapUtils from 'react-bootstrap/lib/utils/bootstrapUtils';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
@@ -128,34 +130,7 @@ const NewEqModalWin = React.createClass({
             <Modal.Title>Existing equipment</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-
-  <Table striped bordered condensed hover>
-    <thead>
-      <tr>
-          <th>#</th>
-          <th><Checkbox> </Checkbox> </th>
-          <th>Last Name</th>
-          <th>Name</th>
-          <th>Code</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-          <td>11111</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-          <td>22222</td>
-      </tr>
-    </tbody>
-  </Table>
+              table
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.close}>Close</Button>
@@ -837,7 +812,6 @@ const NewNormModalWin = React.createClass({
 
 
 
-
 var FrequencySelectField = React.createClass ({
 
     handleChange: function(event, index, value){
@@ -870,9 +844,18 @@ var FrequencySelectField = React.createClass ({
 
         return (
             <div>
-                <FormGroup controlId="frequencySelect6">
+                <style type="text/css">{`
+                .form-group-custom {
+                width:40%;
+                }
+                `}</style>
+                <FormGroup controlId="formControlsSelect7" >
                     <ControlLabel>Frequency</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select frequency" onChange={this.handleChange}>
+                    <FormControl componentClass="select"
+                                 placeholder="select frequency"
+                                 onChange={this.handleChange}
+                                 bsClass="form-control col-xs-3"
+                    >
                         <option value="select">select frequency</option>
                         {options}
                     </FormControl>
@@ -914,9 +897,18 @@ var ManufacturedSelectField = React.createClass ({
 
         return (
             <div>
-                <FormGroup controlId="formControlsSelect6">
+                <style type="text/css">{`
+                .form-group-custom {
+                width:40%;
+                }
+                `}</style>
+                <FormGroup controlId="formControlsSelect8">
                     <ControlLabel>Manufactured</ControlLabel>
-                    <FormControl componentClass="select" placeholder="select manufactured date" onChange={this.handleChange}>
+                    <FormControl componentClass="select"
+                                 placeholder="select manufactured date"
+                                 onChange={this.handleChange}
+                                 bsClass="form-control form-group-custom"
+                                    >
                         <option value="select">select manufactured date</option>
                         {options}
                     </FormControl>
@@ -927,6 +919,7 @@ var ManufacturedSelectField = React.createClass ({
 });
 
 
+
 const EquipmentForm = React.createClass({
     getInitialState: function () {
         return {
@@ -935,8 +928,6 @@ const EquipmentForm = React.createClass({
         }
     },
     _create: function () {
-        
-        // console.log(this.state);
         
         return $.ajax({
             url: '/api/v1.0/equipment/',
@@ -1016,7 +1007,6 @@ const EquipmentForm = React.createClass({
         }
     },
     _onChange: function (e) {
-        console.log(e.target.name);
         var state = {};
         state[e.target.name] =  $.trim(e.target.value);
         this.setState(state);
@@ -1050,15 +1040,20 @@ const EquipmentForm = React.createClass({
                         <Panel header="Add Equipment">
 
                         <EquipmentTypeSelectField ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/>
-                        <NewEqModalWin/>
+                        <NewEqModalWin  />
+
                         <ManufacturerSelectField ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value}/>
                         <NewManufacModalWin/>
+
                         <LocationSelectField ref="loc" source="http://dev.vision.local/api/v1.0/location" value={this.state.value}/>
                         <NewLocationModalWin/>
+
                         <VisualInspBySelectField ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
                         <NewVisualInspByModalWin/>
+
                         <AssignedToSelectField  ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
                         <NewNormModalWin/>
+
                         <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} /> 
 
                         <FormGroup controlId="inputNameField" >
@@ -1076,7 +1071,7 @@ const EquipmentForm = React.createClass({
                         <FormControl type="text" placeholder="serial" ref="serial"/>
                         </FormGroup>
 
-                        <FrequencySelectField title="Frequency" ref="frequency"></FrequencySelectField>
+                        <FrequencySelectField title="Frequency" bsClass="" ref="frequency" ></FrequencySelectField>
                         <ManufacturedSelectField title="Manufactured" id="manufactured"></ManufacturedSelectField>
 
                         <FormGroup controlId="descriptionTextarea">
@@ -1176,6 +1171,7 @@ const EquipmentForm = React.createClass({
                         <ControlLabel>Prev Equipment Number</ControlLabel>
                         <FormControl type="text" placeholder="prev equipment number " ref="prev_eqnumb"/>
                         </FormGroup>
+
 
                         <Button bsStyle="success" type="submit">save</Button>
                         <Button bsStyle="danger" type="close">cancel</Button>
