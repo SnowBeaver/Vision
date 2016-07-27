@@ -3,6 +3,8 @@ from app.diagnostic.models import *
 from flask.ext.sqlalchemy import SQLAlchemy
 from app.users.models import User
 from flask_apidoc import ApiDoc
+from cerberus import Validator
+from datetime import datetime
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -11,20 +13,70 @@ doc = ApiDoc(app=api)
 db = SQLAlchemy(api, session_options={'autoflush':False})
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 
+equipment_schema = {'name': {'type': 'string', 'maxlength': 50, 'required': True},
+                    'equipment_number': {'type': 'string', 'required': True},
+                    'equipment_type_id': {'type': 'integer', 'required': True, 'coerce': int},
+                    'location_id': {'type': 'integer', 'required': True, 'coerce': int},
+                    'visual_inspection_by_id': {'type': 'integer', 'required': True, 'coerce': int},
+                    'assigned_to_id': {'type': 'integer', 'required': True, 'coerce': int},
+                    'norm_id': {'type': 'integer', 'required': True, 'coerce': int},
+                    'manufacturer_id': {'type': 'integer', 'coerce': int},
+                    'serial': {'type': 'string', 'maxlength': 50},
+                    'manufactured': {'type': 'integer', 'min': 1900, 'max': datetime.now().year, 'coerce': int},
+                    'frequency': {'type': 'string', 'allowed': ['25', '50', '60', 'DC']},
+                    'description': {'type': 'string'},
+                    'modifier':  {'type': 'boolean', 'coerce': bool},
+                    'comments':  {'type': 'string'},
+                    'visual_date':   {'type': 'string'},
+                    'visual_inspection_comments':    {'type': 'string'},
+                    'nbr_of_tap_change_ltc': {'type': 'string'},
+                    'upstream1': {'type': 'string', 'maxlength': 100},
+                    'upstream2': {'type': 'string', 'maxlength': 100},
+                    'upstream3': {'type': 'string', 'maxlength': 100},
+                    'upstream4': {'type': 'string', 'maxlength': 100},
+                    'upstream5': {'type': 'string', 'maxlength': 100},
+                    'downstream1':   {'type': 'string', 'maxlength': 100},
+                    'downstream2':   {'type': 'string', 'maxlength': 100},
+                    'downstream3':   {'type': 'string', 'maxlength': 100},
+                    'downstream4':   {'type': 'string', 'maxlength': 100},
+                    'downstream5':   {'type': 'string', 'maxlength': 100},
+                    'tie_location':  {'type': 'boolean', 'coerce': bool},
+                    'tie_maintenance_state': {'type': 'integer', 'coerce': int},
+                    'tie_status':    {'type': 'integer', 'coerce': int},
+                    'phys_position': {'type': 'integer', 'coerce': int},
+                    'tension4':  {'type': 'float', 'coerce': float},
+                    'validated': {'type': 'boolean', 'coerce': bool},
+                    'invalidation':  {'type': 'boolean', 'coerce': bool},
+                    'prev_serial_number':    {'type': 'string', 'maxlength': 50},
+                    'prev_equipment_number': {'type': 'string', 'maxlength': 50},
+                    'sibling':   {'type': 'integer', 'coerce': int},
+                    }
+equipment_type_schema = {}
+campaign_schema = {}
+contract_schema = {}
+norm_schema = {}
+location_schema = {}
+manufacturer_schema = {}
+user_schema = {}
+assigned_to_schema = {}
+visual_inspection_by_schema = {}
+electrical_profile_schema = {}
+fluid_profile_schema = {}
+test_result_schema = {}
 
-model_dict = {'equipment': Equipment,
-              'equipment_type': EquipmentType,
-              'campaign': Campaign,
-              'contract': Contract,
-              'norm': Norm,
-              'location': Location,
-              'manufacturer': Manufacturer,
-              'user': User,
-              'assigned_to': User,
-              'visual_inspection_by': User,
-              'electrical_profile': ElectricalProfile,
-              'fluid_profile': FluidProfile,
-              'test_result': TestResult,
+model_dict = {'equipment': {'model': Equipment, 'schema': equipment_schema},
+              'equipment_type': {'model': EquipmentType, 'schema': equipment_type_schema},
+              'campaign': {'model': Campaign, 'schema': campaign_schema},
+              'contract': {'model': Contract, 'schema': contract_schema},
+              'norm': {'model': Norm, 'schema': norm_schema},
+              'location': {'model': Location, 'schema': location_schema},
+              'manufacturer': {'model': Manufacturer, 'schema': manufacturer_schema},
+              'user': {'model': User, 'schema': user_schema},
+              'assigned_to': {'model': User, 'schema': assigned_to_schema},
+              'visual_inspection_by': {'model': User, 'schema': visual_inspection_by_schema},
+              'electrical_profile': {'model': ElectricalProfile, 'schema': electrical_profile_schema},
+              'fluid_profile': {'model': FluidProfile, 'schema': fluid_profile_schema},
+              'test_result': {'model': TestResult, 'schema': test_result_schema},
               }
 
 eq_type_dict = {1: 'air_bkr',
@@ -93,7 +145,8 @@ def return_json(items_name, items_list):
     return jsonify({items_name: items_list})
 
 
-def get_item(items_model, item_id=None):
+def get_item(path, item_id=None):
+    items_model = model_dict[path]['model']
     if item_id:
         item = db.session.query(items_model).get(item_id) or abort(404)
         return item.serialize()
@@ -105,15 +158,22 @@ def get_item(items_model, item_id=None):
     return [item.serialize() for item in db.session.query(items_model).all()]
 
 
-def add_item(items_model):
+def add_item(path):
     if not request.json:
         abort(400, 'JSON not found')
 
+    items_model = model_dict[path]['model']
+    validation_schema = model_dict[path]['schema']
     param_dict = { k:v for k,v in request.json.items() }
+    v = Validator()
+    if not v.validate(param_dict, validation_schema):
+        abort(400, v.errors)
+
     item = items_model(**param_dict)
     db.session.add(item)
     db.session.commit()
     if items_model == Equipment:
+
         param_tree_dict = {
             'equipment_id': item.id,
             'parent_id': 32,
@@ -134,9 +194,17 @@ def add_item(items_model):
     return item.id
 
 
-def update_item(items_model, item_id):
+def update_item(path, item_id):
     if not request.json:
         abort(400, 'JSON not found')
+
+    items_model = model_dict[path]['model']
+    validation_schema = model_dict[path]['schema']
+    param_dict = {k: v for k, v in request.json.items()}
+    v = Validator()
+    if not v.validate(param_dict, validation_schema):
+        abort(400, v.errors)
+
     item = db.session.query(items_model).get(item_id)
     for k, v in request.json.items():
         setattr(item, k, v)
@@ -144,7 +212,8 @@ def update_item(items_model, item_id):
     return item.serialize()
 
 
-def delete_item(items_model, item_id):
+def delete_item(path, item_id):
+    items_model = model_dict[path]['model']
     rows = db.session.query(items_model).filter(items_model.id == item_id).delete(synchronize_session=False)
     db.session.commit()
     return rows > 0
@@ -172,7 +241,7 @@ def handler(path, item_id=None):
                       'DELETE': delete_item
                       }
     crud_func = crud_functions[request.method]
-    args = [model_dict[path]]
+    args = [path]
     if item_id:
         args.append(item_id)
     return return_json('result', crud_func(*args))
