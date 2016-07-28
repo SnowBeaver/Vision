@@ -6,6 +6,7 @@ from sqlalchemy.orm import joinedload_all
 from app import app
 from sqlalchemy.orm.session import make_transient
 import json
+from flask import jsonify
 
 
 def set_locale():
@@ -22,24 +23,35 @@ def get_locale():
 
 # return all tree
 def get_tree():
-    try:
-        # .options(joinedload_all("children", "children", "children", "children"))
-        tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
-            .filter(TreeNode.text == u'Vision Diagnostic').first()
-        res = None
-        if tree is not None:
-            res = "<ul>"
-            res += create_tree(tree)
-            res += "</ul>"
+    # try:
+    #     # .options(joinedload_all("children", "children", "children", "children"))
+    #     tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
+    #         .filter(TreeNode.text == u'Vision Diagnostic').first()
+    #     res = None
+    #     if tree is not None:
+    #         res = "["
+    #         res += create_tree(tree)
+    #         res += "]"
+    # except Exception as e:
+    #     import logging
+    #     logging.error(e)
+    #     res = None
 
-            # print(tree.dump())
-            # print(res)
-    except Exception as e:
-        import logging
-        logging.error(e)
-        res = None
+    # try:
+    #     tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
+    #         .filter(TreeNode.text == u'Vision Diagnostic').first()
+    tree = db.session.query(TreeNode)\
+        .options(joinedload_all("children", "children", "children", "children"))\
+        .filter(TreeNode.text == u'Vision Diagnostic').first()
 
-    return res
+    res = [item.serialize() for item in tree.children]
+    print res
+    return json.dumps(res)
+
+    # except Exception as e:
+    #     import logging
+    #     logging.error(e)
+
 
 
 # create generate tree
@@ -222,7 +234,7 @@ def copy_node(node_id, parent_id):
 
 
 def render_tree_li(tree):
-    data = "<li data-jstree='{"
+    data = "[ data-jstree='"
     opened = "true" if tree.opened else "false"
     data += "\"openend\" : " + opened
     selected = "true" if tree.selected else "false"
@@ -233,7 +245,7 @@ def render_tree_li(tree):
     data += ",\"icon\" : \"" + tree.icon + "\"}'"
     if tree.tooltip is not None:
         data += " title=\"" + tree.tooltip + "\""
-    data += " id=\"" + str(tree.id) + "\">" + tree.text
+    data += " id=\"" + str(tree.id) + "\"]" + tree.text
 
     return data
 
@@ -241,16 +253,31 @@ def render_tree_li(tree):
 def create_tree(tree):
     data = render_tree_li(tree)
     if tree.children:
-        data += "<ul>"
+        data += "["
         for chd in tree.children:
             if tree.children[chd].children:
                 data += create_tree(tree.children[chd])
             else:
                 data += render_tree_li(tree.children[chd])
-                data += "</li>"
-        data += "</ul>"
-    data += "</li>"
+                data += "]"
+        data += "]"
+    data += "]"
     return data
+
+
+# def create_tree(tree):
+#     data = render_tree_li(tree)
+#     if tree.children:
+#         data += "<ul>"
+#         for chd in tree.children:
+#             if tree.children[chd].children:
+#                 data += create_tree(tree.children[chd])
+#             else:
+#                 data += render_tree_li(tree.children[chd])
+#                 data += "</li>"
+#         data += "</ul>"
+#     data += "</li>"
+#     return data
 
 
 @app.template_filter('render_tree')

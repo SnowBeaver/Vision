@@ -10,7 +10,7 @@ import DateTimePicker from 'react-bootstrap-datetimepicker';
 import Panel from 'react-bootstrap/lib/Panel';
 import Popover from 'react-bootstrap/lib/Popover';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
-import  Modal from 'react-bootstrap/lib/Modal';
+import Modal from 'react-bootstrap/lib/Modal';
 import Table from 'react-bootstrap/lib/Table';
 
 
@@ -1045,7 +1045,7 @@ const EquipmentForm = React.createClass({
 
         return (
             <div className="form-container">
-                <form id="eqtype_form" onSubmit={this._onSubmit} onchange={this._onChange}>
+                <form id="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div>
                         <Panel header="Add Equipment">
 

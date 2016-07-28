@@ -6,14 +6,7 @@
     <div class="row-fluid">
         <div style="position:relative;">
             {% if current_user.is_authenticated() %}
-                {% if tree is defined %}
-                    {# {% include 'admin/diagnostic/old-toolbar.html' %}#}
-                {% endif %}
-                <div class="col-md-3 equal_col">
-                    {% include 'widgets/tree.html' %}
-                </div>
-                <div class="col-md-9" id="app">
-                </div>
+                <div id="app"></div>
             {% else %}
             <form method="POST" action="">
                 {{ form.hidden_tag() if form.hidden_tag }}

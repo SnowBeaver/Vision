@@ -220,6 +220,7 @@ def update_remote(branch='master'):
             run('find . -name "*.pyc" -exec rm -rf {} \;')
             #run('python -c "from app import db;db.create_all()"')
             run('python manage.py db upgrade')
+            update_static()
             restart_services()
 
 def setup_redis():
@@ -292,3 +293,21 @@ def menu_root():
         with source_virtualenv():
             run( 'python -c "from app import db;from app.admin.models import MenuItemsNode;node = MenuItemsNode(text = u\'Vision Diagnostic\', disabled = True, selected = True, type = \'parent\' );top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );db.session.add(node);db.session.commit()"'
             )
+
+
+
+def setup_static():
+    sudo('apt-get -y install npm')
+    sudo('npm install npm -g')
+    sudo('apt-get install nodejs-legacy')
+    static = Path(env.directory, 'app', 'static')
+    with cd(static):
+        run('npm install')
+        run('npm start')
+
+
+def update_static():
+    static = Path(env.directory, 'app', 'static')
+    with cd(static):
+        run('npm install')
+        run('npm start')
