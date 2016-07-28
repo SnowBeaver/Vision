@@ -631,6 +631,7 @@ class EquipmentType(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     code = db.Column(db.String(50))
+    table_name = db.Column(db.String(50))
 
     def __repr__(self):
         return self.name
@@ -639,7 +640,8 @@ class EquipmentType(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'name': self.name,
-                'code': self.code
+                'code': self.code,
+                'table_name': self.table_name,
                 }
 
 

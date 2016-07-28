@@ -10,11 +10,12 @@ from datetime import datetime
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
 doc = ApiDoc(app=api)
-db = SQLAlchemy(api, session_options={'autoflush':False})
+db = SQLAlchemy(api, session_options={'autoflush': False})
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 
-equipment_schema = {'name': {'type': 'string', 'maxlength': 50, 'required': True},
-                    'equipment_number': {'type': 'string', 'required': True},
+equipment_schema = {'id': {'readonly': True},
+                    'name': {'type': 'string', 'maxlength': 50, 'required': True},
+                    'equipment_number': {'type': 'string', 'maxlength': 50, 'required': True},
                     'equipment_type_id': {'type': 'integer', 'required': True, 'coerce': int},
                     'location_id': {'type': 'integer', 'required': True, 'coerce': int},
                     'visual_inspection_by_id': {'type': 'integer', 'required': True, 'coerce': int},
@@ -51,19 +52,185 @@ equipment_schema = {'name': {'type': 'string', 'maxlength': 50, 'required': True
                     'prev_equipment_number': {'type': 'string', 'maxlength': 50},
                     'sibling':   {'type': 'integer', 'coerce': int},
                     }
-equipment_type_schema = {}
-campaign_schema = {}
-contract_schema = {}
-norm_schema = {}
-location_schema = {}
-manufacturer_schema = {}
-user_schema = {}
-assigned_to_schema = {}
-visual_inspection_by_schema = {}
-electrical_profile_schema = {}
-fluid_profile_schema = {}
-test_result_schema = {}
-
+equipment_type_schema = {'id': {'readonly': True},
+                         'name': {'type': 'string', 'maxlength': 50},
+                         'code': {'type': 'string', 'maxlength': 50},
+                         'table_name': {'type': 'string', 'maxlength': 50},
+                         }
+campaign_schema = {'id': {'readonly': True},
+                   'date': {'type': 'datetime', 'coerce': datetime, 'required': True},
+                   'created_by_id': {'type': 'integer', 'coerce': int, 'required': True},
+                   'equipment_id': {'type': 'integer', 'coerce': int, 'required': True},
+                   'performed_by_id': {'type': 'integer', 'coerce': int, 'required': True},
+                   'lab_id': {'type': 'integer', 'coerce': int, 'required': True},
+                   'material_id': {'type': 'integer', 'coerce': int},
+                   'analysis_number': {'type': 'string', 'maxlength': 15},
+                   'percent_ratio': {'type': 'boolean', 'coerce': bool},
+                   'fluid_type_id': {'type': 'integer', 'coerce': int},
+                   'charge': {'type': 'float', 'coerce': float},
+                   'date_prelevement': {'type': 'datetime', 'coerce': datetime},
+                   'remark': {'type': 'string'},
+                   'modifier': {'type': 'boolean', 'coerce': bool},
+                   'transmission': {'type': 'boolean', 'coerce': bool},
+                   'repair_date': {'type': 'datetime', 'coerce': datetime},
+                   'repair_description': {'type': 'string'},
+                   'if_rem': {'type': 'string', 'maxlength': 5},
+                   'if_ok': {'type': 'string', 'maxlength': 5},
+                   'recommandation_id': {'type': 'integer', 'coerce': int},
+                   'recommendationNotes': {'type': 'string'},
+                   'recommended_by_id': {'type': 'integer', 'coerce': int},
+                   'date_application': {'type': 'datetime', 'coerce': datetime},
+                   'comments': {'type': 'string'},
+                   'mws': {'type': 'float', 'coerce': float},
+                   'temperature': {'type': 'float', 'coerce': float},
+                   'sampling_card_print': {'type': 'boolean', 'coerce': bool},
+                   'contract_id': {'type': 'integer', 'coerce': int},
+                   'containers': {'type': 'float', 'coerce': float},
+                   'sampling_card_gathered': {'type': 'integer', 'coerce': int},
+                   'gathered_test_type': {'type': 'string', 'maxlength': 50},
+                   'lab_contract_id': {'type': 'integer', 'coerce': int},
+                   'seringe_num': {'type': 'string', 'maxlength': 50},
+                   'data_valid': {'type': 'integer', 'coerce': int},
+                   'status1': {'type': 'integer', 'coerce': int},
+                   'status2': {'type': 'integer', 'coerce': int},
+                   'error_state': {'type': 'integer', 'coerce': int},
+                   'error_code': {'type': 'integer', 'coerce': int},
+                   'ambient_air_temperature': {'type': 'float', 'coerce': float},
+                   'bushing': {'type': 'boolean', 'coerce': bool},
+                   'winding': {'type': 'boolean', 'coerce': bool},
+                   'insulation_pf': {'type': 'boolean', 'coerce': bool},
+                   'insulation': {'type': 'boolean', 'coerce': bool},
+                   'visual_inspection': {'type': 'boolean', 'coerce': bool},
+                   'resistance': {'type': 'boolean', 'coerce': bool},
+                   'degree': {'type': 'boolean', 'coerce': bool},
+                   'turns': {'type': 'boolean', 'coerce': bool},
+                   'gas': {'type': 'boolean', 'coerce': bool},
+                   'water': {'type': 'boolean', 'coerce': bool},
+                   'furans': {'type': 'boolean', 'coerce': bool},
+                   'inhibitor': {'type': 'boolean', 'coerce': bool},
+                   'pcb': {'type': 'boolean', 'coerce': bool},
+                   'qty': {'type': 'integer', 'coerce': int},
+                   'sampling': {'type': 'integer', 'coerce': int},
+                   'dielec': {'type': 'boolean', 'coerce': bool},
+                   'acidity': {'type': 'boolean', 'coerce': bool},
+                   'density': {'type': 'boolean', 'coerce': bool},
+                   'pcb_jar': {'type': 'boolean', 'coerce': bool},
+                   'inhibitor_jar': {'type': 'boolean', 'coerce': bool},
+                   'point': {'type': 'boolean', 'coerce': bool},
+                   'dielec_2': {'type': 'boolean', 'coerce': bool},
+                   'color': {'type': 'boolean', 'coerce': bool},
+                   'pf': {'type': 'boolean', 'coerce': bool},
+                   'particles': {'type': 'boolean', 'coerce': bool},
+                   'metals': {'type': 'boolean', 'coerce': bool},
+                   'viscosity': {'type': 'boolean', 'coerce': bool},
+                   'dielec_d': {'type': 'boolean', 'coerce': bool},
+                   'ift': {'type': 'boolean', 'coerce': bool},
+                   'pf_100': {'type': 'boolean', 'coerce': bool},
+                   'furans_f': {'type': 'boolean', 'coerce': bool},
+                   'water_w': {'type': 'boolean', 'coerce': bool},
+                   'corr': {'type': 'boolean', 'coerce': bool},
+                   'dielec_i': {'type': 'boolean', 'coerce': bool},
+                   'visual': {'type': 'boolean', 'coerce': bool},
+                   'qty_jar': {'type': 'integer', 'coerce': int},
+                   'sampling_jar': {'type': 'integer', 'coerce': int},
+                   'pcb_vial': {'type': 'boolean', 'coerce': bool},
+                   'antioxidant': {'type': 'boolean', 'coerce': bool},
+                   'qty_vial': {'type': 'integer', 'coerce': int},
+                   'sampling_vial': {'type': 'integer', 'coerce': int},
+                   }
+contract_schema = {'id': {'readonly': True},
+                   'name': {'type': 'string', 'maxlength': 50},
+                   'code': {'type': 'string', 'maxlength': 50},
+                   'contract_status_id': {'type': 'integer', 'required': True, 'coerce': int},
+                   }
+norm_schema = {'id': {'readonly': True},
+               'name': {'type': 'string', 'maxlength': 50},
+               'table_name': {'type': 'string', 'maxlength': 50},
+               }
+location_schema = {'id': {'readonly': True},
+                   'name': {'type': 'string', 'maxlength': 50},
+                   }
+manufacturer_schema = {'id': {'readonly': True},
+                       'name': {'type': 'string', 'maxlength': 50, 'required': True},
+                       'markings': {'type': 'string'},
+                       'location': {'type': 'string', 'maxlength': 256},
+                       'description': {'type': 'string'},
+                       }
+user_schema = {'id': {'readonly': True},
+               'name': {'type': 'string', 'maxlength': 50},
+               'alias': {'type': 'string', 'maxlength': 50, 'required': True},
+               'email': {'type': 'string', 'maxlength': 120, 'required': True},
+               'password': {'type': 'string', 'maxlength': 50, 'required': True},
+               'status': {'type': 'integer', 'coerce': int},
+               'address': {'type': 'string', 'maxlength': 255},
+               'mobile': {'type': 'string', 'maxlength': 50},
+               'website': {'type': 'string', 'maxlength': 255},
+               'country': {'type': 'string', 'maxlength': 255},
+               'photo': {'type': 'string', 'maxlength': 255},
+               'description': {'type': 'string'},
+               'active': {'type': 'boolean', 'coerce': bool},
+               'confirmed': {'type': 'boolean', 'coerce': bool},
+               'confirmed_at': {'type': 'datetime', 'coerce': datetime},
+               'created': {'type': 'datetime', 'coerce': datetime},
+               'updated': {'type': 'datetime', 'coerce': datetime},
+               }
+electrical_profile_schema = {'id': {'readonly': True},
+                             'selection': {'type': 'string', 'maxlength': 256},
+                             'description': {'type': 'string', 'maxlength': 1204},
+                             'bushing': {'type': 'boolean', 'coerce': bool},
+                             'winding': {'type': 'boolean', 'coerce': bool},
+                             'insulation_pf': {'type': 'boolean', 'coerce': bool},
+                             'insulation': {'type': 'boolean', 'coerce': bool},
+                             'visual': {'type': 'boolean', 'coerce': bool},
+                             'resistance': {'type': 'boolean', 'coerce': bool},
+                             'degree': {'type': 'boolean', 'coerce': bool},
+                             'turns': {'type': 'boolean', 'coerce': bool},
+                             }
+fluid_profile_schema = {'id': {'readonly': True},
+                        'selection': {'type': 'string', 'maxlength': 256},
+                        'description': {'type': 'string', 'maxlength': 1204},
+                        'gas': {'type': 'boolean', 'coerce': bool},
+                        'water': {'type': 'boolean', 'coerce': bool},
+                        'furans': {'type': 'boolean', 'coerce': bool},
+                        'inhibitor': {'type': 'boolean', 'coerce': bool},
+                        'pcb': {'type': 'boolean', 'coerce': bool},
+                        'qty': {'type': 'integer', 'coerce': int},
+                        'sampling': {'type': 'integer', 'coerce': int},
+                        'dielec': {'type': 'boolean', 'coerce': bool},
+                        'acidity': {'type': 'boolean', 'coerce': bool},
+                        'density': {'type': 'boolean', 'coerce': bool},
+                        'pcb_jar': {'type': 'boolean', 'coerce': bool},
+                        'inhibitor_jar': {'type': 'boolean', 'coerce': bool},
+                        'point': {'type': 'boolean', 'coerce': bool},
+                        'dielec_2': {'type': 'boolean', 'coerce': bool},
+                        'color': {'type': 'boolean', 'coerce': bool},
+                        'pf': {'type': 'boolean', 'coerce': bool},
+                        'particles': {'type': 'boolean', 'coerce': bool},
+                        'metals': {'type': 'boolean', 'coerce': bool},
+                        'viscosity': {'type': 'boolean', 'coerce': bool},
+                        'dielec_d': {'type': 'boolean', 'coerce': bool},
+                        'ift': {'type': 'boolean', 'coerce': bool},
+                        'pf_100': {'type': 'boolean', 'coerce': bool},
+                        'furans_f': {'type': 'boolean', 'coerce': bool},
+                        'water_w': {'type': 'boolean', 'coerce': bool},
+                        'corr': {'type': 'boolean', 'coerce': bool},
+                        'dielec_i': {'type': 'boolean', 'coerce': bool},
+                        'visual': {'type': 'boolean', 'coerce': bool},
+                        'qty_jar': {'type': 'integer', 'coerce': int},
+                        'sampling_jar': {'type': 'integer', 'coerce': int},
+                        'pcb_vial': {'type': 'boolean', 'coerce': bool},
+                        'antioxidant': {'type': 'boolean', 'coerce': bool},
+                        'qty_vial': {'type': 'integer', 'coerce': int},
+                        'sampling_vial': {'type': 'integer', 'coerce': int},
+                        }
+test_result_schema = {'id': {'readonly': True},
+                      'campaign_id': {'type': 'integer', 'coerce': int},
+                      'reason_id': {'type': 'integer', 'coerce': int},
+                      'date_analyse': {'type': 'datetime', 'coerce': datetime},
+                      'test_type_id': {'type': 'integer', 'coerce': int},
+                      'sampling_point_id': {'type': 'integer', 'coerce': int},
+                      'test_status_id': {'type': 'integer', 'coerce': int},
+                      }
 model_dict = {'equipment': {'model': Equipment, 'schema': equipment_schema},
               'equipment_type': {'model': EquipmentType, 'schema': equipment_type_schema},
               'campaign': {'model': Campaign, 'schema': campaign_schema},
@@ -72,8 +239,8 @@ model_dict = {'equipment': {'model': Equipment, 'schema': equipment_schema},
               'location': {'model': Location, 'schema': location_schema},
               'manufacturer': {'model': Manufacturer, 'schema': manufacturer_schema},
               'user': {'model': User, 'schema': user_schema},
-              'assigned_to': {'model': User, 'schema': assigned_to_schema},
-              'visual_inspection_by': {'model': User, 'schema': visual_inspection_by_schema},
+              'assigned_to': {'model': User, 'schema': user_schema},
+              'visual_inspection_by': {'model': User, 'schema': user_schema},
               'electrical_profile': {'model': ElectricalProfile, 'schema': electrical_profile_schema},
               'fluid_profile': {'model': FluidProfile, 'schema': fluid_profile_schema},
               'test_result': {'model': TestResult, 'schema': test_result_schema},
@@ -89,7 +256,7 @@ eq_type_dict = {1: 'air_bkr',
                 # 8: 'Induction machine',
                 9: 'synch',
                 # 10: 'localization'
-                11: 'tc', # tap changer
+                11: 'tc',  # tap changer
                 12: 'rect',
                 # 13: 'site',
                 14: 'transfo',
@@ -99,6 +266,7 @@ eq_type_dict = {1: 'air_bkr',
                 # 18: 'neutral resistance',
                 # 19: 'gas sensor',
                 }
+
 
 class Tree(db.Model):
     __tablename__ = 'tree'
@@ -132,6 +300,7 @@ class Tree(db.Model):
     #             'status': self.status,
     #             }
 
+
 class TreeTranslation(db.Model):
     __tablename__ = 'tree_translation'
 
@@ -164,7 +333,7 @@ def add_item(path):
 
     items_model = model_dict[path]['model']
     validation_schema = model_dict[path]['schema']
-    param_dict = { k:v for k,v in request.json.items() }
+    param_dict = {k: v for k, v in request.json.items()}
     v = Validator()
     if not v.validate(param_dict, validation_schema):
         abort(400, v.errors)
@@ -184,7 +353,7 @@ def add_item(path):
         db.session.add(item_tree)
         db.session.commit()
         param_tree_trans_dict = {
-            'id': item_tree.id,'locale': 'en',
+            'id': item_tree.id, 'locale': 'en',
             'text': param_dict['name'],
             'tooltip': param_dict['name']
         }
@@ -214,9 +383,13 @@ def update_item(path, item_id):
 
 def delete_item(path, item_id):
     items_model = model_dict[path]['model']
-    rows = db.session.query(items_model).filter(items_model.id == item_id).delete(synchronize_session=False)
-    db.session.commit()
-    return rows > 0
+    try:
+        rows = db.session.query(items_model).filter(items_model.id == item_id).delete(synchronize_session=False)
+    except:
+        return False
+    else:
+        db.session.commit()
+        return rows > 0
 
 
 @api.errorhandler(404)
@@ -250,64 +423,97 @@ def handler(path, item_id=None):
 api.register_blueprint(api_blueprint)
 
 
+# General
 """
 @apiDefine Version100
 @apiVersion 1.0.0
 """
 """
-@apiDefine GetSuccess
+@apiDefine GetItemsSuccess
 @apiSuccess {Dict}  result  [list of dicts with items parameters].
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+      "result": [
+        {"id": 1, ... },
+        {"id": 2, ... },
+        ...
+      ]
+    }
+"""
+"""
+@apiDefine GetItemSuccess
+@apiSuccess {Dict}  result  {"dict of item's params"}
+"""
+"""
+@apiDefine DelItemSuccess
+@apiSuccess {Boolean}  result  True or False if item with id is present but couldn't be deleted (e.g. in relative DBMS).
+@apiSuccessExample Success-Response false:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+      "result": false
+    }
+@apiSuccessExample Success-Response true:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+      "result": true
+    }
 """
 """
 @apiDefine Error404
 @apiError(Error 404){Dict}  NotFound    {"error": "Not found"}
+@apiErrorExample {json} Error-Response:
+    HTTP/1.0 404 NOT FOUND
+    Content-Type: application/json
+    {
+      "error": "Not found"
+    }
 """
 """
 @apiDefine Error400
-@apiError(Error 400){Dict}  NotFound    {"error": "JSON not found"}
+@apiError(Error 400){Dict}  JSONNotFound    {"error": "JSON not found"}
+@apiError(Error 400){Dict}  ValidationError    {"field": "error"}
 """
 
-#### General
-"""
-@api {get} /<path>/ Gets a list of items
-@apiVersion 1.0.0
-@apiName get_items
-@apiGroup path
 
-@apiUse GetSuccess
-@apiUse Error404
+# Users
 """
-
-#### Users
-"""
-@api {get} /user Gets a list of items
+@api {get} /user Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
 @apiGroup User
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/user/
 
-@apiUse GetSuccess
+@apiUse GetItemsSuccess
 @apiUse Error404
 """
+
 """
-@api {get} /user/:id Gets an item by id
+@api {get} /user/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
 @apiGroup User
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/user/1
 
-@apiSuccess         {Dict}                 result { "dict of item's params"}
+@apiUse GetItemSuccess
 @apiUse Error404
 """
 """
-@api {post} /user Adds a new User
+@api {post} /user Add a new item
 @apiVersion 1.0.0
-@apiName add_item(User)
+@apiName add_item
 @apiGroup User
 
 @apiSuccess {Number}     result              The new item id.
 @apiUse Error400
 """
 """
-@api {put} /user/:id Updates an User
+@api {put} /user/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
 @apiGroup User
@@ -316,35 +522,54 @@ api.register_blueprint(api_blueprint)
 @apiUse Error400
 """
 """
-@api {delete} /user/:id Deletes an User
+@api {delete} /user/:id Delete an item
 @apiVersion 1.0.0
 @apiName delete_item
 @apiGroup User
 
-@apiSuccess {Boolean}    result              True or False if couldn't delete.
+@apiUse DelItemSuccess
 @apiUse Error404
 """
 
 
-#### Equipment
+# Equipment
 """
-@api {get} /equipment Gets a list of items
+@api {get} /equipment Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
 @apiGroup Equipment
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/equipment/
 
-@apiUse GetSuccess
+@apiUse GetItemsSuccess
 @apiUse Error404
 """
 """
-@api {get} /equipment/:id Gets an item by id
+@api {get} /equipment/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
 @apiGroup Equipment
 
+
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/equipment/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {"id": 1,
+                   "name": "Air Breaker",
+                   "equipment_number": "123ABC456",
+                   ...
+                   "prev_equipment_number": "789WSX159",
+                   "sibling": 1,
+                   }
+    }
+
 @apiSuccess {Integer}         id
 @apiSuccess {String(50)}      name
-@apiSuccess {Integer}         equipment_number
+@apiSuccess {String(50)}      equipment_number
 @apiSuccess {String(50)}      serial
 @apiSuccess {Integer}         equipment_type_id
 @apiSuccess {Dict}            equipment_type
@@ -390,20 +615,20 @@ api.register_blueprint(api_blueprint)
 @apiUse Error404
 """
 """
-@api {post} /equipment Adds a new item
+@api {post} /equipment Add a new item
 @apiVersion 1.0.0
-@apiName add_item(Equipment)
+@apiName add_item
 @apiGroup Equipment
 
 @apiParam {String(50)}      name                        Required.
-@apiParam {Integer}         equipment_number            Required.
-@apiParam {String(50)}      serial                      Required.
+@apiParam {String(50)}      equipment_number            Required.
 @apiParam {Integer}         equipment_type_id           Required.
-@apiParam {Integer}         manufacturer_id             Required.
 @apiParam {Integer}         location_id                 Required.
 @apiParam {Integer}         visual_inspection_by_id     Required. User id
 @apiParam {Integer}         assigned_to_id              Required. User id
 @apiParam {Integer}         norm_id                     Required.
+@apiParam {String(50)}      serial
+@apiParam {Integer}         manufacturer_id
 @apiParam {Integer}         manufactured                Year manufactured, from 1900
 @apiParam {String}          frequency                   '25', '50', '60', 'DC'
 @apiParam {String}          description
@@ -437,7 +662,7 @@ api.register_blueprint(api_blueprint)
 @apiUse Error400
 """
 """
-@api {put} /equipment/:id Updates an item by id
+@api {put} /equipment/:id Update an item by id
 @apiVersion 1.0.0
 @apiName update_item
 @apiGroup Equipment
@@ -446,11 +671,66 @@ api.register_blueprint(api_blueprint)
 @apiUse Error404
 """
 """
-@api {delete} /equipment/:id Deletes an Equipment
+@api {delete} /equipment/:id Delete an item by id
 @apiVersion 1.0.0
 @apiName delete_item
 @apiGroup Equipment
 
-@apiSuccess {Boolean}    result              True if all ok.
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Equipment_type
+equipment_type_schema = {'id': {'readonly': True},
+                         'name': {'type': 'string', 'maxlength': 50},
+                         'code': {'type': 'string', 'maxlength': 50},
+                         'table_name': {'type': 'string', 'maxlength': 50},
+                         }
+
+
+"""
+@api {get} /equipment_type Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup equipment_type
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /equipment_type/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup equipment_type
+
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /equipment_type Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup equipment_type
+
+@apiSuccess {Number}     result              The new item id.
+@apiUse Error400
+"""
+"""
+@api {put} /equipment_type/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup equipment_type
+
+@apiSuccess {Number}     result              See {get} /equipment_type/:id.
+@apiUse Error400
+"""
+"""
+@api {delete} /equipment_type/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup equipment_type
+
+@apiUse DelItemSuccess
 @apiUse Error404
 """
