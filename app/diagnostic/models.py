@@ -631,6 +631,7 @@ class EquipmentType(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
     code = db.Column(db.String(50))
+    table_name = db.Column(db.String(50))
 
     def __repr__(self):
         return self.name
@@ -639,7 +640,8 @@ class EquipmentType(db.Model):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'name': self.name,
-                'code': self.code
+                'code': self.code,
+                'table_name': self.table_name,
                 }
 
 
@@ -1830,17 +1832,17 @@ class Equipment(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.id, self.equipment_number, self.equipment_type)
 
-    def __init__(self, **kwargs):
-        self.visual_inspection_by_id = int(kwargs.get('visual_inspection_by_id'))
-        self.norm_id = int(kwargs.get('norm_id'))
-        self.equipment_type_id = int(kwargs.get('equipment_type_id'))
-        self.equipment_number = int(kwargs.get('equipment_number'))
-        self.location_id = int(kwargs.get('location_id'))
-        self.manufacturer_id = int(kwargs.get('manufacturer_id'))
-        self.assigned_to_id = int(kwargs.get('assigned_to_id'))
-        self.serial = int(kwargs.get('serial'))
-        self.frequency = cast(kwargs.get('frequency'), Enum(name='Frequency'))
-        # db.Enum('25', '50', '60', 'DC', name="Frequency")
+    # def __init__(self, **kwargs):
+    #     self.visual_inspection_by_id = int(kwargs.get('visual_inspection_by_id'))
+    #     self.norm_id = int(kwargs.get('norm_id'))
+    #     self.equipment_type_id = int(kwargs.get('equipment_type_id'))
+    #     self.equipment_number = int(kwargs.get('equipment_number'))
+    #     self.location_id = int(kwargs.get('location_id'))
+    #     self.manufacturer_id = int(kwargs.get('manufacturer_id'))
+    #     self.assigned_to_id = int(kwargs.get('assigned_to_id'))
+    #     self.serial = int(kwargs.get('serial'))
+    #     self.frequency = cast(kwargs.get('frequency'), Enum(name='Frequency'))
+    #     # db.Enum('25', '50', '60', 'DC', name="Frequency")
 
 
     def serialize(self):

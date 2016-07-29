@@ -27,7 +27,7 @@ const App = React.createClass ({
         return (
             <div>
                 { this.state.showEquipmentList ?
-                    <EquipmentList source="http://dev.vision.local/api/v1.0/campaign/"/> : null }
+                    <EquipmentList source="/api/v1.0/campaign/"/> : null }
                 { this.state.showEquipmentForm ? <EquipmentForm /> : null }
                 { this.state.showEquipmentTest ? <EquipmentTestForm /> : null }
             </div>
