@@ -1,100 +1,106 @@
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
-import Checkbox from 'material-ui/Checkbox';
-import AppBar from 'material-ui/AppBar';
-import AutoComplete from 'material-ui/AutoComplete';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import Dialog from 'material-ui/Dialog';
-import Divider from 'material-ui/Divider';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
-import injectTapEventPlugin from "react-tap-event-plugin";
 
-import {findDOMNode} from 'react-dom';
-injectTapEventPlugin();
+var selectRowProp = {
+    mode: "checkbox",
+    clickToSelect: true,
+    bgColor: "rgb(238, 193, 213)",
+    onSelect: onRowSelect
+};
 
-//
-// const EquipmentList = React.createClass({
-//     getInitialState: function () {
-//         return {
-//             loading: false,
-//             errors: {}
-//         }
-//     },
-//     _create: function () { 
-//         return $.ajax({
-//             url: '/api/v1.0/equipment/',
-//             type: 'GET',
-//             data: { 
-//             },
-//             beforeSend: function () {
-//                 this.setState({loading: true});
-//             }.bind(this)
-//         })
-//     },
-//     _onSubmit: function (e) {
-//         e.preventDefault();
-//         // var errors = this._validate();
-//         // if(Object.keys(errors).length != 0) {
-//         //   this.setState({
-//         //     errors: errors
-//         //   });
-//         //    return;
-//         // }
-//         var xhr = this._create();
-//         xhr.done(this._onSuccess)
-//             .fail(this._onError)
-//             .always(this.hideLoading)
-//     },
-//     hideLoading: function () {
-//         this.setState({loading: false});
-//     },
-//     _onSuccess: function (data) {
-//         this.refs.eqtype_form.getDOMNode().reset();
-//         this.setState(this.getInitialState());
-//         // show success message
-//     },
-//     _onError: function (data) {
-//         var message = "Failed to create";
-//         var res = data.responseJSON;
-//         if(res.message) {
-//             message = data.responseJSON.message;
-//         }
-//         if(res.errors) {
-//             this.setState({
-//                 errors: res.errors
-//             });
-//         }
-//     },
-//     _onChange: function (e) {
-//         console.log(e.target.name);
-//         var state = {};
-//         state[e.target.name] =  $.trim(e.target.value);
-//         this.setState(state);
-//     },
-//     _validate: function () {
-//         var errors = {};
-//     },
-//     _formGroupClass: function (field) {
-//         var className = "form-group ";
-//         if(field) {
-//             className += " has-error"
-//         }
-//         return className;
-//     },
-//     render: function() {
-//
-//         return (
-//             <div className="form-container">
-//                 <FormBar/>
-//
-//                 <div><RaisedSaveButton/><RaisedCancelButton/></div>
-//             </form>
-//             </div>
-//         );
-//     }
-// });
-//
-// export default EquipmentList;
+var cellEditProp = {
+    mode: "click",
+    blurToSave: true,
+    afterSaveCell: onAfterSaveCell
+};
+
+
+function onRowSelect(row, isSelected){
+    console.log(row);
+    console.log("selected: " + isSelected);
+}
+
+function onAfterSaveCell(row, cellName, cellValue){
+    console.log("Save cell '"+cellName+"' with value '"+cellValue+"'");
+    console.log("Thw whole row :");
+    console.log(row);
+}
+
+const EquipmentList = React.createClass({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            isVisible: true,
+            data: false
+        }
+    },
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            var arr = (result['result']);
+            var data = [];
+            for (var i=0;i < arr.length; i++) {
+                var item = arr[i];
+                item.test_result = {
+                    test_reason: 'Repair',
+                    test_type: 'Fluid',
+                    test_status: 'In progress'
+                };
+                data.push({
+                    date: item.date,
+                    reason: item.test_result.test_reason,
+                    type: item.test_result.test_type,
+                    contract: item.contract.code,
+                    test_status: item.test_result.test_status,
+                    analysis_number: item.analysis_number,
+                    serial: item.equipment.serial,
+                    equipment_number: item.equipment.equipment_number
+                });
+            }
+            console.log(data);
+            this.setState({
+                data: data
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    render: function() {
+
+        {if (!this.state.data) { return null }}
+        return (
+            <div>
+                <BootstrapTable data={this.state.data}
+                                cellEdit={cellEditProp}
+                                striped={true}
+                                hover={true}
+                                selectRow={selectRowProp}
+                                search={true}>
+                    <TableHeaderColumn editable={false} dataField="date" dataSort={true}>Acquisition Date</TableHeaderColumn>
+                    <TableHeaderColumn editable={false} dataField="reason" dataSort={true}>Reason</TableHeaderColumn>
+                    <TableHeaderColumn editable={false} dataField="type" dataSort={true}>Type</TableHeaderColumn>
+                    <TableHeaderColumn editable={false} dataField="contract"
+                                       filter={{type: "TextFilter", placeholder: "Contract number"}}
+                                       dataSort={true}>Contract No.</TableHeaderColumn>
+                    <TableHeaderColumn dataField="test_status" dataSort={true}>Analysis stage</TableHeaderColumn>
+                    <TableHeaderColumn editable={false} dataField="analysis_number" isKey={true}>Analysis Nr</TableHeaderColumn>
+                    <TableHeaderColumn deditable={false} ataField="serial"
+                                       filter={{type: "TextFilter", placeholder: "Please enter a value"}}
+                                       dataSort={true}>Serial No.</TableHeaderColumn>
+                    <TableHeaderColumn editable={false} dataField="equipment_number">Equipment No.</TableHeaderColumn>
+                </BootstrapTable>
+            </div>
+        );
+    }
+});
+
+export default EquipmentList; 

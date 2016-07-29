@@ -61,6 +61,7 @@ var TreeComponent = React.createClass({
                 }
             }
             ,"types": types
+            ,"contextmenu": contextMenu,
         }).on('delete_node.jstree', function (e, data ) {
             $.post(url.treeDelete, { 'id' : data.node.id } ,function(data ){
                 //alert(data.id == true );
@@ -224,6 +225,223 @@ const types= {
     }
 }
 
+const contextMenu = {
+    'items' : function(node) {
+        var tmp = $.jstree.defaults.contextmenu.items();
+        delete tmp.create.action;
 
+        var current = $('#tree').jstree(true).get_selected('full',true)[0];
+
+        if( (this.get_type(node) !== "default")
+            && ((this.get_type(node) !== "root"))
+        )
+        {
+            tmp['status'] = {
+                'label' : "Status"
+                ,'submenu' : {
+                    'on' : {
+                        "separator_after"	    : true
+                        ,"label"				: "Normal"
+                        ,"action"			    : function (data){
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 1 }
+                                ,function(data){
+                                    if(data.status == "OK"){
+                                        $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
+                                    }
+
+                                }).fail(function () {
+                                console.log(fail);
+                                data.instance.refresh();
+                            });
+                        }
+                    }
+                    ,'medium' : {
+                        "separator_after"	    : true
+                        ,"label"				: "Warning"
+                        ,"action"			    : function (data){
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 2 }
+                                ,function(data){
+                                    if(data.status == "OK"){
+                                        $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
+                                    }
+
+                                }).fail(function () {
+                                console.log(fail);
+                                data.instance.refresh();
+                            });
+                        }
+                    }
+                    ,'off' : {
+                        "separator_after"	    : true
+                        ,"label"				: "Danger"
+                        ,"action"			    : function (data){
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 0 }
+                                ,function(data){
+                                    if(data.status == "OK"){
+                                        $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
+                                    }
+
+                                }).fail(function () {
+                                console.log(fail);
+                                data.instance.refresh();
+                            });
+                        }
+                    }
+                }
+            };
+
+            tmp['join'] = {
+                'label' : 'Join'
+                ,"separator_before"  : false    // Insert a separator before the item
+                ,"separator_after"   : true,     // Insert a separator after the item
+                "action" : function (node){
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+
+                    console.log("Join " + obj.id);
+                    ids = [];
+                    console.log(ids.length);
+                    $.each( $('#tree').jstree(true).get_selected('full',true) , function( index , value){
+                        if(value.id != obj.id){
+                            ids[ids.length] = value.id;
+                        }
+                    });
+
+                    $.post(url.treeJoin, { 'node_id' : obj.id , 'to_join' : JSON.stringify(ids) }
+                        ,function(data){
+                            if(data.status == "OK"){
+                                $.each( data.joined , function(index, value){
+                                    $('#tree').jstree(true).delete_node($("#" + value));
+                                });
+                            }
+
+                        }).fail(function () {
+                        console.log(fail);
+                        data.instance.refresh();
+                    });
+
+                }
+            }
+        }
+
+        if(typeof current !== 'undefined'){
+            if( current.parents.length >= 9){
+
+                tmp.create.label = '';
+                tmp.ccp.label = '';
+
+                delete tmp.ccp.submenu.paste;
+                delete tmp.ccp.submenu.cut;
+                delete tmp.ccp.submenu.copy;
+
+                return tmp;
+            }
+        }
+
+        tmp.create.label = "New";
+        tmp.create.submenu = {
+            'main' : {
+                "separator_after"	    : true
+                ,"label"				: "Main"
+                ,"action"			    : function (data){
+                    var inst = $.jstree.reference(data.reference),
+                        obj = inst.get_node(data.reference);
+                    $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "New Main" , 'icon' : '../app/static/img/icons/main_b.ico' , 'type' : 'main' , tooltip : "Main tooltip" }
+                        ,function(data){
+
+                            inst.create_node(obj, { 'id' : data.id , 'text' : 'New Main' + data.id , 'icon' : '../app/static/img/icons/main_b.ico' , type: 'main' }
+                                , "last", function (new_node) {
+
+                                    setTimeout(function () {
+                                        inst.edit(new_node); },0);
+                                });
+
+
+                        }).fail(function () {
+                        console.log(fail);
+                        data.instance.refresh();
+                    });
+                }
+            }
+            ,'equipment' : {
+                "separator_after"	    : true
+                ,"label"				: "Equipment"
+                ,"action"			    : function (data){ 
+                    window.location.href = '#/equipment'
+                }
+                // var inst = $.jstree.reference(data.reference),
+                //     obj = inst.get_node(data.reference);
+
+                // $.post(url.treeCreate, {
+                //         parent: obj.id,
+                //         text: "Transfo",
+                //         icon: '../app/static/img/icons/cable_b.ico',
+                //         type: 'cable',
+                //         tooltip: "Equipment tooltip"
+                //     }
+                //     ,function(data){
+                //         inst.create_node(obj, {
+                //                 'id': data.id,
+                //                 'text': 'Equipment' + data.id,
+                //                 'icon' : '../app/static/img/icons/cable_b.ico',
+                //                 'type' : 'Equipment'
+                //             }
+                //             , "last", function (new_node) {
+                //
+                //                 setTimeout(function () {
+                //                     $("#tree #" + obj.id +"_anchor .jstree-icon").attr({ 'title' : "Cable tooltip" + data.id }).tooltip({
+                //                         track: true
+                //                     });
+                //                     inst.edit(new_node); },0);
+                //             });
+                //     }).fail(function () {
+                //     console.log(fail);
+                //     data.instance.refresh();
+                // });
+            }
+        };
+
+
+        if( (this.get_type(node) === "default")
+            || ((this.get_type(node) === "root"))
+        )
+        {
+            $.each(tmp.create.submenu , function(index, value){
+                if( value.label !== 'Main' ){
+                    //console.log(tmp.create.submenu[index]);
+                    delete tmp.create.submenu[index];
+                    //delete value;
+                    //delete this;
+                }
+            });
+
+        }else if(this.get_type(node) != "main"){
+            //delete main submenu
+            delete tmp.create.submenu.main;
+        }
+
+        if(this.get_type(node) === "file") {
+            delete tmp.create;
+        }
+
+        if( node.state != null && node.state.disabled == true)
+        {
+            delete tmp.rename;
+            delete tmp.remove;
+            tmp.ccp.label = '';
+            delete tmp.ccp.submenu.paste;
+            delete tmp.ccp.submenu.cut;
+        }
+
+        delete tmp.ccp.submenu.copy;
+        return tmp;
+    }
+}
 export default TreeComponent;
 
