@@ -10,10 +10,18 @@ from sqlalchemy_i18n import (
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.ext.declarative import declarative_base
+import json
+
 
 BaseManager = declarative_base()
 
 make_translatable(options={'locales': ['en', 'fr', 'es']})
+
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
 
 
 class TreeNode(Translatable, BaseManager):
@@ -28,6 +36,13 @@ class TreeNode(Translatable, BaseManager):
 
     id = sqla.Column(sqla.Integer, primary_key=True)
     parent_id = sqla.Column(sqla.Integer, sqla.ForeignKey(id))
+
+    equipment_id = sqla.Column(sqla.Integer, nullable=True)
+    # equipment_id = sqla.Column(
+    #     'equipment_id',
+    #     sqla.ForeignKey("equipment.id"),
+    #     nullable=False
+    # )
 
     # costumed column
     icon = sqla.Column(sqla.String(126), default="../app/static/img/file.png")
@@ -48,11 +63,12 @@ class TreeNode(Translatable, BaseManager):
         backref=backref("parent", remote_side=id),
         # children will be represented as a dictionary
         # on the "name" attribute.
-        collection_class=attribute_mapped_collection('text'),
+        # collection_class=attribute_mapped_collection('text'),
     )
 
     def get_locale(self):
         return self.locale
+
 
     def __init__(self, text='', parent=None, icon="glyphicon-file", opened=True, disabled=False
                  , selected=False, view="home", type='file', tooltip='', status=1):
@@ -67,12 +83,45 @@ class TreeNode(Translatable, BaseManager):
         self.type = type
         self.status = status
 
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        # return json.dumps(self, default=lambda o: o.__dict__,
+        #                   sort_keys=True, indent=4)
+        return {
+            'id': self.id,
+            'text': self.text,
+            # 'parent': self.parent and self.parent.serialize(),
+            'icon': self.icon,
+            'opened': self.opened,
+            'disabled': self.disabled,
+            'view': self.view,
+            'type': self.type,
+            'status': self.status,
+            'equipment_id': self.equipment_id,
+            # # This is an example how to deal with Many2Many relations
+            'children': self.serialize_many2many()
+        }
+
+    def serialize_many2many(self):
+        """
+        Return object's relations in easily serializeable format.
+        NB! Calls many2many's serialize property.
+        """
+        if not self.children:
+            return None
+        return [item.serialize() for item in self.children]
+
     def __repr__(self):
-        return "TreeNode(name=%r, id=%r, parent_id=%r)" % (
-            self.text,
+        return "{ name: %r, id: %r, parent_id: %r }" % (
+            self.text or '',
             self.id,
             self.parent_id
         )
+
+    # def dump(self, _indent=0):
+    #     p = self.serialize()
+    #     p['children'] = [c.serialize() for c in self.children.values()]
+    #     return p
 
     def dump(self, _indent=0):
         return "   " * _indent + repr(self) + \
@@ -90,3 +139,15 @@ class TreeNodeTranslation(translation_base(TreeNode)):
 
     text = sqla.Column(sqla.UnicodeText())
     tooltip = sqla.Column(sqla.UnicodeText())
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        # return json.dumps(self, default=lambda o: o.__dict__,
+        #                   sort_keys=True, indent=4)
+        return {
+            'id': self.id,
+            'text': self.text,
+            'tooltip': self.tooltip,
+        }
+

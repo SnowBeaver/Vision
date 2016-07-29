@@ -23,6 +23,8 @@
             treeCopy: '{{ url_for("tree.copy") }}',
             treeGetView: '{{ url_for("tree.getview") }}'
         };
+        var treeStruct = {{ _(tree) }};
+{#</div>#}
     </script>
 
 {% endblock head %}
@@ -52,7 +54,7 @@
 {% block tail %}
     <script src="{{ url_for('static', filename='js/jstree.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/selectize.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='src/diagnostic/Tree.js') }}"></script>
+{#    <script src="{{ url_for('static', filename='src/diagnostic/Tree.js') }}"></script>#}
     <script>
         var WebFontConfig = {
           google: { families: [ 'Roboto:400,300,500:latin' ] }
