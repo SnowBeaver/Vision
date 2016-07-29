@@ -227,4 +227,3 @@ const types= {
 
 export default TreeComponent;
 
-
