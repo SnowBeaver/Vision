@@ -37,6 +37,13 @@ class TreeNode(Translatable, BaseManager):
     id = sqla.Column(sqla.Integer, primary_key=True)
     parent_id = sqla.Column(sqla.Integer, sqla.ForeignKey(id))
 
+    equipment_id = sqla.Column(sqla.Integer, nullable=True)
+    # equipment_id = sqla.Column(
+    #     'equipment_id',
+    #     sqla.ForeignKey("equipment.id"),
+    #     nullable=False
+    # )
+
     # costumed column
     icon = sqla.Column(sqla.String(126), default="../app/static/img/file.png")
     opened = sqla.Column(sqla.Boolean(), default=True)
@@ -90,6 +97,7 @@ class TreeNode(Translatable, BaseManager):
             'view': self.view,
             'type': self.type,
             'status': self.status,
+            'equipment_id': self.equipment_id,
             # # This is an example how to deal with Many2Many relations
             'children': self.serialize_many2many()
         }
@@ -102,32 +110,25 @@ class TreeNode(Translatable, BaseManager):
         if not self.children:
             return None
         return [item.serialize() for item in self.children]
-    #
-    # def __repr__(self):
-    #     return "{ name: %r, id: %r, parent_id: %r }" % (
-    #         self.text or '',
-    #         self.id,
-    #         self.parent_id
-    #     )
-    #
-    # def serialize(self):
-    #     return {
-    #         'text': self.text,
-    #         'id': self.id,
-    #         'parent_id': self.parent_id
-    #     }
-    #
+
+    def __repr__(self):
+        return "{ name: %r, id: %r, parent_id: %r }" % (
+            self.text or '',
+            self.id,
+            self.parent_id
+        )
+
     # def dump(self, _indent=0):
     #     p = self.serialize()
     #     p['children'] = [c.serialize() for c in self.children.values()]
     #     return p
 
-    # def dump(self, _indent=0):
-    #     return "   " * _indent + repr(self) + \
-    #            "\n" + \
-    #            "".join(
-    #                [c.dump(_indent + 1) for c in self.children.values()]
-    #            )
+    def dump(self, _indent=0):
+        return "   " * _indent + repr(self) + \
+               "\n" + \
+               "".join(
+                   [c.dump(_indent + 1) for c in self.children.values()]
+               )
 
     def append(self, nodename):
         self.children[nodename] = TreeNode(nodename, parent=self)

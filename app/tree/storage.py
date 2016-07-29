@@ -29,9 +29,9 @@ def get_tree():
     #         .filter(TreeNode.text == u'Vision Diagnostic').first()
     #     res = None
     #     if tree is not None:
-    #         res = "["
+    #         res = "<ul>"
     #         res += create_tree(tree)
-    #         res += "]"
+    #         res += "</ul>"
     # except Exception as e:
     #     import logging
     #     logging.error(e)
@@ -40,19 +40,42 @@ def get_tree():
     # try:
     #     tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
     #         .filter(TreeNode.text == u'Vision Diagnostic').first()
-    tree = db.session.query(TreeNode)\
-        .options(joinedload_all("children", "children", "children", "children"))\
-        .filter(TreeNode.text == u'Vision Diagnostic').first()
+    # tree = db.session.query(TreeNode)\
+    #     .options(joinedload_all("children", "children", "children", "children"))\
+    #     .filter(TreeNode.text == u'Vision Diagnostic').first()
 
-    res = [item.serialize() for item in tree.children]
-    print res
-    return json.dumps(res)
+    tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")).get(1) # get root
+
+    res = []
+    # res.insert(0,tree.serialize())
+
+    res.append(tree.serialize())
+
+    if tree.children:
+        res = serialize(tree.children, res)
+        # for item in tree.children:
+        #     res.append(item.serialize())
+        #     if item.children:
+    # print res
+
+    response = json.dumps(res)
+    return response
 
     # except Exception as e:
     #     import logging
     #     logging.error(e)
 
 
+def serialize(tree, res):
+    if type(tree) == list:
+        for item in tree:
+            res.append(item.serialize())
+            if item.children:
+                return serialize(item.children, res)
+
+    # item = tree.serialize()
+    # res.append(item)
+    return res
 
 # create generate tree
 def create_node(parent, text, icon, type, tooltip):
@@ -234,7 +257,7 @@ def copy_node(node_id, parent_id):
 
 
 def render_tree_li(tree):
-    data = "[ data-jstree='"
+    data = "<li data-jstree='"
     opened = "true" if tree.opened else "false"
     data += "\"openend\" : " + opened
     selected = "true" if tree.selected else "false"
@@ -245,7 +268,7 @@ def render_tree_li(tree):
     data += ",\"icon\" : \"" + tree.icon + "\"}'"
     if tree.tooltip is not None:
         data += " title=\"" + tree.tooltip + "\""
-    data += " id=\"" + str(tree.id) + "\"]" + tree.text
+    data += " id=\"" + str(tree.id) + "\">" + tree.text
 
     return data
 
@@ -253,31 +276,16 @@ def render_tree_li(tree):
 def create_tree(tree):
     data = render_tree_li(tree)
     if tree.children:
-        data += "["
+        data += "<ul>"
         for chd in tree.children:
             if tree.children[chd].children:
                 data += create_tree(tree.children[chd])
             else:
                 data += render_tree_li(tree.children[chd])
-                data += "]"
-        data += "]"
-    data += "]"
+                data += "</li>"
+        data += "</ul>"
+    data += "</li>"
     return data
-
-
-# def create_tree(tree):
-#     data = render_tree_li(tree)
-#     if tree.children:
-#         data += "<ul>"
-#         for chd in tree.children:
-#             if tree.children[chd].children:
-#                 data += create_tree(tree.children[chd])
-#             else:
-#                 data += render_tree_li(tree.children[chd])
-#                 data += "</li>"
-#         data += "</ul>"
-#     data += "</li>"
-#     return data
 
 
 @app.template_filter('render_tree')

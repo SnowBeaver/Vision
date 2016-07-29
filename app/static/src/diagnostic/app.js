@@ -51,12 +51,10 @@ const App = React.createClass ({
                         <br/>
                         <br/>
                         <br/>
-                        <div>
                             <TreeComponent struct={treeStruct}/>
-                        </div>
                     </div>
                 </div>
-                <div className="col-md-9" id="app">
+                <div className="col-md-9">
                     { this.state.showEquipmentList ?
                         <EquipmentList source="/api/v1.0/campaign/"/> : null }
                     { this.state.showEquipmentForm ? <EquipmentForm /> : null }
