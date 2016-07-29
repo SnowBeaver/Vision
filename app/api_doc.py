@@ -6,10 +6,6 @@ doc = ApiDoc(app=api)
 
 # General
 """
-@apiDefine Version100
-@apiVersion 1.0.0
-"""
-"""
 @apiDefine GetItemsSuccess
 @apiSuccess {Dict}  result  [list of dicts with items parameters].
 @apiSuccessExample Success-Response:
@@ -337,10 +333,10 @@ doc = ApiDoc(app=api)
         }
     }
 
-@apiSuccess {Integer}   id
-@apiSuccess {String}    name        'maxlength': 50
-@apiSuccess {String}    code        'maxlength': 50
-@apiSuccess {String}    table_name  'maxlength': 50
+@apiSuccess {Integer}     id
+@apiSuccess {String(50)}  name
+@apiSuccess {String(50)}  code
+@apiSuccess {String(50)}  table_name
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -354,9 +350,9 @@ doc = ApiDoc(app=api)
          -d '{"name":"Tank", "code":"Y", "table_name":"tank"}' \
          http://localhost:8001/api/v1.0/equipment_type/
 
-@apiParam {String}    name        'maxlength': 50
-@apiParam {String}    code        'maxlength': 50
-@apiParam {String}    table_name  'maxlength': 50
+@apiParam {String(50)}  name
+@apiParam {String(50)}  code
+@apiParam {String(50)}  table_name
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -422,11 +418,11 @@ doc = ApiDoc(app=api)
         }
     }
 
-@apiSuccess {Integer}   id
-@apiSuccess {String}    name                'maxlength': 50
-@apiSuccess {String}    code                'maxlength': 50
-@apiSuccess {String}    contract_status_id  'maxlength': 50
-@apiSuccess {Dict}      contract_status
+@apiSuccess {Integer}     id
+@apiSuccess {String(50)}  name
+@apiSuccess {String(50)}  code
+@apiSuccess {String(50)}  contract_status_id
+@apiSuccess {Dict}        contract_status
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -440,10 +436,9 @@ doc = ApiDoc(app=api)
          -d '{"name":"My contract", "code":"My code", "contract_status_id":1}' \
          http://localhost:8001/api/v1.0/contract/
 
-@apiSuccess {String}    name                'maxlength': 50
-@apiSuccess {String}    code                'maxlength': 50
-@apiSuccess {String}    contract_status_id  'maxlength': 50
-
+@apiParam {String(50)}  name
+@apiParam {String(50)}  code
+@apiParam {String(50)}  contract_status_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -466,6 +461,578 @@ doc = ApiDoc(app=api)
 @apiGroup Contract
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/contract/10
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Norm
+"""
+@api {get} /norm/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup norm
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/norm/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /norm/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup norm
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/norm/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "Norms furan ",
+            "table_name": "norm_furan"
+        }
+    }
+
+@apiSuccess {Integer}     id
+@apiSuccess {String(50)}  name
+@apiSuccess {String(50)}  table_name
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /norm Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup norm
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"name":"Norms furan", "table_name":"norm_furan"}' \
+         http://localhost:8001/api/v1.0/norm/
+
+@apiParam {String(50)}  name
+@apiParam {String(50)}  table_name
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /norm/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup norm
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name":"My other name"}'\
+    http://localhost:8001/api/v1.0/norm/10
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /norm/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup norm
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/norm/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Location
+"""
+@api {get} /location/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup location
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/location/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /location/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup location
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/location/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "location"
+        }
+    }
+
+@apiSuccess {Integer}     id
+@apiSuccess {String(50)}  name
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /location Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup location
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"My location"}' \
+         http://localhost:8001/api/v1.0/location/
+
+@apiParam {String(50)}  name
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /location/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup location
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name":"My other name"}'\
+    http://localhost:8001/api/v1.0/location/10
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /location/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup location
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/location/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Manufacturer
+"""
+@api {get} /manufacturer/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup manufacturer
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/manufacturer/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /manufacturer/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup manufacturer
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/manufacturer/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "description": "-",
+            "id": 1,
+            "location": "Enteropia",
+            "markings": "AAA",
+            "name": "Ardrites"
+        }
+    }
+
+@apiSuccess {Integer}     id
+@apiSuccess {String(50)}  name
+@apiSuccess {String(50)}  table_name
+@apiSuccess {String(256)} location
+@apiSuccess {String}      markings
+@apiSuccess {String}      description
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /manufacturer Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup manufacturer
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"name":"Ardrites", "location": "Enteropia", "markings": "AAA"}' \
+         http://localhost:8001/api/v1.0/manufacturer/
+
+@apiParam {String(50)}  name        required
+@apiParam {String(50)}  table_name
+@apiParam {String(256)} location
+@apiParam {String}      markings
+@apiParam {String}      description
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /manufacturer/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup manufacturer
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name":"My other name"}'\
+    http://localhost:8001/api/v1.0/manufacturer/10
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /manufacturer/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup manufacturer
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/manufacturer/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Electrical profile
+"""
+@api {get} /electrical_profile/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup electrical_profile
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/electrical_profile/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /electrical_profile/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup electrical_profile
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/electrical_profile/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "selection": "My selection"
+            "description": "My descripton"
+            "bushing": true
+            "winding": true
+            "insulation_pf": true
+            "insulation": true
+            "visual": true
+            "resistance": true
+            "degree": true
+            "turns": true
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String(256)}   selection
+@apiSuccess {String(1024)}  description
+@apiSuccess {Boolean}       bushing
+@apiSuccess {Boolean}       winding
+@apiSuccess {Boolean}       insulation_pf
+@apiSuccess {Boolean}       insulation
+@apiSuccess {Boolean}       visual
+@apiSuccess {Boolean}       resistance
+@apiSuccess {Boolean}       degree
+@apiSuccess {Boolean}       turns
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /electrical_profile Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup electrical_profile
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"selection":"My selection", "description": "My description", "bushing": true}' \
+         http://localhost:8001/api/v1.0/electrical_profile/
+
+@apiParam {String(256)}   selection
+@apiParam {String(1024)}  description
+@apiParam {Boolean}       bushing
+@apiParam {Boolean}       winding
+@apiParam {Boolean}       insulation_pf
+@apiParam {Boolean}       insulation
+@apiParam {Boolean}       visual
+@apiParam {Boolean}       resistance
+@apiParam {Boolean}       degree
+@apiParam {Boolean}       turns
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /electrical_profile/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup electrical_profile
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name":"My other name"}'\
+    http://localhost:8001/api/v1.0/electrical_profile/10
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /electrical_profile/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup electrical_profile
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/electrical_profile/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Fluid profile
+"""
+@api {get} /fluid_profile/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup fluid_profile
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/fluid_profile/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /fluid_profile/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup fluid_profile
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/fluid_profile/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "selection": "My selection"
+            "description": "My descripton"
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String(256)}   selection
+@apiSuccess {String(1024)}  description
+@apiSuccess {Integer}       qty
+@apiSuccess {Integer}       sampling
+@apiSuccess {Integer}       qty_jar
+@apiSuccess {Integer}       sampling_jar
+@apiSuccess {Integer}       qty_vial
+@apiSuccess {Integer}       sampling_vial
+@apiSuccess {Boolean}       gas
+@apiSuccess {Boolean}       water
+@apiSuccess {Boolean}       furans
+@apiSuccess {Boolean}       inhibitor
+@apiSuccess {Boolean}       pcb
+@apiSuccess {Boolean}       dielec
+@apiSuccess {Boolean}       acidity
+@apiSuccess {Boolean}       density
+@apiSuccess {Boolean}       pcb_jar
+@apiSuccess {Boolean}       inhibitor_jar
+@apiSuccess {Boolean}       point
+@apiSuccess {Boolean}       dielec_2
+@apiSuccess {Boolean}       color
+@apiSuccess {Boolean}       pf
+@apiSuccess {Boolean}       particles
+@apiSuccess {Boolean}       metals
+@apiSuccess {Boolean}       viscosity
+@apiSuccess {Boolean}       dielec_d
+@apiSuccess {Boolean}       ift
+@apiSuccess {Boolean}       pf_100
+@apiSuccess {Boolean}       furans_f
+@apiSuccess {Boolean}       water_w
+@apiSuccess {Boolean}       corr
+@apiSuccess {Boolean}       dielec_i
+@apiSuccess {Boolean}       visual
+@apiSuccess {Boolean}       pcb_vial
+@apiSuccess {Boolean}       antioxidant
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /fluid_profile Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup fluid_profile
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"selection":"My selection", "description": "My description", "gas": true}' \
+         http://localhost:8001/api/v1.0/fluid_profile/
+
+@apiParam {String(256)}   selection
+@apiParam {String(1024)}  description
+@apiParam {Integer}       qty
+@apiParam {Integer}       sampling
+@apiParam {Integer}       qty_jar
+@apiParam {Integer}       sampling_jar
+@apiParam {Integer}       qty_vial
+@apiParam {Integer}       sampling_vial
+@apiParam {Boolean}       gas
+@apiParam {Boolean}       water
+@apiParam {Boolean}       furans
+@apiParam {Boolean}       inhibitor
+@apiParam {Boolean}       pcb
+@apiParam {Boolean}       dielec
+@apiParam {Boolean}       acidity
+@apiParam {Boolean}       density
+@apiParam {Boolean}       pcb_jar
+@apiParam {Boolean}       inhibitor_jar
+@apiParam {Boolean}       point
+@apiParam {Boolean}       dielec_2
+@apiParam {Boolean}       color
+@apiParam {Boolean}       pf
+@apiParam {Boolean}       particles
+@apiParam {Boolean}       metals
+@apiParam {Boolean}       viscosity
+@apiParam {Boolean}       dielec_d
+@apiParam {Boolean}       ift
+@apiParam {Boolean}       pf_100
+@apiParam {Boolean}       furans_f
+@apiParam {Boolean}       water_w
+@apiParam {Boolean}       corr
+@apiParam {Boolean}       dielec_i
+@apiParam {Boolean}       visual
+@apiParam {Boolean}       pcb_vial
+@apiParam {Boolean}       antioxidant
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /fluid_profile/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup fluid_profile
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name":"My other name"}'\
+    http://localhost:8001/api/v1.0/fluid_profile/10
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /fluid_profile/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup fluid_profile
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/fluid_profile/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Test result
+"""
+@api {get} /test_result/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_result
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_result/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_result/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_result
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_result/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "campaign_id": 1,
+            "reason_id": 1,
+            "date_analyse": [
+                "2016-07-29",
+                "17:52:19"
+            ],
+            "test_type_id": 1,
+            "sampling_point_id": 1,
+            "test_status_id": 1,
+        }
+    }
+
+@apiSuccess {Integer}   id
+@apiSuccess {Integer}   campaign_id
+@apiSuccess {Integer}   reason_id
+@apiSuccess {DateTime}  date_analyse
+@apiSuccess {Integer}   test_type_id
+@apiSuccess {Integer}   sampling_point_id
+@apiSuccess {Integer}   test_status_id
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_result Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_result
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"campaign_id":1, "reason_id": 5, "test_type_id": 1, "date_analyse": "2016-07-29 17:52:19"}' \
+         http://localhost:8001/api/v1.0/test_result/
+
+@apiParam {Integer}   campaign_id
+@apiParam {Integer}   reason_id
+@apiParam {DateTime}  date_analyse      format "2016-07-29 17:52:19"
+@apiParam {Integer}   test_type_id
+@apiParam {Integer}   sampling_point_id
+@apiParam {Integer}   test_status_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_result/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_result
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"date_analyse": "2016-07-29 17:52:19"}'\
+    http://localhost:8001/api/v1.0/test_result/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_result/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_result
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_result/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
