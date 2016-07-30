@@ -30,7 +30,7 @@ export default class App extends Component {
         }
 
         return (
-            <div className='container'>
+            <div className='app-container'>
                 <ul>
                     <li><a href='#/home'>Home</a></li>
                     <li><a href='#/equipment'>Equipment</a></li>

@@ -18,10 +18,9 @@ var TreeComponent = React.createClass({
         });
     },
     handleNodeClick: function(e, data) {
-        console.log(e.target);
-        console.log(data);
-        // console.log(event.target.getAttribute('data-jstree'));
-
+        var item = data.instance.get_node(data.node.id);
+        console.log(item.state);
+        
         // ReactDOM.unmountComponentAtNode(this)function (e, data) {
         //
         // $("#treeView #node_id").val(data.node.id);
@@ -33,17 +32,73 @@ var TreeComponent = React.createClass({
         //     }
         // }).fail(function () {
         // });
-    }, 
+    },
+    
+    handleMoveNode: function(e, data){ 
+        var item = data.instance.get_node(data.node.id);
+        var parent = data.instance.get_node(data.parent);
+        //console.log('Move node', item.state.id, parent.state.id);
+        $.post(url.treeMove, {
+            'node_id' : item.state.id, 
+            'parent_id' : parent.state.id
+        }, function(data){
+            // alert(data.success == true );
+        }).fail(function () {
+            data.instance.refresh();
+        });
+    },
+    
+    handleDeleteNode: function(e, data){ 
+        var item = data.instance.get_node(data.node.id);
+        $.post(url.treeDelete, {
+            'id': item.node.id 
+        }, function(data) {
+            //alert(data.id == true );
+        }).fail(function () {
+            data.instance.refresh();
+        });
+    },
+    
+    handleRenameNode: function(e, data){
+        var item = data.instance.get_node(data.node.id);
+        $.post(url.treeRename, {
+            'id': item.node.id, 
+            'text': item.node.text
+        }, function (data) {
+            //alert(data.success == true );
+        }).fail(function () {
+            data.instance.refresh();
+        });
+    },
+    
+    handleStatusChange: function (node) { 
+        console.log(node);
+        return;
+    },
+
+    handleTreeReady: function(e, data){
+        // @todo not tested 
+        $("#tree li").each(function(){
+            var title = $(this).attr('title');
+            if(title != 'undefined'){
+                var id = $(this).attr('id');
+                $("#tree #" + id + "_anchor .jstree-icon").attr({ 'title' : title }).tooltip({
+                    track: true
+                });
+                $(this).removeAttr('title');
+            }
+        });
+    },
     
     componentDidMount: function() {
         
         $(ReactDOM.findDOMNode(this)).jstree({
             //  for admin "contextmenu"
-            "plugins" : [ "search" , "json_data" , "types"  , "contextmenu" , 'dnd' , 'state' , 'changed' ]
-            ,"core" : {
-                "icons":false,
-                "animation" : 0
-                ,"check_callback" : function (operation, node, node_parent, node_position, more) {
+            "plugins": [ "search" , "json_data" , "types"  , "contextmenu" , 'dnd' , 'state' , 'changed' ]
+            ,"core": {
+                "icons": false,
+                "animation": 0
+                ,"check_callback": function (operation, node, node_parent, node_position, more) {
                     // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
                     // in case of 'rename_node' node_position is filled with the new node name
                     var res = true;
@@ -57,42 +112,17 @@ var TreeComponent = React.createClass({
                         }
                     }
                     return res;
-                    //return operation === 'rename_node' ? true : false;
                 }
             }
             ,"types": types
-            ,"contextmenu": contextMenu,
-        }).on('delete_node.jstree', function (e, data ) {
-            $.post(url.treeDelete, { 'id' : data.node.id } ,function(data ){
-                //alert(data.id == true );
-            }).fail(function () {
-                data.instance.refresh();
-            });
-        }).on('rename_node.jstree', function (e, data) {
-            $.post(url.treeRename, { 'id' : data.node.id, 'text' : data.text } ,function(data){
-                //alert(data.success == true );
-            }).fail(function () {
-                data.instance.refresh();
-            });
-        }).on('move_node.jstree', function (e, data) {
-            console.log(data.node.id, data.parent)
-            $.post(url.treeMove, { 'node_id' : data.node.id, 'parent_id' : data.parent }, function(data ){
-                // alert(data.success == true );
-            }).fail(function () {
-                data.instance.refresh();
-            });
-        }).on('select_node.jstree',this.handleNodeClick ).on('ready.jstree', function (e, data){
-            $("#tree li").each(function(){
-                var title = $(this).attr('title');
-                if(title != 'undefined'){
-                    var id = $(this).attr('id');
-                    $("#tree #" + id + "_anchor .jstree-icon").attr({ 'title' : title }).tooltip({
-                        track: true
-                    });
-                    $(this).removeAttr('title');
-                }
-            });
-        });
+            ,"contextmenu": contextMenu
+        }
+        ).on('delete_node.jstree', this.handleDeleteNode
+        ).on('rename_node.jstree', this.handleRenameNode
+        ).on('move_node.jstree', this.handleMoveNode
+        ).on('select_node.jstree',this.handleNodeClick 
+        ).on('ready.jstree', this.handleTreeReady 
+        );
     },
     
     componentWillUnmount: function() {
@@ -115,12 +145,6 @@ var TreeComponent = React.createClass({
 });
 
 var TreeNode = React.createClass({
-    // toggle: function(e){
-    //     AppDispatcher.dispatch({
-    //         eventName: 'expand-collapse',
-    //         node: this.props.node
-    //     });
-    // },
     render: function(){
         
         var cnodes = null; 
@@ -133,8 +157,8 @@ var TreeNode = React.createClass({
             });
         }
         
-        var opts= null; 
         var opts = '{ \"icon\":\"' + this.props.node.icon + '\"';
+        opts += ', \"id\":\"' + this.props.node.id + '\"';
         opts += ', \"opened\":\"' + this.props.node.opened + '\"';
         // opts += ', \"disabled\":\"' + this.props.node.disabled + '\"'; // this will disable whole tree
         opts += ', \"view\":\"' + this.props.node.view + '\"';
@@ -150,6 +174,11 @@ var TreeNode = React.createClass({
     }
 });
 
+const valid_children = [
+    "air_bkr","bkr","bushing","capacitor","induc","mcc",
+    "rect","source","switch","synch","tank","tc","transfo"
+    ,'cable'];
+
 const types= {
     "#" : {
         "max_children" : 1,
@@ -158,70 +187,73 @@ const types= {
     }
     ,"root" : {
         "icon" : "",
-        "valid_children" : ["default","air_bkr","bkr","main","bushing","capacitor","induc,mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        "valid_children" : ["default","air_bkr","bkr","main","bushing","capacitor","induc,mcc","rect",
+            "source","switch","synch","tank","tc","transfo",'cable']
     }
     ,"default" : {
-        "valid_children" : ["default","file","main","air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        "valid_children" : ["default","file","main","air_bkr","bkr","bushing","capacitor","induc","mcc",
+            "rect","source","switch","synch","tank","tc","transfo",'cable']
     }
     ,'main' : {
         "icon" : "../app/static/img/icons/main_b.ico"
-        ,"valid_children" : ["default","file",'main',"air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : ["default","file",'main',"air_bkr","bkr","bushing","capacitor","induc","mcc",
+            "rect","source","switch","synch","tank","tc","transfo",'cable']
     }
     ,'air_bkr' : {
         "icon" : "../app/static/img/icons/air_bkr_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'bkr' : {
         "icon" : "../app/static/img/icons/bkr_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'bushing' : {
         "icon" : "../app/static/img/icons/bushing_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'capacitor' : {
         "icon" : "../app/static/img/icons/capacitor_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'induc' : {
         "icon" : "../app/static/img/icons/induc_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'mcc' : {
         "icon" : "../app/static/img/icons/mcc_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children": valid_children
     }
     ,'rect' : {
         "icon" : "../app/static/img/icons/rect_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children": valid_children
     }
     ,'source' :{
         "icon" : "../app/static/img/icons/source_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children": valid_children
     }
     ,'switch' :{
         "icon" : "../app/static/img/icons/switch_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'synch' :{
         "icon" : "../app/static/img/icons/synch_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'tank' :{
         "icon" : "../app/static/img/icons/tank_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'tc' :{
         "icon" : "../app/static/img/icons/tc_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'transfo' :{
         "icon" : "../app/static/img/icons/transfo_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
     ,'cable' :{
         "icon" : "../app/static/img/icons/cable_b.ico"
-        ,"valid_children" : ["air_bkr","bkr","bushing","capacitor","induc","mcc","rect","source","switch","synch","tank","tc","transfo",'cable']
+        ,"valid_children" : valid_children
     }
 }
 
@@ -243,14 +275,16 @@ const contextMenu = {
                         "separator_after"	    : true
                         ,"label"				: "Normal"
                         ,"action"			    : function (data){
+                            
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
+                            
                             $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 1 }
-                                ,function(data){
+                                , function(data){
                                     if(data.status == "OK"){
                                         $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
                                     }
-
+                        
                                 }).fail(function () {
                                 console.log(fail);
                                 data.instance.refresh();
@@ -352,7 +386,13 @@ const contextMenu = {
                 ,"action"			    : function (data){
                     var inst = $.jstree.reference(data.reference),
                         obj = inst.get_node(data.reference);
-                    $.post(url.treeCreate, { 'parent' : obj.id , 'text' : "New Main" , 'icon' : '../app/static/img/icons/main_b.ico' , 'type' : 'main' , tooltip : "Main tooltip" }
+                    $.post(url.treeCreate, {
+                            'parent': obj.id ,
+                            'text' : "New Main" ,
+                            'icon' : '../app/static/img/icons/main_b.ico' ,
+                            'type' : 'main' ,
+                            tooltip : "Main tooltip"
+                        }
                         ,function(data){
 
                             inst.create_node(obj, { 'id' : data.id , 'text' : 'New Main' + data.id , 'icon' : '../app/static/img/icons/main_b.ico' , type: 'main' }
@@ -372,7 +412,7 @@ const contextMenu = {
             ,'equipment' : {
                 "separator_after"	    : true
                 ,"label"				: "Equipment"
-                ,"action"			    : function (data){ 
+                ,"action"			    : function (data){
                     window.location.href = '#/equipment'
                 }
                 // var inst = $.jstree.reference(data.reference),
