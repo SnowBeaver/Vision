@@ -51,7 +51,7 @@ var TreeComponent = React.createClass({
     handleDeleteNode: function(e, data){ 
         var item = data.instance.get_node(data.node.id);
         $.post(url.treeDelete, {
-            'id': item.node.id 
+            'id': item.state.id 
         }, function(data) {
             //alert(data.id == true );
         }).fail(function () {
@@ -62,8 +62,8 @@ var TreeComponent = React.createClass({
     handleRenameNode: function(e, data){
         var item = data.instance.get_node(data.node.id);
         $.post(url.treeRename, {
-            'id': item.node.id, 
-            'text': item.node.text
+            'id': item.state.id, 
+            'text': data.text
         }, function (data) {
             //alert(data.success == true );
         }).fail(function () {
@@ -164,6 +164,7 @@ var TreeNode = React.createClass({
         opts += ', \"view\":\"' + this.props.node.view + '\"';
         opts += ', \"type\":\"' + this.props.node.type + '\"';
         opts += ', \"eqid\":\"' + this.props.node.equipment_id + '\"';
+        opts += ', \"text\":\"' + this.props.node.text + '\"';
         opts += ', \"status\":\"' + this.props.node.status + '\"}';
         return (
             <li key={this.props.node.id} data-jstree={opts}>
