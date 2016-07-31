@@ -33,11 +33,12 @@ const EquipmentList = React.createClass({
         return {
             loading: false,
             isVisible: true,
-            data: false
+            data: false,
+            source: this.props.source
         }
     },
     componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+        this.serverRequest = $.get(this.state.source, function (result){
 
             var arr = (result['result']);
             var data = [];
@@ -65,6 +66,10 @@ const EquipmentList = React.createClass({
             });
         }.bind(this), 'json');
     },
+    
+    onRowClick: function (row) {
+       console.log('row clicked', row);
+    },
 
     componentWillUnmount: function() {
         this.serverRequest.abort();
@@ -72,6 +77,40 @@ const EquipmentList = React.createClass({
 
     hideLoading: function () {
         this.setState({loading: false});
+    },
+    
+    updateSource: function(source){ 
+        console.log('list triggered', source);
+        this.serverRequest = $.get(source, function (result){ 
+            var arr = (result['result']);
+            var data = [];
+            for (var i=0;i < arr.length; i++) {
+                var item = arr[i];
+                item.test_result = {
+                    test_reason: 'Repair',
+                    test_type: 'Fluid',
+                    test_status: 'In progress'
+                };
+                data.push({
+                    date: item.date,
+                    reason: item.test_result.test_reason,
+                    type: item.test_result.test_type,
+                    contract: item.contract.code,
+                    test_status: item.test_result.test_status,
+                    analysis_number: item.analysis_number,
+                    serial: item.equipment.serial,
+                    equipment_number: item.equipment.equipment_number
+                });
+            }
+            console.log(data);
+            this.setState({
+                data: data
+            });
+        }.bind(this), 'json');
+
+        this.setState({
+            source: source
+        });
     },
 
     render: function() {
@@ -84,8 +123,11 @@ const EquipmentList = React.createClass({
                                 striped={true}
                                 hover={true}
                                 selectRow={selectRowProp}
-                                search={true}>
-                    <TableHeaderColumn editable={false} dataField="date" dataSort={true}>Acquisition Date</TableHeaderColumn>
+                                onRowClick={this.onRowClick}
+                                search={true}
+                                updateSource={this.updateSource}
+                                >
+                    <TableHeaderColumn editable={false} dataField="date" dataSort={true} >Acquisition Date</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="reason" dataSort={true}>Reason</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="type" dataSort={true}>Type</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="contract"

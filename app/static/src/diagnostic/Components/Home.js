@@ -7,12 +7,29 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 
-export default class Home extends Component {
-    onTreeSearch(){
-        
-    }
+var Home = React.createClass ({
     
-    render() {
+    getInitialState: function(){ 
+        return {
+            source: '/api/v1.0/campaign/'
+        }
+    },
+    
+    onTreeSearch: function(){ 
+    },
+    
+    onTreeNodeClick: function(treeItem){
+        
+        console.log('got equipment id from tree click', treeItem.equipment_id); 
+        // console.log(this.refs.getEquipmentList());
+        this.setState({
+            source: '/api/v1.0/campaign/?equipment_id=' + treeItem.equipment_id 
+        });
+        // console.log(this.refs.equipmentList);
+        this.refs.equipmentList.updateSource(this.state.source);
+    },
+    
+    render: function() {
         return (
             <div>
                 <div className="col-md-3 equal_col"> 
@@ -31,15 +48,15 @@ export default class Home extends Component {
                         <br/>
                         <br/>
                         <br/>
-                        <TreeComponent struct={treeStruct}/>
+                        <TreeComponent ref="tree" struct={treeStruct} onTreeNodeClick={this.onTreeNodeClick} />
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <EquipmentList source="/api/v1.0/campaign/"/>
+                    <EquipmentList ref="equipmentList" source={this.state.source} />
                     <EquipmentTestForm />
                 </div>
             </div> 
         )
     }
-}
-
+});
+ export default Home;

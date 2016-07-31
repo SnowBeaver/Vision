@@ -8,7 +8,7 @@ import Home from './Components/Home';
 export default class App extends Component {
 
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
             route: window.location.hash.substr(1)
         }
@@ -22,7 +22,7 @@ export default class App extends Component {
     } 
     
     render() {
-        let Child
+        let Child;
 
         switch( this.state.route ) {
             case '/equipment': Child = Equipment; break;

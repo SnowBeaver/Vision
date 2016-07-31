@@ -19,8 +19,12 @@ var TreeComponent = React.createClass({
     },
     handleNodeClick: function(e, data) {
         var item = data.instance.get_node(data.node.id);
-        console.log(item.state);
-        
+        console.log(data);
+        console.log(data.node.id);
+        console.log(item);
+        this.props.onTreeNodeClick(item.state);
+
+        // data.instance.refresh();
         // ReactDOM.unmountComponentAtNode(this)function (e, data) {
         //
         // $("#treeView #node_id").val(data.node.id);
@@ -37,7 +41,7 @@ var TreeComponent = React.createClass({
     handleMoveNode: function(e, data){ 
         var item = data.instance.get_node(data.node.id);
         var parent = data.instance.get_node(data.parent);
-        //console.log('Move node', item.state.id, parent.state.id);
+        
         $.post(url.treeMove, {
             'node_id' : item.state.id, 
             'parent_id' : parent.state.id
@@ -163,7 +167,7 @@ var TreeNode = React.createClass({
         // opts += ', \"disabled\":\"' + this.props.node.disabled + '\"'; // this will disable whole tree
         opts += ', \"view\":\"' + this.props.node.view + '\"';
         opts += ', \"type\":\"' + this.props.node.type + '\"';
-        opts += ', \"eqid\":\"' + this.props.node.equipment_id + '\"';
+        opts += ', \"equipment_id\":\"' + this.props.node.equipment_id + '\"';
         opts += ', \"text\":\"' + this.props.node.text + '\"';
         opts += ', \"status\":\"' + this.props.node.status + '\"}';
         return (
