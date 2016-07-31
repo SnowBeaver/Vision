@@ -11,16 +11,22 @@ var Home = React.createClass ({
     
     getInitialState: function(){ 
         return {
-            source: '/api/v1.0/campaign/'
+            source: '/api/v1.0/campaign/',
+            text: ''
         }
     },
     
-    onTreeSearch: function(){ 
+    onTreeSearch: function(e){ 
+        // console.log(e.target);
+        // console.log(e.target.value);
+        // this.setState({
+        //     searchValue: e.target.value
+        // });
+        this.refs.tree.handleTreeSearch(e.target.value);
     },
     
-    onTreeNodeClick: function(treeItem){
-        
-        console.log('got equipment id from tree click', treeItem.equipment_id); 
+    onTreeNodeClick: function(treeItem){ 
+        // console.log('got equipment id from tree click', treeItem.equipment_id); 
         // console.log(this.refs.getEquipmentList());
         this.setState({
             source: '/api/v1.0/campaign/?equipment_id=' + treeItem.equipment_id 
@@ -39,16 +45,21 @@ var Home = React.createClass ({
                             <FormControl
                                 type="text"
                                 placeholder="searchTree"
-                                ref="searchTree"
+                                ref="search"
                                 id="plugins4_q"
                                 className="input col-md-12"
-                                onChange={this.onTreeSearch} />
+                                value={this.state.searchValue}
+                                onKeyUp={this.onTreeSearch} />
                         </FormGroup>
                         <br/>
                         <br/>
                         <br/>
                         <br/>
-                        <TreeComponent ref="tree" struct={treeStruct} onTreeNodeClick={this.onTreeNodeClick} />
+                        <TreeComponent
+                            ref="tree" 
+                            struct={treeStruct}
+                            onTreeNodeClick={this.onTreeNodeClick}
+                        />
                     </div>
                 </div>
                 <div className="col-md-9">

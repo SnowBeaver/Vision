@@ -75,9 +75,14 @@ var TreeComponent = React.createClass({
         });
     },
     
-    handleStatusChange: function (node) { 
-        console.log(node);
+    handleStatusChange: function (e, data) {
+        console.log(data); 
         return;
+    },
+    
+    handleTreeSearch: function(value){
+        console.log(value);
+        data.instance.search(value);
     },
 
     handleTreeReady: function(e, data){

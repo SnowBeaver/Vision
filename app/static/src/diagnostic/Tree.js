@@ -930,6 +930,4 @@ $(document).ready(function(){
             e.preventDefault();
         });
     });
-<!-- This script adds the Roboto font to our project. For more detail go to this site:  http://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,500 -->
-
 }); 

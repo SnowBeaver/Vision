@@ -71,6 +71,10 @@ const EquipmentList = React.createClass({
        console.log('row clicked', row);
     },
 
+    onCellClick: function (cell) { 
+        console.log('cell clicked', row);
+    },
+    
     componentWillUnmount: function() {
         this.serverRequest.abort();
     },
@@ -80,7 +84,7 @@ const EquipmentList = React.createClass({
     },
     
     updateSource: function(source){ 
-        console.log('list triggered', source);
+        // console.log('list triggered', source);
         this.serverRequest = $.get(source, function (result){ 
             var arr = (result['result']);
             var data = [];
@@ -99,10 +103,10 @@ const EquipmentList = React.createClass({
                     test_status: item.test_result.test_status,
                     analysis_number: item.analysis_number,
                     serial: item.equipment.serial,
-                    equipment_number: item.equipment.equipment_number
+                    equipment_number: item.equipment.equipment_number 
                 });
             }
-            console.log(data);
+            // console.log(data);
             this.setState({
                 data: data
             });
@@ -116,6 +120,13 @@ const EquipmentList = React.createClass({
     render: function() {
 
         {if (!this.state.data) { return null }}
+        
+        const options = {
+            onRowClick: function (row) {
+                console.log( row, 'on row click'); 
+            }
+        };
+        
         return (
             <div>
                 <BootstrapTable data={this.state.data}
@@ -123,9 +134,9 @@ const EquipmentList = React.createClass({
                                 striped={true}
                                 hover={true}
                                 selectRow={selectRowProp}
-                                onRowClick={this.onRowClick}
                                 search={true}
-                                updateSource={this.updateSource}
+                                updateSource={this.updateSource} 
+                                options={options}
                                 >
                     <TableHeaderColumn editable={false} dataField="date" dataSort={true} >Acquisition Date</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="reason" dataSort={true}>Reason</TableHeaderColumn>
