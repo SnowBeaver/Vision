@@ -7,13 +7,18 @@ import Popover from 'react-bootstrap/lib/Popover';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
 import  Modal from 'react-bootstrap/lib/Modal';
 import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
+import LabCreateForm from './LabCreateForm';
+import LabsList from './LabsList';
 
+
+var items=[];
 
 var LabAnalyserSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value,
+            lab_an: event.target.value
         })
     },
 
@@ -53,7 +58,7 @@ var LabAnalyserSelectField = React.createClass ({
         }
 
         return (
-            <FormGroup controlId="formControlsSelect1">
+            <span>
                 <ControlLabel>Lab/On-Line Analyser</ControlLabel>
                 <FormControl
                     componentClass="select"
@@ -63,7 +68,7 @@ var LabAnalyserSelectField = React.createClass ({
                     <option value="select">select reason</option>
                     {menuItems}
                 </FormControl>
-            </FormGroup>
+            </span>
         );
     }
 });
@@ -101,13 +106,9 @@ const NewLabModalWin = React.createClass({
                 </Button>
         
                 <Modal show={this.state.showModal} onHide={this.close}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Existing equipment</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                      table
-                  </Modal.Body>
+                      <LabsList/>
                   <Modal.Footer>
+                      <Button onClick={this.close}>Save</Button>
                     <Button onClick={this.close}>Close</Button>
                   </Modal.Footer>
                 </Modal>
@@ -121,7 +122,8 @@ var TestReasonSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value
+            value: event.target.value,
+            test_reas: event.target.value
         })
     },
 
@@ -238,7 +240,7 @@ const DescriptionForm = React.createClass({
                         <div className="col-md-4 nopadding padding-right-xs">
                             <FormGroup controlId="eqNoInput">
                                 <ControlLabel>{ this.state.equip_no.label }</ControlLabel>
-                                <FormControl type="text"  value={ this.state.equip_no.value } />
+                                <FormControl type="text"  value={ this.state.equip_no.value } ref="equip_no" />
                             </FormGroup>
                         </div>
 
@@ -252,7 +254,7 @@ const DescriptionForm = React.createClass({
                         <div className="col-md-4 nopadding">
                             <FormGroup controlId="insulFluidInput" >
                                 <ControlLabel>{ this.state.ins_flu.label }</ControlLabel>
-                                <FormControl type="text" value={ this.state.ins_flu.value } />
+                                <FormControl type="text" value={ this.state.ins_flu.value } ref="ins_flu" />
                             </FormGroup>
                         </div>
                     </div>
@@ -260,14 +262,15 @@ const DescriptionForm = React.createClass({
                         <div className="col-md-4 nopadding padding-right-xs">
                             <LabAnalyserSelectField
                                 ref="lab_analyser"
-                                source="http://dev.vision.local/api/v1.0/lab"
+                                source="http://dev.vision.local/api/v1.0/lab/"
                                 value={this.state.value} />
                             <NewLabModalWin/>
                         </div>
+
                         <div className="col-md-4 nopadding padding-right-xs">
                             <FormGroup controlId="insulFluidInput" >
                                 <ControlLabel>{ this.state.contract_no.label }</ControlLabel>
-                                <FormControl type="text" value={ this.state.contract_no.value } />
+                                <FormControl type="text" value={ this.state.contract_no.value } ref="contract"/>
                             </FormGroup>
                         </div>
 
@@ -289,7 +292,7 @@ const DescriptionForm = React.createClass({
                         <div className="col-md-5 nopadding padding-right-xs">
                             <TestReasonSelectField
                                 ref="testreasn"
-                                source="http://dev.vision.local/api/v1.0/reason_id"
+                                source="http://dev.vision.local/api/v1.0/test_reason"
                                 value={this.state.value} />
                         </div>
                         <div className="col-md-2 nopadding">

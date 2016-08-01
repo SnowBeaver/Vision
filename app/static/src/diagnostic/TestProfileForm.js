@@ -5,6 +5,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 
 
+var items =[];
 
 var ElectricalProfSelectField = React.createClass ({
 

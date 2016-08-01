@@ -1,17 +1,21 @@
 import React from 'react';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
-import Popover from 'react-bootstrap/lib/Popover';
-import Tooltip from 'react-bootstrap/lib/Tooltip';
-import  Modal from 'react-bootstrap/lib/Modal';
-import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import DescriptionForm from './DescriptionForm';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
 import TestProfileForm from './TestProfileForm';
+
+
+var SaveButton = React.createClass({
+
+    render : function () {
+        return(
+            <Button>save</Button>
+        );
+    }
+});
+
+
 
 const NaviTestForm = React.createClass ({
 
@@ -24,11 +28,35 @@ const NaviTestForm = React.createClass ({
 
     _create: function () {
         return $.ajax({
-            url: '/api/v1.0/equipment/',
+            url: '/api/v1.0/campaign/',
             type: 'POST',
             data: {
-                'equipment_type_id': this.refs.eqt.state.eqtype_id,
-                'manufacturer_id': this.refs.mn.state.manufac_id,
+                'test_reason': this.refs.testreasn.state.test_reas,
+                'lab_id': this.refs.lab_analyser.state.lab_an,
+                'equipment_number': findDOMNode(this.refs.equip_no).value,
+
+                'fluid_type': findDOMNode(this.refs.ins_flu).value,
+                'contract': findDOMNode(this.refs.contract).value,
+                'lab_contract_id ': findDOMNode(this.refs.lab_no).value,
+
+                'bushing': findDOMNode(this.refs.bush_cap).value,
+                'insulation_resistance_test': findDOMNode(this.refs.ins_res).value,
+                'polymerisation_degree_test': findDOMNode(this.refs.polymer).value,
+                'winding_resistance_test': findDOMNode(this.refs.wind_cap).value,
+                'visual_inspection_by': findDOMNode(this.refs.vis_insp).value,
+                'transformer_turn_ratio_test': findDOMNode(this.refs.ratio).value,
+
+                'dissolved_gas_test': findDOMNode(this.refs.dis_gas).value,
+                'furan_test' : findDOMNode(this.refs.furan_syr).value,
+                'pcb': findDOMNode(this.refs.pcb_jar).value,
+                'water_test': findDOMNode(this.refs.water).value,
+                'inhibitor_test': findDOMNode(this.refs.inhibit_syr).value,
+                
+                
+
+                'sampling':this.refs.sampl1.state.sam1,
+                'sampling_jar':this.refs.sampl2.state.sam2,
+                'sampling_vial':this.refs.sampl3.state.sam3,
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -110,16 +138,6 @@ const NaviTestForm = React.createClass ({
                             </div>
 
                             <div className="modal-body">
-                                <div className="maxwidth">
-                                    <div>
-                                        <button className="btn btn-default pull-right margin-right-xs" className="submit">
-                                            Create
-                                        </button>
-                                        <button className="btn btn-default pull-right margin-right-xs" className="close" data-dismiss="modal">
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
                                     <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
                                         <li className="active"> <a href="#new-tabs-1" data-toggle="tab"> Description </a> </li>
                                         <li> <a href="#new-tabs-2" data-toggle="tab"> Electrical: as per user </a> </li>
@@ -147,6 +165,9 @@ const NaviTestForm = React.createClass ({
                                                 </div>
                                             </div>
                                     </div>
+
+                                    <SaveButton className="btn btn-default pull-right margin-right-xs" type="submit"/>
+
                                 <div className="clearfix"></div>
                             </div>
                             <div className="modal-footer"> </div>

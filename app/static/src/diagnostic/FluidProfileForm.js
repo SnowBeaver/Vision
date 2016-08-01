@@ -4,12 +4,14 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 
+var items =[];
 
 var SamplPointSelectField1 = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value
+            value: event.target.value,
+            sam1: event.target.value
         })
     },
 
@@ -68,6 +70,7 @@ var SamplPointSelectField2 = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value,
+            sam2: event.target.value
         })
     },
 
@@ -126,7 +129,8 @@ var SamplPointSelectField3 = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value
+            value: event.target.value,
+            sam3: event.target.value
         })
     },
 
@@ -225,7 +229,7 @@ const FluidProfileForm = React.createClass({
                         <div className="col-md-8 nopadding padding-right-xs">
                             <div className="maxwidth">
                                 <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="gas">Dissolved Gas</Checkbox>
+                                    <Checkbox ref="dis_gas">Dissolved Gas</Checkbox>
                                 </div>
                                 <div className="col-md-4 nopadding padding-right-xs">
                                     <Checkbox ref="furan_syr">Furans</Checkbox>
@@ -253,8 +257,8 @@ const FluidProfileForm = React.createClass({
                             <div className="col-md-10 nopadding">
                                 <SamplPointSelectField1
                                         ref="sampl1"
-                                        source="http://dev.vision.local/api/v1.0/sampling"
-                                        value={ this.state.sampl_point1.value}/>
+                                        source="http://dev.vision.local/api/v1.0/sampling_point"
+                                        value={ this.state.value}/>
                             </div>
                         </div>
                     </div>
@@ -267,7 +271,7 @@ const FluidProfileForm = React.createClass({
                         <div className="col-md-8 nopadding padding-right-xs">
                             <div className="maxwidth">
                                 <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="dielec_1mm">Dielec .D18161 mmkV</Checkbox>
+                                    <Checkbox ref="dielec_1mm">Dielec .D1816(1mm)(kV)</Checkbox>
                                 </div>
                                 <div className="col-md-4 nopadding padding-right-xs">
                                     <Checkbox ref="acid">AcidityD974</Checkbox>
@@ -349,8 +353,8 @@ const FluidProfileForm = React.createClass({
                                 <div className="col-md-10 nopadding">
                                     <SamplPointSelectField2 
                                         ref="sampl2"
-                                        source="http://dev.vision.local/api/v1.0/sampling_jar"
-                                        value={ this.state.sampl_point2.value}/>
+                                        source="http://dev.vision.local/api/v1.0/sampling_point"
+                                        value={ this.state.value}/>
                                 </div>
                             </div>
                         </div>
@@ -380,8 +384,8 @@ const FluidProfileForm = React.createClass({
                             <div className="col-md-10 nopadding">
                                 <SamplPointSelectField3 
                                     ref="sampl3"
-                                    source="http://dev.vision.local/api/v1.0/sampling_vial"
-                                    value={ this.state.sampl_point3.value} />
+                                    source="http://dev.vision.local/api/v1.0/sampling_point"
+                                    value={ this.state.value} />
                             </div>
                         </div>
                     </div>
