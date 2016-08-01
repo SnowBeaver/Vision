@@ -1,20 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import TextField from 'material-ui/TextField';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
-import Checkbox from 'material-ui/Checkbox';
-import AppBar from 'material-ui/AppBar';
-import AutoComplete from 'material-ui/AutoComplete';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from "react-tap-event-plugin";
-import Dialog from 'material-ui/Dialog';
-import Divider from 'material-ui/Divider';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Button from 'react-bootstrap/lib/Button';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
+import DateTimePicker from 'react-bootstrap-datetimepicker';
+import Panel from 'react-bootstrap/lib/Panel';
+import Popover from 'react-bootstrap/lib/Popover';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
+import Modal from 'react-bootstrap/lib/Modal';
+import Table from 'react-bootstrap/lib/Table';
+
+
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
 
+var options = [];
 var items = [];
 
 var first_year = 1900;
@@ -28,12 +32,122 @@ while (first_year != current_year) {
 }
 
 
+
 var EquipmentTypeSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            eqtype_id: value,
+            value: event.target.value,
+            eqtype_id: event.target.value
+        })
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup controlId="formControlsSelect1">
+                    <ControlLabel>Equipment type</ControlLabel>
+                    <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
+                        <option value="select">select equipment type</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
+const NewEqModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Existing equipment</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+              table
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
+
+
+
+
+var ManufacturerSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value,
+            manufac_id: event.target.value,
         })
 
     },
@@ -62,7 +176,7 @@ var EquipmentTypeSelectField = React.createClass ({
     componentWillUnmount: function() {
         this.serverRequest.abort();
     },
-    
+
     setVisible: function(){
         this.state.isVisible = true;
     },
@@ -70,91 +184,118 @@ var EquipmentTypeSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <SelectField
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    autoWidth={true}
-                    hintText="EqTypeAutocompl"
-                    errorText="This field is required"
-                >
-                    {menuItems}
-                </SelectField>
+                <FormGroup controlId="formControlsSelect2">
+                    <ControlLabel>Manufacturer</ControlLabel>
+                    <FormControl componentClass="select" placeholder="manufacturer" onChange={this.handleChange}>
+                        <option value="select">select manufacturer</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
 });
 
-
-var ManufacturerSelectField = React.createClass({
-
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: value,
-            manufac_id: value
-        })
-        console.log("manufac console", event, index, value);
+const NewManufacModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
     },
 
-    getInitialState: function(){
-        return {
-            items: []
-        };
-    },
-    componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
+    close() {
+        this.setState({showModal: false});
     },
 
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
+    open() {
+        this.setState({showModal: true});
     },
 
-    render: function () {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id}
-                                     primaryText={`${this.state.items[key].name}`}/>);
-        }
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
 
         return (
-            <div>
-                <SelectField
-                    onChange={ this.handleChange }
-                    value={ this.state.value}
-                    autoWidth={true}
-                    hintText="Manufacturer"
-                    errorText="This field is required">
-                    {menuItems}
-                </SelectField>
-            </div>
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Manufacturers Database</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
         );
     }
 });
+
 
 
 var LocationSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            location_id: value
+            value: event.target.value,
+            location_id: event.target.value
         })
+
     },
 
     getInitialState: function(){
         return {
-            items: []
+            items: [],
+            isVisible: false
         };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
     },
 
     componentDidMount: function(){
@@ -171,42 +312,121 @@ var LocationSelectField = React.createClass ({
         this.serverRequest.abort();
     },
 
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
             <div>
-                <SelectField
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    autoWidth={true}
-                    hintText="Location"
-                    errorText="This field is required">
-                    {menuItems}
-                </SelectField>
+                <FormGroup controlId="formControlsSelect3">
+                    <ControlLabel>Location</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select location" onChange={this.handleChange}>
+                        <option value="select">select location</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
 });
 
+const NewLocationModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
 
-var VisualInspectionSelectField = React.createClass ({
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Locations</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
+
+var VisualInspBySelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            visnsp_id: value
-        })
-
+            value: event.target.value
+        }) 
     },
 
     getInitialState: function(){
         return {
-            items: []
+            items: [],
+            isVisible: false
         };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
     },
 
     componentDidMount: function(){
@@ -223,41 +443,122 @@ var VisualInspectionSelectField = React.createClass ({
         this.serverRequest.abort();
     },
 
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<option value={this.state.items[key].id} key={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+
         return (
             <div>
-                <SelectField
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    autoWidth={true}
-                    hintText="Visual Inspection By"
-                    errorText="This field is required">
-                    {menuItems}
-                </SelectField>
+                <FormGroup controlId="formControlsSelect4">
+                    <ControlLabel>Visual Inspected By</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select inspector" onChange={this.handleChange}>
+                        <option value="select">select inspector</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
 });
 
+const NewVisualInspByModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>List of Inpectors</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
 
 var AssignedToSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            assignedto_id: value
+            value: event.target.value
         })
 
     },
 
     getInitialState: function(){
         return {
-            items: []
+            items: [],
+            isVisible: false
         };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
     },
 
     componentDidMount: function(){
@@ -274,41 +575,124 @@ var AssignedToSelectField = React.createClass ({
         this.serverRequest.abort();
     },
 
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<option  value={this.state.items[key].id} key={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+
         return (
             <div>
-                <SelectField
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    autoWidth={true}
-                    hintText="Assigned to"
-                    errorText="This field is required">
-                    {menuItems}
-                </SelectField>
+                <FormGroup controlId="formControlsSelect5">
+                    <ControlLabel>Assigned By</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select person" onChange={this.handleChange}>
+                        <option value="select">select person</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
 });
+
+const NewAssignedToModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
+    },
+
+    close() {
+        this.setState({showModal: false});
+    },
+
+    open() {
+        this.setState({showModal: true});
+    },
+
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
+        return (
+            <span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
+
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>List oof Assigned Persons</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
+        );
+    }
+});
+
 
 
 var NormSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: value,
-            norm_id: value
+            value: event.target.value
         })
 
     },
 
     getInitialState: function(){
         return {
-            items: []
+            items: [],
+            isVisible: false
         };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
     },
 
     componentDidMount: function(){
@@ -325,72 +709,213 @@ var NormSelectField = React.createClass ({
         this.serverRequest.abort();
     },
 
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<MenuItem value={this.state.items[key].id} key={this.state.items[key].id} primaryText={`${this.state.items[key].name}`} />);
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+
         return (
             <div>
-                <SelectField
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    autoWidth={true}
-                    hintText="Norm"
-                    errorText="This field is required">
-                    {menuItems}
-                </SelectField>
+                <FormGroup controlId="formControlsSelect6">
+                    <ControlLabel>Norm</ControlLabel>
+                    <FormControl componentClass="select" placeholder="select norm" onChange={this.handleChange}>
+                        <option value="select">select norm</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
             </div>
         );
     }
 });
 
-const styles = {
-    block: {
-        maxWidth: 250
+const NewNormModalWin = React.createClass({
+    getInitialState() {
+        return {showModal: false};
     },
-    checkbox: {
-        marginBottom: 16
-    }
-};
-const style = {
-    margin: 12
-};
 
+    close() {
+        this.setState({showModal: false});
+    },
 
-const RaisedNewButton = () => (
-    <span><RaisedButton label="New" backgroundColor="#b8b8b8" style={style}/></span> 
-);
+    open() {
+        this.setState({showModal: true});
+    },
 
-const RaisedSaveButton = React.createClass ({
-    render: function () {
+    render() {
+        const popover = (
+            <Popover id="modal-popover" title="popover">
+                very popover. such engagement
+            </Popover>
+        );
+        const tooltip = (
+            <Tooltip id="modal-tooltip">
+                wow.
+            </Tooltip>
+        );
+
         return (
             <span>
-                <RaisedButton label="Save"
-                              backgroundColor="#2f70a8"
-                              style={style}
-                              type="submit"/>
-            </span>
+        <Button bsStyle="primary" bsSize="small" onClick={this.open}>
+          New
+        </Button>
 
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title>Norm</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+  <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th><Checkbox> </Checkbox> </th>
+          <th>Last Name</th>
+          <th>Name</th>
+          <th>Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+          <td>11111</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+          <td>22222</td>
+      </tr>
+    </tbody>
+  </Table>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.close}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </span>
         );
     }
 });
 
 
-const RaisedCancelButton = () => (
-    <span>
-        <RaisedButton label="Cancel"
-              backgroundColor="#cf4440"
-              style={style} />
-    </span>
-);
+
+var FrequencySelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: [ '25', '50', '60', 'DC' ],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        options = [];
+        for (var key in this.state.items) {
+            options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
+        }
+
+        return (
+            <div>
+                <style type="text/css">{`
+                .form-group-custom {
+                width:40%;
+                }
+                `}</style>
+                <FormGroup controlId="formControlsSelect7" >
+                    <ControlLabel>Frequency</ControlLabel>
+                    <FormControl componentClass="select"
+                                 placeholder="select frequency"
+                                 onChange={this.handleChange}
+                                 bsClass="form-control col-xs-3"
+                    >
+                        <option value="select">select frequency</option>
+                        {options}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
+var ManufacturedSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        })
+
+    },
+
+    getInitialState: function(){
+        return {
+            items: year_array,
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        options=[];
+        for (var key in this.state.items) {
+            options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
+        }
+
+        return (
+            <div>
+                <style type="text/css">{`
+                .form-group-custom {
+                width:40%;
+                }
+                `}</style>
+                <FormGroup controlId="formControlsSelect8">
+                    <ControlLabel>Manufactured</ControlLabel>
+                    <FormControl componentClass="select"
+                                 placeholder="select manufactured date"
+                                 onChange={this.handleChange}
+                                 bsClass="form-control form-group-custom"
+                    >
+                        <option value="select">select manufactured date</option>
+                        {options}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
 
 
-const FormBar = () => (
-    <AppBar
-        title="Create Equipment"
-    />
-);
 
 const EquipmentForm = React.createClass({
     getInitialState: function () {
@@ -400,42 +925,45 @@ const EquipmentForm = React.createClass({
         }
     },
     _create: function () {
-        // console.log(this.refs);
 
         return $.ajax({
             url: '/api/v1.0/equipment/',
             type: 'POST',
-            data: {
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
                 'equipment_type_id': this.refs.eqt.state.eqtype_id,
                 'manufacturer_id': this.refs.mn.state.manufac_id,
-                'location_id': this.refs.loc.state.location_id,
-                'visual_inspection_by_id': this.refs.vis.state.visnsp_id,
-                'assigned_to_id': this.refs.ast.state.assignedto_id,
-                'norm_id': this.refs.norms.state.norm_id,
-                'name': this.refs.name.getValue(),
-                'serial': this.refs.serial.getValue(),
-                'number': this.refs.number.getValue(),
-                'description': this.refs.description.getValue(),
-                'comments': this.refs.comments.getValue(),
-                'vis_comments': this.refs.vis_comments.getValue(),
-                'nr_taps': this.refs.nr_taps.getValue(), 
-                'upstream1': this.refs.upstream1.getValue(),
-                'upstream2': this.refs.upstream2.getValue(),
-                'upstream3': this.refs.upstream3.getValue(),
-                'upstream4': this.refs.upstream4.getValue(),
-                'upstream5': this.refs.upstream5.getValue(),
-                'downstream1': this.refs.downstream1.getValue(),
-                'downstream2': this.refs.downstream2.getValue(),
-                'downstream3': this.refs.downstream3.getValue(),
-                'downstream4': this.refs.downstream4.getValue(),
-                'downstream5': this.refs.downstream5.getValue(),
-                'phys_position': this.refs.phys_position.getValue(),
-                'tension4': this.refs.tension4.getValue(),
-                'validated': this.refs.validated.getValue(),
-                'invalidation': this.refs.invalidation.getValue(),
-                'prev_serial': this.refs.prev_serial.getValue(),
-                'prev_eqnumb': this.refs.prev_eqnumb.getValue(), 
-            },  
+                'location_id': this.refs.loc.state.value,
+                'visual_inspection_by_id': this.refs.vis.state.value,
+                'assigned_to_id': this.refs.ast.state.value,
+                'norm_id': this.refs.norms.state.value,
+                'name': findDOMNode(this.refs.name).value,
+                'serial': findDOMNode(this.refs.serial).value,
+                'equipment_number': findDOMNode(this.refs.number).value,
+                'frequency': this.refs.frequency.state.value,
+                'description': findDOMNode(this.refs.description).value,
+                'comments': findDOMNode(this.refs.comments).value,
+                'visual_inspection_comments': findDOMNode(this.refs.vis_comments).value,
+                'nr_taps': findDOMNode(this.refs.nr_taps).value,
+                'upstream1': findDOMNode(this.refs.upstream1).value,
+                'upstream2': findDOMNode(this.refs.upstream2).value,
+                'upstream3': findDOMNode(this.refs.upstream3).value,
+                'upstream4': findDOMNode(this.refs.upstream4).value,
+                'upstream5': findDOMNode(this.refs.upstream5).value,
+                'downstream1': findDOMNode(this.refs.downstream1).value,
+                'downstream2': findDOMNode(this.refs.downstream2).value,
+                'downstream3': findDOMNode(this.refs.downstream3).value,
+                'downstream4': findDOMNode(this.refs.downstream4).value,
+                'downstream5': findDOMNode(this.refs.downstream5).value,
+                'phys_position': findDOMNode(this.refs.phys_position).value,
+                'tension4': findDOMNode(this.refs.tension4).value,
+                'validated': findDOMNode(this.refs.validated).value,
+                'invalidation': findDOMNode(this.refs.invalidation).value,
+                'prev_serial_number': findDOMNode(this.refs.prev_serial).value,
+                'prev_equipment_number': findDOMNode(this.refs.prev_eqnumb).value
+            }),
+            success: function (data, textStatus) { },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -476,7 +1004,6 @@ const EquipmentForm = React.createClass({
         }
     },
     _onChange: function (e) {
-        console.log(e.target.name);
         var state = {};
         state[e.target.name] =  $.trim(e.target.value);
         this.setState(state);
@@ -505,39 +1032,143 @@ const EquipmentForm = React.createClass({
 
         return (
             <div className="form-container">
-                <FormBar/>
-                <form id="eqtype_form" onSubmit={this._onSubmit}> 
-                    <div><EquipmentTypeSelectField  ref="eqt" source="http://dev.vision.local/api/v1.0/equipment_type" value={this.state.value}/><RaisedNewButton/></div>
-                    <ManufacturerSelectField ref="mn" source="http://dev.vision.local/api/v1.0/manufacturer" value={this.state.value} /><RaisedNewButton/>
-                    <LocationSelectField ref="loc"  source="http://dev.vision.local/api/v1.0/location" value={this.state.value} />
-                    <VisualInspectionSelectField ref="vis" source="http://dev.vision.local/api/v1.0/visual_inspection_by" value={this.state.value} />
-                    <AssignedToSelectField ref="ast" source="http://dev.vision.local/api/v1.0/assigned_to" value={this.state.value} />
-                    <NormSelectField ref="norms" source="http://dev.vision.local/api/v1.0/norm" value={this.state.value} />
-                    <TextField ref="name" floatingLabelText="Name" hintText="Name" /><br />
-                    <TextField ref="serial" floatingLabelText="Serial" hintText="Serial" /><br />
-                    <TextField ref="number" floatingLabelText="Equipment number" hintText="Equipment number"/><br />
-                    <div><TextField ref="description" hintText="Description" multiLine={true} rows={2} rowsMax={4} /></div>
-                    <div><TextField ref="comments" hintText="Comments" multiLine={true} rows={2} rowsMax={4} /></div>
-                    <div><TextField ref="vis_comments" hintText="Visual Inspection Comments " multiLine={true} rows={2} rowsMax={4} /></div>
-                    <div><TextField ref="nr_taps" hintText="Enter the Text" floatingLabelText="Nbr Of Tap Change Ltc" /></div>
-                    <div><TextField ref="upstream1" hintText="Enter the Text" floatingLabelText="Upstream1" /></div>
-                    <div><TextField ref="upstream2" hintText="Enter the Text" floatingLabelText="Upstream2" /></div>
-                    <div><TextField ref="upstream3" hintText="Enter the Text" floatingLabelText="Upstream3" /></div>
-                    <div><TextField ref="upstream4" hintText="Enter the Text" floatingLabelText="Upstream4" /></div>
-                    <div><TextField ref="upstream5" hintText="Enter the Text" floatingLabelText="Upstream5" /></div>
-                    <div><TextField ref="downstream1" hintText="Enter the Text" floatingLabelText="Downstream1" /></div>
-                    <div><TextField ref="downstream2" hintText="Enter the Text" floatingLabelText="Downstream2" /></div>
-                    <div><TextField ref="downstream3" hintText="Enter the Text" floatingLabelText="Downstream3" /></div>
-                    <div><TextField ref="downstream4" hintText="Enter the Text" floatingLabelText="Downstream4" /></div>
-                    <div><TextField ref="downstream5" hintText="Enter the Text" floatingLabelText="Downstream5" /></div>
-                    <div><TextField ref="phys_position" hintText="Enter the Text" floatingLabelText="Phys Position" /></div>
-                    <div><TextField ref="tension4" hintText="Enter the Text" floatingLabelText="Tension4" /></div>
-                    <div><Checkbox ref="validated" label="Validated" style={styles.checkbox} /></div>
-                    <div><Checkbox ref="invalidation" label="Invalidation" style={styles.checkbox} /></div>
-                    <div><TextField ref="prev_serial" hintText="Enter the Text" floatingLabelText="Prev Serial Number" /></div>
-                    <div><TextField ref="prev_eqnumb" hintText="Enter the Text" floatingLabelText="Prev Equipment Number" /></div>
-                    <Divider />
-                    <div><RaisedSaveButton/><RaisedCancelButton/></div>
+                <form id="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
+                    <div>
+                        <Panel header="Add Equipment">
+
+                            <EquipmentTypeSelectField ref="eqt" source="/api/v1.0/equipment_type" value={this.state.value}/>
+                            <NewEqModalWin/>
+                            <ManufacturerSelectField ref="mn" source="/api/v1.0/manufacturer" value={this.state.value}/>
+                            <NewManufacModalWin/>
+                            <LocationSelectField ref="loc" source="/api/v1.0/location" value={this.state.value}/>
+                            <NewLocationModalWin/>
+                            <VisualInspBySelectField ref="vis" source="/api/v1.0/visual_inspection_by" value={this.state.value} />
+                            <NewVisualInspByModalWin/>
+                            <AssignedToSelectField  ref="ast" source="/api/v1.0/assigned_to" value={this.state.value} />
+                            <NewNormModalWin/>
+                            <NormSelectField ref="norms" source="/api/v1.0/norm" value={this.state.value} />
+
+                            <FormGroup controlId="inputNameField" >
+                                <ControlLabel>Name</ControlLabel>
+                                <FormControl type="text" placeholder="name" ref="name" />
+                            </FormGroup>
+
+                            <FormGroup controlId="EqNumberField" >
+                                <ControlLabel>Equipment Number</ControlLabel>
+                                <FormControl type="text" placeholder="equipment number" ref="number"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="inputSerialField" >
+                                <ControlLabel>Serial</ControlLabel>
+                                <FormControl type="text" placeholder="serial" ref="serial"/>
+                            </FormGroup>
+
+                            <FrequencySelectField title="Frequency" bsClass="" ref="frequency" ></FrequencySelectField>
+                            <ManufacturedSelectField title="Manufactured" id="manufactured"></ManufacturedSelectField>
+
+                            <FormGroup controlId="descriptionTextarea">
+                                <ControlLabel>Description</ControlLabel>
+                                <FormControl componentClass="textarea" placeholder="description" ref="description"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="commentsTextarea">
+                                <ControlLabel>Comments</ControlLabel>
+                                <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="DateTimePicker">
+                                <ControlLabel>Visual Date</ControlLabel>
+                                <DateTimePicker defaultText="Please select a date"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="visualInspectionCommentsTextarea">
+                                <ControlLabel>Visual Inspection Comments</ControlLabel>
+                                <FormControl componentClass="textarea" placeholder="visComments" ref="vis_comments"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="tapChangesTextarea" ref="nr_taps">
+                                <ControlLabel>Nbr of Tap Changes LTC</ControlLabel>
+                                <FormControl componentClass="textarea" placeholder="tap changes" ref="nr_taps"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="upstream1Input" >
+                                <ControlLabel>Upstream 1</ControlLabel>
+                                <FormControl type="text" placeholder="upstream 1" ref="upstream1"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="upstream2Input" >
+                                <ControlLabel>Upstream 2</ControlLabel>
+                                <FormControl type="text" placeholder="upstream 2" ref="upstream2"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="upstream3Input" >
+                                <ControlLabel>Upstream 3</ControlLabel>
+                                <FormControl type="text" placeholder="upstream 3" ref="upstream3"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="upstream4Input" >
+                                <ControlLabel>Upstream 4</ControlLabel>
+                                <FormControl type="text" placeholder="upstream 4" ref="upstream4"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="upstream5Input" ref="upstream5">
+                                <ControlLabel>Upstream 5</ControlLabel>
+                                <FormControl type="text" placeholder="upstream 5" ref="upstream5"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="downstream1Input" >
+                                <ControlLabel>Downstream 1</ControlLabel>
+                                <FormControl type="text" placeholder="downstream 1" ref="downstream1"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="downstream2Input" >
+                                <ControlLabel>Downstream 2</ControlLabel>
+                                <FormControl type="text" placeholder="downstream 2" ref="downstream2"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="downstream3Input" >
+                                <ControlLabel>Downstream 3</ControlLabel>
+                                <FormControl type="text" placeholder="downstream 3" ref="downstream3"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="downstream4Input" >
+                                <ControlLabel>Downstream 4</ControlLabel>
+                                <FormControl type="text" placeholder="downstream 4" ref="downstream4"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="downstream5Input" >
+                                <ControlLabel>Downstream 5</ControlLabel>
+                                <FormControl type="text" placeholder="downstream 5" ref="downstream5"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="physPositionInput" >
+                                <ControlLabel>Phys Position</ControlLabel>
+                                <FormControl type="text" placeholder="phys position " ref="phys_position"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="tensionInput" >
+                                <ControlLabel>Tension4</ControlLabel>
+                                <FormControl type="text" placeholder="tension4 " ref="tension4"/>
+                            </FormGroup>
+
+                            <Checkbox ref="validated">Validated</Checkbox>
+                            <Checkbox ref="invalidation">Invalidation</Checkbox>
+
+                            <FormGroup controlId="prevSerialNumInput" >
+                                <ControlLabel>Prev Serial Number</ControlLabel>
+                                <FormControl type="text" placeholder="prev serial number " ref="prev_serial"/>
+                            </FormGroup>
+
+                            <FormGroup controlId="prevEquipNumInput" >
+                                <ControlLabel>Prev Equipment Number</ControlLabel>
+                                <FormControl type="text" placeholder="prev equipment number " ref="prev_eqnumb"/>
+                            </FormGroup>
+
+
+                            <Button bsStyle="success" type="submit">save</Button>
+                            <Button bsStyle="danger" type="close">cancel</Button>
+                        </Panel>
+                    </div>
                 </form>
             </div>
         );
@@ -545,4 +1176,3 @@ const EquipmentForm = React.createClass({
 });
 
 export default EquipmentForm;
-

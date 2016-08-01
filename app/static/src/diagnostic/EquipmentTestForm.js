@@ -10,6 +10,7 @@ const EquipmentTestIdentificationForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
+            csrf_token: 'not set',
             errors: {},
             test_type: {
                 label: 'Test type',
@@ -90,7 +91,7 @@ const EquipmentTestIdentificationForm = React.createClass({
         return (
             <div className="form-container">
                 <form method="post" action="#" >
-                    <input type="hidden" value={this.state.csrf_key}/>
+                    <input type="hidden" value={this.state.csrf_token}/>
                         <div className="tab_row text-center">
                             <div className="col-lg-12 nopadding">
                                 <div className="col-lg-6 nopadding padding-right-xs">
@@ -217,6 +218,7 @@ const EquipmentTestRepairForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
+            csrf_token: null,
             errors: {},
             comments: {
                 label: 'Comments',
@@ -238,8 +240,7 @@ const EquipmentTestRepairForm = React.createClass({
     },
     render: function(){
         return (
-            <form className="" method="post" action="#" >
-                {this.state.csrf_token}
+            <form className="" method="post" action="#" > 
                 <div className="tab_row">
                     <div className="col-lg-12 nopadding">
                         <div className="col-lg-6 nopadding padding-right-xs">
@@ -299,7 +300,6 @@ const EquipmentTestDiagnosisForm = React.createClass({
         return (
             <form className="" method="post" action="#" >
                 <div className="tab_row">
-                    {this.state.csrf_token}
                     <div className="col-lg-12 nopadding">
                         <div className="col-lg-6 nopadding padding-right-xs">
                             { this.state.diagnosis.label }
@@ -359,7 +359,6 @@ const EquipmentTestEqDiagnosisForm = React.createClass({
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
-                    {this.state.csrf_token}
                     <div className="col-lg-12 nopadding">
                         {this.state.diagnosis.label }
 						<FormControl componentClass="textarea" placeholder="textarea" value={ this.state.diagnosis.value } />

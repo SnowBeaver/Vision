@@ -856,17 +856,7 @@ $(document).ready(function(){
             });
 
         })
-        .on('copy_node.jstree', function (e, data){
-//                $.post(url.treeCopy, { 'node_id' : data.original.id , 'parent_id' : data.parent } ,function(d){
-//                    if(d.status == "OK"){
-//                        data.instance.refresh();
-//                    }else{
-//                        alert("Something went wrong");
-//                    }
-//                }).fail(function () {
-//	    			data.instance.refresh();
-//				});
-
+        .on('copy_node.jstree', function (e, data){ 
         }).on('select_node.jstree', function (e, data) {
                 $("#treeView #node_id").val(data.node.id);
 
@@ -892,7 +882,6 @@ $(document).ready(function(){
                 }
             });
         });
-
 
     var to = false;
     $('#plugins4_q').keyup(function () {
@@ -941,6 +930,4 @@ $(document).ready(function(){
             e.preventDefault();
         });
     });
-<!-- This script adds the Roboto font to our project. For more detail go to this site:  http://www.google.com/fonts#UsePlace:use/Collection:Roboto:400,300,500 -->
-
 }); 

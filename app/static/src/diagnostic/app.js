@@ -1,39 +1,45 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EquipmentForm from './EquipmentFormBootstrap';
-import EquipmentList from './EquipmentListBootstrap';
-import EquipmentTestForm from './EquipmentTestFormBootstrap';
+import {Component} from 'react'
+import Equipment from './Components/Equipment';
+import Home from './Components/Home';
 
-const App = React.createClass ({
 
-    getInitialState: function () {
-        return {
-            showEquipmentForm: true,
-            showEquipmentList: true,
-            showEquipmentTest: true
+export default class App extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            route: window.location.hash.substr(1)
         }
-    },
-    showEquipmentForm: function () {
-        this.setState({showEquipmentForm: true});
-    },
-    showEquipmentList: function () {
-        this.setState({showEquipmentList: true});
-    },
-    showEquipmentTest: function () {
-        this.setState({showEquipmentTest: true});
-    },
+    }
+    componentDidMount() {
+        window.addEventListener('hashchange', () => {
+            this.setState({
+                route: window.location.hash.substr(1)
+            })
+        })
+    } 
+    
+    render() {
+        let Child;
 
-    render: function () {
+        switch( this.state.route ) {
+            case '/equipment': Child = Equipment; break;
+            default: Child = Home;
+        }
+
         return (
-            <div>
-                { this.state.showEquipmentList ?
-                    <EquipmentList source="/api/v1.0/campaign/"/> : null }
-                { this.state.showEquipmentForm ? <EquipmentForm /> : null }
-                { this.state.showEquipmentTest ? <EquipmentTestForm /> : null }
+            <div className='app-container'>
+                <ul>
+                    <li><a href='#/home'>Home</a></li>
+                    <li><a href='#/equipment'>Equipment</a></li>
+                </ul> 
+                <Child />
             </div>
         );
     }
-});
+}
 
 ReactDOM.render(
     <App />,

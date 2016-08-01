@@ -6,6 +6,7 @@ from sqlalchemy.orm import joinedload_all
 from app import app
 from sqlalchemy.orm.session import make_transient
 import json
+from flask import jsonify
 
 
 def set_locale():
@@ -22,25 +23,59 @@ def get_locale():
 
 # return all tree
 def get_tree():
-    try:
-        # .options(joinedload_all("children", "children", "children", "children"))
-        tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
-            .filter(TreeNode.text == u'Vision Diagnostic').first()
-        res = None
-        if tree is not None:
-            res = "<ul>"
-            res += create_tree(tree)
-            res += "</ul>"
+    # try:
+    #     # .options(joinedload_all("children", "children", "children", "children"))
+    #     tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
+    #         .filter(TreeNode.text == u'Vision Diagnostic').first()
+    #     res = None
+    #     if tree is not None:
+    #         res = "<ul>"
+    #         res += create_tree(tree)
+    #         res += "</ul>"
+    # except Exception as e:
+    #     import logging
+    #     logging.error(e)
+    #     res = None
 
-            # print(tree.dump())
-            # print(res)
-    except Exception as e:
-        import logging
-        logging.error(e)
-        res = None
+    # try:
+    #     tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")) \
+    #         .filter(TreeNode.text == u'Vision Diagnostic').first()
+    # tree = db.session.query(TreeNode)\
+    #     .options(joinedload_all("children", "children", "children", "children"))\
+    #     .filter(TreeNode.text == u'Vision Diagnostic').first()
 
+    tree = db.session.query(TreeNode).options(joinedload_all("children", "children", "children", "children")).get(1) # get root
+
+    res = []
+    # res.insert(0,tree.serialize())
+
+    res.append(tree.serialize())
+
+    if tree.children:
+        res = serialize(tree.children, res)
+        # for item in tree.children:
+        #     res.append(item.serialize())
+        #     if item.children:
+    # print res
+
+    response = json.dumps(res)
+    return response
+
+    # except Exception as e:
+    #     import logging
+    #     logging.error(e)
+
+
+def serialize(tree, res):
+    if type(tree) == list:
+        for item in tree:
+            res.append(item.serialize())
+            if item.children:
+                return serialize(item.children, res)
+
+    # item = tree.serialize()
+    # res.append(item)
     return res
-
 
 # create generate tree
 def create_node(parent, text, icon, type, tooltip):
@@ -222,7 +257,7 @@ def copy_node(node_id, parent_id):
 
 
 def render_tree_li(tree):
-    data = "<li data-jstree='{"
+    data = "<li data-jstree='"
     opened = "true" if tree.opened else "false"
     data += "\"openend\" : " + opened
     selected = "true" if tree.selected else "false"
