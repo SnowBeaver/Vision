@@ -8,7 +8,7 @@ import Tooltip from 'react-bootstrap/lib/Tooltip';
 import  Modal from 'react-bootstrap/lib/Modal';
 import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import LabCreateForm from './LabCreateForm';
-import LabsList from './LabsList';
+import LabsList from './LabList';
 
 
 var items=[];

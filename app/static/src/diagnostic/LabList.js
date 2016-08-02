@@ -27,7 +27,7 @@ function onAfterSaveCell(row, cellName, cellValue){
     console.log(row);
 }
 
-const LabsList = React.createClass({
+const LabList = React.createClass({
 
     getInitialState: function () {
         return {
@@ -156,4 +156,4 @@ const LabsList = React.createClass({
     }
 });
 
-export default LabsList;
+export default LabList;
