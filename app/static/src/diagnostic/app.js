@@ -4,7 +4,7 @@ import {Component} from 'react'
 import TestInsertionForm from './Components/TestInsertionForm';
 import Equipment from './Components/Equipment';
 import Home from './Components/Home';
-import LabList from './Components/LabList';
+import LabList from './LabList';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
 import ChooseTestForm from './ChooseTestForm';

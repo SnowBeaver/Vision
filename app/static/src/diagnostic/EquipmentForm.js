@@ -1165,8 +1165,8 @@ const EquipmentForm = React.createClass({
                             </FormGroup>
 
 
-                            <Button bsStyle="success" type="submit">save</Button>
-                            <Button bsStyle="danger" type="close">cancel</Button>
+                            <Button bsStyle="success" type="submit">Save</Button>
+                            <Button bsStyle="danger">Cancel</Button>
                         </Panel>
                     </div>
                 </form>
