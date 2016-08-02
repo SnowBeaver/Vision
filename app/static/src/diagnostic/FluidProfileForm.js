@@ -3,6 +3,10 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import {findDOMNode} from 'react-dom';
+import Panel from 'react-bootstrap/lib/Panel';
+import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
+import Button from 'react-bootstrap/lib/Button';
 
 var items =[];
 
@@ -189,8 +193,6 @@ const FluidProfileForm = React.createClass({
 
     getInitialState: function () {
         return {
-            loading: false,
-            errors: {},
             qty1: {
                 label: 'Qty',
                 value: null
@@ -203,195 +205,278 @@ const FluidProfileForm = React.createClass({
                 label: 'Qty',
                 value: null
             },
-            sampl_point1: {
-                label: null,
-                value: null
-            },
-            sampl_point2: {
-                label: null,
-                value: null
-            },
-            sampl_point3: {
-                label: null,
-                value: null
-            }
+            loading: false,
+            errors: {}
         }
     },
 
+    _create: function () {
+
+        return $.ajax({
+            url: '/api/v1.0/equipment/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                
+                
+                
+                
+                
+                
+            }),
+            success: function (data, textStatus) { },
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        // var errors = this._validate();
+        // if(Object.keys(errors).length != 0) {
+        //   this.setState({
+        //     errors: errors
+        //   });
+        //    return;
+        // }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+    _onSuccess: function (data) {
+        this.refs.eqtype_form.getDOMNode().reset();
+        this.setState(this.getInitialState());
+        // show success message
+    },
+    _onError: function (data) {
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if(res.message) {
+            message = data.responseJSON.message;
+        }
+        if(res.errors) {
+            this.setState({
+                errors: res.errors
+            });
+        }
+    },
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] =  $.trim(e.target.value);
+        this.setState(state);
+    },
+    _validate: function () {
+        var errors = {};
+        // if(this.state.username == "") {
+        //   errors.username = "Username is required";
+        // }
+        // if(this.state.email == "") {
+        //   errors.email = "Email is required";
+        // }
+        // if(this.state.password == "") {
+        //   errors.password = "Password is required";
+        // }
+        // return errors;
+    },
+    _formGroupClass: function (field) {
+        var className = "form-group ";
+        if(field) {
+            className += " has-error"
+        }
+        return className;
+    },
+
+
+
     render: function() {
-
+console.log("render in fluid profile");
         return (
-            <div>
-                <div className="scheduler-border">
-                    <fieldset className="scheduler-border">
-                                    <legend className="scheduler-border">Jar - Tests requested</legend>
-                    <div className="control-group">
-                        <div className="col-md-8 nopadding padding-right-xs">
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="dis_gas">Dissolved Gas</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="furan_syr">Furans</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding">
-                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
-                                </div>
-                            </div>
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="water">Water</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="inhibit_syr">Inhibitor</Checkbox>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 nopadding">
-                            <div className="col-md-2 nopadding padding-right-xs">
-                                <FormGroup controlId="qtyInput1" >
-                                    <ControlLabel>{this.state.qty1.label}</ControlLabel>
-                                    <FormControl type="text" value={this.state.qty1.value} />
-                                </FormGroup>
-                            </div>
-                            <div className="col-md-10 nopadding">
-                                <SamplPointSelectField1
-                                        ref="sampl1"
-                                        source="http://dev.vision.local/api/v1.0/sampling_point"
-                                        value={ this.state.value}/>
-                            </div>
-                        </div>
-                    </div>
-                        </fieldset>
-                </div>
-                <div className="scheduler-border">
-                    <fieldset className="scheduler-border">
-                                    <legend className="scheduler-border">4-ml vial - Tests requested</legend>
-                    <div className="control-group">
-                        <div className="col-md-8 nopadding padding-right-xs">
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="dielec_1mm">Dielec .D1816(1mm)(kV)</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="acid">AcidityD974</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding">
-                                    <Checkbox ref="density">Density(D1298)</Checkbox>
-                                </div>
-                            </div>
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="inhibit_jar">Inhibitor</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding">
-                                    <Checkbox ref="p_point">PouPoint</Checkbox>
-                                </div>
-                            </div>
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="dielec_2mm">Dielec.D18162mmkV</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="color">ColorD1500</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding">
-                                    <Checkbox ref="pf_25">PF25C(D924)</Checkbox>
-                                </div>
-                            </div>
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="particles">Particles</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="metal_oil">Metals in oil</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding">
-                                    <Checkbox ref="viscosity">Viscosity</Checkbox>
-                                </div>
-                            </div>
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="dielec_db87">Dielec. D877(kV)</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="ift">IFT(D971)</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding">
-                                    <Checkbox ref="pf_100">PF100C(D924)</Checkbox>
-                                </div>
-                            </div>
-                            <div className="maxwidth">
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="furan_jar">Furans</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <Checkbox ref="water_2">Water</Checkbox>
-                                </div>
-                                <div className="col-md-4 nopadding">
-                                    <Checkbox ref="cor_sul">Corr.Sulfur</Checkbox>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 nopadding">
-                            <div className="maxwidth">
-                                <Checkbox ref="dielec_iec">Dielec.IEC-156(kV)</Checkbox>
-                            </div>
-                            <div className="maxwidth">
-                                <Checkbox ref="visual">Visual(D1524)</Checkbox>
-                            </div>
-                            <div className="maxwidth">
-                                <div className="col-md-2 nopadding padding-right-xs">
-                                    <FormGroup controlId="qtyInput2" >
-                                        <ControlLabel>{ this.state.qty2.label }</ControlLabel>
-                                        <FormControl type="text" value={this.state.qty2.value} />
-                                    </FormGroup>
-                                </div>
-                                <div className="col-md-10 nopadding">
-                                    <SamplPointSelectField2 
-                                        ref="sampl2"
-                                        source="http://dev.vision.local/api/v1.0/sampling_point"
-                                        value={ this.state.value}/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                        </fieldset>
-                </div>
 
-                <div className="scheduler-border">
-                    <fieldset className="scheduler-border">
-                                            <legend className="scheduler-border">Electrical</legend>
-                    <div className="control-group">
-                        <div className="col-md-8 nopadding padding-right-xs">
-                            <div className="maxwidth">
-                                <Checkbox ref="pcb_vial">PCB</Checkbox>
+                <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                    <div className="maxwidth">
+                        <Panel header="Electrical profile test parametres">
+                            <div className="scheduler-border">
+                                <fieldset className="scheduler-border">
+                                    <legend className="scheduler-border">Syringe - Test requested</legend>
+                                    <div className="control-group">
+                                        <div className="col-md-8 nopadding padding-right-xs">
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="dis_gas">Dissolved Gas</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="furan_syr">Furans</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="water">Water</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="inhibit_syr">Inhibitor</Checkbox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-4 nopadding">
+                                            <div className="col-md-2 nopadding padding-right-xs">
+                                                <ControlLabel>{this.state.qty1.label}</ControlLabel>
+                                                <FormControl type="text" value={this.state.qty1.value} />
+                                            </div>
+                                            <div className="col-md-10 nopadding">
+                                                <SamplPointSelectField1
+                                                    ref="sampl1"
+                                                    source="http://dev.vision.local/api/v1.0/sampling_point"
+                                                    value={ this.state.value}/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </div>
-                            <div className="maxwidth">
-                                <Checkbox ref="antioxydant">Antioxydant</Checkbox>
+                            <div className="scheduler-border">
+                                <fieldset className="scheduler-border">
+                                    <legend className="scheduler-border">Jar - Test requested</legend>
+                                    <div className="control-group">
+                                        <div className="col-md-8 nopadding padding-right-xs">
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="dielec_1mm">Dielec .D1816(1mm)(kV)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="acid">AcidityD974</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="density">Density(D1298)</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="inhibit_jar">Inhibitor</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="p_point">PouPoint</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="dielec_2mm">Dielec.D18162mmkV</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="color">ColorD1500</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="pf_25">PF25C(D924)</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="particles">Particles</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="metal_oil">Metals in oil</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="viscosity">Viscosity</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="dielec_db87">Dielec. D877(kV)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="ift">IFT(D971)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="pf_100">PF100C(D924)</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="furan_jar">Furans</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="water_2">Water</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="cor_sul">Corr.Sulfur</Checkbox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-4 nopadding">
+                                            <div className="maxwidth">
+                                                <Checkbox ref="dielec_iec">Dielec.IEC-156(kV)</Checkbox>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <Checkbox ref="visual">Visual(D1524)</Checkbox>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-2 nopadding padding-right-xs">
+                                                    <ControlLabel>{ this.state.qty2.label }</ControlLabel>
+                                                    <FormControl type="text" value={this.state.qty2.value} />
+                                                </div>
+                                                <div className="col-md-10 nopadding">
+                                                    <SamplPointSelectField2
+                                                        ref="sampl2"
+                                                        source="http://dev.vision.local/api/v1.0/sampling_point"
+                                                        value={ this.state.value}/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </div>
-                        </div>
-                        <div className="col-md-4 nopadding">
-                            <div className="col-md-2 nopadding padding-right-xs">
-                                <FormGroup controlId="qtyInput3" >
-                                    <ControlLabel>{ this.state.qty3.label }</ControlLabel>
-                                    <FormControl type="text" value={this.state.qty3.value} />
+
+                            <div className="scheduler-border">
+                                <fieldset className="scheduler-border">
+                                    <legend className="scheduler-border">4-ml - Tests requested</legend>
+                                    <div className="control-group">
+                                        <div className="col-md-8 nopadding padding-right-xs">
+                                            <div className="maxwidth">
+                                                <Checkbox ref="pcb_vial">PCB</Checkbox>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <Checkbox ref="antioxydant">Antioxydant</Checkbox>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-4 nopadding">
+                                            <div className="col-md-2 nopadding padding-right-xs">
+                                                <ControlLabel>{ this.state.qty3.label }</ControlLabel>
+                                                <FormControl type="text" value={this.state.qty3.value} />
+                                            </div>
+                                            <div className="col-md-10 nopadding">
+                                                <SamplPointSelectField3
+                                                    ref="sampl3"
+                                                    source="http://dev.vision.local/api/v1.0/sampling_point"
+                                                    value={ this.state.value} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <FormGroup>
+                                    Save as
+                                    <FormControl type="text" placeholder="electrical profile name" ref="elec_prof"/>
                                 </FormGroup>
+                                <ButtonToolbar>
+                                    <Button bsStyle="success" type="submit">save</Button>
+                                    <Button bsStyle="danger" type="close">cancel</Button>
+                                </ButtonToolbar>
+
                             </div>
-                            <div className="col-md-10 nopadding">
-                                <SamplPointSelectField3 
-                                    ref="sampl3"
-                                    source="http://dev.vision.local/api/v1.0/sampling_point"
-                                    value={ this.state.value} />
-                            </div>
-                        </div>
+                        </Panel>
                     </div>
-                        </fieldset>
-                </div>
-            </div>
+                </form>
+
         );}
 });
 

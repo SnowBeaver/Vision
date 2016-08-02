@@ -19,7 +19,8 @@ var LabAnalyserSelectField = React.createClass ({
         this.setState({
             value: event.target.value,
             lab_an: event.target.value
-        })
+        });
+        this.props.handleChange(event);
     },
 
     getInitialState: function(){
@@ -64,6 +65,7 @@ var LabAnalyserSelectField = React.createClass ({
                     componentClass="select"
                     placeholder="select"
                     onChange={this.handleChange}
+                    name="test_reason"
                      >
                     <option value="select">select reason</option>
                     {menuItems}
@@ -120,17 +122,21 @@ const NewLabModalWin = React.createClass({
 
 var TestReasonSelectField = React.createClass ({
 
-    handleChange: function(event, index, value){
+    handleChange: function(event){
+        console.log('here 2');
+        console.log(event.target.name);
+        console.log(event.target.value);
         this.setState({
-            value: event.target.value,
-            test_reas: event.target.value
-        })
+            value: event.target.value
+        });
+        this.props.handleChange(event);
     },
 
     getInitialState: function(){
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: null
         };
     },
 
@@ -139,6 +145,7 @@ var TestReasonSelectField = React.createClass ({
     },
 
     componentDidMount: function(){
+
         this.serverRequest = $.get(this.props.source, function (result){
 
             items = (result['result']);
@@ -168,6 +175,7 @@ var TestReasonSelectField = React.createClass ({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
+                    value={this.state.value}
                     onChange={this.handleChange}
                 >
                     <option value="select">select reason</option>
@@ -220,10 +228,6 @@ const DescriptionForm = React.createClass({
                 value: null
             },
 
-            test_reason: {
-                label: null,
-                value: null
-            },
             ini: {
                 label: 'Initials',
                 value: null
@@ -231,31 +235,31 @@ const DescriptionForm = React.createClass({
         }
     },
 
-    render: function() {
+    handleChange: function(e){
+        console.log('here 1');
+        console.log(e.target.name);
+        console.log(e.target.value);
+        this.props.onChange(e);
+    },
 
+    render: function() {
         return (
             <div className="maxwidth">
                 <div className="col-md-9 nopadding padding-right-xs">
                     <div className="maxwidth">
                         <div className="col-md-4 nopadding padding-right-xs">
-                            <FormGroup controlId="eqNoInput">
                                 <ControlLabel>{ this.state.equip_no.label }</ControlLabel>
                                 <FormControl type="text"  value={ this.state.equip_no.value } ref="equip_no" />
-                            </FormGroup>
                         </div>
 
                         <div className="col-md-4 nopadding padding-right-xs">
-                            <FormGroup controlId="positionInput" >
                                 <ControlLabel>{ this.state.pos_no.label }</ControlLabel>
                                 <FormControl type="text" value={ this.state.pos_no.value } />
-                            </FormGroup>
                         </div>
 
                         <div className="col-md-4 nopadding">
-                            <FormGroup controlId="insulFluidInput" >
                                 <ControlLabel>{ this.state.ins_flu.label }</ControlLabel>
                                 <FormControl type="text" value={ this.state.ins_flu.value } ref="ins_flu" />
-                            </FormGroup>
                         </div>
                     </div>
                     <div className="maxwidth">
@@ -263,22 +267,18 @@ const DescriptionForm = React.createClass({
                             <LabAnalyserSelectField
                                 ref="lab_analyser"
                                 source="http://dev.vision.local/api/v1.0/lab/"
-                                value={this.state.value} />
+                                value={this.state.lab_analyser.value} />
                             <NewLabModalWin/>
                         </div>
 
                         <div className="col-md-4 nopadding padding-right-xs">
-                            <FormGroup controlId="insulFluidInput" >
                                 <ControlLabel>{ this.state.contract_no.label }</ControlLabel>
                                 <FormControl type="text" value={ this.state.contract_no.value } ref="contract"/>
-                            </FormGroup>
                         </div>
 
                         <div className="col-md-4 nopadding">
-                            <FormGroup controlId="labNoInput">
                                 <ControlLabel>{ this.state.lab_no.label }</ControlLabel>
                                 <FormControl type="text" value={ this.state.lab_no.value } />
-                            </FormGroup>
                         </div>
                     </div>
                     <div className="maxwidth">
@@ -291,15 +291,14 @@ const DescriptionForm = React.createClass({
 
                         <div className="col-md-5 nopadding padding-right-xs">
                             <TestReasonSelectField
-                                ref="testreasn"
+                                ref="test_reason"
                                 source="http://dev.vision.local/api/v1.0/test_reason"
-                                value={this.state.value} />
+                                handleChange={this.handleChange}
+                                />
                         </div>
                         <div className="col-md-2 nopadding">
-                            <FormGroup controlId="labNoInput" >
                                 <ControlLabel>{ this.state.ini.label }</ControlLabel>
                                 <FormControl type="text" value={ this.state.ini.value } />
-                            </FormGroup>
                         </div>
                     </div>
                 </div>

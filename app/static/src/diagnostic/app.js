@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Component} from 'react'
+import TestInsertionForm from './Components/TestInsertionForm';
 import Equipment from './Components/Equipment';
 import Home from './Components/Home';
+import LabList from './Components/LabList';
+import ElectricalProfileForm from './ElectricalProfileForm';
+import FluidProfileForm from './FluidProfileForm';
+import ChooseTestForm from './ChooseTestForm';
+
 
 
 export default class App extends Component {
@@ -26,6 +32,10 @@ export default class App extends Component {
 
         switch( this.state.route ) {
             case '/equipment': Child = Equipment; break;
+            case '/elecprofform': Child = ElectricalProfileForm; break;
+            case '/fluidprofform': Child = FluidProfileForm; break;
+            case '/chooseform': Child = ChooseTestForm; break;
+
             default: Child = Home;
         }
 
@@ -34,7 +44,10 @@ export default class App extends Component {
                 <ul>
                     <li><a href='#/home'>Home</a></li>
                     <li><a href='#/equipment'>Equipment</a></li>
-                </ul> 
+                    <li><a href='#/elecprofform'>ElectricalProfileForm</a></li>
+                    <li><a href='#/fluidprofform'>FluidProfileForm</a></li>
+                    <li><a href='#/chooseform'>ChooseTestForm</a></li>
+                </ul>
                 <Child />
             </div>
         );

@@ -171,10 +171,8 @@ const TestProfileForm = React.createClass({
                                     />
                                 </div>
                                 <div className="maxwidth">
-                                    <FormGroup controlId="qtyInput3" >
                                         <ControlLabel>{ this.state.descr1.label }</ControlLabel>
                                         <FormControl type="text" value={ this.state.descr1.value } />
-                                    </FormGroup>
                                 </div>
                                 <div className="maxwidth padding-top-xs" id="electrical" name="electrical">
                                     <div className="maxwidth text-center">
