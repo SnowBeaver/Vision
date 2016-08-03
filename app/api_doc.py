@@ -1197,7 +1197,7 @@ doc = ApiDoc(app=api)
          -d '{"created_by_id":1, "performed_by_id": 5, "equipment_id": 1, "lab_id": 1,"date": "2016-07-29 17:52:19"}' \
          http://localhost:8001/api/v1.0/campaign/
 
-@apiParam   {Datetime}      date                required
+@apiParam   {Datetime}      date                required format "2016-07-29 17:52:19"
 @apiParam   {Integer}       created_by_id       required
 @apiParam   {Integer}       equipment_id        required
 @apiParam   {Integer}       performed_by_id     required
@@ -1207,18 +1207,18 @@ doc = ApiDoc(app=api)
 @apiParam   {Boolean}       percent_ratio
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Float}         charge
-@apiParam   {Datetime}      date_prelevement
+@apiParam   {Datetime}      date_prelevement    format "2016-07-29 17:52:19"
 @apiParam   {String}        remark
 @apiParam   {Boolean}       modifier
 @apiParam   {Boolean}       transmission
-@apiParam   {Datetime}      repair_date
+@apiParam   {Datetime}      repair_date         format "2016-07-29 17:52:19"
 @apiParam   {String}        repair_description
 @apiParam   {String(5)}     if_rem
 @apiParam   {String(5)}     if_ok
 @apiParam   {Integer}       recommandation_id
 @apiParam   {String}        recommendationNotes
 @apiParam   {Integer}       recommended_by_id
-@apiParam   {Datetime}      date_application
+@apiParam   {Datetime}      date_application    format "2016-07-29 17:52:19"
 @apiParam   {String}        comments
 @apiParam   {Float}         mws
 @apiParam   {Float}         temperature
@@ -7735,11 +7735,65 @@ doc = ApiDoc(app=api)
 @apiUse Error404
 """
 
+# TODO has no id
+# schedule
 """
-# has no id
-schedule_schema = {
+@apiIgnore
+@api {get} /schedule/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup schedule
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/schedule/
+
+@apiUse GetItemsSuccess # TODO
+@apiUse Error404
+"""
+"""
+@apiIgnore
+@api {get} /schedule/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup schedule
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/schedule/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "equipment_id": 1,
+            ...
+        }
+    }
+
+@apiSuccess {Integer}    equipment_id
+@apiSuccess {Datetime}   start_date
+@apiSuccess {Integer}    period_years
+@apiSuccess {Integer}    period_months
+@apiSuccess {Integer}    period_days
+@apiSuccess {Integer}    assigned_to_id
+@apiSuccess {Boolean}    recurring
+@apiSuccess {Integer}    notify_before_in_days
+@apiSuccess {String}     description
+@apiSuccess {Integer}    tests_to_perform
+@apiSuccess {Integer}    order
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /schedule/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup schedule
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" \
+         -X POST -d '{"equipment_id":2, "start_date":"2016-07-29 17:52:19", "assigned_to_id":3, "order":5}' \
+         http://localhost:8001/api/v1.0/schedule/
+
 @apiParam   {Integer}    equipment_id           required
-@apiParam   {Datetime}   start_date             required
+@apiParam   {Datetime}   start_date             required    format "2016-07-29 17:52:19"
 @apiParam   {Integer}    period_years
 @apiParam   {Integer}    period_months
 @apiParam   {Integer}    period_days
@@ -7749,5 +7803,31 @@ schedule_schema = {
 @apiParam   {String}     description
 @apiParam   {Integer}    tests_to_perform
 @apiParam   {Integer}    order                  required
-    }
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@apiIgnore
+@api {put} /schedule/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup schedule
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"equipment_id": 3}'\
+    http://localhost:8001/api/v1.0/schedule/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@apiIgnore
+@api {delete} /schedule/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup schedule
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/schedule/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
 """

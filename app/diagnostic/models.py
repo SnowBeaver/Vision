@@ -1274,10 +1274,16 @@ class Upstream(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Upstream.equipment_id')
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id, 'name': self.name}
+        return {'id': self.id,
+                'name': self.name,
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize(),
+                }
 
 
 class Downstream(db.Model):
@@ -1285,10 +1291,16 @@ class Downstream(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50), index=True)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Downstream.equipment_id')
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id, 'name': self.name}
+        return {'id': self.id,
+                'name': self.name,
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize(),
+                }
 
 
 class NeutralResistance(db.Model):
@@ -2197,6 +2209,9 @@ class TestResult(db.Model):
     test_status_id = db.Column('status_id', sqla.ForeignKey("test_status.id"), nullable=True)
     test_status = db.relationship('TestStatus', backref='test_result')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='TestResult.equipment_id')
+
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
 
@@ -2220,6 +2235,8 @@ class TestResult(db.Model):
                 'sampling_point': self.sampling_point and self.sampling_point.serialize(),
                 'test_status_id': self.test_status_id,
                 'test_status': self.test_status and self.test_status.serialize(),
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize(),
                 'tests': [test.serialize() for test in db.session.query(self.test_model).filter_by(test_result_id=self.id)]
                 }
 
