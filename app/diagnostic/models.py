@@ -359,53 +359,53 @@ class Campaign(db.Model):
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
 
 
-    # electriacal profile fields
-    bushing = db.Column(db.Boolean(False))
-    winding = db.Column(db.Boolean(False))
-    insulation_pf = db.Column(db.Boolean(False))
-    insulation = db.Column(db.Boolean(False))
-    visual_inspection = db.Column(db.Boolean(False))
-    resistance = db.Column(db.Boolean(False))
-    degree = db.Column(db.Boolean(False))
-    turns = db.Column(db.Boolean(False))
-
-    # fluid profile field
-    # syringe
-    gas = db.Column(db.Boolean(False))
-    water = db.Column(db.Boolean(False))
-    furans = db.Column(db.Boolean(False))
-    inhibitor = db.Column(db.Boolean(False))
-    pcb = db.Column(db.Boolean(False))
-    qty = db.Column(db.Integer)  # qty Syringe
-    sampling = db.Column(db.Integer)
-    # jar
-    dielec = db.Column(db.Boolean(False))
-    acidity = db.Column(db.Boolean(False))
-    density = db.Column(db.Boolean(False))
-    pcb_jar = db.Column(db.Boolean(False))
-    inhibitor_jar = db.Column(db.Boolean(False))
-    point = db.Column(db.Boolean(False))
-    dielec_2 = db.Column(db.Boolean(False))
-    color = db.Column(db.Boolean(False))
-    pf = db.Column(db.Boolean(False))
-    particles = db.Column(db.Boolean(False))
-    metals = db.Column(db.Boolean(False))
-    viscosity = db.Column(db.Boolean(False))
-    dielec_d = db.Column(db.Boolean(False))
-    ift = db.Column(db.Boolean(False))
-    pf_100 = db.Column(db.Boolean(False))
-    furans_f = db.Column(db.Boolean(False))
-    water_w = db.Column(db.Boolean(False))
-    corr = db.Column(db.Boolean(False))
-    dielec_i = db.Column(db.Boolean(False))
-    visual = db.Column(db.Boolean(False))
-    qty_jar = db.Column(db.Integer)
-    sampling_jar = db.Column(db.Integer)
-    # vial
-    pcb_vial = db.Column(db.Boolean(False))
-    antioxidant = db.Column(db.Boolean(False))
-    qty_vial = db.Column(db.Integer)
-    sampling_vial = db.Column(db.Integer)
+    # # electriacal profile fields
+    # bushing = db.Column(db.Boolean(False))
+    # winding = db.Column(db.Boolean(False))
+    # insulation_pf = db.Column(db.Boolean(False))
+    # insulation = db.Column(db.Boolean(False))
+    # visual_inspection = db.Column(db.Boolean(False))
+    # resistance = db.Column(db.Boolean(False))
+    # degree = db.Column(db.Boolean(False))
+    # turns = db.Column(db.Boolean(False))
+    #
+    # # fluid profile field
+    # # syringe
+    # gas = db.Column(db.Boolean(False))
+    # water = db.Column(db.Boolean(False))
+    # furans = db.Column(db.Boolean(False))
+    # inhibitor = db.Column(db.Boolean(False))
+    # pcb = db.Column(db.Boolean(False))
+    # qty = db.Column(db.Integer)  # qty Syringe
+    # sampling = db.Column(db.Integer)
+    # # jar
+    # dielec = db.Column(db.Boolean(False))
+    # acidity = db.Column(db.Boolean(False))
+    # density = db.Column(db.Boolean(False))
+    # pcb_jar = db.Column(db.Boolean(False))
+    # inhibitor_jar = db.Column(db.Boolean(False))
+    # point = db.Column(db.Boolean(False))
+    # dielec_2 = db.Column(db.Boolean(False))
+    # color = db.Column(db.Boolean(False))
+    # pf = db.Column(db.Boolean(False))
+    # particles = db.Column(db.Boolean(False))
+    # metals = db.Column(db.Boolean(False))
+    # viscosity = db.Column(db.Boolean(False))
+    # dielec_d = db.Column(db.Boolean(False))
+    # ift = db.Column(db.Boolean(False))
+    # pf_100 = db.Column(db.Boolean(False))
+    # furans_f = db.Column(db.Boolean(False))
+    # water_w = db.Column(db.Boolean(False))
+    # corr = db.Column(db.Boolean(False))
+    # dielec_i = db.Column(db.Boolean(False))
+    # visual = db.Column(db.Boolean(False))
+    # qty_jar = db.Column(db.Integer)
+    # sampling_jar = db.Column(db.Integer)
+    # # vial
+    # pcb_vial = db.Column(db.Boolean(False))
+    # antioxidant = db.Column(db.Boolean(False))
+    # qty_vial = db.Column(db.Integer)
+    # sampling_vial = db.Column(db.Integer)
 
 
     def __repr__(self):
@@ -463,47 +463,47 @@ class Campaign(db.Model):
                 'error_state': self.error_state,
                 'error_code': self.error_code,
                 'ambient_air_temperature': self.ambient_air_temperature,
-                'bushing': self.bushing,
-                'winding': self.winding,
-                'insulation_pf': self.insulation_pf,
-                'insulation': self.insulation,
-                'visual_inspection': self.visual_inspection,
-                'resistance': self.resistance,
-                'degree': self.degree,
-                'turns': self.turns,
-                'gas': self.gas,
-                'water': self.water,
-                'furans': self.furans,
-                'inhibitor': self.inhibitor,
-                'pcb': self.pcb,
-                'qty': self.qty,
-                'sampling': self.sampling,
-                'dielec': self.dielec,
-                'acidity': self.acidity,
-                'density': self.density,
-                'pcb_jar': self.pcb_jar,
-                'inhibitor_jar': self.inhibitor_jar,
-                'point': self.point,
-                'dielec_2': self.dielec_2,
-                'color': self.color,
-                'pf': self.pf,
-                'particles': self.particles,
-                'metals': self.metals,
-                'viscosity': self.viscosity,
-                'dielec_d': self.dielec_d,
-                'ift': self.ift,
-                'pf_100': self.pf_100,
-                'furans_f': self.furans_f,
-                'water_w': self.water_w,
-                'corr': self.corr,
-                'dielec_i': self.dielec_i,
-                'visual': self.visual,
-                'qty_jar': self.qty_jar,
-                'sampling_jar': self.sampling_jar,
-                'pcb_vial': self.pcb_vial,
-                'antioxidant': self.antioxidant,
-                'qty_vial': self.qty_vial,
-                'sampling_vial': self.sampling_vial,
+                # 'bushing': self.bushing,
+                # 'winding': self.winding,
+                # 'insulation_pf': self.insulation_pf,
+                # 'insulation': self.insulation,
+                # 'visual_inspection': self.visual_inspection,
+                # 'resistance': self.resistance,
+                # 'degree': self.degree,
+                # 'turns': self.turns,
+                # 'gas': self.gas,
+                # 'water': self.water,
+                # 'furans': self.furans,
+                # 'inhibitor': self.inhibitor,
+                # 'pcb': self.pcb,
+                # 'qty': self.qty,
+                # 'sampling': self.sampling,
+                # 'dielec': self.dielec,
+                # 'acidity': self.acidity,
+                # 'density': self.density,
+                # 'pcb_jar': self.pcb_jar,
+                # 'inhibitor_jar': self.inhibitor_jar,
+                # 'point': self.point,
+                # 'dielec_2': self.dielec_2,
+                # 'color': self.color,
+                # 'pf': self.pf,
+                # 'particles': self.particles,
+                # 'metals': self.metals,
+                # 'viscosity': self.viscosity,
+                # 'dielec_d': self.dielec_d,
+                # 'ift': self.ift,
+                # 'pf_100': self.pf_100,
+                # 'furans_f': self.furans_f,
+                # 'water_w': self.water_w,
+                # 'corr': self.corr,
+                # 'dielec_i': self.dielec_i,
+                # 'visual': self.visual,
+                # 'qty_jar': self.qty_jar,
+                # 'sampling_jar': self.sampling_jar,
+                # 'pcb_vial': self.pcb_vial,
+                # 'antioxidant': self.antioxidant,
+                # 'qty_vial': self.qty_vial,
+                # 'sampling_vial': self.sampling_vial,
                 'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
                 }
 
@@ -2212,6 +2212,54 @@ class TestResult(db.Model):
     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
     equipment = db.relationship('Equipment', foreign_keys='TestResult.equipment_id')
 
+    # electriacal profile fields
+    bushing = db.Column(db.Boolean(False))
+    winding = db.Column(db.Boolean(False))
+    insulation_pf = db.Column(db.Boolean(False))
+    insulation = db.Column(db.Boolean(False))
+    visual_inspection = db.Column(db.Boolean(False))
+    resistance = db.Column(db.Boolean(False))
+    degree = db.Column(db.Boolean(False))
+    turns = db.Column(db.Boolean(False))
+
+    # fluid profile field
+    # syringe
+    gas = db.Column(db.Boolean(False))
+    water = db.Column(db.Boolean(False))
+    furans = db.Column(db.Boolean(False))
+    inhibitor = db.Column(db.Boolean(False))
+    pcb = db.Column(db.Boolean(False))
+    qty = db.Column(db.Integer)  # qty Syringe
+    sampling = db.Column(db.Integer)
+    # jar
+    dielec = db.Column(db.Boolean(False))
+    acidity = db.Column(db.Boolean(False))
+    density = db.Column(db.Boolean(False))
+    pcb_jar = db.Column(db.Boolean(False))
+    inhibitor_jar = db.Column(db.Boolean(False))
+    point = db.Column(db.Boolean(False))
+    dielec_2 = db.Column(db.Boolean(False))
+    color = db.Column(db.Boolean(False))
+    pf = db.Column(db.Boolean(False))
+    particles = db.Column(db.Boolean(False))
+    metals = db.Column(db.Boolean(False))
+    viscosity = db.Column(db.Boolean(False))
+    dielec_d = db.Column(db.Boolean(False))
+    ift = db.Column(db.Boolean(False))
+    pf_100 = db.Column(db.Boolean(False))
+    furans_f = db.Column(db.Boolean(False))
+    water_w = db.Column(db.Boolean(False))
+    corr = db.Column(db.Boolean(False))
+    dielec_i = db.Column(db.Boolean(False))
+    visual = db.Column(db.Boolean(False))
+    qty_jar = db.Column(db.Integer)
+    sampling_jar = db.Column(db.Integer)
+    # vial
+    pcb_vial = db.Column(db.Boolean(False))
+    antioxidant = db.Column(db.Boolean(False))
+    qty_vial = db.Column(db.Integer)
+    sampling_vial = db.Column(db.Integer)
+
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
 
@@ -2237,6 +2285,47 @@ class TestResult(db.Model):
                 'test_status': self.test_status and self.test_status.serialize(),
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
+                'bushing': self.bushing,
+                'winding': self.winding,
+                'insulation_pf': self.insulation_pf,
+                'insulation': self.insulation,
+                'visual_inspection': self.visual_inspection,
+                'resistance': self.resistance,
+                'degree': self.degree,
+                'turns': self.turns,
+                'gas': self.gas,
+                'water': self.water,
+                'furans': self.furans,
+                'inhibitor': self.inhibitor,
+                'pcb': self.pcb,
+                'qty': self.qty,
+                'sampling': self.sampling,
+                'dielec': self.dielec,
+                'acidity': self.acidity,
+                'density': self.density,
+                'pcb_jar': self.pcb_jar,
+                'inhibitor_jar': self.inhibitor_jar,
+                'point': self.point,
+                'dielec_2': self.dielec_2,
+                'color': self.color,
+                'pf': self.pf,
+                'particles': self.particles,
+                'metals': self.metals,
+                'viscosity': self.viscosity,
+                'dielec_d': self.dielec_d,
+                'ift': self.ift,
+                'pf_100': self.pf_100,
+                'furans_f': self.furans_f,
+                'water_w': self.water_w,
+                'corr': self.corr,
+                'dielec_i': self.dielec_i,
+                'visual': self.visual,
+                'qty_jar': self.qty_jar,
+                'sampling_jar': self.sampling_jar,
+                'pcb_vial': self.pcb_vial,
+                'antioxidant': self.antioxidant,
+                'qty_vial': self.qty_vial,
+                'sampling_vial': self.sampling_vial,
                 'tests': [test.serialize() for test in db.session.query(self.test_model).filter_by(test_result_id=self.id)]
                 }
 

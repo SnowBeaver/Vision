@@ -1018,6 +1018,48 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}   test_type_id
 @apiSuccess {Integer}   sampling_point_id
 @apiSuccess {Integer}   test_status_id
+@apiSuccess {Integer}   equipment_id
+@apiSuccess {Boolean}   bushing
+@apiSuccess {Boolean}   winding
+@apiSuccess {Boolean}   insulation_pf
+@apiSuccess {Boolean}   insulation
+@apiSuccess {Boolean}   visual_inspection
+@apiSuccess {Boolean}   resistance
+@apiSuccess {Boolean}   degree
+@apiSuccess {Boolean}   turns
+@apiSuccess {Boolean}   gas
+@apiSuccess {Boolean}   water
+@apiSuccess {Boolean}   furans
+@apiSuccess {Boolean}   inhibitor
+@apiSuccess {Boolean}   pcb
+@apiSuccess {Integer}   qty
+@apiSuccess {Integer}   sampling
+@apiSuccess {Boolean}   dielec
+@apiSuccess {Boolean}   acidity
+@apiSuccess {Boolean}   density
+@apiSuccess {Boolean}   pcb_jar
+@apiSuccess {Boolean}   inhibitor_jar
+@apiSuccess {Boolean}   point
+@apiSuccess {Boolean}   dielec_2
+@apiSuccess {Boolean}   color
+@apiSuccess {Boolean}   pf
+@apiSuccess {Boolean}   particles
+@apiSuccess {Boolean}   metals
+@apiSuccess {Boolean}   viscosity
+@apiSuccess {Boolean}   dielec_d
+@apiSuccess {Boolean}   ift
+@apiSuccess {Boolean}   pf_100
+@apiSuccess {Boolean}   furans_f
+@apiSuccess {Boolean}   water_w
+@apiSuccess {Boolean}   corr
+@apiSuccess {Boolean}   dielec_i
+@apiSuccess {Boolean}   visual
+@apiSuccess {Integer}   qty_jar
+@apiSuccess {Integer}   sampling_jar
+@apiSuccess {Boolean}   pcb_vial
+@apiSuccess {Boolean}   antioxidant
+@apiSuccess {Integer}   qty_vial
+@apiSuccess {Integer}   sampling_vial
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -1037,6 +1079,48 @@ doc = ApiDoc(app=api)
 @apiParam {Integer}   test_type_id
 @apiParam {Integer}   sampling_point_id
 @apiParam {Integer}   test_status_id
+@apiParam {Integer}   equipment_id
+@apiParam {Boolean}   bushing
+@apiParam {Boolean}   winding
+@apiParam {Boolean}   insulation_pf
+@apiParam {Boolean}   insulation
+@apiParam {Boolean}   visual_inspection
+@apiParam {Boolean}   resistance
+@apiParam {Boolean}   degree
+@apiParam {Boolean}   turns
+@apiParam {Boolean}   gas
+@apiParam {Boolean}   water
+@apiParam {Boolean}   furans
+@apiParam {Boolean}   inhibitor
+@apiParam {Boolean}   pcb
+@apiParam {Integer}   qty
+@apiParam {Integer}   sampling
+@apiParam {Boolean}   dielec
+@apiParam {Boolean}   acidity
+@apiParam {Boolean}   density
+@apiParam {Boolean}   pcb_jar
+@apiParam {Boolean}   inhibitor_jar
+@apiParam {Boolean}   point
+@apiParam {Boolean}   dielec_2
+@apiParam {Boolean}   color
+@apiParam {Boolean}   pf
+@apiParam {Boolean}   particles
+@apiParam {Boolean}   metals
+@apiParam {Boolean}   viscosity
+@apiParam {Boolean}   dielec_d
+@apiParam {Boolean}   ift
+@apiParam {Boolean}   pf_100
+@apiParam {Boolean}   furans_f
+@apiParam {Boolean}   water_w
+@apiParam {Boolean}   corr
+@apiParam {Boolean}   dielec_i
+@apiParam {Boolean}   visual
+@apiParam {Integer}   qty_jar
+@apiParam {Integer}   sampling_jar
+@apiParam {Boolean}   pcb_vial
+@apiParam {Boolean}   antioxidant
+@apiParam {Integer}   qty_vial
+@apiParam {Integer}   sampling_vial
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -1142,47 +1226,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       error_state
 @apiSuccess {Integer}       error_code
 @apiSuccess {Float}         ambient_air_temperature
-@apiSuccess {Boolean}       bushing
-@apiSuccess {Boolean}       winding
-@apiSuccess {Boolean}       insulation_pf
-@apiSuccess {Boolean}       insulation
-@apiSuccess {Boolean}       visual_inspection
-@apiSuccess {Boolean}       resistance
-@apiSuccess {Boolean}       degree
-@apiSuccess {Boolean}       turns
-@apiSuccess {Boolean}       gas
-@apiSuccess {Boolean}       water
-@apiSuccess {Boolean}       furans
-@apiSuccess {Boolean}       inhibitor
-@apiSuccess {Boolean}       pcb
-@apiSuccess {Integer}       qty
-@apiSuccess {Integer}       sampling
-@apiSuccess {Boolean}       dielec
-@apiSuccess {Boolean}       acidity
-@apiSuccess {Boolean}       density
-@apiSuccess {Boolean}       pcb_jar
-@apiSuccess {Boolean}       inhibitor_jar
-@apiSuccess {Boolean}       point
-@apiSuccess {Boolean}       dielec_2
-@apiSuccess {Boolean}       color
-@apiSuccess {Boolean}       pf
-@apiSuccess {Boolean}       particles
-@apiSuccess {Boolean}       metals
-@apiSuccess {Boolean}       viscosity
-@apiSuccess {Boolean}       dielec_d
-@apiSuccess {Boolean}       ift
-@apiSuccess {Boolean}       pf_100
-@apiSuccess {Boolean}       furans_f
-@apiSuccess {Boolean}       water_w
-@apiSuccess {Boolean}       corr
-@apiSuccess {Boolean}       dielec_i
-@apiSuccess {Boolean}       visual
-@apiSuccess {Integer}       qty_jar
-@apiSuccess {Integer}       sampling_jar
-@apiSuccess {Boolean}       pcb_vial
-@apiSuccess {Boolean}       antioxidant
-@apiSuccess {Integer}       qty_vial
-@apiSuccess {Integer}       sampling_vial
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -1233,47 +1276,6 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       error_state
 @apiParam   {Integer}       error_code
 @apiParam   {Float}         ambient_air_temperature
-@apiParam   {Boolean}       bushing
-@apiParam   {Boolean}       winding
-@apiParam   {Boolean}       insulation_pf
-@apiParam   {Boolean}       insulation
-@apiParam   {Boolean}       visual_inspection
-@apiParam   {Boolean}       resistance
-@apiParam   {Boolean}       degree
-@apiParam   {Boolean}       turns
-@apiParam   {Boolean}       gas
-@apiParam   {Boolean}       water
-@apiParam   {Boolean}       furans
-@apiParam   {Boolean}       inhibitor
-@apiParam   {Boolean}       pcb
-@apiParam   {Integer}       qty
-@apiParam   {Integer}       sampling
-@apiParam   {Boolean}       dielec
-@apiParam   {Boolean}       acidity
-@apiParam   {Boolean}       density
-@apiParam   {Boolean}       pcb_jar
-@apiParam   {Boolean}       inhibitor_jar
-@apiParam   {Boolean}       point
-@apiParam   {Boolean}       dielec_2
-@apiParam   {Boolean}       color
-@apiParam   {Boolean}       pf
-@apiParam   {Boolean}       particles
-@apiParam   {Boolean}       metals
-@apiParam   {Boolean}       viscosity
-@apiParam   {Boolean}       dielec_d
-@apiParam   {Boolean}       ift
-@apiParam   {Boolean}       pf_100
-@apiParam   {Boolean}       furans_f
-@apiParam   {Boolean}       water_w
-@apiParam   {Boolean}       corr
-@apiParam   {Boolean}       dielec_i
-@apiParam   {Boolean}       visual
-@apiParam   {Integer}       qty_jar
-@apiParam   {Integer}       sampling_jar
-@apiParam   {Boolean}       pcb_vial
-@apiParam   {Boolean}       antioxidant
-@apiParam   {Integer}       qty_vial
-@apiParam   {Integer}       sampling_vial
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -6160,6 +6162,7 @@ doc = ApiDoc(app=api)
 
 @apiSuccess {Integer}       id
 @apiSuccess {String(50)}    name
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -6173,6 +6176,7 @@ doc = ApiDoc(app=api)
          http://localhost:8001/api/v1.0/upstream/
 
 @apiParam   {String(50)}    name
+@apiParam   {Integer}       equipment_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -6379,6 +6383,7 @@ doc = ApiDoc(app=api)
 
 @apiSuccess {Integer}       id
 @apiSuccess {String(50)}    name
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -6392,6 +6397,7 @@ doc = ApiDoc(app=api)
          http://localhost:8001/api/v1.0/downstream/
 
 @apiParam   {String(50)}    name
+@apiParam   {Integer}       equipment_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
