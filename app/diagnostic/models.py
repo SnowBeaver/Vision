@@ -220,12 +220,12 @@ class Campaign(db.Model):
     # code = db.Column(db.String(50), index=True)  # AnalysisKey: Index key for all tests results - id can be used
 
     # Sometimes it is mandatory to enter the test equipment information so same one can be used next time
-    equipment_id = db.Column(
-        'equipment_id',
-        db.ForeignKey("equipment.id"),
-        nullable=False
-    )
-    equipment = db.relationship('Equipment', foreign_keys='Campaign.equipment_id')
+    # equipment_id = db.Column(
+    #     'equipment_id',
+    #     db.ForeignKey("equipment.id"),
+    #     nullable=False
+    # )
+    # equipment = db.relationship('Equipment', foreign_keys='Campaign.equipment_id')
 
     # MaterialCode: Define the type of material analysed: copper, sand, paper, etc..
     material_id = db.Column(
@@ -418,8 +418,8 @@ class Campaign(db.Model):
                 'date': dump_datetime(self.date),
                 'created_by_id': self.created_by_id,
                 'created_by': self.created_by and self.created_by.serialize(),
-                'equipment_id': self.equipment_id,
-                'equipment': self.equipment and self.equipment.serialize(),
+                # 'equipment_id': self.equipment_id,
+                # 'equipment': self.equipment and self.equipment.serialize(),
                 'material_id': self.material_id,
                 'material': self.material and self.material.serialize(),
                 'analysis_number': self.analysis_number,

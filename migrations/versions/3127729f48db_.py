@@ -30,6 +30,8 @@ def upgrade():
     """
 
     sql = """
+    ALTER TABLE public.campaign DROP equipment_id;
+
     """
     op.execute(sql=sql)
 

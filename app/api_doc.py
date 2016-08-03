@@ -1107,7 +1107,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       id
 @apiSuccess {Datetime}      date
 @apiSuccess {Integer}       created_by_id
-@apiSuccess {Integer}       equipment_id
 @apiSuccess {Integer}       performed_by_id
 @apiSuccess {Integer}       lab_id
 @apiSuccess {Integer}       material_id
@@ -1194,12 +1193,11 @@ doc = ApiDoc(app=api)
 @apiGroup campaign
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"created_by_id":1, "performed_by_id": 5, "equipment_id": 1, "lab_id": 1,"date": "2016-07-29 17:52:19"}' \
+         -d '{"created_by_id":1, "performed_by_id": 5, "lab_id": 1,"date": "2016-07-29 17:52:19"}' \
          http://localhost:8001/api/v1.0/campaign/
 
 @apiParam   {Datetime}      date                required format "2016-07-29 17:52:19"
 @apiParam   {Integer}       created_by_id       required
-@apiParam   {Integer}       equipment_id        required
 @apiParam   {Integer}       performed_by_id     required
 @apiParam   {Integer}       lab_id              required
 @apiParam   {Integer}       material_id
