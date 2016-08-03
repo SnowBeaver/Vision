@@ -26,7 +26,7 @@ const ChooseTestForm = React.createClass({
 
                                 <ButtonToolbar>
                                     <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger" type="close">cancel</Button>
+                                    <Button bsStyle="danger" >cancel</Button>
                                 </ButtonToolbar>
                             </div>
                         </Panel>

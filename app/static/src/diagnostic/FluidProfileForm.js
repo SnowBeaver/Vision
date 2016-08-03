@@ -294,9 +294,8 @@ const FluidProfileForm = React.createClass({
 
 
     render: function() {
-console.log("render in fluid profile");
-        return (
 
+        return (
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
                         <Panel header="Electrical profile test parametres">
@@ -469,7 +468,7 @@ console.log("render in fluid profile");
                                 </FormGroup>
                                 <ButtonToolbar>
                                     <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger" type="close">cancel</Button>
+                                    <Button bsStyle="danger">cancel</Button>
                                 </ButtonToolbar>
 
                             </div>
