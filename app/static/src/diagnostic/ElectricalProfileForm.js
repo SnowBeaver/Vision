@@ -103,7 +103,7 @@ const ElectricalProfileForm = React.createClass({
 
     render:function (){
         return(
-            <div>
+            <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
                         <Panel header="Electrical profile test parametres">
@@ -144,14 +144,25 @@ const ElectricalProfileForm = React.createClass({
                                     </div>
                                 </fieldset>
 
-                                    <FormGroup>
+                                <div className="row">
+                                    <div className="col-md-5 ">
+                                        <FormGroup>
                                         Save as
                                         <FormControl type="text" placeholder="electrical profile name" ref="elec_prof"/>
                                     </FormGroup>
-                                    <ButtonToolbar>
-                                    <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger" >cancel</Button>
-                                        </ButtonToolbar>
+                                    </div>
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="success" type="submit">save</Button>
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="danger">cancel</Button>
+                                    </div>
+                                </div>
 
                             </div>
                         </Panel>

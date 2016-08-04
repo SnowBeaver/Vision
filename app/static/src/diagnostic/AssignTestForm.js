@@ -280,12 +280,8 @@ const ChooseTestModal = React.createClass({
                 <Button bsStyle="primary" bsSize="small" onClick={this.open}>
                   Create
                 </Button>
-                <Modal show={this.state.showModal}  {...this.props} bsSize="small" >
+                <Modal show={this.state.showModal}  >
                     <ChooseTestForm/>
-                  <Modal.Footer>
-                      <Button onClick={this.close}>Save</Button>
-                    <Button onClick={this.close}>Close</Button>
-                  </Modal.Footer>
                 </Modal>
               </span>
         );
@@ -357,12 +353,11 @@ var AssignTestForm = React.createClass ({
     render : function() {
 
         return(
-
-            <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                <div>
+            <div className="form-container">
+                <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Assign a test to equipment">
                         <div className="maxwidth">
-                            <div className="col-md-9 nopadding padding-right-xs">
+                            <div className="col-md-12 nopadding padding-right-xs">
                                 <div className="maxwidth">
                                     <div className="col-md-4 nopadding padding-right-xs">
                                         <ControlLabel>{ this.state.equip_no.label }</ControlLabel>
@@ -380,14 +375,15 @@ var AssignTestForm = React.createClass ({
                                     </div>
                                 </div>
                                 <div className="maxwidth">
-                                    <div className="col-md-4 nopadding padding-right-xs">
+                                    <div className="col-md-3 nopadding padding-right-xs">
                                         <LabAnalyserSelectField
                                             ref="lab_analyser"
                                             source="http://dev.vision.local/api/v1.0/lab/"
                                             value={this.state.lab_analyser.value} />
+                                    </div>
+                                    <div className="col-md-1 nopadding padding-right-xs">
                                         <NewLabModalWin/>
                                     </div>
-
                                     <div className="col-md-4 nopadding padding-right-xs">
                                         <ControlLabel>{ this.state.contract_no.label }</ControlLabel>
                                         <FormControl type="text" value={ this.state.contract_no.value } ref="contract"/>
@@ -422,29 +418,37 @@ var AssignTestForm = React.createClass ({
                                     <fieldset className="scheduler-border">
                                         <legend className="scheduler-border">Chosen profile</legend>
                                         <div id="test_prof">
-                                            <a href="http://dev.vision.local/admin/#/elecprofform" >Current test profile</a>
-                                            <a href="javascript:void(0)"  className="glyphicon glyphicon-remove-circle" onClick={this.handleClick}  aria-hidden="true">delete</a>
+                                            <div className="col-md-8"><a href="http://dev.vision.local/admin/#/elecprofform" >Current test profile</a></div>
+                                            <div className="col-md-4"><a href="javascript:void(0)"  className="glyphicon glyphicon-remove-circle " onClick={this.handleClick}  aria-hidden="true">delete</a></div>
                                         </div>
                                     </fieldset>
                                 </div>
-                                <div className="col-md-5 nopadding padding-right-xs">
-                                    <TestProfileSelectField
-                                        ref="test_prof"
-                                        source="http://dev.vision.local/api/v1.0/"/>
+                                <div className="row">
+                                    <div className="col-md-7 ">
+                                        <TestProfileSelectField
+                                            ref="test_prof"
+                                            source="http://dev.vision.local/api/v1.0/"/>
+                                    </div>
+                                    <div className="col-md-4 ">
+                                        <ChooseTestModal/>
+                                    </div>
                                 </div>
-                                <div className="col-md-4 nopadding padding-right-xs">
-                                    <ChooseTestModal/>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                    </div>
+                                    <div className="col-md-1 nopadding padding-right-xs">
+                                        <Button bsStyle="success" type="submit">save</Button>
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="danger">cancel</Button>
+                                    </div>
                                 </div>
-                                <ButtonToolbar className="maxwidth">
-                                    <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger">cancel</Button>
-                                </ButtonToolbar>
                             </div>
                         </div>
                     </Panel>
-                </div>
-            </form>
 
+                </form>
+            </div>
         );
     }
 });

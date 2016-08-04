@@ -60,7 +60,7 @@ var SamplPointSelectField1 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
-                             >
+                >
                     <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
@@ -120,7 +120,7 @@ var SamplPointSelectField2 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
-                             >
+                >
                     <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
@@ -179,7 +179,7 @@ var SamplPointSelectField3 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
-                             >
+                >
                     <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
@@ -218,12 +218,12 @@ const FluidProfileForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                
-                
-                
-                
-                
-                
+
+
+
+
+
+
             }),
             success: function (data, textStatus) { },
             beforeSend: function () {
@@ -296,6 +296,7 @@ const FluidProfileForm = React.createClass({
     render: function() {
 
         return (
+            <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
                         <Panel header="Electrical profile test parametres">
@@ -349,51 +350,29 @@ const FluidProfileForm = React.createClass({
                                                     <Checkbox ref="dielec_1mm">Dielec .D1816(1mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="acid">AcidityD974</Checkbox>
+                                                     <Checkbox ref="dielec_2mm">Dielec.D1816(2mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="density">Density(D1298)</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="inhibit_jar">Inhibitor</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="p_point">PouPoint</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="dielec_2mm">Dielec.D18162mmkV</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="color">ColorD1500</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="pf_25">PF25C(D924)</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="particles">Particles</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="metal_oil">Metals in oil</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="viscosity">Viscosity</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
                                                     <Checkbox ref="dielec_db87">Dielec. D877(kV)</Checkbox>
                                                 </div>
+                                            </div>
+                                            <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="acid">Acidity(D974)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="color">Color(D1500)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
                                                     <Checkbox ref="ift">IFT(D971)</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="density">Density(D1298)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="pf_25">PF25C(D924)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
                                                     <Checkbox ref="pf_100">PF100C(D924)</Checkbox>
@@ -401,10 +380,32 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="furan_jar">Furans</Checkbox>
+                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="particles">Particles</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="furan_jar">Furans</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="inhibit_jar">Inhibitor</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="metal_oil">Metals in oil</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
                                                     <Checkbox ref="water_2">Water</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="p_point">PouPoint</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="viscosity">Viscosity</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
                                                     <Checkbox ref="cor_sul">Corr.Sulfur</Checkbox>
@@ -462,20 +463,31 @@ const FluidProfileForm = React.createClass({
                                     </div>
                                 </fieldset>
 
-                                <FormGroup>
-                                    Save as
-                                    <FormControl type="text" placeholder="electrical profile name" ref="elec_prof"/>
-                                </FormGroup>
-                                <ButtonToolbar>
-                                    <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger">cancel</Button>
-                                </ButtonToolbar>
+                                <div className="row">
+                                    <div className="col-md-5 ">
+                                        <FormGroup>
+                                            Save as
+                                            <FormControl type="text" placeholder="fluid profile name" ref="elec_prof"/>
+                                        </FormGroup>
+                                    </div>
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="success" type="submit">save</Button>
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="danger">cancel</Button>
+                                    </div>
+                                </div>
 
                             </div>
                         </Panel>
                     </div>
                 </form>
-
+            </div>
         );}
 });
 
