@@ -128,6 +128,29 @@ def upgrade():
     sql +="""ALTER TABLE public.campaign DROP percent_ratio;
         ALTER TABLE public.test_result ADD percent_ratio BOOLEAN DEFAULT FALSE NULL;
     """
+    sql += """CREATE TABLE public.equipment_connection
+    (
+        id SERIAL PRIMARY KEY NOT NULL,
+        equipment_id INT,
+        parent_id INT,
+        CONSTRAINT equipment_connection_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
+        CONSTRAINT equipment_connection_parent_id_fk FOREIGN KEY (parent_id) REFERENCES equipment (id)
+    );
+    """
+    sql += """
+    DROP TABLE public.upstream;
+    DROP TABLE public.downstream;
+    ALTER TABLE public.equipment DROP upstream1;
+    ALTER TABLE public.equipment DROP upstream2;
+    ALTER TABLE public.equipment DROP upstream3;
+    ALTER TABLE public.equipment DROP upstream4;
+    ALTER TABLE public.equipment DROP upstream5;
+    ALTER TABLE public.equipment DROP downstream1;
+    ALTER TABLE public.equipment DROP downstream2;
+    ALTER TABLE public.equipment DROP downstream3;
+    ALTER TABLE public.equipment DROP downstream4;
+    ALTER TABLE public.equipment DROP downstream5;
+    """
     op.execute(sql=sql)
 
 

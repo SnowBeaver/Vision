@@ -1263,37 +1263,56 @@ class Bushing(db.Model):
                 }
 
 
-class Upstream(db.Model):
-    __tablename__ = u'upstream'
+# class Upstream(db.Model):
+#     __tablename__ = u'upstream'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     name = db.Column(db.String(50), index=True)
+#     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+#     equipment = db.relationship('Equipment', foreign_keys='Upstream.equipment_id')
+#
+#     def serialize(self):
+#         """Return object data in easily serializeable format"""
+#         return {'id': self.id,
+#                 'name': self.name,
+#                 'equipment_id': self.equipment_id,
+#                 'equipment': self.equipment and self.equipment.serialize(),
+#                 }
 
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
+
+# class Downstream(db.Model):
+#     __tablename__ = u'downstream'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     name = db.Column(db.String(50), index=True)
+#     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+#     equipment = db.relationship('Equipment', foreign_keys='Downstream.equipment_id')
+#
+#     def serialize(self):
+#         """Return object data in easily serializeable format"""
+#         return {'id': self.id,
+#                 'name': self.name,
+#                 'equipment_id': self.equipment_id,
+#                 'equipment': self.equipment and self.equipment.serialize(),
+#                 }
+
+
+class EquipmentConnection(db.Model):
+    __tablename__ = u'equipment_connection'
+
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
-    equipment = db.relationship('Equipment', foreign_keys='Upstream.equipment_id')
+    equipment = db.relationship('Equipment', foreign_keys='EquipmentConnection.equipment_id')
+    parent_id = db.Column('parent_id', db.ForeignKey("equipment.id"))
+    parent = db.relationship('Equipment', foreign_keys='EquipmentConnection.parent_id')
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
-                'name': self.name,
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
-                }
-
-
-class Downstream(db.Model):
-    __tablename__ = u'downstream'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
-    equipment = db.relationship('Equipment', foreign_keys='Downstream.equipment_id')
-
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'equipment_id': self.equipment_id,
-                'equipment': self.equipment and self.equipment.serialize(),
+                'parent_id': self.parent_id,
+                'parent': self.parent and self.parent.serialize(),
                 }
 
 
@@ -1794,18 +1813,18 @@ class Equipment(db.Model):
 
     norm = relationship('Norm', foreign_keys='Equipment.norm_id')
 
-    # its a state of a transformer / breaker /switch /motor / cable  not
-    upstream1 = db.Column(db.String(100))  # Upstream1. Upstream device name
-    upstream2 = db.Column(db.String(100))  # Upstream2. Upstream device name
-    upstream3 = db.Column(db.String(100))  # Upstream3. Upstream device name
-    upstream4 = db.Column(db.String(100))  # Upstream4. Upstream device name
-    upstream5 = db.Column(db.String(100))  # Upstream5. Upstream device name
-
-    downstream1 = db.Column(db.String(100))  # Downstream1. Downstream device name
-    downstream2 = db.Column(db.String(100))  # Downstream2. Downstream device name
-    downstream3 = db.Column(db.String(100))  # Downstream3. Downstream device name
-    downstream4 = db.Column(db.String(100))  # Downstream4. Downstream device name
-    downstream5 = db.Column(db.String(100))  # Downstream5. Downstream device name
+    # # its a state of a transformer / breaker /switch /motor / cable  not
+    # upstream1 = db.Column(db.String(100))  # Upstream1. Upstream device name
+    # upstream2 = db.Column(db.String(100))  # Upstream2. Upstream device name
+    # upstream3 = db.Column(db.String(100))  # Upstream3. Upstream device name
+    # upstream4 = db.Column(db.String(100))  # Upstream4. Upstream device name
+    # upstream5 = db.Column(db.String(100))  # Upstream5. Upstream device name
+    #
+    # downstream1 = db.Column(db.String(100))  # Downstream1. Downstream device name
+    # downstream2 = db.Column(db.String(100))  # Downstream2. Downstream device name
+    # downstream3 = db.Column(db.String(100))  # Downstream3. Downstream device name
+    # downstream4 = db.Column(db.String(100))  # Downstream4. Downstream device name
+    # downstream5 = db.Column(db.String(100))  # Downstream5. Downstream device name
 
     tie_location = db.Column(db.Boolean)  # TieLocation. Tie device location
     tie_maintenance_state = db.Column(db.Integer)  # TieMaintenanceState. Tie is open or closed during maintenance
@@ -1877,16 +1896,16 @@ class Equipment(db.Model):
                 'nbr_of_tap_change_ltc': self.nbr_of_tap_change_ltc,
                 'norm_id': self.norm_id,
                 'norm': self.norm and self.norm.serialize(),
-                'upstream1': self.upstream1,
-                'upstream2': self.upstream2,
-                'upstream3': self.upstream3,
-                'upstream4': self.upstream4,
-                'upstream5': self.upstream5,
-                'downstream1': self.downstream1,
-                'downstream2': self.downstream2,
-                'downstream3': self.downstream3,
-                'downstream4': self.downstream4,
-                'downstream5': self.downstream5,
+                # 'upstream1': self.upstream1,
+                # 'upstream2': self.upstream2,
+                # 'upstream3': self.upstream3,
+                # 'upstream4': self.upstream4,
+                # 'upstream5': self.upstream5,
+                # 'downstream1': self.downstream1,
+                # 'downstream2': self.downstream2,
+                # 'downstream3': self.downstream3,
+                # 'downstream4': self.downstream4,
+                # 'downstream5': self.downstream5,
                 'tie_location': self.tie_location,
                 'tie_maintenance_state': self.tie_maintenance_state,
                 'tie_status': self.tie_status,

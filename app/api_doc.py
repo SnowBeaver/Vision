@@ -229,16 +229,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
 @apiSuccess {Integer}         norm_id
 @apiSuccess {Dict}            norm
-@apiSuccess {String(100)}     upstream1                   Upstream device name
-@apiSuccess {String(100)}     upstream2                   Upstream device name
-@apiSuccess {String(100)}     upstream3                   Upstream device name
-@apiSuccess {String(100)}     upstream4                   Upstream device name
-@apiSuccess {String(100)}     upstream5                   Upstream device name
-@apiSuccess {String(100)}     downstream1                 Downstream device name
-@apiSuccess {String(100)}     downstream2                 Downstream device name
-@apiSuccess {String(100)}     downstream3                 Downstream device name
-@apiSuccess {String(100)}     downstream4                 Downstream device name
-@apiSuccess {String(100)}     downstream5                 Downstream device name
 @apiSuccess {Boolean}         tie_location                Tie device location
 @apiSuccess {Integer}         tie_maintenance_state       Tie is open or closed during maintenance
 @apiSuccess {Integer}         tie_status                  TieAnalysisState.
@@ -280,16 +270,6 @@ doc = ApiDoc(app=api)
 @apiParam {String}          visual_date                 Date where was done the last visual inspection.
 @apiParam {String}          visual_inspection_comments  Visual inspection comments,
 @apiParam {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
-@apiParam {String(100)}     upstream1                   Upstream device name
-@apiParam {String(100)}     upstream2                   Upstream device name
-@apiParam {String(100)}     upstream3                   Upstream device name
-@apiParam {String(100)}     upstream4                   Upstream device name
-@apiParam {String(100)}     upstream5                   Upstream device name
-@apiParam {String(100)}     downstream1                 Downstream device name
-@apiParam {String(100)}     downstream2                 Downstream device name
-@apiParam {String(100)}     downstream3                 Downstream device name
-@apiParam {String(100)}     downstream4                 Downstream device name
-@apiParam {String(100)}     downstream5                 Downstream device name
 @apiParam {Boolean}         tie_location                Tie device location
 @apiParam {Integer}         tie_maintenance_state       Tie is open or closed during maintenance
 @apiParam {Integer}         tie_status                  TieAnalysisState.
@@ -6130,81 +6110,6 @@ doc = ApiDoc(app=api)
 """
 
 
-# upstream
-"""
-@api {get} /upstream/ Get a list of items
-@apiVersion 1.0.0
-@apiName get_items
-@apiGroup upstream
-@apiExample {curl} Example usage:
-      curl -i http://localhost:8001/api/v1.0/upstream/
-
-@apiUse GetItemsSuccess
-@apiUse Error404
-"""
-"""
-@api {get} /upstream/:id Get an item by id
-@apiVersion 1.0.0
-@apiName get_item
-@apiGroup upstream
-@apiExample {curl} Example usage:
-      curl -i http://localhost:8001/api/v1.0/upstream/1
-
-@apiSuccessExample Success-Response:
-    HTTP/1.0 200 OK
-    Content-Type: application/json
-    {
-        "result": {
-            "id": 1,
-            "name": "some name",
-        }
-    }
-
-@apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {Integer}       equipment_id
-@apiUse GetItemSuccess
-@apiUse Error404
-"""
-"""
-@api {post} /upstream/ Add a new item
-@apiVersion 1.0.0
-@apiName add_item
-@apiGroup upstream
-@apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name"}' \
-         http://localhost:8001/api/v1.0/upstream/
-
-@apiParam   {String(50)}    name
-@apiParam   {Integer}       equipment_id
-@apiUse PostItemSuccess
-@apiUse Error400
-"""
-"""
-@api {put} /upstream/:id Update an item
-@apiVersion 1.0.0
-@apiName update_item
-@apiGroup upstream
-@apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/upstream/1
-
-@apiUse PutItemSuccess
-@apiUse Error400
-"""
-"""
-@api {delete} /upstream/:id Delete an item
-@apiVersion 1.0.0
-@apiName delete_item
-@apiGroup upstream
-@apiExample {curl} Example usage:
-    curl -X DELETE http://localhost:8001/api/v1.0/upstream/3
-
-@apiUse DelItemSuccess
-@apiUse Error404
-"""
-
-
 # interrupting_medium
 """
 @api {get} /interrupting_medium/ Get a list of items
@@ -6351,25 +6256,25 @@ doc = ApiDoc(app=api)
 """
 
 
-# downstream
+# equipment_connection
 """
-@api {get} /downstream/ Get a list of items
+@api {get} /equipment_connection/ Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
-@apiGroup downstream
+@apiGroup equipment_connection
 @apiExample {curl} Example usage:
-      curl -i http://localhost:8001/api/v1.0/downstream/
+      curl -i http://localhost:8001/api/v1.0/equipment_connection/
 
 @apiUse GetItemsSuccess
 @apiUse Error404
 """
 """
-@api {get} /downstream/:id Get an item by id
+@api {get} /equipment_connection/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
-@apiGroup downstream
+@apiGroup equipment_connection
 @apiExample {curl} Example usage:
-      curl -i http://localhost:8001/api/v1.0/downstream/1
+      curl -i http://localhost:8001/api/v1.0/equipment_connection/1
 
 @apiSuccessExample Success-Response:
     HTTP/1.0 200 OK
@@ -6377,49 +6282,50 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
+            "equipment_id": 2,
+            "parent_id": 3,
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
 @apiSuccess {Integer}       equipment_id
+@apiSuccess {Integer}       parent_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
 """
-@api {post} /downstream/ Add a new item
+@api {post} /equipment_connection/ Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup downstream
+@apiGroup equipment_connection
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name"}' \
-         http://localhost:8001/api/v1.0/downstream/
+    curl -i -H "Content-Type: application/json" -X POST -d '{"equipment_id": 2, "parent_id": 3}' \
+         http://localhost:8001/api/v1.0/equipment_connection/
 
-@apiParam   {String(50)}    name
 @apiParam   {Integer}       equipment_id
+@apiParam   {Integer}       parent_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
 """
-@api {put} /downstream/:id Update an item
+@api {put} /equipment_connection/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
-@apiGroup downstream
+@apiGroup equipment_connection
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/downstream/1
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"parent_id": 4}'\
+		 http://localhost:8001/api/v1.0/equipment_connection/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
 """
 """
-@api {delete} /downstream/:id Delete an item
+@api {delete} /equipment_connection/:id Delete an item
 @apiVersion 1.0.0
 @apiName delete_item
-@apiGroup downstream
+@apiGroup equipment_connection
 @apiExample {curl} Example usage:
-    curl -X DELETE http://localhost:8001/api/v1.0/downstream/3
+    curl -X DELETE http://localhost:8001/api/v1.0/equipment_connection/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
