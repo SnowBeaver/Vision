@@ -1019,6 +1019,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}   sampling_point_id
 @apiSuccess {Integer}   test_status_id
 @apiSuccess {Integer}   equipment_id
+@apiSuccess {Boolean}   percent_ratio
 @apiSuccess {Boolean}   bushing
 @apiSuccess {Boolean}   winding
 @apiSuccess {Boolean}   insulation_pf
@@ -1080,6 +1081,7 @@ doc = ApiDoc(app=api)
 @apiParam {Integer}   sampling_point_id
 @apiParam {Integer}   test_status_id
 @apiParam {Integer}   equipment_id
+@apiParam {Boolean}   percent_ratio
 @apiParam {Boolean}   bushing
 @apiParam {Boolean}   winding
 @apiParam {Boolean}   insulation_pf
@@ -1195,7 +1197,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       lab_id
 @apiSuccess {Integer}       material_id
 @apiSuccess {String(15)}    analysis_number
-@apiSuccess {Boolean}       percent_ratio
 @apiSuccess {Integer}       fluid_type_id
 @apiSuccess {Float}         charge
 @apiSuccess {Datetime}      date_prelevement
@@ -1245,7 +1246,6 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       lab_id              required
 @apiParam   {Integer}       material_id
 @apiParam   {String(15)}    analysis_number
-@apiParam   {Boolean}       percent_ratio
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Float}         charge
 @apiParam   {Datetime}      date_prelevement    format "2016-07-29 17:52:19"

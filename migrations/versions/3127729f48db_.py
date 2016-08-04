@@ -125,6 +125,9 @@ def upgrade():
     ALTER TABLE public.test_result ADD qty_vial INT DEFAULT 0 NULL;
     ALTER TABLE public.test_result ADD sampling_vial INT DEFAULT 0 NULL;
     """
+    sql +="""ALTER TABLE public.campaign DROP percent_ratio;
+        ALTER TABLE public.test_result ADD percent_ratio BOOLEAN DEFAULT FALSE NULL;
+    """
     op.execute(sql=sql)
 
 
