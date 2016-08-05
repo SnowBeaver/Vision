@@ -58,7 +58,7 @@ var LabAnalyserSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -70,7 +70,7 @@ var LabAnalyserSelectField = React.createClass ({
                     onChange={this.handleChange}
                     name="test_reason"
                 >
-                    <option value="select">select reason</option>
+                    <option key="0" value="select">select reason</option>
                     {menuItems}
                 </FormControl>
             </span>
@@ -119,7 +119,7 @@ var ContractNoSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -131,7 +131,7 @@ var ContractNoSelectField = React.createClass ({
                     onChange={this.handleChange}
                     name="test_reason"
                 >
-                    <option value="select">select number</option>
+                    <option key="0" value="select">select number</option>
                     {menuItems}
                 </FormControl>
             </span>
@@ -227,7 +227,7 @@ var TestReasonSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -239,7 +239,7 @@ var TestReasonSelectField = React.createClass ({
                     value={this.state.value}
                     onChange={this.handleChange}
                 >
-                    <option value="select">select reason</option>
+                    <option key="0" value="select">select reason</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -295,7 +295,7 @@ var TestProfileSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}  value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -307,7 +307,7 @@ var TestProfileSelectField = React.createClass ({
                     value={this.state.value}
                     onChange={this.handleChange}
                 >
-                    <option value="select">select from existing test profiles</option>
+                    <option key="0" value="select">select from existing test profiles</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>

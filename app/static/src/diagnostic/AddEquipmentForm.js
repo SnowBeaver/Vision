@@ -124,11 +124,15 @@ var EquipmentTypeSelectField = React.createClass ({
             this.setState({
                 items: items
             });
-        }.bind(this), 'json');
+        }.bind(this), 'json'); 
     },
 
     componentWillUnmount: function() {
         this.serverRequest.abort();
+    },
+
+    removeSelect: function () {
+        this.props.removeSelect(this.props.index);
     },
 
     setVisible: function(){
@@ -139,19 +143,37 @@ var EquipmentTypeSelectField = React.createClass ({
         var menuItems = [];
         for (var key in this.state.items) {
             // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <span>
-                <FormGroup controlId="formControlsSelect1">
-                    <ControlLabel>Equipment type</ControlLabel>
-                    <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
-                        <option value="select">select equipment type</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </span>
-
+            <div className="row">
+                <div className="col-md-1">
+                    {this.props.index}
+                </div>
+                <div className="col-md-6">
+                    <span>
+                        <FormGroup controlId="formControlsSelect1">
+                            <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
+                                <option value="select">Select equipment {this.props.index}</option>
+                                {menuItems}
+                            </FormControl>
+                        </FormGroup>
+                    </span>
+                </div>
+                <div className="col-md-1">
+                    <a href="javascript:void(0)"
+                       className="glyphicon glyphicon-remove text-danger"
+                       onClick={this.removeSelect}
+                       aria-hidden="true">
+                    </a>
+                </div>
+                <div className="col-md-1">
+                    <AddEquipmentButton/>
+                </div>
+                <div className="col-md-1">
+                    <TestModalWin/>
+                </div>
+            </div>
         );
     }
 });
@@ -160,23 +182,30 @@ var EquipmentTypeSelectField = React.createClass ({
 
 var AddEquipmentForm = React.createClass({
 
-
-    onClickSelectRemove: function () {
-        document.getElementById('select_field').remove();
-    },
-
-    onClickSelectAdd: function () {
-       this.setState({ numberOfSelects: nbr++})
-
-    },
-
-
     getInitialState: function () {
         return {
             loading: false,
-            errors: {}
+            errors: {},
+            numberOfSelects: 1
         }
     },
+
+    onClickSelectAdd: function () {
+        var i = this.state.numberOfSelects+1;
+        this.setState({
+            numberOfSelects: i
+        })
+    },
+    
+    removeSelect: function(index){
+
+        var i = this.state.numberOfSelects-1;
+        this.setState({
+            numberOfSelects: i
+        });
+        document.getElementById('index-'+index).remove();
+    },
+
     _create: function () {
 
         return $.ajax({
@@ -255,25 +284,25 @@ var AddEquipmentForm = React.createClass({
     },
 
     render :function () {
+        // console.log(this.state.numberOfSelects);
+        var selects = [];
+        for(var i=1; i <= this.state.numberOfSelects;i++){
+            selects.push(
+                <EquipmentTypeSelectField index={i} removeSelect={this.removeSelect} />
+            );
+        }
+
         return(
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Specify equipment">
+                        {selects}
                         <div className="row">
-                            <div className="col-md-6 " id="select_field" >
-                                <EquipmentTypeSelectField/>
-                            </div>
-                            <div className="col-md-1 ">
-                                <a href="javascript:void(0)"  className="glyphicon glyphicon-plus" onClick={this.onClickSelectAdd}  aria-hidden="true"></a>
-                            </div>
-                            <div className="col-md-1 ">
-                                <a href="javascript:void(0)"  className="glyphicon glyphicon-remove" onClick={this.onClickSelectRemove}  aria-hidden="true"></a>
-                            </div>
-                            <div className="col-md-1 ">
-                                <AddEquipmentButton/>
-                            </div>
-                            <div className="col-md-1 ">
-                                <TestModalWin/>
+                            <div className="col-md-10">
+                                <a href="javascript:void(0)"
+                                   className="glyphicon glyphicon-plus"
+                                   onClick={this.onClickSelectAdd}
+                                   aria-hidden="true"></a>
                             </div>
                         </div>
                     </Panel>

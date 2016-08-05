@@ -145,8 +145,11 @@ const EquipmentList = React.createClass({
                                        filter={{type: "TextFilter", placeholder: "Contract number"}}
                                        dataSort={true}>Contract No.</TableHeaderColumn>
                     <TableHeaderColumn dataField="test_status" dataSort={true}>Analysis stage</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="analysis_number" isKey={true}>Analysis Nr</TableHeaderColumn>
-                    <TableHeaderColumn deditable={false} ataField="serial"
+                    <TableHeaderColumn editable={false} 
+                                       dataField="analysis_number" 
+                                       isKey={true}>Analysis Nr</TableHeaderColumn>
+                    <TableHeaderColumn editable={false} 
+                                       dataField="serial"
                                        filter={{type: "TextFilter", placeholder: "Please enter a value"}}
                                        dataSort={true}>Serial No.</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="equipment_number">Equipment No.</TableHeaderColumn>

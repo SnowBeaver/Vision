@@ -51,7 +51,7 @@ var SamplPointSelectField1 = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -111,7 +111,7 @@ var SamplPointSelectField2 = React.createClass ({
         var menuItems = [];
         for (var key in this.state.items) {
             // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -170,7 +170,7 @@ var SamplPointSelectField3 = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (

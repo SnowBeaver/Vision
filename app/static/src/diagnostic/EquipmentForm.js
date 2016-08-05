@@ -75,7 +75,7 @@ var EquipmentTypeSelectField = React.createClass ({
         var menuItems = [];
         for (var key in this.state.items) {
             // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -83,7 +83,7 @@ var EquipmentTypeSelectField = React.createClass ({
                 <FormGroup controlId="formControlsSelect1">
                     <ControlLabel>Equipment type</ControlLabel>
                     <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
-                        <option value="select">select equipment type</option>
+                        <option key="0" value="select">select equipment type</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -184,7 +184,7 @@ var ManufacturerSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -192,7 +192,7 @@ var ManufacturerSelectField = React.createClass ({
                 <FormGroup controlId="formControlsSelect2">
                     <ControlLabel>Manufacturer</ControlLabel>
                     <FormControl componentClass="select" placeholder="manufacturer" onChange={this.handleChange}>
-                        <option value="select">select manufacturer</option>
+                        <option key="0" value="select">select manufacturer</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -319,7 +319,7 @@ var LocationSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -327,7 +327,7 @@ var LocationSelectField = React.createClass ({
                 <FormGroup controlId="formControlsSelect3">
                     <ControlLabel>Location</ControlLabel>
                     <FormControl componentClass="select" placeholder="select location" onChange={this.handleChange}>
-                        <option value="select">select location</option>
+                        <option key="0" value="select">select location</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -458,7 +458,7 @@ var VisualInspBySelectField = React.createClass ({
                 <FormGroup controlId="formControlsSelect4">
                     <ControlLabel>Visual Inspected By</ControlLabel>
                     <FormControl componentClass="select" placeholder="select inspector" onChange={this.handleChange}>
-                        <option value="select">select inspector</option>
+                        <option key="0" value="select">select inspector</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -582,7 +582,7 @@ var AssignedToSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option  value={this.state.items[key].id} key={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option value={this.state.items[key].id} key={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -590,7 +590,7 @@ var AssignedToSelectField = React.createClass ({
                 <FormGroup controlId="formControlsSelect5">
                     <ControlLabel>Assigned By</ControlLabel>
                     <FormControl componentClass="select" placeholder="select person" onChange={this.handleChange}>
-                        <option value="select">select person</option>
+                        <option key="0" value="select">select person</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -716,7 +716,7 @@ var NormSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -724,7 +724,7 @@ var NormSelectField = React.createClass ({
                 <FormGroup controlId="formControlsSelect6">
                     <ControlLabel>Norm</ControlLabel>
                     <FormControl componentClass="select" placeholder="select norm" onChange={this.handleChange}>
-                        <option value="select">select norm</option>
+                        <option key="0" value="select">select norm</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -836,7 +836,7 @@ var FrequencySelectField = React.createClass ({
     render: function() {
         options = [];
         for (var key in this.state.items) {
-            options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
+            options.push(<option key={this.state.items[key].id} value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
         }
 
         return (
@@ -848,7 +848,7 @@ var FrequencySelectField = React.createClass ({
                                  placeholder="select frequency"
                                  onChange={this.handleChange}
                     >
-                        <option value="select">select frequency</option>
+                        <option key="0" value="select">select frequency</option>
                         {options}
                     </FormControl>
                 </FormGroup>
@@ -884,7 +884,7 @@ var ManufacturedSelectField = React.createClass ({
     render: function() {
         options=[];
         for (var key in this.state.items) {
-            options.push(<option value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
+            options.push(<option key={this.state.items[key].id} value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
         }
 
         return (
@@ -896,7 +896,7 @@ var ManufacturedSelectField = React.createClass ({
                                  placeholder="select manufactured date"
                                  onChange={this.handleChange}
                     >
-                        <option value="select">select manufactured date</option>
+                        <option key="0" value="select">select manufactured date</option>
                         {options}
                     </FormControl>
                 </FormGroup>
