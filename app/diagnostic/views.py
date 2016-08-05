@@ -713,7 +713,7 @@ class CampaignView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = (['equipment_id', 'lab_id', 'date', 'contract_id'])
-    column_searchable_list = (['equipment_id', 'lab_id', 'date', 'contract_id'])
+    column_searchable_list = (['lab_id', 'date', 'contract_id'])
     # inline_models = (TestResult,)
     # column_editable_list = ['created_by']
 
@@ -733,7 +733,7 @@ class CampaignView(MyModelView):
     column_list = (
         'date',
         'analysis_number',
-        'equipment',
+        # 'equipment',
         'fluid_type',
         'created_by',
         'performed_by',
@@ -743,7 +743,7 @@ class CampaignView(MyModelView):
     column_filters = [
         'date',
         'analysis_number',
-        'equipment',
+        # 'equipment',
         'fluid_type',
         'created_by',
         'performed_by',
@@ -1145,25 +1145,39 @@ class SamplingPointView(MySimpleTypesView):
         )
 
 
-class UpstreamView(MySimpleTypesView):
+# class UpstreamView(MySimpleTypesView):
+#     """
+#     Upstream management view
+#     """
+#
+#     def __init__(self, dbsession):
+#         super(UpstreamView, self).__init__(
+#             Upstream, dbsession, name="Upstream"
+#         )
+#
+#
+# class DownstreamView(MySimpleTypesView):
+#     """
+#     Downstream management view
+#     """
+#
+#     def __init__(self, dbsession):
+#         super(DownstreamView, self).__init__(
+#             Downstream, dbsession, name="Downstream"
+#         )
+
+
+class EquipmentConnectionView(MySimpleTypesView):
     """
-    Upstream management view
+    EquipmentConnection management view
     """
+    # List of columns that can be sorted.
+    column_sortable_list = ()
+    column_searchable_list = ()
 
     def __init__(self, dbsession):
-        super(UpstreamView, self).__init__(
-            Upstream, dbsession, name="Upstream"
-        )
-
-
-class DownstreamView(MySimpleTypesView):
-    """
-    Downstream management view
-    """
-
-    def __init__(self, dbsession):
-        super(DownstreamView, self).__init__(
-            Downstream, dbsession, name="Downstream"
+        super(EquipmentConnectionView, self).__init__(
+            EquipmentConnection, dbsession, name="Equipment connection"
         )
 
 
@@ -1544,25 +1558,30 @@ class FluidTestView(MyTestView):
         )
 
 
-simple_views = [TestReasonView, PressureUnitView, GasRelayView, PaintTypesView, SamplingPointView, UpstreamView,
-                DownstreamView, InterruptingMediumView, InsulationView, BreakerMechanismView, FanConditionView,
-                HeatingConditionView, FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
-                OverallConditionView, GasketConditionView, ValveConditionView, PumpConditionView, ContractStatusView,
-                TapCounterStatusView, GasLevelView, FluidLevelView
-                ]
-test_views = [BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
-              PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
-              DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView, FluidTestView,
-              MetalsInOilTestView, ParticleTestView
-              ]
-other_views = [EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, NormGasView, AirCircuitBreakerView,
-               ManufacturerView, BushingView, CableView, CapacitorView, RectifierView, NeutralResistanceView, TankView,
-               LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView, InductanceView,
-               InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
-               ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
-               EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
-               SyringeView, TestScheduleView, InhibitorTypeView
-               ]
+simple_views = [
+    TestReasonView, PressureUnitView, GasRelayView, PaintTypesView,
+    SamplingPointView, EquipmentConnectionView, InterruptingMediumView,
+    InsulationView, BreakerMechanismView, FanConditionView, HeatingConditionView,
+    FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
+    OverallConditionView, GasketConditionView, ValveConditionView,
+    PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
+    FluidLevelView
+]
+test_views = [
+    BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
+    PolymerisationDegreeTestView, TransformerTurnRatioTestView, WindingResistanceTestView,
+    DissolvedGasTestView, WaterTestView, PCBTestView, InhibitorTestView, FuranTestView, FluidTestView,
+    MetalsInOilTestView, ParticleTestView
+]
+other_views = [
+    EquipmentView, NormFuranView, NormPhysicView, NormIsolationView, NormGasView, AirCircuitBreakerView,
+    ManufacturerView, BushingView, CableView, CapacitorView, RectifierView, NeutralResistanceView, TankView,
+    LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView, InductanceView,
+    InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
+    ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
+    EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
+    SyringeView, TestScheduleView, InhibitorTypeView
+]
 admin_views = simple_views
 admin_views.extend(test_views)
 admin_views.extend(other_views)

@@ -34,17 +34,19 @@ type_string_maxlength_1024_dict = dict_copy_union(type_string_dict, {'maxlength'
 type_string_maxlength_50_required_dict = dict_copy_union(type_string_maxlength_50_dict, required_dict)
 type_string_frequency_dict = dict_copy_union(type_string_dict, {'allowed': ['25', '50', '60', 'DC']})
 
-fluid_type_schema = sampling_point_schema = contract_status_schema = upstream_schema = interrupting_medium_schema = \
-    gas_level_schema = downstream_schema = breaker_mechanism_schema = insulation_schema = test_reason_schema = \
-    location_schema = {'id': id_dict,
-                       'name': type_string_maxlength_50_dict,
-                       }
+fluid_type_schema = sampling_point_schema = contract_status_schema = interrupting_medium_schema = \
+    gas_level_schema = breaker_mechanism_schema = insulation_schema = test_reason_schema = \
+    location_schema = {'id': id_dict, 'name': type_string_maxlength_50_dict}
 gasket_condition_schema = gas_relay_schema = fluid_level_schema = pressure_unit_schema = valve_condition_schema = \
     pump_condition_schema = overall_condition_schema = paint_types_schema = tap_counter_status_schema = \
     tap_filter_condition_schema = fan_condition_schema = connection_condition_schema = foundation_condition_schema = \
-    heating_condition_schema = {'id': id_dict,
-                                'name': type_string_maxlength_25_dict,
-                                }
+    heating_condition_schema = {'id': id_dict, 'name': type_string_maxlength_25_dict}
+# downstream_schema = upstream_schema\
+equipment_connection_schema = {
+    'id': id_dict,
+    'equipment_id': type_integer_coerce_dict,
+    'parent_id': type_integer_coerce_dict,
+    }
 equipment_schema = {
     'id': id_dict,
     'name': type_string_maxlength_50_required_dict,
@@ -64,16 +66,16 @@ equipment_schema = {
     'visual_date':   type_string_dict,
     'visual_inspection_comments':    type_string_dict,
     'nbr_of_tap_change_ltc': type_string_dict,
-    'upstream1': type_string_maxlength_100_dict,
-    'upstream2': type_string_maxlength_100_dict,
-    'upstream3': type_string_maxlength_100_dict,
-    'upstream4': type_string_maxlength_100_dict,
-    'upstream5': type_string_maxlength_100_dict,
-    'downstream1':   type_string_maxlength_100_dict,
-    'downstream2':   type_string_maxlength_100_dict,
-    'downstream3':   type_string_maxlength_100_dict,
-    'downstream4':   type_string_maxlength_100_dict,
-    'downstream5':   type_string_maxlength_100_dict,
+    # 'upstream1': type_string_maxlength_100_dict,
+    # 'upstream2': type_string_maxlength_100_dict,
+    # 'upstream3': type_string_maxlength_100_dict,
+    # 'upstream4': type_string_maxlength_100_dict,
+    # 'upstream5': type_string_maxlength_100_dict,
+    # 'downstream1':   type_string_maxlength_100_dict,
+    # 'downstream2':   type_string_maxlength_100_dict,
+    # 'downstream3':   type_string_maxlength_100_dict,
+    # 'downstream4':   type_string_maxlength_100_dict,
+    # 'downstream5':   type_string_maxlength_100_dict,
     'tie_location':  type_boolean_coerce_dict,
     'tie_maintenance_state': type_integer_coerce_dict,
     'tie_status':    type_integer_coerce_dict,
@@ -90,87 +92,45 @@ equipment_type_schema = {'id': id_dict,
                          'code': type_string_maxlength_50_dict,
                          'table_name': type_string_maxlength_50_dict,
                          }
-campaign_schema = {'id': id_dict,
-                   'date': type_datetime_required_dict,
-                   'created_by_id': type_integer_coerce_required_dict,
-                   'equipment_id': type_integer_coerce_required_dict,
-                   'performed_by_id': type_integer_coerce_required_dict,
-                   'lab_id': type_integer_coerce_required_dict,
-                   'material_id': type_integer_coerce_dict,
-                   'analysis_number': dict_copy_union(type_string_dict, {'maxlength': 15}),
-                   'percent_ratio': type_boolean_coerce_dict,
-                   'fluid_type_id': type_integer_coerce_dict,
-                   'charge': type_float_coerce_dict,
-                   'date_prelevement': type_datetime_dict,
-                   'remark': type_string_dict,
-                   'modifier': type_boolean_coerce_dict,
-                   'transmission': type_boolean_coerce_dict,
-                   'repair_date': type_datetime_dict,
-                   'repair_description': type_string_dict,
-                   'if_rem': type_string_maxlength_5_dict,
-                   'if_ok': type_string_maxlength_5_dict,
-                   'recommandation_id': type_integer_coerce_dict,
-                   'recommendationNotes': type_string_dict,
-                   'recommended_by_id': type_integer_coerce_dict,
-                   'date_application': type_datetime_dict,
-                   'comments': type_string_dict,
-                   'mws': type_float_coerce_dict,
-                   'temperature': type_float_coerce_dict,
-                   'sampling_card_print': type_boolean_coerce_dict,
-                   'contract_id': type_integer_coerce_dict,
-                   'containers': type_float_coerce_dict,
-                   'sampling_card_gathered': type_integer_coerce_dict,
-                   'gathered_test_type': type_string_maxlength_50_dict,
-                   'lab_contract_id': type_integer_coerce_dict,
-                   'seringe_num': type_string_maxlength_50_dict,
-                   'data_valid': type_integer_coerce_dict,
-                   'status1': type_integer_coerce_dict,
-                   'status2': type_integer_coerce_dict,
-                   'error_state': type_integer_coerce_dict,
-                   'error_code': type_integer_coerce_dict,
-                   'ambient_air_temperature': type_float_coerce_dict,
-                   'bushing': type_boolean_coerce_dict,
-                   'winding': type_boolean_coerce_dict,
-                   'insulation_pf': type_boolean_coerce_dict,
-                   'insulation': type_boolean_coerce_dict,
-                   'visual_inspection': type_boolean_coerce_dict,
-                   'resistance': type_boolean_coerce_dict,
-                   'degree': type_boolean_coerce_dict,
-                   'turns': type_boolean_coerce_dict,
-                   'gas': type_boolean_coerce_dict,
-                   'water': type_boolean_coerce_dict,
-                   'furans': type_boolean_coerce_dict,
-                   'inhibitor': type_boolean_coerce_dict,
-                   'pcb': type_boolean_coerce_dict,
-                   'qty': type_integer_coerce_dict,
-                   'sampling': type_integer_coerce_dict,
-                   'dielec': type_boolean_coerce_dict,
-                   'acidity': type_boolean_coerce_dict,
-                   'density': type_boolean_coerce_dict,
-                   'pcb_jar': type_boolean_coerce_dict,
-                   'inhibitor_jar': type_boolean_coerce_dict,
-                   'point': type_boolean_coerce_dict,
-                   'dielec_2': type_boolean_coerce_dict,
-                   'color': type_boolean_coerce_dict,
-                   'pf': type_boolean_coerce_dict,
-                   'particles': type_boolean_coerce_dict,
-                   'metals': type_boolean_coerce_dict,
-                   'viscosity': type_boolean_coerce_dict,
-                   'dielec_d': type_boolean_coerce_dict,
-                   'ift': type_boolean_coerce_dict,
-                   'pf_100': type_boolean_coerce_dict,
-                   'furans_f': type_boolean_coerce_dict,
-                   'water_w': type_boolean_coerce_dict,
-                   'corr': type_boolean_coerce_dict,
-                   'dielec_i': type_boolean_coerce_dict,
-                   'visual': type_boolean_coerce_dict,
-                   'qty_jar': type_integer_coerce_dict,
-                   'sampling_jar': type_integer_coerce_dict,
-                   'pcb_vial': type_boolean_coerce_dict,
-                   'antioxidant': type_boolean_coerce_dict,
-                   'qty_vial': type_integer_coerce_dict,
-                   'sampling_vial': type_integer_coerce_dict,
-                   }
+campaign_schema = {
+    'id': id_dict,
+    'date': type_datetime_required_dict,
+    'created_by_id': type_integer_coerce_required_dict,
+    'performed_by_id': type_integer_coerce_required_dict,
+    'lab_id': type_integer_coerce_required_dict,
+    'material_id': type_integer_coerce_dict,
+    'analysis_number': dict_copy_union(type_string_dict, {'maxlength': 15}),
+    'fluid_type_id': type_integer_coerce_dict,
+    'charge': type_float_coerce_dict,
+    'date_prelevement': type_datetime_dict,
+    'remark': type_string_dict,
+    'modifier': type_boolean_coerce_dict,
+    'transmission': type_boolean_coerce_dict,
+    'repair_date': type_datetime_dict,
+    'repair_description': type_string_dict,
+    'if_rem': type_string_maxlength_5_dict,
+    'if_ok': type_string_maxlength_5_dict,
+    'recommandation_id': type_integer_coerce_dict,
+    'recommendationNotes': type_string_dict,
+    'recommended_by_id': type_integer_coerce_dict,
+    'date_application': type_datetime_dict,
+    'comments': type_string_dict,
+    'mws': type_float_coerce_dict,
+    'temperature': type_float_coerce_dict,
+    'sampling_card_print': type_boolean_coerce_dict,
+    'contract_id': type_integer_coerce_dict,
+    'containers': type_float_coerce_dict,
+    'sampling_card_gathered': type_integer_coerce_dict,
+    'gathered_test_type': type_string_maxlength_50_dict,
+    'lab_contract_id': type_integer_coerce_dict,
+    'seringe_num': type_string_maxlength_50_dict,
+    'data_valid': type_integer_coerce_dict,
+    'status1': type_integer_coerce_dict,
+    'status2': type_integer_coerce_dict,
+    'error_state': type_integer_coerce_dict,
+    'error_code': type_integer_coerce_dict,
+    'ambient_air_temperature': type_float_coerce_dict,
+    }
 contract_schema = {'id': id_dict,
                    'name': type_string_maxlength_50_dict,
                    'code': type_string_maxlength_50_dict,
@@ -253,14 +213,60 @@ fluid_profile_schema = {'id': id_dict,
                         'qty_vial': type_integer_coerce_dict,
                         'sampling_vial': type_integer_coerce_dict,
                         }
-test_result_schema = {'id': id_dict,
-                      'campaign_id': type_integer_coerce_dict,
-                      'reason_id': type_integer_coerce_dict,
-                      'date_analyse': type_datetime_dict,
-                      'test_type_id': type_integer_coerce_dict,
-                      'sampling_point_id': type_integer_coerce_dict,
-                      'test_status_id': type_integer_coerce_dict,
-                      }
+test_result_schema = {
+    'id': id_dict,
+    'campaign_id': type_integer_coerce_dict,
+    'reason_id': type_integer_coerce_dict,
+    'date_analyse': type_datetime_dict,
+    'test_type_id': type_integer_coerce_dict,
+    'sampling_point_id': type_integer_coerce_dict,
+    'test_status_id': type_integer_coerce_dict,
+    'equipment_id': type_integer_coerce_dict,
+    'fluid_profile_id': type_integer_coerce_dict,
+    'electrical_profile_id': type_integer_coerce_dict,
+    'percent_ratio': type_boolean_coerce_dict,
+    'bushing': type_boolean_coerce_dict,
+    'winding': type_boolean_coerce_dict,
+    'insulation_pf': type_boolean_coerce_dict,
+    'insulation': type_boolean_coerce_dict,
+    'visual_inspection': type_boolean_coerce_dict,
+    'resistance': type_boolean_coerce_dict,
+    'degree': type_boolean_coerce_dict,
+    'turns': type_boolean_coerce_dict,
+    'gas': type_boolean_coerce_dict,
+    'water': type_boolean_coerce_dict,
+    'furans': type_boolean_coerce_dict,
+    'inhibitor': type_boolean_coerce_dict,
+    'pcb': type_boolean_coerce_dict,
+    'qty': type_integer_coerce_dict,
+    'sampling': type_integer_coerce_dict,
+    'dielec': type_boolean_coerce_dict,
+    'acidity': type_boolean_coerce_dict,
+    'density': type_boolean_coerce_dict,
+    'pcb_jar': type_boolean_coerce_dict,
+    'inhibitor_jar': type_boolean_coerce_dict,
+    'point': type_boolean_coerce_dict,
+    'dielec_2': type_boolean_coerce_dict,
+    'color': type_boolean_coerce_dict,
+    'pf': type_boolean_coerce_dict,
+    'particles': type_boolean_coerce_dict,
+    'metals': type_boolean_coerce_dict,
+    'viscosity': type_boolean_coerce_dict,
+    'dielec_d': type_boolean_coerce_dict,
+    'ift': type_boolean_coerce_dict,
+    'pf_100': type_boolean_coerce_dict,
+    'furans_f': type_boolean_coerce_dict,
+    'water_w': type_boolean_coerce_dict,
+    'corr': type_boolean_coerce_dict,
+    'dielec_i': type_boolean_coerce_dict,
+    'visual': type_boolean_coerce_dict,
+    'qty_jar': type_integer_coerce_dict,
+    'sampling_jar': type_integer_coerce_dict,
+    'pcb_vial': type_boolean_coerce_dict,
+    'antioxidant': type_boolean_coerce_dict,
+    'qty_vial': type_integer_coerce_dict,
+    'sampling_vial': type_integer_coerce_dict,
+    }
 role_schema = {'id': id_dict,
                'name': dict_copy_union(type_string_dict, {'maxlength': 80}),
                'description': type_string_maxlength_255_dict,
@@ -1016,91 +1022,347 @@ norm_furan_schema = {'id': id_dict,
                      'c4': type_float_coerce_dict,
                      }
 model_dict = {
-    'equipment': {'model': Equipment, 'schema': equipment_schema},
-    'equipment_type': {'model': EquipmentType, 'schema': equipment_type_schema},
-    'campaign': {'model': Campaign, 'schema': campaign_schema},
-    'contract': {'model': Contract, 'schema': contract_schema},
-    'norm': {'model': Norm, 'schema': norm_schema},
-    'location': {'model': Location, 'schema': location_schema},
-    'manufacturer': {'model': Manufacturer, 'schema': manufacturer_schema},
-    'user': {'model': User, 'schema': user_schema},
-    'assigned_to': {'model': User, 'schema': user_schema},
-    'visual_inspection_by': {'model': User, 'schema': user_schema},
-    'electrical_profile': {'model': ElectricalProfile, 'schema': electrical_profile_schema},
-    'fluid_profile': {'model': FluidProfile, 'schema': fluid_profile_schema},
-    'test_result': {'model': TestResult, 'schema': test_result_schema},
-    'role': {'model': Role, 'schema': role_schema},
-    'lab': {'model': Lab, 'schema': lab_schema},
-    'contract_status': {'model': ContractStatus, 'schema': contract_status_schema},
-    'sampling_point': {'model': SamplingPoint, 'schema': sampling_point_schema},
-    'material': {'model': Material, 'schema': material_schema},
-    'fluid_type': {'model': FluidType, 'schema': fluid_type_schema},
-    'gas_sensor': {'model': GasSensor, 'schema': gas_sensor_schema},
-    'transformer': {'model': Transformer, 'schema': transformer_schema},
-    'breaker': {'model': Breaker, 'schema': breaker_schema},
-    'tap_changer': {'model': LoadTapChanger, 'schema': tap_changer_schema},
-    'bushing': {'model': Bushing, 'schema': bushing_schema},
-    'upstream': {'model': Upstream, 'schema': upstream_schema},
-    'downstream': {'model': Downstream, 'schema': downstream_schema},
-    'resistance': {'model': NeutralResistance, 'schema': resistance_schema},
-    'air_breaker': {'model': AirCircuitBreaker, 'schema': air_breaker_schema},
-    'capacitor': {'model': Capacitor, 'schema': capacitor_schema},
-    'powersource': {'model': PowerSource, 'schema': powersource_schema},
-    'switchgear': {'model': SwitchGear, 'schema': switchgear_schema},
-    'induction_machine': {'model': InductionMachine, 'schema': induction_machine_schema},
-    'synchronous_machine': {'model': SynchronousMachine, 'schema': synchronous_machine_schema},
-    'rectifier': {'model': Rectifier, 'schema': rectifier_schema},
-    'inductance': {'model': Inductance, 'schema': inductance_schema},
-    'tank': {'model': Tank, 'schema': tank_schema},
-    'switch': {'model': Switch, 'schema': switch_schema},
-    'cable': {'model': Cable, 'schema': cable_schema},
-    'recommendation': {'model': Recommendation, 'schema': recommendation_schema},
-    'gas_level': {'model': GasLevel, 'schema': gas_level_schema},
-    'interrupting_medium': {'model': InterruptingMedium, 'schema': interrupting_medium_schema},
-    'breaker_mechanism': {'model': BreakerMechanism, 'schema': breaker_mechanism_schema},
-    'insulation': {'model': Insulation, 'schema': insulation_schema},
-    'syringe': {'model': Syringe, 'schema': syringe_schema},
-    'test_reason': {'model': TestReason, 'schema': test_reason_schema},
-    'test_status': {'model': TestStatus, 'schema': test_status_schema},
-    'schedule': {'model': TestSchedule, 'schema': schedule_schema},
-    'test_type': {'model': TestType, 'schema': test_type_schema},
-    'test_type_result_table': {'model': TestTypeResultTable, 'schema': test_type_result_table_schema},
-    'gasket_condition': {'model': GasketCondition, 'schema': gasket_condition_schema},
-    'gas_relay': {'model': GasRelay, 'schema': gas_relay_schema},
-    'fluid_level': {'model': FluidLevel, 'schema': fluid_level_schema},
-    'pressure_unit': {'model': PressureUnit, 'schema': pressure_unit_schema},
-    'valve_condition': {'model': ValveCondition, 'schema': valve_condition_schema},
-    'pump_condition': {'model': PumpCondition, 'schema': pump_condition_schema},
-    'overall_condition': {'model': OverallCondition, 'schema': overall_condition_schema},
-    'paint_types': {'model': PaintTypes, 'schema': paint_types_schema},
-    'tap_counter_status': {'model': TapCounterStatus, 'schema': tap_counter_status_schema},
-    'tap_filter_condition': {'model': TapFilterCondition, 'schema': tap_filter_condition_schema},
-    'fan_condition': {'model': FanCondition, 'schema': fan_condition_schema},
-    'connection_condition': {'model': ConnectionCondition, 'schema': connection_condition_schema},
-    'foundation_condition': {'model': FoundationCondition, 'schema': foundation_condition_schema},
-    'heating_condition': {'model': HeatingCondition, 'schema': heating_condition_schema},
-    'bushing_test': {'model': BushingTest, 'schema': bushing_test_schema},
-    'winding_test': {'model': WindingTest, 'schema': winding_test_schema},
-    'visual_inspection_test': {'model': VisualInspectionTest, 'schema': visual_inspection_test_schema},
-    'insulation_resistance_test': {'model': InsulationResistanceTest, 'schema': insulation_resistance_test_schema},
-    'polymerisation_degree_test': {'model': PolymerisationDegreeTest, 'schema': polymerisation_degree_test_schema},
-    'transformer_turn_ratio_test': {'model': TransformerTurnRatioTest, 'schema': transformer_turn_ratio_test_schema},
-    'winding_resistance_test': {'model': WindingResistanceTest, 'schema': winding_resistance_test_schema},
-    'dissolved_gas_test': {'model': DissolvedGasTest, 'schema': dissolved_gas_test_schema},
-    'water_test': {'model': WaterTest, 'schema': water_test_schema},
-    'furan_test': {'model': FuranTest, 'schema': furan_test_schema},
-    'inhibitor_test': {'model': InhibitorTest, 'schema': inhibitor_test_schema},
-    'inhibitor_type': {'model': InhibitorType, 'schema': inhibitor_type_schema},
-    'pcb_test': {'model': PCBTest, 'schema': pcb_test_schema},
-    'particle_test': {'model': ParticleTest, 'schema': particle_test_schema},
-    'metals_in_oil_test': {'model': MetalsInOilTest, 'schema': metals_in_oil_test_schema},
-    'fluid_test': {'model': FluidTest, 'schema': fluid_test_schema},
-    'norm_physic': {'model': NormPhysic, 'schema': norm_physic_schema},
-    'norm_gas': {'model': NormGas, 'schema': norm_gas_schema},
-    'particles': {'model': NormParticles, 'schema': particles_schema},
-    'norm_isolation': {'model': NormIsolation, 'schema': norm_isolation_schema},
-    'norm_furan': {'model': NormFuran, 'schema': norm_furan_schema},
-    }
+    'equipment': {
+        'model': Equipment,
+        'schema': equipment_schema
+    },
+    'equipment_type': {
+        'model': EquipmentType,
+        'schema': equipment_type_schema
+    },
+    'campaign': {
+        'model': Campaign,
+        'schema': campaign_schema
+    },
+    'contract': {
+        'model': Contract,
+        'schema': contract_schema
+    },
+    'norm': {
+        'model': Norm,
+        'schema': norm_schema
+    },
+    'location': {
+        'model': Location,
+        'schema': location_schema
+    },
+    'manufacturer': {
+        'model': Manufacturer,
+        'schema': manufacturer_schema
+    },
+    'user': {
+        'model': User,
+        'schema': user_schema
+    },
+    'assigned_to': {
+        'model': User,
+        'schema': user_schema
+    },
+    'visual_inspection_by': {
+        'model': User,
+        'schema': user_schema
+    },
+    'electrical_profile': {
+        'model': ElectricalProfile,
+        'schema': electrical_profile_schema
+    },
+    'fluid_profile': {
+        'model': FluidProfile,
+        'schema': fluid_profile_schema
+    },
+    'test_result': {
+        'model': TestResult,
+        'schema': test_result_schema
+    },
+    'role': {
+        'model': Role,
+        'schema': role_schema
+    },
+    'lab': {
+        'model': Lab,
+        'schema': lab_schema
+    },
+    'contract_status': {
+        'model': ContractStatus,
+        'schema': contract_status_schema
+    },
+    'sampling_point': {
+        'model': SamplingPoint,
+        'schema': sampling_point_schema
+    },
+    'material': {
+        'model': Material,
+        'schema': material_schema
+    },
+    'fluid_type': {
+        'model': FluidType,
+        'schema': fluid_type_schema
+    },
+    'gas_sensor': {
+        'model': GasSensor,
+        'schema': gas_sensor_schema
+    },
+    'transformer': {
+        'model': Transformer,
+        'schema': transformer_schema
+    },
+    'breaker': {
+        'model': Breaker,
+        'schema': breaker_schema
+    },
+    'tap_changer': {
+        'model': LoadTapChanger,
+        'schema': tap_changer_schema
+    },
+    'bushing': {
+        'model': Bushing,
+        'schema': bushing_schema
+    },
+    # 'upstream': {
+    # 'model': Upstream,
+    # 'schema': upstream_schema
+    # },
+    # 'downstream': {
+    # 'model': Downstream,
+    # 'schema': downstream_schema
+    # },
+    'equipment_connection': {
+        'model': EquipmentConnection,
+        'schema': equipment_connection_schema
+    },
+    'resistance': {
+        'model': NeutralResistance,
+        'schema': resistance_schema
+    },
+    'air_breaker': {
+        'model': AirCircuitBreaker,
+        'schema': air_breaker_schema
+    },
+    'capacitor': {
+        'model': Capacitor,
+        'schema': capacitor_schema
+    },
+    'powersource': {
+        'model': PowerSource,
+        'schema': powersource_schema
+    },
+    'switchgear': {
+        'model': SwitchGear,
+        'schema': switchgear_schema
+    },
+    'induction_machine': {
+        'model': InductionMachine,
+        'schema': induction_machine_schema
+    },
+    'synchronous_machine': {
+        'model': SynchronousMachine,
+        'schema': synchronous_machine_schema
+    },
+    'rectifier': {
+        'model': Rectifier,
+        'schema': rectifier_schema
+    },
+    'inductance': {
+        'model': Inductance,
+        'schema': inductance_schema
+    },
+    'tank': {
+        'model': Tank,
+        'schema': tank_schema
+    },
+    'switch': {
+        'model': Switch,
+        'schema': switch_schema
+    },
+    'cable': {
+        'model': Cable,
+        'schema': cable_schema
+    },
+    'recommendation': {
+        'model': Recommendation,
+        'schema': recommendation_schema
+    },
+    'gas_level': {
+        'model': GasLevel,
+        'schema': gas_level_schema
+    },
+    'interrupting_medium': {
+        'model': InterruptingMedium,
+        'schema': interrupting_medium_schema
+    },
+    'breaker_mechanism': {
+        'model': BreakerMechanism,
+        'schema': breaker_mechanism_schema
+    },
+    'insulation': {
+        'model': Insulation,
+        'schema': insulation_schema
+    },
+    'syringe': {
+        'model': Syringe,
+        'schema': syringe_schema
+    },
+    'test_reason': {
+        'model': TestReason,
+        'schema': test_reason_schema
+    },
+    'test_status': {
+        'model': TestStatus,
+        'schema': test_status_schema
+    },
+    'schedule': {
+        'model': TestSchedule,
+        'schema': schedule_schema
+    },
+    'test_type': {
+        'model': TestType,
+        'schema': test_type_schema
+    },
+    'test_type_result_table': {
+        'model': TestTypeResultTable,
+        'schema': test_type_result_table_schema
+    },
+    'gasket_condition': {
+        'model': GasketCondition,
+        'schema': gasket_condition_schema
+    },
+    'gas_relay': {
+        'model': GasRelay,
+        'schema': gas_relay_schema
+    },
+    'fluid_level': {
+        'model': FluidLevel,
+        'schema': fluid_level_schema
+    },
+    'pressure_unit': {
+        'model': PressureUnit,
+        'schema': pressure_unit_schema
+    },
+    'valve_condition': {
+        'model': ValveCondition,
+        'schema': valve_condition_schema
+    },
+    'pump_condition': {
+        'model': PumpCondition,
+        'schema': pump_condition_schema
+    },
+    'overall_condition': {
+        'model': OverallCondition,
+        'schema': overall_condition_schema
+    },
+    'paint_types': {
+        'model': PaintTypes,
+        'schema': paint_types_schema
+    },
+    'tap_counter_status': {
+        'model': TapCounterStatus,
+        'schema': tap_counter_status_schema
+    },
+    'tap_filter_condition': {
+        'model': TapFilterCondition,
+        'schema': tap_filter_condition_schema
+    },
+    'fan_condition': {
+        'model': FanCondition,
+        'schema': fan_condition_schema
+    },
+    'connection_condition': {
+        'model': ConnectionCondition,
+        'schema': connection_condition_schema
+    },
+    'foundation_condition': {
+        'model': FoundationCondition,
+        'schema': foundation_condition_schema
+    },
+    'heating_condition': {
+        'model': HeatingCondition,
+        'schema': heating_condition_schema
+    },
+    'bushing_test': {
+        'model': BushingTest,
+        'schema': bushing_test_schema
+    },
+    'winding_test': {
+        'model': WindingTest,
+        'schema': winding_test_schema
+    },
+    'visual_inspection_test': {
+        'model': VisualInspectionTest,
+        'schema': visual_inspection_test_schema
+    },
+    'insulation_resistance_test': {
+        'model': InsulationResistanceTest,
+        'schema': insulation_resistance_test_schema
+    },
+    'polymerisation_degree_test': {
+        'model': PolymerisationDegreeTest,
+        'schema': polymerisation_degree_test_schema
+    },
+    'transformer_turn_ratio_test': {
+        'model': TransformerTurnRatioTest,
+        'schema': transformer_turn_ratio_test_schema
+    },
+    'winding_resistance_test': {
+        'model': WindingResistanceTest,
+        'schema': winding_resistance_test_schema
+    },
+    'dissolved_gas_test': {
+        'model': DissolvedGasTest,
+        'schema': dissolved_gas_test_schema
+    },
+    'water_test': {
+        'model': WaterTest,
+        'schema': water_test_schema
+    },
+    'furan_test': {
+        'model': FuranTest,
+        'schema': furan_test_schema
+    },
+    'inhibitor_test': {
+        'model': InhibitorTest,
+        'schema': inhibitor_test_schema
+    },
+    'inhibitor_type': {
+        'model': InhibitorType,
+        'schema': inhibitor_type_schema
+    },
+    'pcb_test': {
+        'model': PCBTest,
+        'schema': pcb_test_schema
+    },
+    'particle_test': {
+        'model': ParticleTest,
+        'schema': particle_test_schema
+    },
+    'metals_in_oil_test': {
+        'model': MetalsInOilTest,
+        'schema': metals_in_oil_test_schema
+    },
+    'fluid_test': {
+        'model': FluidTest,
+        'schema': fluid_test_schema
+    },
+    'norm_physic': {
+        'model': NormPhysic,
+        'schema': norm_physic_schema
+    },
+    'norm_gas': {
+        'model': NormGas,
+        'schema': norm_gas_schema
+    },
+    'particles': {
+        'model': NormParticles,
+        'schema': particles_schema
+    },
+    'norm_isolation': {
+        'model': NormIsolation,
+        'schema': norm_isolation_schema
+    },
+    'norm_furan': {
+        'model': NormFuran,
+        'schema': norm_furan_schema
+    },
+}
 
 eq_type_dict = {1: 'air_bkr',
                 2: 'bushing',
