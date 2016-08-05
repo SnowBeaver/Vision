@@ -24,7 +24,6 @@ var LabAnalyserSelectField = React.createClass ({
             value: event.target.value,
             lab_an: event.target.value
         });
-        this.props.handleChange(event);
     },
 
     getInitialState: function(){
@@ -79,6 +78,66 @@ var LabAnalyserSelectField = React.createClass ({
     }
 });
 
+var ContractNoSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value,
+            contr_no: event.target.value
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <span>
+                <ControlLabel>Contract No.</ControlLabel>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    onChange={this.handleChange}
+                    name="test_reason"
+                >
+                    <option value="select">select number</option>
+                    {menuItems}
+                </FormControl>
+            </span>
+        );
+    }
+});
 
 const NewLabModalWin = React.createClass({
     getInitialState() {
@@ -127,13 +186,11 @@ const NewLabModalWin = React.createClass({
 var TestReasonSelectField = React.createClass ({
 
     handleChange: function(event){
-        console.log('here 2');
-        console.log(event.target.name);
-        console.log(event.target.value);
         this.setState({
-            value: event.target.value
+            value: event.target.value,
+            test_reas: event.target.value
+
         });
-        this.props.handleChange(event);
     },
 
     getInitialState: function(){
@@ -275,7 +332,7 @@ const ChooseTestModal = React.createClass({
     },
 
     testChoice : function () {
-        
+
     },
 
     render() {
@@ -314,6 +371,88 @@ const ChooseTestModal = React.createClass({
 
 
 var AssignTestForm = React.createClass ({
+
+    _create: function () {
+        console.log(this.refs);
+        return $.ajax({
+            url: '/api/v1.0/campaign/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'equipment_number': findDOMNode(this.refs.equip_no).value,
+                'fluid_type': findDOMNode(this.refs.ins_flu).value,
+                'lab_id': this.refs.lab_analyser.state.lab_an,
+                'contract': this.refs.contract_no.state.contr_no,
+                'test_reason': this.refs.test_reason.state.test_reas
+            }),
+            success: function (data, textStatus) { },
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        // var errors = this._validate();
+        // if(Object.keys(errors).length != 0) {
+        //   this.setState({
+        //     errors: errors
+        //   });
+        //    return;
+        // }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+    _onSuccess: function (data) {
+        this.refs.eqtype_form.getDOMNode().reset();
+        this.setState(this.getInitialState());
+        // show success message
+    },
+    _onError: function (data) {
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if(res.message) {
+            message = data.responseJSON.message;
+        }
+        if(res.errors) {
+            this.setState({
+                errors: res.errors
+            });
+        }
+    },
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] =  $.trim(e.target.value);
+        this.setState(state);
+    },
+    _validate: function () {
+        var errors = {};
+        // if(this.state.username == "") {
+        //   errors.username = "Username is required";
+        // }
+        // if(this.state.email == "") {
+        //   errors.email = "Email is required";
+        // }
+        // if(this.state.password == "") {
+        //   errors.password = "Password is required";
+        // }
+        // return errors;
+    },
+    _formGroupClass: function (field) {
+        var className = "form-group ";
+        if(field) {
+            className += " has-error"
+        }
+        return className;
+    },
+
+
 
     getInitialState: function () {
         return {
@@ -361,13 +500,6 @@ var AssignTestForm = React.createClass ({
         }
     },
 
-    handleChange: function(e){
-        console.log('here 1');
-        console.log(e.target.name);
-        console.log(e.target.value);
-        this.props.onChange(e);
-    },
-
 
     handleClick: function() {
         document.getElementById('test_prof').remove();
@@ -402,14 +534,16 @@ var AssignTestForm = React.createClass ({
                                         <LabAnalyserSelectField
                                             ref="lab_analyser"
                                             source="http://dev.vision.local/api/v1.0/lab/"
-                                            value={this.state.lab_analyser.value} />
+                                            value={this.state.value} />
                                     </div>
                                     <div className="col-md-1 nopadding padding-right-xs">
                                         <NewLabModalWin/>
                                     </div>
                                     <div className="col-md-4 nopadding padding-right-xs">
-                                        <ControlLabel>{ this.state.contract_no.label }</ControlLabel>
-                                        <FormControl type="text" value={ this.state.contract_no.value } ref="contract"/>
+                                        <ContractNoSelectField
+                                            ref="contract_no"
+                                            source="http://dev.vision.local/api/v1.0/contract/"
+                                            value={this.state.value} />
                                     </div>
 
                                     <div className="col-md-4 nopadding">
@@ -430,6 +564,7 @@ var AssignTestForm = React.createClass ({
                                             ref="test_reason"
                                             source="http://dev.vision.local/api/v1.0/test_reason"
                                             handleChange={this.handleChange}
+                                            value={this.state.value}
                                         />
                                     </div>
                                     <div className="col-md-2 nopadding">
@@ -456,6 +591,16 @@ var AssignTestForm = React.createClass ({
                                         <ChooseTestModal/>
                                     </div>
                                 </div>
+                                <div className="row">
+                                        <div className="col-md-5">
+                                        </div>
+                                        <div className="col-md-1 ">
+                                            <Button bsStyle="success" type="submit">save</Button>
+                                        </div>
+                                        <div className="col-md-1 ">
+                                            <Button bsStyle="danger">cancel</Button>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                     </Panel>
