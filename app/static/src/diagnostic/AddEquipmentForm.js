@@ -39,8 +39,16 @@ var TestModalWin = React.createClass({
                 <Modal show={this.state.showModal}  {...this.props}  >
                     <AssignTestForm/>
                   <Modal.Footer>
-                      <Button onClick={this.close}>Save</Button>
-                    <Button onClick={this.close}>Close</Button>
+                      <div className="row">
+                                    <div className="col-md-5">
+                                    </div>
+                                    <div className="col-md-1 nopadding padding-right-xs">
+                                        <Button bsStyle="success" type="submit">save</Button>
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="danger" onClick={this.close}>cancel</Button>
+                                    </div>
+                                </div>
                   </Modal.Footer>
                 </Modal>
               </span>
@@ -76,8 +84,8 @@ var AddEquipmentButton = React.createClass({
                     <Modal show={this.state.showModal}  {...this.props}  >
                     <EquipmentForm/>
                   <Modal.Footer>
-                      <Button onClick={this.close}>Save</Button>
-                    <Button onClick={this.close}>Close</Button>
+                      <Button bsStyle="success" type="submit">Save</Button>
+                    <Button bsStyle="danger" onClick={this.close}>Close</Button>
                   </Modal.Footer>
                 </Modal>
                 </span>

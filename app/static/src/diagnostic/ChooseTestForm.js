@@ -30,10 +30,6 @@ const ChooseTestForm = React.createClass({
                                 <Radio name="choice" ref="electro">
                                     Electrical Profile
                                 </Radio>
-                                <ButtonToolbar>
-                                    <Button bsStyle="success" onclick="testChoice" >save</Button>
-                                    <Button bsStyle="danger" onClick={this.props.close} >cancel</Button>
-                                </ButtonToolbar>
                             </div>
                         </Panel>
                 </form>

@@ -9,6 +9,7 @@ import  Modal from 'react-bootstrap/lib/Modal';
 import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
 import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
+import Radio from 'react-bootstrap/lib/Radio';
 import {findDOMNode} from 'react-dom';
 import ReactDOM from 'react-dom';
 import LabsList from './LabList';
@@ -261,18 +262,21 @@ var TestProfileSelectField = React.createClass ({
 
 const ChooseTestModal = React.createClass({
 
-    getInitialState() {
+    getInitialState: function () {
         return { showModal: false };
     },
 
-    close() {
+    close: function () {
         this.setState({ showModal: false });
     },
 
-    open() {
+    open: function () {
         this.setState({ showModal: true });
     },
 
+    testChoice : function () {
+        
+    },
 
     render() {
         return (
@@ -280,8 +284,27 @@ const ChooseTestModal = React.createClass({
                 <Button bsStyle="primary" bsSize="small" onClick={this.open}>
                   Create
                 </Button>
-                <Modal show={this.state.showModal}  >
-                    <ChooseTestForm/>
+                <Modal show={this.state.showModal}   >
+                    <div className="form-container">
+                <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                        <Panel header="Choose Test Profile">
+                            <div>
+                                <Radio name="choice" ref="fluid" >
+                                    Fluid Profile
+                                </Radio>
+                                <Radio name="choice" ref="electro">
+                                    Electrical Profile
+                                </Radio>
+                            </div>
+                        </Panel>
+                </form>
+            </div>
+                <Modal.Footer>
+                    <ButtonToolbar>
+                        <Button bsStyle="success" onclick="testChoice" >save</Button>
+                        <Button bsStyle="danger" onClick={this.close} >cancel</Button>
+                    </ButtonToolbar>
+                   </Modal.Footer>
                 </Modal>
               </span>
         );
@@ -431,16 +454,6 @@ var AssignTestForm = React.createClass ({
                                     </div>
                                     <div className="col-md-4 ">
                                         <ChooseTestModal/>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-5">
-                                    </div>
-                                    <div className="col-md-1 nopadding padding-right-xs">
-                                        <Button bsStyle="success" type="submit">save</Button>
-                                    </div>
-                                    <div className="col-md-1 ">
-                                        <Button bsStyle="danger">cancel</Button>
                                     </div>
                                 </div>
                             </div>

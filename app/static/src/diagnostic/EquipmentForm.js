@@ -415,7 +415,7 @@ var VisualInspBySelectField = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value
-        }) 
+        })
     },
 
     getInitialState: function(){
@@ -841,17 +841,12 @@ var FrequencySelectField = React.createClass ({
 
         return (
             <div>
-                <style type="text/css">{`
-                .form-group-custom {
-                width:40%;
-                }
-                `}</style>
-                <FormGroup controlId="formControlsSelect7" >
+
+                <FormGroup  controlId="formControlsSelect7" >
                     <ControlLabel>Frequency</ControlLabel>
                     <FormControl componentClass="select"
                                  placeholder="select frequency"
                                  onChange={this.handleChange}
-                                 bsClass="form-control col-xs-3"
                     >
                         <option value="select">select frequency</option>
                         {options}
@@ -894,17 +889,12 @@ var ManufacturedSelectField = React.createClass ({
 
         return (
             <div>
-                <style type="text/css">{`
-                .form-group-custom {
-                width:40%;
-                }
-                `}</style>
+
                 <FormGroup controlId="formControlsSelect8">
                     <ControlLabel>Manufactured</ControlLabel>
                     <FormControl componentClass="select"
                                  placeholder="select manufactured date"
                                  onChange={this.handleChange}
-                                 bsClass="form-control form-group-custom"
                     >
                         <option value="select">select manufactured date</option>
                         {options}
@@ -1035,19 +1025,54 @@ const EquipmentForm = React.createClass({
                 <form id="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div>
                         <Panel header="Add Equipment">
-
-                            <EquipmentTypeSelectField ref="eqt" source="/api/v1.0/equipment_type" value={this.state.value}/>
-                            <NewEqModalWin/>
-                            <ManufacturerSelectField ref="mn" source="/api/v1.0/manufacturer" value={this.state.value}/>
-                            <NewManufacModalWin/>
-                            <LocationSelectField ref="loc" source="/api/v1.0/location" value={this.state.value}/>
-                            <NewLocationModalWin/>
-                            <VisualInspBySelectField ref="vis" source="/api/v1.0/visual_inspection_by" value={this.state.value} />
-                            <NewVisualInspByModalWin/>
-                            <AssignedToSelectField  ref="ast" source="/api/v1.0/assigned_to" value={this.state.value} />
-                            <NewNormModalWin/>
-                            <NormSelectField ref="norms" source="/api/v1.0/norm" value={this.state.value} />
-
+                            <div className="row">
+                                <div className="col-lg-11">
+                                    <EquipmentTypeSelectField ref="eqt" source="/api/v1.0/equipment_type" value={this.state.value}/>
+                                </div>
+                                <div className="col-lg-1">
+                                    <NewEqModalWin/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-11">
+                                    <ManufacturerSelectField ref="mn" source="/api/v1.0/manufacturer" value={this.state.value}/>
+                                </div>
+                                <div className="col-lg-1">
+                                    <NewManufacModalWin/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-11">
+                                    <LocationSelectField ref="loc" source="/api/v1.0/location" value={this.state.value}/>
+                                </div>
+                                <div className="col-lg-1">
+                                    <NewLocationModalWin/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-11">
+                                    <VisualInspBySelectField ref="vis" source="/api/v1.0/visual_inspection_by" value={this.state.value} />
+                                </div>
+                                <div className="col-lg-1">
+                                    <NewVisualInspByModalWin/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-11">
+                                    <AssignedToSelectField  ref="ast" source="/api/v1.0/assigned_to" value={this.state.value} />
+                                </div>
+                                <div className="col-lg-1">
+                                    <NewAssignedToModalWin/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-11">
+                                    <NormSelectField ref="norms" source="/api/v1.0/norm" value={this.state.value} />
+                                </div>
+                                <div className="col-lg-1">
+                                    <NewNormModalWin/>
+                                </div>
+                            </div>
                             <FormGroup controlId="inputNameField" >
                                 <ControlLabel>Name</ControlLabel>
                                 <FormControl type="text" placeholder="name" ref="name" />
@@ -1062,10 +1087,16 @@ const EquipmentForm = React.createClass({
                                 <ControlLabel>Serial</ControlLabel>
                                 <FormControl type="text" placeholder="serial" ref="serial"/>
                             </FormGroup>
-
-                            <FrequencySelectField title="Frequency" bsClass="" ref="frequency" ></FrequencySelectField>
-                            <ManufacturedSelectField title="Manufactured" id="manufactured"></ManufacturedSelectField>
-
+                            <div className="row">
+                                <div className="col-lg-5">
+                                    <FrequencySelectField title="Frequency"  ref="frequency" />
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg-5">
+                                    <ManufacturedSelectField title="Manufactured" id="manufactured"/>
+                                </div>
+                            </div>
                             <FormGroup controlId="descriptionTextarea">
                                 <ControlLabel>Description</ControlLabel>
                                 <FormControl componentClass="textarea" placeholder="description" ref="description"/>
@@ -1163,10 +1194,8 @@ const EquipmentForm = React.createClass({
                                 <ControlLabel>Prev Equipment Number</ControlLabel>
                                 <FormControl type="text" placeholder="prev equipment number " ref="prev_eqnumb"/>
                             </FormGroup>
-
-
                             <Button bsStyle="success" type="submit">Save</Button>
-                            <Button bsStyle="danger">Cancel</Button>
+                            <Button bsStyle="danger" onClick={this.close}>Close</Button>
                         </Panel>
                     </div>
                 </form>
