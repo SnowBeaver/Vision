@@ -60,7 +60,7 @@ var SamplPointSelectField1 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
-                             >
+                >
                     <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
@@ -120,7 +120,7 @@ var SamplPointSelectField2 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
-                             >
+                >
                     <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
@@ -179,7 +179,7 @@ var SamplPointSelectField3 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
-                             >
+                >
                     <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
@@ -211,19 +211,50 @@ const FluidProfileForm = React.createClass({
     },
 
     _create: function () {
-
+        console.log(this.ref);
         return $.ajax({
             url: '/api/v1.0/equipment/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                
-                
-                
-                
-                
-                
+                'gas': findDOMNode(this.refs.dis_gas).value,
+                'furans': findDOMNode(this.refs.furan_cyr).value,
+                'pcb': findDOMNode(this.refs.pcb).value,
+                'water': findDOMNode(this.refs.water).value,
+                'inhibitor': findDOMNode(this.refs.inhibit_syr).value,
+                'dielec': findDOMNode(this.refs.dielec_1mm).value,
+                'dielec_2': findDOMNode(this.refs.dielec_2mm).value,
+                'dielec_d': findDOMNode(this.refs.dielec_db87).value,
+                'acidity': findDOMNode(this.refs.acid).value,
+                'color': findDOMNode(this.refs.color).value,
+                'ift': findDOMNode(this.refs.ift).value,
+                'density': findDOMNode(this.refs.density).value,
+                'pf_25': findDOMNode(this.refs.pf_25).value,
+                'pf_100': findDOMNode(this.refs.pf_100).value,
+                'pcb_jar': findDOMNode(this.refs.pcb_jar).value,
+                'particles': findDOMNode(this.refs.particles).value,
+                'furans_f': findDOMNode(this.refs.furan_jar).value,
+                'inhibitor_jar': findDOMNode(this.refs.inhibit_jar).value,
+                'metals': findDOMNode(this.refs.metal_oil).value,
+                'water_w': findDOMNode(this.refs.water_2).value,
+                'point': findDOMNode(this.refs.p_point).value,
+                'viscosity': findDOMNode(this.refs.viscosity).value,
+                'corr': findDOMNode(this.refs.cor_sul).value,
+                'dielec_i': findDOMNode(this.refs.dielec_iec).value,
+                'visual': findDOMNode(this.refs.visual).value,
+                'pcb_vial': findDOMNode(this.refs.pcb_vial).value,
+                'antioxidant': findDOMNode(this.refs.antioxydant).value,
+
+                'qty': findDOMNode(this.refs.qt1).value,
+                'qty_jar': findDOMNode(this.refs.qt2).value,
+                'qty_vial': findDOMNode(this.refs.qt3).value,
+
+                'sampling': this.refs.sampl1.state.sam1,
+                'sampling_jar': this.refs.sampl2.state.sam2,
+                'sampling_vial': this.refs.sampl3.state.sam3,
+
+                'selection': findDOMNode(this.refs.selection).value,
             }),
             success: function (data, textStatus) { },
             beforeSend: function () {
@@ -294,12 +325,12 @@ const FluidProfileForm = React.createClass({
 
 
     render: function() {
-console.log("render in fluid profile");
-        return (
 
+        return (
+            <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
-                        <Panel header="Electrical profile test parametres">
+                        <Panel header="Fluid profile test parametres">
                             <div className="scheduler-border">
                                 <fieldset className="scheduler-border">
                                     <legend className="scheduler-border">Syringe - Test requested</legend>
@@ -313,7 +344,7 @@ console.log("render in fluid profile");
                                                     <Checkbox ref="furan_syr">Furans</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
+                                                    <Checkbox ref="pcb">PCB</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
@@ -328,7 +359,9 @@ console.log("render in fluid profile");
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
                                                 <ControlLabel>{this.state.qty1.label}</ControlLabel>
-                                                <FormControl type="text" value={this.state.qty1.value} />
+                                                <FormControl type="text"
+                                                             value={this.state.qty1.value}
+                                                             ref="qt1"   />
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField1
@@ -350,51 +383,29 @@ console.log("render in fluid profile");
                                                     <Checkbox ref="dielec_1mm">Dielec .D1816(1mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="acid">AcidityD974</Checkbox>
+                                                     <Checkbox ref="dielec_2mm">Dielec.D1816(2mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="density">Density(D1298)</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="inhibit_jar">Inhibitor</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="p_point">PouPoint</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="dielec_2mm">Dielec.D18162mmkV</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="color">ColorD1500</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="pf_25">PF25C(D924)</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="particles">Particles</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="metal_oil">Metals in oil</Checkbox>
-                                                </div>
-                                                <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="viscosity">Viscosity</Checkbox>
-                                                </div>
-                                            </div>
-                                            <div className="maxwidth">
-                                                <div className="col-md-4 nopadding padding-right-xs">
                                                     <Checkbox ref="dielec_db87">Dielec. D877(kV)</Checkbox>
                                                 </div>
+                                            </div>
+                                            <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="acid">Acidity(D974)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="color">Color(D1500)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
                                                     <Checkbox ref="ift">IFT(D971)</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="density">Density(D1298)</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="pf_25">PF25C(D924)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
                                                     <Checkbox ref="pf_100">PF100C(D924)</Checkbox>
@@ -402,10 +413,32 @@ console.log("render in fluid profile");
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="furan_jar">Furans</Checkbox>
+                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="particles">Particles</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
+                                                    <Checkbox ref="furan_jar">Furans</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="inhibit_jar">Inhibitor</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="metal_oil">Metals in oil</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding">
                                                     <Checkbox ref="water_2">Water</Checkbox>
+                                                </div>
+                                            </div>
+                                            <div className="maxwidth">
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="p_point">PouPoint</Checkbox>
+                                                </div>
+                                                <div className="col-md-4 nopadding padding-right-xs">
+                                                    <Checkbox ref="viscosity">Viscosity</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
                                                     <Checkbox ref="cor_sul">Corr.Sulfur</Checkbox>
@@ -422,7 +455,9 @@ console.log("render in fluid profile");
                                             <div className="maxwidth">
                                                 <div className="col-md-2 nopadding padding-right-xs">
                                                     <ControlLabel>{ this.state.qty2.label }</ControlLabel>
-                                                    <FormControl type="text" value={this.state.qty2.value} />
+                                                    <FormControl type="text"
+                                                                 value={this.state.qty2.value}
+                                                                 ref="qt2"   />
                                                 </div>
                                                 <div className="col-md-10 nopadding">
                                                     <SamplPointSelectField2
@@ -451,7 +486,9 @@ console.log("render in fluid profile");
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
                                                 <ControlLabel>{ this.state.qty3.label }</ControlLabel>
-                                                <FormControl type="text" value={this.state.qty3.value} />
+                                                <FormControl type="text"
+                                                             value={this.state.qty3.value}
+                                                             ref="qt3"   />
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField3
@@ -463,20 +500,33 @@ console.log("render in fluid profile");
                                     </div>
                                 </fieldset>
 
-                                <FormGroup>
-                                    Save as
-                                    <FormControl type="text" placeholder="electrical profile name" ref="elec_prof"/>
-                                </FormGroup>
-                                <ButtonToolbar>
-                                    <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger" type="close">cancel</Button>
-                                </ButtonToolbar>
+                                <div className="row">
+                                    <div className="col-md-5 ">
+                                        <FormGroup>
+                                            Save as
+                                            <FormControl type="text"
+                                                         placeholder="fluid profile name"
+                                                         ref="selection"/>
+                                        </FormGroup>
+                                    </div>
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="success" type="submit">save</Button>
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="danger">cancel</Button>
+                                    </div>
+                                </div>
 
                             </div>
                         </Panel>
                     </div>
                 </form>
-
+            </div>
         );}
 });
 

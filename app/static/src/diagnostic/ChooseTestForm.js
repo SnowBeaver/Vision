@@ -7,27 +7,29 @@ import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import {findDOMNode} from 'react-dom';
 
 
+
+
+
+
+
 const ChooseTestForm = React.createClass({
 
+    testChoice: function () {
 
+    },
 
     render: function () {
         return (
-            <div className="col-xs-4">
+            <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <Panel header="Choose Test Profile">
                             <div>
-                                <Radio name="choice">
+                                <Radio name="choice" ref="fluid">
                                     Fluid Profile
                                 </Radio>
-                                <Radio name="choice">
+                                <Radio name="choice" ref="electro">
                                     Electrical Profile
                                 </Radio>
-
-                                <ButtonToolbar>
-                                    <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger" type="close">cancel</Button>
-                                </ButtonToolbar>
                             </div>
                         </Panel>
                 </form>

@@ -24,16 +24,16 @@ const ElectricalProfileForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-               
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                'bushing': findDOMNode(this.refs.bush_cap).value,
+                'insulation': findDOMNode(this.refs.ins_res).value,
+                'degree': findDOMNode(this.refs.polymer).value,
+                'winding': findDOMNode(this.refs.wind_cap).value,
+                'visual': findDOMNode(this.refs.vis_insp).value,
+                'turns': findDOMNode(this.refs.ratio).value,
+                'insulation_pf': findDOMNode(this.refs.wind_d).value,
+                'resistance': findDOMNode(this.refs.res_win_con).value,
+
+                'selection': findDOMNode(this.refs.selection).value,
             }),
             success: function (data, textStatus) { },
             beforeSend: function () {
@@ -103,7 +103,7 @@ const ElectricalProfileForm = React.createClass({
 
     render:function (){
         return(
-            <div>
+            <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
                         <Panel header="Electrical profile test parametres">
@@ -135,7 +135,7 @@ const ElectricalProfileForm = React.createClass({
                                         </div>
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox ref="wind_cap">Winding Cap and PF Doble</Checkbox>
+                                                <Checkbox ref="wind_d">Winding Cap and PF Doble</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
                                                 <Checkbox ref="res_win_con">Resistance; winding/contact</Checkbox>
@@ -144,14 +144,27 @@ const ElectricalProfileForm = React.createClass({
                                     </div>
                                 </fieldset>
 
-                                    <FormGroup>
+                                <div className="row">
+                                    <div className="col-md-5 ">
+                                        <FormGroup>
                                         Save as
-                                        <FormControl type="text" placeholder="electrical profile name" ref="elec_prof"/>
+                                        <FormControl type="text"
+                                                     placeholder="electrical profile name"
+                                                     ref="selection"/>
                                     </FormGroup>
-                                    <ButtonToolbar>
-                                    <Button bsStyle="success" type="submit">save</Button>
-                                    <Button bsStyle="danger" type="close">cancel</Button>
-                                        </ButtonToolbar>
+                                    </div>
+
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="success" type="submit">save</Button>
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="danger">cancel</Button>
+                                    </div>
+                                </div>
 
                             </div>
                         </Panel>
