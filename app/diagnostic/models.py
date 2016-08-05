@@ -352,154 +352,61 @@ class Campaign(db.Model):
     # AmbientAirTemperature: Ambient air temperature at sampling time
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
 
-
-    # # electriacal profile fields
-    # bushing = db.Column(db.Boolean(False))
-    # winding = db.Column(db.Boolean(False))
-    # insulation_pf = db.Column(db.Boolean(False))
-    # insulation = db.Column(db.Boolean(False))
-    # visual_inspection = db.Column(db.Boolean(False))
-    # resistance = db.Column(db.Boolean(False))
-    # degree = db.Column(db.Boolean(False))
-    # turns = db.Column(db.Boolean(False))
-    #
-    # # fluid profile field
-    # # syringe
-    # gas = db.Column(db.Boolean(False))
-    # water = db.Column(db.Boolean(False))
-    # furans = db.Column(db.Boolean(False))
-    # inhibitor = db.Column(db.Boolean(False))
-    # pcb = db.Column(db.Boolean(False))
-    # qty = db.Column(db.Integer)  # qty Syringe
-    # sampling = db.Column(db.Integer)
-    # # jar
-    # dielec = db.Column(db.Boolean(False))
-    # acidity = db.Column(db.Boolean(False))
-    # density = db.Column(db.Boolean(False))
-    # pcb_jar = db.Column(db.Boolean(False))
-    # inhibitor_jar = db.Column(db.Boolean(False))
-    # point = db.Column(db.Boolean(False))
-    # dielec_2 = db.Column(db.Boolean(False))
-    # color = db.Column(db.Boolean(False))
-    # pf = db.Column(db.Boolean(False))
-    # particles = db.Column(db.Boolean(False))
-    # metals = db.Column(db.Boolean(False))
-    # viscosity = db.Column(db.Boolean(False))
-    # dielec_d = db.Column(db.Boolean(False))
-    # ift = db.Column(db.Boolean(False))
-    # pf_100 = db.Column(db.Boolean(False))
-    # furans_f = db.Column(db.Boolean(False))
-    # water_w = db.Column(db.Boolean(False))
-    # corr = db.Column(db.Boolean(False))
-    # dielec_i = db.Column(db.Boolean(False))
-    # visual = db.Column(db.Boolean(False))
-    # qty_jar = db.Column(db.Integer)
-    # sampling_jar = db.Column(db.Integer)
-    # # vial
-    # pcb_vial = db.Column(db.Boolean(False))
-    # antioxidant = db.Column(db.Boolean(False))
-    # qty_vial = db.Column(db.Integer)
-    # sampling_vial = db.Column(db.Integer)
-
-
     def __repr__(self):
         return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         print(self.performed_by, self.performed_by_id, self.remark)
-        return {'id': self.id,
-                'date': dump_datetime(self.date),
-                'created_by_id': self.created_by_id,
-                'created_by': self.created_by and self.created_by.serialize(),
-                # 'equipment_id': self.equipment_id,
-                # 'equipment': self.equipment and self.equipment.serialize(),
-                'material_id': self.material_id,
-                'material': self.material and self.material.serialize(),
-                'analysis_number': self.analysis_number,
-                # 'percent_ratio': self.percent_ratio,
-                'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-                'charge': self.charge,
-                'date_prelevement': dump_datetime(self.date_prelevement),
-                'remark': self.remark,
-                'performed_by_id': self.performed_by_id,
-                'performed_by': self.performed_by and self.performed_by.serialize(),
-                'modifier': self.modifier,
-                'transmission': self.transmission,
-                'lab_id': self.lab_id,
-                'lab': self.lab and self.lab.serialize(),
-                'repair_date': dump_datetime(self.repair_date),
-                'repair_description': self.repair_description,
-                'if_rem': self.if_rem,
-                'if_ok': self.if_ok,
-                'recommandation_id': self.recommandation_id,
-                'recommendation': self.recommendation and self.recommendation.serialize(),
-                'recommendationNotes': self.recommendationNotes,
-                'recommended_by_id': self.recommended_by_id,
-                'recommended_by': self.recommended_by and self.recommended_by.serialize(),
-                'date_application': self.date_application,
-                'comments': self.comments,
-                'mws': self.mws,
-                'temperature': self.temperature,
-                'sampling_card_print': self.sampling_card_print,
-                'contract_id': self.contract_id,
-                'contract': self.contract and self.contract.serialize(),
-                'containers': self.containers,
-                'sampling_card_gathered': self.sampling_card_gathered,
-                'gathered_test_type': self.gathered_test_type,
-                'lab_contract_id': self.lab_contract_id,
-                'lab_contract': self.lab_contract and self.lab_contract.serialize(),
-                'seringe_num': self.seringe_num,
-                'data_valid': self.data_valid,
-                'status1': self.status1,
-                'status2': self.status2,
-                'error_state': self.error_state,
-                'error_code': self.error_code,
-                'ambient_air_temperature': self.ambient_air_temperature,
-                # 'bushing': self.bushing,
-                # 'winding': self.winding,
-                # 'insulation_pf': self.insulation_pf,
-                # 'insulation': self.insulation,
-                # 'visual_inspection': self.visual_inspection,
-                # 'resistance': self.resistance,
-                # 'degree': self.degree,
-                # 'turns': self.turns,
-                # 'gas': self.gas,
-                # 'water': self.water,
-                # 'furans': self.furans,
-                # 'inhibitor': self.inhibitor,
-                # 'pcb': self.pcb,
-                # 'qty': self.qty,
-                # 'sampling': self.sampling,
-                # 'dielec': self.dielec,
-                # 'acidity': self.acidity,
-                # 'density': self.density,
-                # 'pcb_jar': self.pcb_jar,
-                # 'inhibitor_jar': self.inhibitor_jar,
-                # 'point': self.point,
-                # 'dielec_2': self.dielec_2,
-                # 'color': self.color,
-                # 'pf': self.pf,
-                # 'particles': self.particles,
-                # 'metals': self.metals,
-                # 'viscosity': self.viscosity,
-                # 'dielec_d': self.dielec_d,
-                # 'ift': self.ift,
-                # 'pf_100': self.pf_100,
-                # 'furans_f': self.furans_f,
-                # 'water_w': self.water_w,
-                # 'corr': self.corr,
-                # 'dielec_i': self.dielec_i,
-                # 'visual': self.visual,
-                # 'qty_jar': self.qty_jar,
-                # 'sampling_jar': self.sampling_jar,
-                # 'pcb_vial': self.pcb_vial,
-                # 'antioxidant': self.antioxidant,
-                # 'qty_vial': self.qty_vial,
-                # 'sampling_vial': self.sampling_vial,
-                'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
-                }
+        return {
+            'id': self.id,
+            'date': dump_datetime(self.date),
+            'created_by_id': self.created_by_id,
+            'created_by': self.created_by and self.created_by.serialize(),
+            'material_id': self.material_id,
+            'material': self.material and self.material.serialize(),
+            'analysis_number': self.analysis_number,
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'charge': self.charge,
+            'date_prelevement': dump_datetime(self.date_prelevement),
+            'remark': self.remark,
+            'performed_by_id': self.performed_by_id,
+            'performed_by': self.performed_by and self.performed_by.serialize(),
+            'modifier': self.modifier,
+            'transmission': self.transmission,
+            'lab_id': self.lab_id,
+            'lab': self.lab and self.lab.serialize(),
+            'repair_date': dump_datetime(self.repair_date),
+            'repair_description': self.repair_description,
+            'if_rem': self.if_rem,
+            'if_ok': self.if_ok,
+            'recommandation_id': self.recommandation_id,
+            'recommendation': self.recommendation and self.recommendation.serialize(),
+            'recommendationNotes': self.recommendationNotes,
+            'recommended_by_id': self.recommended_by_id,
+            'recommended_by': self.recommended_by and self.recommended_by.serialize(),
+            'date_application': self.date_application,
+            'comments': self.comments,
+            'mws': self.mws,
+            'temperature': self.temperature,
+            'sampling_card_print': self.sampling_card_print,
+            'contract_id': self.contract_id,
+            'contract': self.contract and self.contract.serialize(),
+            'containers': self.containers,
+            'sampling_card_gathered': self.sampling_card_gathered,
+            'gathered_test_type': self.gathered_test_type,
+            'lab_contract_id': self.lab_contract_id,
+            'lab_contract': self.lab_contract and self.lab_contract.serialize(),
+            'seringe_num': self.seringe_num,
+            'data_valid': self.data_valid,
+            'status1': self.status1,
+            'status2': self.status2,
+            'error_state': self.error_state,
+            'error_code': self.error_code,
+            'ambient_air_temperature': self.ambient_air_temperature,
+            'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
+            }
 
 
 class FluidProfile(db.Model):
@@ -2224,7 +2131,10 @@ class TestResult(db.Model):
 
     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
     equipment = db.relationship('Equipment', foreign_keys='TestResult.equipment_id')
-
+    fluid_profile_id = db.Column('fluid_profile_id', db.ForeignKey("fluid_profile.id"))
+    fluid_profile = db.relationship('FluidProfile', foreign_keys='TestResult.fluid_profile_id')
+    electrical_profile_id = db.Column('electrical_profile_id', db.ForeignKey("electrical_profile.id"))
+    electrical_profile = db.relationship('ElectricalProfile', foreign_keys='TestResult.electrical_profile_id')
     # PercentRatio: Indicate if the TTR was done using Percent ratio or Ratio. Used with TTR table
     # Comes from equipment
     # specific electrical test on winding.  TTR - tranformer term ...
@@ -2291,63 +2201,68 @@ class TestResult(db.Model):
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'campaign_id': self.campaign_id,
-                'reason_id': self.reason_id,
-                'test_reason': self.test_reason and self.test_reason.serialize(),
-                'date_analyse': dump_datetime(self.date_analyse),
-                'test_type_id': self.test_type_id,
-                'test_type': self.test_type and self.test_type.serialize(),
-                'sampling_point_id': self.sampling_point_id,
-                'sampling_point': self.sampling_point and self.sampling_point.serialize(),
-                'test_status_id': self.test_status_id,
-                'test_status': self.test_status and self.test_status.serialize(),
-                'equipment_id': self.equipment_id,
-                'equipment': self.equipment and self.equipment.serialize(),
-                'percent_ratio': self.percent_ratio,
-                'bushing': self.bushing,
-                'winding': self.winding,
-                'insulation_pf': self.insulation_pf,
-                'insulation': self.insulation,
-                'visual_inspection': self.visual_inspection,
-                'resistance': self.resistance,
-                'degree': self.degree,
-                'turns': self.turns,
-                'gas': self.gas,
-                'water': self.water,
-                'furans': self.furans,
-                'inhibitor': self.inhibitor,
-                'pcb': self.pcb,
-                'qty': self.qty,
-                'sampling': self.sampling,
-                'dielec': self.dielec,
-                'acidity': self.acidity,
-                'density': self.density,
-                'pcb_jar': self.pcb_jar,
-                'inhibitor_jar': self.inhibitor_jar,
-                'point': self.point,
-                'dielec_2': self.dielec_2,
-                'color': self.color,
-                'pf': self.pf,
-                'particles': self.particles,
-                'metals': self.metals,
-                'viscosity': self.viscosity,
-                'dielec_d': self.dielec_d,
-                'ift': self.ift,
-                'pf_100': self.pf_100,
-                'furans_f': self.furans_f,
-                'water_w': self.water_w,
-                'corr': self.corr,
-                'dielec_i': self.dielec_i,
-                'visual': self.visual,
-                'qty_jar': self.qty_jar,
-                'sampling_jar': self.sampling_jar,
-                'pcb_vial': self.pcb_vial,
-                'antioxidant': self.antioxidant,
-                'qty_vial': self.qty_vial,
-                'sampling_vial': self.sampling_vial,
-                'tests': [test.serialize() for test in db.session.query(self.test_model).filter_by(test_result_id=self.id)]
-                }
+        return {
+            'id': self.id,
+            'campaign_id': self.campaign_id,
+            'reason_id': self.reason_id,
+            'test_reason': self.test_reason and self.test_reason.serialize(),
+            'date_analyse': dump_datetime(self.date_analyse),
+            'test_type_id': self.test_type_id,
+            'test_type': self.test_type and self.test_type.serialize(),
+            'sampling_point_id': self.sampling_point_id,
+            'sampling_point': self.sampling_point and self.sampling_point.serialize(),
+            'test_status_id': self.test_status_id,
+            'test_status': self.test_status and self.test_status.serialize(),
+            'equipment_id': self.equipment_id,
+            'equipment': self.equipment and self.equipment.serialize(),
+            'fluid_profile_id': self.fluid_profile_id,
+            'fluid_profile': self.fluid_profile and self.fluid_profile.serialize(),
+            'electrical_profile_id': self.electrical_profile_id,
+            'electrical_profile': self.electrical_profile and self.electrical_profile.serialize(),
+            'percent_ratio': self.percent_ratio,
+            'bushing': self.bushing,
+            'winding': self.winding,
+            'insulation_pf': self.insulation_pf,
+            'insulation': self.insulation,
+            'visual_inspection': self.visual_inspection,
+            'resistance': self.resistance,
+            'degree': self.degree,
+            'turns': self.turns,
+            'gas': self.gas,
+            'water': self.water,
+            'furans': self.furans,
+            'inhibitor': self.inhibitor,
+            'pcb': self.pcb,
+            'qty': self.qty,
+            'sampling': self.sampling,
+            'dielec': self.dielec,
+            'acidity': self.acidity,
+            'density': self.density,
+            'pcb_jar': self.pcb_jar,
+            'inhibitor_jar': self.inhibitor_jar,
+            'point': self.point,
+            'dielec_2': self.dielec_2,
+            'color': self.color,
+            'pf': self.pf,
+            'particles': self.particles,
+            'metals': self.metals,
+            'viscosity': self.viscosity,
+            'dielec_d': self.dielec_d,
+            'ift': self.ift,
+            'pf_100': self.pf_100,
+            'furans_f': self.furans_f,
+            'water_w': self.water_w,
+            'corr': self.corr,
+            'dielec_i': self.dielec_i,
+            'visual': self.visual,
+            'qty_jar': self.qty_jar,
+            'sampling_jar': self.sampling_jar,
+            'pcb_vial': self.pcb_vial,
+            'antioxidant': self.antioxidant,
+            'qty_vial': self.qty_vial,
+            'sampling_vial': self.sampling_vial,
+            'tests': [test.serialize() for test in db.session.query(self.test_model).filter_by(test_result_id=self.id)]
+        }
 
 
 class GasketCondition(db.Model):

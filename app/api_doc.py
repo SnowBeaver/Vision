@@ -999,6 +999,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}   sampling_point_id
 @apiSuccess {Integer}   test_status_id
 @apiSuccess {Integer}   equipment_id
+@apiSuccess {Integer}   fluid_profile_id
+@apiSuccess {Integer}   electrical_profile_id
 @apiSuccess {Boolean}   percent_ratio
 @apiSuccess {Boolean}   bushing
 @apiSuccess {Boolean}   winding
@@ -1061,6 +1063,8 @@ doc = ApiDoc(app=api)
 @apiParam {Integer}   sampling_point_id
 @apiParam {Integer}   test_status_id
 @apiParam {Integer}   equipment_id
+@apiParam {Integer}   fluid_profile_id
+@apiParam {Integer}   electrical_profile_id
 @apiParam {Boolean}   percent_ratio
 @apiParam {Boolean}   bushing
 @apiParam {Boolean}   winding

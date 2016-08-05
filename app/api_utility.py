@@ -222,6 +222,8 @@ test_result_schema = {
     'sampling_point_id': type_integer_coerce_dict,
     'test_status_id': type_integer_coerce_dict,
     'equipment_id': type_integer_coerce_dict,
+    'fluid_profile_id': type_integer_coerce_dict,
+    'electrical_profile_id': type_integer_coerce_dict,
     'percent_ratio': type_boolean_coerce_dict,
     'bushing': type_boolean_coerce_dict,
     'winding': type_boolean_coerce_dict,
