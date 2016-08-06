@@ -19,9 +19,9 @@ var TreeComponent = React.createClass({
     },
     handleNodeClick: function(e, data) {
         var item = data.instance.get_node(data.node.id);
-        console.log(data);
-        console.log(data.node.id);
-        console.log(item);
+        // console.log(data);
+        // console.log(data.node.id);
+        // console.log(item);
         this.props.onTreeNodeClick(item.state);
 
         // data.instance.refresh();
@@ -125,13 +125,14 @@ var TreeComponent = React.createClass({
             }
             ,"types": types
             ,"contextmenu": contextMenu
+            ,'onStatusChange': this.handleStatusChange
         }
         ).on('delete_node.jstree', this.handleDeleteNode
         ).on('rename_node.jstree', this.handleRenameNode
         ).on('move_node.jstree', this.handleMoveNode
         ).on('select_node.jstree',this.handleNodeClick 
         ).on('ready.jstree', this.handleTreeReady 
-        );
+        ); 
     },
     
     componentWillUnmount: function() {
@@ -154,6 +155,13 @@ var TreeComponent = React.createClass({
 });
 
 var TreeNode = React.createClass({
+    
+    onStatusChange: function(){
+       this.setState({
+           refresh: true
+       })
+    },
+    
     render: function(){
         
         var cnodes = null; 
@@ -161,7 +169,7 @@ var TreeNode = React.createClass({
         if (this.props.children) {
             cnodes = this.props.children.map(function (n) {
                 if (n.disabled != true) {
-                    return <TreeNode node={n} forceRender={true} children={n.children} key={n.id}/>
+                    return <TreeNode node={n} onStatusChange={n.onStatusChange} forceRender={true} children={n.children} key={n.id}/>
                 }
             });
         }
@@ -267,11 +275,10 @@ const types= {
     }
 }
 
-const contextMenu = {
+const contextMenu = { 
     'items' : function(node) {
         var tmp = $.jstree.defaults.contextmenu.items();
         delete tmp.create.action;
-
         var current = $('#tree').jstree(true).get_selected('full',true)[0];
 
         if( (this.get_type(node) !== "default")
@@ -288,13 +295,16 @@ const contextMenu = {
                             
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
-                            
-                            $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 1 }
+
+                            var id = obj.state.id;
+                            console.log(obj);
+                            $.post(url.treeStatus, {'node_id': id, 'status': 1}
                                 , function(data){
-                                    if(data.status == "OK"){
-                                        $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
+                                    if(data.status == "OK"){ 
+                                        $("#tree #" + obj.id + " > a > i").css(
+                                            'background-image','url(' + data.src +')'
+                                        );
                                     }
-                        
                                 }).fail(function () {
                                 console.log(fail);
                                 data.instance.refresh();
@@ -307,12 +317,13 @@ const contextMenu = {
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
-                            $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 2 }
+                            
+                            var id = obj.state.id;
+                            $.post(url.treeStatus, {'node_id': id, 'status': 2}
                                 ,function(data){
                                     if(data.status == "OK"){
                                         $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
-                                    }
-
+                                    } 
                                 }).fail(function () {
                                 console.log(fail);
                                 data.instance.refresh();
@@ -325,12 +336,12 @@ const contextMenu = {
                         ,"action"			    : function (data){
                             var inst = $.jstree.reference(data.reference),
                                 obj = inst.get_node(data.reference);
-                            $.post(url.treeStatus, { 'node_id' : obj.id , 'status' : 0 }
+                            var id = obj.state.id;
+                            $.post(url.treeStatus, {'node_id': id, 'status': 0 }
                                 ,function(data){
                                     if(data.status == "OK"){
                                         $("#tree #" + obj.id + " > a > i").css('background-image','url(' + data.src +')');
-                                    }
-
+                                    } 
                                 }).fail(function () {
                                 console.log(fail);
                                 data.instance.refresh();
