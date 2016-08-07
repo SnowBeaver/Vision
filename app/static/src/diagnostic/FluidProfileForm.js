@@ -60,8 +60,8 @@ var SamplPointSelectField1 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
+                             name="sampling"
                 >
-                    <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -74,7 +74,6 @@ var SamplPointSelectField2 = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value,
-            sam2: event.target.value
         })
     },
 
@@ -110,7 +109,6 @@ var SamplPointSelectField2 = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
             menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
@@ -120,8 +118,8 @@ var SamplPointSelectField2 = React.createClass ({
                 <FormControl componentClass="select"
                              placeholder="sampling point"
                              onChange={this.handleChange}
+                             name="sampling_jar"
                 >
-                    <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -134,7 +132,6 @@ var SamplPointSelectField3 = React.createClass ({
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value,
-            sam3: event.target.value
         })
     },
 
@@ -178,9 +175,9 @@ var SamplPointSelectField3 = React.createClass ({
                 <ControlLabel>Sampling Point</ControlLabel>
                 <FormControl componentClass="select"
                              placeholder="sampling point"
+                             name="sampling_vial"
                              onChange={this.handleChange}
                 >
-                    <option value="select">select sampling point</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -193,69 +190,41 @@ const FluidProfileForm = React.createClass({
 
     getInitialState: function () {
         return {
-            qty1: {
-                label: 'Qty',
-                value: null
-            },
-            qty2: {
-                label: 'Qty',
-                value: null
-            },
-            qty3: {
-                label: 'Qty',
-                value: null
-            },
+            qty: "",
+            qty_jar: "",
+            qty_vial: "",
             loading: false,
+            data: {},
             errors: {}
         }
     },
 
     _create: function () {
-        console.log(this.ref);
+        var fields = [ 
+            'gas', 'furans', 'pcb', 'water',
+            'inhibitor', 'dielec', 'dielec_2',
+            'dielec_d', 'acidity', 'color',
+            'ift', 'density', 'pf_25', 'pf_100',
+            'pcb_jar', 'particles', 'furans_f',
+            'inhibitor_jar', 'metals', 'water_w',
+            'point', 'viscosity', 'corr', 'dielec_i',
+            'visual', 'pcb_vial', 'antioxidant',
+            'sampling', 'sampling_jar', 'sampling_vial',
+            'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection'
+        ]; 
+        var data = {};
+        for (var i=0;i<fields.length;i++){
+            var key= fields[i];
+            data[key] = this.state[key];
+        } 
+        console.log(data);
+        
         return $.ajax({
-            url: '/api/v1.0/equipment/',
+            url: '/api/v1.0/fluid_profile/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({
-                'gas': findDOMNode(this.refs.dis_gas).value,
-                'furans': findDOMNode(this.refs.furan_cyr).value,
-                'pcb': findDOMNode(this.refs.pcb).value,
-                'water': findDOMNode(this.refs.water).value,
-                'inhibitor': findDOMNode(this.refs.inhibit_syr).value,
-                'dielec': findDOMNode(this.refs.dielec_1mm).value,
-                'dielec_2': findDOMNode(this.refs.dielec_2mm).value,
-                'dielec_d': findDOMNode(this.refs.dielec_db87).value,
-                'acidity': findDOMNode(this.refs.acid).value,
-                'color': findDOMNode(this.refs.color).value,
-                'ift': findDOMNode(this.refs.ift).value,
-                'density': findDOMNode(this.refs.density).value,
-                'pf_25': findDOMNode(this.refs.pf_25).value,
-                'pf_100': findDOMNode(this.refs.pf_100).value,
-                'pcb_jar': findDOMNode(this.refs.pcb_jar).value,
-                'particles': findDOMNode(this.refs.particles).value,
-                'furans_f': findDOMNode(this.refs.furan_jar).value,
-                'inhibitor_jar': findDOMNode(this.refs.inhibit_jar).value,
-                'metals': findDOMNode(this.refs.metal_oil).value,
-                'water_w': findDOMNode(this.refs.water_2).value,
-                'point': findDOMNode(this.refs.p_point).value,
-                'viscosity': findDOMNode(this.refs.viscosity).value,
-                'corr': findDOMNode(this.refs.cor_sul).value,
-                'dielec_i': findDOMNode(this.refs.dielec_iec).value,
-                'visual': findDOMNode(this.refs.visual).value,
-                'pcb_vial': findDOMNode(this.refs.pcb_vial).value,
-                'antioxidant': findDOMNode(this.refs.antioxydant).value,
-
-                'qty': findDOMNode(this.refs.qt1).value,
-                'qty_jar': findDOMNode(this.refs.qt2).value,
-                'qty_vial': findDOMNode(this.refs.qt3).value,
-
-                'sampling': this.refs.sampl1.state.sam1,
-                'sampling_jar': this.refs.sampl2.state.sam2,
-                'sampling_vial': this.refs.sampl3.state.sam3,
-
-                'selection': findDOMNode(this.refs.selection).value,
-            }),
+            data: JSON.stringify(data),
             success: function (data, textStatus) { },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -298,7 +267,19 @@ const FluidProfileForm = React.createClass({
     },
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] =  $.trim(e.target.value);
+        // console.log(e.target.type);
+        if(e.target.type == 'checkbox'){ 
+            state[e.target.name] = e.target.checked;
+        }
+        else if(e.target.type == 'select-one'){
+            // console.log(e.target);
+            // console.log(e.target.name);
+            // console.log(e.target.value);
+            state[e.target.name] = e.target.value;
+        }
+        else{ 
+            state[e.target.name] = $.trim(e.target.value);
+        }
         this.setState(state);
     },
     _validate: function () {
@@ -338,36 +319,33 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="dis_gas">Dissolved Gas</Checkbox>
+                                                    <Checkbox name="gas">Dissolved Gas</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="furan_syr">Furans</Checkbox>
+                                                    <Checkbox name="furans">Furans</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="pcb">PCB</Checkbox>
+                                                    <Checkbox name="pcb">PCB</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="water">Water</Checkbox>
+                                                    <Checkbox name="water">Water</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="inhibit_syr">Inhibitor</Checkbox>
+                                                    <Checkbox name="inhibitor">Inhibitor</Checkbox>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
-                                                <ControlLabel>{this.state.qty1.label}</ControlLabel>
-                                                <FormControl type="text"
-                                                             value={this.state.qty1.value}
-                                                             ref="qt1"   />
+                                                <ControlLabel>Quantity</ControlLabel>
+                                                <FormControl type="text" ref="qty"   name="qty" />
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField1
-                                                    ref="sampl1"
                                                     source="http://dev.vision.local/api/v1.0/sampling_point"
-                                                    value={ this.state.value}/>
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -380,90 +358,88 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="dielec_1mm">Dielec .D1816(1mm)(kV)</Checkbox>
+                                                    <Checkbox name="dielec">Dielec .D1816(1mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                     <Checkbox ref="dielec_2mm">Dielec.D1816(2mm)(kV)</Checkbox>
+                                                     <Checkbox name="dielec_2">Dielec.D1816(2mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="dielec_db87">Dielec. D877(kV)</Checkbox>
+                                                    <Checkbox name="dielec_d">Dielec. D877(kV)</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="acid">Acidity(D974)</Checkbox>
+                                                    <Checkbox name="acid">Acidity(D974)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="color">Color(D1500)</Checkbox>
+                                                    <Checkbox name="color">Color(D1500)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="ift">IFT(D971)</Checkbox>
+                                                    <Checkbox name="ift">IFT(D971)</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="density">Density(D1298)</Checkbox>
+                                                    <Checkbox name="density">Density(D1298)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="pf_25">PF25C(D924)</Checkbox>
+                                                    <Checkbox name="pf_25">PF25C(D924)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="pf_100">PF100C(D924)</Checkbox>
+                                                    <Checkbox name="pf_100">PF100C(D924)</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="pcb_jar">PCB</Checkbox>
+                                                    <Checkbox name="pcb_jar">PCB</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="particles">Particles</Checkbox>
+                                                    <Checkbox name="particles">Particles</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="furan_jar">Furans</Checkbox>
+                                                    <Checkbox name="furans_f">Furans</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="inhibit_jar">Inhibitor</Checkbox>
+                                                    <Checkbox name="inhibitor_jar">Inhibitor</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="metal_oil">Metals in oil</Checkbox>
+                                                    <Checkbox name="metals">Metals in oil</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="water_2">Water</Checkbox>
+                                                    <Checkbox name="water_w">Water</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="p_point">PouPoint</Checkbox>
+                                                    <Checkbox name="point">PouPoint</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox ref="viscosity">Viscosity</Checkbox>
+                                                    <Checkbox name="viscosity">Viscosity</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox ref="cor_sul">Corr.Sulfur</Checkbox>
+                                                    <Checkbox name="corr">Corr.Sulfur</Checkbox>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="maxwidth">
-                                                <Checkbox ref="dielec_iec">Dielec.IEC-156(kV)</Checkbox>
+                                                <Checkbox name="dielec_i">Dielec.IEC-156(kV)</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <Checkbox ref="visual">Visual(D1524)</Checkbox>
+                                                <Checkbox name="visual">Visual(D1524)</Checkbox>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-2 nopadding padding-right-xs">
-                                                    <ControlLabel>{ this.state.qty2.label }</ControlLabel>
-                                                    <FormControl type="text"
-                                                                 value={this.state.qty2.value}
-                                                                 ref="qt2"   />
+                                                    <ControlLabel>Quantity</ControlLabel>
+                                                    <FormControl type="text" name="qty_jar" />
                                                 </div>
                                                 <div className="col-md-10 nopadding">
                                                     <SamplPointSelectField2
-                                                        ref="sampl2"
                                                         source="http://dev.vision.local/api/v1.0/sampling_point"
-                                                        value={ this.state.value}/>
+                                                        value={ this.state.value}
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
@@ -477,48 +453,45 @@ const FluidProfileForm = React.createClass({
                                     <div className="control-group">
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
-                                                <Checkbox ref="pcb_vial">PCB</Checkbox>
+                                                <Checkbox name="pcb_vial">PCB</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <Checkbox ref="antioxydant">Antioxydant</Checkbox>
+                                                <Checkbox name="antioxidant">Antioxydant</Checkbox>
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
-                                                <ControlLabel>{ this.state.qty3.label }</ControlLabel>
-                                                <FormControl type="text"
-                                                             value={this.state.qty3.value}
-                                                             ref="qt3"   />
+                                                <ControlLabel>Quantity</ControlLabel>
+                                                <FormControl type="text" name="qty_vial" />
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField3
-                                                    ref="sampl3"
                                                     source="http://dev.vision.local/api/v1.0/sampling_point"
                                                     value={ this.state.value} />
                                             </div>
                                         </div>
                                     </div>
-                                </fieldset>
-
+                                </fieldset> 
                                 <div className="row">
-                                    <div className="col-md-5 ">
-                                        <FormGroup>
-                                            Save as
-                                            <FormControl type="text"
-                                                         placeholder="fluid profile name"
-                                                         ref="selection"/>
-                                        </FormGroup>
+                                    <div className="col-md-1">
+                                        Save as
                                     </div>
-
+                                    <div className="col-md-4">
+                                        <FormGroup>
+                                            <FormControl type="text"
+                                                         placeholder="profile name"
+                                                         name="selection"/>
+                                        </FormGroup>
+                                    </div> 
                                 </div>
                                 <div className="row">
                                     <div className="col-md-5">
                                     </div>
                                     <div className="col-md-1 ">
-                                        <Button bsStyle="success" type="submit">save</Button>
+                                        <Button bsStyle="success" type="submit">Save</Button>
                                     </div>
                                     <div className="col-md-1 ">
-                                        <Button bsStyle="danger">cancel</Button>
+                                        <Button bsStyle="danger">Cancel</Button>
                                     </div>
                                 </div>
 
