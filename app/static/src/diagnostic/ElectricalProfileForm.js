@@ -19,21 +19,21 @@ const ElectricalProfileForm = React.createClass({
     _create: function () {
 
         return $.ajax({
-            url: '/api/v1.0/equipment/',
+            url: '/api/v1.0/electrical_profile/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                'bushing': findDOMNode(this.refs.bush_cap).value,
-                'insulation': findDOMNode(this.refs.ins_res).value,
-                'degree': findDOMNode(this.refs.polymer).value,
-                'winding': findDOMNode(this.refs.wind_cap).value,
-                'visual': findDOMNode(this.refs.vis_insp).value,
-                'turns': findDOMNode(this.refs.ratio).value,
-                'insulation_pf': findDOMNode(this.refs.wind_d).value,
-                'resistance': findDOMNode(this.refs.res_win_con).value,
-
-                'selection': findDOMNode(this.refs.selection).value,
+                'bushing': this.state.bushing,
+                'insulation': this.state.insulation,
+                'degree': this.state.degree,
+                'winding': this.state.winding,
+                'visual': this.state.visual,
+                'turns': this.state.turns,
+                'insulation_pf': this.state.insulation_pf,
+                'resistance': this.state.resistance, 
+                'selection': this.state.selection,
+                // 'description': this.state.description, not defined
             }),
             success: function (data, textStatus) { },
             beforeSend: function () {
@@ -77,7 +77,13 @@ const ElectricalProfileForm = React.createClass({
     },
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] =  $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if ( e.target.type == 'select-one' ) {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = $.trim(e.target.value);
+        }
         this.setState(state);
     },
     _validate: function () {
@@ -113,56 +119,57 @@ const ElectricalProfileForm = React.createClass({
                                     <div className="control-group">
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox ref="bush_cap">Bushing Cap and PF</Checkbox>
+                                                <Checkbox name="bushing">Bushing Cap and PF</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox ref="ins_res">Insulation Resistance</Checkbox>
+                                                <Checkbox name="insulation">Insulation Resistance</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding">
-                                                <Checkbox ref="polymer">Degree of Polymerization(DP)</Checkbox>
+                                                <Checkbox name="degree">Degree of Polymerization(DP)</Checkbox>
                                             </div>
                                         </div>
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox ref="wind_cap">Winding Cap an PF</Checkbox>
+                                                <Checkbox name="winding">Winding Cap an PF</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox ref="vis_insp">Visual Inspection</Checkbox>
+                                                <Checkbox name="visual">Visual Inspection</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding">
-                                                <Checkbox ref="ratio">Turns Ration Test (TTR)</Checkbox>
+                                                <Checkbox name="turns">Turns Ration Test (TTR)</Checkbox>
                                             </div>
                                         </div>
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox ref="wind_d">Winding Cap and PF Doble</Checkbox>
+                                                <Checkbox name="insulation_pf">Winding Cap and PF Doble</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox ref="res_win_con">Resistance; winding/contact</Checkbox>
+                                                <Checkbox name="resistance">Resistance; winding/contact</Checkbox>
                                             </div>
                                         </div>
                                     </div>
                                 </fieldset>
 
                                 <div className="row">
-                                    <div className="col-md-5 ">
-                                        <FormGroup>
+                                    <div className="col-md-1">
                                         Save as
-                                        <FormControl type="text"
-                                                     placeholder="electrical profile name"
-                                                     ref="selection"/>
-                                    </FormGroup>
                                     </div>
-
+                                    <div className="col-md-4">
+                                        <FormGroup>
+                                            <FormControl type="text"
+                                                         placeholder="electrical profile name"
+                                                         name="selection"/>
+                                        </FormGroup>
+                                    </div> 
                                 </div>
                                 <div className="row">
                                     <div className="col-md-5">
                                     </div>
                                     <div className="col-md-1 ">
-                                        <Button bsStyle="success" type="submit">save</Button>
+                                        <Button bsStyle="success" type="submit">Save</Button>
                                     </div>
                                     <div className="col-md-1 ">
-                                        <Button bsStyle="danger">cancel</Button>
+                                        <Button bsStyle="danger">Cancel</Button>
                                     </div>
                                 </div>
 
