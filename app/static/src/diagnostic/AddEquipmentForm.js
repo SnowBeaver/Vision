@@ -1,97 +1,8 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import Panel from 'react-bootstrap/lib/Panel';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
-import Button from 'react-bootstrap/lib/Button';
-import  Modal from 'react-bootstrap/lib/Modal';
-import InputGroup from 'react-bootstrap/lib/InputGroup';
-import AssignTestForm from './AssignTestForm';
-import EquipmentForm from './EquipmentForm'
-
-
-var selectFields = [];
-var numb=1;
-
-var TestModalWin = React.createClass({
-
-    getInitialState() {
-        return { showModal: false };
-    },
-
-    close() {
-        this.setState({ showModal: false });
-    },
-
-    open() {
-        this.setState({ showModal: true });
-    },
-
-
-    render() {
-        return (
-            <span>
-                <Button bsStyle="success" onClick={this.open}>
-                  TESTS
-                </Button>
-                <Modal show={this.state.showModal}  {...this.props}  >
-                    <AssignTestForm/>
-                  <Modal.Footer>
-                      <div className="row">
-                                    <div className="col-md-5">
-                                    </div>
-                                    <div className="col-md-1 nopadding padding-right-xs">
-                                        <Button bsStyle="success" type="submit">save</Button>
-                                    </div>
-                                    <div className="col-md-1 ">
-                                        <Button bsStyle="danger" onClick={this.close}>cancel</Button>
-                                    </div>
-                                </div>
-                  </Modal.Footer>
-                </Modal>
-              </span>
-        );
-    }
-});
-
-
-
-var AddEquipmentButton = React.createClass({
-
-    getInitialState() {
-        return { showModal: false };
-    },
-
-    close() {
-        this.setState({ showModal: false });
-    },
-
-    open() {
-        this.setState({ showModal: true });
-    },
-
-    onClick: function () {
-
-
-    },
-
-    render: function () {
-        return(
-            <span>
-                <Button bsStyle="primary" onClick={this.open}>NEW</Button>
-                    <Modal show={this.state.showModal}  {...this.props}  >
-                    <EquipmentForm/>
-                  <Modal.Footer>
-                      <Button bsStyle="success" type="submit">Save</Button>
-                    <Button bsStyle="danger" onClick={this.close}>Close</Button>
-                  </Modal.Footer>
-                </Modal>
-                </span>
-        );
-    }
-});
 
 
 
@@ -124,7 +35,8 @@ var EquipmentTypeSelectField = React.createClass ({
             this.setState({
                 items: items
             });
-        }.bind(this), 'json'); 
+        }.bind(this), 'json');
+
     },
 
     componentWillUnmount: function() {
@@ -145,6 +57,8 @@ var EquipmentTypeSelectField = React.createClass ({
             // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
             menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+        console.log("ITEMS:",this.state.items);
+        console.log("menuITEMS:",menuItems);
         return (
             <div className="row">
                 <div className="col-md-1">
@@ -154,7 +68,7 @@ var EquipmentTypeSelectField = React.createClass ({
                     <span>
                         <FormGroup controlId="formControlsSelect1">
                             <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
-                                <option value="select">Select equipment {this.props.index}</option>
+                                <option key="0" value="select">Select equipment {this.props.index}</option>
                                 {menuItems}
                             </FormControl>
                         </FormGroup>
@@ -168,10 +82,10 @@ var EquipmentTypeSelectField = React.createClass ({
                     </a>
                 </div>
                 <div className="col-md-1">
-                    <AddEquipmentButton/>
+                    <a href="http://dev.vision.local/admin/#/equipment" type="button" className="btn btn-primary ">NEW</a>
                 </div>
                 <div className="col-md-1">
-                    <TestModalWin/>
+                   <a href="http://dev.vision.local/admin/#/assigntestform" type="button" className="btn btn-success ">TESTS</a>
                 </div>
             </div>
         );
@@ -288,7 +202,7 @@ var AddEquipmentForm = React.createClass({
         var selects = [];
         for(var i=1; i <= this.state.numberOfSelects;i++){
             selects.push(
-                <EquipmentTypeSelectField index={i} removeSelect={this.removeSelect} />
+                <EquipmentTypeSelectField index={i} source="/api/v1.0/equipment" removeSelect={this.removeSelect} />
             );
         }
 
@@ -306,7 +220,6 @@ var AddEquipmentForm = React.createClass({
                             </div>
                         </div>
                     </Panel>
-
                 </form>
             </div>
         );

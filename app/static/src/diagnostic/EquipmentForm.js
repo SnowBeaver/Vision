@@ -77,13 +77,11 @@ var EquipmentTypeSelectField = React.createClass ({
             // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
             menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
-
         return (
             <div>
                 <FormGroup controlId="formControlsSelect1">
-                    <ControlLabel>Equipment type</ControlLabel>
                     <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
-                        <option key="0" value="select">select equipment type</option>
+                        <option key="0" value="select">Equipment type</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -186,13 +184,11 @@ var ManufacturerSelectField = React.createClass ({
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
-
         return (
             <div>
                 <FormGroup controlId="formControlsSelect2">
-                    <ControlLabel>Manufacturer</ControlLabel>
                     <FormControl componentClass="select" placeholder="manufacturer" onChange={this.handleChange}>
-                        <option key="0" value="select">select manufacturer</option>
+                        <option key="0" value="select">Manufacturer</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -325,9 +321,8 @@ var LocationSelectField = React.createClass ({
         return (
             <div>
                 <FormGroup controlId="formControlsSelect3">
-                    <ControlLabel>Location</ControlLabel>
                     <FormControl componentClass="select" placeholder="select location" onChange={this.handleChange}>
-                        <option key="0" value="select">select location</option>
+                        <option key="0" value="select">Location</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -456,9 +451,8 @@ var VisualInspBySelectField = React.createClass ({
         return (
             <div>
                 <FormGroup controlId="formControlsSelect4">
-                    <ControlLabel>Visual Inspected By</ControlLabel>
                     <FormControl componentClass="select" placeholder="select inspector" onChange={this.handleChange}>
-                        <option key="0" value="select">select inspector</option>
+                        <option key="0" value="select">Visual Inspected By</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -588,9 +582,8 @@ var AssignedToSelectField = React.createClass ({
         return (
             <div>
                 <FormGroup controlId="formControlsSelect5">
-                    <ControlLabel>Assigned By</ControlLabel>
                     <FormControl componentClass="select" placeholder="select person" onChange={this.handleChange}>
-                        <option key="0" value="select">select person</option>
+                        <option key="0" value="select">Assigned By</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -722,9 +715,8 @@ var NormSelectField = React.createClass ({
         return (
             <div>
                 <FormGroup controlId="formControlsSelect6">
-                    <ControlLabel>Norm</ControlLabel>
                     <FormControl componentClass="select" placeholder="select norm" onChange={this.handleChange}>
-                        <option key="0" value="select">select norm</option>
+                        <option key="0" value="select">Norm</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -937,15 +929,6 @@ const EquipmentForm = React.createClass({
                 'visual_inspection_comments': findDOMNode(this.refs.vis_comments).value,
                 'nr_taps': findDOMNode(this.refs.nr_taps).value,
                 'upstream1': findDOMNode(this.refs.upstream1).value,
-                'upstream2': findDOMNode(this.refs.upstream2).value,
-                'upstream3': findDOMNode(this.refs.upstream3).value,
-                'upstream4': findDOMNode(this.refs.upstream4).value,
-                'upstream5': findDOMNode(this.refs.upstream5).value,
-                'downstream1': findDOMNode(this.refs.downstream1).value,
-                'downstream2': findDOMNode(this.refs.downstream2).value,
-                'downstream3': findDOMNode(this.refs.downstream3).value,
-                'downstream4': findDOMNode(this.refs.downstream4).value,
-                'downstream5': findDOMNode(this.refs.downstream5).value,
                 'phys_position': findDOMNode(this.refs.phys_position).value,
                 'tension4': findDOMNode(this.refs.tension4).value,
                 'validated': findDOMNode(this.refs.validated).value,
@@ -1125,51 +1108,6 @@ const EquipmentForm = React.createClass({
                             <FormGroup controlId="upstream1Input" >
                                 <ControlLabel>Upstream 1</ControlLabel>
                                 <FormControl type="text" placeholder="upstream 1" ref="upstream1"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="upstream2Input" >
-                                <ControlLabel>Upstream 2</ControlLabel>
-                                <FormControl type="text" placeholder="upstream 2" ref="upstream2"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="upstream3Input" >
-                                <ControlLabel>Upstream 3</ControlLabel>
-                                <FormControl type="text" placeholder="upstream 3" ref="upstream3"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="upstream4Input" >
-                                <ControlLabel>Upstream 4</ControlLabel>
-                                <FormControl type="text" placeholder="upstream 4" ref="upstream4"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="upstream5Input" ref="upstream5">
-                                <ControlLabel>Upstream 5</ControlLabel>
-                                <FormControl type="text" placeholder="upstream 5" ref="upstream5"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="downstream1Input" >
-                                <ControlLabel>Downstream 1</ControlLabel>
-                                <FormControl type="text" placeholder="downstream 1" ref="downstream1"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="downstream2Input" >
-                                <ControlLabel>Downstream 2</ControlLabel>
-                                <FormControl type="text" placeholder="downstream 2" ref="downstream2"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="downstream3Input" >
-                                <ControlLabel>Downstream 3</ControlLabel>
-                                <FormControl type="text" placeholder="downstream 3" ref="downstream3"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="downstream4Input" >
-                                <ControlLabel>Downstream 4</ControlLabel>
-                                <FormControl type="text" placeholder="downstream 4" ref="downstream4"/>
-                            </FormGroup>
-
-                            <FormGroup controlId="downstream5Input" >
-                                <ControlLabel>Downstream 5</ControlLabel>
-                                <FormControl type="text" placeholder="downstream 5" ref="downstream5"/>
                             </FormGroup>
 
                             <FormGroup controlId="physPositionInput" >

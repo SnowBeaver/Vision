@@ -5,7 +5,6 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import {findDOMNode} from 'react-dom';
 import Panel from 'react-bootstrap/lib/Panel';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 import Button from 'react-bootstrap/lib/Button';
 
 var items =[];
@@ -200,7 +199,7 @@ const FluidProfileForm = React.createClass({
     },
 
     _create: function () {
-        var fields = [ 
+        var fields = [
             'gas', 'furans', 'pcb', 'water',
             'inhibitor', 'dielec', 'dielec_2',
             'dielec_d', 'acidity', 'color',
@@ -211,14 +210,14 @@ const FluidProfileForm = React.createClass({
             'visual', 'pcb_vial', 'antioxidant',
             'sampling', 'sampling_jar', 'sampling_vial',
             'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection'
-        ]; 
+        ];
         var data = {};
         for (var i=0;i<fields.length;i++){
             var key= fields[i];
             data[key] = this.state[key];
-        } 
+        }
         console.log(data);
-        
+
         return $.ajax({
             url: '/api/v1.0/fluid_profile/',
             type: 'POST',
@@ -268,13 +267,13 @@ const FluidProfileForm = React.createClass({
     _onChange: function (e) {
         var state = {};
         // console.log(e.target.type);
-        if(e.target.type == 'checkbox'){ 
+        if(e.target.type == 'checkbox'){
             state[e.target.name] = e.target.checked;
         }
         else if(e.target.type == 'select-one'){
             state[e.target.name] = e.target.value;
         }
-        else{ 
+        else{
             state[e.target.name] = $.trim(e.target.value);
         }
         this.setState(state);
@@ -358,7 +357,7 @@ const FluidProfileForm = React.createClass({
                                                     <Checkbox name="dielec">Dielec .D1816(1mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                     <Checkbox name="dielec_2">Dielec.D1816(2mm)(kV)</Checkbox>
+                                                    <Checkbox name="dielec_2">Dielec.D1816(2mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
                                                     <Checkbox name="dielec_d">Dielec. D877(kV)</Checkbox>
@@ -468,18 +467,22 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                         </div>
                                     </div>
-                                </fieldset> 
+                                </fieldset>
                                 <div className="row">
-                                    <div className="col-md-1">
-                                        Save as
-                                    </div>
-                                    <div className="col-md-4">
+                                    <div className="col-md-6">
                                         <FormGroup>
+                                            <ControlLabel>Save As</ControlLabel>
                                             <FormControl type="text"
-                                                         placeholder="profile name"
+                                                         placeholder="electrical profile name"
                                                          name="selection"/>
                                         </FormGroup>
-                                    </div> 
+                                    </div>
+                                    <div className="col-md-6">
+                                        <FormGroup controlId="commentsTextarea">
+                                            <ControlLabel>Comments</ControlLabel>
+                                            <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
+                                        </FormGroup>
+                                    </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-md-5">

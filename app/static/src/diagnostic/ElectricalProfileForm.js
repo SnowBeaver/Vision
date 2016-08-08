@@ -5,12 +5,12 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 
 const ElectricalProfileForm = React.createClass({
 
-     getInitialState: function () {
+    getInitialState: function () {
         return {
             loading: false,
             errors: {}
@@ -31,7 +31,7 @@ const ElectricalProfileForm = React.createClass({
                 'visual': this.state.visual,
                 'turns': this.state.turns,
                 'insulation_pf': this.state.insulation_pf,
-                'resistance': this.state.resistance, 
+                'resistance': this.state.resistance,
                 'selection': this.state.selection,
                 // 'description': this.state.description, not defined
             }),
@@ -151,16 +151,20 @@ const ElectricalProfileForm = React.createClass({
                                 </fieldset>
 
                                 <div className="row">
-                                    <div className="col-md-1">
-                                        Save as
-                                    </div>
-                                    <div className="col-md-4">
+                                    <div className="col-md-6">
                                         <FormGroup>
+                                            <ControlLabel>Save As</ControlLabel>
                                             <FormControl type="text"
                                                          placeholder="electrical profile name"
                                                          name="selection"/>
                                         </FormGroup>
-                                    </div> 
+                                    </div>
+                                    <div className="col-md-6">
+                                        <FormGroup controlId="commentsTextarea">
+                                            <ControlLabel>Comments</ControlLabel>
+                                            <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
+                                        </FormGroup>
+                                    </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-md-5">

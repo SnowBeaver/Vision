@@ -63,14 +63,13 @@ var LabAnalyserSelectField = React.createClass ({
 
         return (
             <span>
-                <ControlLabel>Lab/On-Line Analyser</ControlLabel>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
                     onChange={this.handleChange}
                     name="test_reason"
                 >
-                    <option key="0" value="select">select reason</option>
+                    <option key="0" value="select">Lab/On-Line Analyser</option>
                     {menuItems}
                 </FormControl>
             </span>
@@ -124,14 +123,13 @@ var ContractNoSelectField = React.createClass ({
 
         return (
             <span>
-                <ControlLabel>Contract No.</ControlLabel>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
                     onChange={this.handleChange}
                     name="test_reason"
                 >
-                    <option key="0" value="select">select number</option>
+                    <option key="0" value="select">Contract No.</option>
                     {menuItems}
                 </FormControl>
             </span>
@@ -232,14 +230,13 @@ var TestReasonSelectField = React.createClass ({
 
         return (
             <FormGroup controlId="formControlsSelect1">
-                <ControlLabel>Reason for Testing</ControlLabel>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
                     onChange={this.handleChange}
                 >
-                    <option key="0" value="select">select reason</option>
+                    <option key="0" value="select">Reason for Testing</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -300,14 +297,13 @@ var TestProfileSelectField = React.createClass ({
 
         return (
             <FormGroup controlId="formControlsSelect1">
-                <ControlLabel>Choose Test Profile</ControlLabel>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
                     onChange={this.handleChange}
                 >
-                    <option key="0" value="select">select from existing test profiles</option>
+                    <option key="0" value="select">Choose Test Profile</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -463,10 +459,6 @@ var AssignTestForm = React.createClass ({
                 label: 'Equipment No.',
                 value: null
             },
-            pos_no: {
-                label: 'Position No.',
-                value: null
-            },
             ins_flu: {
                 label: 'Insulating Fluid',
                 value: null
@@ -483,16 +475,10 @@ var AssignTestForm = React.createClass ({
                 label: 'Contract No.',
                 value: null
             },
-            lab_no: {
-                label: 'Lab P.O. No.',
-                value: null
-            },
-
             acq_date: {
                 label: 'Acquisition Date',
                 value: null
             },
-
             ini: {
                 label: 'Initials',
                 value: null
@@ -514,23 +500,16 @@ var AssignTestForm = React.createClass ({
                         <div className="maxwidth">
                             <div className="col-md-12 nopadding padding-right-xs">
                                 <div className="maxwidth">
-                                    <div className="col-md-4 nopadding padding-right-xs">
-                                        <ControlLabel>{ this.state.equip_no.label }</ControlLabel>
-                                        <FormControl type="text"  value={ this.state.equip_no.value } ref="equip_no" />
+                                    <div className="col-md-6 nopadding padding-right-xs">
+                                        <FormControl type="text" placeholder={ this.state.equip_no.label } value={ this.state.equip_no.value } ref="equip_no" />
                                     </div>
-
-                                    <div className="col-md-4 nopadding padding-right-xs">
-                                        <ControlLabel>{ this.state.pos_no.label }</ControlLabel>
-                                        <FormControl type="text" value={ this.state.pos_no.value } />
-                                    </div>
-
-                                    <div className="col-md-4 nopadding">
-                                        <ControlLabel>{ this.state.ins_flu.label }</ControlLabel>
-                                        <FormControl type="text" value={ this.state.ins_flu.value } ref="ins_flu" />
+                                    <div className="col-md-6 nopadding">
+                                        <FormControl type="text" placeholder={ this.state.ins_flu.label }  value={ this.state.ins_flu.value } ref="ins_flu" />
                                     </div>
                                 </div>
+                                
                                 <div className="maxwidth">
-                                    <div className="col-md-3 nopadding padding-right-xs">
+                                    <div className="col-md-5 nopadding padding-right-xs">
                                         <LabAnalyserSelectField
                                             ref="lab_analyser"
                                             source="http://dev.vision.local/api/v1.0/lab/"
@@ -539,27 +518,16 @@ var AssignTestForm = React.createClass ({
                                     <div className="col-md-1 nopadding padding-right-xs">
                                         <NewLabModalWin/>
                                     </div>
-                                    <div className="col-md-4 nopadding padding-right-xs">
+                                    <div className="col-md-5 nopadding padding-right-xs">
                                         <ContractNoSelectField
                                             ref="contract_no"
                                             source="http://dev.vision.local/api/v1.0/contract/"
                                             value={this.state.value} />
                                     </div>
 
-                                    <div className="col-md-4 nopadding">
-                                        <ControlLabel>{ this.state.lab_no.label }</ControlLabel>
-                                        <FormControl type="text" value={ this.state.lab_no.value } />
-                                    </div>
                                 </div>
                                 <div className="maxwidth">
-                                    <div className="col-md-5 nopadding padding-right-xs">
-                                        <div className="datetimepicker input-group date">
-                                            <ControlLabel>{this.state.acq_date.label }</ControlLabel>
-                                            <DateTimeField datetime={this.state.acq_date} />
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-5 nopadding padding-right-xs">
+                                    <div className="col-md-6 nopadding padding-right-xs">
                                         <TestReasonSelectField
                                             ref="test_reason"
                                             source="http://dev.vision.local/api/v1.0/test_reason"
@@ -568,8 +536,15 @@ var AssignTestForm = React.createClass ({
                                         />
                                     </div>
                                     <div className="col-md-2 nopadding">
-                                        <ControlLabel>{ this.state.ini.label }</ControlLabel>
-                                        <FormControl type="text" value={ this.state.ini.value } />
+                                        <FormControl type="text" placeholder={ this.state.ini.label } value={ this.state.ini.value } />
+                                    </div>
+                                </div>
+                                <div className="maxwidth">
+                                    <div className="col-md-5">
+                                        <div className="datetimepicker input-group date">
+                                            <ControlLabel>{this.state.acq_date.label }</ControlLabel>
+                                            <DateTimeField datetime={this.state.acq_date} />
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="maxwidth">
@@ -592,15 +567,15 @@ var AssignTestForm = React.createClass ({
                                     </div>
                                 </div>
                                 <div className="row">
-                                        <div className="col-md-5">
-                                        </div>
-                                        <div className="col-md-1 ">
-                                            <Button bsStyle="success" type="submit">save</Button>
-                                        </div>
-                                        <div className="col-md-1 ">
-                                            <Button bsStyle="danger">cancel</Button>
-                                        </div>
+                                    <div className="col-md-5">
                                     </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="success" type="submit">save</Button>
+                                    </div>
+                                    <div className="col-md-1 ">
+                                        <Button bsStyle="danger">cancel</Button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </Panel>
