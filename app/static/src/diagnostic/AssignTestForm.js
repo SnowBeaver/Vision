@@ -17,12 +17,11 @@ import ChooseTestForm from './ChooseTestForm';
 
 var items=[];
 
-var LabAnalyserSelectField = React.createClass ({
+var PerformedBySelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value,
-            lab_an: event.target.value
+            value: event.target.value
         });
     },
 
@@ -67,8 +66,65 @@ var LabAnalyserSelectField = React.createClass ({
                     componentClass="select"
                     placeholder="select"
                     onChange={this.handleChange}
-                    name="test_reason"
-                >
+                    name="performed_by_id">
+                    <option key="0" value="select">Performed by</option>
+                    {menuItems}
+                </FormControl>
+            </span>
+        );
+    }
+});
+
+var LabAnalyserSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value,
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <span>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    onChange={this.handleChange} 
+                    name="lab_id">
                     <option key="0" value="select">Lab/On-Line Analyser</option>
                     {menuItems}
                 </FormControl>
@@ -77,12 +133,12 @@ var LabAnalyserSelectField = React.createClass ({
     }
 });
 
+
 var ContractNoSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value,
-            contr_no: event.target.value
         });
     },
 
@@ -127,7 +183,7 @@ var ContractNoSelectField = React.createClass ({
                     componentClass="select"
                     placeholder="select"
                     onChange={this.handleChange}
-                    name="test_reason"
+                    name="contract"
                 >
                     <option key="0" value="select">Contract No.</option>
                     {menuItems}
@@ -185,9 +241,7 @@ var TestReasonSelectField = React.createClass ({
 
     handleChange: function(event){
         this.setState({
-            value: event.target.value,
-            test_reas: event.target.value
-
+            value: event.target.value
         });
     },
 
@@ -234,6 +288,7 @@ var TestReasonSelectField = React.createClass ({
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
+                    name="test_reason"
                     onChange={this.handleChange}
                 >
                     <option key="0" value="select">Reason for Testing</option>
@@ -313,75 +368,137 @@ var TestProfileSelectField = React.createClass ({
 
 
 
-const ChooseTestModal = React.createClass({
+// const ChooseTestModal = React.createClass({
+//
+//     getInitialState: function () {
+//         return { showModal: false };
+//     },
+//
+//     close: function () {
+//         this.setState({ showModal: false });
+//     },
+//
+//     open: function () {
+//         this.setState({ showModal: true });
+//     },
+//
+//     testChoice : function () {
+//
+//     },
+//
+//     render() {
+//         return (
+//             <div>
+//                 <Button bsStyle="primary" bsSize="small" onClick={this.open}>Create</Button>
+//                 <Modal show={this.state.showModal}>
+//                 <div className="form-container">
+//                     <form method="post" action="#" onSubmit={this.onSubmit} onChange={this.onChange}>
+//                         <Panel header="Choose Test Profile">
+//                             <div>
+//                                 <Radio name="choice" value="fluid">
+//                                     Fluid Profile
+//                                 </Radio>
+//                                 <Radio name="choice" value="electro">
+//                                     Electrical Profile
+//                                 </Radio>
+//                             </div>
+//                         </Panel>
+//                     </form>
+//                 </div>
+//                 <Modal.Footer>
+//                     <ButtonToolbar>
+//                         <Button bsStyle="success" onclick="testChoice">Save</Button>
+//                         <Button bsStyle="danger" onClick={this.close}>Cancel</Button>
+//                     </ButtonToolbar>
+//                 </Modal.Footer>
+//                 </Modal>
+//             </div>
+//         );
+//     }
+// });
 
-    getInitialState: function () {
-        return { showModal: false };
+
+var FluidTypeSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value,
+        });
     },
 
-    close: function () {
-        this.setState({ showModal: false });
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
     },
 
-    open: function () {
-        this.setState({ showModal: true });
+    isVisible: function(){
+        return this.state.isVisible;
     },
 
-    testChoice : function () {
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
 
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
     },
 
-    render() {
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
         return (
             <span>
-                <Button bsStyle="primary" bsSize="small" onClick={this.open}>
-                  Create
-                </Button>
-                <Modal show={this.state.showModal}   >
-                    <div className="form-container">
-                <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <Panel header="Choose Test Profile">
-                            <div>
-                                <Radio name="choice" ref="fluid" >
-                                    Fluid Profile
-                                </Radio>
-                                <Radio name="choice" ref="electro">
-                                    Electrical Profile
-                                </Radio>
-                            </div>
-                        </Panel>
-                </form>
-            </div>
-                <Modal.Footer>
-                    <ButtonToolbar>
-                        <Button bsStyle="success" onclick="testChoice" >save</Button>
-                        <Button bsStyle="danger" onClick={this.close} >cancel</Button>
-                    </ButtonToolbar>
-                   </Modal.Footer>
-                </Modal>
-              </span>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    onChange={this.handleChange}
+                    name="fluid_type_id"
+                >
+                    <option key="0" value="select">Insulating Fluid</option>
+                    {menuItems}
+                </FormControl>
+            </span>
         );
     }
 });
 
 
-
 var AssignTestForm = React.createClass ({
 
+
     _create: function () {
-        console.log(this.refs);
+        var fields = [
+            'equipment_number', 'fluid_type_id',
+            'lab_id', 'contract', 'test_reason'
+        ];
+        var data = {};
+        for (var i=0;i<fields.length;i++){
+            var key= fields[i];
+            data[key] = this.state[key];
+        }
+        console.log(data);
+
         return $.ajax({
-            url: '/api/v1.0/campaign/',
+            url: '/api/v1.0/test/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({
-                'equipment_number': findDOMNode(this.refs.equip_no).value,
-                'fluid_type': findDOMNode(this.refs.ins_flu).value,
-                'lab_id': this.refs.lab_analyser.state.lab_an,
-                'contract': this.refs.contract_no.state.contr_no,
-                'test_reason': this.refs.test_reason.state.test_reas
-            }),
+            data: JSON.stringify(data),
             success: function (data, textStatus) { },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -424,7 +541,16 @@ var AssignTestForm = React.createClass ({
     },
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] =  $.trim(e.target.value);
+        // console.log(e.target.type);
+        if(e.target.type == 'checkbox'){
+            state[e.target.name] = e.target.checked;
+        }
+        else if(e.target.type == 'select-one'){
+            state[e.target.name] = e.target.value;
+        }
+        else{
+            state[e.target.name] = $.trim(e.target.value);
+        }
         this.setState(state);
     },
     _validate: function () {
@@ -448,44 +574,13 @@ var AssignTestForm = React.createClass ({
         return className;
     },
 
-
-
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-
-            equip_no: {
-                label: 'Equipment No.',
-                value: null
-            },
-            ins_flu: {
-                label: 'Insulating Fluid',
-                value: null
-            },
-            date: {
-                label: 'Date',
-                value: null
-            },
-            lab_analyser: {
-                label: null,
-                value: null
-            },
-            contract_no: {
-                label: 'Contract No.',
-                value: null
-            },
-            acq_date: {
-                label: 'Acquisition Date',
-                value: null
-            },
-            ini: {
-                label: 'Initials',
-                value: null
-            }
+            equipment_number: ''
         }
     },
-
 
     handleClick: function() {
         document.getElementById('test_prof').remove();
@@ -495,55 +590,55 @@ var AssignTestForm = React.createClass ({
 
         return(
             <div className="form-container">
-                <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Assign a test to equipment">
                         <div className="maxwidth">
-                            <div className="col-md-12 nopadding padding-right-xs">
+                            <div className="col-md-12"> 
                                 <div className="maxwidth">
-                                    <div className="col-md-6 nopadding padding-right-xs">
-                                        <FormControl type="text" placeholder={ this.state.equip_no.label } value={ this.state.equip_no.value } ref="equip_no" />
+                                    <div className="col-md-6">
+                                        <FormControl type="text"
+                                                     placeholder="Equipment No."
+                                                     name="equipment_number" />
                                     </div>
-                                    <div className="col-md-6 nopadding">
-                                        <FormControl type="text" placeholder={ this.state.ins_flu.label }  value={ this.state.ins_flu.value } ref="ins_flu" />
-                                    </div>
-                                </div>
-                                
-                                <div className="maxwidth">
-                                    <div className="col-md-5 nopadding padding-right-xs">
-                                        <LabAnalyserSelectField
-                                            ref="lab_analyser"
-                                            source="http://dev.vision.local/api/v1.0/lab/"
+                                    <div className="col-md-6">
+                                        <FluidTypeSelectField
+                                            source="http://dev.vision.local/api/v1.0/fluid_type/"
                                             value={this.state.value} />
-                                    </div>
-                                    <div className="col-md-1 nopadding padding-right-xs">
-                                        <NewLabModalWin/>
-                                    </div>
-                                    <div className="col-md-5 nopadding padding-right-xs">
-                                        <ContractNoSelectField
-                                            ref="contract_no"
-                                            source="http://dev.vision.local/api/v1.0/contract/"
-                                            value={this.state.value} />
-                                    </div>
-
-                                </div>
-                                <div className="maxwidth">
-                                    <div className="col-md-6 nopadding padding-right-xs">
-                                        <TestReasonSelectField
-                                            ref="test_reason"
-                                            source="http://dev.vision.local/api/v1.0/test_reason"
-                                            handleChange={this.handleChange}
-                                            value={this.state.value}
-                                        />
-                                    </div>
-                                    <div className="col-md-2 nopadding">
-                                        <FormControl type="text" placeholder={ this.state.ini.label } value={ this.state.ini.value } />
                                     </div>
                                 </div>
                                 <div className="maxwidth">
                                     <div className="col-md-5">
+                                        <LabAnalyserSelectField
+                                            source="http://dev.vision.local/api/v1.0/lab/"
+                                            value={this.state.value} />
+                                    </div>
+                                    <div className="col-md-1">
+                                        <NewLabModalWin/>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <ContractNoSelectField
+                                            source="http://dev.vision.local/api/v1.0/contract/"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="maxwidth">
+                                    <div className="col-md-6">
+                                        <TestReasonSelectField
+                                            source="http://dev.vision.local/api/v1.0/test_reason"
+                                            handleChange={this.handleChange}
+                                        />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <PerformedBySelectField
+                                            source="http://dev.vision.local/api/v1.0/user"
+                                            handleChange={this.handleChange} />
+                                    </div>
+                                </div>
+                                <div className="maxwidth">
+                                    <div className="col-md-6">
                                         <div className="datetimepicker input-group date">
-                                            <ControlLabel>{this.state.acq_date.label }</ControlLabel>
-                                            <DateTimeField datetime={this.state.acq_date} />
+                                            <ControlLabel>Acquisition Date</ControlLabel>
+                                            <DateTimeField datetime={this.state.date} />
                                         </div>
                                     </div>
                                 </div>
@@ -551,35 +646,41 @@ var AssignTestForm = React.createClass ({
                                     <fieldset className="scheduler-border">
                                         <legend className="scheduler-border">Chosen profile</legend>
                                         <div id="test_prof">
-                                            <div className="col-md-8"><a href="http://dev.vision.local/admin/#/elecprofform" >Current test profile</a></div>
-                                            <div className="col-md-4"><a href="javascript:void(0)"  className="glyphicon glyphicon-remove-circle " onClick={this.handleClick}  aria-hidden="true">delete</a></div>
+                                            <div className="col-md-8">
+                                                <a href="#/elecprofform">Current test profile</a></div>
+                                            <div className="col-md-4">
+                                                <a href="javascript:void(0)" 
+                                                   className="glyphicon glyphicon-remove text-danger" 
+                                                   onClick={this.handleClick}  
+                                                   aria-hidden="true">
+                                                </a>
+                                            </div>
                                         </div>
                                     </fieldset>
                                 </div>
                                 <div className="row">
-                                    <div className="col-md-7 ">
+                                    <div className="col-md-7">
                                         <TestProfileSelectField
                                             ref="test_prof"
                                             source="http://dev.vision.local/api/v1.0/"/>
                                     </div>
-                                    <div className="col-md-4 ">
-                                        <ChooseTestModal/>
+                                    <div className="col-md-4">
+                                        <a href="#/chooseform" className="btn-default">Create</a>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-md-5">
                                     </div>
-                                    <div className="col-md-1 ">
+                                    <div className="col-md-1">
                                         <Button bsStyle="success" type="submit">save</Button>
                                     </div>
-                                    <div className="col-md-1 ">
+                                    <div className="col-md-1">
                                         <Button bsStyle="danger">cancel</Button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </Panel>
-
                 </form>
             </div>
         );

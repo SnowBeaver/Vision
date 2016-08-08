@@ -311,3 +311,7 @@ def update_static():
     with cd(static):
         run('npm install')
         run('npm start')
+
+
+def generate_apidoc():
+    run('apidoc -i /home/vision/www/app  -f api_doc.py --output /home/vision/www/app/static/docs')

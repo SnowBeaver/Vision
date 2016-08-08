@@ -1,0 +1,9 @@
+{
+  "name": "Vision Diagnostic Api Doc",
+  "version": "0.1.0",
+  "description": "Vision Diagnostic apiDoc",
+  "apidoc": {
+    "title": "Custom apiDoc browser title",
+    "url" : "http://dev.vision.local/app/static/docs/index.html"
+  }
+}
