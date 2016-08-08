@@ -352,6 +352,17 @@ class Campaign(db.Model):
     # AmbientAirTemperature: Ambient air temperature at sampling time
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
 
+    @property
+    def equipment_id(self):
+        class MyList(object):
+            def __init__(self, *args):
+                self.my_list = args
+
+            def __eq__(self, other):
+                return other in self.my_list
+
+        return MyList([x.equipment_id for x in db.session.query(TestResult).filter_by(campaign_id=id)])
+
     def __repr__(self):
         return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
 
