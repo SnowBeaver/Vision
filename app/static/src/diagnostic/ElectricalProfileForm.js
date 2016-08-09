@@ -106,6 +106,7 @@ const ElectricalProfileForm = React.createClass({
         }
         return className;
     },
+    
 
     render:function (){
         return(
@@ -173,7 +174,7 @@ const ElectricalProfileForm = React.createClass({
                                         <Button bsStyle="success" type="submit">Save</Button>
                                     </div>
                                     <div className="col-md-1 ">
-                                        <Button bsStyle="danger">Cancel</Button>
+                                        <Button bsStyle="danger" onClick={this.props.handleClose}>Cancel</Button>
                                     </div>
                                 </div>
 

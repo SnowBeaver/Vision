@@ -3,17 +3,10 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Popover from 'react-bootstrap/lib/Popover';
-import Tooltip from 'react-bootstrap/lib/Tooltip';
-import  Modal from 'react-bootstrap/lib/Modal';
 import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
-import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
-import Radio from 'react-bootstrap/lib/Radio';
 import {findDOMNode} from 'react-dom';
-import ReactDOM from 'react-dom';
-import LabsList from './LabList';
-import ChooseTestForm from './ChooseTestForm';
+
 
 var items=[];
 
@@ -61,19 +54,83 @@ var PerformedBySelectField = React.createClass ({
         }
 
         return (
-            <span>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    onChange={this.handleChange}
-                    name="performed_by_id">
-                    <option key="0" value="select">Performed by</option>
-                    {menuItems}
-                </FormControl>
-            </span>
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="performed_by_id">
+                        <option key="0" value="select">Performed by</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
         );
     }
 });
+
+
+var CreatedBySelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select user"
+                        onChange={this.handleChange}
+                        name="created_by_id">
+                        <option key="0" value="select">Created by</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
 
 var LabAnalyserSelectField = React.createClass ({
 
@@ -119,16 +176,79 @@ var LabAnalyserSelectField = React.createClass ({
         }
 
         return (
-            <span>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    onChange={this.handleChange} 
-                    name="lab_id">
-                    <option key="0" value="select">Lab/On-Line Analyser</option>
-                    {menuItems}
-                </FormControl>
-            </span>
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="lab_id">
+                        <option key="0" value="select">Lab/On-Line Analyser</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
+
+var LabContractSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value,
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="contract">
+                        <option key="0" value="select">Lab Contract</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
         );
     }
 });
@@ -178,60 +298,19 @@ var ContractNoSelectField = React.createClass ({
         }
 
         return (
-            <span>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    onChange={this.handleChange}
-                    name="contract"
-                >
-                    <option key="0" value="select">Contract No.</option>
-                    {menuItems}
-                </FormControl>
-            </span>
-        );
-    }
-});
-
-const NewLabModalWin = React.createClass({
-    getInitialState() {
-        return {showModal: false};
-    },
-
-    close() {
-        this.setState({showModal: false});
-    },
-
-    open() {
-        this.setState({showModal: true});
-    },
-
-    render() {
-        const popover = (
-            <Popover id="modal-popover" title="popover">
-                very popover. such engagement
-            </Popover>
-        );
-        const tooltip = (
-            <Tooltip id="modal-tooltip">
-                wow.
-            </Tooltip>
-        );
-
-        return (
-            <span>
-                <Button bsStyle="primary"  onClick={this.open}>
-                  New
-                </Button>
-        
-                <Modal show={this.state.showModal}  bsSize="small" onHide={this.close}>
-                      <LabsList/>
-                  <Modal.Footer>
-                      <Button onClick={this.close}>Save</Button>
-                    <Button onClick={this.close}>Close</Button>
-                  </Modal.Footer>
-                </Modal>
-              </span>
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="contract"
+                    >
+                        <option key="0" value="select">Contract No.</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
         );
     }
 });
@@ -283,7 +362,7 @@ var TestReasonSelectField = React.createClass ({
         }
 
         return (
-            <FormGroup controlId="formControlsSelect1">
+            <FormGroup>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
@@ -298,7 +377,6 @@ var TestReasonSelectField = React.createClass ({
         );
     }
 });
-
 
 
 var TestProfileSelectField = React.createClass ({
@@ -351,128 +429,18 @@ var TestProfileSelectField = React.createClass ({
         }
 
         return (
-            <FormGroup controlId="formControlsSelect1">
+            <FormGroup>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
                     onChange={this.handleChange}
+                    name="test_prof"
                 >
                     <option key="0" value="select">Choose Test Profile</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
-        );
-    }
-});
-
-
-
-// const ChooseTestModal = React.createClass({
-//
-//     getInitialState: function () {
-//         return { showModal: false };
-//     },
-//
-//     close: function () {
-//         this.setState({ showModal: false });
-//     },
-//
-//     open: function () {
-//         this.setState({ showModal: true });
-//     },
-//
-//     testChoice : function () {
-//
-//     },
-//
-//     render() {
-//         return (
-//             <div>
-//                 <Button bsStyle="primary" bsSize="small" onClick={this.open}>Create</Button>
-//                 <Modal show={this.state.showModal}>
-//                 <div className="form-container">
-//                     <form method="post" action="#" onSubmit={this.onSubmit} onChange={this.onChange}>
-//                         <Panel header="Choose Test Profile">
-//                             <div>
-//                                 <Radio name="choice" value="fluid">
-//                                     Fluid Profile
-//                                 </Radio>
-//                                 <Radio name="choice" value="electro">
-//                                     Electrical Profile
-//                                 </Radio>
-//                             </div>
-//                         </Panel>
-//                     </form>
-//                 </div>
-//                 <Modal.Footer>
-//                     <ButtonToolbar>
-//                         <Button bsStyle="success" onclick="testChoice">Save</Button>
-//                         <Button bsStyle="danger" onClick={this.close}>Cancel</Button>
-//                     </ButtonToolbar>
-//                 </Modal.Footer>
-//                 </Modal>
-//             </div>
-//         );
-//     }
-// });
-
-
-var FluidTypeSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value,
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <span>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    onChange={this.handleChange}
-                    name="fluid_type_id"
-                >
-                    <option key="0" value="select">Insulating Fluid</option>
-                    {menuItems}
-                </FormControl>
-            </span>
         );
     }
 });
@@ -484,7 +452,8 @@ var AssignTestForm = React.createClass ({
     _create: function () {
         var fields = [
             'equipment_number', 'fluid_type_id',
-            'lab_id', 'contract', 'test_reason'
+            'lab_id', 'contract', 'test_reason', 'comments',
+            'date_application',
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -591,67 +560,97 @@ var AssignTestForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="Assign a test to equipment">
+                    <Panel header="New Campaign">
                         <div className="maxwidth">
-                            <div className="col-md-12"> 
-                                <div className="maxwidth">
-                                    <div className="col-md-6">
-                                        <FormControl type="text"
-                                                     placeholder="Equipment No."
-                                                     name="equipment_number" />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <FluidTypeSelectField
-                                            source="http://dev.vision.local/api/v1.0/fluid_type/"
-                                            value={this.state.value} />
-                                    </div>
-                                </div>
-                                <div className="maxwidth">
-                                    <div className="col-md-5">
+                            <div className="col-md-12">
+                                
+                                <div className="row">
+                                    <div className="col-md-11">
                                         <LabAnalyserSelectField
                                             source="http://dev.vision.local/api/v1.0/lab/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <NewLabModalWin/>
+                                        <Button bsStyle="primary" >New</Button>
                                     </div>
-                                    <div className="col-md-6">
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-11">
                                         <ContractNoSelectField
                                             source="http://dev.vision.local/api/v1.0/contract/"
                                         />
                                     </div>
+                                    <div className="col-md-1">
+                                        <Button bsStyle="primary" >New</Button>
+                                    </div>
                                 </div>
-                                <div className="maxwidth">
-                                    <div className="col-md-6">
+
+                                <div className="row">
+                                    <div className="col-md-12">
                                         <TestReasonSelectField
                                             source="http://dev.vision.local/api/v1.0/test_reason"
                                             handleChange={this.handleChange}
                                         />
                                     </div>
-                                    <div className="col-md-6">
-                                        <PerformedBySelectField
+                                </div>
+                                
+                                <div className="row">
+                                    <div className="col-md-11">
+                                        <CreatedBySelectField
                                             source="http://dev.vision.local/api/v1.0/user"
                                             handleChange={this.handleChange} />
                                     </div>
-                                </div>
-                                <div className="maxwidth">
-                                    <div className="col-md-6">
-                                        <div className="datetimepicker input-group date">
-                                            <ControlLabel>Acquisition Date</ControlLabel>
-                                            <DateTimeField datetime={this.state.date} />
-                                        </div>
+                                    <div className="col-md-1">
+                                        <Button bsStyle="primary" >New</Button>
                                     </div>
                                 </div>
+
+                                <div className="row">
+                                    <div className="col-md-11">
+                                        <LabContractSelectField
+                                            source="http://dev.vision.local/api/v1.0/contract/"
+                                            handleChange={this.handleChange} />
+                                    </div>
+                                    <div className="col-md-1">
+                                        <Button bsStyle="primary" >New</Button>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <FormGroup>
+                                            <ControlLabel>Comments</ControlLabel>
+                                            <FormControl componentClass="textarea" placeholder="comments" name="comments"/>
+                                        </FormGroup>
+                                    </div>
+                                </div>
+
                                 <div className="maxwidth">
+                                    <div className="datetimepicker input-group date col-md-3">
+                                        <ControlLabel>Date Created</ControlLabel>
+                                        <DateTimeField datetime={this.state.cr_date} />
+                                    </div>
+                                    <div className="datetimepicker input-group date col-md-3">
+                                        <ControlLabel>Date Applied</ControlLabel>
+                                        <DateTimeField datetime={this.state.date_application} />
+                                    </div>
+                                    <div className="datetimepicker input-group date col-md-3">
+                                        <ControlLabel>Acquisition Date</ControlLabel>
+                                        <DateTimeField datetime={this.state.ac_date} />
+                                    </div>
+                                </div>
+
+                                <div className="row">
                                     <fieldset className="scheduler-border">
                                         <legend className="scheduler-border">Chosen profile</legend>
                                         <div id="test_prof">
                                             <div className="col-md-8">
-                                                <a href="#/elecprofform">Current test profile</a></div>
+                                                <a href="#/elecprofform">Campaign tests</a></div>
                                             <div className="col-md-4">
-                                                <a href="javascript:void(0)" 
-                                                   className="glyphicon glyphicon-remove text-danger" 
-                                                   onClick={this.handleClick}  
+                                                <a href="javascript:void(0)"
+                                                   className="glyphicon glyphicon-remove text-danger"
+                                                   onClick={this.handleClick}
                                                    aria-hidden="true">
                                                 </a>
                                             </div>
@@ -659,13 +658,27 @@ var AssignTestForm = React.createClass ({
                                     </fieldset>
                                 </div>
                                 <div className="row">
-                                    <div className="col-md-7">
+                                    <div className="col-md-12">
                                         <TestProfileSelectField
                                             ref="test_prof"
                                             source="http://dev.vision.local/api/v1.0/"/>
                                     </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <FormGroup>
+                                            <FormControl type="text"
+                                                         placeholder="Container Number"
+                                                         name="containers"
+                                            />
+                                        </FormGroup>
+                                    </div>
+                                </div>
+
+                                <div className="row">
                                     <div className="col-md-4">
-                                        <a href="#/chooseform" className="btn-default">Create</a>
+                                        <a href="#/chooseform" className="btn-info">Create</a>
                                     </div>
                                 </div>
                                 <div className="row">
