@@ -4,7 +4,7 @@ import {Component} from 'react'
 import Equipment from './Components/Equipment';
 import Home from './Components/Home';
 import AddEquipmentForm from './AddEquipmentForm';
-import AssignTestForm from './AssignTestForm';
+import CampaignForm from './CampaignForm';
 import ChooseTestForm from './ChooseTestForm';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
@@ -34,7 +34,7 @@ export default class App extends Component {
         switch( this.state.route ) {
             case '/equipment': Child = Equipment; break;
             case '/addeqform': Child = AddEquipmentForm; break;
-            case '/assigntestform': Child = AssignTestForm; break;
+            case '/assigntestform': Child = CampaignForm; break;
             case '/newtestform': Child = NewTestForm; break;
             case '/elecprofform': Child = ElectricalProfileForm; break;
             case '/fluidprofform': Child = FluidProfileForm; break;
@@ -42,19 +42,21 @@ export default class App extends Component {
 
             default: Child = Home;
         }
+        // <ul>
+        //     <li><a href='#/home'>Home</a></li>
+        //     <li><a href='#/equipment'>Equipment</a></li>
+        //     <li><a href='#/addeqform'>Add Equipment</a></li>
+        //     <li><a href='#/assigntestform'>New Campaign</a></li>
+        //     <li><a href='#/newtestform'>New Test</a></li>
+        //     <li><a href='#/elecprofform'>Electrical Profile</a></li>
+        //     <li><a href='#/fluidprofform'>Fluid Profile</a></li>
+        //     <li><a href='#/chooseform'>Choose Test Profile</a></li>
+        // </ul>
 
         return (
             <div className='app-container'>
-                <ul>
-                    <li><a href='#/home'>Home</a></li>
-                    <li><a href='#/equipment'>Equipment</a></li>
-                    <li><a href='#/addeqform'>AddEquipmentForm</a></li>
-                    <li><a href='#/assigntestform'>AssignTestForm</a></li>
-                    <li><a href='#/newtestform'>NewTestForm</a></li>
-                    <li><a href='#/elecprofform'>ElectricalProfileForm</a></li>
-                    <li><a href='#/fluidprofform'>FluidProfileForm</a></li>
-                    <li><a href='#/chooseform'>ChooseTestForm</a></li>
-                </ul>
+                <a href='#/assigntestform' className="btn btn-success btn-large">Start New Campaign</a>
+                <hr/>
                 <Child />
             </div>
         );

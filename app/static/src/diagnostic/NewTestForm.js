@@ -921,7 +921,9 @@ console.log(this.state.showElectroProfileForm);
                                         </FormGroup>
                                     </div>
                                 </div>
-
+                                <div className="row">
+                                    Please choose test type
+                                </div>
                                 <div className="maxwidth">
                                     <Radio name="profile" value="fluid">
                                         Fluid Profile
@@ -929,21 +931,11 @@ console.log(this.state.showElectroProfileForm);
                                     <Radio name="profile" value="electro">
                                         Electrical Profile
                                     </Radio>
-                                </div>
-                                
+                                </div> 
                                 <div className="row">
-                                    <div className="col-md-4">
-                                        <a href="#/chooseform" className="btn-info">Create</a>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-5">
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="success" type="submit">save</Button>
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="danger">cancel</Button>
+                                    <div className="col-md-12">
+                                        <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
+                                        <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
                                     </div>
                                 </div>
                             </div>

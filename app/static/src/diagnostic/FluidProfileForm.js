@@ -307,7 +307,7 @@ const FluidProfileForm = React.createClass({
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
-                        <Panel header="Fluid profile test parametres">
+                        <Panel header="Fluid profile">
                             <div className="scheduler-border">
                                 <fieldset className="scheduler-border">
                                     <legend className="scheduler-border">Syringe - Test requested</legend>
@@ -485,16 +485,13 @@ const FluidProfileForm = React.createClass({
                                     </div>
                                 </div>
                                 <div className="row">
-                                    <div className="col-md-5">
+                                    <div className="col-md-12">
+                                        <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
+                                        <Button bsStyle="danger" 
+                                                onClick={this.props.handleClose} 
+                                                className="pull-right margin-right-xs">Cancel</Button>
                                     </div>
-                                    <div className="col-md-1 ">
-                                        <Button bsStyle="success" type="submit">Save</Button>
-                                    </div>
-                                    <div className="col-md-1 ">
-                                        <Button bsStyle="danger" onClick={this.props.handleClose}>Cancel</Button>
-                                    </div>
-                                </div>
-
+                                </div> 
                             </div>
                         </Panel>
                     </div>

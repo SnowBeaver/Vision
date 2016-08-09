@@ -61,7 +61,7 @@ var PerformedBySelectField = React.createClass ({
                         placeholder="select"
                         onChange={this.handleChange}
                         name="performed_by_id">
-                        <option key="0" value="select">Performed by</option>
+                        <option key="0" value="select">Assigned to</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -437,7 +437,7 @@ var TestProfileSelectField = React.createClass ({
                     onChange={this.handleChange}
                     name="test_prof"
                 >
-                    <option key="0" value="select">Choose Test Profile</option>
+                    <option key="0" value="select">Choose profile from saved</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -446,14 +446,14 @@ var TestProfileSelectField = React.createClass ({
 });
 
 
-var AssignTestForm = React.createClass ({
+var CampaignForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
             'equipment_number', 'fluid_type_id',
             'lab_id', 'contract', 'test_reason', 'comments',
-            'date_application',
+            'date_application', 'date'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -561,93 +561,107 @@ var AssignTestForm = React.createClass ({
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="New Campaign">
-                        <div className="maxwidth">
-                            <div className="col-md-12">
-                                
-                                <div className="row">
-                                    <div className="col-md-11">
-                                        <LabAnalyserSelectField
-                                            source="http://dev.vision.local/api/v1.0/lab/"
-                                            value={this.state.value} />
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-11">
-                                        <ContractNoSelectField
-                                            source="http://dev.vision.local/api/v1.0/contract/"
-                                        />
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <TestReasonSelectField
-                                            source="http://dev.vision.local/api/v1.0/test_reason"
-                                            handleChange={this.handleChange}
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <div className="row">
-                                    <div className="col-md-11">
-                                        <CreatedBySelectField
-                                            source="http://dev.vision.local/api/v1.0/user"
-                                            handleChange={this.handleChange} />
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-11">
-                                        <LabContractSelectField
-                                            source="http://dev.vision.local/api/v1.0/contract/"
-                                            handleChange={this.handleChange} />
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <FormGroup>
-                                            <ControlLabel>Comments</ControlLabel>
-                                            <FormControl componentClass="textarea" placeholder="comments" name="comments"/>
-                                        </FormGroup>
-                                    </div>
-                                </div>
-
-                                <div className="maxwidth">
-                                    <div className="datetimepicker input-group date col-md-3">
+                        <div className="row">
+                            <div className="col-md-11">
+                                <CreatedBySelectField
+                                    source="http://dev.vision.local/api/v1.0/user"
+                                    handleChange={this.handleChange} />
+                            </div>
+                            <div className="col-md-1">
+                                <Button bsStyle="primary">New</Button>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-3">
+                                <div className="datetimepicker input-group date">
+                                    <FormGroup>
                                         <ControlLabel>Date Created</ControlLabel>
-                                        <DateTimeField datetime={this.state.cr_date} />
-                                    </div>
-                                    <div className="datetimepicker input-group date col-md-3">
-                                        <ControlLabel>Date Applied</ControlLabel>
-                                        <DateTimeField datetime={this.state.date_application} />
-                                    </div>
-                                    <div className="datetimepicker input-group date col-md-3">
-                                        <ControlLabel>Acquisition Date</ControlLabel>
-                                        <DateTimeField datetime={this.state.ac_date} />
-                                    </div>
+                                        <DateTimeField datetime={this.state.date} />
+                                    </FormGroup>
                                 </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-11">
+                                <ContractNoSelectField
+                                    source="http://dev.vision.local/api/v1.0/contract/" />
+                            </div>
+                            <div className="col-md-1">
+                                <Button bsStyle="primary">New</Button>
+                            </div>
+                        </div>
 
-                                <div className="row">
-                                    <fieldset className="scheduler-border">
-                                        <legend className="scheduler-border">Chosen profile</legend>
+                        <div className="row">
+                            <div className="col-md-10">
+                                <TestReasonSelectField
+                                    source="http://dev.vision.local/api/v1.0/test_reason"
+                                    handleChange={this.handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-11">
+                                <LabAnalyserSelectField
+                                    source="http://dev.vision.local/api/v1.0/lab/"
+                                    value={this.state.value} />
+                            </div>
+                            <div className="col-md-1">
+                                <Button bsStyle="primary">New</Button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-11">
+                                <LabContractSelectField
+                                    source="http://dev.vision.local/api/v1.0/contract/"
+                                    handleChange={this.handleChange} />
+                            </div>
+                            <div className="col-md-1">
+                                <Button bsStyle="primary">New</Button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-10">
+                                <FormGroup>
+                                    <FormControl componentClass="textarea" placeholder="comments" name="comments"/>
+                                </FormGroup>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-10">
+                                <FormGroup>
+                                    <FormControl type="text"
+                                                 placeholder="Number of containers"
+                                                 name="containers"
+                                    />
+                                </FormGroup>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="datetimepicker input-group date col-md-3">
+                                    <ControlLabel>Date Applied</ControlLabel>
+                                    <DateTimeField datetime={this.state.date_application} />
+                                </div>
+                                <div className="datetimepicker input-group date col-md-3">
+                                    <ControlLabel>Acquisition Date</ControlLabel>
+                                    <DateTimeField datetime={this.state.ac_date} />
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div className="row">
+                            <div className="col-md-10">
+                                <fieldset className="scheduler-border">
+                                    <legend className="scheduler-border">Campaign tests</legend>
                                         <div id="test_prof">
-                                            <div className="col-md-8">
-                                                <a href="#/elecprofform">Campaign tests</a></div>
                                             <div className="col-md-4">
+                                                <a href="#/elecprofform">Electrical test 39489</a>
+                                                &nbsp;
+                                                &nbsp;
                                                 <a href="javascript:void(0)"
                                                    className="glyphicon glyphicon-remove text-danger"
                                                    onClick={this.handleClick}
@@ -655,44 +669,32 @@ var AssignTestForm = React.createClass ({
                                                 </a>
                                             </div>
                                         </div>
-                                    </fieldset>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <TestProfileSelectField
-                                            ref="test_prof"
-                                            source="http://dev.vision.local/api/v1.0/"/>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <FormGroup>
-                                            <FormControl type="text"
-                                                         placeholder="Container Number"
-                                                         name="containers"
-                                            />
-                                        </FormGroup>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-4">
-                                        <a href="#/chooseform" className="btn-info">Create</a>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-5">
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="success" type="submit">save</Button>
-                                    </div>
-                                    <div className="col-md-1">
-                                        <Button bsStyle="danger">cancel</Button>
-                                    </div>
-                                </div>
+                                </fieldset>
+                            </div>
+                        </div> 
+                        <div className="row">
+                            <div className="col-md-3">
+                                <FormGroup>
+                                    <TestProfileSelectField
+                                        source="http://dev.vision.local/api/v1.0/test_profile"/>
+                                </FormGroup>
+                            </div>
+                            <div className="col-md-1 text-center">OR</div>
+                            <div className="col-md-2">
+                                <FormGroup>
+                                    <a href="#/newtestform" className="btn btn-success">Create new one</a>
+                                </FormGroup>
                             </div>
                         </div>
+            
+                        <div className="row">
+                            <div className="col-md-12 ">
+                                <Button bsStyle="success" className="pull-right" type="submit">Save</Button>
+                                &nbsp;
+                                <Button bsStyle="danger" className="pull-right">Cancel</Button>
+                            </div>
+                        </div>
+        
                     </Panel>
                 </form>
             </div>
@@ -701,4 +703,4 @@ var AssignTestForm = React.createClass ({
 });
 
 
-export default AssignTestForm;
+export default CampaignForm;
