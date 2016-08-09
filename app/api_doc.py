@@ -4,7 +4,7 @@ from api import api
 doc = ApiDoc(app=api)
 
 
-# General
+# Predefined
 """
 @apiDefine GetItemsSuccess
 @apiSuccess {Dict}  result  [list of dicts with items parameters].
@@ -81,13 +81,83 @@ doc = ApiDoc(app=api)
     }
 """
 
+# General (example)
+"""
+@api {get} /<path> Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup General
+@apiExample {curl} Example usage:
+    curl -i http://localhost:8001/api/v1.0/<path>/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /<path>/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup General
+@apiExample {curl} Example usage:
+    curl -i http://localhost:8001/api/v1.0/<path>/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+    "result": {
+        "id": 1,
+        "name": "some name",
+        ...
+        }
+    }
+
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /<path>/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup General
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name": "some name"}' \
+         http://localhost:8001/api/v1.0/<path>/
+
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /<path>/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup General
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}' \
+         http://localhost:8001/api/v1.0/<path>/10
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /<path>/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup General
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/<path>/10
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
 
 # Users
 """
 @api {get} /user Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/user/
 
@@ -98,7 +168,7 @@ doc = ApiDoc(app=api)
 @api {get} /user/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/user/1
 
@@ -130,6 +200,23 @@ doc = ApiDoc(app=api)
         }
     }
 
+@apiSuccess {Integer}       id
+@apiSuccess {String(50)}    name
+@apiSuccess {String(50)}    alias
+@apiSuccess {String(120)}   email
+@apiSuccess {Integer}       status
+@apiSuccess {String(255)}   address
+@apiSuccess {String(50)}    mobile
+@apiSuccess {String(255)}   website
+@apiSuccess {String(255)}   country
+@apiSuccess {String(255)}   photo
+@apiSuccess {String}        description
+@apiSuccess {Boolean}       active
+@apiSuccess {Boolean}       confirmed
+@apiSuccess {Datetime}      confirmed_at
+@apiSuccess {Datetime}      created
+@apiSuccess {Datetime}      updated
+@apiSuccess {List}          roles       [list of dicts with items parameters] - see: role->get list of items
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -137,12 +224,28 @@ doc = ApiDoc(app=api)
 @api {post} /user/ Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
          -d '{"alias":"user", "email":"user@example.com", "password":"my_very_secure_password"}' \
          http://localhost:8001/api/v1.0/user/
 
+@apiParam   {String(50)}    name
+@apiParam   {String(50)}    alias       required
+@apiParam   {String(120)}   email       required
+@apiParam   {String(50)}    password    required
+@apiParam   {Integer}       status
+@apiParam   {String(255)}   address
+@apiParam   {String(50)}    mobile
+@apiParam   {String(255)}   website
+@apiParam   {String(255)}   country
+@apiParam   {String(255)}   photo
+@apiParam   {String}        description
+@apiParam   {Boolean}       active
+@apiParam   {Boolean}       confirmed
+@apiParam   {Datetime}      confirmed_at    format "2016-07-29 17:52:19"
+@apiParam   {Datetime}      created         format "2016-07-29 17:52:19"
+@apiParam   {Datetime}      updated         format "2016-07-29 17:52:19"
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -150,7 +253,7 @@ doc = ApiDoc(app=api)
 @api {put} /user/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"alias":"user1"}' http://localhost:8001/api/v1.0/user/10
 
@@ -161,7 +264,7 @@ doc = ApiDoc(app=api)
 @api {delete} /user/:id Delete an item
 @apiVersion 1.0.0
 @apiName delete_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/user/10
 
@@ -175,7 +278,7 @@ doc = ApiDoc(app=api)
 @api {get} /equipment Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/equipment/
 
@@ -186,7 +289,7 @@ doc = ApiDoc(app=api)
 @api {get} /equipment/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/equipment/1
 
@@ -210,25 +313,25 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(50)}      equipment_number
 @apiSuccess {String(50)}      serial
 @apiSuccess {Integer}         equipment_type_id
-@apiSuccess {Dict}            equipment_type
+@apiSuccess {Dict}            equipment_type              see: equipment_type->get an item
 @apiSuccess {Integer}         manufacturer_id
-@apiSuccess {Dict}            manufacturer
+@apiSuccess {Dict}            manufacturer                see: manufacturer->get an item
 @apiSuccess {Integer}         manufactured                Year manufactured, from 1900
 @apiSuccess {String}          frequency                   allowed: '25', '50', '60' or 'DC'
 @apiSuccess {String}          description
 @apiSuccess {Integer}         location_id
-@apiSuccess {Dict}            location
+@apiSuccess {Dict}            location                    see: location->get an item
 @apiSuccess {Boolean}         modifier
 @apiSuccess {String}          comments
 @apiSuccess {String}          visual_date                 Date where was done the last visual inspection.
 @apiSuccess {Integer}         visual_inspection_by_id     User
-@apiSuccess {Dict}            visual_inspection_by
+@apiSuccess {Dict}            visual_inspection_by        see: user->get an item
 @apiSuccess {Integer}         assigned_to_id              User
-@apiSuccess {Dict}            assigned_to
+@apiSuccess {Dict}            assigned_to                 see: user->get an item
 @apiSuccess {String}          visual_inspection_comments  Visual inspection comments,
 @apiSuccess {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
 @apiSuccess {Integer}         norm_id
-@apiSuccess {Dict}            norm
+@apiSuccess {Dict}            norm                        see: norm->get an item
 @apiSuccess {Boolean}         tie_location                Tie device location
 @apiSuccess {Integer}         tie_maintenance_state       Tie is open or closed during maintenance
 @apiSuccess {Integer}         tie_status                  TieAnalysisState.
@@ -246,7 +349,7 @@ doc = ApiDoc(app=api)
 @api {post} /equipment Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
          -d '{"equipment_number":"987abc", "equipment_type_id":1, "location_id":4, "visual_inspection_by_id": "4", \
@@ -288,7 +391,7 @@ doc = ApiDoc(app=api)
 @api {put} /equipment/:id Update an item by id
 @apiVersion 1.0.0
 @apiName update_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"location_id":5}' http://localhost:8001/api/v1.0/equipment/
 
@@ -299,7 +402,7 @@ doc = ApiDoc(app=api)
 @api {delete} /equipment/:id Delete an item by id
 @apiVersion 1.0.0
 @apiName delete_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/equipment/11
 
@@ -393,7 +496,7 @@ doc = ApiDoc(app=api)
 @api {get} /contract/ Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/contract/
 
@@ -404,7 +507,7 @@ doc = ApiDoc(app=api)
 @api {get} /contract/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/contract/1
 
@@ -428,7 +531,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(50)}  name
 @apiSuccess {String(50)}  code
 @apiSuccess {String(50)}  contract_status_id
-@apiSuccess {Dict}        contract_status
+@apiSuccess {Dict}        contract_status       see: contract_status->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -436,7 +539,7 @@ doc = ApiDoc(app=api)
 @api {post} /contract/ Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
          -d '{"name":"My contract", "code":"My code", "contract_status_id":1}' \
@@ -452,7 +555,7 @@ doc = ApiDoc(app=api)
 @api {put} /contract/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name":"My other name"}'\
          http://localhost:8001/api/v1.0/contract/10
@@ -464,7 +567,7 @@ doc = ApiDoc(app=api)
 @api {delete} /contract/:id Delete an item
 @apiVersion 1.0.0
 @apiName delete_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/contract/10
 
@@ -993,14 +1096,22 @@ doc = ApiDoc(app=api)
 
 @apiSuccess {Integer}   id
 @apiSuccess {Integer}   campaign_id
+@apiSuccess {Dict}      campaign            see: campaign->get an item
 @apiSuccess {Integer}   reason_id
+@apiSuccess {Dict}      reason              see: reason->get an item
 @apiSuccess {DateTime}  date_analyse
 @apiSuccess {Integer}   test_type_id
+@apiSuccess {Dict}      test_type           see: test_type->get an item
 @apiSuccess {Integer}   sampling_point_id
+@apiSuccess {Dict}      sampling_point      see: sampling_point->get an item
 @apiSuccess {Integer}   test_status_id
+@apiSuccess {Dict}      test_status         see: test_status->get an item
 @apiSuccess {Integer}   equipment_id
+@apiSuccess {Dict}      equipment           see: equipment->get an item
 @apiSuccess {Integer}   fluid_profile_id
+@apiSuccess {Dict}      fluid_profile       see: fluid_profile->get an item
 @apiSuccess {Integer}   electrical_profile_id
+@apiSuccess {Dict}      electrical_profile  see: electrical_profile->get an item
 @apiSuccess {Boolean}   percent_ratio
 @apiSuccess {Boolean}   bushing
 @apiSuccess {Boolean}   winding
@@ -1177,11 +1288,16 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       id
 @apiSuccess {Datetime}      date
 @apiSuccess {Integer}       created_by_id
+@apiSuccess {Dict}          created_by          see: user->get an item
 @apiSuccess {Integer}       performed_by_id
+@apiSuccess {Dict}          performed_by        see: performed_by->get an item
 @apiSuccess {Integer}       lab_id
+@apiSuccess {Dict}          lab                 see: lab->get an item
 @apiSuccess {Integer}       material_id
+@apiSuccess {Dict}          material            see: material->get an item
 @apiSuccess {String(15)}    analysis_number
 @apiSuccess {Integer}       fluid_type_id
+@apiSuccess {Dict}          fluid_type          see: fluid_type->get an item
 @apiSuccess {Float}         charge
 @apiSuccess {Datetime}      date_prelevement
 @apiSuccess {String}        remark
@@ -1192,25 +1308,29 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(5)}     if_rem
 @apiSuccess {String(5)}     if_ok
 @apiSuccess {Integer}       recommandation_id
+@apiSuccess {Dict}          recommandation      see: recommandation->get an item
 @apiSuccess {String}        recommendationNotes
 @apiSuccess {Integer}       recommended_by_id
+@apiSuccess {Dict}          recommended_by      see: user->get an item
 @apiSuccess {Datetime}      date_application
 @apiSuccess {String}        comments
 @apiSuccess {Float}         mws
 @apiSuccess {Float}         temperature
-@apiSuccess {Boolean}       sampling_card_print
 @apiSuccess {Integer}       contract_id
+@apiSuccess {Dict}          contract            see: contract->get an item
 @apiSuccess {Float}         containers
-@apiSuccess {Integer}       sampling_card_gathered
-@apiSuccess {String(50)}    gathered_test_type
 @apiSuccess {Integer}       lab_contract_id
+@apiSuccess {Dict}          lab_contract        see: contract->get an item
 @apiSuccess {String(50)}    seringe_num
 @apiSuccess {Integer}       data_valid
 @apiSuccess {Integer}       status1
 @apiSuccess {Integer}       status2
 @apiSuccess {Integer}       error_state
 @apiSuccess {Integer}       error_code
+@apiSuccess {Integer}       sampling_card_id
+@apiSuccess {Dict}          sampling_card       see: sampling_card->get an item
 @apiSuccess {Float}         ambient_air_temperature
+@apiSuccess {List}          test_result         list of related test results, see: test_result->get items
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -1247,11 +1367,8 @@ doc = ApiDoc(app=api)
 @apiParam   {String}        comments
 @apiParam   {Float}         mws
 @apiParam   {Float}         temperature
-@apiParam   {Boolean}       sampling_card_print
 @apiParam   {Integer}       contract_id
 @apiParam   {Float}         containers
-@apiParam   {Integer}       sampling_card_gathered
-@apiParam   {String(50)}    gathered_test_type
 @apiParam   {Integer}       lab_contract_id
 @apiParam   {String(50)}    seringe_num
 @apiParam   {Integer}       data_valid
@@ -1259,6 +1376,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       status2
 @apiParam   {Integer}       error_state
 @apiParam   {Integer}       error_code
+@apiParam   {Integer}       sampling_card_id
 @apiParam   {Float}         ambient_air_temperature
 @apiUse PostItemSuccess
 @apiUse Error400
@@ -1649,11 +1767,13 @@ doc = ApiDoc(app=api)
         }
     }
 
-@apiSuccess {Integer}        id
+@apiSuccess {Integer}     id
 @apiSuccess {String(50)}  name
 @apiSuccess {String(50)}  serial
 @apiSuccess {Integer}     fluid_type_id
+@apiSuccess {Dict}        fluid_type        see: fluid_type->get an item
 @apiSuccess {Integer}     gassensor_id
+@apiSuccess {Dict}        gassensor     see: gassensor->get an item
 @apiSuccess {Float}       fluid_volume
 @apiSuccess {Boolean}     sealed
 @apiSuccess {Boolean}     welded_cover
@@ -1662,6 +1782,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}     autotransformer
 @apiSuccess {Boolean}     threephase
 @apiSuccess {Integer}     fluid_level_id
+@apiSuccess {Dict}        fluid_level    see: fluid_level->get an item
 @apiSuccess {String}      phase_number   allowed: '1', '3' or '6'
 @apiSuccess {String}      frequency      allowed: '25', '50', '60' or 'DC'
 @apiSuccess {Float}       primary_tension
@@ -1711,17 +1832,29 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(20)}  ratio_tag5
 @apiSuccess {String(20)}  ratio_tag6
 @apiSuccess {Integer}     bushing_serial1_id
+@apiSuccess {Dict}        bushing_serial1       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial2_id
+@apiSuccess {Dict}        bushing_serial2       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial3_id
+@apiSuccess {Dict}        bushing_serial3       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial4_id
+@apiSuccess {Dict}        bushing_serial4       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial5_id
+@apiSuccess {Dict}        bushing_serial5       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial6_id
+@apiSuccess {Dict}        bushing_serial6       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial7_id
+@apiSuccess {Dict}        bushing_serial7       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial8_id
+@apiSuccess {Dict}        bushing_serial8       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial9_id
+@apiSuccess {Dict}        bushing_serial9       see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial10_id
+@apiSuccess {Dict}        bushing_serial10      see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial11_id
+@apiSuccess {Dict}        bushing_serial11      see: bushing->get an item
 @apiSuccess {Integer}     bushing_serial12_id
+@apiSuccess {Dict}        bushing_serial12      see: bushing->get an item
 @apiSuccess {Float}       mvaactual
 @apiSuccess {Float}       mvaractual
 @apiSuccess {Float}       mwreserve
@@ -1898,9 +2031,13 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {Boolean}       open
 @apiSuccess {Integer}       fluid_type_id
+@apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
 @apiSuccess {Integer}       fluid_level_id
+@apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
 @apiSuccess {Integer}       interrupting_medium_id
+@apiSuccess {Dict}          interrupting_medium     see: interrupting_medium->get an item
 @apiSuccess {Integer}       breaker_mechanism_id
+@apiSuccess {Dict}          breaker_mechanism       see: breaker_mechanism->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -1988,8 +2125,11 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}        counter
 @apiSuccess {Integer}        number_of_taps
 @apiSuccess {Integer}        fluid_type_id
+@apiSuccess {Dict}           fluid_type                 see: fluid_type->get an item
 @apiSuccess {Integer}        fluid_level_id
+@apiSuccess {Dict}           fluid_level                see: fluid_level->get an item
 @apiSuccess {Integer}        interrupting_medium_id
+@apiSuccess {Dict}           interrupting_medium        see: interrupting_medium->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2084,6 +2224,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Float}         c2
 @apiSuccess {Float}         c2pf
 @apiSuccess {Integer}       fluid_type_id
+@apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2510,6 +2651,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(50)}    serial
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {Integer}       insulation_id
+@apiSuccess {Dict}          insulation      see: insulation->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2760,8 +2902,11 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}       welded_cover
 @apiSuccess {Integer}       cooling_rating
 @apiSuccess {Integer}       fluid_type_id
+@apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
 @apiSuccess {Integer}       fluid_level_id
+@apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
 @apiSuccess {Integer}       gas_sensor_id
+@apiSuccess {Dict}          gas_sensor      see: gas_sensor->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2851,8 +2996,11 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}       welded_cover
 @apiSuccess {Integer}       cooling_rating
 @apiSuccess {Integer}       fluid_type_id
+@apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
 @apiSuccess {Integer}       fluid_level_id
+@apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
 @apiSuccess {Integer}       gas_sensor_id
+@apiSuccess {Dict}          gas_sensor      see: gas_sensor->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2938,7 +3086,9 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(50)}    serial
 @apiSuccess {Boolean}       welded_cover
 @apiSuccess {Integer}       fluid_type_id
+@apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
 @apiSuccess {Integer}       fluid_level_id
+@apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3019,8 +3169,9 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(50)}    name
 @apiSuccess {String(50)}    serial
 @apiSuccess {Integer(6)}    current_rating
-@apiSuccess {Boolean}    threephase
-@apiSuccess {Integer}    interrupting_medium_id                 }
+@apiSuccess {Boolean}       threephase
+@apiSuccess {Integer}       interrupting_medium_id
+@apiSuccess {Dict}          interrupting_medium     see: interrupting_medium->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3104,6 +3255,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}    sealed
 @apiSuccess {Boolean}    threephase
 @apiSuccess {Integer}    insulation_id
+@apiSuccess {Dict}       insulation     see: insulation->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3184,8 +3336,9 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}        id
 @apiSuccess {String(50)}    name
 @apiSuccess {String(50)}    code
-@apiSuccess {String}    description
-@apiSuccess {Integer}    test_type_id
+@apiSuccess {String}        description
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type       see: test_type->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3264,6 +3417,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       id
 @apiSuccess {String(50)}    serial
 @apiSuccess {Integer}       lab_id
+@apiSuccess {Dict}          lab     see: lab->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3492,8 +3646,9 @@ doc = ApiDoc(app=api)
         }
     }
 
-@apiSuccess {Integer}        id
+@apiSuccess {Integer}      id
 @apiSuccess {Integer}      test_type_id
+@apiSuccess {Dict}         test_type        see: test_type->get an item
 @apiSuccess {String(100)}  test_result_table_name
 @apiUse GetItemSuccess
 @apiUse Error404
@@ -6330,6 +6485,82 @@ doc = ApiDoc(app=api)
 @apiGroup equipment_connection
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/equipment_connection/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# sampling_card
+"""
+@api {get} /sampling_card/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sampling_card/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /sampling_card/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sampling_card/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "card_gathered": 5,
+            "card_print": true,
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       card_gathered
+@apiSuccess {Boolean}       card_print
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /sampling_card/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"card_print": true}' \
+         http://localhost:8001/api/v1.0/sampling_card/
+
+@apiParam   {Integer}       card_gathered
+@apiParam   {Boolean}       card_print
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /sampling_card/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"card_print": false}'\
+		 http://localhost:8001/api/v1.0/sampling_card/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /sampling_card/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/sampling_card/3
 
 @apiUse DelItemSuccess
 @apiUse Error404

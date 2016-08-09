@@ -34,9 +34,9 @@ class Lab(db.Model):
     analyser = db.Column(db.Unicode(256))
     name = db.Column(db.Unicode(256))
 
-    def __init__(self, code=0, name=''):
-        self.code = code
-        self.name = name
+    # def __init__(self, code=0, name=''):
+    #     self.code = code
+    #     self.name = name
 
     def dump(self, _indent=0):
         return "   " * _indent + repr(self) + \
@@ -84,20 +84,20 @@ class ElectricalProfile(db.Model):
                    [c.dump(_indent + 1) for c in self.children.values()]
                )
 
-    def parsedata(self, data):
-        if data:
-            for key in data.keys():
-                # print key + ' ' + data[key]
-                if hasattr(self, key):
-                    if key == 'selection' or key == 'description':
-                        if data[key]:
-                            setattr(self, key, data[key])
-                    else:
-                        setattr(self, key, True if data[key] == 'y' else False)
-
-    def __init__(self, data=None):
-        self.parsedata(data)
-        # print getattr(self, key)
+    # def parsedata(self, data):
+    #     if data:
+    #         for key in data.keys():
+    #             # print key + ' ' + data[key]
+    #             if hasattr(self, key):
+    #                 if key == 'selection' or key == 'description':
+    #                     if data[key]:
+    #                         setattr(self, key, data[key])
+    #                 else:
+    #                     setattr(self, key, True if data[key] == 'y' else False)
+    #
+    # def __init__(self, data=None):
+    #     self.parsedata(data)
+    #     # print getattr(self, key)
 
     def clear_data(self):
         for attr in self.__dict__:
@@ -184,6 +184,27 @@ class Contract(db.Model):
                 'code': self.code,
                 'contract_status_id': self.contract_status_id,
                 'contract_status': self.contract_status and self.contract_status.serialize()
+                }
+
+
+class SamplingCard(db.Model):
+    __tablename__ = 'sampling_card'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
+    # user 2 has to print small form
+    card_print = db.Column(db.Boolean)
+    # SamplingCardGathered: Used for printing the card in batch
+    card_gathered = db.Column(db.Integer)
+
+    def __repr__(self):
+        return self.id
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'card_gathered': self.sampling_card_gathered,
+                'card_print': self.sampling_card_print,
                 }
 
 
@@ -321,22 +342,14 @@ class Campaign(db.Model):
 
     # Temperature: Equipement temperature at sampling time
     temperature = db.Column(db.Float(53))
-
-    # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
-    # user 2 has to print small form
-    sampling_card_print = db.Column(db.Boolean)
-
     contract_id = db.Column('contract_id', db.ForeignKey("contract.id"), nullable=True)
     contract = db.relationship('Contract', foreign_keys='Campaign.contract_id')
 
     # Containers: How many containers are required
     containers = db.Column(db.Float(53), server_default=db.text("1"))
 
-    # SamplingCardGathered: Used for printing the card in batch
-    sampling_card_gathered = db.Column(db.Integer)
-
-    # GatheredTestType: Indicates the tests that are grouped for each equipment that need work on
-    gathered_test_type = db.Column(db.String(50))
+    # # GatheredTestType: Indicates the tests that are grouped for each equipment that need work on
+    # gathered_test_type = db.Column(db.String(50))
 
     # contract with laboratory
     lab_contract_id = db.Column('lab_contract_id', db.ForeignKey("contract.id"), nullable=True)
@@ -351,6 +364,20 @@ class Campaign(db.Model):
     error_code = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorCode: Need to look into
     # AmbientAirTemperature: Ambient air temperature at sampling time
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
+    sampling_card_id = db.Column('sampling_card_id', db.ForeignKey("sampling_card.id"), nullable=True)
+    sampling_card = db.relationship('SamplingCard', foreign_keys='Campaign.sampling_card_id')
+
+    # TODO equipment_id as a property
+    # @property
+    # def equipment_id(self):
+    #     class MyList(object):
+    #         def __init__(self, *args):
+    #             self.my_list = args
+    #
+    #         def __eq__(self, other):
+    #             return other in self.my_list
+    #
+    #     return MyList([x.equipment_id for x in db.session.query(TestResult).filter_by(campaign_id=id)])
 
     def __repr__(self):
         return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
@@ -390,12 +417,9 @@ class Campaign(db.Model):
             'comments': self.comments,
             'mws': self.mws,
             'temperature': self.temperature,
-            'sampling_card_print': self.sampling_card_print,
             'contract_id': self.contract_id,
             'contract': self.contract and self.contract.serialize(),
             'containers': self.containers,
-            'sampling_card_gathered': self.sampling_card_gathered,
-            'gathered_test_type': self.gathered_test_type,
             'lab_contract_id': self.lab_contract_id,
             'lab_contract': self.lab_contract and self.lab_contract.serialize(),
             'seringe_num': self.seringe_num,
@@ -405,6 +429,8 @@ class Campaign(db.Model):
             'error_state': self.error_state,
             'error_code': self.error_code,
             'ambient_air_temperature': self.ambient_air_temperature,
+            'sampling_card_id': self.sampling_card_id,
+            'sampling_card': self.sampling_card and self.sampling_card.serialize(),
             'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
             }
 
@@ -454,19 +480,19 @@ class FluidProfile(db.Model):
     qty_vial = db.Column(db.Integer)
     sampling_vial = db.Column(db.Integer)
 
-    def parsedata(self, data):
-        if data:
-            for key in data.keys():
-                if hasattr(self, key):
-                    if key in ['selection', 'description', 'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial',
-                               'sampling_vial', 'sampling_vial']:
-                        if data[key]:
-                            setattr(self, key, data[key])
-                    else:
-                        setattr(self, key, True if data[key] == 'y' else False)
-
-    def __init__(self, data=None):
-        self.parsedata(data)
+    # def parsedata(self, data):
+    #     if data:
+    #         for key in data.keys():
+    #             if hasattr(self, key):
+    #                 if key in ['selection', 'description', 'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial',
+    #                            'sampling_vial', 'sampling_vial']:
+    #                     if data[key]:
+    #                         setattr(self, key, data[key])
+    #                 else:
+    #                     setattr(self, key, True if data[key] == 'y' else False)
+    #
+    # def __init__(self, data=None):
+    #     self.parsedata(data)
 
     def clear_data(self):
         for attr in self.__dict__:
@@ -600,9 +626,9 @@ class Manufacturer(db.Model):
     __tablename__ = u'manufacturer'
 
 
-    def __init__(self, code=0, name=''):
-        self.code = code
-        self.name = name
+    # def __init__(self, code=0, name=''):
+    #     self.code = code
+    #     self.name = name
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))

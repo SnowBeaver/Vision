@@ -2,8 +2,7 @@ from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from cerberus import Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
-from app.diagnostic.models import Equipment
-
+from app.diagnostic.models import Equipment, TestResult, Campaign
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -24,6 +23,10 @@ def get_item(path, item_id=None):
         kwargs = {key: request.args.get(key) for key in request.args if hasattr(items_model, key)
                   or abort(400, 'Wrong attribute: {}'.format(key))
                   }
+        if items_model == Campaign and 'equipment_id' in kwargs:
+            campaing_ids = {item.campaign_id for item in db.session.query(TestResult).filter_by(**kwargs)}
+            return [item.serialize() for item in db.session.query(Campaign).filter(Campaign.id.in_(campaing_ids))]
+
         return [item.serialize() for item in db.session.query(items_model).filter_by(**kwargs)]
     return [item.serialize() for item in db.session.query(items_model).all()]
 
