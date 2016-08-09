@@ -87,7 +87,7 @@ doc = ApiDoc(app=api)
 @api {get} /user Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/user/
 
@@ -98,7 +98,7 @@ doc = ApiDoc(app=api)
 @api {get} /user/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/user/1
 
@@ -137,7 +137,7 @@ doc = ApiDoc(app=api)
 @api {post} /user/ Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
          -d '{"alias":"user", "email":"user@example.com", "password":"my_very_secure_password"}' \
@@ -150,7 +150,7 @@ doc = ApiDoc(app=api)
 @api {put} /user/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"alias":"user1"}' http://localhost:8001/api/v1.0/user/10
 
@@ -161,7 +161,7 @@ doc = ApiDoc(app=api)
 @api {delete} /user/:id Delete an item
 @apiVersion 1.0.0
 @apiName delete_item
-@apiGroup User
+@apiGroup user
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/user/10
 
@@ -175,7 +175,7 @@ doc = ApiDoc(app=api)
 @api {get} /equipment Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/equipment/
 
@@ -186,7 +186,7 @@ doc = ApiDoc(app=api)
 @api {get} /equipment/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/equipment/1
 
@@ -246,7 +246,7 @@ doc = ApiDoc(app=api)
 @api {post} /equipment Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
          -d '{"equipment_number":"987abc", "equipment_type_id":1, "location_id":4, "visual_inspection_by_id": "4", \
@@ -288,7 +288,7 @@ doc = ApiDoc(app=api)
 @api {put} /equipment/:id Update an item by id
 @apiVersion 1.0.0
 @apiName update_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"location_id":5}' http://localhost:8001/api/v1.0/equipment/
 
@@ -299,7 +299,7 @@ doc = ApiDoc(app=api)
 @api {delete} /equipment/:id Delete an item by id
 @apiVersion 1.0.0
 @apiName delete_item
-@apiGroup Equipment
+@apiGroup equipment
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/equipment/11
 
@@ -393,7 +393,7 @@ doc = ApiDoc(app=api)
 @api {get} /contract/ Get a list of items
 @apiVersion 1.0.0
 @apiName get_items
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/contract/
 
@@ -404,7 +404,7 @@ doc = ApiDoc(app=api)
 @api {get} /contract/:id Get an item by id
 @apiVersion 1.0.0
 @apiName get_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i http://localhost:8001/api/v1.0/contract/1
 
@@ -436,7 +436,7 @@ doc = ApiDoc(app=api)
 @api {post} /contract/ Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
          -d '{"name":"My contract", "code":"My code", "contract_status_id":1}' \
@@ -452,7 +452,7 @@ doc = ApiDoc(app=api)
 @api {put} /contract/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name":"My other name"}'\
          http://localhost:8001/api/v1.0/contract/10
@@ -464,7 +464,7 @@ doc = ApiDoc(app=api)
 @api {delete} /contract/:id Delete an item
 @apiVersion 1.0.0
 @apiName delete_item
-@apiGroup Contract
+@apiGroup contract
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/contract/10
 
@@ -1198,11 +1198,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {String}        comments
 @apiSuccess {Float}         mws
 @apiSuccess {Float}         temperature
-@apiSuccess {Boolean}       sampling_card_print
 @apiSuccess {Integer}       contract_id
 @apiSuccess {Float}         containers
-@apiSuccess {Integer}       sampling_card_gathered
-@apiSuccess {String(50)}    gathered_test_type
 @apiSuccess {Integer}       lab_contract_id
 @apiSuccess {String(50)}    seringe_num
 @apiSuccess {Integer}       data_valid
@@ -1210,6 +1207,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       status2
 @apiSuccess {Integer}       error_state
 @apiSuccess {Integer}       error_code
+@apiSuccess {Integer}       sampling_card_id
 @apiSuccess {Float}         ambient_air_temperature
 @apiUse GetItemSuccess
 @apiUse Error404
@@ -1247,11 +1245,8 @@ doc = ApiDoc(app=api)
 @apiParam   {String}        comments
 @apiParam   {Float}         mws
 @apiParam   {Float}         temperature
-@apiParam   {Boolean}       sampling_card_print
 @apiParam   {Integer}       contract_id
 @apiParam   {Float}         containers
-@apiParam   {Integer}       sampling_card_gathered
-@apiParam   {String(50)}    gathered_test_type
 @apiParam   {Integer}       lab_contract_id
 @apiParam   {String(50)}    seringe_num
 @apiParam   {Integer}       data_valid
@@ -1259,6 +1254,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       status2
 @apiParam   {Integer}       error_state
 @apiParam   {Integer}       error_code
+@apiParam   {Integer}       sampling_card_id
 @apiParam   {Float}         ambient_air_temperature
 @apiUse PostItemSuccess
 @apiUse Error400
@@ -6330,6 +6326,82 @@ doc = ApiDoc(app=api)
 @apiGroup equipment_connection
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/equipment_connection/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# sampling_card
+"""
+@api {get} /sampling_card/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sampling_card/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /sampling_card/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sampling_card/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "card_gathered": 5,
+            "card_print": true,
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       card_gathered
+@apiSuccess {Boolean}       card_print
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /sampling_card/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"card_print": true}' \
+         http://localhost:8001/api/v1.0/sampling_card/
+
+@apiParam   {Integer}       card_gathered
+@apiParam   {Boolean}       card_print
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /sampling_card/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"card_print": false}'\
+		 http://localhost:8001/api/v1.0/sampling_card/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /sampling_card/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup sampling_card
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/sampling_card/3
 
 @apiUse DelItemSuccess
 @apiUse Error404

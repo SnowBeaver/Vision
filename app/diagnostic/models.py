@@ -187,6 +187,27 @@ class Contract(db.Model):
                 }
 
 
+class SamplingCard(db.Model):
+    __tablename__ = 'sampling_card'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
+    # user 2 has to print small form
+    card_print = db.Column(db.Boolean)
+    # SamplingCardGathered: Used for printing the card in batch
+    card_gathered = db.Column(db.Integer)
+
+    def __repr__(self):
+        return self.id
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'card_gathered': self.sampling_card_gathered,
+                'card_print': self.sampling_card_print,
+                }
+
+
 class Campaign(db.Model):
     """
     Campaign: Contain current analysis results, who did it and why. It also contain analysis management and statuses
@@ -321,22 +342,14 @@ class Campaign(db.Model):
 
     # Temperature: Equipement temperature at sampling time
     temperature = db.Column(db.Float(53))
-
-    # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
-    # user 2 has to print small form
-    sampling_card_print = db.Column(db.Boolean)
-
     contract_id = db.Column('contract_id', db.ForeignKey("contract.id"), nullable=True)
     contract = db.relationship('Contract', foreign_keys='Campaign.contract_id')
 
     # Containers: How many containers are required
     containers = db.Column(db.Float(53), server_default=db.text("1"))
 
-    # SamplingCardGathered: Used for printing the card in batch
-    sampling_card_gathered = db.Column(db.Integer)
-
-    # GatheredTestType: Indicates the tests that are grouped for each equipment that need work on
-    gathered_test_type = db.Column(db.String(50))
+    # # GatheredTestType: Indicates the tests that are grouped for each equipment that need work on
+    # gathered_test_type = db.Column(db.String(50))
 
     # contract with laboratory
     lab_contract_id = db.Column('lab_contract_id', db.ForeignKey("contract.id"), nullable=True)
@@ -351,6 +364,8 @@ class Campaign(db.Model):
     error_code = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorCode: Need to look into
     # AmbientAirTemperature: Ambient air temperature at sampling time
     ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
+    sampling_card_id = db.Column('sampling_card_id', db.ForeignKey("sampling_card.id"), nullable=True)
+    sampling_card = db.relationship('SamplingCard', foreign_keys='Campaign.sampling_card_id')
 
     @property
     def equipment_id(self):
@@ -401,12 +416,9 @@ class Campaign(db.Model):
             'comments': self.comments,
             'mws': self.mws,
             'temperature': self.temperature,
-            'sampling_card_print': self.sampling_card_print,
             'contract_id': self.contract_id,
             'contract': self.contract and self.contract.serialize(),
             'containers': self.containers,
-            'sampling_card_gathered': self.sampling_card_gathered,
-            'gathered_test_type': self.gathered_test_type,
             'lab_contract_id': self.lab_contract_id,
             'lab_contract': self.lab_contract and self.lab_contract.serialize(),
             'seringe_num': self.seringe_num,
@@ -416,6 +428,8 @@ class Campaign(db.Model):
             'error_state': self.error_state,
             'error_code': self.error_code,
             'ambient_air_temperature': self.ambient_air_temperature,
+            'sampling_card_id': self.sampling_card_id,
+            'sampling_card': self.sampling_card and self.sampling_card.serialize(),
             'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
             }
 

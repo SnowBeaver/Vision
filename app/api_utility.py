@@ -47,6 +47,11 @@ equipment_connection_schema = {
     'equipment_id': type_integer_coerce_dict,
     'parent_id': type_integer_coerce_dict,
     }
+sampling_card_schema = {
+    'id': id_dict,
+    'card_gathered': type_integer_coerce_dict,
+    'card_print': type_boolean_coerce_dict,
+    }
 equipment_schema = {
     'id': id_dict,
     'name': type_string_maxlength_50_required_dict,
@@ -117,11 +122,8 @@ campaign_schema = {
     'comments': type_string_dict,
     'mws': type_float_coerce_dict,
     'temperature': type_float_coerce_dict,
-    'sampling_card_print': type_boolean_coerce_dict,
     'contract_id': type_integer_coerce_dict,
     'containers': type_float_coerce_dict,
-    'sampling_card_gathered': type_integer_coerce_dict,
-    'gathered_test_type': type_string_maxlength_50_dict,
     'lab_contract_id': type_integer_coerce_dict,
     'seringe_num': type_string_maxlength_50_dict,
     'data_valid': type_integer_coerce_dict,
@@ -129,6 +131,7 @@ campaign_schema = {
     'status2': type_integer_coerce_dict,
     'error_state': type_integer_coerce_dict,
     'error_code': type_integer_coerce_dict,
+    'sampling_card_id': type_integer_coerce_dict,
     'ambient_air_temperature': type_float_coerce_dict,
     }
 contract_schema = {'id': id_dict,
