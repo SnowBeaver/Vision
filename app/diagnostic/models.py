@@ -34,9 +34,9 @@ class Lab(db.Model):
     analyser = db.Column(db.Unicode(256))
     name = db.Column(db.Unicode(256))
 
-    def __init__(self, code=0, name=''):
-        self.code = code
-        self.name = name
+    # def __init__(self, code=0, name=''):
+    #     self.code = code
+    #     self.name = name
 
     def dump(self, _indent=0):
         return "   " * _indent + repr(self) + \
@@ -84,20 +84,20 @@ class ElectricalProfile(db.Model):
                    [c.dump(_indent + 1) for c in self.children.values()]
                )
 
-    def parsedata(self, data):
-        if data:
-            for key in data.keys():
-                # print key + ' ' + data[key]
-                if hasattr(self, key):
-                    if key == 'selection' or key == 'description':
-                        if data[key]:
-                            setattr(self, key, data[key])
-                    else:
-                        setattr(self, key, True if data[key] == 'y' else False)
-
-    def __init__(self, data=None):
-        self.parsedata(data)
-        # print getattr(self, key)
+    # def parsedata(self, data):
+    #     if data:
+    #         for key in data.keys():
+    #             # print key + ' ' + data[key]
+    #             if hasattr(self, key):
+    #                 if key == 'selection' or key == 'description':
+    #                     if data[key]:
+    #                         setattr(self, key, data[key])
+    #                 else:
+    #                     setattr(self, key, True if data[key] == 'y' else False)
+    #
+    # def __init__(self, data=None):
+    #     self.parsedata(data)
+    #     # print getattr(self, key)
 
     def clear_data(self):
         for attr in self.__dict__:
@@ -480,19 +480,19 @@ class FluidProfile(db.Model):
     qty_vial = db.Column(db.Integer)
     sampling_vial = db.Column(db.Integer)
 
-    def parsedata(self, data):
-        if data:
-            for key in data.keys():
-                if hasattr(self, key):
-                    if key in ['selection', 'description', 'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial',
-                               'sampling_vial', 'sampling_vial']:
-                        if data[key]:
-                            setattr(self, key, data[key])
-                    else:
-                        setattr(self, key, True if data[key] == 'y' else False)
-
-    def __init__(self, data=None):
-        self.parsedata(data)
+    # def parsedata(self, data):
+    #     if data:
+    #         for key in data.keys():
+    #             if hasattr(self, key):
+    #                 if key in ['selection', 'description', 'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial',
+    #                            'sampling_vial', 'sampling_vial']:
+    #                     if data[key]:
+    #                         setattr(self, key, data[key])
+    #                 else:
+    #                     setattr(self, key, True if data[key] == 'y' else False)
+    #
+    # def __init__(self, data=None):
+    #     self.parsedata(data)
 
     def clear_data(self):
         for attr in self.__dict__:
@@ -626,9 +626,9 @@ class Manufacturer(db.Model):
     __tablename__ = u'manufacturer'
 
 
-    def __init__(self, code=0, name=''):
-        self.code = code
-        self.name = name
+    # def __init__(self, code=0, name=''):
+    #     self.code = code
+    #     self.name = name
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     name = db.Column(db.String(50))
