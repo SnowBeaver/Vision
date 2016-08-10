@@ -7,10 +7,18 @@ import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
 import Radio from 'react-bootstrap/lib/Radio';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
-import Modal from 'react-bootstrap/lib/Modal';
+import CreatedByForm from './CampaignForm_modules/CreatedByForm';
+import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
+import NewContractForm from './CampaignForm_modules/NewContractForm';
+import NewLabForm from './CampaignForm_modules/NewLabForm';
+import NewFluidForm from './NewTestForm_modules/NewFluidForm';
+import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+
+
 var items=[];
 
 
@@ -318,6 +326,7 @@ var LabAnalyserSelectField = React.createClass ({
         );
     }
 });
+
 
 var SyringeNumberSelectField = React.createClass ({
 
@@ -627,17 +636,18 @@ var NewTestForm = React.createClass ({
             errors: {},
             equipment_number: '',
             showFluidProfileForm: false,
-            showElectroProfileForm: false
+            showElectroProfileForm: false,
+            showCreatedByForm: false
         }
     },
 
     handleClick: function() {
         document.getElementById('test_prof').remove();
+
     },
 
     closeElectricalProfileForm: function () {
-        
-        console.log('here');
+
         this.setState({
             showElectroProfileForm: false
 
@@ -645,7 +655,6 @@ var NewTestForm = React.createClass ({
     },
 
     closeFluidProfileForm: function () {
-        console.log('here2');
         
         this.setState({
             showFluidProfileForm: false
@@ -653,9 +662,21 @@ var NewTestForm = React.createClass ({
 
     },
 
+    closeCreatedByForm: function () {
+        this.setState({
+            showCreatedByForm: false
+        })
+    },
+
+    onNewClick:function () {
+        console.log("hi,i'm your handler")
+      this.setState({
+          showCreatedByForm: true
+      })
+    },
+
     render : function() {
-console.log(this.state.showFluidProfileForm);
-console.log(this.state.showElectroProfileForm);
+
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -688,7 +709,10 @@ console.log(this.state.showElectroProfileForm);
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a
+                                           className="btn btn-primary new1"
+                                            onClick={this.onNewClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -699,7 +723,7 @@ console.log(this.state.showElectroProfileForm);
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/material" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -710,7 +734,7 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/fluid" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -721,7 +745,7 @@ console.log(this.state.showElectroProfileForm);
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/createdby" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -732,7 +756,7 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/lab" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -743,7 +767,7 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/recommend" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -754,7 +778,7 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/createdby" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -934,8 +958,13 @@ console.log(this.state.showElectroProfileForm);
                                 </div> 
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
-                                        <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
+                                        <Button bsStyle="success"
+                                                type="submit"
+                                                className="pull-right"
+                                        >Save</Button>
+                                        <Button bsStyle="danger"
+                                                className="pull-right margin-right-xs"
+                                        >Cancel</Button>
                                     </div>
                                 </div>
                             </div>
@@ -945,9 +974,15 @@ console.log(this.state.showElectroProfileForm);
                 <Modal show={this.state.showElectroProfileForm}>
                         <ElectricalProfileForm handleClose={this.closeElectricalProfileForm} />
                 </Modal>
+
                 <Modal show={this.state.showFluidProfileForm}>
                         <FluidProfileForm handleClose={this.closeFluidProfileForm}/>
                 </Modal>
+
+                <Modal show={this.state.showCreatedByForm}>
+                        <CreatedByForm handleClose={this.closeCreatedByForm} />
+                </Modal>
+
             </div>
         );
     }
