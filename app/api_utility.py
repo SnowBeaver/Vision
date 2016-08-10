@@ -63,7 +63,7 @@ equipment_schema = {
     'norm_id': type_integer_coerce_required_dict,
     'manufacturer_id': type_integer_coerce_dict,
     'serial': type_string_maxlength_50_dict,
-    'manufactured': dict_copy_union(type_integer_coerce_dict, required_dict, {'min': 1900, 'max': datetime.now().year}),
+    'manufactured': dict_copy_union(type_integer_coerce_dict, {'min': 1900, 'max': datetime.now().year}),
     'frequency': type_string_frequency_dict,
     'description': type_string_dict,
     'modifier':  type_boolean_coerce_dict,

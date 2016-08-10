@@ -1683,7 +1683,7 @@ class Equipment(db.Model):
     name = db.Column(db.String(50))
     # EquipmentNumber: Equipment ID given by equipment owner.
     # Equipment number to uniquely identify equipment
-    equipment_number = db.Column(db.Integer, nullable=False, index=True)
+    equipment_number = db.Column(db.String(50), nullable=False, index=True)
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
@@ -1786,7 +1786,7 @@ class Equipment(db.Model):
     sibling = db.Column(db.Integer)
 
     def __repr__(self):
-        return "{} {} {}".format(self.id, self.equipment_number, self.equipment_type)
+        return "{} {} {}".format(self.name, self.serial, self.equipment_number)
 
     # def __init__(self, **kwargs):
     #     self.visual_inspection_by_id = int(kwargs.get('visual_inspection_by_id'))
