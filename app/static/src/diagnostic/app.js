@@ -34,10 +34,10 @@ export default class App extends Component {
         switch( this.state.route ) {
             case '/equipment': Child = Equipment; break;
             case '/addeqform': Child = AddEquipmentForm; break;
-            case '/assigntestform': Child = CampaignForm; break;
-            case '/newtestform': Child = NewTestForm; break;
-            case '/elecprofform': Child = ElectricalProfileForm; break;
-            case '/fluidprofform': Child = FluidProfileForm; break;
+            case '/campaign': Child = CampaignForm; break;
+            case '/test': Child = NewTestForm; break;
+            case '/electro': Child = ElectricalProfileForm; break;
+            case '/fluid': Child = FluidProfileForm; break;
             case '/chooseform': Child = ChooseTestForm; break;
 
             default: Child = Home;
@@ -55,7 +55,7 @@ export default class App extends Component {
 
         return (
             <div className='app-container'>
-                <a href='#/assigntestform' className="btn btn-success btn-large">Start New Campaign</a>
+                <a href='#/campaign' className="btn btn-success btn-large">Start New Campaign</a>
                 <hr/>
                 <Child />
             </div>
