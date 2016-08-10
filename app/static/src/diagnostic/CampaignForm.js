@@ -682,7 +682,7 @@ var CampaignForm = React.createClass ({
                             <div className="col-md-1 text-center">OR</div>
                             <div className="col-md-2">
                                 <FormGroup>
-                                    <a href="#/newtestform" className="btn btn-success">Create new one</a>
+                                    <a href="#/test" className="btn btn-success">Create new one</a>
                                 </FormGroup>
                             </div>
                         </div>
@@ -691,7 +691,7 @@ var CampaignForm = React.createClass ({
                             <div className="col-md-12 ">
                                 <Button bsStyle="success" className="pull-right" type="submit">Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" className="pull-right">Cancel</Button>
+                                <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
                             </div>
                         </div>
         
