@@ -82,10 +82,10 @@ var EquipmentTypeSelectField = React.createClass ({
                     </a>
                 </div>
                 <div className="col-md-1">
-                    <a href="http://dev.vision.local/admin/#/equipment" type="button" className="btn btn-primary ">NEW</a>
+                    <a href="#/equipment" type="button" className="btn btn-primary ">NEW</a>
                 </div>
                 <div className="col-md-1">
-                   <a href="http://dev.vision.local/admin/#/assigntestform" type="button" className="btn btn-success ">TESTS</a>
+                   <a href="#/assigntestform" type="button" className="btn btn-success ">TESTS</a>
                 </div>
             </div>
         );

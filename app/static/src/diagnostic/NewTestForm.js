@@ -636,7 +636,7 @@ var NewTestForm = React.createClass ({
     },
 
     closeElectricalProfileForm: function () {
-        
+
         console.log('here');
         this.setState({
             showElectroProfileForm: false
@@ -646,7 +646,7 @@ var NewTestForm = React.createClass ({
 
     closeFluidProfileForm: function () {
         console.log('here2');
-        
+
         this.setState({
             showFluidProfileForm: false
         })
@@ -684,7 +684,7 @@ console.log(this.state.showElectroProfileForm);
                                 <div className="row">
                                     <div className="col-md-11">
                                         <CreatedBySelectField
-                                            source="http://dev.vision.local/api/v1.0/user"
+                                            source="/api/v1.0/user"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -695,7 +695,7 @@ console.log(this.state.showElectroProfileForm);
                                 <div className="row">
                                     <div className="col-md-11">
                                         <MaterialSelectField
-                                            source="http://dev.vision.local/api/v1.0/material/"
+                                            source="/api/v1.0/material/"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -706,7 +706,7 @@ console.log(this.state.showElectroProfileForm);
                                 <div className="row">
                                     <div className="col-md-11">
                                         <FluidTypeSelectField
-                                            source="http://dev.vision.local/api/v1.0/fluid_type/"
+                                            source="/api/v1.0/fluid_type/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -717,7 +717,7 @@ console.log(this.state.showElectroProfileForm);
                                 <div className="row">
                                     <div className="col-md-11">
                                         <PerformedBySelectField
-                                            source="http://dev.vision.local/api/v1.0/user"
+                                            source="/api/v1.0/user"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -728,7 +728,7 @@ console.log(this.state.showElectroProfileForm);
                                 <div className="row">
                                     <div className="col-md-11">
                                         <LabAnalyserSelectField
-                                            source="http://dev.vision.local/api/v1.0/lab/"
+                                            source="/api/v1.0/lab/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -739,7 +739,7 @@ console.log(this.state.showElectroProfileForm);
                                 <div className="row">
                                     <div className="col-md-11">
                                         <RecommendSelectField
-                                            source="http://dev.vision.local/api/v1.0/recommandation_id/"
+                                            source="/api/v1.0/recommandation_id/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -750,7 +750,7 @@ console.log(this.state.showElectroProfileForm);
                                 <div className="row">
                                     <div className="col-md-11">
                                         <RecommendBySelectField
-                                            source="http://dev.vision.local/api/v1.0/recommended_by_id/"
+                                            source="/api/v1.0/recommended_by_id/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -887,11 +887,11 @@ console.log(this.state.showElectroProfileForm);
                                             />
                                         </FormGroup>
                                     </div>
-                                </div> 
+                                </div>
                                 <div className="row">
                                     <div className="col-md-11">
                                         <SyringeNumberSelectField
-                                            source="http://dev.vision.local/api/v1.0/syringe/"
+                                            source="/api/v1.0/syringe/"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -919,7 +919,7 @@ console.log(this.state.showElectroProfileForm);
                                     <Radio name="profile" value="electro">
                                         Electrical Profile
                                     </Radio>
-                                </div> 
+                                </div>
                                 <div className="row">
                                     <div className="col-md-12">
                                         <Button bsStyle="success" type="submit" className="pull-right">Save</Button>

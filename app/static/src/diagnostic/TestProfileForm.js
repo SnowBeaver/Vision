@@ -166,7 +166,7 @@ const TestProfileForm = React.createClass({
                                 <div className="maxwidth">
                                     <ElectricalProfSelectField
                                         ref="electro_prof"
-                                        source="http://dev.vision.local/api/v1.0/electrical_profile"
+                                        source="/api/v1.0/electrical_profile"
                                         value={this.state.fluid_prof.value}
                                     />
                                 </div>
@@ -201,7 +201,7 @@ const TestProfileForm = React.createClass({
                                 <div className="maxwidth">
                                     <FluidProfSelectField
                                         ref="fluid_prof"
-                                        source="http://dev.vision.local/api/v1.0/fluid_profile"
+                                        source="/api/v1.0/fluid_profile"
                                         value={this.state.elec_prof.value}
                                     />
                                 </div>

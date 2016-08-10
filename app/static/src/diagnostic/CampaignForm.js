@@ -564,7 +564,7 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-11">
                                 <CreatedBySelectField
-                                    source="http://dev.vision.local/api/v1.0/user"
+                                    source="/api/v1.0/user"
                                     handleChange={this.handleChange} />
                             </div>
                             <div className="col-md-1">
@@ -584,7 +584,7 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-11">
                                 <ContractNoSelectField
-                                    source="http://dev.vision.local/api/v1.0/contract/" />
+                                    source="/api/v1.0/contract/" />
                             </div>
                             <div className="col-md-1">
                                 <Button bsStyle="primary">New</Button>
@@ -594,7 +594,7 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-10">
                                 <TestReasonSelectField
-                                    source="http://dev.vision.local/api/v1.0/test_reason"
+                                    source="/api/v1.0/test_reason"
                                     handleChange={this.handleChange}
                                 />
                             </div>
@@ -603,7 +603,7 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-11">
                                 <LabAnalyserSelectField
-                                    source="http://dev.vision.local/api/v1.0/lab/"
+                                    source="/api/v1.0/lab/"
                                     value={this.state.value} />
                             </div>
                             <div className="col-md-1">
@@ -614,7 +614,7 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-11">
                                 <LabContractSelectField
-                                    source="http://dev.vision.local/api/v1.0/contract/"
+                                    source="/api/v1.0/contract/"
                                     handleChange={this.handleChange} />
                             </div>
                             <div className="col-md-1">
@@ -671,12 +671,12 @@ var CampaignForm = React.createClass ({
                                         </div>
                                 </fieldset>
                             </div>
-                        </div> 
+                        </div>
                         <div className="row">
                             <div className="col-md-3">
                                 <FormGroup>
                                     <TestProfileSelectField
-                                        source="http://dev.vision.local/api/v1.0/test_profile"/>
+                                        source="/api/v1.0/test_profile"/>
                                 </FormGroup>
                             </div>
                             <div className="col-md-1 text-center">OR</div>
@@ -686,7 +686,7 @@ var CampaignForm = React.createClass ({
                                 </FormGroup>
                             </div>
                         </div>
-            
+
                         <div className="row">
                             <div className="col-md-12 ">
                                 <Button bsStyle="success" className="pull-right" type="submit">Save</Button>
@@ -694,7 +694,7 @@ var CampaignForm = React.createClass ({
                                 <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
                             </div>
                         </div>
-        
+
                     </Panel>
                 </form>
             </div>
