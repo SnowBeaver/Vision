@@ -9,6 +9,7 @@ import ChooseTestForm from './ChooseTestForm';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
 import NewTestForm from './NewTestForm';
+import TestList from './TestList';
 
 
 
@@ -35,25 +36,28 @@ export default class App extends Component {
             case '/equipment': Child = Equipment; break;
             case '/addeqform': Child = AddEquipmentForm; break;
             case '/campaign': Child = CampaignForm; break;
+            case '/testlist': Child = TestList; break;
             case '/test': Child = NewTestForm; break;
             case '/electro': Child = ElectricalProfileForm; break;
             case '/fluid': Child = FluidProfileForm; break;
             case '/chooseform': Child = ChooseTestForm; break;
 
             default: Child = Home;
-        }
+        } 
+
         // <ul>
         //     <li><a href='#/home'>Home</a></li>
         //     <li><a href='#/equipment'>Equipment</a></li>
         //     <li><a href='#/addeqform'>Add Equipment</a></li>
-        //     <li><a href='#/assigntestform'>New Campaign</a></li>
-        //     <li><a href='#/newtestform'>New Test</a></li>
-        //     <li><a href='#/elecprofform'>Electrical Profile</a></li>
-        //     <li><a href='#/fluidprofform'>Fluid Profile</a></li>
+        //     <li><a href='#/campaign'>New Campaign</a></li>
+        //     <li><a href='#/test'>New Test</a></li>
+        //     <li><a href='#/testlist'>Testlist</a></li>
+        //     <li><a href='#/electro'>Electrical Profile</a></li>
+        //     <li><a href='#/fluid'>Fluid Profile</a></li>
         //     <li><a href='#/chooseform'>Choose Test Profile</a></li>
         // </ul>
-
-        return (
+        
+        return ( 
             <div className='app-container'>
                 <a href='#/campaign' className="btn btn-success btn-large">Start New Campaign</a>
                 <hr/>

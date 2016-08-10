@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/lib/Button';
 import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-
+import AddEquipmentForm from './AddEquipmentForm';
 
 var items=[];
 
@@ -379,73 +379,6 @@ var TestReasonSelectField = React.createClass ({
 });
 
 
-var TestProfileSelectField = React.createClass ({
-
-    handleChange: function(event){
-        console.log('here 2');
-        console.log(event.target.name);
-        console.log(event.target.value);
-        this.setState({
-            value: event.target.value
-        });
-        this.props.handleChange(event);
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false,
-            value: null
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}  value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <FormGroup>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    name="test_prof"
-                >
-                    <option key="0" value="select">Choose profile from saved</option>
-                    {menuItems}
-                </FormControl>
-            </FormGroup>
-        );
-    }
-});
-
-
 var CampaignForm = React.createClass ({
 
 
@@ -453,7 +386,7 @@ var CampaignForm = React.createClass ({
         var fields = [
             'equipment_number', 'fluid_type_id',
             'lab_id', 'contract', 'test_reason', 'comments',
-            'date_application', 'date'
+            'date_application', 'date', 'date_prelevement'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -555,6 +488,10 @@ var CampaignForm = React.createClass ({
         document.getElementById('test_prof').remove();
     },
 
+    showTestList: function(){
+        this.refs.test_list.setVisible();
+    },
+
     render : function() {
 
         return(
@@ -629,63 +566,22 @@ var CampaignForm = React.createClass ({
                                 </FormGroup>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-md-10">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Number of containers"
-                                                 name="containers"
-                                    />
-                                </FormGroup>
-                            </div>
-                        </div>
 
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <ControlLabel>Date Applied</ControlLabel>
+                                    <ControlLabel>Scheduled testing</ControlLabel>
                                     <DateTimeField datetime={this.state.date_application} />
                                 </div>
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <ControlLabel>Acquisition Date</ControlLabel>
-                                    <DateTimeField datetime={this.state.ac_date} />
+                                    <ControlLabel>Lab measurement</ControlLabel>
+                                    <DateTimeField datetime={this.state.date_prelevement} />
                                 </div>
                             </div>
                         </div>
                         <hr/>
-                        <div className="row">
-                            <div className="col-md-10">
-                                <fieldset className="scheduler-border">
-                                    <legend className="scheduler-border">Campaign tests</legend>
-                                        <div id="test_prof">
-                                            <div className="col-md-4">
-                                                <a href="#/elecprofform">Electrical test 39489</a>
-                                                &nbsp;
-                                                &nbsp;
-                                                <a href="javascript:void(0)"
-                                                   className="glyphicon glyphicon-remove text-danger"
-                                                   onClick={this.handleClick}
-                                                   aria-hidden="true">
-                                                </a>
-                                            </div>
-                                        </div>
-                                </fieldset>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-3">
-                                <FormGroup>
-                                    <TestProfileSelectField
-                                        source="/api/v1.0/test_profile"/>
-                                </FormGroup>
-                            </div>
-                            <div className="col-md-1 text-center">OR</div>
-                            <div className="col-md-2">
-                                <FormGroup>
-                                    <a href="#/test" className="btn btn-success">Create new one</a>
-                                </FormGroup>
-                            </div>
-                        </div>
+                        
+                        <AddEquipmentForm showTestList={this.showTestList}/> 
 
                         <div className="row">
                             <div className="col-md-12 ">
