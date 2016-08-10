@@ -1131,6 +1131,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}   electrical_profile_id
 @apiSuccess {Dict}      electrical_profile  see: electrical_profile->get an item
 @apiSuccess {Boolean}   percent_ratio
+@apiSuccess {String}    analysis_number
 @apiSuccess {Boolean}   bushing
 @apiSuccess {Boolean}   winding
 @apiSuccess {Boolean}   insulation_pf
@@ -1313,7 +1314,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}          lab                 see: lab->get an item
 @apiSuccess {Integer}       material_id
 @apiSuccess {Dict}          material            see: material->get an item
-@apiSuccess {String(15)}    analysis_number
 @apiSuccess {Integer}       fluid_type_id
 @apiSuccess {Dict}          fluid_type          see: fluid_type->get an item
 @apiSuccess {Float}         charge
@@ -1367,7 +1367,6 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       performed_by_id     required
 @apiParam   {Integer}       lab_id              required
 @apiParam   {Integer}       material_id
-@apiParam   {String(15)}    analysis_number
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Float}         charge
 @apiParam   {Datetime}      date_prelevement    format "2016-07-29 17:52:19"

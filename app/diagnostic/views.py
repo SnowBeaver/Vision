@@ -732,7 +732,7 @@ class CampaignView(MyModelView):
     )
     column_list = (
         'date',
-        'analysis_number',
+        # 'analysis_number',
         # 'equipment',
         'fluid_type',
         'created_by',
@@ -742,7 +742,7 @@ class CampaignView(MyModelView):
     )
     column_filters = [
         'date',
-        'analysis_number',
+        # 'analysis_number',
         # 'equipment',
         'fluid_type',
         'created_by',
