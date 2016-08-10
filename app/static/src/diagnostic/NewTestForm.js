@@ -887,19 +887,7 @@ console.log(this.state.showElectroProfileForm);
                                             />
                                         </FormGroup>
                                     </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <FormGroup>
-                                            <FormControl type="text"
-                                                         placeholder="Gathered Test Type"
-                                                         name="gathered_test_type"
-                                            />
-                                        </FormGroup>
-                                    </div>
-                                </div>
-
+                                </div> 
                                 <div className="row">
                                     <div className="col-md-11">
                                         <SyringeNumberSelectField
