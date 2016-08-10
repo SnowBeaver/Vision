@@ -127,6 +127,7 @@ class ElectricalProfile(db.Model):
                 'resistance': self.resistance,
                 'degree': self.degree,
                 'turns': self.turns,
+                'profile_type': 'electrical_profile',
                 }
 
 
@@ -549,6 +550,7 @@ class FluidProfile(db.Model):
                 'antioxidant': self.antioxidant,
                 'qty_vial': self.qty_vial,
                 'sampling_vial': self.sampling_vial,
+                'profile_type': 'fluid_profile',
                 }
 
 
