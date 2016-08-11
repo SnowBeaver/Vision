@@ -229,7 +229,7 @@ class Campaign(db.Model):
     # )
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    date = db.Column(db.DateTime, index=True) # date of campaign start
+    date_created = db.Column(db.DateTime, index=True) # date of campaign start
 
     # created_by - relation to user table  #user one  (manager group)
     created_by_id = db.Column(
@@ -273,7 +273,7 @@ class Campaign(db.Model):
     # user 1 create the sampling,  date when user 2( guy in the field) starts the work
     # SamplingDate: Date of sampling
     # User 1 adds this value and user 2 has oprtunity to change it (he has access to database)
-    date_prelevement = db.Column(db.DateTime, index=True)
+    date_sampling = db.Column(db.DateTime, index=True)
 
     # Remark: Any pertiment remark related to sampling or equipment status  (can be entered by user1 2 or 3)
     remark = db.Column(db.Text, nullable=True)
@@ -366,14 +366,14 @@ class Campaign(db.Model):
         return MyList([x.equipment_id for x in db.session.query(TestResult).filter_by(campaign_id=id)])
 
     def __repr__(self):
-        return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
+        return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date_created, self.created_by)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         print(self.performed_by, self.performed_by_id, self.remark)
         return {
             'id': self.id,
-            'date': dump_datetime(self.date),
+            'date_created': dump_datetime(self.date_created),
             'created_by_id': self.created_by_id,
             'created_by': self.created_by and self.created_by.serialize(),
             'material_id': self.material_id,
@@ -381,7 +381,7 @@ class Campaign(db.Model):
             'fluid_type_id': self.fluid_type_id,
             'fluid_type': self.fluid_type and self.fluid_type.serialize(),
             'charge': self.charge,
-            'date_prelevement': dump_datetime(self.date_prelevement),
+            'date_sampling': dump_datetime(self.date_sampling),
             'remark': self.remark,
             'performed_by_id': self.performed_by_id,
             'performed_by': self.performed_by and self.performed_by.serialize(),

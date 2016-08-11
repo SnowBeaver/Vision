@@ -1307,7 +1307,7 @@ doc = ApiDoc(app=api)
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {Datetime}      date
+@apiSuccess {Datetime}      date_created
 @apiSuccess {Integer}       created_by_id
 @apiSuccess {Dict}          created_by          see: user->get an item
 @apiSuccess {Integer}       performed_by_id
@@ -1319,7 +1319,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       fluid_type_id
 @apiSuccess {Dict}          fluid_type          see: fluid_type->get an item
 @apiSuccess {Float}         charge
-@apiSuccess {Datetime}      date_prelevement
+@apiSuccess {Datetime}      date_sampling
 @apiSuccess {String}        remark
 @apiSuccess {Boolean}       modifier
 @apiSuccess {Boolean}       transmission

@@ -713,7 +713,7 @@ class CampaignView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = (['equipment_id', 'lab_id', 'date', 'contract_id'])
-    column_searchable_list = (['lab_id', 'date', 'contract_id'])
+    column_searchable_list = (['lab_id', 'date_created', 'contract_id'])
     # inline_models = (TestResult,)
     # column_editable_list = ['created_by']
 
@@ -731,7 +731,7 @@ class CampaignView(MyModelView):
         'error_code',
     )
     column_list = (
-        'date',
+        'date_created',
         # 'analysis_number',
         # 'equipment',
         'fluid_type',
@@ -741,7 +741,7 @@ class CampaignView(MyModelView):
         'repair_date',
     )
     column_filters = [
-        'date',
+        'date_created',
         # 'analysis_number',
         # 'equipment',
         'fluid_type',
