@@ -64,8 +64,7 @@ var EquipmentTypeSelectField = React.createClass ({
                             <FormControl 
                                 componentClass="select" 
                                 placeholder="equipment type" 
-                                onChange={this.handleChange}  
-                                source="/api/v1.0/equipment" >
+                                onChange={this.handleChange}>
                                 <option key="0" value="select">Select equipment {this.props.index}</option>
                                 {menuItems}
                             </FormControl>

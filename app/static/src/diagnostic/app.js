@@ -43,7 +43,7 @@ export default class App extends Component {
             case '/createdby': Child = CreatedByForm; break;
             case '/contract': Child = NewContractForm; break;
             case '/material': Child = NewMaterialForm; break;
-            case '/fluid': Child = NewFluidForm; break;
+            case '/newfluid': Child = NewFluidForm; break;
             case '/lab': Child = NewLabForm; break;
             case '/recommend': Child = NewRecommendationForm; break;
             case '/campaign': Child = CampaignForm; break;
@@ -76,12 +76,12 @@ export default class App extends Component {
                         <li><a href='#/contract'>contract</a></li>
                         <li><a href='#/lab'>lab</a></li>
                         <li><a href='#/material'>material</a></li>
-                        <li><a href='#/fluid'>fluid</a></li>
+                        <li><a href='#/newfluid'>fluid</a></li>
                         <li><a href='#/recommend'>recommend</a></li>
                     </ul>
                 </div>
                 <div className='app-container'>
-			<a href='#/campaign' className="btn btn-success btn-large">Start New Campaign</a>
+                    <a href='#/campaign' className="btn btn-success btn-large">Start New Campaign</a>
                     <hr/>
                     <Child />
                 </div>
