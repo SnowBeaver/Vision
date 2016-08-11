@@ -1022,13 +1022,20 @@ norm_isolation_schema = {'id': readonly_dict,
                          'notseal': type_float_coerce_dict,
                          'seal': type_float_coerce_dict,
                          }
-norm_furan_schema = {'id': readonly_dict,
-                     'name': type_string_maxlength_50_dict,
-                     'c1': type_float_coerce_dict,
-                     'c2': type_float_coerce_dict,
-                     'c3': type_float_coerce_dict,
-                     'c4': type_float_coerce_dict,
-                     }
+norm_furan_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_50_dict,
+    'c1': type_float_coerce_dict,
+    'c2': type_float_coerce_dict,
+    'c3': type_float_coerce_dict,
+    'c4': type_float_coerce_dict,
+}
+test_sampling_card_schema = {
+    'id': readonly_dict,
+    'test_result_id': type_integer_coerce_dict,
+    'date_created': type_datetime_dict,
+    'printed': type_boolean_coerce_dict,
+}
 model_dict = {
     'equipment': {
         'model': Equipment,
@@ -1126,14 +1133,6 @@ model_dict = {
         'model': Bushing,
         'schema': bushing_schema
     },
-    # 'upstream': {
-    # 'model': Upstream,
-    # 'schema': upstream_schema
-    # },
-    # 'downstream': {
-    # 'model': Downstream,
-    # 'schema': downstream_schema
-    # },
     'equipment_connection': {
         'model': EquipmentConnection,
         'schema': equipment_connection_schema
@@ -1373,6 +1372,10 @@ model_dict = {
     'norm_furan': {
         'model': NormFuran,
         'schema': norm_furan_schema
+    },
+    'test_sampling_card': {
+        'model': TestSamplingCard,
+        'schema': test_sampling_card_schema
     },
 }
 

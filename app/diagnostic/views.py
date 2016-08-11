@@ -1145,28 +1145,6 @@ class SamplingPointView(MySimpleTypesView):
         )
 
 
-# class UpstreamView(MySimpleTypesView):
-#     """
-#     Upstream management view
-#     """
-#
-#     def __init__(self, dbsession):
-#         super(UpstreamView, self).__init__(
-#             Upstream, dbsession, name="Upstream"
-#         )
-#
-#
-# class DownstreamView(MySimpleTypesView):
-#     """
-#     Downstream management view
-#     """
-#
-#     def __init__(self, dbsession):
-#         super(DownstreamView, self).__init__(
-#             Downstream, dbsession, name="Downstream"
-#         )
-
-
 class EquipmentConnectionView(MySimpleView):
     """
     EquipmentConnection management view
@@ -1586,6 +1564,19 @@ class FluidTestView(MyTestView):
         )
 
 
+class TestSamplingCardView(MySimpleView):
+    """
+    TestRecommendation management view
+    """
+    # List of columns that can be sorted.
+    column_sortable_list = ()
+    column_searchable_list = ()
+
+    def __init__(self, dbsession):
+        super(TestSamplingCardView, self).__init__(
+            TestSamplingCard, dbsession, category="Campaign", name="Test sampling card"
+        )
+
 simple_views = [
     TestReasonView, PressureUnitView, GasRelayView, PaintTypesView,
     SamplingPointView, EquipmentConnectionView, InterruptingMediumView,
@@ -1593,7 +1584,7 @@ simple_views = [
     FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
     OverallConditionView, GasketConditionView, ValveConditionView,
     PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
-    FluidLevelView, SamplingCardView, TestRecommendationView
+    FluidLevelView, SamplingCardView, TestRecommendationView, TestSamplingCardView
 ]
 test_views = [
     BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,

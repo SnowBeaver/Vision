@@ -1177,40 +1177,6 @@ class Bushing(db.Model):
                 }
 
 
-# class Upstream(db.Model):
-#     __tablename__ = u'upstream'
-#
-#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-#     name = db.Column(db.String(50), index=True)
-#     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
-#     equipment = db.relationship('Equipment', foreign_keys='Upstream.equipment_id')
-#
-#     def serialize(self):
-#         """Return object data in easily serializeable format"""
-#         return {'id': self.id,
-#                 'name': self.name,
-#                 'equipment_id': self.equipment_id,
-#                 'equipment': self.equipment and self.equipment.serialize(),
-#                 }
-
-
-# class Downstream(db.Model):
-#     __tablename__ = u'downstream'
-#
-#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-#     name = db.Column(db.String(50), index=True)
-#     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
-#     equipment = db.relationship('Equipment', foreign_keys='Downstream.equipment_id')
-#
-#     def serialize(self):
-#         """Return object data in easily serializeable format"""
-#         return {'id': self.id,
-#                 'name': self.name,
-#                 'equipment_id': self.equipment_id,
-#                 'equipment': self.equipment and self.equipment.serialize(),
-#                 }
-
-
 class EquipmentConnection(db.Model):
     __tablename__ = u'equipment_connection'
 
@@ -2308,6 +2274,10 @@ class TestResult(db.Model):
             'sampling_vial': self.sampling_vial,
             'tests': self.test_model and [
                 test.serialize() for test in db.session.query(self.test_model)
+                    .filter_by(test_result_id=self.id)
+            ],
+            'test_sampling_cards': [
+                card.serialize() for card in db.session.query(TestSamplingCard)
                     .filter_by(test_result_id=self.id)
             ]
         }
@@ -3830,4 +3800,26 @@ class NormFuran(db.Model):
                 'c2': self.c2,
                 'c3': self.c3,
                 'c4': self.c4,
+                }
+
+
+class TestSamplingCard(db.Model):
+
+    __tablename__ = 'test_sampling_card'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
+    test_result = db.relationship('TestResult', foreign_keys='TestSamplingCard.test_result_id')
+    date_created = db.Column(db.DateTime)
+    printed = db.Column(db.Boolean)
+
+    def __repr__(self):
+        return "{} created at {}".format(self.id, self.date_created)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'date_created': self.date_created,
+                'printed': self.printed,
                 }

@@ -1175,6 +1175,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}   antioxidant
 @apiSuccess {Integer}   qty_vial
 @apiSuccess {Integer}   sampling_vial
+@apiSuccess {List}      tests                see: test->get items
+@apiSuccess {List}      test_sampling_cards  see: test_sampling_cards->get items
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -7970,6 +7972,83 @@ doc = ApiDoc(app=api)
 @apiGroup heating_condition
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/heating_condition/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# test_sampling_card
+"""
+@api {get} /test_sampling_card/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_sampling_card/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_sampling_card/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_sampling_card/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "test_result_id": 1,
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       test_result_id
+@apiSuccess {Integer}       date_created
+@apiSuccess {Integer}       printed
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_sampling_card/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"test_result_id":1}' \
+         http://localhost:8001/api/v1.0/test_sampling_card/
+
+@apiParam   {Integer}       test_result_id
+@apiParam   {Integer}       date_created
+@apiParam   {Integer}       printed
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_sampling_card/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"test_result_id":1}'\
+         http://localhost:8001/api/v1.0/test_sampling_card/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_sampling_card/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_sampling_card/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
