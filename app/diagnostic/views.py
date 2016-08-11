@@ -763,6 +763,12 @@ class CampaignView(MyModelView):
         'lab_contract': {'fields': (Contract.name,)},
     }
 
+    form_args = {
+        'date_prelevement': {
+            'label': 'Date of Sampling',
+        }
+    }
+
     def __init__(self, dbsession):
         super(CampaignView, self).__init__(
             Campaign, dbsession, name="Campaign", category="Campaign",
