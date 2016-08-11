@@ -444,28 +444,6 @@ var CampaignForm = React.createClass ({
                         </div>
 
                         <div className="row">
-                            <div className="col-md-11">
-                                <LabAnalyserSelectField
-                                    source="/api/v1.0/lab/"
-                                    value={this.state.value} />
-                            </div>
-                            <div className="col-md-1">
-                                <Button bsStyle="primary">New</Button>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-11">
-                                <LabContractSelectField
-                                    source="/api/v1.0/contract/"
-                                    handleChange={this.handleChange} />
-                            </div>
-                            <div className="col-md-1">
-                                <Button bsStyle="primary">New</Button>
-                            </div>
-                        </div>
-
-                        <div className="row">
                             <div className="col-md-10">
                                 <FormGroup>
                                     <FormControl componentClass="textarea" placeholder="comments" name="comments"/>
