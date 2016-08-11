@@ -8,11 +8,7 @@ import Panel from 'react-bootstrap/lib/Panel';
 import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
 import CreatedByForm from './CampaignForm_modules/CreatedByForm';
-import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
-import NewLabForm from './CampaignForm_modules/NewLabForm';
-import NewFluidForm from './NewTestForm_modules/NewFluidForm';
-import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm'; 
 import AddEquipmentForm from './AddEquipmentForm';
 
 var items=[];
@@ -368,7 +364,6 @@ var CampaignForm = React.createClass ({
             equipment_number: '',
             showCreatedByForm: false,
             showNewContractForm: false,
-            showNewLabForm: false
 
         }
     },
@@ -377,14 +372,24 @@ var CampaignForm = React.createClass ({
         document.getElementById('test_prof').remove();
     },
 
-    onNewClick:function () {
-
-        this.setState({showCreatedByForm: true,
-        showNewContractForm: false,
-            showNewLabForm: false})
-        
-
-    }, 
+    onNewButtonClick:function (e) {
+        if(e.target.id==='created_by')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: true,
+                    showNewContractForm: false
+                }
+            )}
+        else if(e.target.id==='contract_no')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewContractForm: true
+                })
+        }
+    },
 
     showTestList: function(){
         this.refs.test_list.setVisible();
@@ -404,9 +409,9 @@ var CampaignForm = React.createClass ({
                             </div>
                             <div className="col-md-1">
                                 <FormGroup>
-                                    <a
-                                       className="btn btn-primary new1"
-                                        onClick={this.onNewClick}
+                                    <a id="created_by"
+                                       className="btn btn-primary "
+                                       onClick={this.onNewButtonClick}
                                     >New</a>
                                 </FormGroup>
                             </div>
@@ -427,9 +432,9 @@ var CampaignForm = React.createClass ({
                                     source="/api/v1.0/contract/" />
                             </div>
                             <div className="col-md-1">
-                                <a
+                                <a id="contract_no"
                                    className="btn btn-primary new2"
-                                    onClick={this.onNewClick}
+                                   onClick={this.onNewButtonClick}
                                 >New</a>
                             </div>
                         </div>
@@ -464,8 +469,8 @@ var CampaignForm = React.createClass ({
                             </div>
                         </div>
                         <hr/>
-                        
-                        <AddEquipmentForm showTestList={this.showTestList}/> 
+
+                        <AddEquipmentForm showTestList={this.showTestList}/>
 
                         <div className="row">
                             <div className="col-md-12 ">
@@ -478,15 +483,12 @@ var CampaignForm = React.createClass ({
                 </form>
 
                 <Modal show={this.state.showCreatedByForm}>
-                        <CreatedByForm handleClose={this.closeCreatedByForm} />
+                    <CreatedByForm handleClose={this.closeCreatedByForm} />
                 </Modal>
 
                 <Modal show={this.state.showNewContractForm}>
-                        <NewContractForm handleClose={this.closeNewContractForm} />
+                    <NewContractForm handleClose={this.closeNewContractForm} />
                 </Modal>
-
-                
-
 
             </div>
         );

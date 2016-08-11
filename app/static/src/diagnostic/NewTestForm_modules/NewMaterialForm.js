@@ -303,7 +303,7 @@ var NewMaterialForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Campaign">
+                    <Panel header="New Material Profile">
                         <div className="row">
                             <div className="col-md-12">
                                 <NameSelectField
@@ -330,9 +330,16 @@ var NewMaterialForm = React.createClass ({
 
                         <div className="row">
                             <div className="col-md-12 ">
-                                <Button bsStyle="success" className="btn btn-success pull-right" type="submit">Save</Button>
+                                 <Button bsStyle="success" 
+                                        className="btn btn-success pull-right"
+                                        type="submit"
+                                >Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" className="pull-right">Cancel</Button>
+                                <Button bsStyle="danger" 
+                                        className="pull-right" 
+                                        onClick={this.props.handleClose}
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
                             </div>
                         </div>
                     </Panel>

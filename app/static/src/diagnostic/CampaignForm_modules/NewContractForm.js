@@ -310,7 +310,7 @@ var NewContractForm = React.createClass ({
                             </div>
                         </div>
 
-                       <div className="row">
+                        <div className="row">
                             <div className="col-md-12">
                                 <NameSelectField
                                     source="http://dev.vision.local/api/v1.0/name"
@@ -328,9 +328,16 @@ var NewContractForm = React.createClass ({
 
                         <div className="row">
                             <div className="col-md-12 ">
-                                <Button bsStyle="success" className="btn btn-success pull-right" type="submit">Save</Button>
+                                 <Button bsStyle="success" 
+                                        className="btn btn-success pull-right"
+                                        type="submit"
+                                >Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" className="pull-right">Cancel</Button>
+                                <Button bsStyle="danger" 
+                                        className="pull-right" 
+                                        onClick={this.props.handleClose}
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
                             </div>
                         </div>
                     </Panel>

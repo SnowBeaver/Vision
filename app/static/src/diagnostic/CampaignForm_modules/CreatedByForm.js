@@ -557,7 +557,7 @@ var CreatedByForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New User">
+                    <Panel header="New User Profile">
                         <div className="row">
                             <div className="col-md-12">
                                 <RoleSelectField
