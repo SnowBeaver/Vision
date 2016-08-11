@@ -474,9 +474,13 @@ var CampaignForm = React.createClass ({
 
                         <div className="row">
                             <div className="col-md-12 ">
-                                <Button bsStyle="success" className="pull-right" type="submit">Save</Button>
+                                <Button bsStyle="success"
+                                        className="pull-right"
+                                        type="submit">Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
+                                <Button bsStyle="danger"
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
                             </div>
                         </div>
                     </Panel>

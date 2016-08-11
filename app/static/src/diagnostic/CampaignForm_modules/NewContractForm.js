@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 
+var items = [];
 
 var ContractStatusSelectField = React.createClass ({
 
@@ -67,134 +68,12 @@ var ContractStatusSelectField = React.createClass ({
 });
 
 
-var NameSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="name">
-                        <option key="0" value="select">Name</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
-var CodeSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="code">
-                        <option key="0" value="select">Code</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
 var NewContractForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'contract', 'name', 'code'
+            'name', 'code'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -204,7 +83,7 @@ var NewContractForm = React.createClass ({
         console.log(data);
 
         return $.ajax({
-            url: '/api/v1.0/test/',
+            url: '/api/v1.0/contract/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -305,36 +184,39 @@ var NewContractForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-12">
                                 <ContractStatusSelectField
-                                    source="http://dev.vision.local/api/v1.0/contract_status_id"
+                                    source="http://dev.vision.local/api/v1.0/contract_status"
                                     handleChange={this.handleChange} />
                             </div>
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-12">
-                                <NameSelectField
-                                    source="http://dev.vision.local/api/v1.0/name"
-                                    handleChange={this.handleChange} />
-                            </div>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Name"
+                                             name="name"
+                                />
+                            </FormGroup>
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-12">
-                                <CodeSelectField
-                                    source="http://dev.vision.local/api/v1.0/code"
-                                    handleChange={this.handleChange} />
-                            </div>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Code"
+                                             name="code"
+                                />
+                            </FormGroup>
                         </div>
 
                         <div className="row">
                             <div className="col-md-12 ">
-                                 <Button bsStyle="success" 
+                                <Button bsStyle="success"
                                         className="btn btn-success pull-right"
                                         type="submit"
+                                        onClick={this.props.handleClose}
                                 >Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" 
-                                        className="pull-right" 
+                                <Button bsStyle="danger"
+                                        className="pull-right"
                                         onClick={this.props.handleClose}
                                         className="pull-right margin-right-xs"
                                 >Cancel</Button>
