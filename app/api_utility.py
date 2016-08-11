@@ -114,9 +114,6 @@ campaign_schema = {
     'repair_description': type_string_dict,
     'if_rem': type_string_maxlength_5_dict,
     'if_ok': type_string_maxlength_5_dict,
-    'recommandation_id': type_integer_coerce_dict,
-    'recommendationNotes': type_string_dict,
-    'recommended_by_id': type_integer_coerce_dict,
     'date_application': type_datetime_dict,
     'comments': type_string_dict,
     'mws': type_float_coerce_dict,
@@ -226,6 +223,7 @@ test_result_schema = {
     'equipment_id': type_integer_coerce_dict,
     'fluid_profile_id': type_integer_coerce_dict,
     'electrical_profile_id': type_integer_coerce_dict,
+    'test_recommendation_id': type_integer_coerce_dict,
     'percent_ratio': type_boolean_coerce_dict,
     'analysis_number': readonly_dict,
     'bushing': type_boolean_coerce_dict,
@@ -528,6 +526,13 @@ recommendation_schema = {'id': readonly_dict,
                          'code': type_string_maxlength_50_dict,
                          'description': type_string_dict,
                          'test_type_id': type_integer_coerce_dict,
+                         }
+test_recommendation_schema = {'id': readonly_dict,
+                         'recommendation_id': type_integer_coerce_dict,
+                         'recommendationNotes': type_string_dict,
+                         'user_id': type_integer_coerce_dict,
+                         'date_created': type_integer_coerce_dict,
+                         'date_updated': type_integer_coerce_dict,
                          }
 syringe_schema = {'id': readonly_dict,
                   'serial': type_string_maxlength_50_required_dict,
@@ -1184,6 +1189,10 @@ model_dict = {
     'recommendation': {
         'model': Recommendation,
         'schema': recommendation_schema
+    },
+    'test_recommendation': {
+        'model': TestRecommendation,
+        'schema': test_recommendation_schema
     },
     'gas_level': {
         'model': GasLevel,

@@ -753,8 +753,8 @@ class CampaignView(MyModelView):
     form_ajax_refs = {
         'created_by': {'fields': (User.name,)},
         'performed_by': {'fields': (User.name,)},
-        'recommended_by': {'fields': (User.name,)},
-        'recommendation': {'fields': (Recommendation.name,)},
+        # 'recommended_by': {'fields': (User.name,)},
+        # 'recommendation': {'fields': (Recommendation.name,)},
         # 'equipment': {'fields': (Equipment.equipment_number,)},
         'material': {'fields': (Material.name,)},
         'fluid_type': {'fields': (FluidType.name,)},
@@ -1195,6 +1195,20 @@ class SamplingCardView(MySimpleView):
         )
 
 
+class TestRecommendationView(MySimpleView):
+    """
+    TestRecommendation management view
+    """
+    # List of columns that can be sorted.
+    column_sortable_list = ()
+    column_searchable_list = ()
+
+    def __init__(self, dbsession):
+        super(TestRecommendationView, self).__init__(
+            TestRecommendation, dbsession, category="Types", name="Test recommendation"
+        )
+
+
 class InterruptingMediumView(MySimpleTypesView):
     def __init__(self, dbsession):
         super(InterruptingMediumView, self).__init__(
@@ -1579,7 +1593,7 @@ simple_views = [
     FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
     OverallConditionView, GasketConditionView, ValveConditionView,
     PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
-    FluidLevelView, SamplingCardView
+    FluidLevelView, SamplingCardView, TestRecommendationView
 ]
 test_views = [
     BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,

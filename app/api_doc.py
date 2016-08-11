@@ -1130,6 +1130,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}      fluid_profile       see: fluid_profile->get an item
 @apiSuccess {Integer}   electrical_profile_id
 @apiSuccess {Dict}      electrical_profile  see: electrical_profile->get an item
+@apiSuccess {Integer}   test_recommandation_id
+@apiSuccess {Dict}      test_recommandation  see: test_recommandation->get an item
 @apiSuccess {Boolean}   percent_ratio
 @apiSuccess {String}    analysis_number
 @apiSuccess {Boolean}   bushing
@@ -1325,11 +1327,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {String}        repair_description
 @apiSuccess {String(5)}     if_rem
 @apiSuccess {String(5)}     if_ok
-@apiSuccess {Integer}       recommandation_id
-@apiSuccess {Dict}          recommandation      see: recommandation->get an item
-@apiSuccess {String}        recommendationNotes
-@apiSuccess {Integer}       recommended_by_id
-@apiSuccess {Dict}          recommended_by      see: user->get an item
 @apiSuccess {Datetime}      date_application
 @apiSuccess {String}        comments
 @apiSuccess {Float}         mws
@@ -1377,9 +1374,6 @@ doc = ApiDoc(app=api)
 @apiParam   {String}        repair_description
 @apiParam   {String(5)}     if_rem
 @apiParam   {String(5)}     if_ok
-@apiParam   {Integer}       recommandation_id
-@apiParam   {String}        recommendationNotes
-@apiParam   {Integer}       recommended_by_id
 @apiParam   {Datetime}      date_application    format "2016-07-29 17:52:19"
 @apiParam   {String}        comments
 @apiParam   {Float}         mws
@@ -3394,6 +3388,90 @@ doc = ApiDoc(app=api)
 @apiGroup recommendation
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/recommendation/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# Test recommendation
+"""
+@api {get} /test_recommendation/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_recommendation/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_recommendation/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_recommendation/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "recommendation_id": 1,
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       recommendation_id
+@apiSuccess {Dict}          recommendation      see: recommandation->get an item
+@apiSuccess {String}        recommendation_notes
+@apiSuccess {Integer}       user_id
+@apiSuccess {Dict}          user                see: user->get an item
+@apiSuccess {String}        date_created
+@apiSuccess {String}        date_updated
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_recommendation/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"recommendation_id":1}' \
+         http://localhost:8001/api/v1.0/test_recommendation/
+
+@apiParam   {Integer}       recommendation_id
+@apiParam   {String}        recommendation_notes
+@apiParam   {Integer}       user_id
+@apiParam   {String}        date_created     format "2016-07-29 17:52:19"
+@apiParam   {String}        date_updated     format "2016-07-29 17:52:19"
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_recommendation/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"recommendation_id":2}'\
+    http://localhost:8001/api/v1.0/test_recommendation/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_recommendation/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_recommendation/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
