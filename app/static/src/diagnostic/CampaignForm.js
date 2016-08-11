@@ -12,8 +12,8 @@ import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
-import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
-
+import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm'; 
+import AddEquipmentForm from './AddEquipmentForm';
 
 var items=[];
 
@@ -264,73 +264,6 @@ var TestReasonSelectField = React.createClass ({
 });
 
 
-var TestProfileSelectField = React.createClass ({
-
-    handleChange: function(event){
-        console.log('here 2');
-        console.log(event.target.name);
-        console.log(event.target.value);
-        this.setState({
-            value: event.target.value
-        });
-        this.props.handleChange(event);
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false,
-            value: null
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}  value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <FormGroup>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    name="test_prof"
-                >
-                    <option key="0" value="select">Choose profile from saved</option>
-                    {menuItems}
-                </FormControl>
-            </FormGroup>
-        );
-    }
-});
-
-
 var CampaignForm = React.createClass ({
 
 
@@ -338,7 +271,7 @@ var CampaignForm = React.createClass ({
         var fields = [
             'equipment_number', 'fluid_type_id',
             'lab_id', 'contract', 'test_reason', 'comments',
-            'date_application', 'date'
+            'date_application', 'date', 'date_prelevement'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -451,8 +384,11 @@ var CampaignForm = React.createClass ({
             showNewLabForm: false})
         
 
-    },
+    }, 
 
+    showTestList: function(){
+        this.refs.test_list.setVisible();
+    },
 
     render : function() {
 
@@ -463,7 +399,7 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-11">
                                 <CreatedBySelectField
-                                    source="http://dev.vision.local/api/v1.0/user"
+                                    source="/api/v1.0/user"
                                     handleChange={this.handleChange} />
                             </div>
                             <div className="col-md-1">
@@ -488,7 +424,7 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-11">
                                 <ContractNoSelectField
-                                    source="http://dev.vision.local/api/v1.0/contract/" />
+                                    source="/api/v1.0/contract/" />
                             </div>
                             <div className="col-md-1">
                                 <a
@@ -501,9 +437,31 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-10">
                                 <TestReasonSelectField
-                                    source="http://dev.vision.local/api/v1.0/test_reason"
+                                    source="/api/v1.0/test_reason"
                                     handleChange={this.handleChange}
                                 />
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-11">
+                                <LabAnalyserSelectField
+                                    source="/api/v1.0/lab/"
+                                    value={this.state.value} />
+                            </div>
+                            <div className="col-md-1">
+                                <Button bsStyle="primary">New</Button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-11">
+                                <LabContractSelectField
+                                    source="/api/v1.0/contract/"
+                                    handleChange={this.handleChange} />
+                            </div>
+                            <div className="col-md-1">
+                                <Button bsStyle="primary">New</Button>
                             </div>
                         </div>
 
@@ -514,69 +472,28 @@ var CampaignForm = React.createClass ({
                                 </FormGroup>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-md-10">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Number of containers"
-                                                 name="containers"
-                                    />
-                                </FormGroup>
-                            </div>
-                        </div>
 
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <ControlLabel>Date Applied</ControlLabel>
+                                    <ControlLabel>Scheduled testing</ControlLabel>
                                     <DateTimeField datetime={this.state.date_application} />
                                 </div>
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <ControlLabel>Acquisition Date</ControlLabel>
-                                    <DateTimeField datetime={this.state.ac_date} />
+                                    <ControlLabel>Lab measurement</ControlLabel>
+                                    <DateTimeField datetime={this.state.date_prelevement} />
                                 </div>
                             </div>
                         </div>
                         <hr/>
-                        <div className="row">
-                            <div className="col-md-10">
-                                <fieldset className="scheduler-border">
-                                    <legend className="scheduler-border">Campaign tests</legend>
-                                        <div id="test_prof">
-                                            <div className="col-md-4">
-                                                <a href="#/elecprofform">Electrical test 39489</a>
-                                                &nbsp;
-                                                &nbsp;
-                                                <a href="javascript:void(0)"
-                                                   className="glyphicon glyphicon-remove text-danger"
-                                                   onClick={this.handleClick}
-                                                   aria-hidden="true">
-                                                </a>
-                                            </div>
-                                        </div>
-                                </fieldset>
-                            </div>
-                        </div> 
-                        <div className="row">
-                            <div className="col-md-3">
-                                <FormGroup>
-                                    <TestProfileSelectField
-                                        source="http://dev.vision.local/api/v1.0/test_profile"/>
-                                </FormGroup>
-                            </div>
-                            <div className="col-md-1 text-center">OR</div>
-                            <div className="col-md-2">
-                                <FormGroup>
-                                    <a href="#/newtestform" className="btn btn-success">Create new one</a>
-                                </FormGroup>
-                            </div>
-                        </div>
-            
+                        
+                        <AddEquipmentForm showTestList={this.showTestList}/> 
+
                         <div className="row">
                             <div className="col-md-12 ">
                                 <Button bsStyle="success" className="pull-right" type="submit">Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" className="pull-right">Cancel</Button>
+                                <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
                             </div>
                         </div>
                     </Panel>

@@ -707,20 +707,17 @@ var NewTestForm = React.createClass ({
 
     },
 
-    closeElectricalProfileForm: function () {
-
+    closeElectricalProfileForm: function () { 
         this.setState({
             showElectroProfileForm: false
 
         })
     },
 
-    closeFluidProfileForm: function () {
-
+    closeFluidProfileForm: function () { 
         this.setState({
             showFluidProfileForm: false
-        })
-
+        }) 
     },
 
     closeCreatedByForm: function () {
@@ -766,7 +763,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <CreatedBySelectField
-                                            source="http://dev.vision.local/api/v1.0/user"
+                                            source="/api/v1.0/user"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -780,7 +777,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <MaterialSelectField
-                                            source="http://dev.vision.local/api/v1.0/material/"
+                                            source="/api/v1.0/material/"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -791,7 +788,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <FluidTypeSelectField
-                                            source="http://dev.vision.local/api/v1.0/fluid_type/"
+                                            source="/api/v1.0/fluid_type/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -802,7 +799,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <PerformedBySelectField
-                                            source="http://dev.vision.local/api/v1.0/user"
+                                            source="/api/v1.0/user"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -813,7 +810,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <LabAnalyserSelectField
-                                            source="http://dev.vision.local/api/v1.0/lab/"
+                                            source="/api/v1.0/lab/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -838,7 +835,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <RecommendSelectField
-                                            source="http://dev.vision.local/api/v1.0/recommandation_id/"
+                                            source="/api/v1.0/recommandation_id/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -849,7 +846,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <RecommendBySelectField
-                                            source="http://dev.vision.local/api/v1.0/recommended_by_id/"
+                                            source="/api/v1.0/recommended_by_id/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -987,22 +984,10 @@ var NewTestForm = React.createClass ({
                                         </FormGroup>
                                     </div>
                                 </div>
-
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <FormGroup>
-                                            <FormControl type="text"
-                                                         placeholder="Gathered Test Type"
-                                                         name="gathered_test_type"
-                                            />
-                                        </FormGroup>
-                                    </div>
-                                </div>
-
                                 <div className="row">
                                     <div className="col-md-11">
                                         <SyringeNumberSelectField
-                                            source="http://dev.vision.local/api/v1.0/syringe/"
+                                            source="/api/v1.0/syringe/"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">

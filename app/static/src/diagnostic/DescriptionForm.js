@@ -266,7 +266,7 @@ const DescriptionForm = React.createClass({
                         <div className="col-md-4 nopadding padding-right-xs">
                             <LabAnalyserSelectField
                                 ref="lab_analyser"
-                                source="http://dev.vision.local/api/v1.0/lab/"
+                                source="/api/v1.0/lab/"
                                 value={this.state.lab_analyser.value} />
                             <NewLabModalWin/>
                         </div>
@@ -292,7 +292,7 @@ const DescriptionForm = React.createClass({
                         <div className="col-md-5 nopadding padding-right-xs">
                             <TestReasonSelectField
                                 ref="test_reason"
-                                source="http://dev.vision.local/api/v1.0/test_reason"
+                                source="/api/v1.0/test_reason"
                                 handleChange={this.handleChange}
                                 />
                         </div>

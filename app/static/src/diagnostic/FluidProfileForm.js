@@ -340,7 +340,7 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField1
-                                                    source="http://dev.vision.local/api/v1.0/sampling_point"
+                                                    source="/api/v1.0/sampling_point"
                                                 />
                                             </div>
                                         </div>
@@ -433,7 +433,7 @@ const FluidProfileForm = React.createClass({
                                                 </div>
                                                 <div className="col-md-10 nopadding">
                                                     <SamplPointSelectField2
-                                                        source="http://dev.vision.local/api/v1.0/sampling_point"
+                                                        source="/api/v1.0/sampling_point"
                                                         value={ this.state.value}
                                                     />
                                                 </div>
@@ -462,7 +462,7 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField3
-                                                    source="http://dev.vision.local/api/v1.0/sampling_point"
+                                                    source="/api/v1.0/sampling_point"
                                                     value={ this.state.value} />
                                             </div>
                                         </div>

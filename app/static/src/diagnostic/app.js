@@ -15,6 +15,8 @@ import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+import TestList from './TestList';
+
 
 export default class App extends Component {
 
@@ -38,28 +40,31 @@ export default class App extends Component {
         switch( this.state.route ) {
             case '/equipment': Child = Equipment; break;
             case '/addeqform': Child = AddEquipmentForm; break;
-            case '/assigntestform': Child = CampaignForm; break;
             case '/createdby': Child = CreatedByForm; break;
             case '/contract': Child = NewContractForm; break;
             case '/material': Child = NewMaterialForm; break;
             case '/fluid': Child = NewFluidForm; break;
             case '/lab': Child = NewLabForm; break;
             case '/recommend': Child = NewRecommendationForm; break;
-            case '/newtestform': Child = NewTestForm; break;
-            case '/elecprofform': Child = ElectricalProfileForm; break;
-            case '/fluidprofform': Child = FluidProfileForm; break;
+            case '/campaign': Child = CampaignForm; break;
+            case '/testlist': Child = TestList; break;
+            case '/test': Child = NewTestForm; break;
+            case '/electro': Child = ElectricalProfileForm; break;
+            case '/fluid': Child = FluidProfileForm; break;
             case '/chooseform': Child = ChooseTestForm; break;
 
             default: Child = Home;
-        }
+        } 
+
         // <ul>
         //     <li><a href='#/home'>Home</a></li>
         //     <li><a href='#/equipment'>Equipment</a></li>
         //     <li><a href='#/addeqform'>Add Equipment</a></li>
-        //     <li><a href='#/assigntestform'>New Campaign</a></li>
-        //     <li><a href='#/newtestform'>New Test</a></li>
-        //     <li><a href='#/elecprofform'>Electrical Profile</a></li>
-        //     <li><a href='#/fluidprofform'>Fluid Profile</a></li>
+        //     <li><a href='#/campaign'>New Campaign</a></li>
+        //     <li><a href='#/test'>New Test</a></li>
+        //     <li><a href='#/testlist'>Testlist</a></li>
+        //     <li><a href='#/electro'>Electrical Profile</a></li>
+        //     <li><a href='#/fluid'>Fluid Profile</a></li>
         //     <li><a href='#/chooseform'>Choose Test Profile</a></li>
         // </ul>
 
@@ -76,7 +81,7 @@ export default class App extends Component {
                     </ul>
                 </div>
                 <div className='app-container'>
-                    <a href='#/assigntestform' className="btn btn-success btn-large">Start New Campaign</a>
+			<a href='#/campaign' className="btn btn-success btn-large">Start New Campaign</a>
                     <hr/>
                     <Child />
                 </div>

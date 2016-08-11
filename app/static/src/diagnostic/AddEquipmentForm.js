@@ -5,8 +5,6 @@ import {findDOMNode} from 'react-dom';
 import Panel from 'react-bootstrap/lib/Panel';
 
 
-
-
 var EquipmentTypeSelectField = React.createClass ({
 
 
@@ -29,9 +27,8 @@ var EquipmentTypeSelectField = React.createClass ({
     },
 
     componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
+        this.serverRequest = $.get(this.props.source, function (result){ 
+            var items = (result['result']);
             this.setState({
                 items: items
             });
@@ -54,11 +51,8 @@ var EquipmentTypeSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name} ${this.state.items[key].serial}`}</option>);
         }
-        console.log("ITEMS:",this.state.items);
-        console.log("menuITEMS:",menuItems);
         return (
             <div className="row">
                 <div className="col-md-1">
@@ -67,7 +61,11 @@ var EquipmentTypeSelectField = React.createClass ({
                 <div className="col-md-6">
                     <span>
                         <FormGroup controlId="formControlsSelect1">
-                            <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
+                            <FormControl 
+                                componentClass="select" 
+                                placeholder="equipment type" 
+                                onChange={this.handleChange}  
+                                source="/api/v1.0/equipment" >
                                 <option key="0" value="select">Select equipment {this.props.index}</option>
                                 {menuItems}
                             </FormControl>
@@ -82,16 +80,15 @@ var EquipmentTypeSelectField = React.createClass ({
                     </a>
                 </div>
                 <div className="col-md-1">
-                    <a href="http://dev.vision.local/admin/#/equipment" type="button" className="btn btn-primary ">NEW</a>
+                    <a href="#/equipment" type="button" className="btn btn-primary ">New</a>
                 </div>
                 <div className="col-md-1">
-                   <a href="http://dev.vision.local/admin/#/assigntestform" type="button" className="btn btn-success ">TESTS</a>
+                   <a href="#/testlist" type="button" className="btn btn-success">Tests</a>
                 </div>
             </div>
         );
     }
 });
-
 
 
 var AddEquipmentForm = React.createClass({
@@ -198,7 +195,6 @@ var AddEquipmentForm = React.createClass({
     },
 
     render :function () {
-        // console.log(this.state.numberOfSelects);
         var selects = [];
         for(var i=1; i <= this.state.numberOfSelects;i++){
             selects.push(
@@ -209,7 +205,7 @@ var AddEquipmentForm = React.createClass({
         return(
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="Specify equipment">
+                    <Panel header="Add equipment">
                         {selects}
                         <div className="row">
                             <div className="col-md-10">
@@ -220,10 +216,11 @@ var AddEquipmentForm = React.createClass({
                             </div>
                         </div>
                     </Panel>
-                </form>
+                </form> 
             </div>
         );
     }
 });
+
 
 export default AddEquipmentForm;

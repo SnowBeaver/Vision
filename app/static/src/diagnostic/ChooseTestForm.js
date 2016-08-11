@@ -17,9 +17,9 @@ const ChooseTestForm = React.createClass({
         e.preventDefault();
         var hash = '';
         if(this.state.profile == "fluid") {
-            hash = '#/fluidprofform';
+            hash = '#/fluid';
         } else if(this.state.profile == "electro") {
-            hash = '#/elecprofform';
+            hash = '#/electro';
         }
         window.location.hash = hash;
     },
