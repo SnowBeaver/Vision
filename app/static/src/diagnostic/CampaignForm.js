@@ -16,7 +16,6 @@ import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 
 
 var items=[];
-var e;
 
 var PerformedBySelectField = React.createClass ({
 
@@ -131,128 +130,6 @@ var CreatedBySelectField = React.createClass ({
                         onChange={this.handleChange}
                         name="created_by_id">
                         <option key="0" value="select">Created by</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
-var LabAnalyserSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value,
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="lab_id">
-                        <option key="0" value="select">Lab/On-Line Analyser</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
-var LabContractSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value,
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="contract">
-                        <option key="0" value="select">Lab Contract</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -631,34 +508,6 @@ var CampaignForm = React.createClass ({
                         </div>
 
                         <div className="row">
-                            <div className="col-md-11">
-                                <LabAnalyserSelectField
-                                    source="http://dev.vision.local/api/v1.0/lab/"
-                                    value={this.state.value} />
-                            </div>
-                            <div className="col-md-1">
-                                 <a
-                                    className="btn btn-primary new3"
-                                    onClick={this.onNewClick}
-                                 >New</a>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-11">
-                                <LabContractSelectField
-                                    source="http://dev.vision.local/api/v1.0/contract/"
-                                    handleChange={this.handleChange} />
-                            </div>
-                            <div className="col-md-1">
-                                <a
-                                    className="btn btn-primary new4"
-                                    onClick={this.onNewClick}
-                                 >New</a>
-                            </div>
-                        </div>
-
-                        <div className="row">
                             <div className="col-md-10">
                                 <FormGroup>
                                     <FormControl componentClass="textarea" placeholder="comments" name="comments"/>
@@ -741,9 +590,7 @@ var CampaignForm = React.createClass ({
                         <NewContractForm handleClose={this.closeNewContractForm} />
                 </Modal>
 
-                <Modal show={this.state.showNewLabForm}>
-                        <NewLabForm handleClose={this.closeNewLabForm} />
-                </Modal>
+                
 
 
             </div>

@@ -328,6 +328,67 @@ var LabAnalyserSelectField = React.createClass ({
 });
 
 
+var LabContractSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value,
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="contract">
+                        <option key="0" value="select">Lab Contract</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
+
 var SyringeNumberSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
@@ -655,7 +716,7 @@ var NewTestForm = React.createClass ({
     },
 
     closeFluidProfileForm: function () {
-        
+
         this.setState({
             showFluidProfileForm: false
         })
@@ -670,9 +731,9 @@ var NewTestForm = React.createClass ({
 
     onNewClick:function () {
         console.log("hi,i'm your handler")
-      this.setState({
-          showCreatedByForm: true
-      })
+        this.setState({
+            showCreatedByForm: true
+        })
     },
 
     render : function() {
@@ -710,7 +771,7 @@ var NewTestForm = React.createClass ({
                                     </div>
                                     <div className="col-md-1">
                                         <a
-                                           className="btn btn-primary new1"
+                                            className="btn btn-primary new1"
                                             onClick={this.onNewClick}
                                         >New</a>
                                     </div>
@@ -757,6 +818,20 @@ var NewTestForm = React.createClass ({
                                     </div>
                                     <div className="col-md-1">
                                         <a href="#/lab" className="btn btn-primary">New</a>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-11">
+                                        <LabContractSelectField
+                                            source="http://dev.vision.local/api/v1.0/contract/"
+                                            handleChange={this.handleChange} />
+                                    </div>
+                                    <div className="col-md-1">
+                                        <a
+                                            className="btn btn-primary new4"
+                                            onClick={this.onNewClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -955,7 +1030,7 @@ var NewTestForm = React.createClass ({
                                     <Radio name="profile" value="electro">
                                         Electrical Profile
                                     </Radio>
-                                </div> 
+                                </div>
                                 <div className="row">
                                     <div className="col-md-12">
                                         <Button bsStyle="success"
@@ -972,16 +1047,25 @@ var NewTestForm = React.createClass ({
                     </Panel>
                 </form>
                 <Modal show={this.state.showElectroProfileForm}>
-                        <ElectricalProfileForm handleClose={this.closeElectricalProfileForm} />
+                    <ElectricalProfileForm handleClose={this.closeElectricalProfileForm} />
                 </Modal>
 
                 <Modal show={this.state.showFluidProfileForm}>
-                        <FluidProfileForm handleClose={this.closeFluidProfileForm}/>
+                    <FluidProfileForm handleClose={this.closeFluidProfileForm}/>
                 </Modal>
 
                 <Modal show={this.state.showCreatedByForm}>
-                        <CreatedByForm handleClose={this.closeCreatedByForm} />
+                    <CreatedByForm handleClose={this.closeCreatedByForm} />
                 </Modal>
+
+                <Modal show={this.state.showNewLabForm}>
+                        <NewLabForm handleClose={this.closeNewLabForm} />
+                </Modal>
+
+                <Modal show={this.state.showNewContractForm}>
+                        <NewContractForm handleClose={this.closeNewContractForm} />
+                </Modal>
+
 
             </div>
         );
