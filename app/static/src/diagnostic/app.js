@@ -9,8 +9,13 @@ import ChooseTestForm from './ChooseTestForm';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
 import NewTestForm from './NewTestForm';
+import CreatedByForm from './CampaignForm_modules/CreatedByForm';
+import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
+import NewContractForm from './CampaignForm_modules/NewContractForm';
+import NewLabForm from './CampaignForm_modules/NewLabForm';
+import NewFluidForm from './NewTestForm_modules/NewFluidForm';
+import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import TestList from './TestList';
-
 
 
 export default class App extends Component {
@@ -27,14 +32,20 @@ export default class App extends Component {
                 route: window.location.hash.substr(1)
             })
         })
-    } 
-    
+    }
+
     render() {
         let Child;
 
         switch( this.state.route ) {
             case '/equipment': Child = Equipment; break;
             case '/addeqform': Child = AddEquipmentForm; break;
+            case '/createdby': Child = CreatedByForm; break;
+            case '/contract': Child = NewContractForm; break;
+            case '/material': Child = NewMaterialForm; break;
+            case '/fluid': Child = NewFluidForm; break;
+            case '/lab': Child = NewLabForm; break;
+            case '/recommend': Child = NewRecommendationForm; break;
             case '/campaign': Child = CampaignForm; break;
             case '/testlist': Child = TestList; break;
             case '/test': Child = NewTestForm; break;
@@ -56,12 +67,24 @@ export default class App extends Component {
         //     <li><a href='#/fluid'>Fluid Profile</a></li>
         //     <li><a href='#/chooseform'>Choose Test Profile</a></li>
         // </ul>
-        
-        return ( 
-            <div className='app-container'>
-                <a href='#/campaign' className="btn btn-success btn-large">Start New Campaign</a>
-                <hr/>
-                <Child />
+
+        return (
+            <div className="content">
+                <div>
+                    <ul>
+                        <li><a href='#/createdby'>created by</a></li>
+                        <li><a href='#/contract'>contract</a></li>
+                        <li><a href='#/lab'>lab</a></li>
+                        <li><a href='#/material'>material</a></li>
+                        <li><a href='#/fluid'>fluid</a></li>
+                        <li><a href='#/recommend'>recommend</a></li>
+                    </ul>
+                </div>
+                <div className='app-container'>
+			<a href='#/campaign' className="btn btn-success btn-large">Start New Campaign</a>
+                    <hr/>
+                    <Child />
+                </div>
             </div>
         );
     }

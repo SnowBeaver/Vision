@@ -7,10 +7,18 @@ import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
 import Radio from 'react-bootstrap/lib/Radio';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
-import Modal from 'react-bootstrap/lib/Modal';
+import CreatedByForm from './CampaignForm_modules/CreatedByForm';
+import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
+import NewContractForm from './CampaignForm_modules/NewContractForm';
+import NewLabForm from './CampaignForm_modules/NewLabForm';
+import NewFluidForm from './NewTestForm_modules/NewFluidForm';
+import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+
+
 var items=[];
 
 
@@ -318,6 +326,68 @@ var LabAnalyserSelectField = React.createClass ({
         );
     }
 });
+
+
+var LabContractSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value,
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="contract">
+                        <option key="0" value="select">Lab Contract</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
 
 var SyringeNumberSelectField = React.createClass ({
 
@@ -627,35 +697,44 @@ var NewTestForm = React.createClass ({
             errors: {},
             equipment_number: '',
             showFluidProfileForm: false,
-            showElectroProfileForm: false
+            showElectroProfileForm: false,
+            showCreatedByForm: false
         }
     },
 
     handleClick: function() {
         document.getElementById('test_prof').remove();
+
     },
 
-    closeElectricalProfileForm: function () {
-
-        console.log('here');
+    closeElectricalProfileForm: function () { 
         this.setState({
             showElectroProfileForm: false
 
         })
     },
 
-    closeFluidProfileForm: function () {
-        console.log('here2');
-
+    closeFluidProfileForm: function () { 
         this.setState({
             showFluidProfileForm: false
-        })
+        }) 
+    },
 
+    closeCreatedByForm: function () {
+        this.setState({
+            showCreatedByForm: false
+        })
+    },
+
+    onNewClick:function () {
+        console.log("hi,i'm your handler")
+        this.setState({
+            showCreatedByForm: true
+        })
     },
 
     render : function() {
-console.log(this.state.showFluidProfileForm);
-console.log(this.state.showElectroProfileForm);
+
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -688,7 +767,10 @@ console.log(this.state.showElectroProfileForm);
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a
+                                            className="btn btn-primary new1"
+                                            onClick={this.onNewClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -699,7 +781,7 @@ console.log(this.state.showElectroProfileForm);
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/material" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -710,7 +792,7 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/fluid" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -721,7 +803,7 @@ console.log(this.state.showElectroProfileForm);
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/createdby" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -732,7 +814,21 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/lab" className="btn btn-primary">New</a>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-11">
+                                        <LabContractSelectField
+                                            source="http://dev.vision.local/api/v1.0/contract/"
+                                            handleChange={this.handleChange} />
+                                    </div>
+                                    <div className="col-md-1">
+                                        <a
+                                            className="btn btn-primary new4"
+                                            onClick={this.onNewClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -743,7 +839,7 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/recommend" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -754,7 +850,7 @@ console.log(this.state.showElectroProfileForm);
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a href="#/createdby" className="btn btn-primary">New</a>
                                     </div>
                                 </div>
 
@@ -922,8 +1018,13 @@ console.log(this.state.showElectroProfileForm);
                                 </div>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
-                                        <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
+                                        <Button bsStyle="success"
+                                                type="submit"
+                                                className="pull-right"
+                                        >Save</Button>
+                                        <Button bsStyle="danger"
+                                                className="pull-right margin-right-xs"
+                                        >Cancel</Button>
                                     </div>
                                 </div>
                             </div>
@@ -931,11 +1032,26 @@ console.log(this.state.showElectroProfileForm);
                     </Panel>
                 </form>
                 <Modal show={this.state.showElectroProfileForm}>
-                        <ElectricalProfileForm handleClose={this.closeElectricalProfileForm} />
+                    <ElectricalProfileForm handleClose={this.closeElectricalProfileForm} />
                 </Modal>
+
                 <Modal show={this.state.showFluidProfileForm}>
-                        <FluidProfileForm handleClose={this.closeFluidProfileForm}/>
+                    <FluidProfileForm handleClose={this.closeFluidProfileForm}/>
                 </Modal>
+
+                <Modal show={this.state.showCreatedByForm}>
+                    <CreatedByForm handleClose={this.closeCreatedByForm} />
+                </Modal>
+
+                <Modal show={this.state.showNewLabForm}>
+                        <NewLabForm handleClose={this.closeNewLabForm} />
+                </Modal>
+
+                <Modal show={this.state.showNewContractForm}>
+                        <NewContractForm handleClose={this.closeNewContractForm} />
+                </Modal>
+
+
             </div>
         );
     }

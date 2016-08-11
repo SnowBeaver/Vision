@@ -80,9 +80,6 @@ var EquipmentTypeSelectField = React.createClass ({
                     </a>
                 </div>
                 <div className="col-md-1">
-                    <a href="#/equipment" type="button" className="btn btn-primary ">New</a>
-                </div>
-                <div className="col-md-1">
                    <a href="#/testlist" type="button" className="btn btn-success">Tests</a>
                 </div>
             </div>
