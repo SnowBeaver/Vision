@@ -40,8 +40,10 @@ fluid_type_schema = sampling_point_schema = contract_status_schema = interruptin
 gasket_condition_schema = gas_relay_schema = fluid_level_schema = pressure_unit_schema = valve_condition_schema = \
     pump_condition_schema = overall_condition_schema = paint_types_schema = tap_counter_status_schema = \
     tap_filter_condition_schema = fan_condition_schema = connection_condition_schema = foundation_condition_schema = \
-    heating_condition_schema = {'id': readonly_dict, 'name': type_string_maxlength_25_dict}
-# downstream_schema = upstream_schema\
+    heating_condition_schema = {
+        'id': readonly_dict,
+        'name': type_string_maxlength_25_dict
+    }
 equipment_connection_schema = {
     'id': readonly_dict,
     'equipment_id': type_integer_coerce_dict,
@@ -101,34 +103,10 @@ campaign_schema = {
     'id': readonly_dict,
     'date_created': type_datetime_required_dict,
     'created_by_id': type_integer_coerce_required_dict,
-    'performed_by_id': type_integer_coerce_required_dict,
-    'lab_id': type_integer_coerce_required_dict,
-    'material_id': type_integer_coerce_dict,
-    'fluid_type_id': type_integer_coerce_dict,
-    'charge': type_float_coerce_dict,
-    'date_sampling': type_datetime_dict,
-    'remark': type_string_dict,
-    'modifier': type_boolean_coerce_dict,
-    'transmission': type_boolean_coerce_dict,
-    'repair_date': type_datetime_dict,
-    'repair_description': type_string_dict,
-    'if_rem': type_string_maxlength_5_dict,
-    'if_ok': type_string_maxlength_5_dict,
-    'date_application': type_datetime_dict,
-    'comments': type_string_dict,
-    'mws': type_float_coerce_dict,
-    'temperature': type_float_coerce_dict,
     'contract_id': type_integer_coerce_dict,
-    'containers': type_float_coerce_dict,
-    'lab_contract_id': type_integer_coerce_dict,
-    'seringe_num': type_string_maxlength_50_dict,
-    'data_valid': type_integer_coerce_dict,
-    'status1': type_integer_coerce_dict,
-    'status2': type_integer_coerce_dict,
-    'error_state': type_integer_coerce_dict,
-    'error_code': type_integer_coerce_dict,
-    'sampling_card_id': type_integer_coerce_dict,
-    'ambient_air_temperature': type_float_coerce_dict,
+    'date_sampling': type_datetime_dict,
+    'description': type_string_dict,
+    'status_id': type_integer_coerce_dict,
     }
 contract_schema = {'id': readonly_dict,
                    'name': type_string_maxlength_50_dict,
@@ -226,6 +204,22 @@ test_result_schema = {
     'test_recommendation_id': type_integer_coerce_dict,
     'percent_ratio': type_boolean_coerce_dict,
     'analysis_number': readonly_dict,
+    'performed_by_id': type_integer_coerce_required_dict,
+    'lab_id': type_integer_coerce_required_dict,
+    'material_id': type_integer_coerce_dict,
+    'fluid_type_id': type_integer_coerce_dict,
+    'lab_contract_id': type_integer_coerce_dict,
+    'seringe_num': type_string_maxlength_50_dict,
+    'mws': type_float_coerce_dict,
+    'temperature': type_float_coerce_dict,
+    'containers': type_float_coerce_dict,
+    'transmission': type_boolean_coerce_dict,
+    'charge': type_float_coerce_dict,
+    'remark': type_string_dict,
+    'modifier': type_boolean_coerce_dict,
+    'repair_date': type_datetime_dict,
+    'repair_description': type_string_dict,
+    'ambient_air_temperature': type_float_coerce_dict,
     'bushing': type_boolean_coerce_dict,
     'winding': type_boolean_coerce_dict,
     'insulation_pf': type_boolean_coerce_dict,
@@ -538,10 +532,11 @@ syringe_schema = {'id': readonly_dict,
                   'serial': type_string_maxlength_50_required_dict,
                   'lab_id': type_integer_coerce_dict,
                   }
-test_status_schema = {'id': readonly_dict,
-                      'code': type_string_maxlength_50_dict,
-                      'name': type_string_maxlength_50_dict,
-                      }
+test_status_schema = campaign_status_schema = {
+    'id': readonly_dict,
+    'code': type_string_maxlength_50_dict,
+    'name': type_string_maxlength_50_dict,
+}
 schedule_schema = {
     'equipment_id': type_integer_coerce_required_dict,
     'start_date': type_datetime_required_dict,
@@ -1220,6 +1215,10 @@ model_dict = {
     'test_status': {
         'model': TestStatus,
         'schema': test_status_schema
+    },
+    'campaign_status': {
+        'model': CampaignStatus,
+        'schema': campaign_status_schema
     },
     'schedule': {
         'model': TestSchedule,

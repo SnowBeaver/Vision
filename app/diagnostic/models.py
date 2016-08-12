@@ -236,7 +236,7 @@ class Campaign(db.Model):
     contract = db.relationship('Contract', foreign_keys='Campaign.contract_id')
     date_sampling = db.Column(db.DateTime, index=True)
     description = db.Column(db.Text)
-    status_id = db.Column(db.ForeignKey("status.id"), nullable=True)
+    status_id = db.Column(db.ForeignKey("campaign_status.id"), nullable=True)
     status = db.relationship('CampaignStatus', foreign_keys='Campaign.status_id')
 
     #
@@ -254,8 +254,6 @@ class Campaign(db.Model):
     # status2 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status2:	 Need to look into
     # error_state = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorState: Need to look into
     # error_code = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorCode: Need to look into
-    # # AmbientAirTemperature: Ambient air temperature at sampling time
-
 
     # TODO equipment_id as a property (SQLAlchemy query filter doesn't use this property in comparison)
     @property
@@ -300,7 +298,6 @@ class Campaign(db.Model):
 
             'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
         }
-        print(self.performed_by, self.performed_by_id, self.remark)
 
 
 class FluidProfile(db.Model):
@@ -2054,11 +2051,11 @@ class TestResult(db.Model):
     fluid_type_id = db.Column(db.ForeignKey("fluid_type.id"))
     fluid_type = db.relationship('FluidType', foreign_keys='TestResult.fluid_type_id')
     performed_by_id = db.Column(db.ForeignKey("users_user.id"))
-    performed_by = db.relationship('User', foreign_keys='Campaign.performed_by_id')
+    performed_by = db.relationship('User', foreign_keys='TestResult.performed_by_id')
     lab_id = db.Column(db.ForeignKey("lab.id"), nullable=False)
-    lab = db.relationship('Lab', backref='campaign')
+    lab = db.relationship('Lab', backref='test_result')
     lab_contract_id = db.Column(db.ForeignKey("contract.id"))
-    lab_contract = db.relationship('Contract', foreign_keys='Campaign.lab_contract_id')
+    lab_contract = db.relationship('Contract', foreign_keys='TestResult.lab_contract_id')
     seringe_num = db.Column(db.String(50))
     mws = db.Column(db.Float(53))
     temperature = db.Column(db.Float(53))

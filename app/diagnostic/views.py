@@ -4,6 +4,8 @@ from datetime import datetime
 from .forms import *
 from app.admin.views import MyModelView
 from flask.ext import login
+from .models import *
+from app.users.models import User
 
 
 class EquipmentView(MyModelView):
@@ -713,54 +715,54 @@ class CampaignView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = (['equipment_id', 'lab_id', 'date', 'contract_id'])
-    column_searchable_list = (['lab_id', 'date_created', 'contract_id'])
+    column_searchable_list = (['date_created', 'contract_id'])
     # inline_models = (TestResult,)
     # column_editable_list = ['created_by']
 
     form_excluded_columns = (
         # 'id',
         # 'location_id',
-        'if_rem',
-        'if_ok',
-        'sibling',
-        'modifier',
-        'data_valid',
-        'status1',
-        'status2',
-        'error_state',
-        'error_code',
+        # 'if_rem',
+        # 'if_ok',
+        # 'sibling',
+        # 'modifier',
+        # 'data_valid',
+        # 'status1',
+        # 'status2',
+        # 'error_state',
+        # 'error_code',
     )
     column_list = (
         'date_created',
         # 'analysis_number',
         # 'equipment',
-        'fluid_type',
+        # 'fluid_type',
         'created_by',
-        'performed_by',
-        'lab',
-        'repair_date',
+        # 'performed_by',
+        # 'lab',
+        # 'repair_date',
     )
     column_filters = [
         'date_created',
         # 'analysis_number',
         # 'equipment',
-        'fluid_type',
+        # 'fluid_type',
         'created_by',
-        'performed_by',
-        'lab',
-        'repair_date',
+        # 'performed_by',
+        # 'lab',
+        # 'repair_date',
     ]
     form_ajax_refs = {
         'created_by': {'fields': (User.name,)},
-        'performed_by': {'fields': (User.name,)},
+        # 'performed_by': {'fields': (User.name,)},
         # 'recommended_by': {'fields': (User.name,)},
         # 'recommendation': {'fields': (Recommendation.name,)},
         # 'equipment': {'fields': (Equipment.equipment_number,)},
-        'material': {'fields': (Material.name,)},
-        'fluid_type': {'fields': (FluidType.name,)},
-        'lab': {'fields': (Lab.name,)},
+        # 'material': {'fields': (Material.name,)},
+        # 'fluid_type': {'fields': (FluidType.name,)},
+        # 'lab': {'fields': (Lab.name,)},
         'contract': {'fields': (Contract.name,)},
-        'lab_contract': {'fields': (Contract.name,)},
+        # 'lab_contract': {'fields': (Contract.name,)},
     }
 
     def __init__(self, dbsession):
@@ -1056,6 +1058,25 @@ class TestStatusView(MyModelView):
     def __init__(self, dbsession):
         super(TestStatusView, self).__init__(
             TestStatus, dbsession, name="Test status", category="Statuses"
+        )
+
+
+
+class CampaignStatusView(MyModelView):
+    """
+    CampaignStatus management view
+    """
+    # Visible columns in the list view
+    # can_view_details = True
+    column_hide_backrefs = False
+
+    # # List of columns that can be sorted.
+    column_sortable_list = (['name', 'code'])
+    column_searchable_list = (['name', 'code'])
+
+    def __init__(self, dbsession):
+        super(CampaignStatusView, self).__init__(
+            CampaignStatus, dbsession, name="Campaign status", category="Statuses"
         )
 
 
@@ -1599,7 +1620,7 @@ other_views = [
     InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
     ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
     EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
-    SyringeView, TestScheduleView, InhibitorTypeView
+    SyringeView, TestScheduleView, InhibitorTypeView, CampaignStatusView
 ]
 admin_views = simple_views
 admin_views.extend(test_views)
