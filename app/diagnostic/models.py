@@ -66,7 +66,7 @@ class ElectricalProfile(db.Model):
     __tablename__ = 'electrical_profile'
 
     id = db.Column(db.Integer, primary_key=True)
-    selection = db.Column(db.Unicode(256))
+    name = db.Column(db.Unicode(256))
     description = db.Column(db.Unicode(1024))
     bushing = db.Column(db.Boolean(False))
     winding = db.Column(db.Boolean(False))
@@ -101,23 +101,22 @@ class ElectricalProfile(db.Model):
 
     def clear_data(self):
         for attr in self.__dict__:
-            if attr not in ['id', '_sa_instance_state']:
-                # print attr
-                if attr == 'selection' or attr == 'description':
-                    setattr(self, attr, '')
-                else:
-                    setattr(self, attr, False)
+            if attr in ['id', '_sa_instance_state']:
+                continue
+            # print attr
+            value = '' if attr in ('name', 'description') else False
+            setattr(self, attr, value)
 
     def add_data(self, data):
         self.parsedata(data)
 
     def __repr__(self):
-        return self.selection
+        return self.name
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
-                'selection': self.selection,
+                'name': self.name,
                 'description': self.description,
                 'bushing': self.bushing,
                 'winding': self.winding,
@@ -229,141 +228,31 @@ class Campaign(db.Model):
     # )
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    date = db.Column(db.DateTime, index=True) # date of campaign start
-
-    # created_by - relation to user table  #user one  (manager group)
-    created_by_id = db.Column(
-        'created_by_id',
-        db.ForeignKey("users_user.id"),
-        nullable=False
-    )
+    date_created = db.Column(db.DateTime, index=True) # date of campaign start
+    created_by_id = db.Column(db.ForeignKey("users_user.id"), nullable=False)
     created_by = db.relationship('User', foreign_keys='Campaign.created_by_id')
-
-    # code = db.Column(db.String(50), index=True)  # AnalysisKey: Index key for all tests results - id can be used
-
-    # Sometimes it is mandatory to enter the test equipment information so same one can be used next time
-    # equipment_id = db.Column(
-    #     'equipment_id',
-    #     db.ForeignKey("equipment.id"),
-    #     nullable=False
-    # )
-    # equipment = db.relationship('Equipment', foreign_keys='Campaign.equipment_id')
-
-    # MaterialCode: Define the type of material analysed: copper, sand, paper, etc..
-    material_id = db.Column(
-        'material_id',
-        db.ForeignKey("material.id"),
-        nullable=True
-    )
-    material = db.relationship('Material', backref='campaign')
-
-    # OilType: What type of insulating material is used: Mineral oil, Silicone, Vegetable oil, etc..
-    #  comes from equipment
-    fluid_type_id = db.Column(
-        'fluid_type_id',
-        db.ForeignKey("fluid_type.id"),
-        nullable=True
-    )
-    fluid_type = db.relationship('FluidType', foreign_keys='Campaign.fluid_type_id')
-
-    # Load: what was the equipment loading at the time of sampling
-    # MW MVR (Equipment can sustain), charge is the actual MVA MW
-    charge = db.Column(db.Float(53))
-
-    # user 1 create the sampling,  date when user 2( guy in the field) starts the work
-    # SamplingDate: Date of sampling
-    # User 1 adds this value and user 2 has oprtunity to change it (he has access to database)
-    date_prelevement = db.Column(db.DateTime, index=True)
-
-    # Remark: Any pertiment remark related to sampling or equipment status  (can be entered by user1 2 or 3)
-    remark = db.Column(db.Text, nullable=True)
-
-    # SampledBy: Who did the sampling  user 2 relation to users table
-    performed_by_id = db.Column(
-        'performed_by_id',
-        db.ForeignKey("users_user.id"),
-        nullable=True
-    )
-    performed_by = db.relationship('User', foreign_keys='Campaign.performed_by_id')
-
-    # Modify: Bolean field to indicate record has changed, and foreign database need updates
-    modifier = db.Column(db.Boolean)
-
-    # Transmission: Sampled information and material has been sent to the laboratory
-    # Toggled by user 2, and sends to lab  (normally it's done buy user 1)
-    # user 2 completes the sampling compaign and reassigns record to user 1, transmision is toggled
-    # check the screenshot,  it's a file that exported to a laboratory and then received back by email
-    # compared checked and user 1 updates data
-    transmission = db.Column(db.Boolean)
-
-    # Laboratory: Company that perform the analysis.
-    lab_id = db.Column(
-        'lab_id',
-        db.ForeignKey("lab.id"),
-        nullable=False
-    )
-    lab = db.relationship('Lab', backref='campaign')
-
-    # RepairDate: entered by user1 and indicated when repair is done.  What date was repair done last time
-    # It's not a part of the campaign, it should be a kind  of type of campaign
-    repair_date = db.Column(db.DateTime)
-
-    # Repairdescription: Describe what was doen during repair, part of repair compaign
-    repair_description = db.Column(db.Text)
-
-    # Bolean field that may no longer be required
-    if_rem = db.Column(db.String(5))
-    # Bolean field that may no longer be required
-    if_ok = db.Column(db.String(5))
-
-    # generated by us3er1   uses predefined list of recommandations
-    # RecommendationCode: Used with Recommendation Table, where a list of recomended action are suggested
-    recommandation_id = db.Column('recommendation_id', db.ForeignKey("recommendation.id"), nullable=True)
-    recommendation = db.relationship('Recommendation', backref='campaign')
-
-    # RecommendationWritten:
-    # The analyser gather all his though in this field to explain what should be done in plain that
-    recommendationNotes = db.Column(db.Text)  # Text are field Reccommandation
-    # relation to user who recomends
-    recommended_by_id = db.Column('recommended_by', db.ForeignKey("users_user.id"), nullable=True)
-    recommended_by = db.relationship('User', foreign_keys='Campaign.recommended_by_id')
-
-    # DateApplication: When recommendation was written
-    date_application = db.Column(db.DateTime)
-
-    # Comments: Additional comments.
-    comments = db.Column(db.Text)
-
-    # Same like load, actual MW of the equipment
-    # MWs: Equipment loading in MWatt
-    mws = db.Column(db.Float(53), server_default=db.text("0"))
-
-    # Temperature: Equipement temperature at sampling time
-    temperature = db.Column(db.Float(53))
-    contract_id = db.Column('contract_id', db.ForeignKey("contract.id"), nullable=True)
+    contract_id = db.Column(db.ForeignKey("contract.id"), nullable=True)
     contract = db.relationship('Contract', foreign_keys='Campaign.contract_id')
+    date_sampling = db.Column(db.DateTime, index=True)
+    description = db.Column(db.Text)
+    status_id = db.Column(db.ForeignKey("campaign_status.id"), nullable=True)
+    status = db.relationship('CampaignStatus', foreign_keys='Campaign.status_id')
 
-    # Containers: How many containers are required
-    containers = db.Column(db.Float(53), server_default=db.text("1"))
+    #
+    # # Bolean field that may no longer be required
+    # if_rem = db.Column(db.String(5))
+    # # Bolean field that may no longer be required
+    # if_ok = db.Column(db.String(5))
 
-    # # GatheredTestType: Indicates the tests that are grouped for each equipment that need work on
-    # gathered_test_type = db.Column(db.String(50))
+    # # DateApplication: When recommendation was written
+    # date_application = db.Column(db.DateTime)
 
-    # contract with laboratory
-    lab_contract_id = db.Column('lab_contract_id', db.ForeignKey("contract.id"), nullable=True)
-    lab_contract = db.relationship('Contract', foreign_keys='Campaign.lab_contract_id')
-    # Seringe number as printed
-    seringe_num = db.Column(db.String(50))
 
-    data_valid = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # DataValid: Need to look into
-    status1 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status1: Need to look into
-    status2 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status2:	 Need to look into
-    error_state = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorState: Need to look into
-    error_code = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorCode: Need to look into
-    # AmbientAirTemperature: Ambient air temperature at sampling time
-    ambient_air_temperature = db.Column(db.Float(53), server_default=db.text("0"))
-    sampling_card_id = db.Column('sampling_card_id', db.ForeignKey("sampling_card.id"), nullable=True)
-    sampling_card = db.relationship('SamplingCard', foreign_keys='Campaign.sampling_card_id')
+    # data_valid = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # DataValid: Need to look into
+    # status1 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status1: Need to look into
+    # status2 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status2:	 Need to look into
+    # error_state = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorState: Need to look into
+    # error_code = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # ErrorCode: Need to look into
 
     # TODO equipment_id as a property (SQLAlchemy query filter doesn't use this property in comparison)
     @property
@@ -378,58 +267,36 @@ class Campaign(db.Model):
         return MyList([x.equipment_id for x in db.session.query(TestResult).filter_by(campaign_id=id)])
 
     def __repr__(self):
-        return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date, self.created_by)
+        return 'Campaign {0}, created at {1} by {2}'.format(self.id, self.date_created, self.created_by)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        print(self.performed_by, self.performed_by_id, self.remark)
         return {
             'id': self.id,
-            'date': dump_datetime(self.date),
+            'date_created': dump_datetime(self.date_created),
+            'date_sampling': dump_datetime(self.date_sampling),
             'created_by_id': self.created_by_id,
             'created_by': self.created_by and self.created_by.serialize(),
-            'material_id': self.material_id,
-            'material': self.material and self.material.serialize(),
-            'fluid_type_id': self.fluid_type_id,
-            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-            'charge': self.charge,
-            'date_prelevement': dump_datetime(self.date_prelevement),
-            'remark': self.remark,
-            'performed_by_id': self.performed_by_id,
-            'performed_by': self.performed_by and self.performed_by.serialize(),
-            'modifier': self.modifier,
-            'transmission': self.transmission,
-            'lab_id': self.lab_id,
-            'lab': self.lab and self.lab.serialize(),
-            'repair_date': dump_datetime(self.repair_date),
-            'repair_description': self.repair_description,
-            'if_rem': self.if_rem,
-            'if_ok': self.if_ok,
-            'recommandation_id': self.recommandation_id,
-            'recommendation': self.recommendation and self.recommendation.serialize(),
-            'recommendationNotes': self.recommendationNotes,
-            'recommended_by_id': self.recommended_by_id,
-            'recommended_by': self.recommended_by and self.recommended_by.serialize(),
-            'date_application': self.date_application,
-            'comments': self.comments,
-            'mws': self.mws,
-            'temperature': self.temperature,
             'contract_id': self.contract_id,
             'contract': self.contract and self.contract.serialize(),
-            'containers': self.containers,
-            'lab_contract_id': self.lab_contract_id,
-            'lab_contract': self.lab_contract and self.lab_contract.serialize(),
-            'seringe_num': self.seringe_num,
-            'data_valid': self.data_valid,
-            'status1': self.status1,
-            'status2': self.status2,
-            'error_state': self.error_state,
-            'error_code': self.error_code,
-            'ambient_air_temperature': self.ambient_air_temperature,
-            'sampling_card_id': self.sampling_card_id,
-            'sampling_card': self.sampling_card and self.sampling_card.serialize(),
+            'status_id': self.status_id,
+            'status': self.status and self.status.serialize(),
+            'description': self.description,
+
+            # 'if_rem': self.if_rem,
+            # 'if_ok': self.if_ok,
+            # 'date_application': self.date_application,
+
+
+            # 'data_valid': self.data_valid,
+            # 'status1': self.status1,
+            # 'status2': self.status2,
+            # 'error_state': self.error_state,
+            # 'error_code': self.error_code,
+
+
             'test_result': [ res.serialize() for res in db.session.query(TestResult).filter_by(campaign_id=self.id)]
-            }
+        }
 
 
 class FluidProfile(db.Model):
@@ -437,7 +304,7 @@ class FluidProfile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    selection = db.Column(db.Unicode(256))
+    name = db.Column(db.Unicode(256))
     description = db.Column(db.Unicode(1024))
 
     # syringe
@@ -493,25 +360,26 @@ class FluidProfile(db.Model):
 
     def clear_data(self):
         for attr in self.__dict__:
-            if attr not in ['id', '_sa_instance_state']:
-                # print attr
-                if attr == 'selection' and attr == 'description':
-                    setattr(self, attr, '')
-                if attr in ['qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
-                    setattr(self, attr, 0)
-                else:
-                    setattr(self, attr, False)
+            if attr in ['id', '_sa_instance_state']:
+                continue
+            # print attr
+            if attr in ('name', 'description'):
+                setattr(self, attr, '')
+            if attr in ['qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
+                setattr(self, attr, 0)
+            else:
+                setattr(self, attr, False)
 
     def add_data(self, data):
         self.parsedata(data)
 
     def __repr__(self):
-        return self.selection
+        return self.name
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
-                'selection': self.selection,
+                'name': self.name,
                 'description': self.description,
                 'gas': self.gas,
                 'water': self.water,
@@ -1194,40 +1062,6 @@ class Bushing(db.Model):
                 }
 
 
-# class Upstream(db.Model):
-#     __tablename__ = u'upstream'
-#
-#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-#     name = db.Column(db.String(50), index=True)
-#     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
-#     equipment = db.relationship('Equipment', foreign_keys='Upstream.equipment_id')
-#
-#     def serialize(self):
-#         """Return object data in easily serializeable format"""
-#         return {'id': self.id,
-#                 'name': self.name,
-#                 'equipment_id': self.equipment_id,
-#                 'equipment': self.equipment and self.equipment.serialize(),
-#                 }
-
-
-# class Downstream(db.Model):
-#     __tablename__ = u'downstream'
-#
-#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-#     name = db.Column(db.String(50), index=True)
-#     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
-#     equipment = db.relationship('Equipment', foreign_keys='Downstream.equipment_id')
-#
-#     def serialize(self):
-#         """Return object data in easily serializeable format"""
-#         return {'id': self.id,
-#                 'name': self.name,
-#                 'equipment_id': self.equipment_id,
-#                 'equipment': self.equipment and self.equipment.serialize(),
-#                 }
-
-
 class EquipmentConnection(db.Model):
     __tablename__ = u'equipment_connection'
 
@@ -1896,6 +1730,34 @@ class Recommendation(db.Model):
                 }
 
 
+class TestRecommendation(db.Model):
+    __tablename__ = u'test_recommendation'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    recommendation_id = db.Column(db.ForeignKey("recommendation.id"))
+    recommendation = db.relationship('Recommendation', backref='test_recommendation')
+    recommendation_notes = db.Column(db.Text)
+    user_id = db.Column(db.ForeignKey("users_user.id"))
+    user = db.relationship('User', foreign_keys='TestRecommendation.user_id')
+    date_created = db.Column(db.DateTime)
+    date_updated = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return "{} {} by {}".format(self.id, self.recommendation, self.user)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'recommendation_id': self.recommendation_id,
+                'recommendation': self.recommendation and self.recommendation.serialize(),
+                'recommendation_notes': self.recommendation_notes,
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
+                'date_created': self.date_created,
+                'date_updated': self.date_updated,
+                }
+
+
 class GasLevel(db.Model):
     # 0-normal, 1-caution, 2- danger and 3-extreme
     __tablename__ = u'gas_level'
@@ -1993,6 +1855,24 @@ class TestStatus(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     code = db.Column(db.String(50), index=True)
     name = db.Column(db.String(50), index=True)
+
+    def __repr__(self):
+        return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code
+                }
+
+
+class CampaignStatus(db.Model):
+    __tablename__ = 'campaign_status'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    code = db.Column(db.String(50))
+    name = db.Column(db.String(50))
 
     def __repr__(self):
         return self.name
@@ -2159,11 +2039,35 @@ class TestResult(db.Model):
     fluid_profile = db.relationship('FluidProfile', foreign_keys='TestResult.fluid_profile_id')
     electrical_profile_id = db.Column('electrical_profile_id', db.ForeignKey("electrical_profile.id"))
     electrical_profile = db.relationship('ElectricalProfile', foreign_keys='TestResult.electrical_profile_id')
+    test_recommendation_id = db.Column('test_recommendation_id', db.ForeignKey("test_recommendation.id"))
+    test_recommendation = db.relationship('TestRecommendation', foreign_keys='TestResult.test_recommendation_id')
     # PercentRatio: Indicate if the TTR was done using Percent ratio or Ratio. Used with TTR table
     # Comes from equipment
     # specific electrical test on winding.  TTR - tranformer term ...
     # true when user decided to use percent ratio for ttr
     percent_ratio = db.Column(db.Boolean)
+    material_id = db.Column(db.ForeignKey("material.id"))
+    material = db.relationship('Material', backref='test_result')
+    fluid_type_id = db.Column(db.ForeignKey("fluid_type.id"))
+    fluid_type = db.relationship('FluidType', foreign_keys='TestResult.fluid_type_id')
+    performed_by_id = db.Column(db.ForeignKey("users_user.id"))
+    performed_by = db.relationship('User', foreign_keys='TestResult.performed_by_id')
+    lab_id = db.Column(db.ForeignKey("lab.id"), nullable=False)
+    lab = db.relationship('Lab', backref='test_result')
+    lab_contract_id = db.Column(db.ForeignKey("contract.id"))
+    lab_contract = db.relationship('Contract', foreign_keys='TestResult.lab_contract_id')
+    seringe_num = db.Column(db.String(50))
+    mws = db.Column(db.Float(53))
+    temperature = db.Column(db.Float(53))
+    containers = db.Column(db.Float(53))
+    transmission = db.Column(db.Boolean)
+    charge = db.Column(db.Float(53))
+
+    remark = db.Column(db.Text)
+    modifier = db.Column(db.Boolean)
+    repair_date = db.Column(db.DateTime)
+    repair_description = db.Column(db.Text)
+    ambient_air_temperature = db.Column(db.Float(53))
 
     # electriacal profile fields
     bushing = db.Column(db.Boolean(False))
@@ -2248,8 +2152,31 @@ class TestResult(db.Model):
             'fluid_profile': self.fluid_profile and self.fluid_profile.serialize(),
             'electrical_profile_id': self.electrical_profile_id,
             'electrical_profile': self.electrical_profile and self.electrical_profile.serialize(),
+            'test_recommendation_id': self.test_recommendation_id,
+            'test_recommendation': self.test_recommendation and self.test_recommendation.serialize(),
             'percent_ratio': self.percent_ratio,
             'analysis_number': self.analysis_number,
+            'material_id': self.material_id,
+            'material': self.material and self.material.serialize(),
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'charge': self.charge,
+            'performed_by_id': self.performed_by_id,
+            'performed_by': self.performed_by and self.performed_by.serialize(),
+            'transmission': self.transmission,
+            'lab_id': self.lab_id,
+            'lab': self.lab and self.lab.serialize(),
+            'mws': self.mws,
+            'temperature': self.temperature,
+            'containers': self.containers,
+            'lab_contract_id': self.lab_contract_id,
+            'lab_contract': self.lab_contract and self.lab_contract.serialize(),
+            'seringe_num': self.seringe_num,
+            'remark': self.remark,
+            'modifier': self.modifier,
+            'repair_date': dump_datetime(self.repair_date),
+            'repair_description': self.repair_description,
+            'ambient_air_temperature': self.ambient_air_temperature,
             'bushing': self.bushing,
             'winding': self.winding,
             'insulation_pf': self.insulation_pf,
@@ -2293,6 +2220,10 @@ class TestResult(db.Model):
             'sampling_vial': self.sampling_vial,
             'tests': self.test_model and [
                 test.serialize() for test in db.session.query(self.test_model)
+                    .filter_by(test_result_id=self.id)
+            ],
+            'test_sampling_cards': [
+                card.serialize() for card in db.session.query(TestSamplingCard)
                     .filter_by(test_result_id=self.id)
             ]
         }
@@ -3815,4 +3746,26 @@ class NormFuran(db.Model):
                 'c2': self.c2,
                 'c3': self.c3,
                 'c4': self.c4,
+                }
+
+
+class TestSamplingCard(db.Model):
+
+    __tablename__ = 'test_sampling_card'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
+    test_result = db.relationship('TestResult', foreign_keys='TestSamplingCard.test_result_id')
+    date_created = db.Column(db.DateTime)
+    printed = db.Column(db.Boolean)
+
+    def __repr__(self):
+        return "{} created at {}".format(self.id, self.date_created)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'test_result_id': self.test_result_id,
+                'date_created': self.date_created,
+                'printed': self.printed,
                 }

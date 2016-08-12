@@ -837,7 +837,7 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "selection": "My selection",
+            "name": "My name",
             "description": "My descripton",
             "profile_type": "electrical_profile",
             "bushing": true,
@@ -852,7 +852,7 @@ doc = ApiDoc(app=api)
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(256)}   selection
+@apiSuccess {String(256)}   name
 @apiSuccess {String(1024)}  description
 @apiSuccess {String}        profile_type    electrical_profile
 @apiSuccess {Boolean}       bushing
@@ -873,10 +873,10 @@ doc = ApiDoc(app=api)
 @apiGroup electrical_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"selection":"My selection", "description": "My description", "bushing": true}' \
+         -d '{"name":"My name", "description": "My description", "bushing": true}' \
          http://localhost:8001/api/v1.0/electrical_profile/
 
-@apiParam {String(256)}   selection
+@apiParam {String(256)}   name
 @apiParam {String(1024)}  description
 @apiParam {Boolean}       bushing
 @apiParam {Boolean}       winding
@@ -940,7 +940,7 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "selection": "My selection",
+            "name": "My name",
             "description": "My descripton",
             "profile_type": "fluid_profile",
             ...
@@ -948,7 +948,7 @@ doc = ApiDoc(app=api)
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(256)}   selection
+@apiSuccess {String(256)}   name
 @apiSuccess {String(1024)}  description
 @apiSuccess {String}        profile_type  fluid_profile
 @apiSuccess {Integer}       qty
@@ -994,10 +994,10 @@ doc = ApiDoc(app=api)
 @apiGroup fluid_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"selection":"My selection", "description": "My description", "gas": true}' \
+         -d '{"name":"My name", "description": "My description", "gas": true}' \
          http://localhost:8001/api/v1.0/fluid_profile/
 
-@apiParam {String(256)}   selection
+@apiParam {String(256)}   name
 @apiParam {String(1024)}  description
 @apiParam {Integer}       qty
 @apiParam {Integer}       sampling
@@ -1130,8 +1130,31 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}      fluid_profile       see: fluid_profile->get an item
 @apiSuccess {Integer}   electrical_profile_id
 @apiSuccess {Dict}      electrical_profile  see: electrical_profile->get an item
+@apiSuccess {Integer}   test_recommandation_id
+@apiSuccess {Dict}      test_recommandation  see: test_recommandation->get an item
 @apiSuccess {Boolean}   percent_ratio
 @apiSuccess {String}    analysis_number
+@apiSuccess {Integer}   performed_by_id
+@apiSuccess {Dict}      performed_by        see: performed_by->get an item
+@apiSuccess {Integer}   lab_id
+@apiSuccess {Dict}      lab                 see: lab->get an item
+@apiSuccess {Integer}   material_id
+@apiSuccess {Dict}      material            see: material->get an item
+@apiSuccess {Integer}   fluid_type_id
+@apiSuccess {Dict}      fluid_type          see: fluid_type->get an item
+@apiSuccess {Float}     charge
+@apiSuccess {String}    remark
+@apiSuccess {Boolean}   modifier
+@apiSuccess {Boolean}   transmission
+@apiSuccess {Datetime}  repair_date
+@apiSuccess {String}    repair_description
+@apiSuccess {Float}     mws
+@apiSuccess {Float}     temperature
+@apiSuccess {Float}     containers
+@apiSuccess {Integer}   lab_contract_id
+@apiSuccess {Dict}      lab_contract        see: contract->get an item
+@apiSuccess {String}    seringe_num
+@apiSuccess {Float}     ambient_air_temperature
 @apiSuccess {Boolean}   bushing
 @apiSuccess {Boolean}   winding
 @apiSuccess {Boolean}   insulation_pf
@@ -1173,6 +1196,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}   antioxidant
 @apiSuccess {Integer}   qty_vial
 @apiSuccess {Integer}   sampling_vial
+@apiSuccess {List}      tests                see: test->get items
+@apiSuccess {List}      test_sampling_cards  see: test_sampling_cards->get items
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -1196,6 +1221,22 @@ doc = ApiDoc(app=api)
 @apiParam {Integer}   fluid_profile_id
 @apiParam {Integer}   electrical_profile_id
 @apiParam {Boolean}   percent_ratio
+@apiParam {Integer}   performed_by_id     required
+@apiParam {Integer}   lab_id              required
+@apiParam {Integer}   material_id
+@apiParam {Integer}   fluid_type_id
+@apiParam {Float}     charge
+@apiParam {String}    remark
+@apiParam {Boolean}   modifier
+@apiParam {Boolean}   transmission
+@apiParam {Datetime}  repair_date         format "2016-07-29 17:52:19"
+@apiParam {String}    repair_description
+@apiParam {Float}     mws
+@apiParam {Float}     temperature
+@apiParam {Float}     containers
+@apiParam {Integer}   lab_contract_id
+@apiParam {String}    seringe_num
+@apiParam {Float}     ambient_air_temperature
 @apiParam {Boolean}   bushing
 @apiParam {Boolean}   winding
 @apiParam {Boolean}   insulation_pf
@@ -1291,63 +1332,25 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "campaign_id": 1,
-            "reason_id": 1,
             ...
-            "date_analyse": [
+            "date_created": [
                 "2016-07-29",
                 "17:52:19"
             ],
-            "test_type_id": 1,
-            "sampling_point_id": 1,
-            "test_status_id": 1,
+            "status_id": 1,
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {Datetime}      date
+@apiSuccess {Datetime}      date_created
 @apiSuccess {Integer}       created_by_id
 @apiSuccess {Dict}          created_by          see: user->get an item
-@apiSuccess {Integer}       performed_by_id
-@apiSuccess {Dict}          performed_by        see: performed_by->get an item
-@apiSuccess {Integer}       lab_id
-@apiSuccess {Dict}          lab                 see: lab->get an item
-@apiSuccess {Integer}       material_id
-@apiSuccess {Dict}          material            see: material->get an item
-@apiSuccess {Integer}       fluid_type_id
-@apiSuccess {Dict}          fluid_type          see: fluid_type->get an item
-@apiSuccess {Float}         charge
-@apiSuccess {Datetime}      date_prelevement
-@apiSuccess {String}        remark
-@apiSuccess {Boolean}       modifier
-@apiSuccess {Boolean}       transmission
-@apiSuccess {Datetime}      repair_date
-@apiSuccess {String}        repair_description
-@apiSuccess {String(5)}     if_rem
-@apiSuccess {String(5)}     if_ok
-@apiSuccess {Integer}       recommandation_id
-@apiSuccess {Dict}          recommandation      see: recommandation->get an item
-@apiSuccess {String}        recommendationNotes
-@apiSuccess {Integer}       recommended_by_id
-@apiSuccess {Dict}          recommended_by      see: user->get an item
-@apiSuccess {Datetime}      date_application
-@apiSuccess {String}        comments
-@apiSuccess {Float}         mws
-@apiSuccess {Float}         temperature
 @apiSuccess {Integer}       contract_id
 @apiSuccess {Dict}          contract            see: contract->get an item
-@apiSuccess {Float}         containers
-@apiSuccess {Integer}       lab_contract_id
-@apiSuccess {Dict}          lab_contract        see: contract->get an item
-@apiSuccess {String(50)}    seringe_num
-@apiSuccess {Integer}       data_valid
-@apiSuccess {Integer}       status1
-@apiSuccess {Integer}       status2
-@apiSuccess {Integer}       error_state
-@apiSuccess {Integer}       error_code
-@apiSuccess {Integer}       sampling_card_id
-@apiSuccess {Dict}          sampling_card       see: sampling_card->get an item
-@apiSuccess {Float}         ambient_air_temperature
+@apiSuccess {Datetime}      date_sampling
+@apiSuccess {String}        description
+@apiSuccess {Integer}       status_id
+@apiSuccess {Dict}          status              see: campaign_status->get an item
 @apiSuccess {List}          test_result         list of related test results, see: test_result->get items
 @apiUse GetItemSuccess
 @apiUse Error404
@@ -1359,42 +1362,15 @@ doc = ApiDoc(app=api)
 @apiGroup campaign
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"created_by_id":1, "performed_by_id": 5, "lab_id": 1,"date": "2016-07-29 17:52:19"}' \
+         -d '{"created_by_id":1, "date_created": "2016-07-29 17:52:19"}' \
          http://localhost:8001/api/v1.0/campaign/
 
-@apiParam   {Datetime}      date                required format "2016-07-29 17:52:19"
+@apiParam   {Datetime}      date_created        required format "2016-07-29 17:52:19"
 @apiParam   {Integer}       created_by_id       required
-@apiParam   {Integer}       performed_by_id     required
-@apiParam   {Integer}       lab_id              required
-@apiParam   {Integer}       material_id
-@apiParam   {Integer}       fluid_type_id
-@apiParam   {Float}         charge
-@apiParam   {Datetime}      date_prelevement    format "2016-07-29 17:52:19"
-@apiParam   {String}        remark
-@apiParam   {Boolean}       modifier
-@apiParam   {Boolean}       transmission
-@apiParam   {Datetime}      repair_date         format "2016-07-29 17:52:19"
-@apiParam   {String}        repair_description
-@apiParam   {String(5)}     if_rem
-@apiParam   {String(5)}     if_ok
-@apiParam   {Integer}       recommandation_id
-@apiParam   {String}        recommendationNotes
-@apiParam   {Integer}       recommended_by_id
-@apiParam   {Datetime}      date_application    format "2016-07-29 17:52:19"
-@apiParam   {String}        comments
-@apiParam   {Float}         mws
-@apiParam   {Float}         temperature
 @apiParam   {Integer}       contract_id
-@apiParam   {Float}         containers
-@apiParam   {Integer}       lab_contract_id
-@apiParam   {String(50)}    seringe_num
-@apiParam   {Integer}       data_valid
-@apiParam   {Integer}       status1
-@apiParam   {Integer}       status2
-@apiParam   {Integer}       error_state
-@apiParam   {Integer}       error_code
-@apiParam   {Integer}       sampling_card_id
-@apiParam   {Float}         ambient_air_temperature
+@apiParam   {Datetime}      date_sampling       format "2016-07-29 17:52:19"
+@apiParam   {String}        description
+@apiParam   {Integer}       status_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -3400,6 +3376,90 @@ doc = ApiDoc(app=api)
 """
 
 
+# Test recommendation
+"""
+@api {get} /test_recommendation/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_recommendation/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_recommendation/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_recommendation/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "recommendation_id": 1,
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       recommendation_id
+@apiSuccess {Dict}          recommendation      see: recommandation->get an item
+@apiSuccess {String}        recommendation_notes
+@apiSuccess {Integer}       user_id
+@apiSuccess {Dict}          user                see: user->get an item
+@apiSuccess {String}        date_created
+@apiSuccess {String}        date_updated
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_recommendation/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"recommendation_id":1}' \
+         http://localhost:8001/api/v1.0/test_recommendation/
+
+@apiParam   {Integer}       recommendation_id
+@apiParam   {String}        recommendation_notes
+@apiParam   {Integer}       user_id
+@apiParam   {String}        date_created     format "2016-07-29 17:52:19"
+@apiParam   {String}        date_updated     format "2016-07-29 17:52:19"
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_recommendation/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"recommendation_id":2}'\
+    http://localhost:8001/api/v1.0/test_recommendation/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_recommendation/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_recommendation
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_recommendation/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
 # syringe
 """
 @api {get} /syringe/ Get a list of items
@@ -3547,6 +3607,82 @@ doc = ApiDoc(app=api)
 @apiGroup test_status
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/test_status/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# campaign_status
+"""
+@api {get} /campaign_status/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup campaign_status
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/campaign_status/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /campaign_status/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup campaign_status
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/campaign_status/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "some name",
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String(50)}    code
+@apiSuccess {String(50)}    name
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /campaign_status/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup campaign_status
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name"}' \
+         http://localhost:8001/api/v1.0/campaign_status/
+
+@apiParam   {String(50)}    code
+@apiParam   {String(50)}    name
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /campaign_status/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup campaign_status
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    http://localhost:8001/api/v1.0/campaign_status/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /campaign_status/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup campaign_status
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/campaign_status/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
@@ -7892,6 +8028,83 @@ doc = ApiDoc(app=api)
 @apiGroup heating_condition
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/heating_condition/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# test_sampling_card
+"""
+@api {get} /test_sampling_card/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_sampling_card/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_sampling_card/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_sampling_card/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "test_result_id": 1,
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       test_result_id
+@apiSuccess {Integer}       date_created
+@apiSuccess {Integer}       printed
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_sampling_card/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"test_result_id":1}' \
+         http://localhost:8001/api/v1.0/test_sampling_card/
+
+@apiParam   {Integer}       test_result_id
+@apiParam   {Integer}       date_created
+@apiParam   {Integer}       printed
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_sampling_card/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"test_result_id":1}'\
+         http://localhost:8001/api/v1.0/test_sampling_card/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_sampling_card/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_sampling_card
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_sampling_card/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
