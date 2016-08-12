@@ -17,6 +17,7 @@ import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
 
 
 var items=[];
@@ -703,7 +704,8 @@ var NewTestForm = React.createClass ({
             showNewFluidForm: false,
             showNewRecommendationForm: false,
             showNewContractForm: false,
-            showNewLabForm: false
+            showNewLabForm: false,
+            showNewSyringeForm: false
         }
     },
 
@@ -737,6 +739,13 @@ var NewTestForm = React.createClass ({
         })
     },
 
+    closeNewMaterialForm: function () {
+        this.setState({
+            showNewMaterialForm: false
+        })
+    },
+
+
     closeNewContractForm: function () {
         this.setState({
             showNewContractForm: false
@@ -755,6 +764,12 @@ var NewTestForm = React.createClass ({
         })
     },
 
+    closeNewSyringeForm: function () {
+        this.setState({
+            showNewSyringeForm: false
+        })
+    },
+
 
     onNewButtonClick:function (e) {
         if(e.target.id==='created_by')
@@ -766,7 +781,8 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: false,
                     showNewRecommendationForm: false,
                     showNewContractForm: false,
-                    showNewLabForm: false
+                    showNewLabForm: false,
+                    showNewSyringeForm: false
                 }
             )}
         else if(e.target.id==='material')
@@ -778,7 +794,8 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: false,
                     showNewRecommendationForm: false,
                     showNewContractForm: false,
-                    showNewLabForm: false
+                    showNewLabForm: false,
+                    showNewSyringeForm: false
                 })
         }
         else if(e.target.id==='fluid_type')
@@ -790,7 +807,8 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: true,
                     showNewRecommendationForm: false,
                     showNewContractForm: false,
-                    showNewLabForm: false
+                    showNewLabForm: false,
+                    showNewSyringeForm: false
                 })
         }
         else if(e.target.id==='performed_by')
@@ -802,7 +820,8 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: false,
                     showNewRecommendationForm: false,
                     showNewContractForm: false,
-                    showNewLabForm: false
+                    showNewLabForm: false,
+                    showNewSyringeForm: false
                 })
         }
         else if(e.target.id==='lab_analyser')
@@ -814,7 +833,8 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: false,
                     showNewRecommendationForm: false,
                     showNewContractForm: false,
-                    showNewLabForm: true
+                    showNewLabForm: true,
+                    showNewSyringeForm: false
                 })
         }
         else if(e.target.id==='lab_contract')
@@ -826,10 +846,11 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: false,
                     showNewRecommendationForm: false,
                     showNewContractForm: true,
-                    showNewLabForm: false
+                    showNewLabForm: false,
+                    showNewSyringeForm: false
                 })
         }
-        else if(e.target.id==='recommend')
+        else if(e.target.id==='recommend_by')
         {
             this.setState(
                 {
@@ -838,10 +859,11 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: false,
                     showNewRecommendationForm: false,
                     showNewContractForm: false,
-                    showNewLabForm: false
+                    showNewLabForm: false,
+                    showNewSyringeForm: false
                 })
         }
-        else if(e.target.id==='recommend_by')
+        else if(e.target.id==='recommend')
         {
             this.setState(
                 {
@@ -850,7 +872,21 @@ var NewTestForm = React.createClass ({
                     showNewFluidForm: false,
                     showNewRecommendationForm: true,
                     showNewContractForm: false,
-                    showNewLabForm: false
+                    showNewLabForm: false,
+                    showNewSyringeForm: false
+                })
+        }
+        else if(e.target.id==='syringe')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: false,
+                    showNewLabForm: false,
+                    showNewSyringeForm: true
                 })
         }
     },
@@ -955,7 +991,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <LabContractSelectField
-                                            source="http://dev.vision.local/api/v1.0/contract/"
+                                            source="/api/v1.0/contract/"
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
@@ -969,7 +1005,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <RecommendSelectField
-                                            source="/api/v1.0/recommandation_id/"
+                                            source="/api/v1.0/recommendation/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -983,7 +1019,7 @@ var NewTestForm = React.createClass ({
                                 <div className="row">
                                     <div className="col-md-11">
                                         <RecommendBySelectField
-                                            source="/api/v1.0/recommended_by_id/"
+                                            source="/api/v1.0/user/"
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
@@ -1131,7 +1167,10 @@ var NewTestForm = React.createClass ({
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <Button bsStyle="primary" >New</Button>
+                                        <a id="syringe"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -1201,6 +1240,10 @@ var NewTestForm = React.createClass ({
 
                 <Modal show={this.state.showNewRecommendationForm}>
                     <NewRecommendationForm handleClose={this.closeNewRecommendationForm} />
+                </Modal>
+
+                <Modal show={this.state.showNewSyringeForm}>
+                    <NewSyringeForm handleClose={this.closeNewSyringeForm} />
                 </Modal>
 
             </div>
