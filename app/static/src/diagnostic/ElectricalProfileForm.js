@@ -7,6 +7,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
+import Radio from 'react-bootstrap/lib/Radio';
 
 const ElectricalProfileForm = React.createClass({
 
@@ -58,9 +59,9 @@ const ElectricalProfileForm = React.createClass({
     hideLoading: function () {
         this.setState({loading: false});
     },
-    _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
+    _onSuccess: function (data) { 
         this.setState(this.getInitialState());
+        alert('Profile saved successfully');
         // show success message
     },
     _onError: function (data) {
@@ -150,23 +151,33 @@ const ElectricalProfileForm = React.createClass({
                                         </div>
                                     </div>
                                 </fieldset>
-
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <FormGroup>
-                                            <ControlLabel>Save As</ControlLabel>
-                                            <FormControl type="text"
-                                                         placeholder="electrical profile name"
-                                                         name="selection"/>
-                                        </FormGroup>
+                                    <div className="col-md-1">
+                                        <div>Save As</div>
                                     </div>
-                                    <div className="col-md-6">
+                                    <div className="col-md-2">
+                                        <div className="row">
+                                            <FormGroup>
+                                                <FormControl type="text"
+                                                             placeholder="electrical profile name"
+                                                             name="selection"/>
+                                            </FormGroup>
+                                        </div>
+                                        <div className="row">
+                                            <Radio name="shared" value="1" inline={true}>
+                                                Global
+                                            </Radio>
+                                            <Radio name="shared" value="0" inline={true}>
+                                                Private
+                                            </Radio>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-9">
                                         <FormGroup controlId="commentsTextarea">
-                                            <ControlLabel>Comments</ControlLabel>
                                             <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
                                         </FormGroup>
                                     </div>
-                                </div>
+                                </div> 
                                 <div className="row">
                                     <div className="col-md-12">
                                         <Button bsStyle="success" type="submit" className="pull-right">Save</Button>

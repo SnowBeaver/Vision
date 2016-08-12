@@ -837,22 +837,24 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "selection": "My selection"
-            "description": "My descripton"
-            "bushing": true
-            "winding": true
-            "insulation_pf": true
-            "insulation": true
-            "visual": true
-            "resistance": true
-            "degree": true
-            "turns": true
+            "selection": "My selection",
+            "description": "My descripton",
+            "profile_type": "electrical_profile",
+            "bushing": true,
+            "winding": true,
+            "insulation_pf": true,
+            "insulation": true,
+            "visual": true,
+            "resistance": true,
+            "degree": true,
+            "turns": true,
         }
     }
 
 @apiSuccess {Integer}       id
 @apiSuccess {String(256)}   selection
 @apiSuccess {String(1024)}  description
+@apiSuccess {String}        profile_type    electrical_profile
 @apiSuccess {Boolean}       bushing
 @apiSuccess {Boolean}       winding
 @apiSuccess {Boolean}       insulation_pf
@@ -938,8 +940,9 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "selection": "My selection"
-            "description": "My descripton"
+            "selection": "My selection",
+            "description": "My descripton",
+            "profile_type": "fluid_profile",
             ...
         }
     }
@@ -947,6 +950,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       id
 @apiSuccess {String(256)}   selection
 @apiSuccess {String(1024)}  description
+@apiSuccess {String}        profile_type  fluid_profile
 @apiSuccess {Integer}       qty
 @apiSuccess {Integer}       sampling
 @apiSuccess {Integer}       qty_jar
@@ -1056,6 +1060,20 @@ doc = ApiDoc(app=api)
 """
 
 
+# Test profile
+"""
+@api {get} /test_profile/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_profile
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_profile/
+
+@apiDescription This is the united list of two list, see: fluid_profile->get items and electrical_profile->get items.
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+
 # Test result
 """
 @api {get} /test_result/ Get a list of items
@@ -1113,6 +1131,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}   electrical_profile_id
 @apiSuccess {Dict}      electrical_profile  see: electrical_profile->get an item
 @apiSuccess {Boolean}   percent_ratio
+@apiSuccess {String}    analysis_number
 @apiSuccess {Boolean}   bushing
 @apiSuccess {Boolean}   winding
 @apiSuccess {Boolean}   insulation_pf
@@ -1295,7 +1314,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}          lab                 see: lab->get an item
 @apiSuccess {Integer}       material_id
 @apiSuccess {Dict}          material            see: material->get an item
-@apiSuccess {String(15)}    analysis_number
 @apiSuccess {Integer}       fluid_type_id
 @apiSuccess {Dict}          fluid_type          see: fluid_type->get an item
 @apiSuccess {Float}         charge
@@ -1349,7 +1367,6 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       performed_by_id     required
 @apiParam   {Integer}       lab_id              required
 @apiParam   {Integer}       material_id
-@apiParam   {String(15)}    analysis_number
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Float}         charge
 @apiParam   {Datetime}      date_prelevement    format "2016-07-29 17:52:19"
@@ -6105,7 +6122,7 @@ doc = ApiDoc(app=api)
 @apiGroup fluid_type
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/fluid_type/1
+         http://localhost:8001/api/v1.0/fluid_type/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6178,7 +6195,7 @@ doc = ApiDoc(app=api)
 @apiGroup sampling_point
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/sampling_point/1
+         http://localhost:8001/api/v1.0/sampling_point/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6251,7 +6268,7 @@ doc = ApiDoc(app=api)
 @apiGroup contract_status
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/contract_status/1
+         http://localhost:8001/api/v1.0/contract_status/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6324,7 +6341,7 @@ doc = ApiDoc(app=api)
 @apiGroup interrupting_medium
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/interrupting_medium/1
+         http://localhost:8001/api/v1.0/interrupting_medium/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6397,7 +6414,7 @@ doc = ApiDoc(app=api)
 @apiGroup gas_level
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/gas_level/1
+         http://localhost:8001/api/v1.0/gas_level/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6473,7 +6490,7 @@ doc = ApiDoc(app=api)
 @apiGroup equipment_connection
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"parent_id": 4}'\
-		 http://localhost:8001/api/v1.0/equipment_connection/1
+         http://localhost:8001/api/v1.0/equipment_connection/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6549,7 +6566,7 @@ doc = ApiDoc(app=api)
 @apiGroup sampling_card
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"card_print": false}'\
-		 http://localhost:8001/api/v1.0/sampling_card/1
+         http://localhost:8001/api/v1.0/sampling_card/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6622,7 +6639,7 @@ doc = ApiDoc(app=api)
 @apiGroup breaker_mechanism
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/breaker_mechanism/1
+         http://localhost:8001/api/v1.0/breaker_mechanism/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6695,7 +6712,7 @@ doc = ApiDoc(app=api)
 @apiGroup insulation
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/insulation/1
+         http://localhost:8001/api/v1.0/insulation/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6768,7 +6785,7 @@ doc = ApiDoc(app=api)
 @apiGroup test_reason
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/test_reason/1
+         http://localhost:8001/api/v1.0/test_reason/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6841,7 +6858,7 @@ doc = ApiDoc(app=api)
 @apiGroup location
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/location/1
+         http://localhost:8001/api/v1.0/location/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6914,7 +6931,7 @@ doc = ApiDoc(app=api)
 @apiGroup gasket_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/gasket_condition/1
+         http://localhost:8001/api/v1.0/gasket_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -6987,7 +7004,7 @@ doc = ApiDoc(app=api)
 @apiGroup gas_relay
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/gas_relay/1
+         http://localhost:8001/api/v1.0/gas_relay/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7060,7 +7077,7 @@ doc = ApiDoc(app=api)
 @apiGroup fluid_level
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/fluid_level/1
+         http://localhost:8001/api/v1.0/fluid_level/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7133,7 +7150,7 @@ doc = ApiDoc(app=api)
 @apiGroup pressure_unit
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/pressure_unit/1
+         http://localhost:8001/api/v1.0/pressure_unit/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7206,7 +7223,7 @@ doc = ApiDoc(app=api)
 @apiGroup valve_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/valve_condition/1
+         http://localhost:8001/api/v1.0/valve_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7279,7 +7296,7 @@ doc = ApiDoc(app=api)
 @apiGroup pump_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/pump_condition/1
+         http://localhost:8001/api/v1.0/pump_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7352,7 +7369,7 @@ doc = ApiDoc(app=api)
 @apiGroup overall_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/overall_condition/1
+         http://localhost:8001/api/v1.0/overall_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7425,7 +7442,7 @@ doc = ApiDoc(app=api)
 @apiGroup paint_types
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/paint_types/1
+         http://localhost:8001/api/v1.0/paint_types/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7498,7 +7515,7 @@ doc = ApiDoc(app=api)
 @apiGroup tap_counter_status
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/tap_counter_status/1
+         http://localhost:8001/api/v1.0/tap_counter_status/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7571,7 +7588,7 @@ doc = ApiDoc(app=api)
 @apiGroup tap_filter_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/tap_filter_condition/1
+         http://localhost:8001/api/v1.0/tap_filter_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7644,7 +7661,7 @@ doc = ApiDoc(app=api)
 @apiGroup fan_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/fan_condition/1
+         http://localhost:8001/api/v1.0/fan_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7717,7 +7734,7 @@ doc = ApiDoc(app=api)
 @apiGroup connection_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/connection_condition/1
+         http://localhost:8001/api/v1.0/connection_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7790,7 +7807,7 @@ doc = ApiDoc(app=api)
 @apiGroup foundation_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/foundation_condition/1
+         http://localhost:8001/api/v1.0/foundation_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400
@@ -7863,7 +7880,7 @@ doc = ApiDoc(app=api)
 @apiGroup heating_condition
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-		 http://localhost:8001/api/v1.0/heating_condition/1
+         http://localhost:8001/api/v1.0/heating_condition/1
 
 @apiUse PutItemSuccess
 @apiUse Error400

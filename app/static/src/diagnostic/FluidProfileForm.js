@@ -6,6 +6,7 @@ import Checkbox from 'react-bootstrap/lib/Checkbox';
 import {findDOMNode} from 'react-dom';
 import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
+import Radio from 'react-bootstrap/lib/Radio';
 
 var items =[];
 
@@ -216,7 +217,6 @@ const FluidProfileForm = React.createClass({
             var key= fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
 
         return $.ajax({
             url: '/api/v1.0/fluid_profile/',
@@ -249,7 +249,8 @@ const FluidProfileForm = React.createClass({
     },
     _onSuccess: function (data) {
         this.refs.eqtype_form.getDOMNode().reset();
-        this.setState(this.getInitialState());
+        this.setState(this.getInitialState()); 
+        alert('Profile saved successfully');
         // show success message
     },
     _onError: function (data) {
@@ -266,7 +267,6 @@ const FluidProfileForm = React.createClass({
     },
     _onChange: function (e) {
         var state = {};
-        // console.log(e.target.type);
         if(e.target.type == 'checkbox'){
             state[e.target.name] = e.target.checked;
         }
@@ -469,22 +469,33 @@ const FluidProfileForm = React.createClass({
                                     </div>
                                 </fieldset>
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <FormGroup>
-                                            <ControlLabel>Save As</ControlLabel>
-                                            <FormControl type="text"
-                                                         placeholder="electrical profile name"
-                                                         name="selection"/>
-                                        </FormGroup>
+                                    <div className="col-md-1">
+                                        <div>Save As</div>
                                     </div>
-                                    <div className="col-md-6">
+                                    <div className="col-md-2">
+                                        <div className="row">
+                                            <FormGroup>
+                                                <FormControl type="text"
+                                                             placeholder="electrical profile name"
+                                                             name="selection"/>
+                                            </FormGroup>
+                                        </div>
+                                        <div className="row">
+                                            <Radio name="shared" value="1" inline={true}>
+                                                Global
+                                            </Radio>
+                                            <Radio name="shared" value="0" inline={true}>
+                                                Private
+                                            </Radio>
+                                        </div>
+                                    </div> 
+                                    <div className="col-md-9">
                                         <FormGroup controlId="commentsTextarea">
-                                            <ControlLabel>Comments</ControlLabel>
                                             <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
                                         </FormGroup>
                                     </div>
                                 </div>
-                                <div className="row">
+                                <div className="row"> 
                                     <div className="col-md-12">
                                         <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
                                         <Button bsStyle="danger" 

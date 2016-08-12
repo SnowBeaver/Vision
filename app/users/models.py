@@ -90,6 +90,12 @@ class User(db.Model, UserMixin):
         self.alias = alias
         self.password = password
 
+    @property
+    def initials(self):
+        if not self.name:
+            return ""
+        return ("".join([x[:1] for x in self.name.split()])).upper()
+
     def getStatus(self):
         return USER.STATUS[self.status]
 

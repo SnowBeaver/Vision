@@ -1,7 +1,7 @@
 import React from 'react';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
-
+import { Link } from 'react-router';
 
 var items =[];
 
@@ -72,7 +72,7 @@ var TestList = React.createClass ({
                     <div className="col-md-1 text-center">OR</div>
                     <div className="col-md-2">
                         <FormGroup>
-                            <a href="#/test" className="btn btn-success">Create new one</a>
+                            <Link to="/add_test" className="btn btn-success">Create new one</Link>
                         </FormGroup>
                     </div>
                 </div>
@@ -123,7 +123,7 @@ var TestProfileSelectField = React.createClass ({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}  value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}  value={this.state.items[key].id}>{`${this.state.items[key].selection}`}</option>);
         }
 
         return (
