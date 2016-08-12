@@ -1741,6 +1741,8 @@ class TestRecommendation(db.Model):
     user = db.relationship('User', foreign_keys='TestRecommendation.user_id')
     date_created = db.Column(db.DateTime)
     date_updated = db.Column(db.DateTime)
+    test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
+    test_result = db.relationship('TestResult', backref='test_recommendation')
 
     def __repr__(self):
         return "{} {} by {}".format(self.id, self.recommendation, self.user)
@@ -2039,8 +2041,7 @@ class TestResult(db.Model):
     fluid_profile = db.relationship('FluidProfile', foreign_keys='TestResult.fluid_profile_id')
     electrical_profile_id = db.Column('electrical_profile_id', db.ForeignKey("electrical_profile.id"))
     electrical_profile = db.relationship('ElectricalProfile', foreign_keys='TestResult.electrical_profile_id')
-    test_recommendation_id = db.Column('test_recommendation_id', db.ForeignKey("test_recommendation.id"))
-    test_recommendation = db.relationship('TestRecommendation', foreign_keys='TestResult.test_recommendation_id')
+
     # PercentRatio: Indicate if the TTR was done using Percent ratio or Ratio. Used with TTR table
     # Comes from equipment
     # specific electrical test on winding.  TTR - tranformer term ...
@@ -2152,8 +2153,6 @@ class TestResult(db.Model):
             'fluid_profile': self.fluid_profile and self.fluid_profile.serialize(),
             'electrical_profile_id': self.electrical_profile_id,
             'electrical_profile': self.electrical_profile and self.electrical_profile.serialize(),
-            'test_recommendation_id': self.test_recommendation_id,
-            'test_recommendation': self.test_recommendation and self.test_recommendation.serialize(),
             'percent_ratio': self.percent_ratio,
             'analysis_number': self.analysis_number,
             'material_id': self.material_id,
@@ -2224,6 +2223,10 @@ class TestResult(db.Model):
             ],
             'test_sampling_cards': [
                 card.serialize() for card in db.session.query(TestSamplingCard)
+                    .filter_by(test_result_id=self.id)
+            ],
+            'test_recommendations': [
+                item.serialize() for item in db.session.query(TestRecommendation)
                     .filter_by(test_result_id=self.id)
             ]
         }
@@ -3768,4 +3771,23 @@ class TestSamplingCard(db.Model):
                 'test_result_id': self.test_result_id,
                 'date_created': self.date_created,
                 'printed': self.printed,
+                }
+
+
+class Country(db.Model):
+
+    __tablename__ = 'country'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.Unicode)
+    iso_name = db.Column(db.String(2))
+
+    def __repr__(self):
+        return u"{} ({})".format(self.name, self.iso_name)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'iso_name': self.iso_name,
                 }

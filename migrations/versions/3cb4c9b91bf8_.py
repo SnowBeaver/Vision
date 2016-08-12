@@ -18,9 +18,17 @@ def upgrade():
     sql = """
         ALTER TABLE public.test_result ADD fluid_profile_id INT NULL;
         ALTER TABLE public.test_result ADD electrical_profile_id INT NULL;
+        ALTER TABLE public.test_result ADD CONSTRAINT test_result_fluid_profile_id_fk
+        FOREIGN KEY (fluid_profile_id) REFERENCES fluid_profile (id);
+        ALTER TABLE public.test_result ADD CONSTRAINT test_result_electrical_profile_id_fk
+        FOREIGN KEY (electrical_profile_id) REFERENCES electrical_profile (id);
     """
     op.execute(sql=sql)
 
 
 def downgrade():
-    pass
+    sql = """
+        ALTER TABLE public.test_result DROP fluid_profile_id;
+        ALTER TABLE public.test_result DROP electrical_profile_id;
+        """
+    op.execute(sql=sql)

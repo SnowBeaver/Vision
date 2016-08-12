@@ -1593,7 +1593,7 @@ class FluidTestView(MyTestView):
 
 class TestSamplingCardView(MySimpleView):
     """
-    TestRecommendation management view
+    TestSamplingCard management view
     """
     # List of columns that can be sorted.
     column_sortable_list = ()
@@ -1602,6 +1602,15 @@ class TestSamplingCardView(MySimpleView):
     def __init__(self, dbsession):
         super(TestSamplingCardView, self).__init__(
             TestSamplingCard, dbsession, category="Campaign", name="Test sampling card"
+        )
+
+class CountryView(MySimpleView):
+    """
+    Country management view
+    """
+    def __init__(self, dbsession):
+        super(CountryView, self).__init__(
+            Country, dbsession, category="Options", name="Country"
         )
 
 simple_views = [
@@ -1626,7 +1635,7 @@ other_views = [
     InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
     ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
     EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
-    SyringeView, TestScheduleView, InhibitorTypeView, CampaignStatusView
+    SyringeView, TestScheduleView, InhibitorTypeView, CampaignStatusView, CountryView
 ]
 admin_views = simple_views
 admin_views.extend(test_views)

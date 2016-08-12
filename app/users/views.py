@@ -343,7 +343,7 @@ def change_password():
 
     if form.validate_on_submit():
         user.name = form.name.data
-        user.country = form.country.data
+        user.country_id = form.country_id.data
         user.address = form.address.data
         user.mobile = form.mobile.data
         user.website = form.website.data

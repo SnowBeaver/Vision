@@ -28,4 +28,5 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    sql = """DROP TABLE IF EXISTS public.test_sampling_card;"""
+    op.execute(sql=sql)

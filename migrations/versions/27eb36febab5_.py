@@ -22,4 +22,7 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    sql = """
+      ALTER TABLE public.campaign ADD analysis_number TEXT;
+    """
+    op.execute(sql=sql)

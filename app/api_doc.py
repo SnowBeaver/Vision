@@ -1130,8 +1130,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}      fluid_profile       see: fluid_profile->get an item
 @apiSuccess {Integer}   electrical_profile_id
 @apiSuccess {Dict}      electrical_profile  see: electrical_profile->get an item
-@apiSuccess {Integer}   test_recommandation_id
-@apiSuccess {Dict}      test_recommandation  see: test_recommandation->get an item
 @apiSuccess {Boolean}   percent_ratio
 @apiSuccess {String}    analysis_number
 @apiSuccess {Integer}   performed_by_id
@@ -1198,6 +1196,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}   sampling_vial
 @apiSuccess {List}      tests                see: test->get items
 @apiSuccess {List}      test_sampling_cards  see: test_sampling_cards->get items
+@apiSuccess {List}      test_recommendations see: test_recommendations->get items
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -8109,6 +8108,45 @@ doc = ApiDoc(app=api)
 @apiUse DelItemSuccess
 @apiUse Error404
 """
+
+# country
+"""
+@api {get} /country/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup country
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/country/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /country/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup country
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/country/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "Afghanistan",
+            "iso_name": "AF",
+        }
+    }
+
+@apiSuccess {Integer}   id
+@apiSuccess {String}    name
+@apiSuccess {String}    iso_name
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+
 
 # TODO has no id
 # schedule

@@ -16,8 +16,8 @@ import sqlalchemy as sa
 
 def upgrade():
     sql = """
-        ALTER TABLE public.electrical_profile RENAME COLUMN selection TO name;
-        ALTER TABLE public.fluid_profile RENAME COLUMN selection TO name;
+        ALTER TABLE IF EXISTS public.electrical_profile RENAME COLUMN selection TO name;
+        ALTER TABLE IF EXISTS public.fluid_profile RENAME COLUMN selection TO name;
     """
 
     op.execute(sql=sql)
@@ -25,8 +25,8 @@ def upgrade():
 
 def downgrade():
     sql = """
-        ALTER TABLE public.electrical_profile RENAME COLUMN name TO selection;
-        ALTER TABLE public.fluid_profile RENAME COLUMN name TO selection;
+        ALTER TABLE IF EXISTS public.electrical_profile RENAME COLUMN name TO selection;
+        ALTER TABLE IF EXISTS public.fluid_profile RENAME COLUMN name TO selection;
     """
 
     op.execute(sql=sql)

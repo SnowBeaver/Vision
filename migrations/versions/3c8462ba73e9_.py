@@ -33,4 +33,11 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    sql = """
+        ALTER TABLE IF EXISTS public.campaign DROP sampling_card_id;
+        DROP TABLE IF EXISTS public.sampling_card;
+        ALTER TABLE public.campaign ADD gathered_test_type TEXT;
+        ALTER TABLE public.campaign ADD sampling_card_gathered INT;
+        ALTER TABLE public.campaign ADD sampling_card_print BOOLEAN;
+        """
+    op.execute(sql=sql)
