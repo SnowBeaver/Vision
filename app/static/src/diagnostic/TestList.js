@@ -72,7 +72,7 @@ var TestList = React.createClass ({
                     <div className="col-md-1 text-center">OR</div>
                     <div className="col-md-2">
                         <FormGroup>
-                            <a href="#/test" className="btn btn-success">Create new one</a>
+                            <Link to="/add_test" className="btn btn-success">Create new one</Link>
                         </FormGroup>
                     </div>
                 </div>
