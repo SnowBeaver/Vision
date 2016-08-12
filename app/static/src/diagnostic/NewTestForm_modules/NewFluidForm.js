@@ -5,9 +5,11 @@ import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 
+
 var items= [];
 
-var NameSelectField = React.createClass ({
+
+var FluidNameSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
@@ -57,8 +59,8 @@ var NameSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="name">
-                        <option key="0" value="select">Name</option>
+                        name="fluid_name">
+                        <option key="0" value="select">Fluid Name</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -67,66 +69,6 @@ var NameSelectField = React.createClass ({
     }
 });
 
-
-var TransformerSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="">
-                        <option key="0" value="select">Transformer</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
 
 
 var NewFluidForm = React.createClass ({
@@ -134,7 +76,7 @@ var NewFluidForm = React.createClass ({
 
     _create: function () {
         var fields = [
-            'code', 'analyser', 'name', 'seringe_num', ''
+            'fluid_name'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -144,7 +86,7 @@ var NewFluidForm = React.createClass ({
         console.log(data);
 
         return $.ajax({
-            url: '/api/v1.0/test/',
+            url: '/api/v1.0/fluid_type/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -241,29 +183,29 @@ var NewFluidForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Campaign">
+                    <Panel header="New Fluid Profile">
 
                         <div className="row">
                             <div className="col-md-12">
-                                <NameSelectField
-                                    source="http://dev.vision.local/api/v1.0/name"
-                                    handleChange={this.handleChange} />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-12">
-                                <TransformerSelectField
-                                    source="http://dev.vision.local/api/v1.0/"
+                                <FluidNameSelectField
+                                    source="/api/v1.0/fluid_type"
                                     handleChange={this.handleChange} />
                             </div>
                         </div>
 
                         <div className="row">
                             <div className="col-md-12 ">
-                                <Button bsStyle="success" className="btn btn-success pull-right" type="submit">Save</Button>
+                                <Button bsStyle="success"
+                                        className="btn btn-success pull-right"
+                                        type="submit"
+                                        onClick={this.props.handleClose}
+                                >Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" className="pull-right">Cancel</Button>
+                                <Button bsStyle="danger"
+                                        className="pull-right"
+                                        onClick={this.props.handleClose}
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
                             </div>
                         </div>
                     </Panel>

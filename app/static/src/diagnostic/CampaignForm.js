@@ -8,76 +8,13 @@ import Panel from 'react-bootstrap/lib/Panel';
 import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
 import CreatedByForm from './CampaignForm_modules/CreatedByForm';
-import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
-import NewLabForm from './CampaignForm_modules/NewLabForm';
-import NewFluidForm from './NewTestForm_modules/NewFluidForm';
-import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm'; 
 import AddEquipmentForm from './AddEquipmentForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 
 var items=[];
 
-var PerformedBySelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="performed_by_id">
-                        <option key="0" value="select">Assigned to</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
 
 
 var CreatedBySelectField = React.createClass ({
@@ -334,13 +271,36 @@ var CampaignForm = React.createClass ({
         document.getElementById('test_prof').remove();
     },
 
-    onNewClick:function () { 
+    onNewButtonClick:function (e) {
+        if(e.target.id==='created_by')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: true,
+                    showNewContractForm: false
+                }
+            )}
+        else if(e.target.id==='contract_no')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewContractForm: true
+                })
+        }
+    },
+
+    closeCreatedByForm: function () {
         this.setState({
-            showCreatedByForm: true,
-            showNewContractForm: false,
-            showNewLabForm: false
-        }) 
-    }, 
+            showCreatedByForm: false
+        })
+    },
+
+    closeNewContractForm: function () {
+        this.setState({
+            showNewContractForm: false
+        })
+    },
 
     showTestList: function(){
         this.refs.test_list.setVisible();
@@ -362,10 +322,11 @@ var CampaignForm = React.createClass ({
                             </div>
                             <div className="col-md-1">
                                 <FormGroup>
-                                    <a
-                                        className="btn btn-primary new1"
-                                        onClick={this.onNewClick}
-                                    >New</a>
+                                    <a id="created_by"
+                                       className="btn btn-primary "
+                                       onClick={this.onNewButtonClick}>
+                                        New
+                                    </a>
                                 </FormGroup>
                             </div>
                         </div>
@@ -385,17 +346,20 @@ var CampaignForm = React.createClass ({
                                     source="/api/v1.0/contract/" />
                             </div>
                             <div className="col-md-1">
-                                <a
-                                    className="btn btn-primary new2"
-                                    onClick={this.onNewClick}
-                                >New</a>
+                                <a id="contract_no"
+                                   className="btn btn-primary new2"
+                                   onClick={this.onNewButtonClick}>
+                                    New
+                                </a>
                             </div>
                         </div>
 
                         <div className="row">
                             <div className="col-md-10">
                                 <FormGroup>
-                                    <FormControl componentClass="textarea" placeholder="comments" name="comments"/>
+                                    <FormControl componentClass="textarea" 
+                                                 placeholder="comments" 
+                                                 name="comments"/>
                                 </FormGroup>
                             </div>
                         </div>
@@ -412,19 +376,22 @@ var CampaignForm = React.createClass ({
                                 </div>
                             </div>
                         </div>
-                    <div className="row">
-                        <div className="col-md-12 ">
-                            <Button bsStyle="success" className="pull-right" type="submit">Save</Button>
-                            &nbsp;
-                            <Button bsStyle="danger" className="pull-right margin-right-xs">Cancel</Button>
+                        <div className="row">
+                            <div className="col-md-12 ">
+                                <Button bsStyle="success"
+                                        className="pull-right"
+                                        type="submit">Save</Button>
+                                &nbsp;
+                                <Button bsStyle="danger"
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
+                            </div>
                         </div>
-                    </div>
-                    </form>
-                </Panel>
+                        </form>
+                    </Panel>
                 <hr/>
 
-                <AddEquipmentForm showTestList={this.showTestList}/>
-
+                <AddEquipmentForm showTestList={this.showTestList}/> 
 
                 <Modal show={this.state.showCreatedByForm}>
                     <CreatedByForm handleClose={this.closeCreatedByForm} />

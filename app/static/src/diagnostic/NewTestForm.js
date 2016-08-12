@@ -756,7 +756,12 @@ var NewTestForm = React.createClass ({
             equipment_number: '',
             showFluidProfileForm: false,
             showElectroProfileForm: false,
-            showCreatedByForm: false
+            showCreatedByForm: false,
+            showNewMaterialForm: false,
+            showNewFluidForm: false,
+            showNewRecommendationForm: false,
+            showNewContractForm: false,
+            showNewLabForm: false
         }
     },
 
@@ -765,17 +770,17 @@ var NewTestForm = React.createClass ({
 
     },
 
-    closeElectricalProfileForm: function () { 
+    closeElectricalProfileForm: function () {
         this.setState({
             showElectroProfileForm: false
 
         })
     },
 
-    closeFluidProfileForm: function () { 
+    closeFluidProfileForm: function () {
         this.setState({
             showFluidProfileForm: false
-        }) 
+        })
     },
 
     closeCreatedByForm: function () {
@@ -784,11 +789,128 @@ var NewTestForm = React.createClass ({
         })
     },
 
-    onNewClick:function () {
-        console.log("hi,i'm your handler")
+    closeNewFluidForm: function () {
         this.setState({
-            showCreatedByForm: true
+            showNewFluidForm: false
         })
+    },
+
+    closeNewContractForm: function () {
+        this.setState({
+            showNewContractForm: false
+        })
+    },
+
+    closeNewLabForm: function () {
+        this.setState({
+            showNewLabForm: false
+        })
+    },
+
+    closeNewRecommendationForm: function () {
+        this.setState({
+            showNewRecommendationForm: false
+        })
+    },
+
+
+    onNewButtonClick:function (e) {
+        if(e.target.id==='created_by')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: true,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: false,
+                    showNewLabForm: false
+                }
+            )}
+        else if(e.target.id==='material')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewMaterialForm: true,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: false,
+                    showNewLabForm: false
+                })
+        }
+        else if(e.target.id==='fluid_type')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: true,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: false,
+                    showNewLabForm: false
+                })
+        }
+        else if(e.target.id==='performed_by')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: true,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: false,
+                    showNewLabForm: false
+                })
+        }
+        else if(e.target.id==='lab_analyser')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: false,
+                    showNewLabForm: true
+                })
+        }
+        else if(e.target.id==='lab_contract')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: true,
+                    showNewLabForm: false
+                })
+        }
+        else if(e.target.id==='recommend')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: true,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: false,
+                    showNewContractForm: false,
+                    showNewLabForm: false
+                })
+        }
+        else if(e.target.id==='recommend_by')
+        {
+            this.setState(
+                {
+                    showCreatedByForm: false,
+                    showNewMaterialForm: false,
+                    showNewFluidForm: false,
+                    showNewRecommendationForm: true,
+                    showNewContractForm: false,
+                    showNewLabForm: false
+                })
+        }
     },
 
     render : function() {
@@ -833,9 +955,9 @@ var NewTestForm = React.createClass ({
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a
+                                        <a  id="created_by"
                                             className="btn btn-primary new1"
-                                            onClick={this.onNewClick}
+                                            onClick={this.onNewButtonClick}
                                         >New</a>
                                     </div>
                                 </div>
@@ -847,7 +969,10 @@ var NewTestForm = React.createClass ({
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a href="#/material" className="btn btn-primary">New</a>
+                                        <a id="material"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -858,7 +983,10 @@ var NewTestForm = React.createClass ({
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a href="#/fluid" className="btn btn-primary">New</a>
+                                        <a id="fluid_type"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -869,7 +997,10 @@ var NewTestForm = React.createClass ({
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a href="#/createdby" className="btn btn-primary">New</a>
+                                        <a id="performed_by"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -880,7 +1011,10 @@ var NewTestForm = React.createClass ({
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a href="#/lab" className="btn btn-primary">New</a>
+                                        <a id="lab_analyser"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -891,9 +1025,9 @@ var NewTestForm = React.createClass ({
                                             handleChange={this.handleChange} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a
-                                            className="btn btn-primary new4"
-                                            onClick={this.onNewClick}
+                                        <a id="lab_contract"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
                                         >New</a>
                                     </div>
                                 </div>
@@ -905,7 +1039,10 @@ var NewTestForm = React.createClass ({
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a href="#/recommend" className="btn btn-primary">New</a>
+                                        <a id="recommend"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -916,7 +1053,10 @@ var NewTestForm = React.createClass ({
                                             value={this.state.value} />
                                     </div>
                                     <div className="col-md-1">
-                                        <a href="#/createdby" className="btn btn-primary">New</a>
+                                        <a id="recommend_by"
+                                           className="btn btn-primary"
+                                           onClick={this.onNewButtonClick}
+                                        >New</a>
                                     </div>
                                 </div>
 
@@ -1110,13 +1250,24 @@ var NewTestForm = React.createClass ({
                 </Modal>
 
                 <Modal show={this.state.showNewLabForm}>
-                        <NewLabForm handleClose={this.closeNewLabForm} />
+                    <NewLabForm handleClose={this.closeNewLabForm} />
                 </Modal>
 
                 <Modal show={this.state.showNewContractForm}>
-                        <NewContractForm handleClose={this.closeNewContractForm} />
+                    <NewContractForm handleClose={this.closeNewContractForm} />
                 </Modal>
 
+                <Modal show={this.state.showNewMaterialForm}>
+                    <NewMaterialForm handleClose={this.closeNewMaterialForm} />
+                </Modal>
+
+                <Modal show={this.state.showNewFluidForm}>
+                    <NewFluidForm handleClose={this.closeNewFluidForm} />
+                </Modal>
+
+                <Modal show={this.state.showNewRecommendationForm}>
+                    <NewRecommendationForm handleClose={this.closeNewRecommendationForm} />
+                </Modal>
 
             </div>
         );

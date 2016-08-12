@@ -5,15 +5,14 @@ import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 
+var items=[];
 
-var items = [];
 
-
-var ContractStatusSelectField = React.createClass ({
+var LabAnalyserSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value
+            value: event.target.value,
         });
     },
 
@@ -59,8 +58,8 @@ var ContractStatusSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="contract_status">
-                        <option key="0" value="select">Contract Status</option>
+                        name="lab_id">
+                        <option key="0" value="select">Lab/On-Line Analyser</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -71,12 +70,12 @@ var ContractStatusSelectField = React.createClass ({
 
 
 
-var NewContractForm = React.createClass ({
+var NewSyringeForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'name', 'code', 'contract_status'
+            'serial', 'lab_id'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -86,7 +85,7 @@ var NewContractForm = React.createClass ({
         console.log(data);
 
         return $.ajax({
-            url: '/api/v1.0/contract/',
+            url: '/api/v1.0/syringe/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -183,43 +182,33 @@ var NewContractForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Contract">
+                    <Panel header="New Material Profile">
                         <div className="row">
                             <div className="col-md-12">
-                                <ContractStatusSelectField
-                                    source="/api/v1.0/contract_status"
+                                <LabAnalyserSelectField
+                                    source="/api/v1.0/lab"
                                     handleChange={this.handleChange} />
                             </div>
                         </div>
 
                         <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Name"
-                                             name="name"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Code"
-                                             name="code"
-                                />
-                            </FormGroup>
-                        </div>
+                                    <FormGroup>
+                                        <FormControl type="text"
+                                                     placeholder="Serial"
+                                                     name="serial"
+                                        />
+                                    </FormGroup>
+                                </div>
 
                         <div className="row">
                             <div className="col-md-12 ">
-                                <Button bsStyle="success"
+                                 <Button bsStyle="success" 
                                         className="btn btn-success pull-right"
                                         type="submit"
-                                        onClick={this.props.handleClose}
                                 >Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger"
-                                        className="pull-right"
+                                <Button bsStyle="danger" 
+                                        className="pull-right" 
                                         onClick={this.props.handleClose}
                                         className="pull-right margin-right-xs"
                                 >Cancel</Button>
@@ -233,4 +222,4 @@ var NewContractForm = React.createClass ({
 });
 
 
-export default NewContractForm;
+export default NewSyringeForm;

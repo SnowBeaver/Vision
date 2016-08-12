@@ -1,8 +1,8 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import {findDOMNode} from 'react-dom';
 import Panel from 'react-bootstrap/lib/Panel';
+import { Link } from 'react-router';
 
 
 var EquipmentTypeSelectField = React.createClass ({
@@ -79,7 +79,7 @@ var EquipmentTypeSelectField = React.createClass ({
                     </a>
                 </div>
                 <div className="col-md-1">
-                   <a href="#/testlist" type="button" className="btn btn-success">Tests</a>
+                   <Link to="/testlist" type="button" className="btn btn-success">Tests</Link>
                 </div>
             </div>
         );

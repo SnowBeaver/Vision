@@ -8,66 +8,6 @@ import {findDOMNode} from 'react-dom';
 
 var items = [];
 
-var CodeSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="code">
-                        <option key="0" value="select">Code</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
 
 var NameSelectField = React.createClass ({
 
@@ -130,134 +70,13 @@ var NameSelectField = React.createClass ({
 });
 
 
-var SyringeNumberSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value,
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].serial}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="seringe_num">
-                        <option key="0" value="select">Syringe</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
-var CampaignSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="role">
-                        <option key="0" value="select">Campaign</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
 
 var NewLabForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'code', 'analyser', 'name', 'seringe_num', ''
+            'code', 'analyser', 'name'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -364,14 +183,15 @@ var NewLabForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Campaign">
+                    <Panel header="New Laboratory Profile">
 
-                        <div className="row">
-                            <div className="col-md-12">
-                                <CodeSelectField
-                                    source="http://dev.vision.local/api/v1.0/code"
-                                    handleChange={this.handleChange} />
-                            </div>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Code"
+                                             name="code"
+                                />
+                            </FormGroup>
                         </div>
 
                         <div className="row">
@@ -388,32 +208,24 @@ var NewLabForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-12">
                                 <NameSelectField
-                                    source="http://dev.vision.local/api/v1.0/contract_status_id"
-                                    handleChange={this.handleChange} />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-12">
-                                <SyringeNumberSelectField
-                                    source="http://dev.vision.local/api/v1.0/seringe_num"
-                                    handleChange={this.handleChange} />
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-12">
-                                <CampaignSelectField
-                                    source="http://dev.vision.local/api/v1.0/"
+                                    source="/api/v1.0/user"
                                     handleChange={this.handleChange} />
                             </div>
                         </div>
 
                         <div className="row">
                             <div className="col-md-12 ">
-                                <Button bsStyle="success" className="btn btn-success pull-right" type="submit">Save</Button>
+                                <Button bsStyle="success"
+                                        className="btn btn-success pull-right"
+                                        type="submit"
+                                        onClick={this.props.handleClose}
+                                >Save</Button>
                                 &nbsp;
-                                <Button bsStyle="danger" className="pull-right">Cancel</Button>
+                                <Button bsStyle="danger"
+                                        className="pull-right"
+                                        onClick={this.props.handleClose}
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
                             </div>
                         </div>
                     </Panel>
