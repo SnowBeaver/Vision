@@ -2,7 +2,8 @@ from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from cerberus import Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
-from app.diagnostic.models import Equipment, TestResult, Campaign
+from app.diagnostic.models import Equipment, TestResult, Campaign, FluidProfile
+from app.diagnostic.models import ElectricalProfile
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -116,6 +117,13 @@ def handler(path, item_id=None):
     if item_id:
         args.append(item_id)
     return return_json('result', crud_func(*args))
+
+
+@api_blueprint.route('/test_profile/', methods=['GET', ])
+def get_test_profile():
+    rows_fluid = db.session.query(FluidProfile).all()
+    rows_electrical = db.session.query(ElectricalProfile).all()
+    return return_json('result', [item.serialize() for rows in (rows_fluid, rows_electrical) for item in rows])
 
 
 api.register_blueprint(api_blueprint)

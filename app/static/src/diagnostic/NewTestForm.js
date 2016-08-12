@@ -572,6 +572,69 @@ var RecommendBySelectField = React.createClass ({
 });
 
 
+var TestReasonSelectField = React.createClass ({
+
+    handleChange: function(event){
+        this.setState({
+            value: event.target.value
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false,
+            value: null
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <FormGroup>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    value={this.state.value}
+                    name="test_reason"
+                    onChange={this.handleChange}
+                >
+                    <option key="0" value="select">Reason for Testing</option>
+                    {menuItems}
+                </FormControl>
+            </FormGroup>
+        );
+    }
+});
+
+
 var NewTestForm = React.createClass ({
 
 
@@ -583,7 +646,7 @@ var NewTestForm = React.createClass ({
             'analysis_number', 'charge', 'remark', 'transmission', 'repair_date',
             'repair_description', 'date_application','comments', 'mws', 'temperature',
             'sampling_card_print', 'containers', 'sampling_card_gathered', 'gathered_test_type',
-            'seringe_num', 'ambient_air_temperature', 'test_result'
+            'seringe_num', 'ambient_air_temperature', 'test_result' 
 
         ];
         var data = {};
@@ -591,7 +654,6 @@ var NewTestForm = React.createClass ({
             var key= fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
 
         return $.ajax({
             url: '/api/v1.0/test/',
@@ -605,15 +667,16 @@ var NewTestForm = React.createClass ({
             }.bind(this)
         })
     },
+    
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
+        var errors = this._validate();
+        if(Object.keys(errors).length != 0) {
+          this.setState({
+            errors: errors
+          });
+           return;
+        }
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -622,11 +685,13 @@ var NewTestForm = React.createClass ({
     hideLoading: function () {
         this.setState({loading: false});
     },
+    
     _onSuccess: function (data) {
         this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
         // show success message
     },
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -639,11 +704,9 @@ var NewTestForm = React.createClass ({
             });
         }
     },
+    
     _onChange: function (e) {
         var state = {};
-
-        console.log(e.target.type);
-        console.log(e.target.value);
 
         if(e.target.type == 'checkbox'){
             state[e.target.name] = e.target.checked;
@@ -670,18 +733,13 @@ var NewTestForm = React.createClass ({
         }
         this.setState(state);
     },
+    
     _validate: function () {
         var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
-        // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
-        // return errors;
+        if(this.state.lab_id == "") {
+            errors.lab_id = "Please choose laboratory";
+        }
+        return errors;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -862,15 +920,23 @@ var NewTestForm = React.createClass ({
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="New Test">
                         <div className="maxwidth">
-                            <div className="col-md-12">
-
+                            <div className="col-md-12"> 
                                 <div className="maxwidth">
                                     <FormGroup>
                                         <FormControl type="text"
                                                      placeholder="Analysis Number"
                                                      name="analysis_number"
+                                                     readOnly="readOnly" 
                                         />
                                     </FormGroup>
+                                </div> 
+                                <div className="row">
+                                    <div className="col-md-10">
+                                        <TestReasonSelectField
+                                            source="/api/v1.0/test_reason"
+                                            handleChange={this.handleChange}
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="maxwidth">
