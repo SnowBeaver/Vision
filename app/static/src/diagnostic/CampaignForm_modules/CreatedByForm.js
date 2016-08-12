@@ -70,12 +70,13 @@ var RoleSelectField = React.createClass ({
 });
 
 
+
 var CreatedByForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'role', 'name', 'email',
+            'role', 'name', 'email', 'alias',
             'website', 'photo', 'adress', 'description',
             'country', 'mobile', 'active'
         ];
@@ -87,7 +88,7 @@ var CreatedByForm = React.createClass ({
         console.log(data);
 
         return $.ajax({
-            url: '/api/v1.0/user/',
+            url: '/api/v1.0/users_user/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -194,7 +195,7 @@ var CreatedByForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-12">
                                 <RoleSelectField
-                                    source="http://dev.vision.local/api/v1.0/role"
+                                    source="/api/v1.0/role"
                                     handleChange={this.handleChange} />
                             </div>
                         </div>
@@ -212,7 +213,7 @@ var CreatedByForm = React.createClass ({
                             <FormGroup>
                                 <FormControl type="text"
                                              placeholder="Username"
-                                             name="name"
+                                             name="alias"
                                 />
                             </FormGroup>
                         </div>
@@ -262,6 +263,15 @@ var CreatedByForm = React.createClass ({
                             </FormGroup>
                         </div>
 
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Photo"
+                                             name="photo"
+                                />
+                            </FormGroup>
+                        </div>
+
                         <div className="row">
                             <div className="col-md-12">
                                 <FormGroup>
@@ -277,15 +287,6 @@ var CreatedByForm = React.createClass ({
                             <div className="col-md-4 nopadding padding-right-xs">
                                 <Checkbox name="active">Active</Checkbox>
                             </div>
-                        </div>
-
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Schedule"
-                                             name="schedule"
-                                />
-                            </FormGroup>
                         </div>
 
                         <div className="row">

@@ -13,65 +13,6 @@ import AddEquipmentForm from './AddEquipmentForm';
 
 var items=[];
 
-var PerformedBySelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="performed_by_id">
-                        <option key="0" value="select">Assigned to</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
 
 
 var CreatedBySelectField = React.createClass ({
@@ -209,7 +150,7 @@ var TestReasonSelectField = React.createClass ({
         return {
             items: [],
             isVisible: false,
-            value: null
+            value: ''
         };
     },
 
@@ -265,8 +206,7 @@ var CampaignForm = React.createClass ({
 
     _create: function () {
         var fields = [
-            'equipment_number', 'fluid_type_id',
-            'lab_id', 'contract', 'test_reason', 'comments',
+            'equipment_number','contract','test_reason','comments',
             'date_application', 'date', 'date_prelevement'
         ];
         var data = {};
@@ -277,7 +217,7 @@ var CampaignForm = React.createClass ({
         console.log(data);
 
         return $.ajax({
-            url: '/api/v1.0/test/',
+            url: '/api/v1.0/campaign/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -391,6 +331,18 @@ var CampaignForm = React.createClass ({
         }
     },
 
+    closeCreatedByForm: function () {
+        this.setState({
+            showCreatedByForm: false
+        })
+    },
+
+    closeNewContractForm: function () {
+        this.setState({
+            showNewContractForm: false
+        })
+    },
+
     showTestList: function(){
         this.refs.test_list.setVisible();
     },
@@ -399,8 +351,8 @@ var CampaignForm = React.createClass ({
 
         return(
             <div className="form-container">
+                <Panel header="New Campaign">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Campaign">
                         <div className="row">
                             <div className="col-md-11">
                                 <CreatedBySelectField
@@ -451,7 +403,9 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-10">
                                 <FormGroup>
-                                    <FormControl componentClass="textarea" placeholder="comments" name="comments"/>
+                                    <FormControl componentClass="textarea" 
+                                                 placeholder="comments" 
+                                                 name="comments"/>
                                 </FormGroup>
                             </div>
                         </div>
@@ -468,10 +422,6 @@ var CampaignForm = React.createClass ({
                                 </div>
                             </div>
                         </div>
-                        <hr/>
-
-                        <AddEquipmentForm showTestList={this.showTestList}/>
-
                         <div className="row">
                             <div className="col-md-12 ">
                                 <Button bsStyle="success"
@@ -483,8 +433,12 @@ var CampaignForm = React.createClass ({
                                 >Cancel</Button>
                             </div>
                         </div>
+                        </form>
                     </Panel>
-                </form>
+                <hr/>
+
+                        <AddEquipmentForm showTestList={this.showTestList}/>
+
 
                 <Modal show={this.state.showCreatedByForm}>
                     <CreatedByForm handleClose={this.closeCreatedByForm} />
