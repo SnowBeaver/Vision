@@ -86,7 +86,7 @@ var NewLabForm = React.createClass ({
         console.log(data);
 
         return $.ajax({
-            url: '/api/v1.0/test/',
+            url: '/api/v1.0/lab/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -115,9 +115,14 @@ var NewLabForm = React.createClass ({
         this.setState({loading: false});
     },
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
         // show success message
+    },
+    componentDidMount: function(){
+
+    },
+    componentWillUnmount: function() {
+
     },
     _onError: function (data) {
         var message = "Failed to create";

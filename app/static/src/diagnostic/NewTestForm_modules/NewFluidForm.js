@@ -9,74 +9,13 @@ import {findDOMNode} from 'react-dom';
 var items= [];
 
 
-var FluidNameSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="fluid_name">
-                        <option key="0" value="select">Fluid Name</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
 
 var NewFluidForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'fluid_name'
+            'name'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -185,12 +124,13 @@ var NewFluidForm = React.createClass ({
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="New Fluid Profile">
 
-                        <div className="row">
-                            <div className="col-md-12">
-                                <FluidNameSelectField
-                                    source="/api/v1.0/fluid_type"
-                                    handleChange={this.handleChange} />
-                            </div>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Name"
+                                             name="name"
+                                />
+                            </FormGroup>
                         </div>
 
                         <div className="row">
