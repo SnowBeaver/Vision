@@ -72,7 +72,6 @@ class User(db.Model, UserMixin):
     address = db.Column(db.String(255))
     mobile = db.Column(db.String(50))
     website = db.Column(db.String(255))
-    country = db.Column(db.String(255))
     photo = db.Column(db.String(255))
     description = db.Column(db.UnicodeText())
     active = db.Column(db.Boolean, default=False)
@@ -80,6 +79,8 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     created = db.Column('created', db.DateTime, default=datetime.datetime.now)
     updated = db.Column('updated', db.DateTime, default=datetime.datetime.now)
+    country_id = db.Column(db.Integer, db.ForeignKey("country.id"))
+    country = db.relationship('Country', backref='users_user')
 
     def __unicode__(self):
         return u"%s" % (self.name)
@@ -143,7 +144,8 @@ class User(db.Model, UserMixin):
                 'address': self.address,
                 'mobile': self.mobile,
                 'website': self.website,
-                'country': self.country,
+                'country_id': self.country_id,
+                'country': self.country and self.country.serialize(),
                 'photo': self.photo,
                 'description': self.description,
                 'active': self.active,

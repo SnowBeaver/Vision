@@ -3779,11 +3779,11 @@ class Country(db.Model):
     __tablename__ = 'country'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
+    name = db.Column(db.Unicode)
     iso_name = db.Column(db.String(2))
 
     def __repr__(self):
-        return "{} ({})".format(self.name, self.iso_name)
+        return u"{} ({})".format(self.name, self.iso_name)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
