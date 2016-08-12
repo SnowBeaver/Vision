@@ -16,4 +16,3 @@ Flask-Blogging
 flask-blog
 *.sql
 .DS_Store
-Vagrantfile
