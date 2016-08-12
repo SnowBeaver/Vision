@@ -111,8 +111,8 @@ var CountrySelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="role">
-                        <option key="0" value="select">Roles</option>
+                        name="country">
+                        <option key="0" value="select">Country</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -306,7 +306,7 @@ var CreatedByForm = React.createClass ({
                         <div className="maxwidth">
                             <FormGroup>
                                 <CountrySelectField
-                                    source="/api/v1.0/countries/"
+                                    source="/api/v1.0/country/"
                                     handleChange={this.handleChange}
                                 />
                             </FormGroup>

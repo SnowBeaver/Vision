@@ -349,7 +349,7 @@ var CampaignForm = React.createClass ({
                         </div>
 
                         <div className="row">
-                            <div className="col-md-10">
+                            <div className="col-md-11">
                                 <FormGroup>
                                     <FormControl componentClass="textarea" 
                                                  placeholder="comments" 

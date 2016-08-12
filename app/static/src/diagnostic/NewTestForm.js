@@ -1100,7 +1100,7 @@ var NewTestForm = React.createClass ({
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-md-11">
+                                    <div className="col-md-2">
                                         Recommendation list
                                     </div>
                                     <div className="col-md-1">
