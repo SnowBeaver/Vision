@@ -61,7 +61,7 @@ var TestTypeSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="test_name">
+                        name="name">
                         <option key="0" value="select">Test Type</option>
                         {menuItems}
                     </FormControl>
@@ -139,7 +139,7 @@ var NewRecommendationForm = React.createClass ({
 
     _create: function () {
         var fields = [
-            'test_name', 'name', 'code',  'description'
+            'name', 'name', 'code',  'description'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){

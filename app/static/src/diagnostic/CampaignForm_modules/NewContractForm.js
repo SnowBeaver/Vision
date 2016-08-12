@@ -59,7 +59,7 @@ var ContractStatusSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="contract_status">
+                        name="contract_status_id">
                         <option key="0" value="select">Contract Status</option>
                         {menuItems}
                     </FormControl>
@@ -76,7 +76,7 @@ var NewContractForm = React.createClass ({
 
     _create: function () {
         var fields = [
-            'name', 'code', 'contract_status'
+            'name', 'code', 'contract_status_id'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -115,10 +115,18 @@ var NewContractForm = React.createClass ({
         this.setState({loading: false});
     },
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
         // show success message
     },
+
+    componentDidMount: function(){
+
+    },
+
+    componentWillUnmount: function() {
+
+    },
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;

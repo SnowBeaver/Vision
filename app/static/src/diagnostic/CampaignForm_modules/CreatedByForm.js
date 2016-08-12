@@ -76,8 +76,8 @@ var CreatedByForm = React.createClass ({
 
     _create: function () {
         var fields = [
-            'role', 'name', 'email', 'alias',
-            'website', 'photo', 'adress', 'description',
+            'name', 'email', 'alias',
+            'website', 'photo', 'address', 'description',
             'country', 'mobile', 'active'
         ];
         var data = {};
@@ -88,7 +88,7 @@ var CreatedByForm = React.createClass ({
         console.log(data);
 
         return $.ajax({
-            url: '/api/v1.0/users_user/',
+            url: '/api/v1.0/user/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -117,7 +117,6 @@ var CreatedByForm = React.createClass ({
         this.setState({loading: false});
     },
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
         // show success message
     },
@@ -231,7 +230,7 @@ var CreatedByForm = React.createClass ({
                             <FormGroup>
                                 <FormControl type="text"
                                              placeholder="Adress"
-                                             name="adress"
+                                             name="address"
                                 />
                             </FormGroup>
                         </div>
