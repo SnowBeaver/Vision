@@ -70,6 +70,56 @@ var RoleSelectField = React.createClass ({
 });
 
 
+var CountrySelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+        };
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="role">
+                        <option key="0" value="select">Roles</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
 
 var CreatedByForm = React.createClass ({
 
@@ -255,9 +305,9 @@ var CreatedByForm = React.createClass ({
 
                         <div className="maxwidth">
                             <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Country"
-                                             name="country"
+                                <CountrySelectField
+                                    source="/api/v1.0/countries/"
+                                    handleChange={this.handleChange}
                                 />
                             </FormGroup>
                         </div>
