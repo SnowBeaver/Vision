@@ -195,7 +195,7 @@ var MaterialSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select material"
                         onChange={this.handleChange}
-                        name="material">
+                        name="material_id">
                         <option key="0" value="select">Material</option>
                         {menuItems}
                     </FormControl>
@@ -562,8 +562,8 @@ var RecommendBySelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="recommended_by_id">
-                        <option key="0" value="select">Recommendation By</option>
+                        name="recommendations">
+                        <option key="0" value="select">Recommendations</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -638,21 +638,29 @@ var TestReasonSelectField = React.createClass ({
 
 var NewTestForm = React.createClass ({
 
+    //test_sampling_card
+    //test_commendation
+    //'campaign_id' - should be passed
 
     _create: function () {
         var fields = [
-            'fluid_type_id',
-            'lab_id', 'contract', 'test_reason', 'comments',
-            'recommandation_id','recommended_by_id','recommendationNotes',
-            'analysis_number', 'charge', 'remark', 'transmission', 'repair_date',
-            'repair_description', 'date_application','comments', 'mws', 'temperature',
-            'sampling_card_print', 'containers', 'sampling_card_gathered', 'gathered_test_type',
-            'seringe_num', 'ambient_air_temperature', 'test_result' 
-
+            'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id', 
+            'test_status_id', 'fluid_profile_id', 'electrical_profile_id','material_id', 'fluid_type_id', 
+            'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws', 
+            'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description', 
+            'ambient_air_temperature'
+        ];
+        var profile_fields = [ 
+            'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
+            'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
+            'density', 'pcb_jar', 'inhibitor_jar', 'point', 'dielec_2', 'color', 'pf', 'particles', 'metals',
+            'viscosity', 'dielec_d', 'ift', 'pf_100', 'furans_f', 'water_w', 'corr', 'dielec_i', 'qty_jar',
+            'sampling_jar', 'pcb_vial', 'antioxidant', 'qty_vial', 'sampling_vial', 'percent_ratio' , 
+            'sampling_point_id'
         ];
         var data = {};
-        for (var i=0;i<fields.length;i++){
-            var key= fields[i];
+        for ( var i=0; i<fields.length; i++ ) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
 
@@ -974,6 +982,15 @@ var NewTestForm = React.createClass ({
                                         />
                                     </div>
                                 </div>
+                                
+                                <div className="row">
+                                    <div className="col-md-10">
+                                        <TestReasonSelectField
+                                            source="/api/v1.0/test_reason"
+                                            handleChange={this.handleChange}
+                                        />
+                                    </div>
+                                </div>
 
                                 <div className="maxwidth">
                                     <div className="datetimepicker input-group date col-md-3">
@@ -1084,9 +1101,7 @@ var NewTestForm = React.createClass ({
 
                                 <div className="row">
                                     <div className="col-md-11">
-                                        <RecommendBySelectField
-                                            source="/api/v1.0/user/"
-                                            value={this.state.value} />
+                                        Recommendation list
                                     </div>
                                     <div className="col-md-1">
                                         <a id="recommend_by"
@@ -1161,7 +1176,7 @@ var NewTestForm = React.createClass ({
                                     <div className="datetimepicker input-group date col-md-3">
                                         <FormGroup>
                                             <ControlLabel>Date Applied</ControlLabel>
-                                            <DateTimeField datetime={this.state.date_application} />
+                                            <DateTimeField datetime={this.state.date_analyse} />
                                         </FormGroup>
                                     </div>
                                 </div>
@@ -1201,31 +1216,10 @@ var NewTestForm = React.createClass ({
 
                                 <div className="maxwidth">
                                     <div className="col-md-4 nopadding padding-right-xs">
-                                        <Checkbox name="sampling_card_print">Sampling Card Print</Checkbox>
+                                        <Checkbox name="print_sampling_card">Sampling Card Print</Checkbox>
                                     </div>
                                 </div>
 
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <FormGroup>
-                                            <FormControl type="text"
-                                                         placeholder="Container Number"
-                                                         name="containers"
-                                            />
-                                        </FormGroup>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <FormGroup>
-                                            <FormControl type="text"
-                                                         placeholder="Sampling Card Gathered"
-                                                         name="sampling_card_gathered"
-                                            />
-                                        </FormGroup>
-                                    </div>
-                                </div>
                                 <div className="row">
                                     <div className="col-md-11">
                                         <SyringeNumberSelectField

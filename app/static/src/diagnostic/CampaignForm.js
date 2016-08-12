@@ -96,7 +96,7 @@ var ContractNoSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
         this.setState({
-            value: event.target.value,
+            value: event.target.value
         });
     },
 
@@ -144,7 +144,7 @@ var ContractNoSelectField = React.createClass ({
                         onChange={this.handleChange}
                         name="contract_id"
                     >
-                        <option key="0" value="select">Contract No.</option>
+                        <option value="select">Contract No.</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -165,9 +165,8 @@ var CampaignForm = React.createClass ({
             showNewContractForm: false,
             showNewLabForm: false,
             fields: [
-                'fluid_type_id', 'contract_id', 'comments',
-                'date_application', 'date', 'date_prelevement',
-                'created_by_id'
+                'created_by_id', 'date_created', 'date_sampling',
+                'date_application', 'description', 'contract_id'
             ]
         }
     },
@@ -186,7 +185,7 @@ var CampaignForm = React.createClass ({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) {
+            success: function (response) { 
                 alert('Campaign sucessfully started.');
             },
             beforeSend: function () {
@@ -215,7 +214,6 @@ var CampaignForm = React.createClass ({
     },
 
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
         // show success message
     },
@@ -272,21 +270,17 @@ var CampaignForm = React.createClass ({
     },
 
     onNewButtonClick:function (e) {
-        if(e.target.id==='created_by')
-        {
-            this.setState(
-                {
+        if ('created_by' === e.target.id) {
+            this.setState({
                     showCreatedByForm: true,
                     showNewContractForm: false
                 }
             )}
-        else if(e.target.id==='contract_no')
-        {
-            this.setState(
-                {
-                    showCreatedByForm: false,
-                    showNewContractForm: true
-                })
+        else if('contract_no' === e.target.id) {
+            this.setState( {
+                showCreatedByForm: false,
+                showNewContractForm: true
+            })
         }
     },
 
@@ -335,7 +329,7 @@ var CampaignForm = React.createClass ({
                                 <div className="datetimepicker input-group date">
                                     <FormGroup>
                                         <ControlLabel>Date Created</ControlLabel>
-                                        <DateTimeField datetime={this.state.date} />
+                                        <DateTimeField datetime={this.state.date_created} />
                                     </FormGroup>
                                 </div>
                             </div>
@@ -372,7 +366,7 @@ var CampaignForm = React.createClass ({
                                 </div>
                                 <div className="datetimepicker input-group date col-md-3">
                                     <ControlLabel>Lab measurement</ControlLabel>
-                                    <DateTimeField datetime={this.state.date_prelevement} />
+                                    <DateTimeField datetime={this.state.date_sampling} />
                                 </div>
                             </div>
                         </div>
