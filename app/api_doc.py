@@ -837,7 +837,7 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "selection": "My selection",
+            "name": "My name",
             "description": "My descripton",
             "profile_type": "electrical_profile",
             "bushing": true,
@@ -852,7 +852,7 @@ doc = ApiDoc(app=api)
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(256)}   selection
+@apiSuccess {String(256)}   name
 @apiSuccess {String(1024)}  description
 @apiSuccess {String}        profile_type    electrical_profile
 @apiSuccess {Boolean}       bushing
@@ -873,10 +873,10 @@ doc = ApiDoc(app=api)
 @apiGroup electrical_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"selection":"My selection", "description": "My description", "bushing": true}' \
+         -d '{"name":"My name", "description": "My description", "bushing": true}' \
          http://localhost:8001/api/v1.0/electrical_profile/
 
-@apiParam {String(256)}   selection
+@apiParam {String(256)}   name
 @apiParam {String(1024)}  description
 @apiParam {Boolean}       bushing
 @apiParam {Boolean}       winding
@@ -940,7 +940,7 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "selection": "My selection",
+            "name": "My name",
             "description": "My descripton",
             "profile_type": "fluid_profile",
             ...
@@ -948,7 +948,7 @@ doc = ApiDoc(app=api)
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(256)}   selection
+@apiSuccess {String(256)}   name
 @apiSuccess {String(1024)}  description
 @apiSuccess {String}        profile_type  fluid_profile
 @apiSuccess {Integer}       qty
@@ -994,10 +994,10 @@ doc = ApiDoc(app=api)
 @apiGroup fluid_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"selection":"My selection", "description": "My description", "gas": true}' \
+         -d '{"name":"My name", "description": "My description", "gas": true}' \
          http://localhost:8001/api/v1.0/fluid_profile/
 
-@apiParam {String(256)}   selection
+@apiParam {String(256)}   name
 @apiParam {String(1024)}  description
 @apiParam {Integer}       qty
 @apiParam {Integer}       sampling

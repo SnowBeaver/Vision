@@ -798,8 +798,8 @@ class FluidProfileView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    # column_sortable_list = (['selection'])
-    column_searchable_list = (['selection'])
+    # column_sortable_list = (['name'])
+    column_searchable_list = (['name'])
     column_exclude_list = (['description'])
     column_labels = {'qty': 'Qty Syringe', 'pf': 'Pf 20', 'point': 'Pour Point'}
 
@@ -928,9 +928,9 @@ class ElectricalProfileView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    # column_sortable_list = ('selection', 'description', 'bushing', 'winding', 'winding_double',
+    # column_sortable_list = ('name', 'description', 'bushing', 'winding', 'winding_double',
     #                         'insulation', 'visual', 'resistance', 'degree', 'turns')
-    column_searchable_list = ('selection', 'description', 'bushing', 'winding', 'insulation_pf',
+    column_searchable_list = ('name', 'description', 'bushing', 'winding', 'insulation_pf',
                               'insulation', 'visual', 'resistance', 'degree', 'turns')
 
     # form_args = {'winding_double': {'label': 'Winding Doble', }}

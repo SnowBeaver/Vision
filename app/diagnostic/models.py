@@ -66,7 +66,7 @@ class ElectricalProfile(db.Model):
     __tablename__ = 'electrical_profile'
 
     id = db.Column(db.Integer, primary_key=True)
-    selection = db.Column(db.Unicode(256))
+    name = db.Column(db.Unicode(256))
     description = db.Column(db.Unicode(1024))
     bushing = db.Column(db.Boolean(False))
     winding = db.Column(db.Boolean(False))
@@ -101,23 +101,22 @@ class ElectricalProfile(db.Model):
 
     def clear_data(self):
         for attr in self.__dict__:
-            if attr not in ['id', '_sa_instance_state']:
-                # print attr
-                if attr == 'selection' or attr == 'description':
-                    setattr(self, attr, '')
-                else:
-                    setattr(self, attr, False)
+            if attr in ['id', '_sa_instance_state']:
+                continue
+            # print attr
+            value = '' if attr in ('name', 'description') else False
+            setattr(self, attr, value)
 
     def add_data(self, data):
         self.parsedata(data)
 
     def __repr__(self):
-        return self.selection
+        return self.name
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
-                'selection': self.selection,
+                'name': self.name,
                 'description': self.description,
                 'bushing': self.bushing,
                 'winding': self.winding,
@@ -305,7 +304,7 @@ class FluidProfile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    selection = db.Column(db.Unicode(256))
+    name = db.Column(db.Unicode(256))
     description = db.Column(db.Unicode(1024))
 
     # syringe
@@ -361,25 +360,26 @@ class FluidProfile(db.Model):
 
     def clear_data(self):
         for attr in self.__dict__:
-            if attr not in ['id', '_sa_instance_state']:
-                # print attr
-                if attr == 'selection' and attr == 'description':
-                    setattr(self, attr, '')
-                if attr in ['qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
-                    setattr(self, attr, 0)
-                else:
-                    setattr(self, attr, False)
+            if attr in ['id', '_sa_instance_state']:
+                continue
+            # print attr
+            if attr in ('name', 'description'):
+                setattr(self, attr, '')
+            if attr in ['qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
+                setattr(self, attr, 0)
+            else:
+                setattr(self, attr, False)
 
     def add_data(self, data):
         self.parsedata(data)
 
     def __repr__(self):
-        return self.selection
+        return self.name
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
-                'selection': self.selection,
+                'name': self.name,
                 'description': self.description,
                 'gas': self.gas,
                 'water': self.water,
