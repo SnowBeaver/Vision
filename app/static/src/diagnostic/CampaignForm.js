@@ -13,31 +13,30 @@ import AddEquipmentForm from './AddEquipmentForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 
-var items=[];
+var items = [];
 
 
+var CreatedBySelectField = React.createClass({
 
-var CreatedBySelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -46,18 +45,18 @@ var CreatedBySelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
-    
-    getValidationState: function(){ 
+
+    getValidationState: function () {
         var error_msg = this.props.errors['created_by_id'];
         var state = null;
-        if( typeof error_msg != 'undefined') {
+        if (typeof error_msg != 'undefined') {
             state = "error";
         } else {
             return;
@@ -65,17 +64,18 @@ var CreatedBySelectField = React.createClass ({
         return state;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
             <div>
                 <FormGroup controlId="created_by" validationState={this.getValidationState()}>
-                    { this.getValidationState() == 'error' ? 
-                        <HelpBlock className="warning">{this.props.errors['created_by_id']}, 
-                            please choose user and resubmit the form</HelpBlock> : null 
+                    { this.getValidationState() == 'error' ?
+                        <HelpBlock className="warning">{this.props.errors['created_by_id']},
+                            please choose user and resubmit the form</HelpBlock> : null
                     }
                     <FormControl
                         componentClass="select"
@@ -92,27 +92,35 @@ var CreatedBySelectField = React.createClass ({
 });
 
 
-var ContractNoSelectField = React.createClass ({
+var ContractNoSelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
+            selected: false,
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    setSelected: function (data) {
+        this.componentDidMount();
+        this.setState({
+            selected: data.result
+        }); 
+    },
+
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -121,18 +129,19 @@ var ContractNoSelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -143,6 +152,7 @@ var ContractNoSelectField = React.createClass ({
                         placeholder="select"
                         onChange={this.handleChange}
                         name="contract_id"
+                        value={this.state.selected}
                     >
                         <option value="select">Contract No.</option>
                         {menuItems}
@@ -154,8 +164,7 @@ var ContractNoSelectField = React.createClass ({
 });
 
 
-
-var CampaignForm = React.createClass ({
+var CampaignForm = React.createClass({
 
     getInitialState: function () {
         return {
@@ -174,8 +183,8 @@ var CampaignForm = React.createClass ({
     _create: function () {
         var fields = this.state.fields;
         var data = {};
-        for ( var i=0; i<fields.length; i++) {
-            var key= fields[i];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
 
@@ -185,7 +194,7 @@ var CampaignForm = React.createClass ({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (response) { 
+            success: function (response) {
                 alert('Campaign sucessfully started.');
             },
             beforeSend: function () {
@@ -197,11 +206,11 @@ var CampaignForm = React.createClass ({
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
-        if(Object.keys(errors).length != 0) {
-          this.setState({
-            errors: errors
-          });
-           return;
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -215,6 +224,7 @@ var CampaignForm = React.createClass ({
 
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
+        this.props.setCampaignId();
         // show success message
     },
 
@@ -222,25 +232,25 @@ var CampaignForm = React.createClass ({
 
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.error) {
+        if (res.error) {
             this.setState({
                 errors: res.error
-            }); 
+            });
         }
     },
 
     _onChange: function (e) {
         var state = {};
-        if(e.target.type == 'checkbox'){
+        if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         }
-        else if(e.target.type == 'select-one'){
+        else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         }
-        else{
+        else {
             state[e.target.name] = $.trim(e.target.value);
         }
         this.setState(state);
@@ -259,25 +269,26 @@ var CampaignForm = React.createClass ({
 
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
     },
 
-    handleClick: function() {
+    handleClick: function () {
         document.getElementById('test_prof').remove();
     },
 
-    onNewButtonClick:function (e) {
+    onNewButtonClick: function (e) {
         if ('created_by' === e.target.id) {
             this.setState({
                     showCreatedByForm: true,
                     showNewContractForm: false
                 }
-            )}
-        else if('contract_no' === e.target.id) {
-            this.setState( {
+            )
+        }
+        else if ('contract_no' === e.target.id) {
+            this.setState({
                 showCreatedByForm: false,
                 showNewContractForm: true
             })
@@ -296,13 +307,18 @@ var CampaignForm = React.createClass ({
         })
     },
 
-    showTestList: function(){
+    showTestList: function () {
         this.refs.test_list.setVisible();
     },
 
-    render : function() {
+    onContractCreate: function (response) {
+        this.refs.contract.setSelected(response);
+        alert('Contract created');
+    },
 
-        return(
+    render: function () {
+
+        return (
             <div className="form-container">
                 <Panel header="New Campaign">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -310,7 +326,7 @@ var CampaignForm = React.createClass ({
                             <div className="col-md-11">
                                 <CreatedBySelectField
                                     source="/api/v1.0/user"
-                                    handleChange={this.handleChange} 
+                                    handleChange={this.handleChange}
                                     errors={this.state.errors}
                                 />
                             </div>
@@ -329,15 +345,15 @@ var CampaignForm = React.createClass ({
                                 <div className="datetimepicker input-group date">
                                     <FormGroup>
                                         <ControlLabel>Date Created</ControlLabel>
-                                        <DateTimeField datetime={this.state.date_created} />
+                                        <DateTimeField datetime={this.state.date_created}/>
                                     </FormGroup>
                                 </div>
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-md-11">
-                                <ContractNoSelectField
-                                    source="/api/v1.0/contract/" />
+                                <ContractNoSelectField ref="contract"
+                                                       source="/api/v1.0/contract/"/>
                             </div>
                             <div className="col-md-1">
                                 <a id="contract_no"
@@ -351,8 +367,8 @@ var CampaignForm = React.createClass ({
                         <div className="row">
                             <div className="col-md-11">
                                 <FormGroup>
-                                    <FormControl componentClass="textarea" 
-                                                 placeholder="comments" 
+                                    <FormControl componentClass="textarea"
+                                                 placeholder="comments"
                                                  name="comments"/>
                                 </FormGroup>
                             </div>
@@ -362,11 +378,11 @@ var CampaignForm = React.createClass ({
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
                                     <ControlLabel>Scheduled testing</ControlLabel>
-                                    <DateTimeField datetime={this.state.date_application} />
+                                    <DateTimeField datetime={this.state.date_application}/>
                                 </div>
                                 <div className="datetimepicker input-group date col-md-3">
                                     <ControlLabel>Lab measurement</ControlLabel>
-                                    <DateTimeField datetime={this.state.date_sampling} />
+                                    <DateTimeField datetime={this.state.date_sampling}/>
                                 </div>
                             </div>
                         </div>
@@ -381,18 +397,18 @@ var CampaignForm = React.createClass ({
                                 >Cancel</Button>
                             </div>
                         </div>
-                        </form>
-                    </Panel>
+                    </form>
+                </Panel>
                 <hr/>
 
-                <AddEquipmentForm showTestList={this.showTestList}/> 
+                <AddEquipmentForm showTestList={this.showTestList}/>
 
                 <Modal show={this.state.showCreatedByForm}>
-                    <CreatedByForm handleClose={this.closeCreatedByForm} />
+                    <CreatedByForm handleClose={this.closeCreatedByForm}/>
                 </Modal>
 
                 <Modal show={this.state.showNewContractForm}>
-                    <NewContractForm handleClose={this.closeNewContractForm} />
+                    <NewContractForm onContractCreate={this.onContractCreate} handleClose={this.closeNewContractForm}/>
                 </Modal>
             </div>
         );

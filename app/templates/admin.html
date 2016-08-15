@@ -23,7 +23,7 @@
             treeCopy: '{{ url_for("tree.copy") }}',
             treeGetView: '{{ url_for("tree.getview") }}'
         };
-        var treeStruct = {{ _(tree) }};
+        var treeStruct = {{ _(tree) or '[]' }};
 {#</div>#}
     </script>
 
