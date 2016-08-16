@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from flask.ext.sqlalchemy import SQLAlchemy
-from cerberus import Validator
+from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
 from app.diagnostic.models import Equipment, TestResult, Campaign, FluidProfile
 from app.diagnostic.models import ElectricalProfile

@@ -1210,7 +1210,7 @@ doc = ApiDoc(app=api)
          -d '{"campaign_id":1, "reason_id": 5, "test_type_id": 1, "date_analyse": "2016-07-29 17:52:19"}' \
          http://localhost:8001/api/v1.0/test_result/
 
-@apiParam {Integer}   campaign_id
+@apiParam {Integer}   campaign_id       required
 @apiParam {Integer}   reason_id
 @apiParam {DateTime}  date_analyse      format "2016-07-29 17:52:19"
 @apiParam {Integer}   test_type_id
@@ -1220,8 +1220,8 @@ doc = ApiDoc(app=api)
 @apiParam {Integer}   fluid_profile_id
 @apiParam {Integer}   electrical_profile_id
 @apiParam {Boolean}   percent_ratio
-@apiParam {Integer}   performed_by_id     required
-@apiParam {Integer}   lab_id              required
+@apiParam {Integer}   performed_by_id
+@apiParam {Integer}   lab_id
 @apiParam {Integer}   material_id
 @apiParam {Integer}   fluid_type_id
 @apiParam {Float}     charge

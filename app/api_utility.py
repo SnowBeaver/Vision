@@ -1,7 +1,78 @@
+import math
+
 from app.diagnostic.models import *
 from app.users.models import User, Role
 from datetime import datetime
+from cerberus import Validator
 
+class MyValidator(Validator):
+    def _validate_fluid_tests_qty(self, fluid_tests_qty, field, value):
+        quantity_ml_syringe = 0
+
+        # Syringe
+        if self.document.get('gas'): quantity_ml_syringe += 15
+        if self.document.get('water'): quantity_ml_syringe += 10
+        if self.document.get('pcb'): quantity_ml_syringe += 5
+        if self.document.get('furans'): quantity_ml_syringe += 20
+
+        quantity = math.ceil(quantity_ml_syringe / 30.0)
+
+        if not quantity_ml_syringe and self.document.get('inhibitor'):  # chkDBPCSer.Item(0).value?
+            quantity = 1
+
+        if quantity != value:
+            self._error(field, "Wrong quantity, must be {}".format(quantity))
+
+
+    def _validate_fluid_tests_qty_jar(self, fluid_tests_qty, field, value):
+        quantity_ml_jar = 0
+        # POTS. Jar
+        if self.document.get('dielec'): quantity_ml_jar += 500
+        if self.document.get('dielec_2'): quantity_ml_jar += 500
+        if self.document.get('dielec_d'): quantity_ml_jar += 450
+        if self.document.get('dielec_i'): quantity_ml_jar += 500
+        if self.document.get('ift'): quantity_ml_jar += 25
+        if self.document.get('pf'): quantity_ml_jar += 100
+        if self.document.get('pf_100'): quantity_ml_jar += 100
+        if self.document.get('point'): quantity_ml_jar += 50
+        if self.document.get('viscosity'): quantity_ml_jar += 50
+        if self.document.get('corr'): quantity_ml_jar += 200
+        if self.document.get('pcb_jar'): quantity_ml_jar += 5
+        if self.document.get('particles'): quantity_ml_jar += 500
+        if self.document.get('metals'): quantity_ml_jar += 50
+        if self.document.get('water_w'): quantity_ml_jar += 10
+        if self.document.get('furans_f'): quantity_ml_jar += 20
+
+        quantity = math.ceil(quantity_ml_jar / 750.0)
+
+        if(not quantity_ml_jar) and (self.document.get('acidity') or
+                                     self.document.get('color') or
+                                     self.document.get('density') or
+                                     self.document.get('visual') or
+                                     self.document.get('inhibitor_jar')):
+            quantity = 1
+
+        if quantity != value:
+            self._error(field, "Wrong quantity, must be {}".format(quantity))
+
+    def _validate_fluid_tests_qty_vial(self, fluid_tests_qty, field, value):
+        # FIOLES. vial
+        quantite_ml_vial = 0
+
+        if self.document.get('pcb_vial'):
+            quantite_ml_vial += 5
+        quantity = math.ceil(quantite_ml_vial / 5.0)
+
+        if not quantite_ml_vial and self.document.get('antioxidant'):
+            quantity = 1
+
+        if quantity != value:
+            self._error(field, "Wrong quantity, must be {}".format(quantity))
+    # testcheckedtemp = 0
+    # if (self.document.get('point') or
+    #     self.document.get('viscosity') or
+    #     self.document.get('corr')):
+    #     testcheckedtemp = 1
 
 def dict_copy_union(dict1, *kargs):
     dict3 = dict1.copy()
@@ -168,7 +239,7 @@ fluid_profile_schema = {
     'furans': type_boolean_coerce_dict,
     'inhibitor': type_boolean_coerce_dict,
     'pcb': type_boolean_coerce_dict,
-    'qty': type_integer_coerce_dict,
+    'qty': dict_copy_union(type_integer_coerce_dict, {'fluid_tests_qty': True}),
     'sampling': type_integer_coerce_dict,
     'dielec': type_boolean_coerce_dict,
     'acidity': type_boolean_coerce_dict,
@@ -190,16 +261,16 @@ fluid_profile_schema = {
     'corr': type_boolean_coerce_dict,
     'dielec_i': type_boolean_coerce_dict,
     'visual': type_boolean_coerce_dict,
-    'qty_jar': type_integer_coerce_dict,
+    'qty_jar': dict_copy_union(type_integer_coerce_dict, {'fluid_tests_qty_jar': True}),
     'sampling_jar': type_integer_coerce_dict,
     'pcb_vial': type_boolean_coerce_dict,
     'antioxidant': type_boolean_coerce_dict,
-    'qty_vial': type_integer_coerce_dict,
+    'qty_vial': dict_copy_union(type_integer_coerce_dict, {'fluid_tests_qty_vial': True}),
     'sampling_vial': type_integer_coerce_dict,
 }
 test_result_schema = {
     'id': readonly_dict,
-    'campaign_id': type_integer_coerce_dict,
+    'campaign_id': type_integer_coerce_required_dict,
     'reason_id': type_integer_coerce_dict,
     'date_analyse': type_datetime_dict,
     'test_type_id': type_integer_coerce_dict,
@@ -211,8 +282,8 @@ test_result_schema = {
     'test_recommendation_id': type_integer_coerce_dict,
     'percent_ratio': type_boolean_coerce_dict,
     'analysis_number': readonly_dict,
-    'performed_by_id': type_integer_coerce_required_dict,
-    'lab_id': type_integer_coerce_required_dict,
+    'performed_by_id': type_integer_coerce_dict,
+    'lab_id': type_integer_coerce_dict,
     'material_id': type_integer_coerce_dict,
     'fluid_type_id': type_integer_coerce_dict,
     'lab_contract_id': type_integer_coerce_dict,
@@ -240,7 +311,7 @@ test_result_schema = {
     'furans': type_boolean_coerce_dict,
     'inhibitor': type_boolean_coerce_dict,
     'pcb': type_boolean_coerce_dict,
-    'qty': type_integer_coerce_dict,
+    'qty': dict_copy_union(type_integer_coerce_dict, {'fluid_tests_qty': True}),
     'sampling': type_integer_coerce_dict,
     'dielec': type_boolean_coerce_dict,
     'acidity': type_boolean_coerce_dict,
@@ -262,11 +333,11 @@ test_result_schema = {
     'corr': type_boolean_coerce_dict,
     'dielec_i': type_boolean_coerce_dict,
     'visual': type_boolean_coerce_dict,
-    'qty_jar': type_integer_coerce_dict,
+    'qty_jar': dict_copy_union(type_integer_coerce_dict, {'fluid_tests_qty_jar': True}),
     'sampling_jar': type_integer_coerce_dict,
     'pcb_vial': type_boolean_coerce_dict,
     'antioxidant': type_boolean_coerce_dict,
-    'qty_vial': type_integer_coerce_dict,
+    'qty_vial': dict_copy_union(type_integer_coerce_dict, {'fluid_tests_qty_vial': True}),
     'sampling_vial': type_integer_coerce_dict,
     }
 role_schema = {'id': readonly_dict,

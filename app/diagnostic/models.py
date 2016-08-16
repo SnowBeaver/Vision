@@ -244,10 +244,6 @@ class Campaign(db.Model):
     # # Bolean field that may no longer be required
     # if_ok = db.Column(db.String(5))
 
-    # # DateApplication: When recommendation was written
-    # date_application = db.Column(db.DateTime)
-
-
     # data_valid = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # DataValid: Need to look into
     # status1 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status1: Need to look into
     # status2 = db.Column(db.Integer, server_default=db.text("0"), nullable=True)  # Status2:	 Need to look into
