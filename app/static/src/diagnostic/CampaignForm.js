@@ -11,6 +11,7 @@ import CreatedByForm from './CampaignForm_modules/CreatedByForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import AddEquipmentForm from './AddEquipmentForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import { hashHistory } from 'react-router';
 
 
 var items = [];
@@ -103,7 +104,6 @@ var ContractNoSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            selected: false,
             isVisible: false
         };
     },
@@ -112,7 +112,7 @@ var ContractNoSelectField = React.createClass({
         this.componentDidMount();
         this.setState({
             selected: data.result
-        }); 
+        });
     },
 
     isVisible: function () {
@@ -169,13 +169,16 @@ var CampaignForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
+            campaign_id: false,
+            date_created: new Date().toISOString(),
+            date_sampling: new Date().toISOString(),
             errors: {},
             showCreatedByForm: false,
             showNewContractForm: false,
             showNewLabForm: false,
             fields: [
                 'created_by_id', 'date_created', 'date_sampling',
-                'date_application', 'description', 'contract_id'
+                'description', 'contract_id'
             ]
         }
     },
@@ -194,9 +197,6 @@ var CampaignForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (response) {
-                alert('Campaign sucessfully started.');
-            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -223,9 +223,12 @@ var CampaignForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        this.setState(this.getInitialState());
-        this.props.setCampaignId();
-        // show success message
+        // this.setState(this.getInitialState());
+        this.setState({
+            campaign_id: data.result
+        });
+        console.log('Campaign successfully started.');
+        hashHistory.push('/add_equipment');
     },
 
     _onError: function (data) {
@@ -301,7 +304,7 @@ var CampaignForm = React.createClass({
         })
     },
 
-    closeNewContractForm: function () {
+    closeNewContractForm: function () { 
         this.setState({
             showNewContractForm: false
         })
@@ -314,6 +317,10 @@ var CampaignForm = React.createClass({
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
         alert('Contract created');
+    },
+
+    _getCampaign: function(){
+        return this.state.campaign_id;
     },
 
     render: function () {
@@ -345,7 +352,7 @@ var CampaignForm = React.createClass({
                                 <div className="datetimepicker input-group date">
                                     <FormGroup>
                                         <ControlLabel>Date Created</ControlLabel>
-                                        <DateTimeField datetime={this.state.date_created}/>
+                                        <DateTimeField name="date_created" datetime={this.state.date_created}/>
                                     </FormGroup>
                                 </div>
                             </div>
@@ -377,12 +384,8 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <ControlLabel>Scheduled testing</ControlLabel>
-                                    <DateTimeField datetime={this.state.date_application}/>
-                                </div>
-                                <div className="datetimepicker input-group date col-md-3">
                                     <ControlLabel>Lab measurement</ControlLabel>
-                                    <DateTimeField datetime={this.state.date_sampling}/>
+                                    <DateTimeField name="date_sampling" datetime={this.state.date_sampling}/>
                                 </div>
                             </div>
                         </div>
@@ -390,7 +393,7 @@ var CampaignForm = React.createClass({
                             <div className="col-md-12 ">
                                 <Button bsStyle="success"
                                         className="pull-right"
-                                        type="submit">Save</Button>
+                                        type="submit">Next</Button>
                                 &nbsp;
                                 <Button bsStyle="danger"
                                         className="pull-right margin-right-xs"
@@ -400,8 +403,6 @@ var CampaignForm = React.createClass({
                     </form>
                 </Panel>
                 <hr/>
-
-                <AddEquipmentForm showTestList={this.showTestList}/>
 
                 <Modal show={this.state.showCreatedByForm}>
                     <CreatedByForm handleClose={this.closeCreatedByForm}/>
