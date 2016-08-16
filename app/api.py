@@ -90,34 +90,34 @@ def delete_item(path, item_id):
         db.session.commit()
         return rows > 0
 
+
 def add_items():
-   if not request.json:
-       abort(400, 'JSON not found')
+    if not request.json:
+        abort(400, 'JSON not found')
 
-   items_model = model_dict['test_result']['model']
+    items_model = model_dict['test_result']['model']
 
-   try:
-       campaign_id = request.json[0].get('campaign_id')
-       rows = db.session.query(items_model).filter(items_model.campaign_id == campaign_id).delete(synchronize_session=False)
-   except:
-       pass
-   else:
-       db.session.commit()
+    try:
+        campaign_id = request.json[0].get('campaign_id')
+        db.session.query(items_model).filter(items_model.campaign_id == campaign_id).delete(synchronize_session=False)
+    except:
+        db.session.rollback()
+    else:
+        db.session.commit()
 
+    validation_schema = model_dict['test_result']['schema']
+    my_ids = []
+    for json_dict in request.json:
+        param_dict = {k: v for k, v in json_dict.items()}
+        v = Validator()
+        if not v.validate(param_dict, validation_schema):
+            abort(400, v.errors)
 
-   validation_schema = model_dict['test_result']['schema']
-   my_ids = []
-   for json_dict in request.json:
-       param_dict = {k: v for k, v in json_dict.items()}
-       v = Validator()
-       if not v.validate(param_dict, validation_schema):
-           abort(400, v.errors)
-
-       item = items_model(**param_dict)
-       db.session.add(item)
-       db.session.commit()
-       my_ids.append(item.id)
-   return my_ids
+        item = items_model(**param_dict)
+        db.session.add(item)
+        db.session.commit()
+        my_ids.append(item.id)
+    return my_ids
 
 
 @api.errorhandler(404)
@@ -154,7 +154,8 @@ def get_test_profile():
     rows_electrical = db.session.query(ElectricalProfile).all()
     return return_json('result', [item.serialize() for rows in (rows_fluid, rows_electrical) for item in rows])
 
-@api_blueprint.route('/test_result/equipment', methods=['POST',])
+
+@api_blueprint.route('/test_result/equipment', methods=['POST', ])
 def handler_items():
     return return_json('result', add_items())
 
