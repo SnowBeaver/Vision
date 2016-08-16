@@ -68,6 +68,7 @@ class ElectricalProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(256))
     description = db.Column(db.Unicode(1024))
+    shared = db.Column(db.Boolean)
     bushing = db.Column(db.Boolean(False))
     winding = db.Column(db.Boolean(False))
     insulation_pf = db.Column(db.Boolean(False))
@@ -118,6 +119,7 @@ class ElectricalProfile(db.Model):
         return {'id': self.id,
                 'name': self.name,
                 'description': self.description,
+                'shared': self.shared,
                 'bushing': self.bushing,
                 'winding': self.winding,
                 'insulation_pf': self.insulation_pf,
@@ -302,6 +304,7 @@ class FluidProfile(db.Model):
 
     name = db.Column(db.Unicode(256))
     description = db.Column(db.Unicode(1024))
+    shared = db.Column(db.Boolean)
 
     # syringe
     gas = db.Column(db.Boolean(False))
@@ -377,6 +380,7 @@ class FluidProfile(db.Model):
         return {'id': self.id,
                 'name': self.name,
                 'description': self.description,
+                'shared': self.shared,
                 'gas': self.gas,
                 'water': self.water,
                 'furans': self.furans,

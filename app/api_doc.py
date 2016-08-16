@@ -854,6 +854,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       id
 @apiSuccess {String(256)}   name
 @apiSuccess {String(1024)}  description
+@apiSuccess {Boolean}       shared
 @apiSuccess {String}        profile_type    electrical_profile
 @apiSuccess {Boolean}       bushing
 @apiSuccess {Boolean}       winding
@@ -878,6 +879,7 @@ doc = ApiDoc(app=api)
 
 @apiParam {String(256)}   name
 @apiParam {String(1024)}  description
+@apiParam {Boolean}       shared
 @apiParam {Boolean}       bushing
 @apiParam {Boolean}       winding
 @apiParam {Boolean}       insulation_pf
@@ -950,6 +952,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}       id
 @apiSuccess {String(256)}   name
 @apiSuccess {String(1024)}  description
+@apiSuccess {Boolean}       shared
 @apiSuccess {String}        profile_type  fluid_profile
 @apiSuccess {Integer}       qty
 @apiSuccess {Integer}       sampling
@@ -999,6 +1002,7 @@ doc = ApiDoc(app=api)
 
 @apiParam {String(256)}   name
 @apiParam {String(1024)}  description
+@apiParam {Boolean}       shared
 @apiParam {Integer}       qty
 @apiParam {Integer}       sampling
 @apiParam {Integer}       qty_jar
