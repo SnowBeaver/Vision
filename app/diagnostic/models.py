@@ -162,8 +162,8 @@ class Contract(db.Model):
     __tablename__ = 'contract'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
-    code = db.Column(db.String(50), index=True)
+    name = db.Column(db.String(50), index=True, unique=True)
+    code = db.Column(db.String(50), index=True, unique=True)
     # user 1 enters manually
     # ContractNum: What is the contract number within the company
     # ContractStatus: What is the status of the contract

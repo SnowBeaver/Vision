@@ -43,10 +43,10 @@ class EquipmentView(MyModelView):
 
     form_widget_args = {
         'frequency': {
-            'style': 'width: 50px'
+            'style': 'width: 100px'
         },
         'manufactured': {
-            'style': 'width: 80px'
+            'style': 'width: 100px'
         },
     }
 
