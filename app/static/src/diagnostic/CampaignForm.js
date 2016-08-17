@@ -227,8 +227,8 @@ var CampaignForm = React.createClass({
         this.setState({
             campaign_id: data.result
         });
-        console.log('Campaign successfully started.');
-        hashHistory.push('/add_equipment');
+        console.log('Campaign successfully started.', data.result);
+        hashHistory.push('/add_equipment/' + data.result);
     },
 
     _onError: function (data) {

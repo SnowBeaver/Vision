@@ -62,8 +62,8 @@ render((
             <IndexRoute component={Home} />
             <Route path="campaign" component={Campaign} />
             <Route path="equipment" component={Equipment} />
-            <Route path="add_equipment" component={AddEquipmentForm} />
-            <Route path="testlist" component={TestList} />
+            <Route path="add_equipment/:campaign" component={AddEquipmentForm} />
+            <Route path="testlist/:campaign" component={TestList} />
             <Route path="electro" component={ElectricalProfileForm} />
             <Route path="fluid" component={FluidProfileForm} />
             <Route path="choose_profile" component={ChooseTestForm} />

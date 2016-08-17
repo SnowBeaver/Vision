@@ -110,8 +110,9 @@ var AddEquipmentForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                'campaign_id': this.state.campaign_id,
-                'equipment_id': this.state.equipment,
+                // comes as url argument
+                'campaign_id': parseInt(this.props.params['campaign']),
+                'equipment_id': this.state.equipment
             }),
             success: function (data, textStatus) {
             },
