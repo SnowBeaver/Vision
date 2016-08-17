@@ -341,7 +341,11 @@ test_result_schema = {
     'antioxidant': type_boolean_coerce_dict,
     'qty_vial': dict_copy_union(type_integer_coerce_dict, {'fluid_tests_qty_vial': True}),
     'sampling_vial': type_integer_coerce_dict,
-    }
+}
+test_result_equipment_schema = {
+    'campaign_id': type_integer_coerce_required_dict,
+    'equipment_id': {'type': ['integer', 'list'], 'schema': type_integer_coerce_dict},
+}
 role_schema = {'id': readonly_dict,
                'name': dict_copy_union(type_string_dict, {'maxlength': 80}),
                'description': type_string_maxlength_255_dict,
@@ -1163,6 +1167,10 @@ model_dict = {
     'test_result': {
         'model': TestResult,
         'schema': test_result_schema
+    },
+    'test_result_equipment': {
+        'model': TestResult,
+        'schema': test_result_equipment_schema
     },
     'role': {
         'model': Role,

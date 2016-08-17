@@ -1285,6 +1285,39 @@ doc = ApiDoc(app=api)
 @apiUse Error400
 """
 """
+@api {post} /test_result/equipment Add a lot of new items with equipment_id
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_result
+@apiExample {curl} Example with equipment_id as integer:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"campaign_id":1,"equipment_id":5}' \
+         http://localhost:8001/api/v1.0/test_result/equipment
+
+@apiExample {curl} Example with equipment_id as list with one integer:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"campaign_id":1,"equipment_id":[5]}' \
+         http://localhost:8001/api/v1.0/test_result/equipment
+
+@apiExample {curl} Example with equipment_id as list of integers:
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"campaign_id":1,"equipment_id":[5,6]}' \
+         http://localhost:8001/api/v1.0/test_result/equipment
+
+@apiParam {Integer}   campaign_id       required
+@apiParam {Integer}   equipment_id
+@apiParam {List}      equipment_id
+
+@apiSuccess {List}  result  List of new items ids.
+@apiSuccessExample Success-Response true:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+      "result": [42,43]
+    }
+@apiUse Error400
+"""
+"""
 @api {put} /test_result/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
