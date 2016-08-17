@@ -52,8 +52,12 @@ var EquipmentTypeSelectField = React.createClass({
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name} ${this.state.items[key].serial}`}</option>);
+            menuItems.push(
+                <option key={this.state.items[key].id}
+                        value={this.state.items[key].id}>
+                    {`${this.state.items[key].name} ${this.state.items[key].serial}`}
+                </option>
+            );
         }
         var index = this.props.index.toString();
         var id = 'index-' + index;

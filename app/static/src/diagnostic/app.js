@@ -34,6 +34,7 @@ const App = React.createClass({
                     <li><Link to='/add_equipment'>Add Equipment</Link></li>
                     <li><Link to='/testlist'>Testlist</Link></li>
                     <li><Link to='/add_test'>New Test</Link></li>
+                    <li><Link to='/edit_test/1'>Edit Test</Link></li>
                     <li><Link to='/electro'>Electrical Profile</Link></li>
                     <li><Link to='/fluid'>Fluid Profile</Link></li>
                     <li><Link to='/choose_profile'>Choose Test Profile</Link></li>
@@ -68,6 +69,7 @@ render((
             <Route path="fluid" component={FluidProfileForm} />
             <Route path="choose_profile" component={ChooseTestForm} />
             <Route path="add_test" component={NewTestForm} />
+            <Route path="edit_test/:id" component={NewTestForm} />
             <Route path="add_createdby" component={CreatedByForm} />
             <Route path="add_contract" component={NewContractForm} />
             <Route path="add_lab" component={NewLabForm} />
