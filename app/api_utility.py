@@ -180,8 +180,8 @@ campaign_schema = {
     'status_id': type_integer_coerce_dict,
     }
 contract_schema = {'id': readonly_dict,
-                   'name': type_string_maxlength_50_dict,
-                   'code': type_string_maxlength_50_dict,
+                   'name': type_string_maxlength_50_required_dict,
+                   'code': type_string_maxlength_50_required_dict,
                    'contract_status_id': type_integer_coerce_required_dict,
                    }
 norm_schema = {'id': readonly_dict,
