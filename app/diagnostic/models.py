@@ -373,7 +373,7 @@ class FluidProfile(db.Model):
         self.parsedata(data)
 
     def __repr__(self):
-        return self.name
+        return u"{}".format(self.name)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
