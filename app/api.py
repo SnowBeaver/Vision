@@ -4,6 +4,8 @@ from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
 from app.diagnostic.models import Equipment, TestResult, Campaign, FluidProfile
 from app.diagnostic.models import ElectricalProfile
+from collections import Iterable
+
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -14,6 +16,12 @@ api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 def return_json(items_name, items_list):
     return jsonify({items_name: items_list})
 
+
+def new_instance(model, **param_dict):
+    item = model(**param_dict)
+    db.session.add(item)
+    db.session.commit()
+    return item
 
 def get_item(path, item_id=None):
     items_model = model_dict[path]['model']
@@ -33,9 +41,6 @@ def get_item(path, item_id=None):
 
 
 def add_item(path):
-    if not request.json:
-        abort(400, 'JSON not found')
-
     items_model = model_dict[path]['model']
     validation_schema = model_dict[path]['schema']
     param_dict = {k: v for k, v in request.json.items()}
@@ -43,35 +48,26 @@ def add_item(path):
     if not v.validate(param_dict, validation_schema):
         abort(400, v.errors)
 
-    item = items_model(**param_dict)
-    db.session.add(item)
-    db.session.commit()
+    item = new_instance(items_model, **param_dict)
     if items_model == Equipment:
-
         param_tree_dict = {
             'equipment_id': item.id,
             'parent_id': 32,
             'icon': '../app/static/img/icons/{0}_b.ico'.format(eq_type_dict.get(item.equipment_type_id, '')),
-            'type': '{0}'.format(eq_type_dict.get(item.equipment_type_id, ''))
+            'type': '{0}'.format(eq_type_dict.get(item.id.equipment_type_id, ''))
         }
-        item_tree = Tree(**param_tree_dict)
-        db.session.add(item_tree)
-        db.session.commit()
+        item_tree = new_instance(Tree, **param_tree_dict)
+
         param_tree_trans_dict = {
             'id': item_tree.id, 'locale': 'en',
             'text': param_dict['name'],
             'tooltip': param_dict['name']
         }
-        item_tree_trans = TreeTranslation(**param_tree_trans_dict)
-        db.session.add(item_tree_trans)
-        db.session.commit()
+        new_instance(TreeTranslation, **param_tree_trans_dict)
     return item.id
 
 
 def update_item(path, item_id):
-    if not request.json:
-        abort(400, 'JSON not found')
-
     items_model = model_dict[path]['model']
     item = db.session.query(items_model).get(item_id)
     for k, v in request.json.items():
@@ -92,31 +88,25 @@ def delete_item(path, item_id):
 
 
 def add_items():
-    if not request.json:
-        abort(400, 'JSON not found')
-
-    items_model = model_dict['test_result']['model']
-    validation_schema = model_dict['test_result']['schema']
-    v = Validator(validation_schema)
-    if False in [v.validate(param_dict) for param_dict in request.json]:
+    path = 'test_result_equipment'
+    items_model = model_dict[path]['model']
+    validation_schema = model_dict[path]['schema']
+    v = Validator()
+    if not v.validate(request.json, validation_schema):
         abort(400, v.errors)
 
+    campaign_id = request.json.get('campaign_id')
     try:
-        campaign_id = request.json[0].get('campaign_id')
         db.session.query(items_model).filter(items_model.campaign_id == campaign_id).delete(synchronize_session=False)
     except:
         db.session.rollback()
     else:
         db.session.commit()
 
-    my_ids = []
-    for json_dict in request.json:
-        # param_dict = {k: v for k, v in json_dict.items()}
-        item = items_model(**json_dict)
-        db.session.add(item)
-        db.session.commit()
-        my_ids.append(item.id)
-    return my_ids
+    equipment_ids = request.json.get('equipment_id')
+    if not isinstance(equipment_ids, Iterable):
+        equipment_ids = [equipment_ids]
+    return [new_instance(items_model, campaign_id=campaign_id, equipment_id=id).id for id in equipment_ids]
 
 
 @api.errorhandler(404)
@@ -134,6 +124,9 @@ def bad_request(error):
 def handler(path, item_id=None):
     if path not in model_dict:
         abort(404)
+
+    if request.method in ('POST', 'GET', 'PUT') and not request.json:
+            abort(400, 'JSON not found')
 
     crud_functions = {'GET': get_item,
                       'POST': add_item,
@@ -156,6 +149,9 @@ def get_test_profile():
 
 @api_blueprint.route('/test_result/equipment', methods=['POST', ])
 def handler_items():
+    if not request.json:
+        abort(400, 'JSON not found')
+
     return return_json('result', add_items())
 
 
