@@ -96,6 +96,10 @@ def add_items():
         abort(400, 'JSON not found')
 
     items_model = model_dict['test_result']['model']
+    validation_schema = model_dict['test_result']['schema']
+    v = Validator(validation_schema)
+    if False in [v.validate(param_dict) for param_dict in request.json]:
+        abort(400, v.errors)
 
     try:
         campaign_id = request.json[0].get('campaign_id')
@@ -105,15 +109,10 @@ def add_items():
     else:
         db.session.commit()
 
-    validation_schema = model_dict['test_result']['schema']
     my_ids = []
     for json_dict in request.json:
-        param_dict = {k: v for k, v in json_dict.items()}
-        v = Validator()
-        if not v.validate(param_dict, validation_schema):
-            abort(400, v.errors)
-
-        item = items_model(**param_dict)
+        # param_dict = {k: v for k, v in json_dict.items()}
+        item = items_model(**json_dict)
         db.session.add(item)
         db.session.commit()
         my_ids.append(item.id)
