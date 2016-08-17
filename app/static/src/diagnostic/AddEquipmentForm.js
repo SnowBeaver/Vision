@@ -55,16 +55,17 @@ var EquipmentTypeSelectField = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name} ${this.state.items[key].serial}`}</option>);
         }
-        var id = 'index-' + this.props.index;
+        var index = this.props.index.toString();
+        var id = 'index-' + index;
 
         return (
             <div className="row" id={id}>
                 <div className="col-md-1">
-                    {this.props.index+1}
+                    {this.props.index + 1}
                 </div>
                 <div className="col-md-6">
                     <span>
-                        <FormGroup controlId="formControlsSelect1">
+                        <FormGroup controlId={index}>
                             <FormControl
                                 componentClass="select"
                                 placeholder="equipment"
@@ -72,7 +73,7 @@ var EquipmentTypeSelectField = React.createClass({
                                 onChange={this.handleChange}
                                 value={this.props.value}
                             >
-                                <option key="0" value="select">Select equipment {this.props.index+1}</option>
+                                <option key="0" value="select">Select equipment {this.props.index + 1}</option>
                                 {menuItems}
                             </FormControl>
                         </FormGroup>
@@ -124,10 +125,7 @@ var AddEquipmentForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        console.log(this.context.router);
-        console.log(this.state.equipment); 
-        console.log(e);
-        
+
         var errors = this._validate();
         if (Object.keys(errors).length != 0) {
             this.setState({
@@ -147,13 +145,11 @@ var AddEquipmentForm = React.createClass({
 
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
-        // <Link to="/testlist" type="button" className="btn btn-success">
-        //     Next
-        // </Link>
-        // show success message
-        console.log('Campaign equipment successfully saved.');
-        return;
-        // hashHistory.push('/testlist');
+        // show success message in console for now
+        console.log('Campaign equipment successfully saved.', data);
+
+        var campaign = this.props.params['campaign'];
+        hashHistory.push('/testlist/' + campaign);
     },
 
     _onError: function (data) {
@@ -193,7 +189,7 @@ var AddEquipmentForm = React.createClass({
     _onChange: function (e) {
         var state = {};
         var eq = this.state.equipment;
-        eq.push(parseInt(e.target.value));
+        eq[e.target.id] = parseInt(e.target.value);
         state[e.target.name] = $.trim(e.target.value);
         state['equipment'] = Array.from(new Set(eq));
         this.setState(state);
@@ -204,7 +200,7 @@ var AddEquipmentForm = React.createClass({
         var numberOfSelects = this.state.numberOfSelects + 1;
         this.setState({
             numberOfSelects: numberOfSelects
-        }); 
+        });
     },
 
     removeSelect: function (index) {
@@ -212,12 +208,12 @@ var AddEquipmentForm = React.createClass({
         this.setState({
             numberOfSelects: numberOfSelects
         });
-        var arr = this.state.equipment; 
+        var arr = this.state.equipment;
         arr.splice(index, 1);
-        
+
         this.setState({
             equipment: arr
-        }); 
+        });
     },
 
     getItems: function () {
