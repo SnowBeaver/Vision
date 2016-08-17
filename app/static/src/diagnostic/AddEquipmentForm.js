@@ -1,42 +1,37 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
+import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
-import { Link } from 'react-router';
+import {Link} from 'react-router';
+import {hashHistory} from 'react-router';
 
 
-var EquipmentTypeSelectField = React.createClass ({
+var EquipmentTypeSelectField = React.createClass({
 
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value,
-            eqtype_id: event.target.value
-        })
-    },
-
-    getInitialState: function(){
+    getInitialState: function () {
         return {
-            items: [],
-            isVisible: false
+            items: []
         };
     },
 
-    isVisible: function(){
-        return this.state.isVisible;
+    handleChange: function (event, index, value) {
+
+        this.setState({
+            value: event.target.value
+        })
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){ 
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
             var items = (result['result']);
             this.setState({
                 items: items
             });
         }.bind(this), 'json');
-
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
@@ -44,28 +39,41 @@ var EquipmentTypeSelectField = React.createClass ({
         this.props.removeSelect(this.props.index);
     },
 
-    setVisible: function(){
-        this.state.isVisible = true;
+    getSelected: function () {
+        return this.state.selected || this.state.value;
     },
 
-    render: function() {
+    setSelected: function (selected) {
+        this.setState({
+            selected: selected
+        })
+    },
+
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name} ${this.state.items[key].serial}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name} ${this.state.items[key].serial}`}</option>);
         }
+        var index = this.props.index.toString();
+        var id = 'index-' + index;
+
         return (
-            <div className="row">
+            <div className="row" id={id}>
                 <div className="col-md-1">
-                    {this.props.index}
+                    {this.props.index + 1}
                 </div>
                 <div className="col-md-6">
                     <span>
-                        <FormGroup controlId="formControlsSelect1">
-                            <FormControl 
-                                componentClass="select" 
-                                placeholder="equipment type" 
-                                onChange={this.handleChange}>
-                                <option key="0" value="select">Select equipment {this.props.index}</option>
+                        <FormGroup controlId={index}>
+                            <FormControl
+                                componentClass="select"
+                                placeholder="equipment"
+                                name="equipment_id"
+                                onChange={this.handleChange}
+                                value={this.props.value}
+                            >
+                                <option key="0" value="select">Select equipment {this.props.index + 1}</option>
                                 {menuItems}
                             </FormControl>
                         </FormGroup>
@@ -77,9 +85,6 @@ var EquipmentTypeSelectField = React.createClass ({
                        onClick={this.removeSelect}
                        aria-hidden="true">
                     </a>
-                </div>
-                <div className="col-md-1">
-                   <Link to="/testlist" type="button" className="btn btn-success">Tests</Link>
                 </div>
             </div>
         );
@@ -93,126 +98,171 @@ var AddEquipmentForm = React.createClass({
         return {
             loading: false,
             errors: {},
-            numberOfSelects: 1
+            numberOfSelects: 1,
+            equipment: []
         }
-    },
-
-    onClickSelectAdd: function () {
-        var i = this.state.numberOfSelects+1;
-        this.setState({
-            numberOfSelects: i
-        })
-    },
-    
-    removeSelect: function(index){
-
-        var i = this.state.numberOfSelects-1;
-        this.setState({
-            numberOfSelects: i
-        });
-        document.getElementById('index-'+index).remove();
     },
 
     _create: function () {
 
         return $.ajax({
-            url: '/api/v1.0/equipment/',
+            url: '/api/v1.0/test_result/equipment',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                'equipment_type_id': this.refs.eqt.state.eqtype_id,
-
+                // comes as url argument
+                'campaign_id': parseInt(this.props.params['campaign']),
+                'equipment_id': this.state.equipment
             }),
-            success: function (data, textStatus) { },
+            success: function (data, textStatus) {
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
         })
     },
+
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
+
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
     },
+
     hideLoading: function () {
         this.setState({loading: false});
     },
+
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
-        // show success message
+        // show success message in console for now
+        console.log('Campaign equipment successfully saved.', data);
+
+        var campaign = this.props.params['campaign'];
+        hashHistory.push('/testlist/' + campaign);
     },
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
         }
     },
-    _onChange: function (e) {
-        var state = {};
-        state[e.target.name] =  $.trim(e.target.value);
-        this.setState(state);
-    },
     _validate: function () {
         var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
+        // if(this.state.campaign_id == "") {
+        //   errors.username = "Campaign should be started first";
         // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
-        // return errors;
+        return errors;
     },
+
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
     },
 
-    render :function () {
-        var selects = [];
-        for(var i=1; i <= this.state.numberOfSelects;i++){
-            selects.push(
-                <EquipmentTypeSelectField index={i} source="/api/v1.0/equipment" removeSelect={this.removeSelect} />
+    onClickCancel: function () {
+        if (confirm('Are you sure you want to cancel campaign? All campaign data will be lost')) {
+            //@todo redirect to cancel or call cancel campaign function
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        var eq = this.state.equipment;
+        eq[e.target.id] = parseInt(e.target.value);
+        state[e.target.name] = $.trim(e.target.value);
+        state['equipment'] = Array.from(new Set(eq));
+        this.setState(state);
+    },
+
+    onClickSelectAdd: function () {
+
+        var numberOfSelects = this.state.numberOfSelects + 1;
+        this.setState({
+            numberOfSelects: numberOfSelects
+        });
+    },
+
+    removeSelect: function (index) {
+        var numberOfSelects = this.state.numberOfSelects - 1;
+        this.setState({
+            numberOfSelects: numberOfSelects
+        });
+        var arr = this.state.equipment;
+        arr.splice(index, 1);
+
+        this.setState({
+            equipment: arr
+        });
+    },
+
+    getItems: function () {
+
+        var items = [];
+        var numberOfSelects = this.state.numberOfSelects;
+
+        for (var i = 0; i < numberOfSelects; i++) {
+            var value = null || this.state.equipment[i];
+            items.push(
+                <EquipmentTypeSelectField
+                    key={i}
+                    index={i}
+                    source="/api/v1.0/equipment"
+                    removeSelect={this.removeSelect}
+                    value={value}
+                />
             );
         }
+        return items;
+    },
 
-        return(
+    render: function () {
+
+        return (
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Add equipment">
-                        {selects}
+                        {this.getItems()}
                         <div className="row">
                             <div className="col-md-10">
                                 <a href="javascript:void(0)"
                                    className="glyphicon glyphicon-plus"
                                    onClick={this.onClickSelectAdd}
-                                   aria-hidden="true"></a>
+                                   aria-hidden="true">&nbsp;</a>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-12 ">
+                                <Button bsStyle="success" type="submit"
+                                        className="pull-right"
+                                >Next</Button>
+                                <Button bsStyle="danger" onClick={this.onClickCancel}
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
                             </div>
                         </div>
                     </Panel>
-                </form> 
+                </form>
             </div>
         );
     }
