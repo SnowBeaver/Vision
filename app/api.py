@@ -125,7 +125,7 @@ def handler(path, item_id=None):
     if path not in model_dict:
         abort(404)
 
-    if request.method in ('POST', 'GET', 'PUT') and not request.json:
+    if request.method in ('POST', 'PUT') and not request.json:
             abort(400, 'JSON not found')
 
     crud_functions = {'GET': get_item,
