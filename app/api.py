@@ -120,19 +120,40 @@ def bad_request(error):
 
 
 @api_blueprint.route('/<path>/', methods=['GET', 'POST'])
-@api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
 def handler(path, item_id=None):
+    if path not in model_dict:
+        abort(404)
+
+    if request.method == 'POST' and not request.json:
+            abort(400, 'JSON not found')
+
+    crud_functions = {
+        'GET': get_item,
+        'POST': add_item,
+        # 'PUT': update_item,
+        # 'DELETE': delete_item
+    }
+    crud_func = crud_functions[request.method]
+    args = [path]
+    if item_id:
+        args.append(item_id)
+    return return_json('result', crud_func(*args))
+
+
+@api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'POST', 'DELETE'])
+def handler_with_id(path, item_id=None):
     if path not in model_dict:
         abort(404)
 
     if request.method in ('POST', 'PUT') and not request.json:
             abort(400, 'JSON not found')
 
-    crud_functions = {'GET': get_item,
-                      'POST': add_item,
-                      'PUT': update_item,
-                      'DELETE': delete_item
-                      }
+    crud_functions = {
+        'GET': get_item,
+        'POST': update_item,
+        'PUT': update_item,
+        'DELETE': delete_item
+    }
     crud_func = crud_functions[request.method]
     args = [path]
     if item_id:
