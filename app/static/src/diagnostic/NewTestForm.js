@@ -56,8 +56,9 @@ var TestProfileSelectField = React.createClass({
     render: function () {
         var options = [];
         for (var key in this.state.items) {
-            var index = Math.random() + '_'+ this.state.items[key].id;
-            options.push(<option key={index} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            var index = Math.random() + '_' + this.state.items[key].id;
+            options.push(<option key={index}
+                                 value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -75,7 +76,6 @@ var TestProfileSelectField = React.createClass({
         )
     }
 });
-
 
 
 var PerformedBySelectField = React.createClass({
@@ -663,38 +663,39 @@ var NewTestForm = React.createClass({
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'ambient_air_temperature'
-            ],
-            profile_fields: [
-                'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
-                'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
-                'density', 'pcb_jar', 'inhibitor_jar', 'point', 'dielec_2', 'color', 'pf', 'particles', 'metals',
-                'viscosity', 'dielec_d', 'ift', 'pf_100', 'furans_f', 'water_w', 'corr', 'dielec_i', 'qty_jar',
-                'sampling_jar', 'pcb_vial', 'antioxidant', 'qty_vial', 'sampling_vial', 'percent_ratio',
-                'sampling_point_id'
             ]
+            // profile_fields: [
+            //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
+            //     'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
+            //     'density', 'pcb_jar', 'inhibitor_jar', 'point', 'dielec_2', 'color', 'pf', 'particles', 'metals',
+            //     'viscosity', 'dielec_d', 'ift', 'pf_100', 'furans_f', 'water_w', 'corr', 'dielec_i', 'qty_jar',
+            //     'sampling_jar', 'pcb_vial', 'antioxidant', 'qty_vial', 'sampling_vial', 'percent_ratio',
+            //     'sampling_point_id'
+            // ]
         }
     },
 
     componentDidMount: function () {
         // fill up form with data
-        
+        this.setState({
+            test_result_id: this.props.data['id']
+        });
     },
 
-    _create: function () {
+    _save: function () {
         var fields = this.state.fields;
-        var profile_fields = this.state.profile_fields;
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
         console.log(this.props.data);
-        console.log(this.props.data['campaign_id']);
+        // console.log(this.props.data['campaign_id']);
         data['campaign_id'] = this.props.data['campaign'];
-        // data['test_status_id'] = this.props.params['campaign']; // should be set on the API side
+        var url = '/api/v1.0/test_result/' + this.state.test_result_id;
 
         return $.ajax({
-            url: '/api/v1.0/test_result/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -716,7 +717,7 @@ var NewTestForm = React.createClass({
             });
             return;
         }
-        var xhr = this._create();
+        var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
@@ -726,9 +727,12 @@ var NewTestForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        this.setState(this.getInitialState());
-        alert('Test added');
-        // show success message
+        // this.setState(this.getInitialState());
+        this.setState({
+            analysis_number: data['result'].analysis_number
+            // show success message
+        });
+        alert('Test saved');
     },
 
     _onError: function (data) {
@@ -780,7 +784,7 @@ var NewTestForm = React.createClass({
         }
         return errors;
     },
-    
+
     _formGroupClass: function (field) {
         var className = "form-group ";
         if (field) {
@@ -1220,7 +1224,7 @@ var NewTestForm = React.createClass({
 
                     <Modal show={this.state.showFluidProfileForm}>
                         <FluidProfileForm data={this.props.data} handleClose={this.closeFluidProfileForm}/>
-                    </Modal> 
+                    </Modal>
 
                     <Modal show={this.state.showNewLabForm}>
                         <NewLabForm handleClose={this.closeNewLabForm}/>

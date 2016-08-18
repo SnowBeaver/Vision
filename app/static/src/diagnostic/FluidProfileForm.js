@@ -205,7 +205,7 @@ var TestProfileSelectField = React.createClass({
         if ('select' == event.target.value) {
             
             this.setState({
-                'data': null
+                saved_profile: null
             });
             
             this.props.fillUpForm();
@@ -214,9 +214,9 @@ var TestProfileSelectField = React.createClass({
 
             this.serverRequest = $.get('/api/v1.0/fluid_profile/' + event.target.value, function (result) {
                 this.setState({
-                    data: result['result']
+                    saved_profile: result['result']
                 });
-                this.props.fillUpForm(this.state.data);
+                this.props.fillUpForm(this.state.saved_profile);
             }.bind(this), 'json');
         } 
     },
@@ -284,23 +284,19 @@ const FluidProfileForm = React.createClass({
         }
     },
     componentDidMount: function(){
-        // console.log('fluid profile form created, props:');
         // console.log(this.props.data);
         //test_result_id
         // console.log(this.props.data.id);
     },
-    fillUpForm: function(data){
+    fillUpForm: function(saved_data){
 
-        if (null == data) {
+        if (null == saved_data) {
             this.refs.fluid_profile.reset();
         } else {
             this.setState({
-                data: data
+                data: saved_data
             });
         }
-        // Object.keys(data).map(function(value, index) {
-        //     console.log(index,value);
-        // }); 
     },
     
     _save: function () {
@@ -310,14 +306,38 @@ const FluidProfileForm = React.createClass({
             var key= fields[i];
             data[key] = this.state[key];
         }
+        this.setState({
+            form: data
+        });
 
+        // console.log('fluid profile form data');
+        // console.log(data);
+        // console.log('fluid profile saved earlier data');
+        // console.log(this.state.data);
+        // console.log(this.state.name);
+
+        // save part to test_result 
+        $.ajax({
+            url: '/api/v1.0/test_result/' + this.props.data.id,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(this.state.form),
+            success: function (data, textStatus) {
+                alert('Profile saved successfully')
+            },
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        });
+        
+        // show success message
         // if update a profile
-        if (this.state.name != '') {
+        if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
             var url = '/api/v1.0/fluid_profile/';
-            if (this.state.data.id != '' && this.state.name != '') {
+            if (this.state.data.id) {
                 url = url + this.state.data.id;
-            }
-
+            } 
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
@@ -332,23 +352,8 @@ const FluidProfileForm = React.createClass({
                 beforeSend: function () {
                     this.setState({loading: true});
                 }.bind(this)
-            })
-        }
-
-        // save part of test_result
-        return $.ajax({
-            url: url,
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data, textStatus) {
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
-
+            });
+        } 
     },
     _onSubmit: function (e) {
         e.preventDefault();
@@ -370,10 +375,9 @@ const FluidProfileForm = React.createClass({
     },
     
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
-        this.setState(this.getInitialState()); 
-        alert('Profile saved successfully');
-        // show success message
+        console.log('Fluid profile saved successfully');
+        // this.refs.eqtype_form.getDOMNode().reset();
+        // this.setState(this.getInitialState()); 
     },
     
     _onError: function (data) {
