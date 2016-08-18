@@ -9,6 +9,64 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import Radio from 'react-bootstrap/lib/Radio';
 
+
+var TestProfileSelectField = React.createClass({
+
+    getInitialState: function () {
+        return {
+            isVisible: true
+        };
+    },
+
+    handleChange: function (event) {
+        // console.log(event.target.name);
+        // console.log(event.target.value);
+        this.setState({
+            value: event.target.value
+        });
+    },
+
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
+            this.setState({
+                items: result['result']
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function () {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function () {
+        this.state.isVisible = true;
+    },
+
+    render: function () {
+        var options = [];
+        for (var key in this.state.items) {
+            var index = Math.random() + '_'+ this.state.items[key].id;
+            options.push(<option key={index} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <FormGroup>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    name="test_prof">
+                    <option value="select">Choose profile from saved</option>
+                    {options}
+                </FormControl>
+            </FormGroup>
+        )
+    }
+});
+
+
+
 const ElectricalProfileForm = React.createClass({
 
     getInitialState: function () {
@@ -110,11 +168,17 @@ const ElectricalProfileForm = React.createClass({
     
 
     render:function (){
-        return(
+        return( 
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
                         <Panel header="Electrical profile test parametres">
+                            <div className="row">
+                                <FormGroup>
+                                    Choose from saved <TestProfileSelectField source="/api/v1.0/electrical_profile"/>
+                                </FormGroup>
+                            </div>
+
                             <div className="scheduler-border">
                                 <fieldset className="scheduler-border">
                                     <legend className="scheduler-border">Test requested</legend>

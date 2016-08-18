@@ -6,7 +6,8 @@ import Panel from 'react-bootstrap/lib/Panel';
 import {Link} from 'react-router';
 import NewTestForm from './NewTestForm';
 import Button from 'react-bootstrap/lib/Button'; 
-import Modal from 'react-bootstrap/lib/Modal';
+
+var Breadcrumbs = require('react-breadcrumbs');
 
 
 var TestItem = React.createClass({
@@ -69,62 +70,6 @@ var TestItem = React.createClass({
     }
 });
 
-var TestProfileSelectField = React.createClass({
-
-    getInitialState: function () {
-        return {
-            isVisible: true
-        };
-    },
-
-    handleChange: function (event) {
-        // console.log(event.target.name);
-        // console.log(event.target.value);
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    componentDidMount: function () { 
-        this.serverRequest = $.get(this.props.source, function (result) { 
-            this.setState({
-                items: result['result']
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-
-    render: function () {
-        var options = [];
-        for (var key in this.state.items) {
-            var index = Math.random() + '_'+ this.state.items[key].id;
-            options.push(<option key={index} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <FormGroup>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    name="test_prof">
-                    <option value="select">Choose profile from saved</option>
-                    {options}
-                </FormControl>
-            </FormGroup>
-        )
-    }
-});
-
-
 var TestItemList = React.createClass({
 
     handleChange: function (event, index, value) {
@@ -186,20 +131,14 @@ var TestItemList = React.createClass({
                         {tests}
                     </div>
                     <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-6">
                             <FormGroup>
-                                <TestProfileSelectField source="/api/v1.0/test_profile"/>
-                            </FormGroup>
-                        </div>
-                        <div className="col-md-1 text-center">OR</div>
-                        <div className="col-md-2">
-                            <FormGroup>
-                                <Button onClick={this.showTestForm}>Create new one</Button>
+                                <Button onClick={this.showTestForm} className="success">Add new test</Button>
                             </FormGroup>
                         </div>
                     </div>
 
-                        <NewTestForm show={this.state.showTestForm} handleClose={this.closeTestForm} />
+                    <NewTestForm show={this.state.showTestForm} data={this.props.data} handleClose={this.closeTestForm} />
                     
                 </div> : null
         );
@@ -219,22 +158,22 @@ var TestList = React.createClass({
         return {
             items: [],
             isVisible: true, 
-            equipment: [
-                { id: 1, name: 'Test equoment 1' },
-                { id: 2, name: 'Test equoment 2' },
-                { id: 3, name: 'Test equoment 3' }
-            ]
+            // equipment: [
+            //     { id: 1, name: 'Test equoment 1' },
+            //     { id: 2, name: 'Test equoment 2' },
+            //     { id: 3, name: 'Test equoment 3' }
+            // ]
         };
     },
 
     componentDidMount: function () {
         var campaign_id = this.props.params['campaign'];
-        // this.serverRequest = $.get('/api/v1.0/test_result/?campaign_id=' + campaign_id,
-        //     function (result) {
-        //         this.setState({
-        //             equipment: result['result']
-        //         });
-        //     }.bind(this), 'json');
+        this.serverRequest = $.get('/api/v1.0/test_result/?campaign_id=' + campaign_id,
+            function (result) {
+                this.setState({
+                    equipment: result['result']
+                });
+            }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
@@ -249,19 +188,18 @@ var TestList = React.createClass({
 
     render: function () {
 
-        console.log(this.props.params);
-        console.log(this.state.equipment);
+        // console.log(this.props.params);
+        // console.log(this.state.equipment);
         
         var items = [];
         for (var key in this.state.equipment) {
-            console.log(this.state.equipment[key]);
             items.push(
                 <Panel 
-                    key={this.state.equipment[key].id} 
-                    eventKey={this.state.equipment[key].id} 
-                    header={this.state.equipment[key].name}
+                    key={this.state.equipment[key].equipment.id} 
+                    eventKey={this.state.equipment[key].equipment.id} 
+                    header={this.state.equipment[key].equipment.name}
                 >
-                    <TestItemList equipment_id={this.state.equipment[key].id}/>
+                    <TestItemList data={this.state.equipment[key]}/>
                 </Panel>
             );
         }

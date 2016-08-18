@@ -185,74 +185,197 @@ var SamplPointSelectField3 = React.createClass ({
     }
 });
 
+var TestProfileSelectField = React.createClass({
+
+    getInitialState: function () {
+        return {
+            isVisible: true
+        };
+    },
+
+    handleChange: function (event) {
+        this.setState({
+            value: event.target.value
+        });
+        this.loadProfileData(event); 
+    },
+
+    loadProfileData: function (event) {
+        
+        if ('select' == event.target.value) {
+            
+            this.setState({
+                'data': null
+            });
+            
+            this.props.fillUpForm();
+            
+        } else {
+
+            this.serverRequest = $.get('/api/v1.0/fluid_profile/' + event.target.value, function (result) {
+                this.setState({
+                    data: result['result']
+                });
+                this.props.fillUpForm(this.state.data);
+            }.bind(this), 'json');
+        } 
+    },
+
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
+            this.setState({
+                items: result['result']
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function () {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function () {
+        this.state.isVisible = true;
+    },
+
+    render: function () {
+        var options = [];
+        for (var key in this.state.items) {
+            var index = Math.random() + '_'+ this.state.items[key].id;
+            options.push(<option key={index} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <FormGroup>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    name="test_prof">
+                    <option value="select">Choose profile from saved</option>
+                    {options}
+                </FormControl>
+            </FormGroup>
+        )
+    }
+});
+
+
 
 const FluidProfileForm = React.createClass({
 
     getInitialState: function () {
         return {
-            qty: "",
-            qty_jar: "",
-            qty_vial: "",
             loading: false,
             data: {},
-            errors: {}
+            errors: {}, 
+            fields: [
+                'gas', 'furans', 'pcb', 'water',
+                'inhibitor', 'dielec', 'dielec_2',
+                'dielec_d', 'acidity', 'color',
+                'ift', 'density', 'pf_25', 'pf_100',
+                'pcb_jar', 'particles', 'furans_f',
+                'inhibitor_jar', 'metals', 'water_w',
+                'point', 'viscosity', 'corr', 'dielec_i',
+                'visual', 'pcb_vial', 'antioxidant',
+                'sampling', 'sampling_jar', 'sampling_vial',
+                'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection'
+            ]
         }
     },
+    componentDidMount: function(){
+        // console.log('fluid profile form created, props:');
+        // console.log(this.props.data);
+        //test_result_id
+        // console.log(this.props.data.id);
+    },
+    fillUpForm: function(data){
 
-    _create: function () {
-        var fields = [
-            'gas', 'furans', 'pcb', 'water',
-            'inhibitor', 'dielec', 'dielec_2',
-            'dielec_d', 'acidity', 'color',
-            'ift', 'density', 'pf_25', 'pf_100',
-            'pcb_jar', 'particles', 'furans_f',
-            'inhibitor_jar', 'metals', 'water_w',
-            'point', 'viscosity', 'corr', 'dielec_i',
-            'visual', 'pcb_vial', 'antioxidant',
-            'sampling', 'sampling_jar', 'sampling_vial',
-            'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection'
-        ];
+        if (null == data) {
+            this.refs.fluid_profile.reset();
+        } else {
+            this.setState({
+                data: data
+            });
+        }
+        // Object.keys(data).map(function(value, index) {
+        //     console.log(index,value);
+        // }); 
+    },
+    
+    _save: function () {
+        var fields = this.state.fields;
         var data = {};
         for (var i=0;i<fields.length;i++){
             var key= fields[i];
             data[key] = this.state[key];
         }
 
+        // if update a profile
+        if (this.state.name != '') {
+            var url = '/api/v1.0/fluid_profile/';
+            if (this.state.data.id != '' && this.state.name != '') {
+                url = url + this.state.data.id;
+            }
+
+            // if profile name is not empty and radio is checked then use this url to save profile
+            // and save to test_result
+            // otherwise just use these values for saving test_result
+            return $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (data, textStatus) {
+                },
+                beforeSend: function () {
+                    this.setState({loading: true});
+                }.bind(this)
+            })
+        }
+
+        // save part of test_result
         return $.ajax({
-            url: '/api/v1.0/fluid_profile/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) { },
+            success: function (data, textStatus) {
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
         })
+
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
-        var xhr = this._create();
+        var errors = this._validate();
+        if(Object.keys(errors).length != 0) {
+          this.setState({
+            errors: errors
+          });
+           return;
+        }
+        var xhr = this._save(); 
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
     },
+    
     hideLoading: function () {
         this.setState({loading: false});
     },
+    
     _onSuccess: function (data) {
         this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState()); 
         alert('Profile saved successfully');
         // show success message
     },
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -265,6 +388,7 @@ const FluidProfileForm = React.createClass({
             });
         }
     },
+    
     _onChange: function (e) {
         var state = {};
         if(e.target.type == 'checkbox'){
@@ -278,18 +402,13 @@ const FluidProfileForm = React.createClass({
         }
         this.setState(state);
     },
+    
     _validate: function () {
         var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
-        // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
         // if(this.state.password == "") {
         //   errors.password = "Password is required";
         // }
-        // return errors;
+        return errors;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -305,9 +424,18 @@ const FluidProfileForm = React.createClass({
 
         return (
             <div className="form-container">
-                <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                <form ref="fluid_profile" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
                         <Panel header="Fluid profile">
+                            <div className="row">
+                                <div className="col-md-10">
+                                </div>
+                                <div className="col-md-2">
+                                    <FormGroup>
+                                        <TestProfileSelectField fillUpForm={this.fillUpForm} source="/api/v1.0/fluid_profile"/>
+                                    </FormGroup>
+                                </div>
+                            </div> 
                             <div className="scheduler-border">
                                 <fieldset className="scheduler-border">
                                     <legend className="scheduler-border">Syringe - Test requested</legend>
@@ -315,10 +443,20 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="gas">Dissolved Gas</Checkbox>
+                                                    <Checkbox 
+                                                        name="gas" 
+                                                        checked={this.state.data.gas ? 'checked': false} 
+                                                        value="1"
+                                                    >
+                                                        Dissolved Gas
+                                                    </Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="furans">Furans</Checkbox>
+                                                    <Checkbox 
+                                                        name="furans"
+                                                        checked={this.state.data.furans ? 'checked': false}
+                                                        value="1"
+                                                    >Furans</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
                                                     <Checkbox name="pcb">PCB</Checkbox>
@@ -336,11 +474,12 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
                                                 <ControlLabel>Quantity</ControlLabel>
-                                                <FormControl type="text" ref="qty"   name="qty" />
+                                                <FormControl type="text" ref="qty" name="qty" value={this.state.data.qty} />
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField1
                                                     source="/api/v1.0/sampling_point"
+                                                    value={this.state.data.sampling}
                                                 />
                                             </div>
                                         </div>
@@ -429,12 +568,12 @@ const FluidProfileForm = React.createClass({
                                             <div className="maxwidth">
                                                 <div className="col-md-2 nopadding padding-right-xs">
                                                     <ControlLabel>Quantity</ControlLabel>
-                                                    <FormControl type="text" name="qty_jar" />
+                                                    <FormControl type="text" name="qty_jar" value={this.state.data.qty_jar} />
                                                 </div>
                                                 <div className="col-md-10 nopadding">
                                                     <SamplPointSelectField2
                                                         source="/api/v1.0/sampling_point"
-                                                        value={ this.state.value}
+                                                        value={ this.state.data.sampling_jar}
                                                     />
                                                 </div>
                                             </div>
@@ -458,12 +597,12 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
                                                 <ControlLabel>Quantity</ControlLabel>
-                                                <FormControl type="text" name="qty_vial" />
+                                                <FormControl type="text" name="qty_vial" value={this.state.data.qty_vial} />
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField3
                                                     source="/api/v1.0/sampling_point"
-                                                    value={ this.state.value} />
+                                                    value={ this.state.data.sampling_vial} />
                                             </div>
                                         </div>
                                     </div>
@@ -477,7 +616,7 @@ const FluidProfileForm = React.createClass({
                                             <FormGroup>
                                                 <FormControl type="text"
                                                              placeholder="electrical profile name"
-                                                             name="selection"/>
+                                                             name="name" value="" />
                                             </FormGroup>
                                         </div>
                                         <div className="row">

@@ -11,7 +11,6 @@ import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
-import CreatedByForm from './CampaignForm_modules/CreatedByForm';
 import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
@@ -22,32 +21,26 @@ import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
 
 var items = [];
 
+var TestProfileSelectField = React.createClass({
 
-var CreatedBySelectField = React.createClass({
+    getInitialState: function () {
+        return {
+            isVisible: true
+        };
+    },
 
     handleChange: function (event) {
+        // console.log(event.target.name);
+        // console.log(event.target.value);
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-
     componentDidMount: function () {
         this.serverRequest = $.get(this.props.source, function (result) {
-
-            items = (result['result']);
             this.setState({
-                items: items
+                items: result['result']
             });
         }.bind(this), 'json');
     },
@@ -61,28 +54,28 @@ var CreatedBySelectField = React.createClass({
     },
 
     render: function () {
-        var menuItems = [];
+        var options = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            var index = Math.random() + '_'+ this.state.items[key].id;
+            options.push(<option key={index} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select user"
-                        onChange={this.handleChange}
-                        name="created_by_id">
-                        <option key="0" value="select">Created by</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
+            <FormGroup>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    name="test_type_id">
+                    <option value="select">Choose profile from saved</option>
+                    {options}
+                </FormControl>
+            </FormGroup>
+        )
     }
 });
+
 
 
 var PerformedBySelectField = React.createClass({
@@ -385,7 +378,7 @@ var LabContractSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="contract">
+                        name="lab_contract_id">
                         <option key="0" value="select">Lab Contract</option>
                         {menuItems}
                     </FormControl>
@@ -633,7 +626,7 @@ var TestReasonSelectField = React.createClass({
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
-                    name="test_reason"
+                    name="test_reason_id"
                     onChange={this.handleChange}
                 >
                     <option key="0" value="select">Reason for Testing</option>
@@ -648,6 +641,7 @@ var TestReasonSelectField = React.createClass({
 var NewTestForm = React.createClass({
 
     //test_sampling_card
+    //test_status_id - should be set separate
     //test_commendation
     //'campaign_id' - should be passed
 
@@ -655,44 +649,52 @@ var NewTestForm = React.createClass({
         return {
             loading: false,
             errors: {},
-            equipment_number: '',
             showFluidProfileForm: false,
             showElectroProfileForm: false,
-            showCreatedByForm: false,
             showNewMaterialForm: false,
             showNewFluidForm: false,
             showNewRecommendationForm: false,
             showNewContractForm: false,
             showNewLabForm: false,
-            showNewSyringeForm: false
+            showNewSyringeForm: false,
+            fields: [
+                'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
+                'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
+                'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
+                'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
+                'ambient_air_temperature'
+            ],
+            profile_fields: [
+                'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
+                'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
+                'density', 'pcb_jar', 'inhibitor_jar', 'point', 'dielec_2', 'color', 'pf', 'particles', 'metals',
+                'viscosity', 'dielec_d', 'ift', 'pf_100', 'furans_f', 'water_w', 'corr', 'dielec_i', 'qty_jar',
+                'sampling_jar', 'pcb_vial', 'antioxidant', 'qty_vial', 'sampling_vial', 'percent_ratio',
+                'sampling_point_id'
+            ]
         }
     },
 
+    componentDidMount: function () {
+        // fill up form with data
+        
+    },
 
     _create: function () {
-        var fields = [
-            'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
-            'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
-            'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
-            'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
-            'ambient_air_temperature'
-        ];
-        var profile_fields = [
-            'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
-            'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
-            'density', 'pcb_jar', 'inhibitor_jar', 'point', 'dielec_2', 'color', 'pf', 'particles', 'metals',
-            'viscosity', 'dielec_d', 'ift', 'pf_100', 'furans_f', 'water_w', 'corr', 'dielec_i', 'qty_jar',
-            'sampling_jar', 'pcb_vial', 'antioxidant', 'qty_vial', 'sampling_vial', 'percent_ratio',
-            'sampling_point_id'
-        ];
+        var fields = this.state.fields;
+        var profile_fields = this.state.profile_fields;
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
+        console.log(this.props.data);
+        console.log(this.props.data['campaign_id']);
+        data['campaign_id'] = this.props.data['campaign'];
+        // data['test_status_id'] = this.props.params['campaign']; // should be set on the API side
 
         return $.ajax({
-            url: '/api/v1.0/test/',
+            url: '/api/v1.0/test_result/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -778,17 +780,13 @@ var NewTestForm = React.createClass({
         }
         return errors;
     },
+    
     _formGroupClass: function (field) {
         var className = "form-group ";
         if (field) {
             className += " has-error"
         }
         return className;
-    },
-
-    handleClick: function () {
-        document.getElementById('test_prof').remove();
-
     },
 
     closeElectricalProfileForm: function () {
@@ -801,12 +799,6 @@ var NewTestForm = React.createClass({
     closeFluidProfileForm: function () {
         this.setState({
             showFluidProfileForm: false
-        })
-    },
-
-    closeCreatedByForm: function () {
-        this.setState({
-            showCreatedByForm: false
         })
     },
 
@@ -849,21 +841,8 @@ var NewTestForm = React.createClass({
 
 
     onNewButtonClick: function (e) {
-        if (e.target.id === 'created_by') {
+        if (e.target.id === 'material') {
             this.setState({
-                    showCreatedByForm: true,
-                    showNewMaterialForm: false,
-                    showNewFluidForm: false,
-                    showNewRecommendationForm: false,
-                    showNewContractForm: false,
-                    showNewLabForm: false,
-                    showNewSyringeForm: false
-                }
-            )
-        }
-        else if (e.target.id === 'material') {
-            this.setState({
-                showCreatedByForm: false,
                 showNewMaterialForm: true,
                 showNewFluidForm: false,
                 showNewRecommendationForm: false,
@@ -874,7 +853,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.id === 'fluid_type') {
             this.setState({
-                showCreatedByForm: false,
                 showNewMaterialForm: false,
                 showNewFluidForm: true,
                 showNewRecommendationForm: false,
@@ -885,7 +863,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.id === 'performed_by') {
             this.setState({
-                showCreatedByForm: true,
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
                 showNewRecommendationForm: false,
@@ -896,7 +873,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.id === 'lab_analyser') {
             this.setState({
-                showCreatedByForm: false,
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
                 showNewRecommendationForm: false,
@@ -907,7 +883,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.id === 'lab_contract') {
             this.setState({
-                showCreatedByForm: false,
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
                 showNewRecommendationForm: false,
@@ -918,7 +893,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.id === 'recommend_by') {
             this.setState({
-                showCreatedByForm: true,
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
                 showNewRecommendationForm: false,
@@ -929,7 +903,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.id === 'recommend') {
             this.setState({
-                showCreatedByForm: false,
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
                 showNewRecommendationForm: true,
@@ -940,7 +913,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.id === 'syringe') {
             this.setState({
-                showCreatedByForm: false,
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
                 showNewRecommendationForm: false,
@@ -977,29 +949,6 @@ var NewTestForm = React.createClass({
                                             />
                                         </div>
                                     </div>
-                                    <div className="maxwidth">
-                                        <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup>
-                                                <ControlLabel>Date Created</ControlLabel>
-                                                <DateTimeField datetime={this.state.cr_date}/>
-                                            </FormGroup>
-                                        </div>
-                                    </div>
-
-                                    <div className="row">
-                                        <div className="col-md-11">
-                                            <CreatedBySelectField
-                                                source="/api/v1.0/user"
-                                                handleChange={this.handleChange}/>
-                                        </div>
-                                        <div className="col-md-1">
-                                            <a id="created_by"
-                                               className="btn btn-primary new1"
-                                               onClick={this.onNewButtonClick}
-                                            >New</a>
-                                        </div>
-                                    </div>
-
                                     <div className="row">
                                         <div className="col-md-11">
                                             <MaterialSelectField
@@ -1229,17 +1178,27 @@ var NewTestForm = React.createClass({
                                             </FormGroup>
                                         </div>
                                     </div>
-                                    <div className="row">
-                                        Please choose test type
-                                    </div>
-                                    <div className="maxwidth">
-                                        <Radio name="profile" value="fluid">
-                                            Fluid Profile
-                                        </Radio>
-                                        <Radio name="profile" value="electro">
-                                            Electrical Profile
-                                        </Radio>
-                                    </div>
+
+                                    <fieldset className="scheduler-border">
+                                        <legend className="scheduler-border">Choose test type</legend>
+                                        <div className="row">
+                                            <div>
+                                                <div className="col-md-2">
+                                                    <FormGroup>
+                                                        <TestProfileSelectField source="/api/v1.0/test_profile"/>
+                                                    </FormGroup>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="maxwidth">
+                                            <Radio name="profile" value="fluid">
+                                                Fluid Profile
+                                            </Radio>
+                                            <Radio name="profile" value="electro">
+                                                Electrical Profile
+                                            </Radio>
+                                        </div>
+                                    </fieldset>
                                     <div className="row">
                                         <div className="col-md-12">
                                             <Button bsStyle="success"
@@ -1260,12 +1219,8 @@ var NewTestForm = React.createClass({
                     </Modal>
 
                     <Modal show={this.state.showFluidProfileForm}>
-                        <FluidProfileForm handleClose={this.closeFluidProfileForm}/>
-                    </Modal>
-
-                    <Modal show={this.state.showCreatedByForm}>
-                        <CreatedByForm handleClose={this.closeCreatedByForm}/>
-                    </Modal>
+                        <FluidProfileForm data={this.props.data} handleClose={this.closeFluidProfileForm}/>
+                    </Modal> 
 
                     <Modal show={this.state.showNewLabForm}>
                         <NewLabForm handleClose={this.closeNewLabForm}/>
