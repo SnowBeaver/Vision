@@ -2032,7 +2032,7 @@ class TestResult(db.Model):
 
     # Status: Code indicating the Analysis status.
     # Analysis is a process with several steps and each one has a code.
-    test_status_id = db.Column('status_id', sqla.ForeignKey("test_status.id"), nullable=True)
+    test_status_id = db.Column('status_id', sqla.ForeignKey("test_status.id"), nullable=True, default=1)
     test_status = db.relationship('TestStatus', backref='test_result')
 
     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
