@@ -279,7 +279,8 @@ const FluidProfileForm = React.createClass({
                 'point', 'viscosity', 'corr', 'dielec_i',
                 'visual', 'pcb_vial', 'antioxidant',
                 'sampling', 'sampling_jar', 'sampling_vial',
-                'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection'
+                'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection',
+                'description'
             ]
         }
     },
@@ -355,6 +356,7 @@ const FluidProfileForm = React.createClass({
             });
         } 
     },
+    
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
@@ -449,7 +451,7 @@ const FluidProfileForm = React.createClass({
                                                 <div className="col-md-4 nopadding padding-right-xs">
                                                     <Checkbox 
                                                         name="gas" 
-                                                        checked={this.state.data.gas ? 'checked': false} 
+                                                        checked={this.state.data.gas ? 'checked': null}
                                                         value="1"
                                                     >
                                                         Dissolved Gas
@@ -458,20 +460,32 @@ const FluidProfileForm = React.createClass({
                                                 <div className="col-md-4 nopadding padding-right-xs">
                                                     <Checkbox 
                                                         name="furans"
-                                                        checked={this.state.data.furans ? 'checked': false}
+                                                        checked={this.state.data.furans ? 'checked': null}
                                                         value="1"
                                                     >Furans</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox name="pcb">PCB</Checkbox>
+                                                    <Checkbox
+                                                        name="pcb"
+                                                        checked={this.state.data.pcb ? 'checked': null}
+                                                        value="1"
+                                                    >PCB</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="water">Water</Checkbox>
+                                                    <Checkbox
+                                                        name="water"
+                                                        checked={this.state.data.water ? 'checked': null}
+                                                        value="1"
+                                                    >Water</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="inhibitor">Inhibitor</Checkbox>
+                                                    <Checkbox
+                                                        name="inhibitor"
+                                                        checked={this.state.data.inhibitor ? 'checked': null}
+                                                        value="1"
+                                                    >Inhibitor</Checkbox>
                                                 </div>
                                             </div>
                                         </div>
@@ -497,77 +511,156 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="dielec">Dielec .D1816(1mm)(kV)</Checkbox>
+                                                    <Checkbox
+                                                        name="dielec"
+                                                        checked={this.state.data.dielec ? 'checked': null}
+                                                        value="1"
+                                                    >Dielec .D1816(1mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="dielec_2">Dielec.D1816(2mm)(kV)</Checkbox>
+                                                    <Checkbox
+                                                        name="dielec_2"
+                                                        checked={this.state.data.dielec_2 ? 'checked': null}
+                                                        value="1"
+                                                    >Dielec.D1816(2mm)(kV)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox name="dielec_d">Dielec. D877(kV)</Checkbox>
+                                                    <Checkbox
+                                                        name="dielec_d"
+                                                        checked={this.state.data.dielec_d ? 'checked': null}
+                                                        value="1"
+                                                    >Dielec. D877(kV)</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="acid">Acidity(D974)</Checkbox>
+                                                    <Checkbox name="acid"
+                                                              checked={this.state.data.acid ? 'checked': null}
+                                                              value="1"
+                                                    >Acidity(D974)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="color">Color(D1500)</Checkbox>
+                                                    <Checkbox
+                                                        name="color"
+                                                        checked={this.state.data.color ? 'checked': null}
+                                                        value="1"
+                                                    >Color(D1500)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox name="ift">IFT(D971)</Checkbox>
+                                                    <Checkbox
+                                                        name="ift"
+                                                        checked={this.state.data.ift ? 'checked': null}
+                                                        value="1"
+                                                    >IFT(D971)</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="density">Density(D1298)</Checkbox>
+                                                    <Checkbox
+                                                        name="density"
+                                                        checked={this.state.data.density ? 'checked': null}
+                                                        value="1"
+                                                    >Density(D1298)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="pf_25">PF25C(D924)</Checkbox>
+                                                    <Checkbox
+                                                        name="pf_25"
+                                                        checked={this.state.data.pf_25 ? 'checked': null}
+                                                        value="1"
+                                                    >PF25C(D924)</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox name="pf_100">PF100C(D924)</Checkbox>
+                                                    <Checkbox
+                                                        name="pf_100"
+                                                        checked={this.state.data.pf_100 ? 'checked': null}
+                                                        value="1"
+                                                    >PF100C(D924)</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="pcb_jar">PCB</Checkbox>
+                                                    <Checkbox
+                                                        name="pcb_jar"
+                                                        checked={this.state.data.pcb_jar ? 'checked': null}
+                                                        value="1"
+                                                    >PCB</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="particles">Particles</Checkbox>
+                                                    <Checkbox
+                                                        name="particles"
+                                                        checked={this.state.data.particles ? 'checked': null}
+                                                        value="1"
+                                                    >Particles</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox name="furans_f">Furans</Checkbox>
+                                                    <Checkbox
+                                                        name="furans_f"
+                                                        checked={this.state.data.furans_f ? 'checked': null}
+                                                        value="1"
+                                                    >Furans</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="inhibitor_jar">Inhibitor</Checkbox>
+                                                    <Checkbox
+                                                        name="inhibitor_jar"
+                                                        checked={this.state.data.inhibitor_jar ? 'checked': null}
+                                                        value="1"
+                                                    >Inhibitor</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="metals">Metals in oil</Checkbox>
+                                                    <Checkbox
+                                                        name="metals"
+                                                        checked={this.state.data.metals ? 'checked': null}
+                                                        value="1"
+                                                    >Metals in oil</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox name="water_w">Water</Checkbox>
+                                                    <Checkbox
+                                                        name="water_w"
+                                                        checked={this.state.data.water_w ? 'checked': null}
+                                                        value="1"
+                                                    >Water</Checkbox>
                                                 </div>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="point">PouPoint</Checkbox>
+                                                    <Checkbox 
+                                                        name="point"
+                                                        checked={this.state.data.point ? 'checked': null}
+                                                        value="1"
+                                                    >PouPoint</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="viscosity">Viscosity</Checkbox>
+                                                    <Checkbox 
+                                                        name="viscosity"
+                                                        checked={this.state.data.viscosity ? 'checked': null}
+                                                        value="1"
+                                                    >Viscosity</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox name="corr">Corr.Sulfur</Checkbox>
+                                                    <Checkbox 
+                                                        name="corr"
+                                                        checked={this.state.data.corr ? 'checked': null}
+                                                        value="1"
+                                                    >Corr.Sulfur</Checkbox>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="maxwidth">
-                                                <Checkbox name="dielec_i">Dielec.IEC-156(kV)</Checkbox>
+                                                <Checkbox 
+                                                    name="dielec_i" 
+                                                    checked={this.state.data.dielec_i ? 'checked': null}
+                                                    value="1"
+                                                >Dielec.IEC-156(kV)</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <Checkbox name="visual">Visual(D1524)</Checkbox>
+                                                <Checkbox 
+                                                    name="visual"
+                                                    checked={this.state.data.visual ? 'checked': null}
+                                                    value="1"
+                                                >Visual(D1524)</Checkbox>
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-2 nopadding padding-right-xs">
@@ -592,10 +685,18 @@ const FluidProfileForm = React.createClass({
                                     <div className="control-group">
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
-                                                <Checkbox name="pcb_vial">PCB</Checkbox>
+                                                <Checkbox 
+                                                    name="pcb_vial"
+                                                    checked={this.state.data.pcb_vial ? 'checked': null}
+                                                    value="1"
+                                                >PCB</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <Checkbox name="antioxidant">Antioxydant</Checkbox>
+                                                <Checkbox 
+                                                    name="antioxidant"
+                                                    checked={this.state.data.antioxidant ? 'checked': null}
+                                                    value="1"
+                                                >Antioxydant</Checkbox>
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
@@ -620,7 +721,7 @@ const FluidProfileForm = React.createClass({
                                             <FormGroup>
                                                 <FormControl type="text"
                                                              placeholder="electrical profile name"
-                                                             name="name" value="" />
+                                                             name="name" />
                                             </FormGroup>
                                         </div>
                                         <div className="row">
@@ -632,9 +733,24 @@ const FluidProfileForm = React.createClass({
                                             </Radio>
                                         </div>
                                     </div> 
-                                    <div className="col-md-9">
+                                    <div className="col-md-4">
+                                        <FormGroup controlId="descTextarea">
+                                            <FormControl 
+                                                componentClass="textarea" 
+                                                placeholder="Description" 
+                                                ref="description"
+                                                name="description"
+                                            />
+                                        </FormGroup>
+                                    </div>
+                                    <div className="col-md-5">
                                         <FormGroup controlId="commentsTextarea">
-                                            <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
+                                            <FormControl 
+                                                componentClass="textarea" 
+                                                placeholder="comments" 
+                                                ref="comments"
+                                                name="comments"
+                                            />
                                         </FormGroup>
                                     </div>
                                 </div>

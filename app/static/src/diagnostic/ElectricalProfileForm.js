@@ -9,7 +9,6 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import Radio from 'react-bootstrap/lib/Radio';
 
-
 var TestProfileSelectField = React.createClass({
 
     getInitialState: function () {
@@ -19,11 +18,31 @@ var TestProfileSelectField = React.createClass({
     },
 
     handleChange: function (event) {
-        // console.log(event.target.name);
-        // console.log(event.target.value);
         this.setState({
             value: event.target.value
         });
+        this.loadProfileData(event);
+    },
+
+    loadProfileData: function (event) {
+
+        if ('select' == event.target.value) {
+
+            this.setState({
+                saved_profile: null
+            });
+
+            this.props.fillUpForm();
+
+        } else {
+
+            this.serverRequest = $.get('/api/v1.0/electrical_profile/' + event.target.value, function (result) {
+                this.setState({
+                    saved_profile: result['result']
+                });
+                this.props.fillUpForm(this.state.saved_profile);
+            }.bind(this), 'json');
+        }
     },
 
     componentDidMount: function () {
@@ -66,62 +85,126 @@ var TestProfileSelectField = React.createClass({
 });
 
 
-
 const ElectricalProfileForm = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
-            errors: {}
+            errors: {},
+            data: {},
+            fields: [
+                'bushing',
+                'insulation',
+                'degree',
+                'winding',
+                'visual',
+                'turns',
+                'insulation_pf',
+                'resistance',
+                'selection',
+                'description',
+            ]
         }
     },
-    _create: function () {
+    
+    componentDidMount: function(){
+        // console.log(this.props.data);
+        //test_result_id
+        // console.log(this.props.data.id);
+    },
+    fillUpForm: function(saved_data){
 
-        return $.ajax({
-            url: '/api/v1.0/electrical_profile/',
+        if (null == saved_data) {
+            this.refs.electrical_profile.reset();
+        } else {
+            this.setState({
+                data: saved_data
+            });
+        }
+    },
+
+    _save: function () {
+        var fields = this.state.fields;
+        var data = {};
+        for (var i=0;i<fields.length;i++){
+            var key= fields[i];
+            data[key] = this.state[key];
+        }
+        this.setState({
+            form: data
+        });
+
+        // console.log('electrical profile form data');
+        // console.log(data);
+        // console.log('electrical profile saved earlier data');
+        // console.log(this.state.data);
+        // console.log(this.state.name);
+
+        // save part to test_result 
+        $.ajax({
+            url: '/api/v1.0/test_result/' + this.props.data.id,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({
-                'bushing': this.state.bushing,
-                'insulation': this.state.insulation,
-                'degree': this.state.degree,
-                'winding': this.state.winding,
-                'visual': this.state.visual,
-                'turns': this.state.turns,
-                'insulation_pf': this.state.insulation_pf,
-                'resistance': this.state.resistance,
-                'selection': this.state.selection,
-                // 'description': this.state.description, not defined
-            }),
-            success: function (data, textStatus) { },
+            data: JSON.stringify(this.state.form),
+            success: function (data, textStatus) {
+                alert('Profile saved successfully')
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
-        })
+        });
+
+        // show success message
+        // if update a profile
+        if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
+            var url = '/api/v1.0/electrical_profile/';
+            if (this.state.data.id) {
+                url = url + this.state.data.id;
+            }
+            // if profile name is not empty and radio is checked then use this url to save profile
+            // and save to test_result
+            // otherwise just use these values for saving test_result
+            return $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (data, textStatus) {
+                },
+                beforeSend: function () {
+                    this.setState({loading: true});
+                }.bind(this)
+            });
+        }
     },
+
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
-        var xhr = this._create();
+        var errors = this._validate();
+        if(Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
     },
+
     hideLoading: function () {
         this.setState({loading: false});
     },
-    _onSuccess: function (data) { 
-        this.setState(this.getInitialState());
-        alert('Profile saved successfully');
-        // show success message
+
+    _onSuccess: function (data) {
+        console.log('Electrical profile saved successfully');
+        // this.refs.electrical_profile.getDOMNode().reset();
+        // this.setState(this.getInitialState()); 
     },
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -134,29 +217,27 @@ const ElectricalProfileForm = React.createClass({
             });
         }
     },
+
     _onChange: function (e) {
         var state = {};
-        if (e.target.type == 'checkbox') {
+        if(e.target.type == 'checkbox'){
             state[e.target.name] = e.target.checked;
-        } else if ( e.target.type == 'select-one' ) {
+        }
+        else if(e.target.type == 'select-one'){
             state[e.target.name] = e.target.value;
-        } else {
+        }
+        else{
             state[e.target.name] = $.trim(e.target.value);
         }
         this.setState(state);
     },
+
     _validate: function () {
         var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
-        // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
         // if(this.state.password == "") {
         //   errors.password = "Password is required";
         // }
-        // return errors;
+        return errors;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -165,52 +246,87 @@ const ElectricalProfileForm = React.createClass({
         }
         return className;
     },
-    
+
 
     render:function (){
         return( 
             <div className="form-container">
-                <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                <form ref="electrical_profile" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
-                        <Panel header="Electrical profile test parametres">
+                        <Panel header="Electrical profile test parametres"> 
                             <div className="row">
-                                <FormGroup>
-                                    Choose from saved <TestProfileSelectField source="/api/v1.0/electrical_profile"/>
-                                </FormGroup>
-                            </div>
-
+                                <div className="col-md-10">
+                                </div>
+                                <div className="col-md-2">
+                                    <FormGroup>
+                                        <TestProfileSelectField fillUpForm={this.fillUpForm} source="/api/v1.0/electrical_profile"/>
+                                    </FormGroup>
+                                </div>
+                            </div> 
                             <div className="scheduler-border">
                                 <fieldset className="scheduler-border">
                                     <legend className="scheduler-border">Test requested</legend>
                                     <div className="control-group">
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox name="bushing">Bushing Cap and PF</Checkbox>
+                                                <Checkbox
+                                                    name="bushing"
+                                                    checked={this.state.data.bushing ? 'checked': null}
+                                                    value="1"
+                                                >Bushing Cap and PF</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox name="insulation">Insulation Resistance</Checkbox>
+                                                <Checkbox
+                                                    name="insulation"
+                                                    checked={this.state.data.insulation ? 'checked': null}
+                                                    value="1"
+                                                >Insulation Resistance</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding">
-                                                <Checkbox name="degree">Degree of Polymerization(DP)</Checkbox>
+                                                <Checkbox
+                                                    name="degree"
+                                                    checked={this.state.data.degree ? 'checked': null}
+                                                    value="1"
+                                                >Degree of Polymerization(DP)</Checkbox>
                                             </div>
                                         </div>
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox name="winding">Winding Cap an PF</Checkbox>
+                                                <Checkbox
+                                                    name="winding"
+                                                    checked={this.state.data.winding ? 'checked': null}
+                                                    value="1"
+                                                >Winding Cap an PF</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox name="visual">Visual Inspection</Checkbox>
+                                                <Checkbox
+                                                    name="visual"
+                                                    checked={this.state.data.visual ? 'checked': null}
+                                                    value="1"
+                                                >Visual Inspection</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding">
-                                                <Checkbox name="turns">Turns Ration Test (TTR)</Checkbox>
+                                                <Checkbox
+                                                    name="turns"
+                                                    checked={this.state.data.turns ? 'checked': null}
+                                                    value="1"
+                                                >Turns Ration Test (TTR)</Checkbox>
                                             </div>
                                         </div>
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox name="insulation_pf">Winding Cap and PF Doble</Checkbox>
+                                                <Checkbox 
+                                                    name="insulation_pf"
+                                                    checked={this.state.data.insulation_pf ? 'checked': null}
+                                                    value="1"
+                                                >Winding Cap and PF Doble</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox name="resistance">Resistance; winding/contact</Checkbox>
+                                                <Checkbox 
+                                                    name="resistance"
+                                                    checked={this.state.data.resistance ? 'checked': null}
+                                                    value="1"
+                                                >Resistance; winding/contact</Checkbox>
                                             </div>
                                         </div>
                                     </div>
@@ -223,8 +339,9 @@ const ElectricalProfileForm = React.createClass({
                                         <div className="row">
                                             <FormGroup>
                                                 <FormControl type="text"
-                                                             placeholder="electrical profile name"
-                                                             name="selection"/>
+                                                             placeholder="Electrical profile name"
+                                                             name="name"
+                                                />
                                             </FormGroup>
                                         </div>
                                         <div className="row">
@@ -236,9 +353,24 @@ const ElectricalProfileForm = React.createClass({
                                             </Radio>
                                         </div>
                                     </div>
-                                    <div className="col-md-9">
+                                    <div className="col-md-4">
+                                        <FormGroup controlId="descTextarea">
+                                            <FormControl 
+                                                componentClass="textarea" 
+                                                placeholder="Description" 
+                                                ref="description"
+                                                name="description"
+                                            />
+                                        </FormGroup>
+                                    </div>
+                                    <div className="col-md-5">
                                         <FormGroup controlId="commentsTextarea">
-                                            <FormControl componentClass="textarea" placeholder="comments" ref="comments"/>
+                                            <FormControl 
+                                                componentClass="textarea" 
+                                                placeholder="comments" 
+                                                ref="comments"
+                                                name="comments"
+                                            />
                                         </FormGroup>
                                     </div>
                                 </div> 

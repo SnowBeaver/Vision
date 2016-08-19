@@ -728,8 +728,9 @@ var NewTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
+        // console.log(data['result']['analysis_number']);
         this.setState({
-            analysis_number: data['result'].analysis_number
+            analysis_number: data['result']['analysis_number']
             // show success message
         });
         alert('Test saved');
@@ -942,6 +943,7 @@ var NewTestForm = React.createClass({
                                                          placeholder="Analysis Number"
                                                          name="analysis_number"
                                                          readOnly="readOnly"
+                                                         value={this.state.analysis_number}
                                             />
                                         </FormGroup>
                                     </div>
@@ -971,7 +973,7 @@ var NewTestForm = React.createClass({
                                         <div className="col-md-11">
                                             <FluidTypeSelectField
                                                 source="/api/v1.0/fluid_type/"
-                                                value={this.state.value}/>
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="fluid_type"
@@ -999,7 +1001,7 @@ var NewTestForm = React.createClass({
                                         <div className="col-md-11">
                                             <LabAnalyserSelectField
                                                 source="/api/v1.0/lab/"
-                                                value={this.state.value}/>
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="lab_analyser"
@@ -1027,7 +1029,7 @@ var NewTestForm = React.createClass({
                                         <div className="col-md-11">
                                             <RecommendSelectField
                                                 source="/api/v1.0/recommendation/"
-                                                value={this.state.value}/>
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="recommend"
@@ -1219,7 +1221,7 @@ var NewTestForm = React.createClass({
                         </Panel>
                     </form>
                     <Modal show={this.state.showElectroProfileForm}>
-                        <ElectricalProfileForm handleClose={this.closeElectricalProfileForm}/>
+                        <ElectricalProfileForm data={this.props.data} handleClose={this.closeElectricalProfileForm}/>
                     </Modal>
 
                     <Modal show={this.state.showFluidProfileForm}>
