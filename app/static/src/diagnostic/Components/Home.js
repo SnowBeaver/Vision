@@ -26,12 +26,12 @@ var Home = React.createClass ({
     },
     
     onTreeNodeClick: function(treeItem){ 
+        
+        var src = (treeItem.equipment_id) ? '/api/v1.0/campaign/?equipment_id=' + treeItem.equipment_id: '#';
         // console.log('got equipment id from tree click', treeItem.equipment_id); 
-        // console.log(this.refs.getEquipmentList());
         this.setState({
-            source: '/api/v1.0/campaign/?equipment_id=' + treeItem.equipment_id 
+            source: src 
         });
-        // console.log(this.refs.equipmentList);
         this.refs.equipmentList.updateSource(this.state.source);
     },
     
