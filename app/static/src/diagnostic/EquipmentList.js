@@ -49,6 +49,14 @@ const EquipmentList = React.createClass({
                     test_type: 'Fluid',
                     test_status: 'In progress'
                 };
+
+                var serial = ''; 
+                var eqnumb; 
+                if (typeof item.equipment != 'undefined') {
+                    serial = item.equipment.serial;
+                    eqnumb = item.equipment.equipment_number
+                }
+                
                 data.push({
                     date: item.date,
                     reason: item.test_result.test_reason,
@@ -56,8 +64,8 @@ const EquipmentList = React.createClass({
                     contract: item.contract.code,
                     test_status: item.test_result.test_status,
                     analysis_number: item.analysis_number,
-                    serial: item.equipment.serial,
-                    equipment_number: item.equipment.equipment_number
+                    serial: serial,
+                    equipment_number: eqnumb
                 });
             }
             console.log(data);
@@ -95,6 +103,12 @@ const EquipmentList = React.createClass({
                     test_type: 'Fluid',
                     test_status: 'In progress'
                 };
+                var serial = '';
+                var eqnumb = '';
+                if (typeof item.equipment != 'undefined') {
+                    serial = item.equipment.serial;
+                    eqnumb = item.equipment.equipment_number
+                }
                 data.push({
                     date: item.date,
                     reason: item.test_result.test_reason,
@@ -102,11 +116,10 @@ const EquipmentList = React.createClass({
                     contract: item.contract.code,
                     test_status: item.test_result.test_status,
                     analysis_number: item.analysis_number,
-                    serial: item.equipment.serial,
-                    equipment_number: item.equipment.equipment_number 
+                    serial: serial,
+                    equipment_number: eqnumb
                 });
             }
-            // console.log(data);
             this.setState({
                 data: data
             });
