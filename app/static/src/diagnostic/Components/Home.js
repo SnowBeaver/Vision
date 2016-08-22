@@ -1,6 +1,7 @@
 import {Component} from 'react';
 import React from 'react';
-import EquipmentList from '../EquipmentList';
+// import EquipmentList from '../EquipmentList';
+import TestResultForm from '../TestResultForm';
 import EquipmentTestForm from '../EquipmentTestForm';
 import TreeComponent from '../TreeComponent';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
@@ -29,10 +30,10 @@ var Home = React.createClass ({
         // console.log('got equipment id from tree click', treeItem.equipment_id); 
         // console.log(this.refs.getEquipmentList());
         this.setState({
-            source: '/api/v1.0/campaign/?equipment_id=' + treeItem.equipment_id 
+            source: '/api/v1.0/test_result/?equipment_id=' + treeItem.equipment_id
         });
-        // console.log(this.refs.equipmentList);
-        this.refs.equipmentList.updateSource(this.state.source);
+        // console.log(this.refs.testResultList);
+        this.refs.testResultList.updateSource(this.state.source);
     },
     
     render: function() {
@@ -63,8 +64,9 @@ var Home = React.createClass ({
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <EquipmentList ref="equipmentList" source={this.state.source} />
-                    <EquipmentTestForm />
+                    <TestResultForm ref="testResultList" source={this.state.source} />
+                    {/*<EquipmentList ref="equipmentList" source={this.state.source} />*/}
+                    {/*<EquipmentTestForm />*/}
                 </div>
             </div> 
         )

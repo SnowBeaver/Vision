@@ -19,6 +19,7 @@ import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+import TestResultForm from './TestResultForm';
 
 
 const App = React.createClass({
@@ -44,6 +45,7 @@ const App = React.createClass({
                     <li><Link to='/add_material'>material</Link></li>
                     <li><Link to='/add_fluid'>new fluid</Link></li>
                     <li><Link to='/add_recommend'>recommend</Link></li>
+                    <li><Link to='/test_result'>test result</Link></li>
                 </ul>
                 <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
 
@@ -76,6 +78,7 @@ render((
             <Route path="add_material" component={NewMaterialForm} />
             <Route path="add_fluid" component={NewFluidForm} />
             <Route path="add_recommend" component={NewRecommendationForm} />
+            <Route path="test_result" component={TestResultForm} />
         </Route>
     </Router>
 ), document.getElementById('app'));
