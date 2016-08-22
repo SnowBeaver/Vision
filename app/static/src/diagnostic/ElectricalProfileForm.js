@@ -102,11 +102,13 @@ const ElectricalProfileForm = React.createClass({
                 'insulation_pf',
                 'resistance',
                 'selection',
-                'description',
+                'shared',
+                'name',
+                'description'
             ]
         }
     },
-    
+
     componentDidMount: function(){
         // console.log(this.props.data);
         //test_result_id
@@ -200,7 +202,7 @@ const ElectricalProfileForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        console.log('Electrical profile saved successfully');
+        //console.log('Electrical profile saved successfully');
         // this.refs.electrical_profile.getDOMNode().reset();
         // this.setState(this.getInitialState()); 
     },
@@ -226,6 +228,9 @@ const ElectricalProfileForm = React.createClass({
         else if(e.target.type == 'select-one'){
             state[e.target.name] = e.target.value;
         }
+        else if(e.target.type == 'radio'){
+            state[e.target.name] = e.target.value;
+        }
         else{
             state[e.target.name] = $.trim(e.target.value);
         }
@@ -249,11 +254,11 @@ const ElectricalProfileForm = React.createClass({
 
 
     render:function (){
-        return( 
+        return(
             <div className="form-container">
                 <form ref="electrical_profile" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="maxwidth">
-                        <Panel header="Electrical profile test parametres"> 
+                        <Panel header="Electrical profile test parametres">
                             <div className="row">
                                 <div className="col-md-10">
                                 </div>
@@ -262,7 +267,7 @@ const ElectricalProfileForm = React.createClass({
                                         <TestProfileSelectField fillUpForm={this.fillUpForm} source="/api/v1.0/electrical_profile"/>
                                     </FormGroup>
                                 </div>
-                            </div> 
+                            </div>
                             <div className="scheduler-border">
                                 <fieldset className="scheduler-border">
                                     <legend className="scheduler-border">Test requested</legend>
@@ -315,14 +320,14 @@ const ElectricalProfileForm = React.createClass({
                                         </div>
                                         <div className="maxwidth">
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox 
+                                                <Checkbox
                                                     name="insulation_pf"
                                                     checked={this.state.data.insulation_pf ? 'checked': null}
                                                     value="1"
                                                 >Winding Cap and PF Doble</Checkbox>
                                             </div>
                                             <div className="col-md-4 nopadding padding-right-xs">
-                                                <Checkbox 
+                                                <Checkbox
                                                     name="resistance"
                                                     checked={this.state.data.resistance ? 'checked': null}
                                                     value="1"
@@ -355,30 +360,24 @@ const ElectricalProfileForm = React.createClass({
                                     </div>
                                     <div className="col-md-4">
                                         <FormGroup controlId="descTextarea">
-                                            <FormControl 
-                                                componentClass="textarea" 
-                                                placeholder="Description" 
+                                            <FormControl
+                                                componentClass="textarea"
+                                                placeholder="Description"
                                                 ref="description"
                                                 name="description"
                                             />
                                         </FormGroup>
                                     </div>
-                                    <div className="col-md-5">
-                                        <FormGroup controlId="commentsTextarea">
-                                            <FormControl 
-                                                componentClass="textarea" 
-                                                placeholder="comments" 
-                                                ref="comments"
-                                                name="comments"
-                                            />
-                                        </FormGroup>
-                                    </div>
-                                </div> 
+
+                                </div>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
-                                        <Button bsStyle="danger" 
-                                                onClick={this.props.handleClose} 
+                                        <Button bsStyle="success"
+                                                type="submit"
+                                                onClick={this.props.handleClose}
+                                                className="pull-right">Save</Button>
+                                        <Button bsStyle="danger"
+                                                onClick={this.props.handleClose}
                                                 className="pull-right margin-right-xs">Cancel</Button>
                                     </div>
                                 </div>

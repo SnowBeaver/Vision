@@ -451,130 +451,6 @@ var SyringeNumberSelectField = React.createClass({
 });
 
 
-var RecommendSelectField = React.createClass({
-
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value,
-        });
-    },
-
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-
-    render: function () {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="recommandation_id">
-                        <option key="0" value="select">Recommendation</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
-var RecommendBySelectField = React.createClass({
-
-    handleChange: function (event) {
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-
-    render: function () {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="recommendations">
-                        <option key="0" value="select">Recommendations</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-
 var TestReasonSelectField = React.createClass({
 
     handleChange: function (event) {
@@ -653,16 +529,17 @@ var NewTestForm = React.createClass({
             showElectroProfileForm: false,
             showNewMaterialForm: false,
             showNewFluidForm: false,
-            showNewRecommendationForm: false,
             showNewContractForm: false,
             showNewLabForm: false,
             showNewSyringeForm: false,
+            date_analyse: new Date().toISOString(),
+            repair_date: new Date().toISOString(),
             fields: [
                 'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
-                'ambient_air_temperature'
+                'recommendation_notes', 'ambient_air_temperature'
             ]
             // profile_fields: [
             //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
@@ -832,12 +709,6 @@ var NewTestForm = React.createClass({
         })
     },
 
-    closeNewRecommendationForm: function () {
-        this.setState({
-            showNewRecommendationForm: false
-        })
-    },
-
     closeNewSyringeForm: function () {
         this.setState({
             showNewSyringeForm: false
@@ -850,7 +721,6 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: true,
                 showNewFluidForm: false,
-                showNewRecommendationForm: false,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: false
@@ -860,7 +730,6 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: true,
-                showNewRecommendationForm: false,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: false
@@ -870,7 +739,6 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
-                showNewRecommendationForm: false,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: false
@@ -880,7 +748,6 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
-                showNewRecommendationForm: false,
                 showNewContractForm: false,
                 showNewLabForm: true,
                 showNewSyringeForm: false
@@ -890,28 +757,7 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
-                showNewRecommendationForm: false,
                 showNewContractForm: true,
-                showNewLabForm: false,
-                showNewSyringeForm: false
-            })
-        }
-        else if (e.target.id === 'recommend_by') {
-            this.setState({
-                showNewMaterialForm: false,
-                showNewFluidForm: false,
-                showNewRecommendationForm: false,
-                showNewContractForm: false,
-                showNewLabForm: false,
-                showNewSyringeForm: false
-            })
-        }
-        else if (e.target.id === 'recommend') {
-            this.setState({
-                showNewMaterialForm: false,
-                showNewFluidForm: false,
-                showNewRecommendationForm: true,
-                showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: false
             })
@@ -920,7 +766,6 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
-                showNewRecommendationForm: false,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: true
@@ -1024,33 +869,7 @@ var NewTestForm = React.createClass({
                                             >New</a>
                                         </div>
                                     </div>
-
-                                    <div className="row">
-                                        <div className="col-md-11">
-                                            <RecommendSelectField
-                                                source="/api/v1.0/recommendation/"
-                                            />
-                                        </div>
-                                        <div className="col-md-1">
-                                            <a id="recommend"
-                                               className="btn btn-primary"
-                                               onClick={this.onNewButtonClick}
-                                            >New</a>
-                                        </div>
-                                    </div>
-
-                                    <div className="row">
-                                        <div className="col-md-2">
-                                            Recommendation list
-                                        </div>
-                                        <div className="col-md-1">
-                                            <a id="recommend_by"
-                                               className="btn btn-primary"
-                                               onClick={this.onNewButtonClick}
-                                            >New</a>
-                                        </div>
-                                    </div>
-
+                                    
                                     <div className="row">
                                         <div className="col-md-12">
                                             <FormGroup>
@@ -1084,7 +903,7 @@ var NewTestForm = React.createClass({
                                         <div className="datetimepicker input-group date col-md-3">
                                             <FormGroup>
                                                 <ControlLabel>Repair Date</ControlLabel>
-                                                <DateTimeField datetime={this.state.repair_date}/>
+                                                <DateTimeField name="repair_date" datetime={this.state.repair_date}/>
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1106,7 +925,7 @@ var NewTestForm = React.createClass({
                                                 <ControlLabel>Recommendation Notes</ControlLabel>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="recommendations"
-                                                             name="recommendationNotes"
+                                                             name="recommendation_notes"
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1116,7 +935,7 @@ var NewTestForm = React.createClass({
                                         <div className="datetimepicker input-group date col-md-3">
                                             <FormGroup>
                                                 <ControlLabel>Date Applied</ControlLabel>
-                                                <DateTimeField datetime={this.state.date_analyse}/>
+                                                <DateTimeField name="date_analyse" datetime={this.state.date_analyse}/>
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1242,10 +1061,6 @@ var NewTestForm = React.createClass({
 
                     <Modal show={this.state.showNewFluidForm}>
                         <NewFluidForm handleClose={this.closeNewFluidForm}/>
-                    </Modal>
-
-                    <Modal show={this.state.showNewRecommendationForm}>
-                        <NewRecommendationForm handleClose={this.closeNewRecommendationForm}/>
                     </Modal>
 
                     <Modal show={this.state.showNewSyringeForm}>

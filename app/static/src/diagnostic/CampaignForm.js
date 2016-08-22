@@ -376,7 +376,7 @@ var CampaignForm = React.createClass({
                                 <FormGroup>
                                     <FormControl componentClass="textarea"
                                                  placeholder="comments"
-                                                 name="comments"/>
+                                                 name="description"/>
                                 </FormGroup>
                             </div>
                         </div>
