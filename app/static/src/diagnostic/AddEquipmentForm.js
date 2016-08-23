@@ -7,7 +7,7 @@ import {Link} from 'react-router';
 import {hashHistory} from 'react-router';
 
 
-var EquipmentTypeSelectField = React.createClass({
+var EquipmentSelectField = React.createClass({
 
     getInitialState: function () {
         return {
@@ -228,7 +228,7 @@ var AddEquipmentForm = React.createClass({
         for (var i = 0; i < numberOfSelects; i++) {
             var value = null || this.state.equipment[i];
             items.push(
-                <EquipmentTypeSelectField
+                <EquipmentSelectField
                     key={i}
                     index={i}
                     source="/api/v1.0/equipment"

@@ -377,8 +377,7 @@ const ElectricalProfileForm = React.createClass({
                                                 onClick={this.props.handleClose} 
                                                 className="pull-right margin-right-xs">Cancel</Button>
                                     </div>
-                                </div>
-
+                                </div> 
                             </div>
                         </Panel>
                     </div>
