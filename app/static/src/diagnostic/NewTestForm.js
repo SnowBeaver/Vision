@@ -15,7 +15,6 @@ import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
-import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
 
 
@@ -69,7 +68,7 @@ var TestProfileSelectField = React.createClass({
                     value={this.state.value}
                     onChange={this.handleChange}
                     name="test_type_id">
-                    <option value="select">Choose profile from saved</option>
+                    <option value="select_prof">Choose profile from saved</option>
                     {options}
                 </FormControl>
             </FormGroup>
@@ -525,6 +524,7 @@ var NewTestForm = React.createClass({
         return {
             loading: false,
             errors: {},
+            showRadio: true,
             showFluidProfileForm: false,
             showElectroProfileForm: false,
             showNewMaterialForm: false,
@@ -629,11 +629,24 @@ var NewTestForm = React.createClass({
     _onChange: function (e) {
         var state = {};
 
+        if(e.target.value != 'select_prof' && e.target.name == 'test_type_id'){
+             this.setState({
+                 showRadio:false
+             })
+            }
+            else{
+                 this.setState({
+                 showRadio:true
+             })
+            }
+
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         }
         else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
+            console.log(e.target.value);
+
         }
         else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
@@ -772,6 +785,8 @@ var NewTestForm = React.createClass({
             })
         }
     },
+
+
 
     render: function () {
 
@@ -973,12 +988,6 @@ var NewTestForm = React.createClass({
                                         </div>
                                     </div>
 
-                                    <div className="maxwidth">
-                                        <div className="col-md-4 nopadding padding-right-xs">
-                                            <Checkbox name="print_sampling_card">Sampling Card Print</Checkbox>
-                                        </div>
-                                    </div>
-
                                     <div className="row">
                                         <div className="col-md-11">
                                             <SyringeNumberSelectField
@@ -1015,6 +1024,7 @@ var NewTestForm = React.createClass({
                                                 </div>
                                             </div>
                                         </div>
+                                        {this.state.showRadio ?
                                         <div className="maxwidth">
                                             <Radio name="profile" value="fluid">
                                                 Fluid Profile
@@ -1023,6 +1033,7 @@ var NewTestForm = React.createClass({
                                                 Electrical Profile
                                             </Radio>
                                         </div>
+                                : null}
                                     </fieldset>
                                     <div className="row">
                                         <div className="col-md-12">

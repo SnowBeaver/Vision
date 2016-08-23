@@ -20,6 +20,10 @@ import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 
+import NewManufacturerForm from './EquipmentForm_modules/NewManufacturerForm';
+import NewLocationForm from './EquipmentForm_modules/NewLocationForm';
+import NewNormForm from './EquipmentForm_modules/NewNormForm';
+import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 
 const App = React.createClass({
   render() {
@@ -44,6 +48,11 @@ const App = React.createClass({
                     <li><Link to='/add_material'>material</Link></li>
                     <li><Link to='/add_fluid'>new fluid</Link></li>
                     <li><Link to='/add_recommend'>recommend</Link></li>
+                    <li><Link to='/eq_type_add'>new eq type</Link></li>
+                    <li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
+                    <li><Link to='/eq_add_location'>new eq location</Link></li>
+                    <li><Link to='/eq_add_norm'>new eq norms</Link></li>
+
                 </ul>
                 <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
 
@@ -76,6 +85,10 @@ render((
             <Route path="add_material" component={NewMaterialForm} />
             <Route path="add_fluid" component={NewFluidForm} />
             <Route path="add_recommend" component={NewRecommendationForm} />
+            <Route path="eq_type_add" component={NewEquipmentTypeForm} />
+            <Route path="eq_add_manufac" component={NewManufacturerForm} />
+            <Route path="eq_add_location" component={NewLocationForm} />
+            <Route path="eq_add_norm" component={NewNormForm} />
         </Route>
     </Router>
 ), document.getElementById('app'));
