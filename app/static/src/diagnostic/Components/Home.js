@@ -1,6 +1,7 @@
 import {Component} from 'react';
 import React from 'react';
-import EquipmentList from '../EquipmentList';
+// import EquipmentList from '../EquipmentList';
+import TestResultForm from '../TestResultForm';
 import EquipmentTestForm from '../EquipmentTestForm';
 import TreeComponent from '../TreeComponent';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
@@ -8,15 +9,15 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 
 var Home = React.createClass ({
-    
-    getInitialState: function(){ 
+
+    getInitialState: function(){
         return {
             source: '/api/v1.0/campaign/',
             text: ''
         }
     },
-    
-    onTreeSearch: function(e){ 
+
+    onTreeSearch: function(e){
         // console.log(e.target);
         // console.log(e.target.value);
         // this.setState({
@@ -24,21 +25,21 @@ var Home = React.createClass ({
         // });
         this.refs.tree.handleTreeSearch(e.target.value);
     },
-    
-    onTreeNodeClick: function(treeItem){ 
-        
+
+    onTreeNodeClick: function(treeItem){
+
         var src = (treeItem.equipment_id) ? '/api/v1.0/campaign/?equipment_id=' + treeItem.equipment_id: '#';
-        // console.log('got equipment id from tree click', treeItem.equipment_id); 
+        // console.log('got equipment id from tree click', treeItem.equipment_id);
         this.setState({
-            source: src 
+            source: src
         });
         this.refs.equipmentList.updateSource(this.state.source);
     },
-    
+
     render: function() {
         return (
             <div>
-                <div className="col-md-3 equal_col"> 
+                <div className="col-md-3 equal_col">
                     <div className="maxwidth">
                         <FormGroup>
                             <ControlLabel>Search</ControlLabel>
@@ -56,17 +57,18 @@ var Home = React.createClass ({
                         <br/>
                         <br/>
                         <TreeComponent
-                            ref="tree" 
+                            ref="tree"
                             struct={treeStruct}
                             onTreeNodeClick={this.onTreeNodeClick}
                         />
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <EquipmentList ref="equipmentList" source={this.state.source} />
-                    <EquipmentTestForm />
+                    <TestResultForm ref="testResultList" source={this.state.source} />
+                    {/*<EquipmentList ref="equipmentList" source={this.state.source} />*/}
+                    {/*<EquipmentTestForm />*/}
                 </div>
-            </div> 
+            </div>
         )
     }
 });

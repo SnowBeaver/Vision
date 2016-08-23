@@ -900,12 +900,14 @@ var ManufacturedSelectField = React.createClass ({
 
 
 const EquipmentForm = React.createClass({
+    
     getInitialState: function () {
         return {
             loading: false,
             errors: {}
         }
     },
+    
     _create: function () {
 
         return $.ajax({
