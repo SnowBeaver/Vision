@@ -5,13 +5,248 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 
+var TestTypeSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){ 
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup>
+                    <FormControl
+                        componentClass="select"
+                        placeholder="select"
+                        onChange={this.handleChange}
+                        name="name">
+                        <option key="0" value="select">Test Type</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
+var InitialsSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        })
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option value={this.state.items[key].id} key={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup controlId="formControlsSelect4">
+                    <FormControl componentClass="select" placeholder="Select initials" onChange={this.handleChange}>
+                        <option key="0" value="select">Initials</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
+var TestReasonSelectField = React.createClass ({
+
+    handleChange: function(event){
+        this.setState({
+            value: event.target.value
+        });
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false,
+            value: null
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <FormGroup controlId="formControlsSelect1">
+                <ControlLabel>Reason of testing</ControlLabel>
+                <FormControl
+                    componentClass="select"
+                    placeholder="select"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                >
+                    <option value="select">Select reason</option>
+                    {menuItems}
+                </FormControl>
+            </FormGroup>
+        );
+    }
+});
+
+var SyringeSelectField = React.createClass ({
+
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        })
+    },
+
+    getInitialState: function(){
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id} 
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup controlId="formControlsSelect1">
+                    <ControlLabel>Syringe</ControlLabel>
+                    <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
+                        <option value="select">select syringe</option>
+                        {menuItems}
+                    </FormControl>
+                </FormGroup>
+            </div>
+        );
+    }
+});
+
 const EquipmentTestIdentificationForm = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             csrf_token: 'not set',
-            errors: {},
+            errors: {}
         }
     },
 
@@ -24,23 +259,15 @@ const EquipmentTestIdentificationForm = React.createClass({
                         <div className="tab_row text-center">
                             <div className="col-lg-12 nopadding">
                                 <div className="col-lg-6 nopadding padding-right-xs">
-                                    <FormGroup controlId="formControlsSelect">
                                         <ControlLabel>Test type</ControlLabel>
-                                        <FormControl componentClass="select" placeholder="select">
-                                            <option value="select">{this.props.data && this.props.data.test_type}</option>
-                                            {/*{this.state.test_type.optionList}*/}
-                                        </FormControl>
-                                    </FormGroup>
+                                        <TestTypeSelectField
+                                            source="/api/v1.0/test_type"
+                                            handleChange={this.handleChange}/> 
                                 </div>
                                 <div className="col-lg-6 nopadding">
                                     <div className="col-lg-6 nopadding padding-right-xs">
-                                        <FormGroup controlId="formControlsSelect">
-                                            <ControlLabel>Initials</ControlLabel>
-                                            <FormControl componentClass="select" placeholder="select">
-                                                <option value="select">select</option>
-                                                {/*{this.state.initials.optionList}*/}
-                                            </FormControl>
-                                        </FormGroup>
+                                            <InitialsSelectField source="/api/v1.0/user" 
+                                                handleChange={this.handleChange} /> 
                                     </div>
                                     <div className="col-lg-6 nopadding">Acq Date
                                         <div className="datetimepicker input-group date"></div>
@@ -49,13 +276,11 @@ const EquipmentTestIdentificationForm = React.createClass({
                             </div>
                             <div className="col-lg-12 nopadding">
                                 <div className="col-lg-6 nopadding padding-right-xs">
-                                    <FormGroup controlId="formControlsSelect">
-                                        <ControlLabel>Reason</ControlLabel>
-                                        <FormControl componentClass="select" placeholder="select">
-                                            <option value="select">select</option>
-                                            {/*{this.state.reason.optionList}*/}
-                                        </FormControl>
-                                    </FormGroup>
+                                        <TestReasonSelectField 
+                                            source="/api/v1.0/test_reason"
+                                            handleChange={this.handleChange}
+                                        >
+                                        </TestReasonSelectField>
                                 </div>
                                 <div className="col-lg-6 nopadding">
                                     <div className="col-lg-6 nopadding padding-right-xs"> 
@@ -84,13 +309,7 @@ const EquipmentTestIdentificationForm = React.createClass({
                                     <FormControl type="text" value="" />
                                 </div>
                                 <div className="col-lg-3 nopadding padding-right-xs">
-                                    <FormGroup controlId="formControlsSelect">
-                                        <ControlLabel>Syringe</ControlLabel>
-                                        <FormControl componentClass="select" placeholder="select">
-                                            <option value="select">select</option>
-                                            {/*{this.state.syringe.optionList}*/}
-                                        </FormControl>
-                                    </FormGroup>
+                                    <SyringeSelectField ref="syringe" source="/api/v1.0/syringe" />
                                 </div>
                                 <div className="col-lg-2 nopadding padding-right-xs">Test number
                                     <FormControl type="text" value="" />
@@ -183,27 +402,7 @@ const EquipmentTestRepairForm = React.createClass({
 const EquipmentTestDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
-            loading: false,
-            // diagnosis: {
-            //     label: null,
-            //     value: null
-            // },
-            // recommendations: {
-            //     label: null,
-            //     value: null
-            // },
-            // predefined_diag: {
-            //     label: null,
-            //     value: null
-            // },
-            // predefined_rec: {
-            //     label: null,
-            //     value: null
-            // },
-            // date: {
-            //     label: null,
-            //     value: null
-            // },
+            loading: false
         }
     },
     render: function(){
@@ -292,43 +491,46 @@ const EquipmentTestForm = React.createClass({
             data: null
         }
     },
-    // _create: function () {
-    //     // console.log(this.refs);
-    //
-    //     return $.ajax({
-    //         url: '/api/v1.0/equipment/',
-    //         type: 'POST',
-    //         data: {
-    //             'equipment_type_id': this.refs.eqt.state.eqtype_id,
-    //             'manufacturer_id': this.refs.mn.state.manufac_id,
-    //         },
-    //         beforeSend: function () {
-    //             this.setState({loading: true});
-    //         }.bind(this)
-    //     })
-    // },
+    
+    _save: function () {
+        var data = {};
+    
+        return $.ajax({
+            url: '/api/v1.0/equipment/',
+            type: 'POST',
+            data: data,
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
-        // var xhr = this._create();
-        // xhr.done(this._onSuccess)
-        //     .fail(this._onError)
-        //     .always(this.hideLoading)
+        var errors = this._validate();
+        if(Object.keys(errors).length != 0) {
+          this.setState({
+            errors: errors
+          });
+           return;
+        }
+        var xhr = this._save();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
     },
+    
     hideLoading: function () {
         this.setState({loading: false});
     },
+    
     _onSuccess: function (data) {
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
         // show success message
+        alert('Saved');
     },
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -341,25 +543,22 @@ const EquipmentTestForm = React.createClass({
             });
         }
     },
+    
     _onChange: function (e) {
         console.log(e.target.name);
         var state = {};
         state[e.target.name] =  $.trim(e.target.value);
         this.setState(state);
     },
+    
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
         //   errors.username = "Username is required";
         // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
-        // return errors;
+        return errors;
     },
+    
     _formGroupClass: function (field) {
         var className = "form-group ";
         if(field) {
@@ -367,10 +566,13 @@ const EquipmentTestForm = React.createClass({
         }
         return className;
     },
+    
     componentDidMount: function () {
-        $.get(this.state.source, function (result){
+
+        $.get(this.state.source, function (result) {
             var arr = (result['result']);
-            var data = {
+            
+            this.setState({
                 id: arr.id,
                 date: arr.date_analyse,
                 reason: arr.reason_id,
@@ -380,13 +582,10 @@ const EquipmentTestForm = React.createClass({
                 analysis_number: arr.analysis_number,
                 serial: arr.equipment.serial,
                 equipment_number: arr.equipment.equipment_number
-            };
-            console.log(arr);
-            console.log(data);
-            this.setState({
-                data: data
             });
+            
         });
+
     },
     render: function() {
         return (
@@ -400,16 +599,16 @@ const EquipmentTestForm = React.createClass({
                     </ul>
                     <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                         <div id="tabs-1" role="tabpanel" className="tab-pane active ">
-                            <EquipmentTestIdentificationForm data={this.state.data}/>
+                            <EquipmentTestIdentificationForm data={this.state}/>
                         </div>
                         <div id="tabs-2" role="tabpanel" className="tab-pane">
-                            <EquipmentTestRepairForm/>
+                            <EquipmentTestRepairForm data={this.state} />
                         </div>
                         <div id="tabs-3" role="tabpanel" className="tab-pane">
-                            <EquipmentTestDiagnosisForm/>
+                            <EquipmentTestDiagnosisForm data={this.state}/>
                         </div>
                         <div id="tabs-4" role="tabpanel" className="tab-pane">
-                            <EquipmentTestEqDiagnosisForm/>
+                            <EquipmentTestEqDiagnosisForm data={this.state} />
                         </div>
                     </div>
                 </div>
