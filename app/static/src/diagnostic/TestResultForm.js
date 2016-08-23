@@ -1,6 +1,7 @@
 import React from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import Modal from 'react-bootstrap/lib/Modal';
+import Button from 'react-bootstrap/lib/Button';
 import EquipmentTestForm from './EquipmentTestForm';
 
 
@@ -37,7 +38,8 @@ var TestResultForm = React.createClass ({
             isVisible: true,
             data: false,
             source: this.props.source,
-            showEquipmentTestForm: false
+            showEquipmentTestForm: false,
+            selectedRowId: null
         }
     },
 
@@ -49,7 +51,7 @@ var TestResultForm = React.createClass ({
 
     onRowClick: function (row) {
         console.log('row clicked', row);
-        this.setState({showEquipmentTestForm: true});
+        this.setState({ showEquipmentTestForm: true, selectedRowId: row.id  });
     },
 
     updateSource: function(source){
@@ -65,14 +67,15 @@ var TestResultForm = React.createClass ({
                 //     test_status: 'In progress'
                 // };
                 data.push({
+                    id: item.id,
                     date: item.date_analyse,
-                    reason: item.reason_id,
-                    type: item.test_type_id,
+                    reason: item.reason && item.reason.name,
+                    type: item.test_type && item.test_type.name,
                     contract: null,
-                    test_status: item.test_status_id,
+                    test_status: item.test_status && item.test_status.name,
                     analysis_number: item.analysis_number,
-                    serial: item.equipment.serial,
-                    equipment_number: item.equipment.equipment_number
+                    serial: item.equipment && item.equipment.serial,
+                    equipment_number: item.equipment && item.equipment.equipment_number
                 });
             }
             // console.log(data);
@@ -104,6 +107,7 @@ var TestResultForm = React.createClass ({
                                 updateSource={this.updateSource}
                                 options={options}
                                 >
+                    <TableHeaderColumn editable={false} dataField="id" hidden={true}>Id</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="date" dataSort={true} >Acquisition Date</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="reason" dataSort={true}>Reason</TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="type" dataSort={true}>Type</TableHeaderColumn>
@@ -121,7 +125,11 @@ var TestResultForm = React.createClass ({
                     <TableHeaderColumn editable={false} dataField="equipment_number">Equipment No.</TableHeaderColumn>
                 </BootstrapTable>
                 <Modal show={this.state.showEquipmentTestForm}>
-                    <EquipmentTestForm handleClose={this.closeEquipmentTestForm}/>
+                    <EquipmentTestForm handleClose={this.closeEquipmentTestForm} selectedRowId={this.state.selectedRowId}/>
+                    <Modal.Footer>
+                        <Button bsStyle="primary" onClick={this.closeEquipmentTestForm}>Close</Button>
+                        <Button bsStyle="primary">Save changes</Button>
+                    </Modal.Footer>
                 </Modal>
             </div>
         );
