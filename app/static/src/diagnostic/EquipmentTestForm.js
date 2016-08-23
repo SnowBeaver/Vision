@@ -1,5 +1,5 @@
 import React from 'react';
-import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
+import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
@@ -182,7 +182,15 @@ var TestReasonSelectField = React.createClass ({
     }
 });
 
-var SyringeSelectField = React.createClass ({
+var EquipmentTypeSelectField = React.createClass({
+    render: function() {
+        return (
+            <div></div>
+        )
+    }
+});
+
+var SyringeSelectField = React.createClass({
 
     handleChange: function(event, index, value){
         this.setState({
@@ -243,6 +251,8 @@ var SyringeSelectField = React.createClass ({
 const EquipmentTestIdentificationForm = React.createClass({
 
     getInitialState: function () {
+        console.log('EquipmentTestIdentificationForm getInitialState')
+        console.log(this.props.data)
         return {
             loading: false,
             csrf_token: 'not set',
@@ -251,6 +261,7 @@ const EquipmentTestIdentificationForm = React.createClass({
     },
 
     render: function() {
+        console.log('EquipmentTestIdentificationForm render')
         console.log(this.props.data)
         return (
             <div className="form-container">
@@ -582,12 +593,13 @@ const EquipmentTestForm = React.createClass({
                 analysis_number: arr.analysis_number,
                 serial: arr.equipment.serial,
                 equipment_number: arr.equipment.equipment_number
-            });
-            
-        });
 
+            });
+        }.bind(this), 'json');
     },
     render: function() {
+        console.log('EquipmentTestForm render')
+        console.log(this.state.data)
         return (
             <div> 
                 <div className="maxwidth padding-top-lg margin-bottom-xs">
