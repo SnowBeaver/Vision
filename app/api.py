@@ -59,7 +59,7 @@ def add_item(path):
             'equipment_id': item.id,
             'parent_id': 32,
             'icon': '../app/static/img/icons/{0}_b.ico'.format(eq_type_dict.get(item.equipment_type_id, '')),
-            'type': '{0}'.format(eq_type_dict.get(item.id.equipment_type_id, ''))
+            'type': '{0}'.format(eq_type_dict.get(item.equipment_type_id, ''))
         }
         item_tree = new_instance(Tree, **param_tree_dict)
 
