@@ -33,7 +33,7 @@ var Home = React.createClass ({
         this.setState({
             source: src
         });
-        this.refs.equipmentList.updateSource(this.state.source);
+        this.refs.testResultList.updateSource(this.state.source);
     },
 
     render: function() {
