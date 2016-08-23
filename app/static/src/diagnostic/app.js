@@ -23,30 +23,31 @@ import TestResultForm from './TestResultForm';
 
 
 const App = React.createClass({
+
+// <ul>
+//     <li><Link to='/home'>Home</Link></li>
+//     <li><Link to='/campaign'>New Campaign</Link></li>
+//     <li><Link to='/equipment'>Equipment</Link></li>
+//     <li><Link to='/add_equipment'>Add Equipment</Link></li>
+//     <li><Link to='/testlist'>Testlist</Link></li>
+//     <li><Link to='/add_test'>New Test</Link></li>
+//     <li><Link to='/edit_test/1'>Edit Test</Link></li>
+//     <li><Link to='/electro'>Electrical Profile</Link></li>
+//     <li><Link to='/fluid'>Fluid Profile</Link></li>
+//     <li><Link to='/choose_profile'>Choose Test Profile</Link></li>
+//     <li><Link to='/add_createdby'>created by</Link></li>
+//     <li><Link to='/add_contract'>contract</Link></li>
+//     <li><Link to='/add_lab'>lab</Link></li>
+//     <li><Link to='/add_material'>material</Link></li>
+//     <li><Link to='/add_fluid'>new fluid</Link></li>
+//     <li><Link to='/add_recommend'>recommend</Link></li>
+//     <li><Link to='/test_result'>test result</Link></li>
+// </ul>
   render() {
     return (
 
         <div className="content">
             <div>
-                <ul>
-                    <li><Link to='/home'>Home</Link></li>
-                    <li><Link to='/campaign'>New Campaign</Link></li>
-                    <li><Link to='/equipment'>Equipment</Link></li>
-                    <li><Link to='/add_equipment'>Add Equipment</Link></li>
-                    <li><Link to='/testlist'>Testlist</Link></li>
-                    <li><Link to='/add_test'>New Test</Link></li>
-                    <li><Link to='/edit_test/1'>Edit Test</Link></li>
-                    <li><Link to='/electro'>Electrical Profile</Link></li>
-                    <li><Link to='/fluid'>Fluid Profile</Link></li>
-                    <li><Link to='/choose_profile'>Choose Test Profile</Link></li>
-                    <li><Link to='/add_createdby'>created by</Link></li>
-                    <li><Link to='/add_contract'>contract</Link></li>
-                    <li><Link to='/add_lab'>lab</Link></li>
-                    <li><Link to='/add_material'>material</Link></li>
-                    <li><Link to='/add_fluid'>new fluid</Link></li>
-                    <li><Link to='/add_recommend'>recommend</Link></li>
-                    <li><Link to='/test_result'>test result</Link></li>
-                </ul>
                 <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
 
             </div>

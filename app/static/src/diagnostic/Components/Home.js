@@ -65,7 +65,7 @@ var Home = React.createClass ({
                 </div>
                 <div className="col-md-9">
                     <TestResultForm ref="testResultList" source={this.state.source} />
-                    <EquipmentList ref="equipmentList" source={this.state.source} />
+                    {/* <EquipmentList ref="equipmentList" source={this.state.source} /> */}
                     {/*<EquipmentTestForm />*/}
                 </div>
             </div>
