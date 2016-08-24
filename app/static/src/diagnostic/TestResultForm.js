@@ -65,7 +65,7 @@ var TestResultForm = React.createClass({
                     id: item.id,
                     date: item.date_analyse,
                     reason: item.reason && item.reason.name,
-                    type: item.test_type && item.test_type.name,
+                    test_type_id: item.test_type && item.test_type.name,
                     contract: null,
                     test_status: item.test_status && item.test_status.name,
                     analysis_number: item.analysis_number,
