@@ -723,7 +723,7 @@ const FluidProfileForm = React.createClass({
                                         <div className="row">
                                             <FormGroup>
                                                 <FormControl type="text"
-                                                             placeholder="electrical profile name"
+                                                             placeholder="Fluid profile name"
                                                              name="name" />
                                             </FormGroup>
                                         </div>

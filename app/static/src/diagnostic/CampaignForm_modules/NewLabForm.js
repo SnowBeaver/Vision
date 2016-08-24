@@ -99,13 +99,13 @@ var NewLabForm = React.createClass ({
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
+        var errors = this._validate();
+        if(Object.keys(errors).length != 0) {
+          this.setState({
+            errors: errors
+          });
+           return;
+        }
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -114,9 +114,12 @@ var NewLabForm = React.createClass ({
     hideLoading: function () {
         this.setState({loading: false});
     },
+    
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         // show success message
+        this.props.onLabCreate(data);
+        this.props.handleClose();
     },
     componentDidMount: function(){
 
@@ -138,7 +141,6 @@ var NewLabForm = React.createClass ({
     },
     _onChange: function (e) {
         var state = {};
-        // console.log(e.target.type);
         if(e.target.type == 'checkbox'){
             state[e.target.name] = e.target.checked;
         }
@@ -155,13 +157,7 @@ var NewLabForm = React.createClass ({
         // if(this.state.username == "") {
         //   errors.username = "Username is required";
         // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
-        // return errors;
+        return errors;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";

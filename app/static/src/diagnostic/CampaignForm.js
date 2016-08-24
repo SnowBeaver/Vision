@@ -317,6 +317,11 @@ var CampaignForm = React.createClass({
         this.refs.contract.setSelected(response);
         alert('Contract created');
     },
+    
+    onUserCreate: function (response) {
+        this.refs.created_by.setSelected(response);
+        alert('Contract created');
+    },
 
     _getCampaign: function(){
         return this.state.campaign_id;
@@ -331,6 +336,7 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-11">
                                 <CreatedBySelectField
+                                    ref="created_by"
                                     source="/api/v1.0/user"
                                     handleChange={this.handleChange}
                                     errors={this.state.errors}
