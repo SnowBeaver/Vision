@@ -1523,7 +1523,7 @@ class Equipment(db.Model):
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     # EquipmentType. Define equipment by a single letter code. T:transformer, D; breaker etc...
     equipment_type_id = db.Column('equipment_type_id', db.ForeignKey("equipment_type.id"), nullable=False)
-    equipment_type = relation('EquipmentType', backref='equipment')
+    equipment_type = relation('EquipmentType', foreign_keys='Equipment.equipment_type_id')
 
     manufacturer_id = db.Column('manufacturer_id', db.ForeignKey("manufacturer.id"), nullable=False)
     manufacturer = relationship('Manufacturer', foreign_keys='Equipment.manufacturer_id')
