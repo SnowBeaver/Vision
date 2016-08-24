@@ -25,6 +25,9 @@ import NewLocationForm from './EquipmentForm_modules/NewLocationForm';
 import NewNormForm from './EquipmentForm_modules/NewNormForm';
 import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 
+import NewBushingTestForm from './TestTypeResultForm_modules/NewBushingTestForm';
+import NewFuranTestForm from './TestTypeResultForm_modules/NewFuranTestForm';
+
 const App = React.createClass({
   render() {
     return (
@@ -52,7 +55,8 @@ const App = React.createClass({
                     <li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
                     <li><Link to='/eq_add_location'>new eq location</Link></li>
                     <li><Link to='/eq_add_norm'>new eq norms</Link></li>
-
+                    <li><Link to='/bushing_test'>bushing test</Link></li>
+                    <li><Link to='/furan_test'>furan test</Link></li>
                 </ul>
                 <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
 
@@ -89,6 +93,8 @@ render((
             <Route path="eq_add_manufac" component={NewManufacturerForm} />
             <Route path="eq_add_location" component={NewLocationForm} />
             <Route path="eq_add_norm" component={NewNormForm} />
+            <Route path="bushing_test" component={NewBushingTestForm} />
+            <Route path="furan_test" component={NewFuranTestForm} />
         </Route>
     </Router>
 ), document.getElementById('app'));
