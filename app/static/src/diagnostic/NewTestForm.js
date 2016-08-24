@@ -9,13 +9,13 @@ import Radio from 'react-bootstrap/lib/Radio';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
+import CreatedByForm from './CampaignForm_modules/CreatedByForm';
 import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
 import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
-import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
 
 
@@ -69,7 +69,7 @@ var TestProfileSelectField = React.createClass({
                     value={this.state.value}
                     onChange={this.handleChange}
                     name="test_type_id">
-                    <option value="select">Choose profile from saved</option>
+                    <option value="select_prof">Choose profile from saved</option>
                     {options}
                 </FormControl>
             </FormGroup>
@@ -525,8 +525,10 @@ var NewTestForm = React.createClass({
         return {
             loading: false,
             errors: {},
+            showRadio: true,
             showFluidProfileForm: false,
             showElectroProfileForm: false,
+            showCreatedByForm: false,
             showNewMaterialForm: false,
             showNewFluidForm: false,
             showNewContractForm: false,
@@ -629,11 +631,24 @@ var NewTestForm = React.createClass({
     _onChange: function (e) {
         var state = {};
 
+        if(e.target.value != 'select_prof' && e.target.name == 'test_type_id'){
+            this.setState({
+                showRadio:false
+            })
+        }
+        else{
+            this.setState({
+                showRadio:true
+            })
+        }
+
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         }
         else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
+            console.log(e.target.value);
+
         }
         else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
@@ -696,6 +711,12 @@ var NewTestForm = React.createClass({
         })
     },
 
+    closeCreatedByForm: function () {
+        this.setState({
+            showCreatedByForm: false
+
+        })
+    },
 
     closeNewContractForm: function () {
         this.setState({
@@ -721,6 +742,7 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: true,
                 showNewFluidForm: false,
+                showCreatedByForm: false,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: false
@@ -730,6 +752,7 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: true,
+                showCreatedByForm: false,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: false
@@ -739,6 +762,7 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
+                showCreatedByForm: true,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: false
@@ -748,6 +772,7 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
+                showCreatedByForm: false,
                 showNewContractForm: false,
                 showNewLabForm: true,
                 showNewSyringeForm: false
@@ -757,6 +782,7 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
+                showCreatedByForm: false,
                 showNewContractForm: true,
                 showNewLabForm: false,
                 showNewSyringeForm: false
@@ -766,12 +792,15 @@ var NewTestForm = React.createClass({
             this.setState({
                 showNewMaterialForm: false,
                 showNewFluidForm: false,
+                showCreatedByForm: false,
                 showNewContractForm: false,
                 showNewLabForm: false,
                 showNewSyringeForm: true
             })
         }
     },
+
+
 
     render: function () {
 
@@ -869,7 +898,7 @@ var NewTestForm = React.createClass({
                                             >New</a>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="row">
                                         <div className="col-md-12">
                                             <FormGroup>
@@ -973,12 +1002,6 @@ var NewTestForm = React.createClass({
                                         </div>
                                     </div>
 
-                                    <div className="maxwidth">
-                                        <div className="col-md-4 nopadding padding-right-xs">
-                                            <Checkbox name="print_sampling_card">Sampling Card Print</Checkbox>
-                                        </div>
-                                    </div>
-
                                     <div className="row">
                                         <div className="col-md-11">
                                             <SyringeNumberSelectField
@@ -1015,14 +1038,16 @@ var NewTestForm = React.createClass({
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="maxwidth">
-                                            <Radio name="profile" value="fluid">
-                                                Fluid Profile
-                                            </Radio>
-                                            <Radio name="profile" value="electro">
-                                                Electrical Profile
-                                            </Radio>
-                                        </div>
+                                        {this.state.showRadio ?
+                                            <div className="maxwidth">
+                                                <Radio name="profile" value="fluid">
+                                                    Fluid Profile
+                                                </Radio>
+                                                <Radio name="profile" value="electro">
+                                                    Electrical Profile
+                                                </Radio>
+                                            </div>
+                                            : null}
                                     </fieldset>
                                     <div className="row">
                                         <div className="col-md-12">
@@ -1039,6 +1064,7 @@ var NewTestForm = React.createClass({
                             </div>
                         </Panel>
                     </form>
+
                     <Modal show={this.state.showElectroProfileForm}>
                         <ElectricalProfileForm data={this.props.data} handleClose={this.closeElectricalProfileForm}/>
                     </Modal>
@@ -1048,23 +1074,57 @@ var NewTestForm = React.createClass({
                     </Modal>
 
                     <Modal show={this.state.showNewLabForm}>
-                        <NewLabForm handleClose={this.closeNewLabForm}/>
+                        <Modal.Header>
+                            <Modal.Title>New Laboratory Profile</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <NewLabForm handleClose={this.closeNewLabForm}/>
+                        </Modal.Body>
                     </Modal>
 
                     <Modal show={this.state.showNewContractForm}>
-                        <NewContractForm handleClose={this.closeNewContractForm}/>
+                        <Modal.Header>
+                            <Modal.Title>New Contract</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <NewContractForm onContractCreate={this.onContractCreate} handleClose={this.closeNewContractForm}/>
+                        </Modal.Body>
                     </Modal>
 
                     <Modal show={this.state.showNewMaterialForm}>
-                        <NewMaterialForm handleClose={this.closeNewMaterialForm}/>
+                        <Modal.Header>
+                            <Modal.Title>New Material Profile</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <NewMaterialForm handleClose={this.closeNewMaterialForm}/>
+                        </Modal.Body>
                     </Modal>
 
                     <Modal show={this.state.showNewFluidForm}>
-                        <NewFluidForm handleClose={this.closeNewFluidForm}/>
+                        <Modal.Header>
+                            <Modal.Title>New Fluid Profile</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <NewFluidForm handleClose={this.closeNewFluidForm}/>
+                        </Modal.Body>
+                    </Modal>
+
+                    <Modal show={this.state.showCreatedByForm}>
+                        <Modal.Header>
+                            <Modal.Title>New User Profile</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <CreatedByForm data={this.props.data} handleClose={this.closeCreatedByForm}/>
+                        </Modal.Body>
                     </Modal>
 
                     <Modal show={this.state.showNewSyringeForm}>
-                        <NewSyringeForm handleClose={this.closeNewSyringeForm}/>
+                        <Modal.Header>
+                            <Modal.Title>New Syringe</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <NewSyringeForm handleClose={this.closeNewSyringeForm}/>
+                        </Modal.Body>
                     </Modal>
 
                 </div> : null

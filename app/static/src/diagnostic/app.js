@@ -12,7 +12,7 @@ import ElectricalProfileForm from './ElectricalProfileForm';
 import FluidProfileForm from './FluidProfileForm';
 import TestList from './TestList';
 
-import NewTestForm from './NewTestForm'; 
+import NewTestForm from './NewTestForm';
 import CreatedByForm from './CampaignForm_modules/CreatedByForm';
 import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
@@ -21,6 +21,10 @@ import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import TestResultForm from './TestResultForm';
 
+import NewManufacturerForm from './EquipmentForm_modules/NewManufacturerForm';
+import NewLocationForm from './EquipmentForm_modules/NewLocationForm';
+import NewNormForm from './EquipmentForm_modules/NewNormForm';
+import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 
 const App = React.createClass({
 
@@ -48,6 +52,29 @@ const App = React.createClass({
 
         <div className="content">
             <div>
+                <ul>
+                    <li><Link to='/home'>Home</Link></li>
+                    <li><Link to='/campaign'>New Campaign</Link></li>
+                    <li><Link to='/equipment'>Equipment</Link></li>
+                    <li><Link to='/add_equipment'>Add Equipment</Link></li>
+                    <li><Link to='/testlist'>Testlist</Link></li>
+                    <li><Link to='/add_test'>New Test</Link></li>
+                    <li><Link to='/edit_test/1'>Edit Test</Link></li>
+                    <li><Link to='/electro'>Electrical Profile</Link></li>
+                    <li><Link to='/fluid'>Fluid Profile</Link></li>
+                    <li><Link to='/choose_profile'>Choose Test Profile</Link></li>
+                    <li><Link to='/add_createdby'>created by</Link></li>
+                    <li><Link to='/add_contract'>contract</Link></li>
+                    <li><Link to='/add_lab'>lab</Link></li>
+                    <li><Link to='/add_material'>material</Link></li>
+                    <li><Link to='/add_fluid'>new fluid</Link></li>
+                    <li><Link to='/add_recommend'>recommend</Link></li>
+                    <li><Link to='/eq_type_add'>new eq type</Link></li>
+                    <li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
+                    <li><Link to='/eq_add_location'>new eq location</Link></li>
+                    <li><Link to='/eq_add_norm'>new eq norms</Link></li>
+
+                </ul>
                 <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
 
             </div>
@@ -80,6 +107,10 @@ render((
             <Route path="add_fluid" component={NewFluidForm} />
             <Route path="add_recommend" component={NewRecommendationForm} />
             <Route path="test_result" component={TestResultForm} />
+            <Route path="eq_type_add" component={NewEquipmentTypeForm} />
+            <Route path="eq_add_manufac" component={NewManufacturerForm} />
+            <Route path="eq_add_location" component={NewLocationForm} />
+            <Route path="eq_add_norm" component={NewNormForm} />
         </Route>
     </Router>
 ), document.getElementById('app'));

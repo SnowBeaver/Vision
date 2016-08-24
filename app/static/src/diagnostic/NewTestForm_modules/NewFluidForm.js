@@ -122,7 +122,6 @@ var NewFluidForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Fluid Profile">
 
                         <div className="maxwidth">
                             <FormGroup>
@@ -148,7 +147,7 @@ var NewFluidForm = React.createClass ({
                                 >Cancel</Button>
                             </div>
                         </div>
-                    </Panel>
+                    
                 </form>
             </div>
         );

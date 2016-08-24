@@ -121,12 +121,13 @@ var CountrySelectField = React.createClass ({
     }
 });
 
+
 var CreatedByForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'name', 'email', 'alias',
+            'role', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
             'country', 'mobile', 'active'
         ];
@@ -240,7 +241,6 @@ var CreatedByForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New User Profile">
                         <div className="row">
                             <div className="col-md-12">
                                 <RoleSelectField
@@ -353,7 +353,6 @@ var CreatedByForm = React.createClass ({
                                 >Cancel</Button>
                             </div>
                         </div>
-                    </Panel>
                 </form>
             </div>
         );
