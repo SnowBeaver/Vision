@@ -109,7 +109,6 @@ var NewNormForm = React.createClass({
 
         return (
             <div className="form-container">
-                <Panel header="New Norm">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
                             <div className="col-md-12">
@@ -147,8 +146,6 @@ var NewNormForm = React.createClass({
                             </div>
                         </div>
                     </form>
-                </Panel>
-                <hr/>
             </div>
         );
     }

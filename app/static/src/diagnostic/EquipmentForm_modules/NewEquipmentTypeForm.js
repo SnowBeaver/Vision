@@ -110,7 +110,6 @@ var NewEquipmentTypeForm = React.createClass({
 
         return (
             <div className="form-container">
-                <Panel header="New Equipment Type">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
                             <div className="col-md-12">
@@ -159,9 +158,8 @@ var NewEquipmentTypeForm = React.createClass({
                                 >Cancel</Button>
                             </div>
                         </div>
+                        <br/>
                     </form>
-                </Panel>
-                <hr/>
             </div>
         );
     }

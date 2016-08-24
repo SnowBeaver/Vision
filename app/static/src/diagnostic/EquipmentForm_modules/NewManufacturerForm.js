@@ -115,7 +115,6 @@ var NewManufacturerForm = React.createClass({
 
         return (
             <div className="form-container">
-                <Panel header="New Manufacturer">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
                             <div className="col-md-12">
@@ -174,8 +173,6 @@ var NewManufacturerForm = React.createClass({
                             </div>
                         </div>
                     </form>
-                </Panel>
-                <hr/>
             </div>
         );
     }

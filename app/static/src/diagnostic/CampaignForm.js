@@ -9,7 +9,6 @@ import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
 import CreatedByForm from './CampaignForm_modules/CreatedByForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
-import AddEquipmentForm from './AddEquipmentForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import { hashHistory } from 'react-router';
 
@@ -404,13 +403,24 @@ var CampaignForm = React.createClass({
                 </Panel>
                 <hr/>
 
-                <Modal show={this.state.showCreatedByForm}>
-                    <CreatedByForm handleClose={this.closeCreatedByForm}/>
+               <Modal show={this.state.showCreatedByForm}>
+                    <Modal.Header>
+                        <Modal.Title>New User Profile</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <CreatedByForm data={this.props.data} handleClose={this.closeCreatedByForm}/>
+                    </Modal.Body>
                 </Modal>
-
+                
                 <Modal show={this.state.showNewContractForm}>
-                    <NewContractForm onContractCreate={this.onContractCreate} handleClose={this.closeNewContractForm}/>
+                    <Modal.Header>
+                        <Modal.Title>New Contract</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <NewContractForm onContractCreate={this.onContractCreate} handleClose={this.closeNewContractForm}/>
+                    </Modal.Body>
                 </Modal>
+                
             </div>
         );
     }

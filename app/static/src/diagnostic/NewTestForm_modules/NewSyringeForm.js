@@ -182,7 +182,7 @@ var NewSyringeForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Material Profile">
+                    
                         <div className="row">
                             <div className="col-md-12">
                                 <LabAnalyserSelectField
@@ -214,7 +214,7 @@ var NewSyringeForm = React.createClass ({
                                 >Cancel</Button>
                             </div>
                         </div>
-                    </Panel>
+                    
                 </form>
             </div>
         );

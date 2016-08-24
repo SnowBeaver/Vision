@@ -108,7 +108,6 @@ var NewLocationForm = React.createClass({
 
         return (
             <div className="form-container">
-                <Panel header="New Location">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
                             <div className="col-md-12">
@@ -135,8 +134,6 @@ var NewLocationForm = React.createClass({
                             </div>
                         </div>
                     </form>
-                </Panel>
-                <hr/>
             </div>
         );
     }

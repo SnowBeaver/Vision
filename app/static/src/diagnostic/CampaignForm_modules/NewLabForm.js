@@ -188,7 +188,6 @@ var NewLabForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New Laboratory Profile">
 
                         <div className="maxwidth">
                             <FormGroup>
@@ -233,7 +232,6 @@ var NewLabForm = React.createClass ({
                                 >Cancel</Button>
                             </div>
                         </div>
-                    </Panel>
                 </form>
             </div>
         );
