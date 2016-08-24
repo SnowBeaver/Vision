@@ -127,7 +127,7 @@ var FluidProfSelectField = React.createClass ({
 });
 
 
-const TestProfileForm = React.createClass({
+var TestProfileForm = React.createClass({
 
     getInitialState: function () {
         return {
