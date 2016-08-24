@@ -578,7 +578,7 @@ const EquipmentTestForm = React.createClass({
                 id: arr.id,
                 date: arr.date_analyse,
                 reason: arr.reason_id,
-                type: arr.test_type_id,
+                test_type_id: arr.test_type_id,
                 contract: null,
                 test_status: arr.test_status_id,
                 analysis_number: arr.analysis_number,
