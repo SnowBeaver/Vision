@@ -5,176 +5,53 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 
-var TestTypeSelectField = React.createClass ({
 
+const FieldLabel = React.createClass({
+    render: function() {
+        return (
+            <ControlLabel>{this.props.label}</ControlLabel>
+        );
+    }
+});
+
+var SelectField = React.createClass({
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value
         });
     },
-
     getInitialState: function(){
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: -1
         };
     },
-
     isVisible: function(){
         return this.state.isVisible;
     },
-
     componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){ 
-            var items = (result['result']);
-            this.setState({
-                items: items
-            });
+        this.serverRequest = $.get(this.props.source, function (result){
+            this.setState({ items: (result['result']) });
         }.bind(this), 'json');
     },
-
     componentWillUnmount: function() {
         this.serverRequest.abort();
     },
-
     setVisible: function(){
         this.state.isVisible = true;
     },
-
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
-
+        console.log( "SelectField value" + (this.props.value || 'no data') );
         return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="name">
-                        <option key="0" value="select">Test Type</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-var InitialsSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        })
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            var items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id} key={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup controlId="formControlsSelect4">
-                    <FormControl componentClass="select" placeholder="Select initials" onChange={this.handleChange}>
-                        <option key="0" value="select">Initials</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-var TestReasonSelectField = React.createClass ({
-
-    handleChange: function(event){
-        this.setState({
-            value: event.target.value
-        });
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false,
-            value: null
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            var items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <FormGroup controlId="formControlsSelect1">
-                <ControlLabel>Reason of testing</ControlLabel>
-                <FormControl
-                    componentClass="select"
-                    placeholder="select"
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                >
-                    <option value="select">Select reason</option>
+            <FormGroup>
+                <FormControl componentClass="select" placeholder="select"
+                             onChange={this.handleChange}>
+                    {/*<option key="0" value="select">Test Type</option>*/}
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -182,77 +59,45 @@ var TestReasonSelectField = React.createClass ({
     }
 });
 
-var EquipmentTypeSelectField = React.createClass({
+const SelectFieldWithLabelOnTop = React.createClass({
     render: function() {
+        var className = "col-lg-" + ( this.props.length || '4' ) + " nopadding padding-right-xs";
+        console.log( "SelectFieldWithLabelOnTop value" + (this.props.value || 'no data') );
         return (
-            <div></div>
-        )
+            <div className={className}>
+                <FieldLabel label={this.props.label}/>
+                <SelectField source={this.props.source} value={this.props.value}/>
+            </div>
+        );
     }
 });
-
-var SyringeSelectField = React.createClass({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value
-        })
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            var items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
+const DateTimeFieldWithLabelOnTop = React.createClass({
     render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} 
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
+        var className = "col-lg-" + ( this.props.length || '4' ) + " nopadding padding-right-xs";
         return (
-            <div>
-                <FormGroup controlId="formControlsSelect1">
-                    <ControlLabel>Syringe</ControlLabel>
-                    <FormControl componentClass="select" placeholder="equipment type" onChange={this.handleChange}>
-                        <option value="select">select syringe</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
+            <div className={className}>
+                <div className="datetimepicker input-group date">
+                    <FieldLabel label={this.props.label}/>
+                    <DateTimeField datetime="" />
+                </div>
+            </div>
+        );
+    }
+});
+const TextFieldWithLabelOnTop = React.createClass({
+    render: function() {
+        var className = "col-lg-" + ( this.props.length || '4' ) + " nopadding padding-right-xs";
+        return (
+            <div className={className}>
+                <FieldLabel label={this.props.label}/>
+                <FormControl type="text" value="" />
             </div>
         );
     }
 });
 
-const EquipmentTestIdentificationForm = React.createClass({
-
+var EquipmentTestIdentificationForm = React.createClass({
     getInitialState: function () {
-        console.log('EquipmentTestIdentificationForm getInitialState')
-        console.log(this.props.data)
         return {
             loading: false,
             csrf_token: 'not set',
@@ -267,88 +112,35 @@ const EquipmentTestIdentificationForm = React.createClass({
             <div className="form-container">
                 <form method="post" action="#" >
                     <input type="hidden" value={this.state.csrf_token}/>
-                        <div className="tab_row text-center">
-                            <div className="col-lg-12 nopadding">
-                                <div className="col-lg-6 nopadding padding-right-xs">
-                                        <ControlLabel>Test type</ControlLabel>
-                                        <TestTypeSelectField
-                                            source="/api/v1.0/test_type"
-                                            handleChange={this.handleChange}/> 
-                                </div>
-                                <div className="col-lg-6 nopadding">
-                                    <div className="col-lg-6 nopadding padding-right-xs">
-                                            <InitialsSelectField source="/api/v1.0/user" 
-                                                handleChange={this.handleChange} /> 
-                                    </div>
-                                    <div className="col-lg-6 nopadding">Acq Date
-                                        <div className="datetimepicker input-group date"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-12 nopadding">
-                                <div className="col-lg-6 nopadding padding-right-xs">
-                                        <TestReasonSelectField 
-                                            source="/api/v1.0/test_reason"
-                                            handleChange={this.handleChange}
-                                        >
-                                        </TestReasonSelectField>
-                                </div>
-                                <div className="col-lg-6 nopadding">
-                                    <div className="col-lg-6 nopadding padding-right-xs"> 
-                                        <FormControl label="Status" type="text" value="" />
-                                    </div>
-                                    <div className="col-lg-6 nopadding">Temp
-                                        <FormControl type="text" value="" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-12 nopadding">
-                                <div className="col-lg-6 nopadding">
-                                    <div className="col-lg-6 nopadding padding-right-xs">Insulating
-                                        <FormControl type="text" value="" />
-                                    </div>
-                                    <div className="col-lg-6 nopadding padding-right-xs">Contract
-                                        <FormControl type="text" value="" />
-                                    </div>
-                                </div>
-                                <div className="col-lg-6 nopadding">Grouping
-                                    <FormControl type="text" value="" />
-                                </div>
-                            </div>
-                            <div className="col-lg-12 nopadding">
-                                <div className="col-lg-2 nopadding padding-right-xs">Sampling
-                                    <FormControl type="text" value="" />
-                                </div>
-                                <div className="col-lg-3 nopadding padding-right-xs">
-                                    <SyringeSelectField ref="syringe" source="/api/v1.0/syringe" />
-                                </div>
-                                <div className="col-lg-2 nopadding padding-right-xs">Test number
-                                    <FormControl type="text" value="" />
-                                </div>
-                                <div className="col-lg-3 nopadding padding-right-xs">
-                                    <div className="datetimepicker input-group date">Lab date
-                                        <DateTimeField datetime="" />
-                                    </div>
-                                </div>
-                                <div className="col-lg-2 nopadding">Load mva
-                                    <FormControl type="text" value="" />
-                                </div>
-                            </div>
-                            <div className="col-lg-12 nopadding">
-                                <div className="col-lg-3 nopadding padding-right-xs">Equipment
-                                    <FormControl type="text" value="" />
-                                </div>
-                                <div className="col-lg-3 nopadding padding-right-xs">Order status
-                                    <FormControl type="text" value="" />
-                                </div>
-                                <div className="col-lg-3 nopadding padding-right-xs">Lab no
-                                    <FormControl type="text" value="" />
-                                </div>
-                                <div className="col-lg-3 nopadding">Lab
-                                    <FormControl type="text" value="" />
-                                </div>
-                            </div>
+                    <div className="tab_row text-center">
+                        <div className="col-lg-12 nopadding">
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/test_type" label="Test type" lenght="4"/>
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/user" label="Initials"/>
+                            <DateTimeFieldWithLabelOnTop label="Acq Date"/>
                         </div>
+                        <div className="col-lg-12 nopadding">
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/test_reason" label="Test reason"/>
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/test_status" label="Status" />
+                            <TextFieldWithLabelOnTop label="Temperature" />
+                        </div>
+                        <div className="col-lg-12 nopadding">
+                            <TextFieldWithLabelOnTop label="Insulating" />
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/contract" label="Contract" />
+                            <TextFieldWithLabelOnTop label="Grouping" />
+                        </div>
+                        <div className="col-lg-12 nopadding">
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/sampling_point" label="Sampling" length="3"/>
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/syringe" label="Syringe" length="3"/>
+                            <TextFieldWithLabelOnTop label="Test number" length="3"/>
+                            <TextFieldWithLabelOnTop label="Load mva" length="3"/>
+                        </div>
+                        <div className="col-lg-12 nopadding">
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/equipment" label="Equipment" />
+                            <TextFieldWithLabelOnTop label="Order status" />
+                            <SelectFieldWithLabelOnTop source="/api/v1.0/lab" label="Lab" length="2" value={this.props.data.lab_id}/>
+                            <DateTimeFieldWithLabelOnTop label="Lab date" length="2"/>
+                        </div>
+                    </div>
                 </form>
             </div>
         );
@@ -357,7 +149,7 @@ const EquipmentTestIdentificationForm = React.createClass({
 
 
 
-const EquipmentTestRepairForm = React.createClass({
+var EquipmentTestRepairForm = React.createClass({
 
     getInitialState: function () {
         return {
@@ -410,7 +202,7 @@ const EquipmentTestRepairForm = React.createClass({
     }
 });
 
-const EquipmentTestDiagnosisForm = React.createClass({
+var EquipmentTestDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false
@@ -452,7 +244,7 @@ const EquipmentTestDiagnosisForm = React.createClass({
 });
 
 
-const EquipmentTestEqDiagnosisForm = React.createClass({
+var EquipmentTestEqDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
@@ -493,12 +285,11 @@ const EquipmentTestEqDiagnosisForm = React.createClass({
     }
 });
 
-const EquipmentTestForm = React.createClass({
+var EquipmentTestForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-            source: '/api/v1.0/test_result/' + this.props.selectedRowId,
             data: null
         }
     },
@@ -579,29 +370,29 @@ const EquipmentTestForm = React.createClass({
     },
     
     componentDidMount: function () {
-
-        $.get(this.state.source, function (result) {
+        this.serverRequest = $.get('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
             var arr = (result['result']);
-            
-            this.setState({
+            this.setState({ data : {
                 id: arr.id,
                 date: arr.date_analyse,
                 reason: arr.reason_id,
                 type: arr.test_type_id,
+                lab_id: arr.lab_id,
                 contract: null,
                 test_status: arr.test_status_id,
                 analysis_number: arr.analysis_number,
                 serial: arr.equipment.serial,
                 equipment_number: arr.equipment.equipment_number
-
+                }
             });
         }.bind(this), 'json');
     },
     render: function() {
-        console.log('EquipmentTestForm render')
-        console.log(this.state.data)
+        console.log('EquipmentTestForm render');
+        console.log(this.state.data);
+        if ((typeof(this.state.data) == "undefined") || (this.state.data == null)) { return null}
         return (
-            <div> 
+            <div>
                 <div className="maxwidth padding-top-lg margin-bottom-xs">
                     <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
                         <li className="active"> <a href="#tabs-1" data-toggle="tab"> Identification </a> </li>
@@ -611,16 +402,16 @@ const EquipmentTestForm = React.createClass({
                     </ul>
                     <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                         <div id="tabs-1" role="tabpanel" className="tab-pane active ">
-                            <EquipmentTestIdentificationForm data={this.state}/>
+                            <EquipmentTestIdentificationForm data={this.state.data}/>
                         </div>
                         <div id="tabs-2" role="tabpanel" className="tab-pane">
-                            <EquipmentTestRepairForm data={this.state} />
+                            <EquipmentTestRepairForm data={this.state.data} />
                         </div>
                         <div id="tabs-3" role="tabpanel" className="tab-pane">
-                            <EquipmentTestDiagnosisForm data={this.state}/>
+                            <EquipmentTestDiagnosisForm data={this.state.data}/>
                         </div>
                         <div id="tabs-4" role="tabpanel" className="tab-pane">
-                            <EquipmentTestEqDiagnosisForm data={this.state} />
+                            <EquipmentTestEqDiagnosisForm data={this.state.data} />
                         </div>
                     </div>
                 </div>
