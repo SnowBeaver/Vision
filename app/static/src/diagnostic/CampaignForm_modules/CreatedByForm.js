@@ -121,12 +121,13 @@ var CountrySelectField = React.createClass ({
     }
 });
 
+
 var CreatedByForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'name', 'email', 'alias',
+            'role', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
             'country', 'mobile', 'active'
         ];
