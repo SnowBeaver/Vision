@@ -100,7 +100,7 @@ var PerformedBySelectField = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
+            var items = (result['result']);
             this.setState({
                 items: items
             });
@@ -162,7 +162,7 @@ var MaterialSelectField = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
+            var items = (result['result']);
             this.setState({
                 items: items
             });
@@ -224,7 +224,7 @@ var FluidTypeSelectField = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
+            var items = (result['result']);
             this.setState({
                 items: items
             });
@@ -287,7 +287,7 @@ var LabAnalyserSelectField = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
+            var items = (result['result']);
             this.setState({
                 items: items
             });
@@ -349,7 +349,7 @@ var LabContractSelectField = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
+            var items = (result['result']);
             this.setState({
                 items: items
             });
@@ -411,7 +411,7 @@ var SyringeNumberSelectField = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
+            var items = (result['result']);
             this.setState({
                 items: items
             });
@@ -474,7 +474,7 @@ var TestReasonSelectField = React.createClass({
 
         this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
+            var items = (result['result']);
             this.setState({
                 items: items
             });
