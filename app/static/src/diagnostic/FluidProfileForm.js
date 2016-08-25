@@ -197,19 +197,19 @@ var TestProfileSelectField = React.createClass({
         this.setState({
             value: event.target.value
         });
-        this.loadProfileData(event); 
+        this.loadProfileData(event);
     },
 
     loadProfileData: function (event) {
-        
+
         if ('select' == event.target.value) {
-            
+
             this.setState({
                 saved_profile: null
             });
-            
+
             this.props.fillUpForm();
-            
+
         } else {
 
             this.serverRequest = $.get('/api/v1.0/fluid_profile/' + event.target.value, function (result) {
@@ -218,7 +218,7 @@ var TestProfileSelectField = React.createClass({
                 });
                 this.props.fillUpForm(this.state.saved_profile);
             }.bind(this), 'json');
-        } 
+        }
     },
 
     componentDidMount: function () {
@@ -268,7 +268,7 @@ const FluidProfileForm = React.createClass({
         return {
             loading: false,
             data: {},
-            errors: {}, 
+            errors: {},
             fields: [
                 'gas', 'furans', 'pcb', 'water',
                 'inhibitor', 'dielec', 'dielec_2',
@@ -280,7 +280,7 @@ const FluidProfileForm = React.createClass({
                 'visual', 'pcb_vial', 'antioxidant',
                 'sampling', 'sampling_jar', 'sampling_vial',
                 'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection',
-                'description'
+                'shared', 'name', 'description'
             ]
         }
     },
@@ -299,7 +299,7 @@ const FluidProfileForm = React.createClass({
             });
         }
     },
-    
+
     _save: function () {
         var fields = this.state.fields;
         var data = {};
@@ -331,14 +331,14 @@ const FluidProfileForm = React.createClass({
                 this.setState({loading: true});
             }.bind(this)
         });
-        
+
         // show success message
         // if update a profile
         if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
             var url = '/api/v1.0/fluid_profile/';
             if (this.state.data.id) {
                 url = url + this.state.data.id;
-            } 
+            }
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
@@ -354,34 +354,34 @@ const FluidProfileForm = React.createClass({
                     this.setState({loading: true});
                 }.bind(this)
             });
-        } 
+        }
     },
-    
+
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
         if(Object.keys(errors).length != 0) {
-          this.setState({
-            errors: errors
-          });
-           return;
+            this.setState({
+                errors: errors
+            });
+            return;
         }
-        var xhr = this._save(); 
+        var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
     },
-    
+
     hideLoading: function () {
         this.setState({loading: false});
     },
-    
+
     _onSuccess: function (data) {
-        console.log('Fluid profile saved successfully');
+        //console.log('Fluid profile saved successfully');
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState()); 
     },
-    
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -394,11 +394,14 @@ const FluidProfileForm = React.createClass({
             });
         }
     },
-    
+
     _onChange: function (e) {
         var state = {};
         if(e.target.type == 'checkbox'){
             state[e.target.name] = e.target.checked;
+        }
+        else if(e.target.type == 'radio'){
+            state[e.target.name] = e.target.value;
         }
         else if(e.target.type == 'select-one'){
             state[e.target.name] = e.target.value;
@@ -408,7 +411,7 @@ const FluidProfileForm = React.createClass({
         }
         this.setState(state);
     },
-    
+
     _validate: function () {
         var errors = {};
         // if(this.state.password == "") {
@@ -441,7 +444,7 @@ const FluidProfileForm = React.createClass({
                                         <TestProfileSelectField fillUpForm={this.fillUpForm} source="/api/v1.0/fluid_profile"/>
                                     </FormGroup>
                                 </div>
-                            </div> 
+                            </div>
                             <div className="scheduler-border">
                                 <fieldset className="scheduler-border">
                                     <legend className="scheduler-border">Syringe - Test requested</legend>
@@ -449,8 +452,8 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox 
-                                                        name="gas" 
+                                                    <Checkbox
+                                                        name="gas"
                                                         checked={this.state.data.gas ? 'checked': null}
                                                         value="1"
                                                     >
@@ -458,7 +461,7 @@ const FluidProfileForm = React.createClass({
                                                     </Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox 
+                                                    <Checkbox
                                                         name="furans"
                                                         checked={this.state.data.furans ? 'checked': null}
                                                         value="1"
@@ -534,8 +537,8 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox name="acid"
-                                                              checked={this.state.data.acid ? 'checked': null}
+                                                    <Checkbox name="acidity"
+                                                              checked={this.state.data.acidity ? 'checked': null}
                                                               value="1"
                                                     >Acidity(D974)</Checkbox>
                                                 </div>
@@ -625,21 +628,21 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox 
+                                                    <Checkbox
                                                         name="point"
                                                         checked={this.state.data.point ? 'checked': null}
                                                         value="1"
                                                     >PouPoint</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
-                                                    <Checkbox 
+                                                    <Checkbox
                                                         name="viscosity"
                                                         checked={this.state.data.viscosity ? 'checked': null}
                                                         value="1"
                                                     >Viscosity</Checkbox>
                                                 </div>
                                                 <div className="col-md-4 nopadding">
-                                                    <Checkbox 
+                                                    <Checkbox
                                                         name="corr"
                                                         checked={this.state.data.corr ? 'checked': null}
                                                         value="1"
@@ -649,14 +652,14 @@ const FluidProfileForm = React.createClass({
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="maxwidth">
-                                                <Checkbox 
-                                                    name="dielec_i" 
+                                                <Checkbox
+                                                    name="dielec_i"
                                                     checked={this.state.data.dielec_i ? 'checked': null}
                                                     value="1"
                                                 >Dielec.IEC-156(kV)</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <Checkbox 
+                                                <Checkbox
                                                     name="visual"
                                                     checked={this.state.data.visual ? 'checked': null}
                                                     value="1"
@@ -685,14 +688,14 @@ const FluidProfileForm = React.createClass({
                                     <div className="control-group">
                                         <div className="col-md-8 nopadding padding-right-xs">
                                             <div className="maxwidth">
-                                                <Checkbox 
+                                                <Checkbox
                                                     name="pcb_vial"
                                                     checked={this.state.data.pcb_vial ? 'checked': null}
                                                     value="1"
                                                 >PCB</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <Checkbox 
+                                                <Checkbox
                                                     name="antioxidant"
                                                     checked={this.state.data.antioxidant ? 'checked': null}
                                                     value="1"
@@ -720,7 +723,7 @@ const FluidProfileForm = React.createClass({
                                         <div className="row">
                                             <FormGroup>
                                                 <FormControl type="text"
-                                                             placeholder="electrical profile name"
+                                                             placeholder="Fluid profile name"
                                                              name="name" />
                                             </FormGroup>
                                         </div>
@@ -732,36 +735,27 @@ const FluidProfileForm = React.createClass({
                                                 Private
                                             </Radio>
                                         </div>
-                                    </div> 
+                                    </div>
                                     <div className="col-md-4">
                                         <FormGroup controlId="descTextarea">
-                                            <FormControl 
-                                                componentClass="textarea" 
-                                                placeholder="Description" 
+                                            <FormControl
+                                                componentClass="textarea"
+                                                placeholder="Description"
                                                 ref="description"
                                                 name="description"
                                             />
                                         </FormGroup>
                                     </div>
-                                    <div className="col-md-5">
-                                        <FormGroup controlId="commentsTextarea">
-                                            <FormControl 
-                                                componentClass="textarea" 
-                                                placeholder="comments" 
-                                                ref="comments"
-                                                name="comments"
-                                            />
-                                        </FormGroup>
-                                    </div>
+
                                 </div>
-                                <div className="row"> 
+                                <div className="row">
                                     <div className="col-md-12">
                                         <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
                                         <Button bsStyle="danger" 
                                                 onClick={this.props.handleClose} 
                                                 className="pull-right margin-right-xs">Cancel</Button>
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                         </Panel>
                     </div>

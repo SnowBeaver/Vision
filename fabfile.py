@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from fabric.contrib.files import exists
 from fabric.api import settings
 
+
 class FabricException(Exception):
     pass
 
@@ -22,7 +23,7 @@ env.pip = env.venv + '/bin/pip'
 env.python = env.venv + '/bin/python'
 env.home = '/home/' + PROJECT
 
-#bbflask
+# bbflask
 env.bbenv = env.directory + '/bbenv'
 env.bbactivate = 'source ' + env.bbenv + '/bin/activate'
 env.bbpip = env.bbenv + '/bin/pip'
@@ -35,6 +36,7 @@ env.redis_conf = Path(LOCAL_PROJECT_DIR, "dep", "redis", "redis.conf")
 def source_virtualenv():
     with prefix(env.activate):
         yield
+
 
 @contextmanager
 def source_bb_virtualenv():
@@ -56,9 +58,9 @@ def setup_dev():
     sudo("pip install virtualenv")
     sudo("pip install gunicorn")
 
-    with settings(abort_exception = FabricException):
+    with settings(abort_exception=FabricException):
         try:
-            sudo("rm -rf %s"  % env.venv)
+            sudo("rm -rf %s" % env.venv)
         except FabricException:
             pass
 
@@ -77,7 +79,7 @@ def restart_services():
     sudo("service supervisor stop")
     sudo('service redis-server stop')
     sudo("service nginx stop")
-    with settings(abort_exception = FabricException):
+    with settings(abort_exception=FabricException):
         try:
             sudo('killall uwsgi')
         except FabricException:
@@ -87,6 +89,7 @@ def restart_services():
     sudo("service supervisor force-reload")
     sudo("service supervisor start")
     sudo('service redis-server start')
+
 
 def deploy_dev_image():
     # create vagrant box
@@ -104,13 +107,15 @@ def deploy_dev_image():
     put(box, os.path.join(remotebox, 'package.box'))
     local('rm -f %s' % box)
 
+
 def deploy_supervisor():
     super_conf = "/etc/supervisor/conf.d/%s.conf" % PROJECT
     sudo("rm -f %s" % super_conf)
-    put( Path(LOCAL_PROJECT_DIR, 'dep' , 'supervisor' , 'template.conf'), super_conf, use_sudo=True)
+    put(Path(LOCAL_PROJECT_DIR, 'dep', 'supervisor', 'template.conf'), super_conf, use_sudo=True)
 
     sudo("chown root:root %s" % super_conf)
     restart_services()
+
 
 def deploy_nginx():
     nginx_conf = "/etc/nginx/sites-available/%s.conf" % PROJECT
@@ -126,7 +131,6 @@ def deploy_nginx():
 
 
 def setup_dev_app():
-
     with cd(env.directory):
         local('git pull origin master')
         run('virtualenv env --always-copy')
@@ -138,7 +142,7 @@ def setup_dev_app():
         run('cp config.py.dist config.py')
         with source_virtualenv():
             run('find . -name "*.pyc" -exec rm -rf {} \;')
-            #run('python manage.py db init')
+            # run('python manage.py db init')
             run('python manage.py db upgrade')
 
 
@@ -165,14 +169,14 @@ def first_deploy():
 
             sudo("rm -f %s/vision.xml" % (env.directory))
             sudo("rm -f %s/flask_bb.xml" % (env.directory))
-            put( Path(uwsgi_local , "flask_bb.xml"), "%s/flask_bb.xml" % env.directory)
-            put( Path(uwsgi_local , "vision.xml" ), "%s/vision.xml" % env.directory)
+            put(Path(uwsgi_local, "flask_bb.xml"), "%s/flask_bb.xml" % env.directory)
+            put(Path(uwsgi_local, "vision.xml"), "%s/vision.xml" % env.directory)
 
             sudo("rm -f %s" % nginx_conf)
             sudo("rm -f %s" % flaskbb_conf)
 
-            put( Path(LOCAL_PROJECT_DIR , 'dep' , 'nginx' ,'template.conf') , nginx_conf, use_sudo=True)
-            put( Path(LOCAL_PROJECT_DIR , 'dep' , 'supervisor' ,'flaskbb.conf'), flaskbb_conf, use_sudo=True)
+            put(Path(LOCAL_PROJECT_DIR, 'dep', 'nginx', 'template.conf'), nginx_conf, use_sudo=True)
+            put(Path(LOCAL_PROJECT_DIR, 'dep', 'supervisor', 'flaskbb.conf'), flaskbb_conf, use_sudo=True)
 
             run(env.pip + ' install -r requirements.txt')
             setup_trans()
@@ -189,6 +193,7 @@ def first_deploy():
 
             deploy_supervisor()
             restart_services()
+
 
 def deploy(branch='master'):
     with cd(env.directory):
@@ -212,22 +217,27 @@ def update_flaskbb():
                 run(env.bbpip + ' install uwsgi')
                 run(env.bbpip + ' install -r requirements.txt')
 
+
 def update_remote(branch='master'):
     with cd(env.directory):
         run('git pull origin %s' % branch)
         with source_virtualenv():
             run(env.pip + ' install -r requirements.txt')
             run('find . -name "*.pyc" -exec rm -rf {} \;')
-            #run('python -c "from app import db;db.create_all()"')
+            # run('python -c "from app import db;db.create_all()"')
+            sudo('service supervisor stop')
             run('python manage.py db upgrade')
             update_static()
             restart_services()
+            sudo('service supervisor start')
+
 
 def setup_redis():
     sudo("apt-get install -y redis-server")
     put(env.redis_conf, '/etc/redis/redis.conf', use_sudo=True)
     sudo("update-rc.d redis-server defaults")
     sudo("service redis-server start")
+
 
 def setup_trans():
     with cd(env.directory):
@@ -236,10 +246,12 @@ def setup_trans():
             run('./env/bin/pybabel init -i app/messages.pot -d app/translations -l es')
             run('./env/bin/pybabel init -i app/messages.pot -d app/translations -l fr')
 
+
 def compile_trans():
     with cd(env.directory):
         with source_virtualenv():
             run('./env/bin/pybabel compile -f -d app/translations')
+
 
 def update_trans():
     with cd(env.directory):
@@ -247,10 +259,13 @@ def update_trans():
             run('pybabel update -i app/messages.pot -d app/translations')
             run('rm -f ./messages.pot')
 
+
 def create_root():
     with cd(env.directory):
         with source_virtualenv():
-            run('python -c "from app import db;from app.tree.models import TreeNode;node = TreeNode(text = u\'Vision Diagnostic\' , disabled=True , selected=True , icon=\'../app/static/img/root.png\' , type=\'default\');db.session.add(node);db.session.commit()"')
+            run(
+                'python -c "from app import db;from app.tree.models import TreeNode;node = TreeNode(text = u\'Vision Diagnostic\' , disabled=True , selected=True , icon=\'../app/static/img/root.png\' , type=\'default\');db.session.add(node);db.session.commit()"')
+
 
 def setup_blogging():
     with cd(env.directory):
@@ -282,7 +297,7 @@ def setup_flaskbb():
 
 def setup_api():
     uwsgi_local = LOCAL_PROJECT_DIR.child('dep').child('uwsgi')
-    put( Path(uwsgi_local , "vision-api.xml" ), "%s/vision-api.xml" % env.directory)
+    put(Path(uwsgi_local, "vision-api.xml"), "%s/vision-api.xml" % env.directory)
     deploy_supervisor()
     deploy_nginx()
     restart_services()
@@ -291,9 +306,9 @@ def setup_api():
 def menu_root():
     with cd(env.directory):
         with source_virtualenv():
-            run( 'python -c "from app import db;from app.admin.models import MenuItemsNode;node = MenuItemsNode(text = u\'Vision Diagnostic\', disabled = True, selected = True, type = \'parent\' );top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );db.session.add(node);db.session.commit()"'
-            )
-
+            run(
+                'python -c "from app import db;from app.admin.models import MenuItemsNode;node = MenuItemsNode(text = u\'Vision Diagnostic\', disabled = True, selected = True, type = \'parent\' );top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );db.session.add(node);db.session.commit()"'
+                )
 
 
 def setup_static():

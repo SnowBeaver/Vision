@@ -917,7 +917,7 @@ class EquipmentTypeView(MyModelView):
     column_sortable_list = ('name', 'code')
     column_searchable_list = ('name', 'code')
 
-    inline_models = (Equipment,)
+    # inline_models = (Equipment,)
 
     def __init__(self, dbsession):
         super(EquipmentTypeView, self).__init__(

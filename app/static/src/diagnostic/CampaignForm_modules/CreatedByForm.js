@@ -121,12 +121,13 @@ var CountrySelectField = React.createClass ({
     }
 });
 
+
 var CreatedByForm = React.createClass ({
 
 
     _create: function () {
         var fields = [
-            'name', 'email', 'alias',
+            'role', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
             'country', 'mobile', 'active'
         ];
@@ -151,13 +152,13 @@ var CreatedByForm = React.createClass ({
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
+        var errors = this._validate();
+        if(Object.keys(errors).length != 0) {
+          this.setState({
+            errors: errors
+          });
+           return;
+        }
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -169,7 +170,9 @@ var CreatedByForm = React.createClass ({
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         // show success message
-    },
+        this.props.onUserCreate(data);
+        this.props.handleClose();
+    }, 
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -207,7 +210,7 @@ var CreatedByForm = React.createClass ({
         // if(this.state.password == "") {
         //   errors.password = "Password is required";
         // }
-        // return errors;
+        return errors;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -240,7 +243,6 @@ var CreatedByForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <Panel header="New User Profile">
                         <div className="row">
                             <div className="col-md-12">
                                 <RoleSelectField
@@ -353,7 +355,6 @@ var CreatedByForm = React.createClass ({
                                 >Cancel</Button>
                             </div>
                         </div>
-                    </Panel>
                 </form>
             </div>
         );

@@ -8,16 +8,16 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 
-var Home = React.createClass ({
-    
-    getInitialState: function(){ 
+var Home = React.createClass({
+
+    getInitialState: function () {
         return {
             source: '/api/v1.0/campaign/',
             text: ''
         }
     },
-    
-    onTreeSearch: function(e){ 
+
+    onTreeSearch: function (e) {
         // console.log(e.target);
         // console.log(e.target.value);
         // this.setState({
@@ -25,21 +25,21 @@ var Home = React.createClass ({
         // });
         this.refs.tree.handleTreeSearch(e.target.value);
     },
-    
-    onTreeNodeClick: function(treeItem){ 
-        // console.log('got equipment id from tree click', treeItem.equipment_id); 
-        // console.log(this.refs.getEquipmentList());
+
+    onTreeNodeClick: function (treeItem) {
+
+        var src = (treeItem.equipment_id) ? '/api/v1.0/test_result/?equipment_id=' + treeItem.equipment_id : '#';
+        // console.log('got equipment id from tree click', treeItem.equipment_id);
         this.setState({
-            source: '/api/v1.0/test_result/?equipment_id=' + treeItem.equipment_id
+            source: src
         });
-        // console.log(this.refs.testResultList);
         this.refs.testResultList.updateSource(this.state.source);
     },
-    
-    render: function() {
+
+    render: function () {
         return (
             <div>
-                <div className="col-md-3 equal_col"> 
+                <div className="col-md-3 equal_col">
                     <div className="maxwidth">
                         <FormGroup>
                             <ControlLabel>Search</ControlLabel>
@@ -50,26 +50,26 @@ var Home = React.createClass ({
                                 id="plugins4_q"
                                 className="input col-md-12"
                                 value={this.state.searchValue}
-                                onKeyUp={this.onTreeSearch} />
+                                onKeyUp={this.onTreeSearch}/>
                         </FormGroup>
                         <br/>
                         <br/>
                         <br/>
                         <br/>
                         <TreeComponent
-                            ref="tree" 
+                            ref="tree"
                             struct={treeStruct}
                             onTreeNodeClick={this.onTreeNodeClick}
                         />
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <TestResultForm ref="testResultList" source={this.state.source} />
-                    {/*<EquipmentList ref="equipmentList" source={this.state.source} />*/}
+                    <TestResultForm ref="testResultList" source={this.state.source}/>
+                    {/* <EquipmentList ref="equipmentList" source={this.state.source} /> */}
                     {/*<EquipmentTestForm />*/}
                 </div>
-            </div> 
+            </div>
         )
     }
 });
- export default Home;
+export default Home;

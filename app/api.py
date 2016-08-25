@@ -2,15 +2,20 @@ from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
-from app.diagnostic.models import Equipment, TestResult, Campaign, FluidProfile
+from app.diagnostic.models import Equipment, EquipmentType, TestResult, Campaign, FluidProfile
 from app.diagnostic.models import ElectricalProfile
 from collections import Iterable
+from sqlalchemy import create_engine, MetaData
+from flask.ext.blogging import SQLAStorage
 
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
+engine = create_engine(api.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(api, session_options={'autoflush': False})
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
+meta = MetaData()
+sql_storage = SQLAStorage(engine, metadata=meta)
 
 
 def return_json(items_name, items_list):
@@ -54,7 +59,7 @@ def add_item(path):
             'equipment_id': item.id,
             'parent_id': 32,
             'icon': '../app/static/img/icons/{0}_b.ico'.format(eq_type_dict.get(item.equipment_type_id, '')),
-            'type': '{0}'.format(eq_type_dict.get(item.id.equipment_type_id, ''))
+            'type': '{0}'.format(eq_type_dict.get(item.equipment_type_id, ''))
         }
         item_tree = new_instance(Tree, **param_tree_dict)
 
@@ -107,6 +112,17 @@ def add_items():
     if not isinstance(equipment_ids, Iterable):
         equipment_ids = [equipment_ids]
     return [new_instance(items_model, campaign_id=campaign_id, equipment_id=id).id for id in equipment_ids]
+
+
+def get_equipment_type_fields(item_id):
+
+    item = db.session.query(EquipmentType).get(item_id) or abort(404)
+    return {str(c.name): str(c.type) for c in meta.tables[item.table_name].columns}
+
+
+@api_blueprint.route('/equipment_type/<int:item_id>/fields', methods=['GET', ])
+def handler_equipment_type_fields(item_id):
+    return return_json('result', get_equipment_type_fields(item_id))
 
 
 @api.errorhandler(404)

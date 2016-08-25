@@ -5,14 +5,13 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 
-
 var SelectField = React.createClass({
     handleChange: function(event, index, value){
         this.setState({
             value: event.target.value
         });
     },
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false,
@@ -36,7 +35,8 @@ var SelectField = React.createClass({
     render: function() {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         console.log( "SelectField value" + (this.props.value || 'no data') );
         console.log( this.props.value );
@@ -65,6 +65,7 @@ const DateTimeFieldWithLabel = React.createClass({
         );
     }
 });
+
 const TextField = React.createClass({
     render: function() {
         return (
@@ -84,13 +85,12 @@ var EquipmentTestIdentificationForm = React.createClass({
             errors: {}
         }
     },
-
     render: function() {
         console.log('EquipmentTestIdentificationForm render')
         console.log(this.props.data)
         return (
             <div className="form-container">
-                <form method="post" action="#" >
+                <form method="post" action="#">
                     <input type="hidden" value={this.state.csrf_token}/>
                     <div className="tab_row text-center">
                         <div className="col-lg-12 nopadding">
@@ -162,9 +162,7 @@ var EquipmentTestIdentificationForm = React.createClass({
 });
 
 
-
 var EquipmentTestRepairForm = React.createClass({
-
     getInitialState: function () {
         return {
             loading: false,
@@ -188,25 +186,25 @@ var EquipmentTestRepairForm = React.createClass({
             // }
         }
     },
-    render: function(){
+    render: function () {
         return (
-            <form className="" method="post" action="#" > 
+            <form className="" method="post" action="#">
                 <div className="tab_row">
                     <div className="col-lg-12 nopadding">
                         <div className="col-lg-6 nopadding padding-right-xs">Comments
-                            <FormControl componentClass="textarea" placeholder="textarea" value="" />
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
                         </div>
                         <div className="col-lg-6 nopadding ">Notes
-                            <FormControl componentClass="textarea" placeholder="textarea" value="" />
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
                         </div>
                     </div>
                     <div className="col-lg-12 nopadding">
                         <div className="col-lg-6 nopadding padding-right-xs">Sample
-                            <FormControl type="text" value="" />
+                            <FormControl type="text" value=""/>
                         </div>
                         <div className="col-lg-6 nopadding">Date
                             <div className="datepicker input-group date">
-                                <DateTimeField datetime="" />
+                                <DateTimeField datetime=""/>
                             </div>
                         </div>
                     </div>
@@ -222,28 +220,28 @@ var EquipmentTestDiagnosisForm = React.createClass({
             loading: false
         }
     },
-    render: function(){
+    render: function () {
         return (
-            <form className="" method="post" action="#" >
+            <form className="" method="post" action="#">
                 <div className="tab_row">
                     <div className="col-lg-12 nopadding">
                         <div className="col-lg-6 nopadding padding-right-xs">Diagnosis
-                            <FormControl componentClass="textarea" placeholder="textarea" value="" />
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
                         </div>
                         <div className="col-lg-6 nopadding ">Recommendations
-                            <FormControl componentClass="textarea" placeholder="textarea" value="" />
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
                         </div>
                     </div>
                     <div className="col-lg-12 nopadding">Predefined diag
-                        <FormControl type="text" value="" />
+                        <FormControl type="text" value=""/>
                     </div>
                     <div className="col-lg-12 nopadding">Predefined rec
-                        <FormControl type="text" value="" />
+                        <FormControl type="text" value=""/>
                     </div>
                     <div className="col-lg-12 nopadding">
                         <div className="col-lg-9 nopadding padding-right-xs">Date
                             <div className="datepicker input-group date">
-                                <DateTimeField datetime="" />
+                                <DateTimeField datetime=""/>
                             </div>
                         </div>
                         <div className="col-lg-3 nopadding">
@@ -281,17 +279,17 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
             <form className="" method="post" action="#">
                 <div className="tab_row">
                     <div className="col-lg-12 nopadding">Diagnosis
-						<FormControl componentClass="textarea" placeholder="textarea" value="" />
+                        <FormControl componentClass="textarea" placeholder="textarea" value=""/>
                     </div>
                     <div className="col-lg-12 nopadding">Indicator
-                        <FormControl type="text" value="" />
+                        <FormControl type="text" value=""/>
                     </div>
                     <div className="col-lg-12 nopadding">Condition
-						<FormGroup>
-							<Checkbox inline>
-								{/*{this.state.condition.value}*/}
-							</Checkbox>
-						</FormGroup>
+                        <FormGroup>
+                            <Checkbox inline>
+                                {/*{this.state.condition.value}*/}
+                            </Checkbox>
+                        </FormGroup>
                     </div>
                 </div>
             </form>
@@ -315,10 +313,10 @@ var EquipmentTestForm = React.createClass({
             data: null
         }
     },
-    
+
     _save: function () {
         var data = {};
-    
+
         return $.ajax({
             url: '/api/v1.0/equipment/',
             type: 'POST',
@@ -328,53 +326,53 @@ var EquipmentTestForm = React.createClass({
             }.bind(this)
         })
     },
-    
+
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
-        if(Object.keys(errors).length != 0) {
-          this.setState({
-            errors: errors
-          });
-           return;
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
         }
         var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
     },
-    
+
     hideLoading: function () {
         this.setState({loading: false});
     },
-    
+
     _onSuccess: function (data) {
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
         // show success message
         alert('Saved');
     },
-    
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
         }
     },
-    
+
     _onChange: function (e) {
         console.log(e.target.name);
         var state = {};
-        state[e.target.name] =  $.trim(e.target.value);
+        state[e.target.name] = $.trim(e.target.value);
         this.setState(state);
     },
-    
+
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
@@ -382,18 +380,18 @@ var EquipmentTestForm = React.createClass({
         // }
         return errors;
     },
-    
+
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
     },
-    
+
     componentDidMount: function () {
         this.serverRequest = $.get('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
-            var arr = (result['result']);
+            // var arr = (result['result']);
             this.setState({ data : (result['result']) });
             // this.setState({ data : {
             //     id: arr.id,
