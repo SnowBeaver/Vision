@@ -6,14 +6,6 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 
 
-const FieldLabel = React.createClass({
-    render: function() {
-        return (
-            <ControlLabel>{this.props.label}</ControlLabel>
-        );
-    }
-});
-
 var SelectField = React.createClass({
     handleChange: function(event, index, value){
         this.setState({
@@ -47,11 +39,15 @@ var SelectField = React.createClass({
             menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         console.log( "SelectField value" + (this.props.value || 'no data') );
+        console.log( this.props.value );
+        console.log( typeof(this.state.value) == "undefined" );
+        console.log( this.state.value == null );
         return (
             <FormGroup>
-                <FormControl componentClass="select" placeholder="select"
-                             onChange={this.handleChange}>
-                    {/*<option key="0" value="select">Test Type</option>*/}
+                <ControlLabel>{this.props.label}</ControlLabel>
+                <FormControl componentClass="select"
+                             onChange={this.handleChange}
+                             defaultValue={this.props.value}>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -59,39 +55,23 @@ var SelectField = React.createClass({
     }
 });
 
-const SelectFieldWithLabelOnTop = React.createClass({
+const DateTimeFieldWithLabel = React.createClass({
     render: function() {
-        var className = "col-lg-" + ( this.props.length || '4' ) + " nopadding padding-right-xs";
-        console.log( "SelectFieldWithLabelOnTop value" + (this.props.value || 'no data') );
         return (
-            <div className={className}>
-                <FieldLabel label={this.props.label}/>
-                <SelectField source={this.props.source} value={this.props.value}/>
+            <div className="datetimepicker input-group date">
+                <ControlLabel>{this.props.label}</ControlLabel>
+                <DateTimeField datetime={this.props.value} />
             </div>
         );
     }
 });
-const DateTimeFieldWithLabelOnTop = React.createClass({
+const TextField = React.createClass({
     render: function() {
-        var className = "col-lg-" + ( this.props.length || '4' ) + " nopadding padding-right-xs";
         return (
-            <div className={className}>
-                <div className="datetimepicker input-group date">
-                    <FieldLabel label={this.props.label}/>
-                    <DateTimeField datetime="" />
-                </div>
-            </div>
-        );
-    }
-});
-const TextFieldWithLabelOnTop = React.createClass({
-    render: function() {
-        var className = "col-lg-" + ( this.props.length || '4' ) + " nopadding padding-right-xs";
-        return (
-            <div className={className}>
-                <FieldLabel label={this.props.label}/>
-                <FormControl type="text" value="" />
-            </div>
+            <FormGroup>
+                <ControlLabel>{this.props.label}</ControlLabel>
+                <FormControl type="text" value={this.props.value} />
+            </FormGroup>
         );
     }
 });
@@ -114,31 +94,65 @@ var EquipmentTestIdentificationForm = React.createClass({
                     <input type="hidden" value={this.state.csrf_token}/>
                     <div className="tab_row text-center">
                         <div className="col-lg-12 nopadding">
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/test_type" label="Test type" lenght="4"/>
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/user" label="Initials"/>
-                            <DateTimeFieldWithLabelOnTop label="Acq Date"/>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/test_type" label="Test type" value={this.props.data.test_type_id}/>
+                            </div>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/user" label="Initials ?"/>
+                            </div>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <DateTimeFieldWithLabel label="Date analyse" value={this.props.data.date_analyse}/>
+                            </div>
                         </div>
                         <div className="col-lg-12 nopadding">
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/test_reason" label="Test reason"/>
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/test_status" label="Status" />
-                            <TextFieldWithLabelOnTop label="Temperature" />
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/test_reason" label="Test reason" value={this.props.data.test_reason_id}/>
+                            </div>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/test_status" label="Status" value={this.props.data.status_id}/>
+                            </div>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <TextField label="Temperature" value={this.props.data.temperature}/>
+                            </div>
                         </div>
                         <div className="col-lg-12 nopadding">
-                            <TextFieldWithLabelOnTop label="Insulating" />
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/contract" label="Contract" />
-                            <TextFieldWithLabelOnTop label="Grouping" />
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <TextField label="Insulating ?" />
+                            </div>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/contract" label="Lab contract" value={this.props.data.lab_contract_id}/>
+                            </div>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <TextField label="Grouping ?" />
+                            </div>
                         </div>
                         <div className="col-lg-12 nopadding">
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/sampling_point" label="Sampling" length="3"/>
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/syringe" label="Syringe" length="3"/>
-                            <TextFieldWithLabelOnTop label="Test number" length="3"/>
-                            <TextFieldWithLabelOnTop label="Load mva" length="3"/>
+                            <div className="col-lg-3 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/sampling_point" label="Sampling" value={this.props.data.sampling_point_id}/>
+                            </div>
+                            <div className="col-lg-3 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/syringe" label="Syringe ?"/>
+                            </div>
+                            <div className="col-lg-3 nopadding padding-right-xs">
+                                <TextField label="Test number ?"/>
+                            </div>
+                            <div className="col-lg-3 nopadding padding-right-xs">
+                                <TextField label="Load mva ?"/>
+                            </div>
                         </div>
                         <div className="col-lg-12 nopadding">
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/equipment" label="Equipment" />
-                            <TextFieldWithLabelOnTop label="Order status" />
-                            <SelectFieldWithLabelOnTop source="/api/v1.0/lab" label="Lab" length="2" value={this.props.data.lab_id}/>
-                            <DateTimeFieldWithLabelOnTop label="Lab date" length="2"/>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/equipment" label="Equipment" value={this.props.data.equipment_id}/>
+                            </div>
+                            <div className="col-lg-4 nopadding padding-right-xs">
+                                <TextField label="Order status ?" />
+                            </div>
+                            <div className="col-lg-2 nopadding padding-right-xs">
+                                <SelectField source="/api/v1.0/lab" label="Lab" value={this.props.data.lab_id}/>
+                            </div>
+                            <div className="col-lg-2 nopadding padding-right-xs">
+                                <DateTimeFieldWithLabel label="Lab date ?"/>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -285,6 +299,14 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
     }
 });
 
+var TestValuesForm = React.createClass({
+    render: function () {
+        return (
+            <div>Here would be the test values.</div>
+        );
+    }
+});
+
 var EquipmentTestForm = React.createClass({
     getInitialState: function () {
         return {
@@ -372,19 +394,21 @@ var EquipmentTestForm = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
             var arr = (result['result']);
-            this.setState({ data : {
-                id: arr.id,
-                date: arr.date_analyse,
-                reason: arr.reason_id,
-                type: arr.test_type_id,
-                lab_id: arr.lab_id,
-                contract: null,
-                test_status: arr.test_status_id,
-                analysis_number: arr.analysis_number,
-                serial: arr.equipment.serial,
-                equipment_number: arr.equipment.equipment_number
-                }
-            });
+            this.setState({ data : (result['result']) });
+            // this.setState({ data : {
+            //     id: arr.id,
+            //     date: arr.date_analyse,
+            //     reason: arr.reason_id,
+            //     type: arr.test_type_id,
+            //     lab_id: arr.lab_id,
+            //     test_type_id: arr.test_type_id,
+            //     contract: null,
+            //     test_status: arr.test_status_id,
+            //     analysis_number: arr.analysis_number,
+            //     serial: arr.equipment.serial,
+            //     equipment_number: arr.equipment.equipment_number
+            //     }
+            // });
         }.bind(this), 'json');
     },
     render: function() {
@@ -399,6 +423,7 @@ var EquipmentTestForm = React.createClass({
                         <li> <a href="#tabs-2" data-toggle="tab"> Test repair notes </a> </li>
                         <li> <a href="#tabs-3" data-toggle="tab"> Records diagnostic </a> </li>
                         <li> <a href="#tabs-4" data-toggle="tab"> Diagnosis and recommendations </a> </li>
+                        <li> <a href="#tabs-5" data-toggle="tab"> Test values </a> </li>
                     </ul>
                     <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                         <div id="tabs-1" role="tabpanel" className="tab-pane active ">
@@ -412,6 +437,10 @@ var EquipmentTestForm = React.createClass({
                         </div>
                         <div id="tabs-4" role="tabpanel" className="tab-pane">
                             <EquipmentTestEqDiagnosisForm data={this.state.data} />
+                        </div>
+                        <div id="tabs-5" role="tabpanel" className="tab-pane">
+                            <TestValuesForm testResultId={this.props.selectedRowId}
+                                            testTypeId={this.state.data.test_type_id} />
                         </div>
                     </div>
                 </div>
