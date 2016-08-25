@@ -1,22 +1,24 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
-
-var NewFuranTestForm = React.createClass({
+var NewParticleTestForm = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
             fields: [
-                'hmf', 'fol', 'fal', 'acf', 'mef',
-                'hmf_flag', 'fol_flag', 'fal_flag', 'acf_flag', 'mef_flag'
+                '2um', '5um', '10um', '15um',
+                '25um', '50um', '100um', 'nas1638',
+                'iso4406_1', 'iso4406_2', 'iso4406_3'
             ]
         }
     },
@@ -30,7 +32,7 @@ var NewFuranTestForm = React.createClass({
         }
 
         return $.ajax({
-            url: '/api/v1.0/furan_test/',
+            url: '/api/v1.0/particle_test/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -109,88 +111,127 @@ var NewFuranTestForm = React.createClass({
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <div className="row">
-                        <div className="col-md-1 ">
-                            <Checkbox name="hmf_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
-                        </div>
 
+                    <div className="row">
                         <div className="col-md-3">
                             <FormGroup>
+                                <ControlLabel> >2um </ControlLabel>
                                 <FormControl type="text"
-                                             placeholder="5-HMF"
-                                             name="hmf"
+                                             placeholder="0.0"
+                                             name="2um"
                                 />
                             </FormGroup>
                         </div>
-                        <div className="col-md-1">
-                            <Checkbox name="fol_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
-                        </div>
                         <div className="col-md-3">
                             <FormGroup>
+                                <ControlLabel> >5um </ControlLabel>
                                 <FormControl type="text"
-                                             placeholder="2-FOL"
-                                             name="fol"
+                                             placeholder="0.0"
+                                             name="5um"
                                 />
                             </FormGroup>
                         </div>
-                        <div className="col-md-1">
-                            <Checkbox name="fol_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                        <div className="col-md-3">
+                            <FormGroup>
+                                <ControlLabel> >10um </ControlLabel>
+                                <FormControl type="text"
+                                             placeholder="0.0"
+                                             name="10um"
+                                />
+                            </FormGroup>
                         </div>
                         <div className="col-md-3">
                             <FormGroup>
+                                <ControlLabel> >15um </ControlLabel>
                                 <FormControl type="text"
-                                             placeholder="2-FAL"
-                                             name="fal"
+                                             placeholder="15um"
+                                             name="15um"
                                 />
                             </FormGroup>
                         </div>
                     </div>
 
                     <div className="row">
-                        <div className="col-md-1 ">
-                            <Checkbox name="acf_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
-                        </div>
-
                         <div className="col-md-3">
                             <FormGroup>
+                                <ControlLabel> >25um </ControlLabel>
                                 <FormControl type="text"
-                                             placeholder="2-ACF"
-                                             name="hmf"
+                                             placeholder="0.0"
+                                             name="25um"
                                 />
                             </FormGroup>
                         </div>
-                        <div className="col-md-1">
-                            <Checkbox name="mef_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                        <div className="col-md-3">
+                            <FormGroup>
+                                <ControlLabel> >50um </ControlLabel>
+                                <FormControl type="text"
+                                             placeholder="0.0"
+                                             name="50um"
+                                />
+                            </FormGroup>
                         </div>
                         <div className="col-md-3">
                             <FormGroup>
+                                <ControlLabel> >100um </ControlLabel>
                                 <FormControl type="text"
-                                             placeholder="5-MEF"
-                                             name="fol"
+                                             placeholder="0.0"
+                                             name="100um"
+                                />
+                            </FormGroup>
+                        </div>
+                        <div className="col-md-3">
+                            <FormGroup>
+                                <ControlLabel> NAS1638 </ControlLabel>
+                                <FormControl type="text"
+                                             placeholder="0.0"
+                                             name="nas1638"
                                 />
                             </FormGroup>
                         </div>
                     </div>
+
+
+                            <div className="row">
+                                <div className="col-md-6 pull-right" >
+                                    <Panel header="ISO 4406">
+                                    </Panel>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-2 pull-right">
+                                    <FormGroup>
+                                        <FormControl type="text"
+                                                     placeholder="0"
+                                                     name="iso4406_2"
+                                        />
+                                    </FormGroup>
+                                </div>
+
+                                <div className="col-md-2 pull-right">
+                                    <FormGroup>
+                                        <FormControl type="text"
+                                                     placeholder="0"
+                                                     name="iso4406_2"
+                                        />
+                                    </FormGroup>
+                                </div>
+
+                                <div className="col-md-2 pull-right">
+                                    <FormGroup>
+                                        <FormControl type="text"
+                                                     placeholder="0"
+                                                     name="iso4406_3"
+                                        />
+                                    </FormGroup>
+                                </div>
+                            </div>
+
 
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
                                     className="pull-right"
+                                    onClick={this.props.handleClose}
                                     type="submit">Save</Button>
                             &nbsp;
                             <Button bsStyle="danger"
@@ -206,4 +247,4 @@ var NewFuranTestForm = React.createClass({
 });
 
 
-export default NewFuranTestForm;
+export default NewParticleTestForm;
