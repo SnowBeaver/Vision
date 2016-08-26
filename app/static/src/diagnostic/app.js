@@ -33,6 +33,12 @@ import NewInhibitorTestForm from './TestTypeResultForm_modules/NewInhibitorTestF
 import NewInsulationResistanceTestForm from './TestTypeResultForm_modules/NewInsulationResistanceTestForm';
 import NewMetalsOnOilTestForm from './TestTypeResultForm_modules/NewMetalsOnOilTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
+import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
+import NewPolymerTestForm from './TestTypeResultForm_modules/NewPolymerTestForm';
+import NewTransformerTestForm from './TestTypeResultForm_modules/NewTransformerTestForm';
+
+
+
 
 const App = React.createClass({
     render() {
@@ -69,6 +75,9 @@ const App = React.createClass({
                         <li><Link to='/insulation_test'>insulation test</Link></li>
                         <li><Link to='/me_oil__test'>metals on oil test</Link></li>
                         <li><Link to='/particle_test'>particles test</Link></li>
+                        <li><Link to='/pcb_test'>pcb test</Link></li>
+                        <li><Link to='/polymer_test'>polymer test</Link></li>
+                        <li><Link to='/transformer_test'>transformer test</Link></li>
                     </ul>
                     <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
 
@@ -113,6 +122,9 @@ render((
             <Route path="insulation_test" component={NewInsulationResistanceTestForm} />
             <Route path="me_oil__test" component={NewMetalsOnOilTestForm} />
             <Route path="particle_test" component={NewParticleTestForm} />
+            <Route path="pcb_test" component={NewPcbTestForm} />
+            <Route path="polymer_test" component={NewPolymerTestForm} />
+            <Route path="transformer_test" component={NewTransformerTestForm} />
         </Route>
     </Router>
 ), document.getElementById('app'));

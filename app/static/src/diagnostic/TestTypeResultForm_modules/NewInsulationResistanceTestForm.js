@@ -4,7 +4,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
-import Panel from 'react-bootstrap/lib/Panel';
+import Panel from 'react-bootstrap/lib/Col';
 import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
@@ -19,7 +19,7 @@ var NewInsulationResistanceTestForm = React.createClass({
             fields: [
                 'test_kv1', 'test_kv2', 'test_kv3', 'test_kv4', 'test_kv5',
                 'resistance1', 'resistance2', 'resistance3', 'resistance4', 'resistance5',
-                'multiplier1', 'multiplier2', 'multiplier3', 'multiplier4', 'multiplier5',
+                'multiplier1', 'multiplier2', 'multiplier3', 'multiplier4', 'multiplier5'
             ]
         }
     },
@@ -113,9 +113,12 @@ var NewInsulationResistanceTestForm = React.createClass({
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
+
                         <div className="col-md-2">
-                            <b>HI to LO+GND</b>
+                            <Col componentClass={ControlLabel} sm={2}>
+                                HI to LO+TER+GND</Col>
                         </div>
+
                         <div className="col-md-2">
                             <FormGroup>
                                 <FormControl type="text"
@@ -162,7 +165,7 @@ var NewInsulationResistanceTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-2">
-                            <b>LO to HI+GND</b>
+                            <b>LO to HI+TER+GND</b>
                         </div>
                         <div className="col-md-2">
                             <FormGroup>
@@ -210,7 +213,7 @@ var NewInsulationResistanceTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-2">
-                            <b>Hi+LO to GND</b>
+                            <b>TER to HI+LO+GND</b>
                         </div>
                         <div className="col-md-2">
                             <FormGroup>
@@ -258,7 +261,7 @@ var NewInsulationResistanceTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-2">
-                            <b>Core to GND</b>
+                            <b>Hi+LO+TER to GND</b>
                         </div>
                         <div className="col-md-2">
                             <FormGroup>
@@ -281,6 +284,54 @@ var NewInsulationResistanceTestForm = React.createClass({
                                 <FormControl type="text"
                                              placeholder="Multiplier"
                                              name="multiplier4"
+                                />
+                            </FormGroup>
+                        </div>
+                        <div className="col-md-2">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Measured"
+                                             name=""
+                                             disabled
+                                />
+                            </FormGroup>
+                        </div>
+                        <div className="col-md-2">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Corr. 20C"
+                                             name=""
+                                             disabled
+                                />
+                            </FormGroup>
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-md-2">
+                            <b>Core to GND</b>
+                        </div>
+                        <div className="col-md-2">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Test kV"
+                                             name="test_kv5"
+                                />
+                            </FormGroup>
+                        </div>
+                        <div className="col-md-2">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Mego ohM"
+                                             name="resistance5"
+                                />
+                            </FormGroup>
+                        </div>
+                        <div className="col-md-2">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Multiplier"
+                                             name="multiplier5"
                                 />
                             </FormGroup>
                         </div>
