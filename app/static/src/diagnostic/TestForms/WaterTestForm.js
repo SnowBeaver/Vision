@@ -20,18 +20,20 @@ var WaterTestForm = React.createClass({
     render: function() {
         return (
             <div className="form-container">
-                <h1>Dissolved water(ppm)</h1>
+                <h3>Dissolved water(ppm)</h3>
                 <form method="post" action="#" >
-                    <input type="hidden" value={this.state.csrf_token}/>
                     <div className="tab_row text-center">
                         <div className="col-lg-12 nopadding">
-                            <div className="col-lg-4 nopadding padding-right-xs">
-                                <Checkbox checked readOnly/>
+                            <div className="col-lg-1 nopadding padding-right-xs">
+                                <FormGroup>
+                                    <ControlLabel></ControlLabel>
+                                    <Checkbox />
+                                </FormGroup>
                             </div>
-                            <div className="col-lg-4 nopadding padding-right-xs">
+                            <div className="col-lg-6 nopadding padding-right-xs">
                                 <TextField label="Dissolved water" value=""/>
                             </div>
-                            <div className="col-lg-4 nopadding padding-right-xs">
+                            <div className="col-lg-5 nopadding padding-right-xs">
                                 Moisture at 25C(%): 17,8
                             </div>
                         </div>

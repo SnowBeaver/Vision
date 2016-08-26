@@ -4,6 +4,8 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import VisualTestForm from './TestForms/VisualTestForm';
+import WaterTestForm from './TestForms/WaterTestForm';
 
 var SelectField = React.createClass({
     handleChange: function(event, index, value){
@@ -68,10 +70,14 @@ const DateTimeFieldWithLabel = React.createClass({
 
 const TextField = React.createClass({
     render: function() {
+        var value = "";
+        var label = "";
+        if (this.props.value != null) { value = this.props.value; }
+        if (this.props.label != null) { label = this.props.label; }
         return (
             <FormGroup>
-                <ControlLabel>{this.props.label}</ControlLabel>
-                <FormControl type="text" value={this.props.value} />
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text" value={value} />
             </FormGroup>
         );
     }
@@ -117,13 +123,13 @@ var EquipmentTestIdentificationForm = React.createClass({
                         </div>
                         <div className="col-lg-12 nopadding">
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <TextField label="Insulating ?" />
+                                <TextField label="Insulating ?" value=""/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
                                 <SelectField source="/api/v1.0/contract" label="Lab contract" value={this.props.data.lab_contract_id}/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <TextField label="Grouping ?" />
+                                <TextField label="Grouping ?" value=""/>
                             </div>
                         </div>
                         <div className="col-lg-12 nopadding">
@@ -134,10 +140,10 @@ var EquipmentTestIdentificationForm = React.createClass({
                                 <SelectField source="/api/v1.0/syringe" label="Syringe ?"/>
                             </div>
                             <div className="col-lg-3 nopadding padding-right-xs">
-                                <TextField label="Test number ?"/>
+                                <TextField label="Test number ?" value=""/>
                             </div>
                             <div className="col-lg-3 nopadding padding-right-xs">
-                                <TextField label="Load mva ?"/>
+                                <TextField label="Load mva ?" value=""/>
                             </div>
                         </div>
                         <div className="col-lg-12 nopadding">
@@ -145,7 +151,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                 <SelectField source="/api/v1.0/equipment" label="Equipment" value={this.props.data.equipment_id}/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <TextField label="Order status ?" />
+                                <TextField label="Order status ?" value=""/>
                             </div>
                             <div className="col-lg-2 nopadding padding-right-xs">
                                 <SelectField source="/api/v1.0/lab" label="Lab" value={this.props.data.lab_id}/>
@@ -300,7 +306,10 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
 var TestValuesForm = React.createClass({
     render: function () {
         return (
-            <div>Here would be the test values.</div>
+            <VisualTestForm />
+        );
+        return (
+            <WaterTestForm />
         );
     }
 });
