@@ -36,6 +36,8 @@ import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestFor
 import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
 import NewPolymerTestForm from './TestTypeResultForm_modules/NewPolymerTestForm';
 import NewTransformerTestForm from './TestTypeResultForm_modules/NewTransformerTestForm';
+import NewWindingResistanceTestForm from './TestTypeResultForm_modules/NewWindingResistanceTestForm';
+
 
 
 
@@ -78,6 +80,7 @@ const App = React.createClass({
                         <li><Link to='/pcb_test'>pcb test</Link></li>
                         <li><Link to='/polymer_test'>polymer test</Link></li>
                         <li><Link to='/transformer_test'>transformer test</Link></li>
+                        <li><Link to='/winding_test'>winding test</Link></li>
                     </ul>
                     <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
 
@@ -125,6 +128,7 @@ render((
             <Route path="pcb_test" component={NewPcbTestForm} />
             <Route path="polymer_test" component={NewPolymerTestForm} />
             <Route path="transformer_test" component={NewTransformerTestForm} />
+            <Route path="winding_test" component={NewWindingResistanceTestForm} />
         </Route>
     </Router>
 ), document.getElementById('app'));
