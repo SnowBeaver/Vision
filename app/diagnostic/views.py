@@ -824,7 +824,7 @@ class TestTypeView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = (['name', 'group_id', 'is_group'])
+    # column_sortable_list = (['name', 'group_id', 'is_group'])
     column_searchable_list = (['name', 'group_id', 'is_group'])
 
     # inline_models = (TestResult,)
@@ -850,33 +850,6 @@ class InhibitorTypeView(MyModelView):
     def __init__(self, dbsession):
         super(InhibitorTypeView, self).__init__(
             InhibitorType, dbsession, name="Inhibitor type", category="Types"
-        )
-
-
-class TestTypeResultTableView(MyModelView):
-    """
-    TestTypeResultTable management view
-    """
-    # Visible columns in the list view
-    can_view_details = True
-    column_hide_backrefs = False
-
-    # # List of columns that can be sorted.
-    column_sortable_list = ('test_type_id', 'test_result_table_name')
-    column_searchable_list = ('test_type_id', 'test_result_table_name')
-
-    # edit_modal = True
-    # from flask_admin.model.form import InlineFormAdmin
-    #
-    # class MyInlineModelForm(InlineFormAdmin):
-    #     form_columns = ('name')
-    #
-    # inline_models = (TestType,)
-
-    def __init__(self, dbsession):
-        super(TestTypeResultTableView, self).__init__(
-            TestTypeResultTable, dbsession,
-            name="Test type result table", category="Conditions"
         )
 
 
@@ -1633,7 +1606,7 @@ other_views = [
     ManufacturerView, BushingView, CableView, CapacitorView, RectifierView, NeutralResistanceView, TankView,
     LoadTapChangerView, BreakerView, SwitchView, SwitchGearView, SynchronousMachineView, InductanceView,
     InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
-    ContractView, FluidProfileView, TestStatusView, TestTypeView, TestTypeResultTableView, TestResultView,
+    ContractView, FluidProfileView, TestStatusView, TestTypeView, TestResultView,
     EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
     SyringeView, TestScheduleView, InhibitorTypeView, CampaignStatusView, CountryView
 ]

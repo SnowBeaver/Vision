@@ -3760,6 +3760,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(50)}    name
 @apiSuccess {Integer}       group_id
 @apiSuccess {Boolean}       is_group
+@apiSuccess {String(100)}   test_table_name
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3772,9 +3773,10 @@ doc = ApiDoc(app=api)
     curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "is_group": false}' \
          http://localhost:8001/api/v1.0/test_type/
 
-@apiParam   {String(50)}    name     required
-@apiParam   {Integer}    group_id
-@apiParam   {Boolean}    is_group    required
+@apiParam   {String(50)}  name              required
+@apiParam   {Integer}     group_id
+@apiParam   {Boolean}     is_group          required
+@apiParam   {String(100)} test_table_name
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -3797,84 +3799,6 @@ doc = ApiDoc(app=api)
 @apiGroup test_type
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/test_type/3
-
-@apiUse DelItemSuccess
-@apiUse Error404
-"""
-
-
-# test_type_result_table
-"""
-@api {get} /test_type_result_table/ Get a list of items
-@apiVersion 1.0.0
-@apiName get_items
-@apiGroup test_type_result_table
-@apiExample {curl} Example usage:
-      curl -i http://localhost:8001/api/v1.0/test_type_result_table/
-
-@apiUse GetItemsSuccess
-@apiUse Error404
-"""
-"""
-@api {get} /test_type_result_table/:id Get an item by id
-@apiVersion 1.0.0
-@apiName get_item
-@apiGroup test_type_result_table
-@apiExample {curl} Example usage:
-      curl -i http://localhost:8001/api/v1.0/test_type_result_table/1
-
-@apiSuccessExample Success-Response:
-    HTTP/1.0 200 OK
-    Content-Type: application/json
-    {
-        "result": {
-            "id": 1,
-            "test_type_id": 2,
-            "test_result_table_name": "bushing_test",
-            ...
-        }
-    }
-
-@apiSuccess {Integer}      id
-@apiSuccess {Integer}      test_type_id
-@apiSuccess {Dict}         test_type        see: test_type->get an item
-@apiSuccess {String(100)}  test_result_table_name
-@apiUse GetItemSuccess
-@apiUse Error404
-"""
-"""
-@api {post} /test_type_result_table/ Add a new item
-@apiVersion 1.0.0
-@apiName add_item
-@apiGroup test_type_result_table
-@apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"test_type_id":2}' \
-         http://localhost:8001/api/v1.0/test_type_result_table/
-
-@apiParam   {Integer}      test_type_id
-@apiParam   {String(100)}  test_result_table_name,
-@apiUse PostItemSuccess
-@apiUse Error400
-"""
-"""
-@api {put} /test_type_result_table/:id Update an item
-@apiVersion 1.0.0
-@apiName update_item
-@apiGroup test_type_result_table
-@apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
-    http://localhost:8001/api/v1.0/test_type_result_table/1
-
-@apiUse PutItemSuccess
-@apiUse Error400
-"""
-"""
-@api {delete} /test_type_result_table/:id Delete an item
-@apiVersion 1.0.0
-@apiName delete_item
-@apiGroup test_type_result_table
-@apiExample {curl} Example usage:
-    curl -X DELETE http://localhost:8001/api/v1.0/test_type_result_table/3
 
 @apiUse DelItemSuccess
 @apiUse Error404

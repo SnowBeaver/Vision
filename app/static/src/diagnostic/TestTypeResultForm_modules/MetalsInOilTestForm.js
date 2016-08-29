@@ -9,7 +9,7 @@ import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
-var NewMetalsOnOilTestForm = React.createClass({
+var MetalsInOilTestForm = React.createClass({
 
     getInitialState: function () {
         return {
@@ -302,4 +302,4 @@ var NewMetalsOnOilTestForm = React.createClass({
 });
 
 
-export default NewMetalsOnOilTestForm;
+export default MetalsInOilTestForm;

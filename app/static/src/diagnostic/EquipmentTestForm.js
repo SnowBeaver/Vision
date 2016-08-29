@@ -4,8 +4,21 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
-import VisualTestForm from './TestForms/VisualTestForm';
-import WaterTestForm from './TestForms/WaterTestForm';
+import NewBushingTestForm from './TestTypeResultForm_modules/NewBushingTestForm';
+// import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
+import NewInsulationResistanceTestForm from './TestTypeResultForm_modules/NewInsulationResistanceTestForm';
+import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
+// import WindingResistanceTestForm from './TestTypeResultForm_modules/WindingResistanceTestForm';
+import PolymerisationDegreeTestForm from './TestTypeResultForm_modules/PolymerisationDegreeTestForm';
+// import TransformerTurnRatioTestForm from './TestTypeResultForm_modules/TransformerTurnRatioTestForm';
+import NewDissolvedGasForm from './TestTypeResultForm_modules/NewDissolvedGasTestForm';
+import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
+import NewFuranTestForm from './TestTypeResultForm_modules/NewFuranTestForm';
+import NewInhibitorTestForm from './TestTypeResultForm_modules/NewInhibitorTestForm';
+import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
+import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
+import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
+import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 
 var SelectField = React.createClass({
     handleChange: function(event, index, value){
@@ -13,21 +26,34 @@ var SelectField = React.createClass({
             value: event.target.value
         });
     },
+    onClick: function(e) {
+        e.preventDefault();
+        this.serverRequest = $.get(this.props.source, function (result){
+            this.setState({ items: (result['result']) });
+            var menuItems = [];
+            for (var key in this.state.items) {
+                menuItems.push(<option key={this.state.items[key].id}
+                                       value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            }
+            this.setState({menuItems: menuItems});
+        }.bind(this), 'json');
+    },
     getInitialState: function () {
         return {
             items: [],
             isVisible: false,
-            value: -1
+            value: -1,
+            menuItems: []
         };
     },
     isVisible: function(){
         return this.state.isVisible;
     },
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-            this.setState({ items: (result['result']) });
-        }.bind(this), 'json');
-    },
+    // componentDidMount: function(){
+    //     this.serverRequest = $.get(this.props.source, function (result){
+    //         this.setState({ items: (result['result']) });
+    //     }.bind(this), 'json');
+    // },
     componentWillUnmount: function() {
         this.serverRequest.abort();
     },
@@ -35,11 +61,12 @@ var SelectField = React.createClass({
         this.state.isVisible = true;
     },
     render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
+        var menuItems = this.state.menuItems;
+        // var menuItems = [];
+        // for (var key in this.state.items) {
+        //     menuItems.push(<option key={this.state.items[key].id}
+        //                            value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        // }
         console.log( "SelectField value" + (this.props.value || 'no data') );
         console.log( this.props.value );
         console.log( typeof(this.state.value) == "undefined" );
@@ -49,6 +76,7 @@ var SelectField = React.createClass({
                 <ControlLabel>{this.props.label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
+                             onClick={this.onClick}
                              defaultValue={this.props.value}>
                     {menuItems}
                 </FormControl>
@@ -305,12 +333,60 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
 
 var TestValuesForm = React.createClass({
     render: function () {
-        return (
-            <VisualTestForm />
-        );
-        return (
-            <WaterTestForm />
-        );
+        switch(this.props.testTypeId) {
+            case null:
+                return (<div></div>);
+            case "2":
+                return (<NewBushingTestForm />);
+            // case "3":
+            // case "4":
+            //     return (<WindingTestForm />);
+            case "5":
+                return (<NewInsulationResistanceTestForm />);
+            case "6":
+                return (<VisualTestForm />);
+            // case "7":
+            //     return (<WindingResistanceTestForm />);
+            case "8":
+                return (<PolymerisationDegreeTestForm />);
+            // case "9":
+            //     return (<TransformerTurnRatioTestForm />);
+            case "12":
+                return (<NewDissolvedGasForm />);
+            case "13":
+            case "34":
+                return (<WaterTestForm />);
+            case "14":
+            case "33":
+                return (<NewFuranTestForm />);
+            case "15":
+            case "22":
+            case "40":
+                return (<NewInhibitorTestForm />);
+            case "16":
+            case "21":
+            case "39":
+                return (<NewPcbTestForm />);
+            case "18":
+            case "19":
+            case "20":
+            case "23":
+            case "24":
+            case "25":
+            case "26":
+            case "29":
+            case "30":
+            case "31":
+            case "32":
+            case "35":
+            case "36":
+            case "37":
+                return (<NewFluidTestForm />);
+            case "27":
+                return (<NewParticleTestForm />);
+            case "28":
+                return (<MetalsInOilTestForm />);
+        }
     }
 });
 
@@ -400,22 +476,7 @@ var EquipmentTestForm = React.createClass({
 
     componentDidMount: function () {
         this.serverRequest = $.get('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
-            // var arr = (result['result']);
             this.setState({ data : (result['result']) });
-            // this.setState({ data : {
-            //     id: arr.id,
-            //     date: arr.date_analyse,
-            //     reason: arr.reason_id,
-            //     type: arr.test_type_id,
-            //     lab_id: arr.lab_id,
-            //     test_type_id: arr.test_type_id,
-            //     contract: null,
-            //     test_status: arr.test_status_id,
-            //     analysis_number: arr.analysis_number,
-            //     serial: arr.equipment.serial,
-            //     equipment_number: arr.equipment.equipment_number
-            //     }
-            // });
         }.bind(this), 'json');
     },
     render: function() {
