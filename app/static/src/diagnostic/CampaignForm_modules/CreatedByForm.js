@@ -129,7 +129,7 @@ var CreatedByForm = React.createClass ({
         var fields = [
             'role', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
-            'country', 'mobile', 'active'
+            'country', 'mobile', 'active', 'password'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -233,9 +233,9 @@ var CreatedByForm = React.createClass ({
     },
 
     handleClose: function () {
-      this.setState({
-          showCreatedByForm: false
-      })
+        this.setState({
+            showCreatedByForm: false
+        })
     },
 
     render : function() {
@@ -243,118 +243,127 @@ var CreatedByForm = React.createClass ({
         return(
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <div className="row">
-                            <div className="col-md-12">
-                                <RoleSelectField
-                                    source="/api/v1.0/role"
-                                    handleChange={this.handleChange} />
-                            </div>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <RoleSelectField
+                                source="/api/v1.0/role"
+                                handleChange={this.handleChange} />
                         </div>
+                    </div>
 
-                        <div className="maxwidth">
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Full Name"
+                                         name="name"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Username"
+                                         name="alias"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="password"
+                                         placeholder="Password"
+                                         name="password"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="E-mail"
+                                         name="email"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Adress"
+                                         name="address"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Mobile"
+                                         name="mobile"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Website"
+                                         name="website"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <CountrySelectField
+                                source="/api/v1.0/country/"
+                                handleChange={this.handleChange}
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Photo"
+                                         name="photo"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-md-12">
                             <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Full Name"
-                                             name="name"
-                                />
+                                <FormControl
+                                    componentClass="textarea"
+                                    placeholder="description"
+                                    name="description"/>
                             </FormGroup>
                         </div>
+                    </div>
 
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Username"
-                                             name="alias"
-                                />
-                            </FormGroup>
+                    <div className="maxwidth">
+                        <div className="col-md-4 nopadding padding-right-xs">
+                            <Checkbox name="active">Active</Checkbox>
                         </div>
+                    </div>
 
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="E-mail"
-                                             name="email"
-                                />
-                            </FormGroup>
+                    <div className="row">
+                        <div className="col-md-12 ">
+                            <Button bsStyle="success"
+                                    className="btn btn-success pull-right"
+                                    type="submit"
+                                    onClick={this.props.handleClose}
+                            >Save</Button>
+                            &nbsp;
+                            <Button bsStyle="danger"
+                                    className="pull-right"
+                                    onClick={this.props.handleClose}
+                                    className="pull-right margin-right-xs"
+                            >Cancel</Button>
                         </div>
-
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Adress"
-                                             name="address"
-                                />
-                            </FormGroup>
-                        </div>
-
-                         <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Mobile"
-                                             name="mobile"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Website"
-                                             name="website"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <CountrySelectField
-                                    source="/api/v1.0/country/"
-                                    handleChange={this.handleChange}
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Photo"
-                                             name="photo"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-12">
-                                <FormGroup>
-                                    <FormControl
-                                        componentClass="textarea"
-                                        placeholder="description"
-                                        name="description"/>
-                                </FormGroup>
-                            </div>
-                        </div>
-
-                        <div className="maxwidth">
-                            <div className="col-md-4 nopadding padding-right-xs">
-                                <Checkbox name="active">Active</Checkbox>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-12 ">
-                                <Button bsStyle="success" 
-                                        className="btn btn-success pull-right"
-                                        type="submit"
-                                        onClick={this.props.handleClose}
-                                >Save</Button>
-                                &nbsp;
-                                <Button bsStyle="danger" 
-                                        className="pull-right" 
-                                        onClick={this.props.handleClose}
-                                        className="pull-right margin-right-xs"
-                                >Cancel</Button>
-                            </div>
-                        </div>
+                    </div>
                 </form>
             </div>
         );
