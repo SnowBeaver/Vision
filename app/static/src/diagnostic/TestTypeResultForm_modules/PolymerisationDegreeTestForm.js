@@ -10,7 +10,7 @@ import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
 
-var NewPolymerTestForm = React.createClass({
+var PolymerisationDegreeTestForm = React.createClass({
 
     getInitialState: function () {
         return {
@@ -295,5 +295,5 @@ var NewPolymerTestForm = React.createClass({
 });
 
 
-export default NewPolymerTestForm;
+export default PolymerisationDegreeTestForm;
 

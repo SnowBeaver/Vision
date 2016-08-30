@@ -1968,6 +1968,7 @@ class TestType(db.Model):
     # group = relationship('TestType', backref="test_type")
     is_group = db.Column(db.Boolean, nullable=False, default=False)
     # test_type_result_table = db.relationship("TestTypeResultTable", back_populates="test_type")
+    test_table_name = db.Column(db.String(100), nullable=False, default='')
 
     def __repr__(self):
         return self.name
@@ -1978,27 +1979,7 @@ class TestType(db.Model):
                 'name': self.name,
                 'group_id': self.group_id,
                 'is_group': self.is_group,
-                }
-
-
-class TestTypeResultTable(db.Model):
-    __tablename__ = u'test_type_result_table'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    test_type_id = db.Column(db.Integer, db.ForeignKey('test_type.id'))
-    test_type = relationship('TestType', backref="test_type_result_table")
-    # test_type = db.relationship('TestType', back_populates="test_type_result_table")
-    test_result_table_name = db.Column(db.String(100), nullable=False)
-
-    def __repr__(self):
-        return "{} - {}".format(self.test_type, self.test_result_table_name)
-
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'test_type_id': self.test_type_id,
-                'test_type': self.test_type and self.test_type.serialize(),
-                'test_result_table_name': self.test_result_table_name,
+                'test_table_name': self.test_table_name,
                 }
 
 
@@ -2124,9 +2105,8 @@ class TestResult(db.Model):
 
     @property
     def test_model(self):
-        result_table = db.session.query(TestTypeResultTable).filter_by(test_type_id=self.test_type_id).first()
-        if result_table:
-            return get_class_by_tablename(result_table.test_result_table_name)
+        if self.test_type:
+            return get_class_by_tablename(self.test_type.test_table_name)
 
     @property
     def analysis_number(self):

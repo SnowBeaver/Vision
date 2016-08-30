@@ -5,6 +5,7 @@ from app.users.models import User, Role
 from datetime import datetime
 from cerberus import Validator
 
+
 class MyValidator(Validator):
     def _validate_fluid_tests_qty(self, fluid_tests_qty, field, value):
         quantity_ml_syringe = 0
@@ -638,11 +639,8 @@ test_type_schema = {'id': readonly_dict,
                     'name': type_string_maxlength_50_required_dict,
                     'group_id': type_integer_coerce_dict,
                     'is_group': dict_copy_union(type_boolean_coerce_dict, required_dict),
+                    'test_table_name': type_string_maxlength_100_dict,
                     }
-test_type_result_table_schema = {'id': readonly_dict,
-                                 'test_type_id': type_integer_coerce_dict,
-                                 'test_result_table_name': type_string_maxlength_100_dict,
-                                 }
 bushing_test_schema = {'id': readonly_dict,
                        'test_result_id': type_integer_coerce_dict,
                        'h1': type_float_coerce_dict,
@@ -1315,10 +1313,6 @@ model_dict = {
     'test_type': {
         'model': TestType,
         'schema': test_type_schema
-    },
-    'test_type_result_table': {
-        'model': TestTypeResultTable,
-        'schema': test_type_result_table_schema
     },
     'gasket_condition': {
         'model': GasketCondition,

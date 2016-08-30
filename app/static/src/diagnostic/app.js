@@ -32,13 +32,12 @@ import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewDissolvedGasTestForm from './TestTypeResultForm_modules/NewDissolvedGasTestForm';
 import NewInhibitorTestForm from './TestTypeResultForm_modules/NewInhibitorTestForm';
 import NewInsulationResistanceTestForm from './TestTypeResultForm_modules/NewInsulationResistanceTestForm';
-import NewMetalsOnOilTestForm from './TestTypeResultForm_modules/NewMetalsOnOilTestForm';
+import NewMetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
-import NewPolymerTestForm from './TestTypeResultForm_modules/NewPolymerTestForm';
+import PolymerisationDegreeTestForm from './TestTypeResultForm_modules/PolymerisationDegreeTestForm';
 import NewTransformerTestForm from './TestTypeResultForm_modules/NewTransformerTestForm';
 import NewWindingResistanceTestForm from './TestTypeResultForm_modules/NewWindingResistanceTestForm';
-
 
 
 const App = React.createClass({
@@ -123,10 +122,10 @@ render((
             <Route path="dissolved_test" component={NewDissolvedGasTestForm} />
             <Route path="inhibit_test" component={NewInhibitorTestForm} />
             <Route path="insulation_test" component={NewInsulationResistanceTestForm} />
-            <Route path="me_oil__test" component={NewMetalsOnOilTestForm} />
+            <Route path="me_oil__test" component={NewMetalsInOilTestForm} />
             <Route path="particle_test" component={NewParticleTestForm} />
             <Route path="pcb_test" component={NewPcbTestForm} />
-            <Route path="polymer_test" component={NewPolymerTestForm} />
+            <Route path="polymer_test" component={PolymerisationDegreeTestForm} />
             <Route path="transformer_test" component={NewTransformerTestForm} />
             <Route path="winding_test" component={NewWindingResistanceTestForm} />
         </Route>

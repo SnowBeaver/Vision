@@ -1,7 +1,7 @@
 {
-  "name": "material-ui-example-browserify",
-  "version": "0.15.0",
-  "description": "Sample project that uses Material-UI",
+  "name": "VisionDiagnostic",
+  "version": "1.0.0",
+  "description": "Vision Diagnostic front end",
   "repository": {
     "type": "git",
     "url": "https://github.com/callemall/material-ui.git"
