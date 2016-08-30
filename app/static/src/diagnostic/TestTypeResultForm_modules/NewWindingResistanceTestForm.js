@@ -3,7 +3,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
+import Radio from 'react-bootstrap/lib/Radio';
 import Panel from 'react-bootstrap/lib/Panel';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import {findDOMNode} from 'react-dom';
@@ -447,30 +447,7 @@ var NewWindingResistanceTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
-        this.setState(state);
-    },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
-        return errors;
-    },
-
-    _formGroupClass: function (field) {
-        var className = "form-group ";
-        if (field) {
-            className += " has-error"
-        }
-        return className;
-    },
-
-    onWindNumButtonClick: function (e) {
         if (e.target.id === 'primary') {
             this.setState({
                 showPrimaryWindingTestPanel: true,
@@ -492,8 +469,31 @@ var NewWindingResistanceTestForm = React.createClass({
                 showTertiaryWindingTestPanel: true
             })
         }
-
+        else{
+            state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+        }
     },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
+    _formGroupClass: function (field) {
+        var className = "form-group ";
+        if (field) {
+            className += " has-error"
+        }
+        return className;
+    },
+
 
 
     onClickTapAdd: function () {
@@ -535,45 +535,34 @@ var NewWindingResistanceTestForm = React.createClass({
                         </PanelGroup>
                     </div>
                     <div className="row">
-                        <div className="col-md-1">
+                        <div className="col-md-2">
                             <a href="javascript:void(0)"
                                className="glyphicon glyphicon-plus"
                                onClick={this.onClickTapAdd}
-                               aria-hidden="true">&nbsp;</a>
+                               aria-hidden="true">Add new Tap</a>
                         </div>
                         <div className="row">
-                            <div className="col-md-1">
+                            <div className="col-md-2">
                                 <a href="javascript:void(0)"
                                    className="glyphicon glyphicon-minus"
                                    onClick={this.onClickTapRemove}
-                                   aria-hidden="true">&nbsp;</a>
+                                   aria-hidden="true">Remove Tap</a>
                             </div>
                         </div>
                     </div>
 
 
-
                     <div className="row">
-                        <div className="col-md-offset-3">
-                            <div className="col-md-2">
-                                <a id="primary"
-                                   className="btn btn-info"
-                                   onClick={this.onWindNumButtonClick}
-                                >Primary</a>
+                        <div className="col-md-offset-7">
+                            <div className="col-md-3" >
+                                <Radio name="filter" id="primary" onClick={this._onChange}>Primary(H)</Radio>
                             </div>
-                            <div className="col-md-2">
-                                <a id="secondary"
-                                   className="btn btn-info"
-                                   onClick={this.onWindNumButtonClick}
-                                >Secondary</a>
+                            <div className="col-md-3" >
+                                <Radio name="filter" id="secondary" onClick={this._onChange} >Secondary(X)</Radio>
                             </div>
-                            <div className="col-md-2">
-                                <a id="tertiary"
-                                   className="btn btn-info"
-                                   onClick={this.onWindNumButtonClick}
-                                >Tertiary</a>
+                            <div className="col-md-3" >
+                                <Radio name="filter"id="tertiary" onClick={this._onChange} >Tertiary(T)</Radio>
                             </div>
-
                         </div>
                     </div>
 

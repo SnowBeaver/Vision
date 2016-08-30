@@ -4,13 +4,15 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
+import Radio from 'react-bootstrap/lib/Radio';
+import CheckBox from 'react-bootstrap/lib/CheckBox';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
 var options =[];
-
+var test_result_id;
 
 var ActualTapSelectField = React.createClass ({
 
@@ -198,6 +200,9 @@ var NewTransformerTestForm = React.createClass({
             loading: false,
             numberOfTaps: 1,
             errors: {},
+            test_result_id,
+            keys: 1,
+            testData : {'test_result_id': 1,'taps':[]},
             fields: [
                 'measured_current1', 'measured_current2', 'measured_current3',
                 'calculated_current1', 'calculated_current2', 'calculated_current3',
@@ -208,19 +213,22 @@ var NewTransformerTestForm = React.createClass({
     },
 
     _create: function () {
-        var fields = this.state.fields;
-        var data = {};
-        for (var i = 0; i < fields.length; i++) {
+        var i;
+        for(i=1; i<=this.state.keys; i++){
+            document.getElementById(i);
+            var fields = this.state.fields;
+        for (i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
-        }
+        this.state.testData.taps.push({key:this.state[key]});
+         console.log("testData Fields",this.state.testData);
+        }}
 
         return $.ajax({
             url: '/api/v1.0/transformer_turn_ratio_test/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify(data),
+            data: JSON.stringify(this.state.testData),
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -293,6 +301,7 @@ var NewTransformerTestForm = React.createClass({
     onClickTapAdd: function () {
 
         this.setState({
+            keys : this.state.keys+1,
             numberOfTaps : this.state.numberOfTaps + 1
         });
     },
@@ -300,6 +309,7 @@ var NewTransformerTestForm = React.createClass({
     onClickTapRemove: function () {
 
         this.setState({
+            keys : this.state.keys-1,
             numberOfTaps : this.state.numberOfTaps - 1
         });
     },
@@ -313,11 +323,12 @@ var NewTransformerTestForm = React.createClass({
             var headName = "Tap Number " + i;
             taps.push(
                 <Panel header={headName}
-                       eventKey={i}>
+                       eventKey={i}
+                       id={i}>
                     <TapTestPanel/>
                 </Panel>
 
-            )
+            );
         }
 
         return (
@@ -344,7 +355,21 @@ var NewTransformerTestForm = React.createClass({
                             </div>
                         </div>
                         </div>
-                    
+                    <div className="row">
+                        <div className="col-md-3">
+                            <CheckBox>100/Ratio(% Ratio)</CheckBox>
+                        </div>
+                        <div className="col-md-3" >
+                            <Radio name="filter">Prim./Sec.(P)</Radio>
+                        </div>
+                        <div className="col-md-3" >
+                            <Radio name="filter" >Prim./Tet.(P)</Radio>
+                        </div>
+                        <div className="col-md-3" >
+                            <Radio name="filter" >Prim./Tet.(T)</Radio>
+                        </div>
+                        </div>
+
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
