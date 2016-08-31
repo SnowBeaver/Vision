@@ -3,9 +3,30 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
+
+
+const TextField = React.createClass({
+    render: function() {
+        var value = (this.props.value != null) ? this.props.value: "";
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             defaultValue={value}
+                             />
+            </FormGroup>
+        );
+    }
+});
+
 
 
 var NewFuranTestForm = React.createClass({
@@ -19,6 +40,14 @@ var NewFuranTestForm = React.createClass({
                 'hmf_flag', 'fol_flag', 'fal_flag', 'acf_flag', 'mef_flag'
             ]
         }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) { this.setState({data: res[0]}); }
+        }.bind(this), 'json');
     },
 
     _create: function () {
@@ -105,7 +134,7 @@ var NewFuranTestForm = React.createClass({
     },
 
     render: function () {
-
+        if (this.state.data == null) { return (<div></div>);}
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -116,14 +145,8 @@ var NewFuranTestForm = React.createClass({
                                     </span>
                             </Checkbox>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="5-HMF"
-                                             name="hmf"
-                                />
-                            </FormGroup>
+                            <TextField label="5-HMF" name="hmf" value={this.state.data.hmf}/>
                         </div>
                         <div className="col-md-1">
                             <Checkbox name="fol_flag">
@@ -132,12 +155,7 @@ var NewFuranTestForm = React.createClass({
                             </Checkbox>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="2-FOL"
-                                             name="fol"
-                                />
-                            </FormGroup>
+                            <TextField label="2-FOL" name="fol" value={this.state.data.fol}/>
                         </div>
                         <div className="col-md-1">
                             <Checkbox name="fol_flag">
@@ -146,12 +164,7 @@ var NewFuranTestForm = React.createClass({
                             </Checkbox>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="2-FAL"
-                                             name="fal"
-                                />
-                            </FormGroup>
+                            <TextField label="2-FAL" name="fal" value={this.state.data.fal}/>
                         </div>
                     </div>
 
@@ -164,12 +177,7 @@ var NewFuranTestForm = React.createClass({
                         </div>
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="2-ACF"
-                                             name="hmf"
-                                />
-                            </FormGroup>
+                            <TextField label="2-ACF" name="acf" value={this.state.data.acf}/>
                         </div>
                         <div className="col-md-1">
                             <Checkbox name="mef_flag">
@@ -178,12 +186,7 @@ var NewFuranTestForm = React.createClass({
                             </Checkbox>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="5-MEF"
-                                             name="fol"
-                                />
-                            </FormGroup>
+                            <TextField label="5-MEF" name="mef" value={this.state.data.mef}/>
                         </div>
                     </div>
 
