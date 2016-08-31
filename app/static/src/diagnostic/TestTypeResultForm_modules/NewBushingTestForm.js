@@ -60,8 +60,8 @@ var NewBushingTestForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        if (this.state.data == null && ('id' in this.state.data)) {
-            url += this.state['id'];
+        if (this.state.data != null && ('id' in this.state.data)) {
+            url += this.state.data['id'];
             type = 'PUT';
         }
         return $.ajax({
