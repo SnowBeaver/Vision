@@ -8,39 +8,40 @@ import Radio from 'react-bootstrap/lib/Radio';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
-var options =[];
+var options = [];
 var test_result_id;
 
-var ActualTapSelectField = React.createClass ({
+var ActualTapSelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         })
 
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
-            items: [ '1', '2', '3', '4','5','6','7','8','9','10']
+            items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         options = [];
         for (var key in this.state.items) {
-            options.push(<option key={this.state.items[key].id} value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
+            options.push(<option key={this.state.items[key]}
+                                 value={this.state.items[key]}>{`${this.state.items[key]}`}</option>);
 
 
         }
@@ -53,7 +54,7 @@ var ActualTapSelectField = React.createClass ({
                                  placeholder="select tap"
                                  onChange={this.handleChange}
                     >
-                        <option key="0" value="select">{this.state.items[0]}</option>
+                        <option value="select">{this.state.items[0]}</option>
                         {options}
                     </FormControl>
                 </FormGroup>
@@ -65,9 +66,9 @@ var ActualTapSelectField = React.createClass ({
 
 var TapTestPanel = React.createClass({
 
-    
+
     render: function () {
-        return(
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -202,7 +203,7 @@ var NewTransformerTestForm = React.createClass({
             errors: {},
             test_result_id,
             keys: 1,
-            testData : {'test_result_id': 1,'taps':[]},
+            testData: {'test_result_id': 1, 'taps': []},
             fields: [
                 'measured_current1', 'measured_current2', 'measured_current3',
                 'calculated_current1', 'calculated_current2', 'calculated_current3',
@@ -214,14 +215,15 @@ var NewTransformerTestForm = React.createClass({
 
     _create: function () {
         var i;
-        for(i=1; i<=this.state.keys; i++){
+        for (i = 1; i <= this.state.keys; i++) {
             document.getElementById(i);
             var fields = this.state.fields;
-        for (i = 0; i < fields.length; i++) {
-            var key = fields[i];
-        this.state.testData.taps.push({key:this.state[key]});
-         console.log("testData Fields",this.state.testData);
-        }}
+            for (i = 0; i < fields.length; i++) {
+                var key = fields[i];
+                this.state.testData.taps.push({key: this.state[key]});
+                console.log("testData Fields", this.state.testData);
+            }
+        }
 
         return $.ajax({
             url: '/api/v1.0/transformer_turn_ratio_test/',
@@ -297,29 +299,29 @@ var NewTransformerTestForm = React.createClass({
         }
         return className;
     },
-    
+
     onClickTapAdd: function () {
 
         this.setState({
-            keys : this.state.keys+1,
-            numberOfTaps : this.state.numberOfTaps + 1
+            keys: this.state.keys + 1,
+            numberOfTaps: this.state.numberOfTaps + 1
         });
     },
 
     onClickTapRemove: function () {
 
         this.setState({
-            keys : this.state.keys-1,
-            numberOfTaps : this.state.numberOfTaps - 1
+            keys: this.state.keys - 1,
+            numberOfTaps: this.state.numberOfTaps - 1
         });
     },
 
-    
+
     render: function () {
 
-        var taps=[];
-        var numberOfTaps= this.state.numberOfTaps;
-        for(var i=1; i<=numberOfTaps; i++){
+        var taps = [];
+        var numberOfTaps = this.state.numberOfTaps;
+        for (var i = 1; i <= numberOfTaps; i++) {
             var headName = "Tap Number " + i;
             taps.push(
                 <Panel header={headName}
@@ -327,7 +329,6 @@ var NewTransformerTestForm = React.createClass({
                        id={i}>
                     <TapTestPanel/>
                 </Panel>
-
             );
         }
 
@@ -339,14 +340,14 @@ var NewTransformerTestForm = React.createClass({
                             {taps}
                         </PanelGroup>
                     </div>
-                     <div className="row">
-                            <div className="col-md-1">
-                                <a href="javascript:void(0)"
-                                   className="glyphicon glyphicon-plus"
-                                   onClick={this.onClickTapAdd}
-                                   aria-hidden="true">&nbsp;</a>
-                            </div>
-                         <div className="row">
+                    <div className="row">
+                        <div className="col-md-1">
+                            <a href="javascript:void(0)"
+                               className="glyphicon glyphicon-plus"
+                               onClick={this.onClickTapAdd}
+                               aria-hidden="true">&nbsp;</a>
+                        </div>
+                        <div className="row">
                             <div className="col-md-1">
                                 <a href="javascript:void(0)"
                                    className="glyphicon glyphicon-minus"
@@ -354,21 +355,21 @@ var NewTransformerTestForm = React.createClass({
                                    aria-hidden="true">&nbsp;</a>
                             </div>
                         </div>
-                        </div>
+                    </div>
                     <div className="row">
                         <div className="col-md-3">
                             <Checkbox>100/Ratio(% Ratio)</Checkbox>
                         </div>
-                        <div className="col-md-3" >
+                        <div className="col-md-3">
                             <Radio name="filter">Prim./Sec.(P)</Radio>
                         </div>
-                        <div className="col-md-3" >
-                            <Radio name="filter" >Prim./Tet.(P)</Radio>
+                        <div className="col-md-3">
+                            <Radio name="filter">Prim./Tet.(P)</Radio>
                         </div>
-                        <div className="col-md-3" >
-                            <Radio name="filter" >Prim./Tet.(T)</Radio>
+                        <div className="col-md-3">
+                            <Radio name="filter">Prim./Tet.(T)</Radio>
                         </div>
-                        </div>
+                    </div>
 
                     <div className="row">
                         <div className="col-md-12 ">
