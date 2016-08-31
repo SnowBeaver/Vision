@@ -5,7 +5,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import Radio from 'react-bootstrap/lib/Radio';
-import CheckBox from 'react-bootstrap/lib/CheckBox';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
@@ -358,7 +358,7 @@ var NewTransformerTestForm = React.createClass({
                     </div>
                     <div className="row">
                         <div className="col-md-3">
-                            <CheckBox>100/Ratio(% Ratio)</CheckBox>
+                            <Checkbox>100/Ratio(% Ratio)</Checkbox>
                         </div>
                         <div className="col-md-3">
                             <Radio name="filter">Prim./Sec.(P)</Radio>
