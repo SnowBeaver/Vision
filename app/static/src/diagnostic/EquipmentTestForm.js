@@ -26,17 +26,20 @@ var SelectField = React.createClass({
             value: event.target.value
         });
     },
-    onClick: function(e) {
-        e.preventDefault();
+    updateMenuItems: function () {
         this.serverRequest = $.get(this.props.source, function (result){
-            this.setState({ items: (result['result']) });
+            var res = (result['result']);
             var menuItems = [];
-            for (var key in this.state.items) {
-                menuItems.push(<option key={this.state.items[key].id}
-                                       value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            for (var key in res) {
+                menuItems.push(<option key={res[key].id}
+                                       value={res[key].id}>{`${res[key].name}`}</option>);
             }
             this.setState({menuItems: menuItems});
         }.bind(this), 'json');
+    },
+    onClick: function(e) {
+        e.preventDefault();
+        this.updateMenuItems();
     },
     getInitialState: function () {
         return {
@@ -49,11 +52,9 @@ var SelectField = React.createClass({
     isVisible: function(){
         return this.state.isVisible;
     },
-    // componentDidMount: function(){
-    //     this.serverRequest = $.get(this.props.source, function (result){
-    //         this.setState({ items: (result['result']) });
-    //     }.bind(this), 'json');
-    // },
+    componentDidMount: function(){
+        this.updateMenuItems();
+    },
     componentWillUnmount: function() {
         this.serverRequest.abort();
     },
@@ -78,7 +79,7 @@ var SelectField = React.createClass({
                              onChange={this.handleChange}
                              onClick={this.onClick}
                              defaultValue={this.props.value}>
-                    {menuItems}
+                    {this.state.menuItems}
                 </FormControl>
             </FormGroup>
         );
@@ -333,59 +334,58 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
 
 var TestValuesForm = React.createClass({
     render: function () {
-        switch(this.props.testTypeId) {
-            case null:
+        if (this.props.testType == null) {
+            return (<div></div>);
+        }
+        var tableName = this.props.testType.test_table_name;
+        switch(tableName) {
+            case "bushing_test":
+                return (<NewBushingTestForm testResultId={this.props.testResultId}
+                                            tableName={tableName}/>);
+            // case "winding_test":
+            //     return (<WindingTestForm testResultId={this.props.testResultId}
+            //                              tableName={tableName}/>);
+            case "insulation_resistance_test":
+                return (<NewInsulationResistanceTestForm testResultId={this.props.testResultId}
+                                                         tableName={tableName}/>);
+            case "visual_inspection_test":
+                return (<VisualTestForm testResultId={this.props.testResultId}
+                                        tableName={tableName}/>);
+            // case "winding_resistance_test":
+            //     return (<WindingResistanceTestForm testResultId={this.props.testResultId}
+            //                                        tableName={tableName}/>);
+            case "polymerisation_degree_test":
+                return (<PolymerisationDegreeTestForm testResultId={this.props.testResultId}
+                                                      tableName={tableName}/>);
+            case "transformer_turn_ratio_test":
+                return (<TransformerTurnRatioTestForm testResultId={this.props.testResultId}
+                                                      tableName={tableName}/>);
+            case "dissolved_gas_test":
+                return (<NewDissolvedGasForm testResultId={this.props.testResultId}
+                                             tableName={tableName}/>);
+            case "water_test":
+                return (<WaterTestForm testResultId={this.props.testResultId}
+                                       tableName={tableName}/>);
+            case "furan_test":
+                return (<NewFuranTestForm testResultId={this.props.testResultId}
+                                          tableName={tableName}/>);
+            case "inhibitor_test":
+                return (<NewInhibitorTestForm testResultId={this.props.testResultId}
+                                              tableName={tableName}/>);
+            case "pcb_test":
+                return (<NewPcbTestForm testResultId={this.props.testResultId}
+                                        tableName={tableName}/>);
+            case "fluid_test":
+                return (<NewFluidTestForm testResultId={this.props.testResultId}
+                                          tableName={tableName}/>);
+            case "particle_test":
+                return (<NewParticleTestForm testResultId={this.props.testResultId}
+                                             tableName={tableName}/>);
+            case "metals_in_oil_test":
+                return (<MetalsInOilTestForm testResultId={this.props.testResultId}
+                                             tableName={tableName}/>);
+            default:
                 return (<div></div>);
-            case "2":
-                return (<NewBushingTestForm />);
-            // case "3":
-            // case "4":
-            //     return (<WindingTestForm />);
-            case "5":
-                return (<NewInsulationResistanceTestForm />);
-            case "6":
-                return (<VisualTestForm />);
-            // case "7":
-            //     return (<WindingResistanceTestForm />);
-            case "8":
-                return (<PolymerisationDegreeTestForm />);
-            // case "9":
-            //     return (<TransformerTurnRatioTestForm />);
-            case "12":
-                return (<NewDissolvedGasForm />);
-            case "13":
-            case "34":
-                return (<WaterTestForm />);
-            case "14":
-            case "33":
-                return (<NewFuranTestForm />);
-            case "15":
-            case "22":
-            case "40":
-                return (<NewInhibitorTestForm />);
-            case "16":
-            case "21":
-            case "39":
-                return (<NewPcbTestForm />);
-            case "18":
-            case "19":
-            case "20":
-            case "23":
-            case "24":
-            case "25":
-            case "26":
-            case "29":
-            case "30":
-            case "31":
-            case "32":
-            case "35":
-            case "36":
-            case "37":
-                return (<NewFluidTestForm />);
-            case "27":
-                return (<NewParticleTestForm />);
-            case "28":
-                return (<MetalsInOilTestForm />);
         }
     }
 });
@@ -508,7 +508,8 @@ var EquipmentTestForm = React.createClass({
                         </div>
                         <div id="tabs-5" role="tabpanel" className="tab-pane">
                             <TestValuesForm testResultId={this.props.selectedRowId}
-                                            testTypeId={this.state.data.test_type_id} />
+                                            testType={this.state.data.test_type}
+                            />
                         </div>
                     </div>
                 </div>
