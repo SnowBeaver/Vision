@@ -49,11 +49,11 @@ var SelectField = React.createClass({
     isVisible: function(){
         return this.state.isVisible;
     },
-    // componentDidMount: function(){
-    //     this.serverRequest = $.get(this.props.source, function (result){
-    //         this.setState({ items: (result['result']) });
-    //     }.bind(this), 'json');
-    // },
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+            this.setState({ items: (result['result']) });
+        }.bind(this), 'json');
+    },
     componentWillUnmount: function() {
         this.serverRequest.abort();
     },

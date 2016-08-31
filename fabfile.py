@@ -308,7 +308,7 @@ def menu_root():
         with source_virtualenv():
             run(
                 'python -c "from app import db;from app.admin.models import MenuItemsNode;node = MenuItemsNode(text = u\'Vision Diagnostic\', disabled = True, selected = True, type = \'parent\' );top_node = MenuItemsNode( text = u\'Top Menu\' , parent = node ,  disabled = True, selected = True , type = \'parent\' );db.session.add(node);db.session.commit()"'
-                )
+            )
 
 
 def setup_static():
@@ -319,6 +319,12 @@ def setup_static():
     with cd(static):
         run('npm install')
         run('npm start')
+
+def update_nodejs():
+    sudo('npm cache clean -f')
+    sudo('npm install -g n')
+    sudo('n stable')
+    sudo('ln -sf /usr/local/n/versions/node/{}/bin/node /usr/bin/node '.format('6.4.0'))
 
 
 def update_static():
