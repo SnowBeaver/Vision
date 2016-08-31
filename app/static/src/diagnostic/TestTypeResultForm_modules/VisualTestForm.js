@@ -382,6 +382,14 @@ var VisualTestForm = React.createClass({
                                 </div>
                             </div>
                         </div>
+
+                        <div className="row">
+                                <div className="col-md-12">
+                                <FormGroup>
+                                    <FormControl componentClass="textarea" placeholder="Notes" multiple/>
+                                </FormGroup>
+                                    </div>
+                            </div>
                     </div>
                 </form>
             </div>
