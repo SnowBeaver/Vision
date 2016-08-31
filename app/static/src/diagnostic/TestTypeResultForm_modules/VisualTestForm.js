@@ -1,6 +1,6 @@
 import React from 'react';
 import Form from 'react-bootstrap/lib/Form';
-import Col from 'react-bootstrap/lib/Col';
+import Panel from 'react-bootstrap/lib/Panel';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
@@ -45,14 +45,13 @@ var SelectField = React.createClass({
         console.log( this.state.value == null );
         return (
             <FormGroup>
-                <Col componentClass={ControlLabel} sm={2}>{this.props.label}</Col>
-                <Col sm={10}>
-                    <FormControl componentClass="select"
-                                 onChange={this.handleChange}
-                                 defaultValue={this.props.value}>
-                        {menuItems}
-                    </FormControl>
-                </Col>
+                <FormControl componentClass="select"
+                             onChange={this.handleChange}
+                             defaultValue={this.props.value}
+                             >
+                    <option>{this.props.label}</option>
+                    {menuItems}
+                </FormControl>
             </FormGroup>
         );
     }
@@ -62,8 +61,7 @@ const TextField = React.createClass({
     render: function() {
         return (
             <FormGroup>
-                <ControlLabel>{this.props.label}</ControlLabel>
-                <FormControl type="text" value={this.props.value} />
+                <FormControl type="text" placeholder={this.props.label} value={this.props.value} />
             </FormGroup>
         );
     }
@@ -76,127 +74,312 @@ var VisualTestForm = React.createClass({
                 <h3>Visual inspection</h3>
                 <form method="post" action="#" >
                     <div className="tab_row text-center">
-                        <div className="row">
-                            <div className="col-lg-8 nopadding padding-right-xs">
-                                Tank
-                                <div className="col-lg-6">
-                                    <SelectField source="" label="Cover gasket" value=""/>
-                                    <SelectField source="" label="Manhole gasket" value=""/>
-                                    <SelectField source="" label="Gas relay" value=""/>
-                                    <SelectField source="" label="Oil level" value=""/>
-                                    <div className="col-lg-2">
-                                        <TextField label="Winding temp Max" value=""/>
-                                        <TextField label="Oil temp Max" value=""/>
-                                    </div>
-                                    <div className="col-lg-2 nopadding padding-right-xs">
-                                        <TextField label="Winding temp Actual" value=""/>
-                                        <TextField label="Oil temp Actual" value=""/>
-                                    </div>
-                                    <div className="col-lg-2 nopadding padding-right-xs">
-                                        <FormGroup>
-                                            <ControlLabel>Ctc</ControlLabel>
-                                            <Checkbox />
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <ControlLabel>Ctc</ControlLabel>
-                                            <Checkbox />
-                                        </FormGroup>
-                                    </div>
-                                </div>
-                                <div className="col-lg-6">
-                                    <div className="col-lg-3 nopadding padding-right-xs">
-                                        <SelectField source="" label="Pressure" value=""/>
-                                    </div>
-                                    <div className="col-lg-3 nopadding padding-right-xs">
-                                        <TextField label="" value=""/>
-                                    </div>
 
-                                    <SelectField source="" label="Sud. pres. valve" value=""/>
-                                    <SelectField source="" label="Sampling valves" value=""/>
-                                    <SelectField source="" label="Oil pump" value=""/>
-                                    <div className="col-lg-6 nopadding padding-right-xs">
-                                        <TextField label="Dissolved gas analyzer (ppm)" value=""/>
-                                    </div>
-                                    <SelectField source="" label="Overall condition" value=""/>
-                                </div>
-                            </div>
-                            <div className="col-lg-4 nopadding padding-right-xs">
-                                Expansion/Conservator tank
-                                <SelectField source="" label="Pipe tightness" value=""/>
-                                <SelectField source="" label="Oil level" value=""/>
-                                <SelectField source="" label="Silica gel breather" value=""/>
-                                <SelectField source="" label="Overall condition" value=""/>
-                            </div>
-                        </div>
                         <div className="row">
-                            <div className="col-lg-8 nopadding padding-right-xs">
-                                <FormGroup>
-                                    <ControlLabel>Notes</ControlLabel>
-                                    <FormControl componentClass="textarea" placeholder="Notes" value="" />
-                                </FormGroup>
-                            </div>
-                            <div className="col-lg-4 nopadding padding-right-xs">
-                                Bushing + arrester
-                                <SelectField source="" label="Gasket" value=""/>
-                                <SelectField source="" label="Oil level" value=""/>
-                                <SelectField source="" label="Overall condition" value=""/>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-lg-8 nopadding padding-right-xs">
-                                Tap changer
-                                <div className="col-lg-6">
-                                    <SelectField source="" label="Gasket" value=""/>
-                                    <SelectField source="" label="Oil level" value=""/>
-                                    <div className="col-lg-6">
-                                        <TextField label="Temperature(C) Max" value=""/>
-                                    </div>
-                                    <div className="col-lg-6 nopadding padding-right-xs">
-                                        <TextField label="Temperature(C) Actual" value=""/>
-                                    </div>
-                                    <div className="col-lg-4">
-                                        <SelectField source="" label="Pressure" value=""/>
-                                    </div>
-                                    <div className="col-lg-4">
-                                        <TextField label="Pressure Max" value=""/>
-                                    </div>
-                                    <div className="col-lg-4 nopadding padding-right-xs">
-                                        <TextField label="Pressure Actual" value=""/>
+                            <div className="col-md-8 ">
+                                <div className="row">
+                                    <div >
+                                        <Panel header="Tank">
+                                        </Panel>
                                     </div>
                                 </div>
-                                <div className="col-lg-6">
-                                    <SelectField source="" label="Sud. pres. valve" value=""/>
-                                    <SelectField source="" label="Sampling valves" value=""/>
-                                    <TextField label="No. of operations" value=""/>
-                                    <SelectField source="" label="Counter" value=""/>
-                                    <SelectField source="" label="Filter" value=""/>
-                                    <SelectField source="" label="Overall condition" value=""/>
+                                <div className="row">
+                                    <div className="col-md-6  ">
+                                        <SelectField source="" label="Cover gasket" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <b>Pressure</b>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <SelectField source="" label="-" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <TextField label="0.0" value=""/>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Manhole gasket" value=""/>
+                                    </div>
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Sud.Pres.Valve" value=""/>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Gas relay" value=""/>
+                                    </div>
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Sampling Valves" value=""/>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Oil level" value=""/>
+                                    </div>
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Oil Pump" value=""/>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-2"><b>Winding Temp.</b></div>
+                                    <div className="col-md-2">
+                                        <TextField label="Max" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <TextField label="Actual" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <Checkbox ><b>Ctc</b></Checkbox>
+                                    </div>
+                                    <div className="col-md-3 nopadding">
+                                        <TextField label="Diss. Gas Analyzer" value=""/>
+                                    </div>
+                                    <div className="col-md-1 nopadding">
+                                        <b>ppm</b>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-2"><b>Oil Temp.</b></div>
+                                    <div className="col-md-2">
+                                        <TextField label="Max" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <TextField label="Actual" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <Checkbox ><b>Ctc</b></Checkbox>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <SelectField source="" label="Overall Condition" value=""/>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="col-lg-4 nopadding padding-right-xs">
-                                Radiator
-                                <SelectField source="" label="Fan" value=""/>
-                                <SelectField source="" label="Gasket" value=""/>
-                                <SelectField source="" label="Overall condition" value=""/>
+
+                            <div className="col-md-4 ">
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <Panel header="Miscelaneous">
+                                        </Panel>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <SelectField source="" label="Foundation" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <TextField label="Ambient temp.(C)" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <TextField label="Load(MVA)" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <Panel header="Grounding">
+                                        </Panel>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <TextField label="Value" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <TextField label="Connection" value=""/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+
                         <div className="row">
-                            <div className="col-lg-4 nopadding padding-right-xs">
-                                Control cabinet
-                                <SelectField source="" label="Connection" value=""/>
-                                <SelectField source="" label="Heating" value=""/>
-                                <SelectField source="" label="Overall condition" value=""/>
+                            <div className="col-md-8 ">
+                                <div className="row">
+                                    <div >
+                                        <Panel header="Tap Charger">
+                                        </Panel>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <SelectField source="" label="Gasket" value=""/>
+                                    </div>
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Sud Pres. Valve" value=""/>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Oil Level" value=""/>
+                                    </div>
+                                    <div className="col-md-6 ">
+                                        <SelectField source="" label="Sampling Valves" value=""/>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-6 col-md-offset-6">
+                                        <TextField label="No. of Operations" value=""/>
+                                    </div>
+                                </div>
+
+
+                                <div className="row">
+                                    <div className="col-md-2"><b>Temperature(C)</b></div>
+                                    <div className="col-md-2 col-md-offset-2">
+                                        <TextField label="Max" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <TextField label="Actual" value=""/>
+                                    </div>
+                                    <div className="col-md-4 ">
+                                        <SelectField source="" label="Counter" value=""/>
+                                    </div>
+                                </div>
+
+
+                                <div className="row">
+                                    <div className="col-md-2"><b>Pressure</b></div>
+                                    <div className="col-md-2 ">
+                                        <SelectField source="" label="Counter" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <TextField label="Max" value=""/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <TextField label="Actual" value=""/>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <SelectField source="" label="Filter" value=""/>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-md-2"><b>Position of NLTC</b></div>
+                                    <div className="col-md-2 col-md-offset-4">
+                                        <TextField label="Actual" value=""/>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <SelectField source="" label="Overall Condition" value=""/>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="col-lg-4 nopadding padding-right-xs">
-                                Grounding
-                                <TextField label="Value" value=""/>
-                                <SelectField source="" label="Connection" value=""/>
+
+                            <div className="col-md-4 ">
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <Panel header="Expansion Conservation Tank">
+                                        </Panel>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <SelectField source="" label="Pipe Tightness" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <SelectField source="" label="Oil Level" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <SelectField source="" label="Silica Gel Breather" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-11 col-md-offset-1">
+                                        <SelectField source="" label="Overall Condition" value=""/>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="col-lg-4 nopadding padding-right-xs">
-                                Miscellaneous
-                                <SelectField source="" label="Foundation" value=""/>
-                                <TextField label="Ambient temp.(C)" value=""/>
-                                <TextField label="Load (MVA)" value=""/>
+                        </div>
+
+
+                        <div className="row">
+                                <div className="col-md-4">
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <Panel header="Radiator">
+                                            </Panel>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <SelectField source="" label="Fan" value=""/>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <SelectField source="" label="Gasket" value=""/>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <SelectField source="" label="Overall Condition" value=""/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-md-4">
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <Panel header="Control Cabinet">
+                                            </Panel>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <SelectField source="" label="Connection" value=""/>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <SelectField source="" label="Heating" value=""/>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-12 ">
+                                            <SelectField source="" label="Overall Condition" value=""/>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            <div className="col-md-4">
+                                <div className="row">
+                                    <div className="col-md-12 ">
+                                        <Panel header="Bushing+arrester">
+                                        </Panel>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 ">
+                                        <SelectField source="" label="Gasket" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 ">
+                                        <SelectField source="" label="Oil Level" value=""/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 ">
+                                        <SelectField source="" label="Overall Condition" value=""/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
