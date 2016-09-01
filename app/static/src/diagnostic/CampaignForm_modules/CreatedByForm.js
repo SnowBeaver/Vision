@@ -59,7 +59,7 @@ var RoleSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="role">
+                        name="roles">
                         <option key="0" value="select">Roles</option>
                         {menuItems}
                     </FormControl>

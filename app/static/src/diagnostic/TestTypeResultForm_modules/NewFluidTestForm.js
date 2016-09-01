@@ -8,6 +8,38 @@ import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
 
+const TextField = React.createClass({
+    render: function() {
+        var value = (this.props.value != null) ? this.props.value: "";
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             defaultValue={value}
+                             />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
+
+
 var NewFluidTestForm = React.createClass({
 
     getInitialState: function () {
@@ -21,6 +53,14 @@ var NewFluidTestForm = React.createClass({
                 'corrosive_sulfur', 'viscosity', 'flash_point','pour_point'
             ]
         }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) { this.setState({data: res[0]}); }
+        }.bind(this), 'json');
     },
 
     _create: function () {
@@ -107,73 +147,39 @@ var NewFluidTestForm = React.createClass({
     },
 
     render: function () {
-
+        if (this.state.data == null) { return (<div></div>);}
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 
                     <div className="row">
                         <div className="col-md-1 ">
-                            <Checkbox name="dielectric_1816_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="dielectric_1816_flag"/>
                         </div>
                         <div className="col-md-5">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Dielec. D1816(1mm)(Kv)"
-                                             name="dielectric_1816"
-                                />
-                            </FormGroup>
+                            <TextField label="Dielec. D1816(1mm)(Kv)" name="dielectric_1816" value={this.state.data.dielectric_1816}/>
                         </div>
                         <div className="col-md-1 ">
-                            <Checkbox name="dielectric_1816_2_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="dielectric_1816_2_flag"/>
                         </div>
 
                         <div className="col-md-5">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Dielec. D1816(2mm)(Kv)"
-                                             name="dielectric_1816_2"
-                                />
-                            </FormGroup>
+                            <TextField label="Dielec. D1816(2mm)(Kv)" name="dielectric_1816_2" value={this.state.data.dielectric_1816_2}/>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-1 ">
-                            <Checkbox name="dielectric_877_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="dielectric_877_flag"/>
                         </div>
-
                         <div className="col-md-5">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Dielec. D877(Kv)"
-                                             name="dielectric_877"
-                                />
-                            </FormGroup>
+                            <TextField label="Dielec. D877(Kv)" name="dielectric_877" value={this.state.data.dielectric_877}/>
                         </div>
                         <div className="col-md-1 ">
-                            <Checkbox name="dielectric_iec_156_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="dielectric_iec_156_flag"/>
                         </div>
-
                         <div className="col-md-5">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Dielec. IEC-156(Kv)"
-                                             name="dielectric_iec_156"
-                                />
-                            </FormGroup>
+                            <TextField label="Dielec. IEC-156(Kv)" name="dielectric_iec_156" value={this.state.data.dielectric_iec_156}/>
                         </div>
                     </div>
 
@@ -181,131 +187,60 @@ var NewFluidTestForm = React.createClass({
                     <div className="row">
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Acidity(D974)"
-                                             name="acidity"
-                                />
-                            </FormGroup>
+                            <TextField label="Acidity(D974)" name="acidity" value={this.state.data.acidity}/>
+                        </div>
+                        <div className="col-md-3">
+                            <TextField label="Color(D1500)" name="color" value={this.state.data.color}/>
                         </div>
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Color(D1500)"
-                                             name="color"
-                                />
-                            </FormGroup>
+                            <TextField label="IFT(D971)" name="ift" value={this.state.data.ift}/>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="IFT(D971)"
-                                             name="ift"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Visual(D1524)"
-                                             name="visual"
-                                />
-                            </FormGroup>
+                            <TextField label="Visual(D1524)" name="visual" value={this.state.data.visual}/>
                         </div>
                     </div>
 
                     <div className="row">
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Density(D1298)"
-                                             name="density"
-                                />
-                            </FormGroup>
+                            <TextField label="Density(D1298)" name="density" value={this.state.data.density}/>
                         </div>
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="PF 25C(D924)"
-                                             name="pf20c"
-                                />
-                            </FormGroup>
+                            <TextField label="PF 25C(D924)" name="pf20c" value={this.state.data.pf20c}/>
                         </div>
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="PF 25C(D924)"
-                                             name="pf100c"
-                                />
-                            </FormGroup>
+                            <TextField label="PF 100C(D924)" name="pf100c" value={this.state.data.pf100c}/>
                         </div>
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Sludge(D2112)"
-                                             name="sludge"
-                                />
-                            </FormGroup>
+                            <TextField label="Sludge(D2112)" name="sludge" value={this.state.data.sludge}/>
                         </div>
                     </div>
 
                     <div className="row">
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Aniline Point(D611)"
-                                             name="aniline_point"
-                                />
-                            </FormGroup>
+                            <TextField label="Aniline Point(D611)" name="aniline_point" value={this.state.data.aniline_point}/>
+                        </div>
+                        <div className="col-md-3">
+                            <TextField label="Viscosity(D88)" name="viscosity" value={this.state.data.viscosity}/>
                         </div>
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Viscosity(D88)"
-                                             name="pf20c"
-                                />
-                            </FormGroup>
+                            <TextField label="Flash Point(D92)" name="flash_point" value={this.state.data.flash_point}/>
                         </div>
 
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Flash Point(D92)"
-                                             name="pf100c"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Pour Point(D97)"
-                                             name="pour_point"
-                                />
-                            </FormGroup>
+                            <TextField label="Pour Point(D97)" name="pour_point" value={this.state.data.pour_point}/>
                         </div>
                     </div>
 
                     <div className="row">
-                        <div className="col-md-3">
-                        </div>
-
-                        <div className="col-md-6">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Corrosive Sulfur(D1275)"
-                                             name="corrosive_sulfur"
-                                />
-                            </FormGroup>
+                        <div className="col-md-6 col-md-offset-3">
+                            <TextField label="Corrosive Sulfur(D1275)" name="corrosive_sulfur" value={this.state.data.corrosive_sulfur}/>
                         </div>
                     </div>
 
