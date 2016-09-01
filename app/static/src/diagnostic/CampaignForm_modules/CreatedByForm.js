@@ -111,7 +111,7 @@ var CountrySelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="country">
+                        name="country_id">
                         <option key="0" value="select">Country</option>
                         {menuItems}
                     </FormControl>
@@ -129,7 +129,7 @@ var CreatedByForm = React.createClass ({
         var fields = [
             'roles', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
-            'country', 'mobile', 'active', 'password'
+            'country_id', 'mobile', 'active', 'password'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -242,7 +242,7 @@ var CreatedByForm = React.createClass ({
 
         return(
             <div className="form-container">
-                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange} onError={this._onError}>
+                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
                             <div className="col-md-12">
                                 <RoleSelectField

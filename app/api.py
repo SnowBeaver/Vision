@@ -31,7 +31,8 @@ def new_instance(model, **param_dict):
     item = model(**param_dict)
 
     if model == User:
-        item.roles = [db.session.query(Role).filter(Role.id == param_dict["roles"]).first()]
+        role = db.session.query(Role).filter(Role.id == param_dict["roles"]).first()
+        item.roles = [role] if role else abort(400, {"roles": "invalid value"})
         item.password = encrypt_password(param_dict["password"])
 
     db.session.add(item)
