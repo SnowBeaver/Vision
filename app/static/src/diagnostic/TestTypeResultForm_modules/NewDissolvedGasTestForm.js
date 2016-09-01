@@ -11,17 +11,20 @@ import {Link} from 'react-router';
 
 const TextField = React.createClass({
     render: function() {
-        var value = (this.props.value != null) ? this.props.value: "";
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
-                             defaultValue={value}
+                             value={value}
                              />
+                <FormControl.Feedback />
             </FormGroup>
         );
     }
@@ -154,19 +157,19 @@ var NewDissolvedGasTestForm = React.createClass({
                                     <CheckBox name="h2_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Hydrogen-H2" name="h2" value={this.state.data.h2}/>
+                                    <TextField label="Hydrogen-H2" name="h2" value={this.state.h2}/>
                                 </div>
                                 <div className="col-md-1">
                                     <CheckBox name="o2_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Oxygen-O2" name="o2" value={this.state.data.o2}/>
+                                    <TextField label="Oxygen-O2" name="o2" value={this.state.o2}/>
                                 </div>
                                 <div className="col-md-1">
                                     <CheckBox name="n2_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                     <TextField label="Nitrogen-N2" name="n2" value={this.state.data.n2}/>
+                                     <TextField label="Nitrogen-N2" name="n2" value={this.state.n2}/>
                                 </div>
                             </div>
 
@@ -175,19 +178,19 @@ var NewDissolvedGasTestForm = React.createClass({
                                     <CheckBox name="co_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="CO" name="co" value={this.state.data.co}/>
+                                    <TextField label="CO" name="co" value={this.state.co}/>
                                 </div>
                                 <div className="col-md-1">
                                     <CheckBox name="ch4_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Methane-CH4" name="ch4" value={this.state.data.ch4}/>
+                                    <TextField label="Methane-CH4" name="ch4" value={this.state.ch4}/>
                                 </div>
                                 <div className="col-md-1">
                                     <CheckBox name="co2_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="CO2" name="co2" value={this.state.data.co2}/>
+                                    <TextField label="CO2" name="co2" value={this.state.co2}/>
                                 </div>
                             </div>
 
@@ -196,19 +199,19 @@ var NewDissolvedGasTestForm = React.createClass({
                                     <CheckBox name="c2h4_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Ethylene-C2H4" name="c2h4" value={this.state.data.c2h4}/>
+                                    <TextField label="Ethylene-C2H4" name="c2h4" value={this.state.c2h4}/>
                                 </div>
                                 <div className="col-md-1">
                                     <CheckBox name="c2h6_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Ethane-C2H6" name="c2h6" value={this.state.data.c2h6}/>
+                                    <TextField label="Ethane-C2H6" name="c2h6" value={this.state.c2h6}/>
                                 </div>
                                 <div className="col-md-1">
                                     <CheckBox name="c2h2_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Acetylene-C2H2" name="c2h2" value={this.state.data.c2h2}/>
+                                    <TextField label="Acetylene-C2H2" name="c2h2" value={this.state.c2h2}/>
                                 </div>
                             </div>
 

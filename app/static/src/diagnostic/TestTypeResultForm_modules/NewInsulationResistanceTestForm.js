@@ -15,7 +15,6 @@ const TextField = React.createClass({
         var value = (this.props.value != null) ? this.props.value: "";
         return (
             <FormGroup>
-
                 <FormControl type="text"
                              placeholder={label}
                              name={name}

@@ -8,6 +8,42 @@ import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
+
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                             />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
+
+
 var NewParticleTestForm = React.createClass({
 
     getInitialState: function () {
@@ -113,79 +149,31 @@ var NewParticleTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >2um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="2um"
-                                />
-                            </FormGroup>
+                            <TextField label=">2um" name="2um" value={this.state._2um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >5um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="5um"
-                                />
-                            </FormGroup>
+                            <TextField label=">5um" name="5um" value={this.state._5um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >10um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="10um"
-                                />
-                            </FormGroup>
+                            <TextField label=">10um" name="10um" value={this.state._10um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >15um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="15um"
-                                             name="15um"
-                                />
-                            </FormGroup>
+                            <TextField label=">15um" name="15um" value={this.state._15um}/>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >25um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="25um"
-                                />
-                            </FormGroup>
+                            <TextField label=">25um" name="25um" value={this.state._25um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >50um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="50um"
-                                />
-                            </FormGroup>
+                            <TextField label=">50um" name="50um" value={this.state._50um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >100um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="100um"
-                                />
-                            </FormGroup>
+                            <TextField label=">100um" name="100um" value={this.state._100um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> NAS1638 </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="nas1638"
-                                />
-                            </FormGroup>
+                            <TextField label="NAS1638" name="nas1638" value={this.state._nas1638}/>
                         </div>
                     </div>
 
@@ -198,30 +186,15 @@ var NewParticleTestForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-2 pull-right">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="0"
-                                                     name="iso4406_2"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="" name="iso4406_2" value={this.state.iso4406_2}/>
                                 </div>
 
                                 <div className="col-md-2 pull-right">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="0"
-                                                     name="iso4406_2"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="" name="iso4406_2" value={this.state.iso4406_2}/>
                                 </div>
 
                                 <div className="col-md-2 pull-right">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="0"
-                                                     name="iso4406_3"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="" name="iso4406_3" value={this.state.iso4406_3}/>
                                 </div>
                             </div>
 

@@ -7,15 +7,37 @@ import Checkbox from 'react-bootstrap/lib/Checkbox';
 
 const TextField = React.createClass({
     render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
-                <ControlLabel>{this.props.label}</ControlLabel>
-                <FormControl type="text" value={this.props.value} />
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                             />
+                <FormControl.Feedback />
             </FormGroup>
         );
     }
 });
 
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
 var WaterTestForm = React.createClass({
     render: function() {
         return (
