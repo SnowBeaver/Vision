@@ -5,6 +5,7 @@ from app.users.models import User, Role
 from datetime import datetime
 from cerberus import Validator
 
+
 class MyValidator(Validator):
     def _validate_fluid_tests_qty(self, fluid_tests_qty, field, value):
         quantity_ml_syringe = 0
@@ -199,6 +200,7 @@ user_schema = {'id': readonly_dict,
                'alias': type_string_maxlength_50_required_dict,
                'email': dict_copy_union(type_string_dict, required_dict, {'maxlength': 120}),
                'password': type_string_maxlength_50_required_dict,
+               'roles': type_integer_coerce_required_dict,
                'status': type_integer_coerce_dict,
                'address': type_string_maxlength_255_dict,
                'mobile': type_string_maxlength_50_dict,

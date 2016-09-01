@@ -4,9 +4,12 @@ from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
 from app.diagnostic.models import Equipment, EquipmentType, TestResult, Campaign, FluidProfile
 from app.diagnostic.models import ElectricalProfile
+from app.users.models import User, Role
 from collections import Iterable
 from sqlalchemy import create_engine, MetaData
 from flask.ext.blogging import SQLAStorage
+from flask.ext.security import Security, SQLAlchemyUserDatastore
+from flask.ext.security.utils import encrypt_password
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -16,6 +19,8 @@ db = SQLAlchemy(api, session_options={'autoflush': False})
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 meta = MetaData()
 sql_storage = SQLAStorage(engine, metadata=meta)
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(api, user_datastore)
 
 
 def return_json(items_name, items_list):
@@ -24,9 +29,15 @@ def return_json(items_name, items_list):
 
 def new_instance(model, **param_dict):
     item = model(**param_dict)
+
+    if model == User:
+        item.roles = [db.session.query(Role).filter(Role.id == param_dict["roles"]).first()]
+        item.password = encrypt_password(param_dict["password"])
+
     db.session.add(item)
     db.session.commit()
     return item
+
 
 def get_item(path, item_id=None):
     items_model = model_dict[path]['model']

@@ -59,7 +59,7 @@ var RoleSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="role">
+                        name="roles">
                         <option key="0" value="select">Roles</option>
                         {menuItems}
                     </FormControl>
@@ -127,9 +127,9 @@ var CreatedByForm = React.createClass ({
 
     _create: function () {
         var fields = [
-            'role', 'name', 'email', 'alias',
+            'roles', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
-            'country', 'mobile', 'active'
+            'country', 'mobile', 'active', 'password'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -242,7 +242,7 @@ var CreatedByForm = React.createClass ({
 
         return(
             <div className="form-container">
-                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange} onError={this._onError}>
                         <div className="row">
                             <div className="col-md-12">
                                 <RoleSelectField
@@ -265,6 +265,14 @@ var CreatedByForm = React.createClass ({
                                 <FormControl type="text"
                                              placeholder="Username"
                                              name="alias"
+                                />
+                            </FormGroup>
+                        </div>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="password"
+                                             placeholder="Password"
+                                             name="password"
                                 />
                             </FormGroup>
                         </div>
