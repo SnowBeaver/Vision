@@ -2,10 +2,28 @@ import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
+const TextField = React.createClass({
+    render: function() {
+        var value = (this.props.value != null) ? this.props.value: "";
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             defaultValue={value}
+                             />
+            </FormGroup>
+        );
+    }
+});
 
 var NewBushingTestForm = React.createClass({
 
@@ -35,21 +53,26 @@ var NewBushingTestForm = React.createClass({
 
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/bushing_test/';
+        var type = 'POST'
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if (this.state.data != null && ('id' in this.state.data)) {
+            url += this.state.data['id'];
+            type = 'PUT';
+        }
         return $.ajax({
-            url: '/api/v1.0/bushing_test/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {
+                    this.setState({loading: true});
+                }.bind(this)
         })
     },
 
@@ -90,6 +113,13 @@ var NewBushingTestForm = React.createClass({
             });
         }
     },
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) { this.setState({data: res[0]}); }
+        }.bind(this), 'json');
+    },
 
     _onChange: function (e) {
         var state = {};
@@ -117,777 +147,308 @@ var NewBushingTestForm = React.createClass({
     },
 
     render: function () {
-
+        if (this.state.data == null) { return (<div></div>);}
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <h4>Parameters and conditions</h4>
                     <div className="row">
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H1"
-                                             name="h1"
-                                />
-                            </FormGroup>
+                            <TextField label="H1" name="h1" value={this.state.data.h1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H2"
-                                             name="h2"
-                                />
-                            </FormGroup>
+                            <TextField label="H2" name="h2" value={this.state.data.h2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H3"
-                                             name="h3"
-                                />
-                            </FormGroup>
+                            <TextField label="H3" name="h3" value={this.state.data.h3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Hn"
-                                             name="hn"
-                                />
-                            </FormGroup>
+                            <TextField label="Hn" name="hn" value={this.state.data.hn}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X1"
-                                             name="x1"
-                                />
-                            </FormGroup>
+                            <TextField label="X1" name="x1" value={this.state.data.x1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X2"
-                                             name="x2"
-                                />
-                            </FormGroup>
+                            <TextField label="X2" name="x2" value={this.state.data.x2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X3"
-                                             name="x3"
-                                />
-                            </FormGroup>
+                            <TextField label="X3" name="x3" value={this.state.data.x3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Xn"
-                                             name="xn"
-                                />
-                            </FormGroup>
+                            <TextField label="Xn" name="xn" value={this.state.data.xn}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T1"
-                                             name="t1"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T2"
-                                             name="t2"
-                                />
-                            </FormGroup>
+                            <TextField label="T1" name="t1" value={this.state.data.t1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T3"
-                                             name="t3"
-                                />
-                            </FormGroup>
+                            <TextField label="T2" name="t2" value={this.state.data.t2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Tn"
-                                             name="tn"
-                                />
-                            </FormGroup>
+                            <TextField label="T3" name="t3" value={this.state.data.t3}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="Tn" name="tn" value={this.state.data.tn}/>
                         </div>
                     </div>
-
                     <div className="row">
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H1C1"
-                                             name="h1c1"
-                                />
-                            </FormGroup>
+                            <TextField label="H1C1" name="h1c1" value={this.state.data.h1c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H2C1"
-                                             name="h2c1"
-                                />
-                            </FormGroup>
+                            <TextField label="H2C1" name="h2c1" value={this.state.data.h2c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H3C1"
-                                             name="h3c1"
-                                />
-                            </FormGroup>
+                            <TextField label="H3C1" name="h3c1" value={this.state.data.h3c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="HnC1"
-                                             name="hnc1"
-                                />
-                            </FormGroup>
+                            <TextField label="HnC1" name="hnc1" value={this.state.data.hnc1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X1C1"
-                                             name="x1c1"
-                                />
-                            </FormGroup>
+                            <TextField label="X1C1" name="x1c1" value={this.state.data.x1c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X2C1"
-                                             name="x2c1"
-                                />
-                            </FormGroup>
+                            <TextField label="X2C1" name="x2c1" value={this.state.data.x2c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X3C1"
-                                             name="x3c1"
-                                />
-                            </FormGroup>
+                            <TextField label="X3C1" name="x3c1" value={this.state.data.x3c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="XnC1"
-                                             name="xnc1"
-                                />
-                            </FormGroup>
+                            <TextField label="XnC1" name="xnc1" value={this.state.data.xnc1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T1C1"
-                                             name="t1c1"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T2C1"
-                                             name="t2c1"
-                                />
-                            </FormGroup>
+                            <TextField label="T1C1" name="t1c1" value={this.state.data.t1c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T3C1"
-                                             name="t3c1"
-                                />
-                            </FormGroup>
+                            <TextField label="T2C1" name="t2c1" value={this.state.data.t2c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="TnC1"
-                                             name="tnc1"
-                                />
-                            </FormGroup>
+                            <TextField label="T3C1" name="t3c1" value={this.state.data.t3c1}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="TnC1" name="tnc1" value={this.state.data.tnc1}/>
                         </div>
                     </div>
-
                     <div className="row">
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H1C2"
-                                             name="h1c2"
-                                />
-                            </FormGroup>
+                            <TextField label="H1C2" name="h1c2" value={this.state.data.h1c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H2C2"
-                                             name="h2c2"
-                                />
-                            </FormGroup>
+                            <TextField label="H2C2" name="h2c2" value={this.state.data.h2c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="H3C2"
-                                             name="h3c2"
-                                />
-                            </FormGroup>
+                            <TextField label="H3C2" name="h3c2" value={this.state.data.h3c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="HnC2"
-                                             name="hnc2"
-                                />
-                            </FormGroup>
+                            <TextField label="HnC2" name="hnc2" value={this.state.data.hnc2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X1C2"
-                                             name="x1c2"
-                                />
-                            </FormGroup>
+                            <TextField label="X1C2" name="x1c2" value={this.state.data.x1c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X2C2"
-                                             name="x2c2"
-                                />
-                            </FormGroup>
+                            <TextField label="X2C2" name="x2c2" value={this.state.data.x2c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="X3C2"
-                                             name="x3c2"
-                                />
-                            </FormGroup>
+                            <TextField label="X3C2" name="x3c2" value={this.state.data.x3c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="XnC2"
-                                             name="xnc2"
-                                />
-                            </FormGroup>
+                            <TextField label="XnC2" name="xnc2" value={this.state.data.xnc2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T1C2"
-                                             name="t1c2"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T2C2"
-                                             name="t2c2"
-                                />
-                            </FormGroup>
+                            <TextField label="T1C2" name="t1c2" value={this.state.data.t1c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="T3C2"
-                                             name="t3c2"
-                                />
-                            </FormGroup>
+                            <TextField label="T2C2" name="t2c2" value={this.state.data.t2c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="TnC2"
-                                             name="tnc2"
-                                />
-                            </FormGroup>
+                            <TextField label="T3C2" name="t3c2" value={this.state.data.t3c2}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="TnC2" name="tnc2" value={this.state.data.tnc2}/>
                         </div>
                     </div>
-
                     <div className="row">
-
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q1"
-                                             name="q1"
-                                />
-                            </FormGroup>
+                            <TextField label="Q1" name="q1" value={this.state.data.q1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q2"
-                                             name="q2"
-                                />
-                            </FormGroup>
+                            <TextField label="Q2" name="q2" value={this.state.data.q2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q3"
-                                             name="q3"
-                                />
-                            </FormGroup>
+                            <TextField label="Q3" name="q3" value={this.state.data.q3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Qn"
-                                             name="qn"
-                                />
-                            </FormGroup>
+                            <TextField label="Qn" name="qn" value={this.state.data.qn}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 1"
-                                             name="facteur"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor" name="facteur" value={this.state.data.facteur}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 2"
-                                             name="facteur1"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor 1" name="facteur1" value={this.state.data.facteur1}/>
                         </div>
                     </div>
                     <div className="row">
-
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q1C1"
-                                             name="q1c1"
-                                />
-                            </FormGroup>
+                            <TextField label="Q1C1" name="q1c1" value={this.state.data.q1c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q2C1"
-                                             name="q2c1"
-                                />
-                            </FormGroup>
+                            <TextField label="Q2C1" name="q2c1" value={this.state.data.q2c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q3C1"
-                                             name="q3c1"
-                                />
-                            </FormGroup>
+                            <TextField label="Q3C1" name="q3c1" value={this.state.data.q3c1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="QnC1"
-                                             name="qnc1"
-                                />
-                            </FormGroup>
+                            <TextField label="QnC1" name="qnc1" value={this.state.data.qnc1}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 3"
-                                             name="facteur2"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor 2" name="facteur2" value={this.state.data.facteur2}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 4"
-                                             name="facteur3"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor 3" name="facteur3" value={this.state.data.facteur3}/>
                         </div>
                     </div>
                     <div className="row">
-
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q1C2"
-                                             name="q1c2"
-                                />
-                            </FormGroup>
+                            <TextField label="Q1C2" name="q1c2" value={this.state.data.q1c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q2C2"
-                                             name="q2c2"
-                                />
-                            </FormGroup>
+                            <TextField label="Q2C2" name="q2c2" value={this.state.data.q2c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Q3C2"
-                                             name="q3c2"
-                                />
-                            </FormGroup>
+                            <TextField label="Q3C2" name="q3c2" value={this.state.data.q3c2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="QnC2"
-                                             name="qnc2"
-                                />
-                            </FormGroup>
+                            <TextField label="QnC2" name="qnc2" value={this.state.data.qnc2}/>
                         </div>
                         <div className="col-md-4 ">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Temperature"
-                                             name="temperature"
-                                />
-                            </FormGroup>
+                            <TextField label="Temperature" name="temperature" value={this.state.data.temperature}/>
                         </div>
                         <div className="col-md-4 ">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Humidity"
-                                             name="humidity"
-                                />
-                            </FormGroup>
+                            <TextField label="Humidity" name="humidity" value={this.state.data.humidity}/>
                         </div>
                     </div>
-
-
 
                     <hr></hr>
                     <h4>Tests</h4>
 
                     <div className="row">
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV H1"
-                                             name="test_kv_h1"
-                                />
-                            </FormGroup>
+                            <TextField label="kV H1" name="test_kv_h1" value={this.state.data.test_kv_h1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV H2"
-                                             name="test_kv_h2"
-                                />
-                            </FormGroup>
+                            <TextField label="kV H2" name="test_kv_h2" value={this.state.data.test_kv_h2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV H3"
-                                             name="test_kv_h3"
-                                />
-                            </FormGroup>
+                            <TextField label="kV H3" name="test_kv_h3" value={this.state.data.test_kv_h3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Hn"
-                                             name="test_kv_hn"
-                                />
-                            </FormGroup>
+                            <TextField label="kV Hn" name="test_kv_hn" value={this.state.data.test_kv_hn}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV X1"
-                                             name="test_kv_x1"
-                                />
-                            </FormGroup>
+                            <TextField label="kV X1" name="test_kv_x1" value={this.state.data.test_kv_x1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV X2"
-                                             name="test_kv_x2"
-                                />
-                            </FormGroup>
+                            <TextField label="kV X2" name="test_kv_x2" value={this.state.data.test_kv_x2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV X3"
-                                             name="test_kv_x3"
-                                />
-                            </FormGroup>
+                            <TextField label="kV X3" name="test_kv_x3" value={this.state.data.test_kv_x3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Xn"
-                                             name="test_kv_xn"
-                                />
-                            </FormGroup>
+                            <TextField label="kV Xn" name="test_kv_xn" value={this.state.data.test_kv_xn}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 1"
-                                             name="facteurn"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor n" name="facteurn" value={this.state.data.facteurn}/>
                         </div>
                     </div>
 
                     <div className="row">
-
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV T1"
-                                             name="test_kv_t1"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV T2"
-                                             name="test_kv_t2"
-                                />
-                            </FormGroup>
+                            <TextField label="kV T1" name="test_kv_t1" value={this.state.data.test_kv_t1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV T3"
-                                             name="test_kv_t3"
-                                />
-                            </FormGroup>
+                            <TextField label="kV T2" name="test_kv_t2" value={this.state.data.test_kv_t2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Tn"
-                                             name="test_kv_tn"
-                                />
-                            </FormGroup>
+                            <TextField label="kV T3" name="test_kv_t3" value={this.state.data.test_kv_t3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Q1"
-                                             name="test_kv_q1"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Q2"
-                                             name="test_kv_q2"
-                                />
-                            </FormGroup>
+                            <TextField label="kV Tn" name="test_kv_tn" value={this.state.data.test_kv_tn}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Q3"
-                                             name="test_kv_q3"
-                                />
-                            </FormGroup>
+                            <TextField label="kV Q1" name="test_kv_q1" value={this.state.data.test_kv_q1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Qn"
-                                             name="test_kv_qn"
-                                />
-                            </FormGroup>
+                            <TextField label="kV Q2" name="test_kv_q2" value={this.state.data.test_kv_q2}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="kV Q3" name="test_kv_q3" value={this.state.data.test_kv_q3}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="kV Qn" name="test_kv_qn" value={this.state.data.test_kv_qn}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 2"
-                                             name="facteurn1"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor n1" name="facteurn1" value={this.state.data.facteurn1}/>
                         </div>
                     </div>
 
 
                     <div className="row">
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF H1"
-                                             name="test_pfc2_h1"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC H1" name="test_pfc2_h1" value={this.state.data.test_pfc2_h1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF H2"
-                                             name="test_pfc2_h2"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC H2" name="test_pfc2_h2" value={this.state.data.test_pfc2_h2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF H3"
-                                             name="test_pfc2_h3"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC H3" name="test_pfc2_h3" value={this.state.data.test_pfc2_h3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF Hn"
-                                             name="test_pfc2_hn"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC Hn" name="test_pfc2_hn" value={this.state.data.test_pfc2_hn}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF X1"
-                                             name="test_pfc2_x1"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC X1" name="test_pfc2_x1" value={this.state.data.test_pfc2_x1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF X2"
-                                             name="test_pfc2_x2"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC X2" name="test_pfc2_x2" value={this.state.data.test_pfc2_x2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF X3"
-                                             name="test_pfc2_x3"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC X3" name="test_pfc2_x3" value={this.state.data.test_pfc2_x3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="kV Xn"
-                                             name="test_pfc2_xn"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC Xn" name="test_pfc2_xn" value={this.state.data.test_pfc2_xn}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 3"
-                                             name="facteurn2"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor n2" name="facteurn2" value={this.state.data.facteurn2}/>
                         </div>
                     </div>
                     <div className="row">
-
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF T1"
-                                             name="test_pfc2_t1"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF T2"
-                                             name="test_pfc2_t2"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC T1" name="test_pfc2_t1" value={this.state.data.test_pfc2_t1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF T3"
-                                             name="test_pfc2_t3"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC T2" name="test_pfc2_t2" value={this.state.data.test_pfc2_t2}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF Tn"
-                                             name="test_pfc2_tn"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC T3" name="test_pfc2_t3" value={this.state.data.test_pfc2_t3}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF Q1"
-                                             name="test_pfc2_q1"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF Q2"
-                                             name="test_pfc2_q2"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC Tn" name="test_pfc2_tn" value={this.state.data.test_pfc2_tn}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF Q3"
-                                             name="test_pfc2_q3"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC Q1" name="test_pfc2_q1" value={this.state.data.test_pfc2_q1}/>
                         </div>
                         <div className="col-md-1">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="pF Qn"
-                                             name="test_pfc2_qn"
-                                />
-                            </FormGroup>
+                            <TextField label="Test PFC Q2" name="test_pfc2_q2" value={this.state.data.test_pfc2_q2}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="Test PFC Q3" name="test_pfc2_q3" value={this.state.data.test_pfc2_q3}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="Test PFC Qn" name="test_pfc2_qn" value={this.state.data.test_pfc2_qn}/>
                         </div>
                         <div className="col-md-4">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Factor 4"
-                                             name="facteurn3"
-                                />
-                            </FormGroup>
+                            <TextField label="Factor n3" name="facteurn3" value={this.state.data.facteurn3}/>
                         </div>
                     </div>
-
-
 
                     <div className="row">
                         <div className="col-md-12 ">
