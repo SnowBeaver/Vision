@@ -10,6 +10,42 @@ import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
 
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                             />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
+
+
+
 var PolymerisationDegreeTestForm = React.createClass({
 
     getInitialState: function () {
@@ -132,29 +168,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase A</b>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_a1"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_a1" value={this.state.phase_a1}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_a2"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_a2" value={this.state.phase_a2}/>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_a3"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_a3" value={this.state.phase_a3}/>
                         </div>
                     </div>
 
@@ -163,29 +183,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase B</b>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_b1"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_b1" value={this.state.phase_b1}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_b2"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_b2" value={this.state.phase_b2}/>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_b3"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_b3" value={this.state.phase_b3}/>
                         </div>
                     </div>
 
@@ -194,29 +198,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase C</b>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_c1"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_c1" value={this.state.phase_c1}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_c2"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_c2" value={this.state.phase_c2}/>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_c3"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="phase_c3" value={this.state.phase_c3}/>
                         </div>
                     </div>
 
@@ -229,48 +217,22 @@ var PolymerisationDegreeTestForm = React.createClass({
                     </div>
                     <div className="row">
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_a"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="lead_a" value={this.state.lead_a}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_b"
-                                />
-                            </FormGroup>
-                        </div>
-
-                        <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_c"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="lead_b" value={this.state.lead_b}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_n"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="lead_c" value={this.state.lead_c}/>
+                        </div>
+                        <div className="col-md-3">
+                            <TextField label="" name="lead_n" value={this.state.lead_n}/>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-3 pull-right">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="winding"
-                                />
-                            </FormGroup>
+                            <TextField label="" name="winding" value={this.state.winding}/>
                         </div>
 
                     </div>

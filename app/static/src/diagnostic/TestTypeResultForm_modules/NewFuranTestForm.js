@@ -27,7 +27,18 @@ const TextField = React.createClass({
     }
 });
 
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
 
+});
 
 var NewFuranTestForm = React.createClass({
 
@@ -140,28 +151,19 @@ var NewFuranTestForm = React.createClass({
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-1 ">
-                            <Checkbox name="hmf_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="hmf_flag"/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="5-HMF" name="hmf" value={this.state.data.hmf}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="fol_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="fol_flag"/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="2-FOL" name="fol" value={this.state.data.fol}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="fol_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="fal_flag"/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="2-FAL" name="fal" value={this.state.data.fal}/>
@@ -170,20 +172,13 @@ var NewFuranTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-1 ">
-                            <Checkbox name="acf_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                             <CheckBox name="acf_flag"/>
                         </div>
-
                         <div className="col-md-3">
                             <TextField label="2-ACF" name="acf" value={this.state.data.acf}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="mef_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                             <CheckBox name="mef_flag"/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="5-MEF" name="mef" value={this.state.data.mef}/>

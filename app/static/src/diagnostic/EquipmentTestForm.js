@@ -71,10 +71,10 @@ var SelectField = React.createClass({
         //     menuItems.push(<option key={this.state.items[key].id}
         //                            value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         // }
-        console.log( "SelectField value" + (this.props.value || 'no data') );
-        console.log( this.props.value );
-        console.log( typeof(this.state.value) == "undefined" );
-        console.log( this.state.value == null );
+        // console.log( "SelectField value" + (this.props.value || 'no data') );
+        // console.log( this.props.value );
+        // console.log( typeof(this.state.value) == "undefined" );
+        // console.log( this.state.value == null );
         return (
             <FormGroup>
                 <ControlLabel>{this.props.label}</ControlLabel>
@@ -341,6 +341,7 @@ var TestValuesForm = React.createClass({
             return (<div></div>);
         }
         var tableName = this.props.testType.test_table_name;
+        console.log("Test table name: " + tableName);
         switch(tableName) {
             case "bushing_test":
                 return (<NewBushingTestForm testResultId={this.props.testResultId}
