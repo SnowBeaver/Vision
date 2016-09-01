@@ -28,13 +28,13 @@ var TestItem = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
-
-            items = (result['result']);
-            this.setState({
-                items: item
-            });
-        }.bind(this), 'json');
+        // this.serverRequest = $.get(this.props.source, function (result) {
+        //
+        //     items = (result['result']);
+        //     this.setState({
+        //         items: item
+        //     });
+        // }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
@@ -55,7 +55,7 @@ var TestItem = React.createClass({
                 <div className="row">
                     <div id="test_prof">
                         <div className="col-md-4">
-                            <Link to="/edit_test/{this.state.id}">{this.state.name}</Link>
+                            <Link to="/edit_test/{this.props.data.id}">{this.props.data.name}</Link>
                             &nbsp;
                             &nbsp;
                             <a href="javascript:void(0)"
@@ -86,13 +86,14 @@ var TestItemList = React.createClass({
         };
     },
 
-    componentDidMount: function () {
+    componentDidMount: function () { 
+        // load test_result and show tests for each equipment
         // this.serverRequest = $.get(this.props.source, function (result) { 
         //     items = (result['result']);
         //     this.setState({
         //         items: items
         //     });
-        // }.bind(this), 'json');
+        // }.bind(this), 'json'); 
     },
 
     componentWillUnmount: function () {
@@ -119,9 +120,10 @@ var TestItemList = React.createClass({
 
     render: function () {
         var tests = [];
-        for (var key in this.state.items) {
+        console.log(this.props.data);
+        for (var key in this.props.data) {
             tests.push(
-                <TestItem />
+                <TestItem data={this.props.data[key]}/>
             );
         } 
         return (
