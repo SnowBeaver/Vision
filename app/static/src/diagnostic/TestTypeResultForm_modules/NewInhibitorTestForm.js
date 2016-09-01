@@ -14,17 +14,20 @@ var items=[];
 
 const TextField = React.createClass({
     render: function() {
-        var value = (this.props.value != null) ? this.props.value: "";
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
-                             defaultValue={value}
+                             value={value}
                              />
+                <FormControl.Feedback />
             </FormGroup>
         );
     }
@@ -275,7 +278,7 @@ var NewInhibitorTestForm = React.createClass({
                                         <CheckBox name="inhibitor_flag"/>
                                     </div>
                                     <div className="col-xs-6">
-                                        <TextField label="Inhibitor" name="inhibitor" value={this.state.data.inhibitor}/>
+                                        <TextField label="Inhibitor" name="inhibitor" value={this.state.inhibitor}/>
                                     </div>
                                 </div>
                                 <div className="row">

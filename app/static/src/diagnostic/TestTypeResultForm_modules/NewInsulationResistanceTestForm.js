@@ -10,17 +10,20 @@ import {Link} from 'react-router';
 
 const TextField = React.createClass({
     render: function() {
-        var value = (this.props.value != null) ? this.props.value: "";
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
-                             defaultValue={value}
-                />
+                             value={value}
+                             />
+                <FormControl.Feedback />
             </FormGroup>
         );
     }
@@ -149,13 +152,13 @@ var NewInsulationResistanceTestForm = React.createClass({
                         </div>
 
                         <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv1" value={this.state.data.test_kv1}/>
+                            <TextField label="Test kV" name="test_kv1" value={this.state.test_kv1}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance1" value={this.state.data.resistance1}/>
+                            <TextField label="Mego ohM" name="resistance1" value={this.state.resistance1}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier1" value={this.state.data.multiplier1}/>
+                            <TextField label="Multiplier" name="multiplier1" value={this.state.multiplier1}/>
                         </div>
                         <div className="col-md-2">
                             <TextField label="Measured" name="" value="" disabled/>
@@ -170,12 +173,12 @@ var NewInsulationResistanceTestForm = React.createClass({
                             <b>LO to HI+TER+GND</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv2" value={this.state.data.test_kv2}/>
+                            <TextField label="Test kV" name="test_kv2" value={this.state.test_kv2}/>
                             <div className="col-md-2">
-                                <TextField label="Mego ohM" name="resistance2" value={this.state.data.resistance2}/>
+                                <TextField label="Mego ohM" name="resistance2" value={this.state.resistance2}/>
                             </div>
                             <div className="col-md-2">
-                                <TextField label="Multiplier" name="multiplier2" value={this.state.data.multiplier2}/>
+                                <TextField label="Multiplier" name="multiplier2" value={this.state.multiplier2}/>
                             </div>
                             <div className="col-md-2">
                                 <TextField label="Measured" name="" value="" disabled/>
@@ -190,12 +193,12 @@ var NewInsulationResistanceTestForm = React.createClass({
                                 <b>TER to HI+LO+GND</b>
                             </div>
                             <div className="col-md-2">
-                                <TextField label="Test kV" name="test_kv3" value={this.state.data.test_kv3}/>
+                                <TextField label="Test kV" name="test_kv3" value={this.state.test_kv3}/>
                                 <div className="col-md-2">
-                                    <TextField label="Mego ohM" name="resistance3" value={this.state.data.resistance3}/>
+                                    <TextField label="Mego ohM" name="resistance3" value={this.state.resistance3}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Multiplier" name="multiplier3" value={this.state.data.multiplier3}/>
+                                    <TextField label="Multiplier" name="multiplier3" value={this.state.multiplier3}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Measured" name="" value="" disabled/>
@@ -210,13 +213,13 @@ var NewInsulationResistanceTestForm = React.createClass({
                                     <b>Hi+LO+TER to GND</b>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Test kV" name="test_kv4" value={this.state.data.test_kv4}/>
+                                    <TextField label="Test kV" name="test_kv4" value={this.state.test_kv4}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Mego ohM" name="resistance4" value={this.state.data.resistance4}/>
+                                    <TextField label="Mego ohM" name="resistance4" value={this.state.resistance4}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Multiplier" name="multiplier4" value={this.state.data.multiplier4}/>
+                                    <TextField label="Multiplier" name="multiplier4" value={this.state.multiplier4}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Measured" name="" value="" disabled/>
@@ -231,13 +234,13 @@ var NewInsulationResistanceTestForm = React.createClass({
                                     <b>Core to GND</b>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Test kV" name="test_kv5" value={this.state.data.test_kv5}/>
+                                    <TextField label="Test kV" name="test_kv5" value={this.state.test_kv5}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Mego ohM" name="resistance5" value={this.state.data.resistance5}/>
+                                    <TextField label="Mego ohM" name="resistance5" value={this.state.resistance5}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <TextField label="Multiplier" name="multiplier5" value={this.state.data.multiplier5}/>
+                                    <TextField label="Multiplier" name="multiplier5" value={this.state.multiplier5}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Measured" name="" value="" disabled/>
