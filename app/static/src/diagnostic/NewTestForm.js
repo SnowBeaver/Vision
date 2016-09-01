@@ -1230,7 +1230,7 @@ var NewTestForm = React.createClass({
                         </Modal.Header>
                         <Modal.Body>
                             <NewSyringeForm handleClose={this.closeNewSyringeForm}
-                                            onSyringeCreate={this.onSyringeCreate}
+                                            onCreate={this.onSyringeCreate}
                             />
                         </Modal.Body>
                     </Modal>

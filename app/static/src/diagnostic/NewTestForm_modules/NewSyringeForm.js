@@ -114,8 +114,8 @@ var NewSyringeForm = React.createClass ({
         this.setState({loading: false});
     },
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
+        this.props.onCreate(data);
         // show success message
     },
     _onError: function (data) {
