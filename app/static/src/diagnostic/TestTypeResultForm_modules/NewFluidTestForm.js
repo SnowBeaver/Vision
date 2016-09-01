@@ -168,6 +168,7 @@ var NewFluidTestForm = React.createClass({
                         </div>
                     </div>
 
+
                     <div className="row">
                         <div className="col-md-1 ">
                             <CheckBox name="dielectric_877_flag"/>
@@ -185,7 +186,6 @@ var NewFluidTestForm = React.createClass({
 
 
                     <div className="row">
-
                         <div className="col-md-3">
                             <TextField label="Acidity(D974)" name="acidity" value={this.state.data.acidity}/>
                         </div>
@@ -201,8 +201,8 @@ var NewFluidTestForm = React.createClass({
                         </div>
                     </div>
 
-                    <div className="row">
 
+                    <div className="row">
                         <div className="col-md-3">
                             <TextField label="Density(D1298)" name="density" value={this.state.data.density}/>
                         </div>
@@ -220,8 +220,8 @@ var NewFluidTestForm = React.createClass({
                         </div>
                     </div>
 
-                    <div className="row">
 
+                    <div className="row">
                         <div className="col-md-3">
                             <TextField label="Aniline Point(D611)" name="aniline_point" value={this.state.data.aniline_point}/>
                         </div>
@@ -238,6 +238,7 @@ var NewFluidTestForm = React.createClass({
                         </div>
                     </div>
 
+                    
                     <div className="row">
                         <div className="col-md-6 col-md-offset-3">
                             <TextField label="Corrosive Sulfur(D1275)" name="corrosive_sulfur" value={this.state.data.corrosive_sulfur}/>
