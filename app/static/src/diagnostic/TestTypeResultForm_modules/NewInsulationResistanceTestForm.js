@@ -20,7 +20,7 @@ const TextField = React.createClass({
                              placeholder={label}
                              name={name}
                              defaultValue={value}
-                             />
+                />
             </FormGroup>
         );
     }
@@ -172,90 +172,95 @@ var NewInsulationResistanceTestForm = React.createClass({
                         <div className="col-md-2">
                             <TextField label="Test kV" name="test_kv2" value={this.state.data.test_kv2}/>
                             <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance2" value={this.state.data.resistance2}/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier2" value={this.state.data.multiplier2}/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-2">
-                            <b>TER to HI+LO+GND</b>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv3" value={this.state.data.test_kv3}/>
+                                <TextField label="Mego ohM" name="resistance2" value={this.state.data.resistance2}/>
+                            </div>
                             <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance3" value={this.state.data.resistance3}/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier3" value={this.state.data.multiplier3}/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-2">
-                            <b>Hi+LO+TER to GND</b>
-                        </div>
-                       <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv4" value={this.state.data.test_kv4}/>
+                                <TextField label="Multiplier" name="multiplier2" value={this.state.data.multiplier2}/>
+                            </div>
                             <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance4" value={this.state.data.resistance4}/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier4" value={this.state.data.multiplier4}/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-2">
-                            <b>Core to GND</b>
-                        <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv5" value={this.state.data.test_kv5}/>
+                                <TextField label="Measured" name="" value="" disabled/>
+                            </div>
                             <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance5" value={this.state.data.resistance5}/>
+                                <TextField label="Corr. 20C" name="" value="" disabled/>
+                            </div>
                         </div>
-                        <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier5" value={this.state.data.multiplier5}/>
+
+                        <div className="row">
+                            <div className="col-md-2">
+                                <b>TER to HI+LO+GND</b>
+                            </div>
+                            <div className="col-md-2">
+                                <TextField label="Test kV" name="test_kv3" value={this.state.data.test_kv3}/>
+                                <div className="col-md-2">
+                                    <TextField label="Mego ohM" name="resistance3" value={this.state.data.resistance3}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Multiplier" name="multiplier3" value={this.state.data.multiplier3}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Measured" name="" value="" disabled/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Corr. 20C" name="" value="" disabled/>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-md-2">
+                                    <b>Hi+LO+TER to GND</b>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Test kV" name="test_kv4" value={this.state.data.test_kv4}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Mego ohM" name="resistance4" value={this.state.data.resistance4}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Multiplier" name="multiplier4" value={this.state.data.multiplier4}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Measured" name="" value="" disabled/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Corr. 20C" name="" value="" disabled/>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-md-2">
+                                    <b>Core to GND</b>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Test kV" name="test_kv5" value={this.state.data.test_kv5}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Mego ohM" name="resistance5" value={this.state.data.resistance5}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Multiplier" name="multiplier5" value={this.state.data.multiplier5}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Measured" name="" value="" disabled/>
+                                </div>
+                                <div className="col-md-2">
+                                    <TextField label="Corr. 20C" name="" value="" disabled/>
+                                </div>
+                            </div>
                         </div>
-                        <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
-                        </div>
-                        <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
-                        </div>
-                    </div>
 
 
-                    <div className="row">
-                        <div className="col-md-12 ">
-                            <Button bsStyle="success"
-                                    className="pull-right"
-                                    onClick={this.props.handleClose}
-                                    type="submit">Save</Button>
-                            &nbsp;
-                            <Button bsStyle="danger"
-                                    className="pull-right margin-right-xs"
-                                    onClick={this.props.handleClose}
-                            >Cancel</Button>
+                        <div className="row">
+                            <div className="col-md-12 ">
+                                <Button bsStyle="success"
+                                        className="pull-right"
+                                        onClick={this.props.handleClose}
+                                        type="submit">Save</Button>
+                                &nbsp;
+                                <Button bsStyle="danger"
+                                        className="pull-right margin-right-xs"
+                                        onClick={this.props.handleClose}
+                                >Cancel</Button>
+                            </div>
                         </div>
                     </div>
                 </form>
