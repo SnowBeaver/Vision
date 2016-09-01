@@ -59,7 +59,7 @@ var RoleSelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="role">
+                        name="roles">
                         <option key="0" value="select">Roles</option>
                         {menuItems}
                     </FormControl>
@@ -80,7 +80,7 @@ var CountrySelectField = React.createClass ({
 
     getInitialState: function(){
         return {
-            items: [],
+            items: []
         };
     },
 
@@ -122,7 +122,7 @@ var CountrySelectField = React.createClass ({
 });
 
 
-var CreatedByForm = React.createClass ({
+var NewUserForm = React.createClass ({
 
 
     _create: function () {
@@ -136,7 +136,6 @@ var CreatedByForm = React.createClass ({
             var key= fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
 
         return $.ajax({
             url: '/api/v1.0/user/',
@@ -164,15 +163,17 @@ var CreatedByForm = React.createClass ({
             .fail(this._onError)
             .always(this.hideLoading)
     },
+    
     hideLoading: function () {
         this.setState({loading: false});
     },
+    
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         // show success message
-        this.props.onUserCreate(data);
-        this.props.handleClose();
+        this.props.onCreate(data);
     }, 
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -185,6 +186,7 @@ var CreatedByForm = React.createClass ({
             });
         }
     },
+    
     _onChange: function (e) {
         var state = {};
         // console.log(e.target.type);
@@ -199,19 +201,15 @@ var CreatedByForm = React.createClass ({
         }
         this.setState(state);
     },
+    
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
         //   errors.username = "Username is required";
         // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
         return errors;
     },
+    
     _formGroupClass: function (field) {
         var className = "form-group ";
         if(field) {
@@ -230,12 +228,6 @@ var CreatedByForm = React.createClass ({
 
     handleClick: function() {
         document.getElementById('test_prof').remove();
-    },
-
-    handleClose: function () {
-        this.setState({
-            showCreatedByForm: false
-        })
     },
 
     render : function() {
@@ -371,4 +363,4 @@ var CreatedByForm = React.createClass ({
 });
 
 
-export default CreatedByForm;
+export default NewUserForm;

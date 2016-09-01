@@ -13,7 +13,7 @@ import FluidProfileForm from './FluidProfileForm';
 import TestList from './TestList';
 
 import NewTestForm from './NewTestForm';
-import CreatedByForm from './CampaignForm_modules/CreatedByForm';
+import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import NewMaterialForm from './NewTestForm_modules/NewMaterialForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';

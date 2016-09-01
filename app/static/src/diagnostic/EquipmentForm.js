@@ -13,7 +13,7 @@ import NewManufacturerForm from './EquipmentForm_modules/NewManufacturerForm';
 import NewLocationForm from './EquipmentForm_modules/NewLocationForm';
 import NewNormForm from './EquipmentForm_modules/NewNormForm';
 import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
-import CreatedByForm from './CampaignForm_modules/CreatedByForm';
+import CreatedByForm from './CampaignForm_modules/NewUserForm';
 
 
 import {findDOMNode} from 'react-dom';

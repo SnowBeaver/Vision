@@ -48,19 +48,23 @@ var NewMaterialForm = React.createClass ({
             .fail(this._onError)
             .always(this.hideLoading)
     },
+    
     hideLoading: function () {
         this.setState({loading: false});
     },
+    
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
+        this.props.onCreate(data);
         // show success message
     },
-    componentDidMount: function(){
-
+    
+    componentDidMount: function(){ 
     },
-    componentWillUnmount: function() {
-
+    
+    componentWillUnmount: function() { 
     },
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;

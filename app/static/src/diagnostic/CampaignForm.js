@@ -7,7 +7,7 @@ import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
 import Modal from 'react-bootstrap/lib/Modal';
 import {findDOMNode} from 'react-dom';
-import CreatedByForm from './CampaignForm_modules/CreatedByForm';
+import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import { hashHistory } from 'react-router';
@@ -315,12 +315,12 @@ var CampaignForm = React.createClass({
 
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
-        alert('Contract created');
+        alert('Contract added');
     },
     
     onUserCreate: function (response) {
         this.refs.created_by.setSelected(response);
-        alert('Contract created');
+        alert('User added');
     },
 
     _getCampaign: function(){
@@ -414,7 +414,10 @@ var CampaignForm = React.createClass({
                         <Modal.Title>New User Profile</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <CreatedByForm data={this.props.data} handleClose={this.closeCreatedByForm}/>
+                        <CreatedByForm data={this.props.data} 
+                                       onCreate={this.onUserCreate}
+                                       handleClose={this.closeCreatedByForm}
+                        />
                     </Modal.Body>
                 </Modal>
                 
@@ -423,7 +426,7 @@ var CampaignForm = React.createClass({
                         <Modal.Title>New Contract</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewContractForm onContractCreate={this.onContractCreate} handleClose={this.closeNewContractForm}/>
+                        <NewContractForm onCreate={this.onContractCreate} handleClose={this.closeNewContractForm}/>
                     </Modal.Body>
                 </Modal>
                 

@@ -50,14 +50,17 @@ var NewFluidForm = React.createClass ({
             .fail(this._onError)
             .always(this.hideLoading)
     },
+    
     hideLoading: function () {
         this.setState({loading: false});
     },
+    
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
+        this.props.onCreate(data);
         // show success message
     },
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -70,6 +73,7 @@ var NewFluidForm = React.createClass ({
             });
         }
     },
+    
     _onChange: function (e) {
         var state = {};
         // console.log(e.target.type);
@@ -84,6 +88,7 @@ var NewFluidForm = React.createClass ({
         }
         this.setState(state);
     },
+    
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
@@ -97,6 +102,7 @@ var NewFluidForm = React.createClass ({
         // }
         // return errors;
     },
+    
     _formGroupClass: function (field) {
         var className = "form-group ";
         if(field) {
@@ -108,8 +114,7 @@ var NewFluidForm = React.createClass ({
     getInitialState: function () {
         return {
             loading: false,
-            errors: {},
-            equipment_number: ''
+            errors: {}
         }
     },
 

@@ -118,8 +118,7 @@ var NewLabForm = React.createClass ({
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         // show success message
-        this.props.onLabCreate(data);
-        this.props.handleClose();
+        this.props.onCreate(data);
     },
     componentDidMount: function(){
 
