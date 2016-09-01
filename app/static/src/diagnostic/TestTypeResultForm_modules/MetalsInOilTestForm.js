@@ -9,6 +9,39 @@ import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
+
+const TextField = React.createClass({
+    render: function() {
+        var value = (this.props.value != null) ? this.props.value: "";
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             defaultValue={value}
+                             />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
+
+
 var MetalsInOilTestForm = React.createClass({
 
     getInitialState: function () {
@@ -116,166 +149,78 @@ var MetalsInOilTestForm = React.createClass({
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-1 ">
-                            <Checkbox name="iron_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="iron_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Iron"
-                                             name="iron"
-                                />
-                            </FormGroup>
+                            <TextField label="Iron" name="iron" value={this.state.data.iron}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="nickel_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                             <CheckBox name="nickel_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Nickel"
-                                             name="nickel"
-                                />
-                            </FormGroup>
+                            <TextField label="Nickel" name="nickel" value={this.state.data.nickel}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="aluminium_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="aluminium_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Aluminium"
-                                             name="aluminium"
-                                />
-                            </FormGroup>
+                            <TextField label="Aluminium" name="aluminium" value={this.state.data.aluminium}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="copper_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="copper_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Copper"
-                                             name="copper"
-                                />
-                            </FormGroup>
+                            <TextField label="Copper" name="copper" value={this.state.data.copper}/>
                         </div>
 
                     </div>
 
                     <div className="row">
                         <div className="col-md-1">
-                            <Checkbox name="tin_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="tin_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Tin"
-                                             name="tin"
-                                />
-                            </FormGroup>
+                            <TextField label="Tin" name="tin" value={this.state.data.tin}/>
                         </div>
                         <div className="col-md-1 ">
-                            <Checkbox name="silver_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="silver_flag"/>
                         </div>
 
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Silver"
-                                             name="silver"
-                                />
-                            </FormGroup>
+                            <TextField label="Silver" name="silver" value={this.state.data.silver}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="lead_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="lead_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Lead"
-                                             name="lead"
-                                />
-                            </FormGroup>
+                            <TextField label="Lead" name="lead" value={this.state.data.lead}/>
                         </div>
                         <div className="col-md-1">
-                            <Checkbox name="zinc_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="zinc_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Zinc"
-                                             name="zinc"
-                                />
-                            </FormGroup>
+                            <TextField label="Zinc" name="zinc" value={this.state.data.zinc}/>
                         </div>
 
 
                         <div className="row">
                             <div className="col-md-1">
-                                <Checkbox name="arsenic_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                </Checkbox>
+                                <CheckBox name="arsenic_flag"/>
                             </div>
                             <div className="col-md-2">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Arsenic"
-                                                 name="arsenic"
-                                    />
-                                </FormGroup>
+                                <TextField label="Arsenic" name="arsenic" value={this.state.data.arsenic}/>
                             </div>
                             <div className="col-md-1">
-                                <Checkbox name="cadmium_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                </Checkbox>
+                                <CheckBox name="cadmium_flag"/>
                             </div>
                             <div className="col-md-2">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Cadmium"
-                                                 name="cadmium"
-                                    />
-                                </FormGroup>
+                                <TextField label="Cadmium" name="cadmium" value={this.state.data.cadmium}/>
                             </div>
                             <div className="col-md-1">
-                                <Checkbox name="chrome_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                </Checkbox>
+                                <CheckBox name="chrome_flag"/>
                             </div>
                             <div className="col-md-2">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Chrome"
-                                                 name="chrome"
-                                    />
-                                </FormGroup>
+                                <TextField label="Chrome" name="chrome" value={this.state.data.chrome}/>
                             </div>
                         </div>
                     </div>
