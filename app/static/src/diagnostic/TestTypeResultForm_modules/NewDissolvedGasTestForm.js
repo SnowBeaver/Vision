@@ -214,18 +214,18 @@ var NewDissolvedGasTestForm = React.createClass({
 
                             <div className="row">
                                 <div className="col-md-3">
-                                    <TextField label="TDCG" name="" value=/>
+                                    <TextField label="TDCG" name="" value=""/>
                                 </div>
                                 <div className="col-md-3">
-                                     <TextField label="Total Hydrocarbons" name="" value=/>
+                                     <TextField label="Total Hydrocarbons" name="" value=""/>
                                 </div>
                             </div>
 
                         </div>
                         <div className="col-md-3">
                             <Panel header="Gas Content(%)">
-                                <TextField label="" name="cap_gaz" value=/>
-                                <TextField label="" name="content_gaz" value=/>
+                                <TextField label="" name="cap_gaz" value=""/>
+                                <TextField label="" name="content_gaz" value=""/>
                             </Panel>
                         </div>
                     </div>
@@ -235,13 +235,13 @@ var NewDissolvedGasTestForm = React.createClass({
                         <div className="row">
 
                             <div className="col-md-4 ">
-                                <TextField label="Measured" name="" value=/>
+                                <TextField label="Measured" name="" value=""/>
                             </div>
                             <div className="col-md-4">
-                                <TextField label="Calculated" name="" value=/>
+                                <TextField label="Calculated" name="" value=""/>
                             </div>
                             <div className="col-md-4">
-                                <TextField label="+Calculated" name="" value=/>
+                                <TextField label="+Calculated" name="" value=""/>
                             </div>
                         </div>
                     </fieldset>
