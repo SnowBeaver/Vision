@@ -2,7 +2,7 @@ from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
-from app.diagnostic.models import Equipment, EquipmentType, TestResult, Campaign, FluidProfile
+from app.diagnostic.models import Equipment, EquipmentType, TestResult, Campaign, FluidProfile, Country
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
@@ -34,6 +34,12 @@ def new_instance(model, **param_dict):
         role = db.session.query(Role).filter(Role.id == param_dict["roles"]).first()
         item.roles = [role] if role else abort(400, {"roles": "invalid value"})
         item.password = encrypt_password(param_dict["password"])
+
+        country_id = param_dict.get("country_id")
+        if country_id:
+            country_exists = db.session.query(db.exists().where(Country.id == country_id)).scalar()
+            if not country_exists:
+                abort(400, {"country_id": "invalid value"})
 
     db.session.add(item)
     db.session.commit()
