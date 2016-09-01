@@ -13,11 +13,10 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
-        console.log("NewFluidTestForm TextField " + name + " value: " + value);
-        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
+
         return (
             <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
+
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
@@ -29,22 +28,8 @@ const TextField = React.createClass({
     }
 });
 
-const CheckBox = React.createClass({
-    render: function () {
-        var name = (this.props.name != null) ? this.props.name: "";
-        return (
-            <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
-                </span>
-            </Checkbox>
-        );
-    }
-
-});
-
 
 var NewInsulationResistanceTestForm = React.createClass({
-
     getInitialState: function () {
         return {
             loading: false,
@@ -57,26 +42,47 @@ var NewInsulationResistanceTestForm = React.createClass({
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var data = res[0];
+                var state = {data: data};
+                for (var k in data) {
+                    if (data.hasOwnProperty(k)) {
+                        state[k] = data[k];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
         return $.ajax({
-            url: '/api/v1.0/insulation_resistance_test/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {
+                    this.setState({loading: true});
+                }.bind(this)
         })
     },
-
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
@@ -141,7 +147,6 @@ var NewInsulationResistanceTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>

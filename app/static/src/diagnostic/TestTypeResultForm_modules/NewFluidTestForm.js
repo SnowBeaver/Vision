@@ -14,8 +14,6 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
-        console.log("NewFluidTestForm TextField " + name + " value: " + value);
-        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -68,7 +66,7 @@ var NewFluidTestForm = React.createClass({
                 var data = res[0];
                 var state = {data: data};
                 for (var k in data) {
-                    if (k != 'id' && data.hasOwnProperty(k)) {
+                    if (data.hasOwnProperty(k)) {
                         state[k] = data[k];
                     }
                 }
@@ -80,14 +78,14 @@ var NewFluidTestForm = React.createClass({
     _create: function () {
         var fields = this.state.fields;
         var data = {test_result_id: this.props.testResultId};
-        var url = '/api/v1.0/fluid_test/';
+        var url = '/api/v1.0/' + this.props.tableName + '/';
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-        if (this.state.data != null && ('id' in this.state.data)) {
-            url += this.state.data['id'];
+        if ('id' in this.state) {
+            url += this.state['id'];
             type = 'PUT';
         }
         return $.ajax({

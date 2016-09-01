@@ -5,12 +5,12 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import NewBushingTestForm from './TestTypeResultForm_modules/NewBushingTestForm';
-// import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
+import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import NewInsulationResistanceTestForm from './TestTypeResultForm_modules/NewInsulationResistanceTestForm';
 import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
-// import WindingResistanceTestForm from './TestTypeResultForm_modules/WindingResistanceTestForm';
+import NewWindingResistanceTestForm from './TestTypeResultForm_modules/NewWindingResistanceTestForm';
 import PolymerisationDegreeTestForm from './TestTypeResultForm_modules/PolymerisationDegreeTestForm';
-// import TransformerTurnRatioTestForm from './TestTypeResultForm_modules/TransformerTurnRatioTestForm';
+import NewTransformerTestForm from './TestTypeResultForm_modules/NewTransformerTestForm';
 import NewDissolvedGasForm from './TestTypeResultForm_modules/NewDissolvedGasTestForm';
 import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
 import NewFuranTestForm from './TestTypeResultForm_modules/NewFuranTestForm';
@@ -346,23 +346,23 @@ var TestValuesForm = React.createClass({
             case "bushing_test":
                 return (<NewBushingTestForm testResultId={this.props.testResultId}
                                             tableName={tableName}/>);
-            // case "winding_test":
-            //     return (<WindingTestForm testResultId={this.props.testResultId}
-            //                              tableName={tableName}/>);
+            case "winding_test":
+                return (<WindingTestForm testResultId={this.props.testResultId}
+                                         tableName={tableName}/>);
             case "insulation_resistance_test":
                 return (<NewInsulationResistanceTestForm testResultId={this.props.testResultId}
                                                          tableName={tableName}/>);
             case "visual_inspection_test":
                 return (<VisualTestForm testResultId={this.props.testResultId}
                                         tableName={tableName}/>);
-            // case "winding_resistance_test":
-            //     return (<WindingResistanceTestForm testResultId={this.props.testResultId}
-            //                                        tableName={tableName}/>);
+            case "winding_resistance_test":
+                return (<NewWindingResistanceTestForm testResultId={this.props.testResultId}
+                                                   tableName={tableName}/>);
             case "polymerisation_degree_test":
                 return (<PolymerisationDegreeTestForm testResultId={this.props.testResultId}
                                                       tableName={tableName}/>);
             case "transformer_turn_ratio_test":
-                return (<TransformerTurnRatioTestForm testResultId={this.props.testResultId}
+                return (<NewTransformerTestForm testResultId={this.props.testResultId}
                                                       tableName={tableName}/>);
             case "dissolved_gas_test":
                 return (<NewDissolvedGasForm testResultId={this.props.testResultId}
