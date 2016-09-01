@@ -11,17 +11,20 @@ import {Link} from 'react-router';
 
 const TextField = React.createClass({
     render: function() {
-        var value = (this.props.value != null) ? this.props.value: "";
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
-                             defaultValue={value}
+                             value={value}
                              />
+                <FormControl.Feedback />
             </FormGroup>
         );
     }
@@ -146,31 +149,31 @@ var NewParticleTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-3">
-                            <TextField label=">2um" name="2um" value={this.state.data.2um}/>
+                            <TextField label=">2um" name="2um" value={this.state._2um}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">5um" name="5um" value={this.state.data.5um}/>
+                            <TextField label=">5um" name="5um" value={this.state._5um}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">10um" name="10um" value={this.state.data.10um}/>
+                            <TextField label=">10um" name="10um" value={this.state._10um}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">15um" name="15um" value={this.state.data.15um}/>
+                            <TextField label=">15um" name="15um" value={this.state._15um}/>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-3">
-                            <TextField label=">25um" name="25um" value={this.state.data.25um}/>
+                            <TextField label=">25um" name="25um" value={this.state._25um}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">50um" name="50um" value={this.state.data.50um}/>
+                            <TextField label=">50um" name="50um" value={this.state._50um}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">100um" name="100um" value={this.state.data.100um}/>
+                            <TextField label=">100um" name="100um" value={this.state._100um}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="NAS1638" name="nas1638" value={this.state.data.nas1638}/>
+                            <TextField label="NAS1638" name="nas1638" value={this.state._nas1638}/>
                         </div>
                     </div>
 
@@ -183,15 +186,15 @@ var NewParticleTestForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-2 pull-right">
-                                    <TextField label="" name="iso4406_2" value={this.state.data.iso4406_2}/>
+                                    <TextField label="" name="iso4406_2" value={this.state.iso4406_2}/>
                                 </div>
 
                                 <div className="col-md-2 pull-right">
-                                    <TextField label="" name="iso4406_2" value={this.state.data.iso4406_2}/>
+                                    <TextField label="" name="iso4406_2" value={this.state.iso4406_2}/>
                                 </div>
 
                                 <div className="col-md-2 pull-right">
-                                    <TextField label="" name="iso4406_3" value={this.state.data.iso4406_3}/>
+                                    <TextField label="" name="iso4406_3" value={this.state.iso4406_3}/>
                                 </div>
                             </div>
 
