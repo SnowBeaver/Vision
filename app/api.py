@@ -2,11 +2,14 @@ from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
-from app.diagnostic.models import Equipment, EquipmentType, TestResult, Campaign, FluidProfile
+from app.diagnostic.models import Equipment, EquipmentType, TestResult, Campaign, FluidProfile, Country
 from app.diagnostic.models import ElectricalProfile
+from app.users.models import User, Role
 from collections import Iterable
 from sqlalchemy import create_engine, MetaData
 from flask.ext.blogging import SQLAStorage
+from flask.ext.security import Security, SQLAlchemyUserDatastore
+from flask.ext.security.utils import encrypt_password
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -16,6 +19,8 @@ db = SQLAlchemy(api, session_options={'autoflush': False})
 api_blueprint = Blueprint('api_v1_0', __name__, url_prefix='/api/v1.0')
 meta = MetaData()
 sql_storage = SQLAStorage(engine, metadata=meta)
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(api, user_datastore)
 
 
 def return_json(items_name, items_list):
@@ -24,9 +29,22 @@ def return_json(items_name, items_list):
 
 def new_instance(model, **param_dict):
     item = model(**param_dict)
+
+    if model == User:
+        role = db.session.query(Role).filter(Role.id == param_dict["roles"]).first()
+        item.roles = [role] if role else abort(400, {"roles": "invalid value"})
+        item.password = encrypt_password(param_dict["password"])
+
+        country_id = param_dict.get("country_id")
+        if country_id:
+            country_exists = db.session.query(db.exists().where(Country.id == country_id)).scalar()
+            if not country_exists:
+                abort(400, {"country_id": "invalid value"})
+
     db.session.add(item)
     db.session.commit()
     return item
+
 
 def get_item(path, item_id=None):
     items_model = model_dict[path]['model']

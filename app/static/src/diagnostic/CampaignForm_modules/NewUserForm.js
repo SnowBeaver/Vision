@@ -111,7 +111,7 @@ var CountrySelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="country">
+                        name="country_id">
                         <option key="0" value="select">Country</option>
                         {menuItems}
                     </FormControl>
@@ -127,9 +127,9 @@ var NewUserForm = React.createClass ({
 
     _create: function () {
         var fields = [
-            'role', 'name', 'email', 'alias',
+            'roles', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
-            'country', 'mobile', 'active', 'password'
+            'country_id', 'mobile', 'active', 'password'
         ];
         var data = {};
         for (var i=0;i<fields.length;i++){
@@ -163,17 +163,17 @@ var NewUserForm = React.createClass ({
             .fail(this._onError)
             .always(this.hideLoading)
     },
-    
+
     hideLoading: function () {
         this.setState({loading: false});
     },
-    
+
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         // show success message
         this.props.onCreate(data);
-    }, 
-    
+    },
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -186,7 +186,7 @@ var NewUserForm = React.createClass ({
             });
         }
     },
-    
+
     _onChange: function (e) {
         var state = {};
         // console.log(e.target.type);
@@ -201,7 +201,7 @@ var NewUserForm = React.createClass ({
         }
         this.setState(state);
     },
-    
+
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
@@ -209,7 +209,7 @@ var NewUserForm = React.createClass ({
         // }
         return errors;
     },
-    
+
     _formGroupClass: function (field) {
         var className = "form-group ";
         if(field) {
@@ -339,21 +339,100 @@ var NewUserForm = React.createClass ({
                         <div className="col-md-4 nopadding padding-right-xs">
                             <Checkbox name="active">Active</Checkbox>
                         </div>
-                    </div>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="password"
+                                             placeholder="Password"
+                                             name="password"
+                                />
+                            </FormGroup>
+                        </div>
 
-                    <div className="row">
-                        <div className="col-md-12 ">
-                            <Button bsStyle="success"
-                                    className="btn btn-success pull-right"
-                                    type="submit"
-                                    onClick={this.props.handleClose}
-                            >Save</Button>
-                            &nbsp;
-                            <Button bsStyle="danger"
-                                    className="pull-right"
-                                    onClick={this.props.handleClose}
-                                    className="pull-right margin-right-xs"
-                            >Cancel</Button>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="E-mail"
+                                             name="email"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Adress"
+                                             name="address"
+                                />
+                            </FormGroup>
+                        </div>
+
+                         <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Mobile"
+                                             name="mobile"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Website"
+                                             name="website"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <CountrySelectField
+                                    source="/api/v1.0/country/"
+                                    handleChange={this.handleChange}
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Photo"
+                                             name="photo"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-12">
+                                <FormGroup>
+                                    <FormControl
+                                        componentClass="textarea"
+                                        placeholder="description"
+                                        name="description"/>
+                                </FormGroup>
+                            </div>
+                        </div>
+
+                        <div className="maxwidth">
+                            <div className="col-md-4 nopadding padding-right-xs">
+                                <Checkbox name="active">Active</Checkbox>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-12 ">
+                                <Button bsStyle="success"
+                                        className="btn btn-success pull-right"
+                                        type="submit"
+                                        onClick={this.props.handleClose}
+                                >Save</Button>
+                                &nbsp;
+                                <Button bsStyle="danger"
+                                        className="pull-right"
+                                        onClick={this.props.handleClose}
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
+                            </div>
                         </div>
                     </div>
                 </form>
