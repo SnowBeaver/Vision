@@ -1,0 +1,841 @@
+import React from 'react';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import Button from 'react-bootstrap/lib/Button';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
+import {findDOMNode} from 'react-dom';
+import { hashHistory } from 'react-router';
+import {Link} from 'react-router';
+import Form from 'react-bootstrap/lib/Form';
+import Panel from 'react-bootstrap/lib/Panel';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+
+
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+var SelectField = React.createClass({
+   handleChange: function(event, index, value){
+       this.setState({
+           value: event.target.value
+       });
+   },
+   getInitialState: function () {
+       return {
+           items: [],
+           isVisible: false,
+           value: -1
+       };
+   },
+   isVisible: function(){
+       return this.state.isVisible;
+   },
+   componentDidMount: function(){
+       var source = '/api/v1.0/' + this.props.source + '/';
+       this.serverRequest = $.get(source, function (result){
+           this.setState({ items: (result['result']) });
+       }.bind(this), 'json');
+   },
+   componentWillUnmount: function() {
+       this.serverRequest.abort();
+   },
+   setVisible: function(){
+       this.state.isVisible = true;
+   },
+   render: function() {
+       var label = (this.props.label != null) ? this.props.label: "";
+       var value = (this.props.value != null) ? this.props.value: "";
+       var menuItems = [];
+       for (var key in this.state.items) {
+           menuItems.push(<option key={this.state.items[key].id}
+                                  value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+       }
+       return (
+           <FormGroup>
+               <ControlLabel>{label}</ControlLabel>
+               <FormControl componentClass="select"
+                            onChange={this.handleChange}
+                            defaultValue={value}
+                            >
+                   {menuItems}
+               </FormControl>
+           </FormGroup>
+       );
+   }
+});
+
+
+
+
+var AirBreakerParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var BushingParams = React.createClass ({
+
+render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Frequency" name="frequency" value={this.state.frequency}/>
+                    </div>
+                    <div className="col-md-1">
+                        <TextField label="Winding" name="winding" value={this.state.winding}/>
+                    </div>
+                    <div className="col-md-1">
+                        <TextField label="Voltage" name="kv" value={this.state.kv}/>
+                    </div>
+                    <div className="col-md-3">
+                    <SelectField
+                        source="fluid_type"
+                        label="Fluid Type"
+                        value={this.state.fluid_type_id}/>
+                </div>
+                    <div className="col-md-3">
+                        <TextField label="Model" name="model" value={this.state.model}/>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Fluid Volume" name="fluid_volume" value={this.state.fluid_volume}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="C1" name="c1" value={this.state.c1}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="C1PF" name="c1pf" value={this.state.c1pf}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="C2" name="c2" value={this.state.c2}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="C2PF" name="c2pf" value={this.state.c2pf}/>
+                    </div>
+                </div>
+                
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Current" name="current" value={this.state.current}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="BIL" name="bil" value={this.state.bil}/>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Manufac. H1" name="bushing_manufacturer_h1" value={this.state.bushing_manufacturer_h1}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. H2" name="bushing_manufacturer_h2" value={this.state.bushing_manufacturer_h2}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. H3" name="bushing_manufacturer_h3" value={this.state.bushing_manufacturer_h3}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Hn" name="bushing_manufacturer_hn" value={this.state.bushing_manufacturer_hn}/>
+                    </div>
+                </div>
+
+                 <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Manufac. X1" name="bushing_manufacturer_x1" value={this.state.bushing_manufacturer_x1}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. X2" name="bushing_manufacturer_x2" value={this.state.bushing_manufacturer_x2}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. X3" name="bushing_manufacturer_x3" value={this.state.bushing_manufacturer_x3}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Xn" name="bushing_manufacturer_xn" value={this.state.bushing_manufacturer_xn}/>
+                    </div>
+                </div>
+
+                 <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Manufac. T1" name="bushing_manufacturer_t1" value={this.state.bushing_manufacturer_t1}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. T2" name="bushing_manufacturer_t2" value={this.state.bushing_manufacturer_t2}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. T3" name="bushing_manufacturer_t3" value={this.state.bushing_manufacturer_t3}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Tn" name="bushing_manufacturer_tn" value={this.state.bushing_manufacturer_tn}/>
+                    </div>
+                </div>
+
+                 <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Q1" name="bushing_manufacturer_q1" value={this.state.bushing_manufacturer_q1}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Q2" name="bushing_manufacturer_q2" value={this.state.bushing_manufacturer_q2}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Q3" name="bushing_manufacturer_q3" value={this.state.bushing_manufacturer_q3}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Qn" name="bushing_manufacturer_qn" value={this.state.bushing_manufacturer_qn}/>
+                    </div>
+                </div>
+
+                 <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Type H" name="bushing_type_h" value={this.state.bushing_type_h}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Type Hn" name="bushing_type_hn" value={this.state.bushing_type_hn}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Type X" name="bushing_type_x" value={this.state.bushing_type_x}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Type Xn" name="bushing_type_xn" value={this.state.bushing_type_xn}/>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Type T" name="bushing_type_t" value={this.state.bushing_type_t}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Type Tn" name="bushing_type_tn" value={this.state.bushing_type_tn}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Type Q" name="bushing_type_q" value={this.state.bushing_type_q}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Type Qn" name="bushing_type_qn" value={this.state.bushing_type_qn}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var CapacitorParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Kv" name="kv" value={this.state.kv}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Kvar" name="kvar" value={this.state.kvar}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="BIL" name="bil" value={this.state.bil}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var BreakerParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <SelectField
+                            source="fluid_type"
+                            label="Fluid Type"
+                            value={this.state.fluid_type_id}/>
+                    </div>
+                    <div className="col-md-3">
+                        <SelectField
+                            source="fluid_level"
+                            label="Fluid Level"
+                            value={this.state.fluid_level_id}/>
+                    </div>
+                    <div className="col-md-3">
+                        <SelectField
+                            source="interruping_medium"
+                            label="Interruping Medium"
+                            value={this.state.interruping_medium_id}/>
+                    </div>
+                    <div className="col-md-3">
+                        <SelectField
+                            source="breaker_mechanism"
+                            label="Breaker Mechanism"
+                            value={this.state.breaker_mechanism_id}/>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Open" name="open" value={this.state.kv}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Current Rating" name="current_rating" value={this.state.kvar}/>
+                    </div>
+                </div>
+            </div>
+
+        )
+    }
+});
+
+
+var PowerSourceParams = React.createClass ({
+    render : function () {
+        return(
+            <div className="row">
+                <div className="col-md-2">
+                    <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Kv" name="kv" value={this.state.kv}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Three Phase" name="threephase" value={this.state.threephase}/>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var CableParams = React.createClass ({
+    render : function () {
+        return(
+            <div className="row">
+                <div className="col-md-3">
+                    <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                </div>
+                <div className="col-md-5">
+                    <TextField label="Model" name="model" value={this.state.model}/>
+                </div>
+                <div className="col-md-3">
+                    <TextField label="Three Phase" name="threephase" value={this.state.threephase}/>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var SwitchGearParams = React.createClass ({
+    render : function () {
+        return(
+            <div className="row">
+                 <div className="col-md-3">
+                        <SelectField
+                            source="insulation"
+                            label="Insulation Type"
+                            value={this.state.insulation_id}/>
+                    </div>
+                <div className="col-md-3">
+                    <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                </div>
+                <div className="col-md-3">
+                    <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Three Phase" name="threephase" value={this.state.threephase}/>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var InductionMachineParams = React.createClass ({
+    render : function () {
+        return(
+            <div className="row">
+                <div className="col-md-2">
+                    <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                </div>
+                 <div className="col-md-2">
+                    <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Hp" name="hp" value={this.state.hp}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Kva" name="kva" value={this.state.kva}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Pf" name="pf" value={this.state.pf}/>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var SyncroMachineParams = React.createClass ({
+    render : function () {
+        return(
+            <div className="row">
+                <div className="col-md-2">
+                    <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Hp" name="hp" value={this.state.hp}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Kw" name="kw" value={this.state.kw}/>
+                </div>
+            </div>
+
+        )
+    }
+});
+
+
+var LocalizationParams = React.createClass ({
+
+});
+
+
+var TapChangerParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <SelectField
+                            source="fluid_type"
+                            label="Fluid Type"
+                            value={this.state.fluid_type_id}/>
+                    </div>
+                    <div className="col-md-3">
+                        <SelectField
+                            source="fluid_level"
+                            label="Fluid Level"
+                            value={this.state.fluid_level_id}/>
+                    </div>
+                    <div className="col-md-3">
+                        <SelectField
+                            source="interruping_medium"
+                            label="Interruping Medium"
+                            value={this.state.interruping_medium_id}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Hp" name="hp" value={this.state.hp}/>
+                    </div>
+                    <div className="col-md-4">
+                        <TextField label="Kw" name="kw" value={this.state.kw}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var RectifierParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-4">
+                        <SelectField
+                            source="fluid_type"
+                            label="Fluid Type"
+                            value={this.state.fluid_type_id}/>
+                    </div>
+                    <div className="col-md-4">
+                        <SelectField
+                            source="fluid_level"
+                            label="Fluid Level"
+                            value={this.state.fluid_level_id}/>
+                    </div>
+                    <div className="col-md-4">
+                        <SelectField
+                            source="gas_sensor"
+                            label="Gas Sensor"
+                            value={this.state.gas_sensor}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+
+                    <div className="col-md-2">
+                        <TextField label="Fluid Volume" name="fluid_volume" value={this.state.fluid_volume}/>
+                    </div>
+
+                    <div className="col-md-2">
+                        <TextField label="Cooling Rating" name="cooling_rating" value={this.state.cooling_rating}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var SiteParams = React.createClass ({
+
+});
+
+
+var TransformerParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-2">
+                    <SelectField
+                        source="gas_sensor"
+                        label="Gas Sensor"
+                        value={this.state.gas_sensor}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Windings" name="windings" value={this.state.windings}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                   <div className="col-md-2">
+                        <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Fluid Volume" name="fluid_volume" value={this.state.fluid_volume}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Primary Tension" name="primary_tension" value={this.state.primary_tension}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Secondary Tension" name="secondary_tension" value={this.state.secondary_tension}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Tertiary Tension" name="tertiary_tension" value={this.state.tertiary_tension}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Based Power" name="based_transformerp_ower" value={this.state.based_transformerp_ower}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="First Cooling Stage Power" name="first_cooling_stage_power" value={this.state.first_cooling_stage_power}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Second Cooling Stage Power" name="second_cooling_stage_power" value={this.state.second_cooling_stage_power}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Autotransformer" name="autotransformer" value={this.state.autotransformer}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Primary Winding Connection" name="primary_winding_connection" value={this.state.primary_winding_connection}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Secondary Winding Connection" name="secondary_winding_connection" value={this.state.secondary_winding_connection}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Tertiary Winding Connection" name="tertiary_winding_connection" value={this.state.tertiary_winding_connection}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Winding Metal" name="winding_metal" value={this.state.winding_metal}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Bil1" name="bil1" value={this.state.bil1}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Bil2" name="bil2" value={this.state.bil2}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Bil3" name="bil3" value={this.state.bil3}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Static Shield 1" name="static_shield1" value={this.state.static_shield1}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Static Shield 2" name="static_shield2" value={this.state.static_shield2}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Static Shield 3" name="static_shield3" value={this.state.static_shield3}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var TankParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-4">
+                        <SelectField
+                            source="fluid_type"
+                            label="Fluid Type"
+                            value={this.state.fluid_type_id}/>
+                    </div>
+                    <div className="col-md-4">
+                        <SelectField
+                            source="fluid_level"
+                            label="Fluid Level"
+                            value={this.state.fluid_level_id}/>
+                    </div>
+                    <div className="col-md-4">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                    <div className="col-md-4">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var SwitchParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <SelectField
+                            source="interrupting_medium"
+                            label="Interrupting Medium"
+                            value={this.state.interrupting_medium_id}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                    <div className="col-md-2">
+                    <TextField label="three Phase" name="threephase" value={this.state.threephase}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var InductanceParams = React.createClass ({
+    render : function () {
+        return(
+            <div className="row">
+                <div className="col-md-2">
+                    <SelectField
+                        source="fluid_type"
+                        label="Fluid Type"
+                        value={this.state.fluid_type_id}/>
+                </div>
+                <div className="col-md-2">
+                    <SelectField
+                        source="fluid_level"
+                        label="Fluid Level"
+                        value={this.state.fluid_level_id}/>
+                </div>
+                <div className="col-md-2">
+                    <SelectField
+                        source="gas_sensor"
+                        label="Gas Sensor"
+                        value={this.state.gas_sensor}/>
+                </div>
+                 <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Winding" name="winding" value={this.state.winding}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+                    <div className="col-md-2">
+                    <TextField label="Fluid Volume" name="fluid_volume" value={this.state.fluid_volume}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="Cooling Rating" name="cooling_rating" value={this.state.cooling_rating}/>
+                    </div>
+            </div>
+        )
+    }
+});
+
+
+var GasSensorParams = React.createClass ({
+    render : function () {
+        return(
+            <div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="H2" name="h2" value={this.state.h2}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="CH4" name="welded_cover" value={this.state.ch4}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="C2H2" name="c2h2" value={this.state.c2h2}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="C2H4" name="c2h4" value={this.state.c2h4}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="C2H6" name="c2h6" value={this.state.c2h6}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="CO" name="co" value={this.state.co}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="CO2" name="co2" value={this.state.co2}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="O2" name="o2" value={this.state.o2}/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField label="N2" name="n2" value={this.state.n2}/>
+                    </div>
+                    <div className="col-md-1">
+                        <TextField label="Error(ppm)" name="ppm_error" value={this.state.ppm_error}/>
+                    </div>
+                    <div className="col-md-1">
+                        <TextField label="Error(%)" name="percent_error" value={this.state.percent_error}/>
+                    </div>
+                    <div className="col-md-4">
+                        <TextField label="Model" name="model" value={this.state.model}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+
+export default AirBreakerParams ;
+export default BushingParams ;
+export default CapacitorParams ;
+export default BreakerParams ;
+export default PowerSourceParams ;
+export default CableParams ;
+export default SwitchGearParams ;
+export default InductionMachineParams ;
+export default SyncroMachineParams ;
+export default LocalizationParams ;
+export default TapChangerParams ;
+export default RectifierParams ;
+export default SiteParams ;
+export default TransformerParams ;
+export default TankParams ;
+export default SwitchParams ;
+export default InductanceParams ;
+export default GasSensorParams ;

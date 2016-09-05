@@ -15,6 +15,25 @@ import NewNormForm from './EquipmentForm_modules/NewNormForm';
 import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 import CreatedByForm from './CampaignForm_modules/NewUserForm';
 
+import AirBreakerParams from './EquipmentTypeParameters';
+import BushingParams from './EquipmentTypeParameters';
+import CapacitorParams from './EquipmentTypeParameters';
+import BreakerParams from './EquipmentTypeParameters';
+import PowerSourceParams from './EquipmentTypeParameters';
+import CableParams from './EquipmentTypeParameters';
+import SwitchGearParams from './EquipmentTypeParameters';
+import InductionMachineParams from './EquipmentTypeParameters';
+import SyncroMachineParams from './EquipmentTypeParameters';
+import LocalizationParams from './EquipmentTypeParameters';
+import TapChangerParams from './EquipmentTypeParameters';
+import RectifierParams from './EquipmentTypeParameters';
+import SiteParams from './EquipmentTypeParameters';
+import TransformerParams from './EquipmentTypeParameters';
+import TankParams from './EquipmentTypeParameters';
+import SwitchParams from './EquipmentTypeParameters';
+import InductanceParams from './EquipmentTypeParameters';
+import GasSensorParams from './EquipmentTypeParameters';
+
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
