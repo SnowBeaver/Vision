@@ -4304,7 +4304,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}    tap_changer_pressure_unit_id
 @apiSuccess {Float}      tap_changer_tap_position
 @apiSuccess {Integer}    tap_changer_overpressure_valve_id
-@apiSuccess {Integer}    tap_changer_ampling_valve_id
+@apiSuccess {Integer}    tap_changer_sampling_valve_id
 @apiSuccess {Integer}    tap_changer_operation_counter
 @apiSuccess {Integer}    tap_changer_counter_id
 @apiSuccess {Integer}    tap_changer_filter_id
@@ -4367,7 +4367,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}    tap_changer_pressure_unit_id
 @apiParam   {Float}    tap_changer_tap_position
 @apiParam   {Integer}    tap_changer_overpressure_valve_id
-@apiParam   {Integer}    tap_changer_ampling_valve_id
+@apiParam   {Integer}    tap_changer_sampling_valve_id
 @apiParam   {Integer}    tap_changer_operation_counter
 @apiParam   {Integer}    tap_changer_counter_id
 @apiParam   {Integer}    tap_changer_filter_id

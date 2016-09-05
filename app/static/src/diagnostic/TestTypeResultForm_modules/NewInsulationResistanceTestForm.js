@@ -42,16 +42,19 @@ var NewInsulationResistanceTestForm = React.createClass({
         }
     },
 
-    componentDidMount: function () {
+        componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
         this.serverRequest = $.get(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
                 var data = res[0];
-                var state = {data: data};
-                for (var k in data) {
-                    if (data.hasOwnProperty(k)) {
-                        state[k] = data[k];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
                     }
                 }
                 this.setState(state);
