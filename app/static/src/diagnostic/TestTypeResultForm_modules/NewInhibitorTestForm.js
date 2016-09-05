@@ -12,6 +12,91 @@ import {Link} from 'react-router';
 
 var items=[];
 
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                             />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
+
+var SelectField = React.createClass({
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        });
+    },
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: false,
+            value: -1
+        };
+    },
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+    componentDidMount: function(){
+        this.serverRequest = $.get(this.props.source, function (result){
+            this.setState({ items: (result['result']) });
+        }.bind(this), 'json');
+    },
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+    render: function() {
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+        console.log( "SelectField value" + (this.props.value || 'no data') );
+        console.log( this.props.value );
+        console.log( typeof(this.state.value) == "undefined" );
+        console.log( this.state.value == null );
+        return (
+            <FormGroup>
+                <FormControl componentClass="select"
+                             onChange={this.handleChange}
+                             defaultValue={this.props.value}
+                             >
+                    <option>{this.props.label}</option>
+                    {menuItems}
+                </FormControl>
+            </FormGroup>
+        );
+    }
+});
+
 var InhibitorTypeSelectField = React.createClass ({
 
     handleChange: function(event, index, value){
@@ -190,25 +275,15 @@ var NewInhibitorTestForm = React.createClass({
                             <div className="col-md-8">
                                 <div className="row">
                                     <div className="col-xs-1 ">
-                                        <Checkbox name="inhibitor_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                        </Checkbox>
+                                        <CheckBox name="inhibitor_flag"/>
                                     </div>
                                     <div className="col-xs-6">
-                                        <FormGroup>
-                                            <FormControl type="text"
-                                                         placeholder="Inhibitor"
-                                                         name="inhibitor"
-                                            />
-                                        </FormGroup>
+                                        <TextField label="Inhibitor" name="inhibitor" value={this.state.inhibitor}/>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div>
-                                        <InhibitorTypeSelectField
-                                                                  source="/api/v1.0/inhibitor_type"
-                                                                  value={this.state.value}/>
+                                        <SelectField source="" label="Inhibitor Type" value=""/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -221,49 +296,13 @@ var NewInhibitorTestForm = React.createClass({
                                 </div>
                             </div>
 
-
                             <div className="col-md-4">
                                 <Panel header="Calculation of inhibitor quantity to add to the transformer">
-
-                                    <FormGroup>
-                                        <ControlLabel>Final inhibitor concentration(ppm)</ControlLabel>
-                                        <FormControl type="text"
-                                                     placeholder="0.0"
-                                                     name=""
-
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <ControlLabel>Aditive mixture concetration(% v/v)</ControlLabel>
-                                        <FormControl type="text"
-                                                     placeholder="0.0"
-                                                     name=""
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <ControlLabel>Required quantity of additive(liters)</ControlLabel>
-                                        <FormControl type="text"
-                                                     placeholder="0.0"
-                                                     name=""
-                                                     disabled
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <ControlLabel>Required dry crystal weight(kg)</ControlLabel>
-                                        <FormControl type="text"
-                                                     placeholder="0.0"
-                                                     name=""
-                                                     disabled
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <ControlLabel>Equipment oil volume(liters)</ControlLabel>
-                                        <FormControl type="text"
-                                                     placeholder="0.0"
-                                                     name=""
-                                                     disabled
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Final inhibitor concentration(ppm)" name="" value=""/>
+                                    <TextField label="Aditive mixture concetration(% v/v)" name="" value=""/>
+                                    <TextField label="Required quantity of additive(liters)" disabled name="" value=""/>
+                                    <TextField label="Required dry crystal weight(kg)" disabled name="" value=""/>
+                                    <TextField label="Equipment oil volume(liters)" disabled name="" value=""/>
                                 </Panel>
                             </div>
                         </div>

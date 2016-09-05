@@ -3,10 +3,45 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
+
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                             />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left" >
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
 
 var NewPcbTestForm = React.createClass({
 
@@ -113,64 +148,31 @@ var NewPcbTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-1 ">
-                            <Checkbox name="aroclor_1242_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="aroclor_1242_flag"/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Aroclor-1242"
-                                             name="aroclor_1242"
-                                />
-                            </FormGroup>
+                            <TextField label="Aroclor-1242" name="aroclor_1242" value={this.state.aroclor_1242}/>
                         </div>
                         <div className="col-md-1 ">
-                            <Checkbox name="aroclor_1254_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <CheckBox name="aroclor_1254_flag"/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Aroclor-1254"
-                                             name="aroclor_1254"
-                                />
-                            </FormGroup>
+                            <TextField label="Aroclor-1254" name="aroclor_1254" value={this.state.aroclor_1254}/>
                         </div>
                         <div className="col-md-1 ">
-                            <Checkbox name="aroclor_1260_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <Checkbox name="aroclor_1260_flag"/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Aroclor-1260"
-                                             name="aroclor_1260"
-                                />
-                            </FormGroup>
+                            <TextField label="Aroclor-1260" name="aroclor_1260" value={this.state.aroclor_1260}/>
                         </div>
                     </div>
 
-
                     <div className="row">
                         <div className="col-md-3 pull-right">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="PCB-Total"
-                                             name="pcb_total"
-                                />
-                            </FormGroup>
+                            <TextField label="PCB-Total" name="pcb_total" value={this.state.pcb_total}/>
                         </div>
                         <div className="col-md-1 pull-right">
-                            <Checkbox name="total_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                            </Checkbox>
+                            <Checkbox name="total_flag"/>
                         </div>
                     </div>
 

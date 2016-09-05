@@ -136,7 +136,7 @@ class ContractStatus(db.Model):
     __tablename__ = 'contract_status'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50), index=True)
+    name = db.Column(db.String(50), index=True, nullable=False)
 
     def __repr__(self):
         return self.name
@@ -174,7 +174,6 @@ class Contract(db.Model):
         db.ForeignKey("contract_status.id"),
         nullable=False
     )
-    contract_status = relationship(ContractStatus, backref="contract")
 
     def __repr__(self):
         return self.name
@@ -184,8 +183,7 @@ class Contract(db.Model):
         return {'id': self.id,
                 'name': self.name,
                 'code': self.code,
-                'contract_status_id': self.contract_status_id,
-                'contract_status': self.contract_status and self.contract_status.serialize()
+                'contract_status_id': self.contract_status_id
                 }
 
 
