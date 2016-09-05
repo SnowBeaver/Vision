@@ -12,17 +12,20 @@ import {Link} from 'react-router';
 
 const TextField = React.createClass({
     render: function() {
-        var value = (this.props.value != null) ? this.props.value: "";
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        console.log("NewFluidTestForm TextField " + name + " value: " + value);
+        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
-                             defaultValue={value}
+                             value={value}
                              />
+                <FormControl.Feedback />
             </FormGroup>
         );
     }
@@ -152,25 +155,25 @@ var MetalsInOilTestForm = React.createClass({
                             <CheckBox name="iron_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Iron" name="iron" value={this.state.data.iron}/>
+                            <TextField label="Iron" name="iron" value={this.state.iron}/>
                         </div>
                         <div className="col-md-1">
-                             <CheckBox name="nickel_flag"/>
+                            <CheckBox name="nickel_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Nickel" name="nickel" value={this.state.data.nickel}/>
+                            <TextField label="Nickel" name="nickel" value={this.state.nickel}/>
                         </div>
                         <div className="col-md-1">
                             <CheckBox name="aluminium_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Aluminium" name="aluminium" value={this.state.data.aluminium}/>
+                            <TextField label="Aluminium" name="aluminium" value={this.state.aluminium}/>
                         </div>
                         <div className="col-md-1">
                             <CheckBox name="copper_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Copper" name="copper" value={this.state.data.copper}/>
+                            <TextField label="Copper" name="copper" value={this.state.copper}/>
                         </div>
 
                     </div>
@@ -180,48 +183,46 @@ var MetalsInOilTestForm = React.createClass({
                             <CheckBox name="tin_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Tin" name="tin" value={this.state.data.tin}/>
+                            <TextField label="Tin" name="tin" value={this.state.tin}/>
                         </div>
                         <div className="col-md-1 ">
                             <CheckBox name="silver_flag"/>
                         </div>
 
                         <div className="col-md-2">
-                            <TextField label="Silver" name="silver" value={this.state.data.silver}/>
+                            <TextField label="Silver" name="silver" value={this.state.silver}/>
                         </div>
                         <div className="col-md-1">
                             <CheckBox name="lead_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Lead" name="lead" value={this.state.data.lead}/>
+                            <TextField label="Lead" name="lead" value={this.state.lead}/>
                         </div>
                         <div className="col-md-1">
                             <CheckBox name="zinc_flag"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Zinc" name="zinc" value={this.state.data.zinc}/>
+                            <TextField label="Zinc" name="zinc" value={this.state.zinc}/>
                         </div>
-
-
-                        <div className="row">
-                            <div className="col-md-1">
-                                <CheckBox name="arsenic_flag"/>
-                            </div>
-                            <div className="col-md-2">
-                                <TextField label="Arsenic" name="arsenic" value={this.state.data.arsenic}/>
-                            </div>
-                            <div className="col-md-1">
-                                <CheckBox name="cadmium_flag"/>
-                            </div>
-                            <div className="col-md-2">
-                                <TextField label="Cadmium" name="cadmium" value={this.state.data.cadmium}/>
-                            </div>
-                            <div className="col-md-1">
-                                <CheckBox name="chrome_flag"/>
-                            </div>
-                            <div className="col-md-2">
-                                <TextField label="Chrome" name="chrome" value={this.state.data.chrome}/>
-                            </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-1">
+                            <CheckBox name="arsenic_flag"/>
+                        </div>
+                        <div className="col-md-2">
+                            <TextField label="Arsenic" name="arsenic" value={this.state.arsenic}/>
+                        </div>
+                        <div className="col-md-1">
+                            <CheckBox name="cadmium_flag"/>
+                        </div>
+                        <div className="col-md-2">
+                            <TextField label="Cadmium" name="cadmium" value={this.state.cadmium}/>
+                        </div>
+                        <div className="col-md-1">
+                            <CheckBox name="chrome_flag"/>
+                        </div>
+                        <div className="col-md-2">
+                            <TextField label="Chrome" name="chrome" value={this.state.chrome}/>
                         </div>
                     </div>
 
