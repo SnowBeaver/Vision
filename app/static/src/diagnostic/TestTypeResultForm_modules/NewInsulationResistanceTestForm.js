@@ -13,7 +13,6 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
-        var active = (this.props.active != null) ? "disabled" : "";
 
         return (
             <FormGroup>
