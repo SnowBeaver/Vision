@@ -145,7 +145,8 @@ var ContractNoSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.contract_id ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.contract_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -211,6 +212,7 @@ var CampaignForm = React.createClass({
             });
             return;
         }
+        this._clearErrors();
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -255,7 +257,15 @@ var CampaignForm = React.createClass({
         else {
             state[e.target.name] = $.trim(e.target.value);
         }
+
+        // Clear the errors
+        state.errors = this.state.errors;
+        delete state.errors[e.target.name];
         this.setState(state);
+    },
+
+    _clearErrors: function () {
+        this.setState({errors: {}});
     },
 
     _validate: function () {
@@ -355,9 +365,11 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-3">
                                 <div className="datetimepicker input-group date">
-                                    <FormGroup>
+                                    <FormGroup validationState={this.state.errors.date_created ? 'error' : null}>
+                                        <HelpBlock className="warning">{this.state.errors.date_created}</HelpBlock>
                                         <ControlLabel>Date Created</ControlLabel>
-                                        <DateTimeField name="date_created" datetime={this.state.date_created}/>
+                                        <DateTimeField name="date_created"
+                                                       datetime={this.state.date_created}/>
                                     </FormGroup>
                                 </div>
                             </div>
@@ -365,7 +377,8 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-11">
                                 <ContractNoSelectField ref="contract"
-                                                       source="/api/v1.0/contract/"/>
+                                                       source="/api/v1.0/contract/"
+                                                       errors={this.state.errors}/>
                             </div>
                             <div className="col-md-1">
                                 <a id="contract_no"
@@ -378,7 +391,8 @@ var CampaignForm = React.createClass({
 
                         <div className="row">
                             <div className="col-md-11">
-                                <FormGroup>
+                                <FormGroup validationState={this.state.errors.description ? 'error' : null}>
+                                    <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
                                     <FormControl componentClass="textarea"
                                                  placeholder="comments"
                                                  name="description"/>
@@ -389,8 +403,12 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <ControlLabel>Lab measurement</ControlLabel>
-                                    <DateTimeField name="date_sampling" datetime={this.state.date_sampling}/>
+                                    <FormGroup validationState={this.state.errors.date_sampling ? 'error' : null}>
+                                        <HelpBlock className="warning">{this.state.errors.date_sampling}</HelpBlock>
+                                        <ControlLabel>Lab measurement</ControlLabel>
+                                        <DateTimeField name="date_sampling"
+                                                       datetime={this.state.date_sampling}/>
+                                    </FormGroup>
                                 </div>
                             </div>
                         </div>
