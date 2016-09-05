@@ -557,7 +557,7 @@ var TestReasonSelectField = React.createClass({
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
-                    name="test_reason_id"
+                    name="reason_id"
                     onChange={this.handleChange}
                 >
                     <option key="0" value="select">Reason for Testing</option>
@@ -590,9 +590,9 @@ var NewTestForm = React.createClass({
             showNewLabForm: false,
             showNewSyringeForm: false,
             date_analyse: new Date().toISOString(),
-            repair_date: new Date().toISOString(),
+            repair_date: new Date().toISOString(), 
             fields: [
-                'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
+                'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
@@ -623,19 +623,17 @@ var NewTestForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        console.log(this.props.data);
-        // console.log(this.props.data['campaign_id']);
-        data['campaign_id'] = this.props.data['campaign'];
-        var url = '/api/v1.0/test_result/' + this.state.test_result_id;
-
+        data['campaign_id'] = this.props.data['campaign_id'];
+        data['equipment_id'] = this.props.data['equipment_id'];
+        // var url = '/api/v1.0/test_result/' + this.state.test_result_id; // edit
+        var url = '/api/v1.0/test_result/';
+        
         return $.ajax({
             url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) {
-            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -661,15 +659,14 @@ var NewTestForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        // this.setState(this.getInitialState());
-        // console.log(data['result']['analysis_number']);
+        //this.setState(this.getInitialState());
         this.setState({
             analysis_number: data['result']['analysis_number']
             // show success message
         });
-        alert('Test saved');
-    },
-
+        this.props.reloadList();
+    }, 
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;

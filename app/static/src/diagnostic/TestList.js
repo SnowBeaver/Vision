@@ -21,9 +21,7 @@ var TestItem = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: true,
-            name: 'Electrical test 39489 by default',
-            id: null
+            isVisible: true
         };
     },
 
@@ -50,22 +48,41 @@ var TestItem = React.createClass({
     },
 
     render: function () {
+
+        if (!this.props.data || typeof this.props.data == 'undefined' || !this.state.isVisible) {
+            return null;
+        } 
+        var test = this.props.data;
+        var edit_link = "/edit_test/" + test.id;
+        var test_type = {} || test.test_type;
+        var test_status = {} || test.test_status;
+        var performed_by = {} || test.performed_by;
+        // console.log(performed_by, test_status, test_type, edit_link, test);
+
         return (
-            this.state.isVisible ?
-                <div className="row">
-                    <div id="test_prof">
-                        <div className="col-md-4">
-                            <Link to="/edit_test/{this.props.data.id}">{this.props.data.name}</Link>
-                            &nbsp;
-                            &nbsp;
-                            <a href="javascript:void(0)"
-                               className="glyphicon glyphicon-remove text-danger"
-                               onClick={this.onRemove}
-                               aria-hidden="true">
-                            </a>
-                        </div>
+            <div className="row">
+                <div id="test_prof">
+                    <div className="col-md-1">
+                        <Link to={edit_link}>{test_type.name}</Link>
                     </div>
-                </div> : null
+                    <div className="col-md-1">
+                        {test.analysis_number}
+                    </div>
+                    <div className="col-md-1">
+                        {test_status.name}
+                    </div>
+                    <div className="col-md-1">
+                        {performed_by.name}
+                    </div>
+                    <div className="col-md-1">
+                        <a href="javascript:void(0)"
+                           className="glyphicon glyphicon-remove text-danger"
+                           onClick={this.onRemove}
+                           aria-hidden="true">
+                        </a>
+                    </div>
+                </div>
+            </div>
         );
     }
 });
@@ -117,15 +134,17 @@ var TestItemList = React.createClass({
             showTestForm: false
         })
     },
+    
+    reloadList: function(){
+        this.closeTestForm();
+        this.props.reloadList();
+    },
 
     render: function () {
         var tests = [];
-        console.log(this.props.data);
-        for (var key in this.props.data) {
-            tests.push(
-                <TestItem data={this.props.data[key]}/>
-            );
-        } 
+        tests.push(
+            <TestItem data={this.props.data}/>
+        );
         return (
             this.state.isVisible ?
                 <div>
@@ -140,7 +159,11 @@ var TestItemList = React.createClass({
                         </div>
                     </div>
 
-                    <NewTestForm show={this.state.showTestForm} data={this.props.data} handleClose={this.closeTestForm} />
+                    <NewTestForm show={this.state.showTestForm} 
+                                 data={this.props.data} 
+                                 handleClose={this.closeTestForm}
+                                 reloadList={this.reloadList} 
+                    />
                     
                 </div> : null
         );
@@ -159,22 +182,28 @@ var TestList = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: true, 
-            // equipment: [
-            //     { id: 1, name: 'Test equoment 1' },
-            //     { id: 2, name: 'Test equoment 2' },
-            //     { id: 3, name: 'Test equoment 3' }
-            // ]
+            isVisible: true
         };
     },
 
     componentDidMount: function () {
         var campaign_id = this.props.params['campaign'];
         this.serverRequest = $.get('/api/v1.0/test_result/?campaign_id=' + campaign_id,
+
             function (result) {
-                this.setState({
-                    equipment: result['result']
+                
+                var tests = result['result'];
+                var equipment = [];
+                
+                tests.map(function(item){
+                    equipment[item.equipment.id] = item.equipment;
                 });
+
+                this.setState({
+                    equipment: equipment,
+                    tests: tests
+                });
+                
             }.bind(this), 'json');
     },
 
@@ -188,11 +217,12 @@ var TestList = React.createClass({
         });
     },
 
+    reloadList: function(){
+        this.componentDidMount();
+    },
+
     render: function () {
 
-        // console.log(this.props.params);
-        // console.log(this.state.equipment);
-        
         var items = [];
         for (var key in this.state.equipment) {
             items.push(
@@ -201,7 +231,9 @@ var TestList = React.createClass({
                     eventKey={this.state.equipment[key].equipment.id} 
                     header={this.state.equipment[key].equipment.name}
                 >
-                    <TestItemList data={this.state.equipment[key]}/>
+                    <TestItemList data={this.state.tests} id={this.state.equipment[key].id}
+                                  reloadList={this.reloadList}
+                    />
                 </Panel>
             );
         }
