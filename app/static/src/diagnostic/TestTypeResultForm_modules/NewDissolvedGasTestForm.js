@@ -14,8 +14,6 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
-        console.log("NewFluidTestForm TextField " + name + " value: " + value);
-        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -61,17 +59,42 @@ var NewDissolvedGasTestForm = React.createClass({
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
         return $.ajax({
-            url: '/api/v1.0/dissolved_gas_test/',
-            type: 'POST',
+            url: url,
+            type: type,
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -145,7 +168,6 @@ var NewDissolvedGasTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -227,9 +249,9 @@ var NewDissolvedGasTestForm = React.createClass({
                         </div>
                         <div className="col-md-3">
                             <Panel header="Gas Content(%)">
-                                <TextField label="" name="cap_gaz" value=""/>
-                                <TextField label="" name="content_gaz" value=""/>
                             </Panel>
+                            <TextField label="Cap gaz" name="cap_gaz" value={this.state.cap_gaz}/>
+                            <TextField label="Content gaz" name="content_gaz" value={this.state.content_gaz}/>
                         </div>
                     </div>
                     
