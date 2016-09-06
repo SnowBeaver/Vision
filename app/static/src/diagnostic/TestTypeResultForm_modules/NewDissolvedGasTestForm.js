@@ -31,12 +31,23 @@ const TextField = React.createClass({
 const CheckBox = React.createClass({
     render: function () {
         var name = (this.props.name != null) ? this.props.name: "";
-        return (
-            <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
-                </span>
-            </Checkbox>
-        );
+        var checked = (this.props.value != null) ? this.props.value: false;
+        if (checked) {
+            return (
+                <Checkbox checked name={name}>
+                    <span className="glyphicon glyphicon-menu-left">
+                    </span>
+                </Checkbox>
+            );
+        }
+        else {
+            return (
+                <Checkbox name={name}>
+                    <span className="glyphicon glyphicon-menu-left" >
+                    </span>
+                </Checkbox>
+            );
+        }
     }
 
 });
@@ -143,10 +154,21 @@ var NewDissolvedGasTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
-        this.setState(state);
-    },
+       var state = {};
+       if (e.target.type == 'checkbox') {
+           state[e.target.name] = e.target.checked;
+       }
+       else if (e.target.type == 'radio') {
+           state[e.target.name] = e.target.value;
+       }
+       else if (e.target.type == 'select-one') {
+           state[e.target.name] = e.target.value;
+       }
+       else {
+           state[e.target.name] = $.trim(e.target.value);
+       }
+       this.setState(state);
+   },
 
     _validate: function () {
         var errors = {};
@@ -171,24 +193,23 @@ var NewDissolvedGasTestForm = React.createClass({
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-
                     <div className="row">
                         <div className="col-md-9">
                             <div className="row">
                                 <div className="col-md-1 ">
-                                    <CheckBox name="h2_flag"/>
+                                    <CheckBox name="h2_flag" value={this.state.h2_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Hydrogen-H2" name="h2" value={this.state.h2}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <CheckBox name="o2_flag"/>
+                                    <CheckBox name="o2_flag" value={this.state.o2_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Oxygen-O2" name="o2" value={this.state.o2}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <CheckBox name="n2_flag"/>
+                                    <CheckBox name="n2_flag" value={this.state.n2_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                      <TextField label="Nitrogen-N2" name="n2" value={this.state.n2}/>
@@ -197,19 +218,19 @@ var NewDissolvedGasTestForm = React.createClass({
 
                             <div className="row">
                                 <div className="col-md-1 ">
-                                    <CheckBox name="co_flag"/>
+                                    <CheckBox name="co_flag" value={this.state.co_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="CO" name="co" value={this.state.co}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <CheckBox name="ch4_flag"/>
+                                    <CheckBox name="ch4_flag" value={this.state.ch4_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Methane-CH4" name="ch4" value={this.state.ch4}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <CheckBox name="co2_flag"/>
+                                    <CheckBox name="co2_flag" value={this.state.co2_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="CO2" name="co2" value={this.state.co2}/>
@@ -218,19 +239,19 @@ var NewDissolvedGasTestForm = React.createClass({
 
                             <div className="row">
                                 <div className="col-md-1 ">
-                                    <CheckBox name="c2h4_flag"/>
+                                    <CheckBox name="c2h4_flag" value={this.state.c2h4_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Ethylene-C2H4" name="c2h4" value={this.state.c2h4}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <CheckBox name="c2h6_flag"/>
+                                    <CheckBox name="c2h6_flag" value={this.state.c2h6_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Ethane-C2H6" name="c2h6" value={this.state.c2h6}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <CheckBox name="c2h2_flag"/>
+                                    <CheckBox name="c2h2_flag" value={this.state.c2h2_flag}/>
                                 </div>
                                 <div className="col-md-2">
                                     <TextField label="Acetylene-C2H2" name="c2h2" value={this.state.c2h2}/>

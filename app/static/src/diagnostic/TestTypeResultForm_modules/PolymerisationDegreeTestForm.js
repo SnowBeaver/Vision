@@ -1,9 +1,7 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
@@ -26,19 +24,6 @@ const TextField = React.createClass({
             </FormGroup>
         );
     }
-});
-
-const CheckBox = React.createClass({
-    render: function () {
-        var name = (this.props.name != null) ? this.props.name: "";
-        return (
-            <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
-                </span>
-            </Checkbox>
-        );
-    }
-
 });
 
 
@@ -263,10 +248,8 @@ var PolymerisationDegreeTestForm = React.createClass({
                     </div>
 
                     <div className="row">
-                        <div className="col-md-1 pull-right">
+                        <div className="col-md-3 pull-right">
                             <b>Winding</b>
-                        </div>
-                        <div className="col-md-2 pull-right">
                             <TextField label="winding" name="winding" value={this.state.winding}/>
                         </div>
 
