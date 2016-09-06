@@ -15,11 +15,8 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
-        console.log("NewFluidTestForm TextField " + name + " value: " + value);
-        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
@@ -45,7 +42,6 @@ const CheckBox = React.createClass({
 });
 
 
-
 var PolymerisationDegreeTestForm = React.createClass({
 
     getInitialState: function () {
@@ -61,17 +57,42 @@ var PolymerisationDegreeTestForm = React.createClass({
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
         return $.ajax({
-            url: '/api/v1.0/polymerisation_degree_test/',
-            type: 'POST',
+            url: url,
+            type: type,
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -145,7 +166,6 @@ var PolymerisationDegreeTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -168,13 +188,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase A</b>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_a1" value={this.state.phase_a1}/>
+                            <TextField label="phase_a1" name="phase_a1" value={this.state.phase_a1}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_a2" value={this.state.phase_a2}/>
+                            <TextField label="phase_a2" name="phase_a2" value={this.state.phase_a2}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_a3" value={this.state.phase_a3}/>
+                            <TextField label="phase_a3" name="phase_a3" value={this.state.phase_a3}/>
                         </div>
                     </div>
 
@@ -183,13 +203,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase B</b>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_b1" value={this.state.phase_b1}/>
+                            <TextField label="phase_b1" name="phase_b1" value={this.state.phase_b1}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_b2" value={this.state.phase_b2}/>
+                            <TextField label="phase_b2" name="phase_b2" value={this.state.phase_b2}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_b3" value={this.state.phase_b3}/>
+                            <TextField label="phase_b3" name="phase_b3" value={this.state.phase_b3}/>
                         </div>
                     </div>
 
@@ -198,13 +218,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase C</b>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_c1" value={this.state.phase_c1}/>
+                            <TextField label="phase_c1" name="phase_c1" value={this.state.phase_c1}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_c2" value={this.state.phase_c2}/>
+                            <TextField label="phase_c2" name="phase_c2" value={this.state.phase_c2}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="" name="phase_c3" value={this.state.phase_c3}/>
+                            <TextField label="phase_c3" name="phase_c3" value={this.state.phase_c3}/>
                         </div>
                     </div>
 
@@ -216,23 +236,38 @@ var PolymerisationDegreeTestForm = React.createClass({
 
                     </div>
                     <div className="row">
-                        <div className="col-md-3">
-                            <TextField label="" name="lead_a" value={this.state.lead_a}/>
+                        <div className="col-md-1">
+                            <b>Lead A</b>
                         </div>
-                        <div className="col-md-3">
-                            <TextField label="" name="lead_b" value={this.state.lead_b}/>
+                        <div className="col-md-2">
+                            <TextField label="lead_a" name="lead_a" value={this.state.lead_a}/>
                         </div>
-                        <div className="col-md-3">
-                            <TextField label="" name="lead_c" value={this.state.lead_c}/>
+                        <div className="col-md-1">
+                            <b>Lead B</b>
                         </div>
-                        <div className="col-md-3">
-                            <TextField label="" name="lead_n" value={this.state.lead_n}/>
+                        <div className="col-md-2">
+                            <TextField label="lead_b" name="lead_b" value={this.state.lead_b}/>
+                        </div>
+                        <div className="col-md-1">
+                            <b>Lead C</b>
+                        </div>
+                        <div className="col-md-2">
+                            <TextField label="lead_c" name="lead_c" value={this.state.lead_c}/>
+                        </div>
+                        <div className="col-md-1">
+                            <b>Lead N</b>
+                        </div>
+                        <div className="col-md-2">
+                            <TextField label="lead_n" name="lead_n" value={this.state.lead_n}/>
                         </div>
                     </div>
 
                     <div className="row">
-                        <div className="col-md-3 pull-right">
-                            <TextField label="" name="winding" value={this.state.winding}/>
+                        <div className="col-md-1 pull-right">
+                            <b>Winding</b>
+                        </div>
+                        <div className="col-md-2 pull-right">
+                            <TextField label="winding" name="winding" value={this.state.winding}/>
                         </div>
 
                     </div>
@@ -258,4 +293,3 @@ var PolymerisationDegreeTestForm = React.createClass({
 
 
 export default PolymerisationDegreeTestForm;
-
