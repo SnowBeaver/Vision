@@ -31,59 +31,170 @@ const TextField = React.createClass({
 });
 
 var SelectField = React.createClass({
-   handleChange: function(event, index, value){
-       this.setState({
-           value: event.target.value
-       });
-   },
-   getInitialState: function () {
-       return {
-           items: [],
-           isVisible: false,
-           value: -1
-       };
-   },
-   isVisible: function(){
-       return this.state.isVisible;
-   },
-   componentDidMount: function(){
-       var source = '/api/v1.0/' + this.props.source + '/';
-       this.serverRequest = $.get(source, function (result){
-           this.setState({ items: (result['result']) });
-       }.bind(this), 'json');
-   },
-   componentWillUnmount: function() {
-       this.serverRequest.abort();
-   },
-   setVisible: function(){
-       this.state.isVisible = true;
-   },
-   render: function() {
-       var label = (this.props.label != null) ? this.props.label: "";
-       var value = (this.props.value != null) ? this.props.value: "";
-       var menuItems = [];
-       for (var key in this.state.items) {
-           menuItems.push(<option key={this.state.items[key].id}
-                                  value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-       }
-       return (
-           <FormGroup>
-               <ControlLabel>{label}</ControlLabel>
-               <FormControl componentClass="select"
-                            onChange={this.handleChange}
-                            defaultValue={value}
-                            >
-                   {menuItems}
-               </FormControl>
-           </FormGroup>
-       );
-   }
+    handleChange: function(event, index, value){
+        this.setState({
+            value: event.target.value
+        });
+    },
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: false,
+            value: -1
+        };
+    },
+    isVisible: function(){
+        return this.state.isVisible;
+    },
+    componentDidMount: function(){
+        var source = '/api/v1.0/' + this.props.source + '/';
+        this.serverRequest = $.get(source, function (result){
+            this.setState({ items: (result['result']) });
+        }.bind(this), 'json');
+    },
+    componentWillUnmount: function() {
+        this.serverRequest.abort();
+    },
+    setVisible: function(){
+        this.state.isVisible = true;
+    },
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl componentClass="select"
+                             onChange={this.handleChange}
+                             defaultValue={value}
+                >
+                    {menuItems}
+                </FormControl>
+            </FormGroup>
+        );
+    }
 });
 
 
 
 
 var AirBreakerParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "welded_cover", "current_rating"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
+
+
     render : function () {
         return(
             <div>
@@ -108,8 +219,121 @@ var AirBreakerParams = React.createClass ({
 
 
 var BushingParams = React.createClass ({
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "winding", "model", "kw", "current", "fluid_volume",
+                "bushing_manufacturer_h1", "bushing_manufacturer_h2", "bushing_manufacturer_h3", "bushing_manufacturer_hn",
+                "bushing_manufacturer_x1", "bushing_manufacturer_x2", "bushing_manufacturer_x3", "bushing_manufacturer_xn",
+                "bushing_manufacturer_t1", "bushing_manufacturer_t2", "bushing_manufacturer_t3", "bushing_manufacturer_tn",
+                "bushing_manufacturer_q1", "bushing_manufacturer_q2", "bushing_manufacturer_q3", "bushing_manufacturer_qn",
+                "bushing_type_h", "bushing_type_hn", "bushing_type_x", "bushing_type_xn", "bushing_type_t", "bushing_type_tn",
+                "bushing_type_q", "bushing_type_qn", "c1", "c1pf", "c2", "c2pf", "bil"
+            ]
+        }
+    },
 
-render : function () {
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
+    render : function () {
         return(
             <div>
                 <div className="row">
@@ -126,11 +350,11 @@ render : function () {
                         <TextField label="Voltage" name="kv" value={this.state.kv}/>
                     </div>
                     <div className="col-md-3">
-                    <SelectField
-                        source="fluid_type"
-                        label="Fluid Type"
-                        value={this.state.fluid_type_id}/>
-                </div>
+                        <SelectField
+                            source="fluid_type"
+                            label="Fluid Type"
+                            value={this.state.fluid_type_id}/>
+                    </div>
                     <div className="col-md-3">
                         <TextField label="Model" name="model" value={this.state.model}/>
                     </div>
@@ -156,7 +380,7 @@ render : function () {
                         <TextField label="C2PF" name="c2pf" value={this.state.c2pf}/>
                     </div>
                 </div>
-                
+
                 <div className="row">
                     <div className="col-md-2">
                         <TextField label="Current" name="current" value={this.state.current}/>
@@ -181,7 +405,7 @@ render : function () {
                     </div>
                 </div>
 
-                 <div className="row">
+                <div className="row">
                     <div className="col-md-3">
                         <TextField label="Manufac. X1" name="bushing_manufacturer_x1" value={this.state.bushing_manufacturer_x1}/>
                     </div>
@@ -196,7 +420,7 @@ render : function () {
                     </div>
                 </div>
 
-                 <div className="row">
+                <div className="row">
                     <div className="col-md-3">
                         <TextField label="Manufac. T1" name="bushing_manufacturer_t1" value={this.state.bushing_manufacturer_t1}/>
                     </div>
@@ -211,7 +435,7 @@ render : function () {
                     </div>
                 </div>
 
-                 <div className="row">
+                <div className="row">
                     <div className="col-md-3">
                         <TextField label="Manufac. Q1" name="bushing_manufacturer_q1" value={this.state.bushing_manufacturer_q1}/>
                     </div>
@@ -226,7 +450,7 @@ render : function () {
                     </div>
                 </div>
 
-                 <div className="row">
+                <div className="row">
                     <div className="col-md-3">
                         <TextField label="Type H" name="bushing_type_h" value={this.state.bushing_type_h}/>
                     </div>
@@ -262,6 +486,115 @@ render : function () {
 
 
 var CapacitorParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "welded_cover", "current_rating", "kv", "kvar", "bil"
+
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
     render : function () {
         return(
             <div>
@@ -292,6 +625,115 @@ var CapacitorParams = React.createClass ({
 
 
 var BreakerParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "welded_cover", "current_rating", "open", "current_rating"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div>
@@ -347,6 +789,115 @@ var BreakerParams = React.createClass ({
 
 
 var PowerSourceParams = React.createClass ({
+
+     getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "welded_cover", "kv", "threephase"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div className="row">
@@ -372,6 +923,116 @@ var PowerSourceParams = React.createClass ({
 
 
 var CableParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "model", "threephase"
+
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div className="row">
@@ -391,15 +1052,126 @@ var CableParams = React.createClass ({
 
 
 var SwitchGearParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "model", "welded_cover", "current_rating", "threephase"
+
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
+
     render : function () {
         return(
             <div className="row">
-                 <div className="col-md-3">
-                        <SelectField
-                            source="insulation"
-                            label="Insulation Type"
-                            value={this.state.insulation_id}/>
-                    </div>
+                <div className="col-md-3">
+                    <SelectField
+                        source="insulation"
+                        label="Insulation Type"
+                        value={this.state.insulation_id}/>
+                </div>
                 <div className="col-md-3">
                     <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
                 </div>
@@ -419,6 +1191,117 @@ var SwitchGearParams = React.createClass ({
 
 
 var InductionMachineParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "model", "welded_cover", "current_rating", "threephase",
+                "hp" , "kva", "pf"
+
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div className="row">
@@ -428,7 +1311,7 @@ var InductionMachineParams = React.createClass ({
                 <div className="col-md-2">
                     <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
                 </div>
-                 <div className="col-md-2">
+                <div className="col-md-2">
                     <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
                 </div>
                 <div className="col-md-2">
@@ -447,6 +1330,115 @@ var InductionMachineParams = React.createClass ({
 
 
 var SyncroMachineParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "model", "welded_cover", "current_rating", "hp", "kw"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div className="row">
@@ -472,12 +1464,117 @@ var SyncroMachineParams = React.createClass ({
 });
 
 
-var LocalizationParams = React.createClass ({
-
-});
-
-
 var TapChangerParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "model", "welded_cover", "current_rating", "hp", "kw"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
+
     render : function () {
         return(
             <div>
@@ -526,6 +1623,115 @@ var TapChangerParams = React.createClass ({
 
 
 var RectifierParams = React.createClass ({
+
+     getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "model", "welded_cover", "fluid_volume", "cooling_rating"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div>
@@ -572,21 +1778,126 @@ var RectifierParams = React.createClass ({
 });
 
 
-var SiteParams = React.createClass ({
-
-});
-
-
 var TransformerParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["phase_number", "sealed", "model", "welded_cover", "fluid_volume", "cooling_rating"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
+
     render : function () {
         return(
             <div>
                 <div className="row">
                     <div className="col-md-2">
-                    <SelectField
-                        source="gas_sensor"
-                        label="Gas Sensor"
-                        value={this.state.gas_sensor}/>
+                        <SelectField
+                            source="gas_sensor"
+                            label="Gas Sensor"
+                            value={this.state.gas_sensor}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="Windings" name="windings" value={this.state.windings}/>
@@ -594,7 +1905,7 @@ var TransformerParams = React.createClass ({
                     <div className="col-md-2">
                         <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
                     </div>
-                   <div className="col-md-2">
+                    <div className="col-md-2">
                         <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
                     </div>
                     <div className="col-md-2">
@@ -668,6 +1979,114 @@ var TransformerParams = React.createClass ({
 
 
 var TankParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["sealed",  "welded_cover"]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div>
@@ -698,6 +2117,114 @@ var TankParams = React.createClass ({
 
 
 var SwitchParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["sealed",  "welded_cover", "threephase", "current_rating"]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div>
@@ -715,7 +2242,7 @@ var SwitchParams = React.createClass ({
                         <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
                     </div>
                     <div className="col-md-2">
-                    <TextField label="three Phase" name="threephase" value={this.state.threephase}/>
+                        <TextField label="three Phase" name="threephase" value={this.state.threephase}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="Current Rating" name="current_rating" value={this.state.current_rating}/>
@@ -728,6 +2255,114 @@ var SwitchParams = React.createClass ({
 
 
 var InductanceParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["sealed",  "welded_cover", "winding", "fluid_volume", "cooling_rating"]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div className="row">
@@ -749,21 +2384,21 @@ var InductanceParams = React.createClass ({
                         label="Gas Sensor"
                         value={this.state.gas_sensor}/>
                 </div>
-                 <div className="col-md-2">
-                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
-                    </div>
-                    <div className="col-md-2">
-                        <TextField label="Winding" name="winding" value={this.state.winding}/>
-                    </div>
-                    <div className="col-md-2">
-                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
-                    </div>
-                    <div className="col-md-2">
+                <div className="col-md-2">
+                    <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Winding" name="winding" value={this.state.winding}/>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                </div>
+                <div className="col-md-2">
                     <TextField label="Fluid Volume" name="fluid_volume" value={this.state.fluid_volume}/>
-                    </div>
-                    <div className="col-md-2">
-                        <TextField label="Cooling Rating" name="cooling_rating" value={this.state.cooling_rating}/>
-                    </div>
+                </div>
+                <div className="col-md-2">
+                    <TextField label="Cooling Rating" name="cooling_rating" value={this.state.cooling_rating}/>
+                </div>
             </div>
         )
     }
@@ -771,6 +2406,116 @@ var InductanceParams = React.createClass ({
 
 
 var GasSensorParams = React.createClass ({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: ["sealed",  "welded_cover", "winding", "fluid_volume", "cooling_rating", "h2",
+                "c2h2", "c2h4", "c2h6", "co", "co2", "o2", "n2", "ppm_error", "percent_error", "model"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
     render : function () {
         return(
             <div>
@@ -830,10 +2575,8 @@ export default CableParams ;
 export default SwitchGearParams ;
 export default InductionMachineParams ;
 export default SyncroMachineParams ;
-export default LocalizationParams ;
 export default TapChangerParams ;
 export default RectifierParams ;
-export default SiteParams ;
 export default TransformerParams ;
 export default TankParams ;
 export default SwitchParams ;
