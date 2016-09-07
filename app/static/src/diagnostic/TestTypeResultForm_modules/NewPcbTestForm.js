@@ -14,8 +14,6 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
-        console.log("NewFluidTestForm TextField " + name + " value: " + value);
-        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -33,14 +31,24 @@ const TextField = React.createClass({
 const CheckBox = React.createClass({
     render: function () {
         var name = (this.props.name != null) ? this.props.name: "";
-        return (
-            <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
-                </span>
-            </Checkbox>
-        );
+        var checked = (this.props.value != null) ? this.props.value: false;
+        if (checked) {
+            return (
+                <Checkbox checked name={name}>
+                    <span className="glyphicon glyphicon-menu-left">
+                    </span>
+                </Checkbox>
+            );
+        }
+        else {
+            return (
+                <Checkbox name={name}>
+                    <span className="glyphicon glyphicon-menu-left" >
+                    </span>
+                </Checkbox>
+            );
+        }
     }
-
 });
 
 var NewPcbTestForm = React.createClass({
@@ -57,16 +65,39 @@ var NewPcbTestForm = React.createClass({
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+        }
         return $.ajax({
-            url: '/api/v1.0/pcb_test/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -102,7 +133,6 @@ var NewPcbTestForm = React.createClass({
     },
 
     _onError: function (data) {
-
         var message = "Failed to create";
         var res = data.responseJSON;
         if (res.message) {
@@ -116,9 +146,20 @@ var NewPcbTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
-        this.setState(state);
+       var state = {};
+       if (e.target.type == 'checkbox') {
+           state[e.target.name] = e.target.checked;
+       }
+       else if (e.target.type == 'radio') {
+           state[e.target.name] = e.target.value;
+       }
+       else if (e.target.type == 'select-one') {
+           state[e.target.name] = e.target.value;
+       }
+       else {
+           state[e.target.name] = $.trim(e.target.value);
+       }
+       this.setState(state);
     },
 
     _validate: function () {
@@ -141,26 +182,24 @@ var NewPcbTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-
                     <div className="row">
                         <div className="col-md-1 ">
-                            <CheckBox name="aroclor_1242_flag"/>
+                            <CheckBox name="aroclor_1242_flag" value={this.state.aroclor_1242_flag}/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="Aroclor-1242" name="aroclor_1242" value={this.state.aroclor_1242}/>
                         </div>
                         <div className="col-md-1 ">
-                            <CheckBox name="aroclor_1254_flag"/>
+                            <CheckBox name="aroclor_1254_flag" value={this.state.aroclor_1254_flag}/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="Aroclor-1254" name="aroclor_1254" value={this.state.aroclor_1254}/>
                         </div>
                         <div className="col-md-1 ">
-                            <Checkbox name="aroclor_1260_flag"/>
+                            <CheckBox name="aroclor_1260_flag" value={this.state.aroclor_1260_flag}/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="Aroclor-1260" name="aroclor_1260" value={this.state.aroclor_1260}/>
@@ -172,11 +211,9 @@ var NewPcbTestForm = React.createClass({
                             <TextField label="PCB-Total" name="pcb_total" value={this.state.pcb_total}/>
                         </div>
                         <div className="col-md-1 pull-right">
-                            <Checkbox name="total_flag"/>
+                            <CheckBox name="total_flag" value={this.state.total_flag}/>
                         </div>
                     </div>
-
-
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
@@ -195,6 +232,5 @@ var NewPcbTestForm = React.createClass({
         );
     }
 });
-
 
 export default NewPcbTestForm;
