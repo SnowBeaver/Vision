@@ -9,6 +9,7 @@ import {findDOMNode} from 'react-dom';
 import { hashHistory } from 'react-router';
 import {Link} from 'react-router';
 
+
 const TextField = React.createClass({
     render: function() {
         var label = (this.props.label != null) ? this.props.label: "";
@@ -53,7 +54,6 @@ const CheckBox = React.createClass({
 });
 
 
-
 var NewDissolvedGasTestForm = React.createClass({
 
     getInitialState: function () {
@@ -94,18 +94,16 @@ var NewDissolvedGasTestForm = React.createClass({
         var fields = this.state.fields;
         var data = {test_result_id: this.props.testResultId};
         var url = '/api/v1.0/' + this.props.tableName + '/';
-        var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
         if ('id' in this.state) {
             url += this.state['id'];
-            type = 'PUT';
         }
         return $.ajax({
             url: url,
-            type: type,
+            type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),

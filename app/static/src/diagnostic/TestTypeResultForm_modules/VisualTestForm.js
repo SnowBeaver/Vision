@@ -128,22 +128,20 @@ var VisualTestForm = React.createClass({
         }.bind(this), 'json');
     },
 
-        _create: function () {
+    _create: function () {
         var fields = this.state.fields;
         var data = {test_result_id: this.props.testResultId};
         var url = '/api/v1.0/' + this.props.tableName + '/';
-        var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
         if ('id' in this.state) {
             url += this.state['id'];
-            type = 'PUT';
         }
         return $.ajax({
             url: url,
-            type: type,
+            type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
