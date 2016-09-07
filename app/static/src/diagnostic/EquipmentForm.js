@@ -54,9 +54,8 @@ var EquipmentTypeSelectField = React.createClass({
 
     handleChange: function (event, index, value) {
         this.setState({
-            value: event.target.value,
-
-        })
+            value: event.target.value
+        });
     },
 
     getInitialState: function () {
@@ -90,7 +89,6 @@ var EquipmentTypeSelectField = React.createClass({
 
     render: function () {
         var menuItems = [];
-        var typeName = null;
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
@@ -604,68 +602,90 @@ var ManufacturedSelectField = React.createClass ({
 var EqAdditionalParams = React.createClass ({
 
     getInitialState: function () {
+        console.log(this.props.data);
         return {
-            tableName: null
-        };
+            tableName: ''
+        }
     },
-
     componentDidMount: function () {
-        var source = '/api/v1.0/equipment_type/'+this.props.eqId ;
-        this.serverRequest = $.get(source, function (result) {
-            var res = (result['result']);
-            if (res.length > 0) {
-                this.setState({tableName: res['name']});
-            }
-        }.bind(this), 'json');
+        // var source = '/api/v1.0/equipment_type/'+ this.props.data.id ;
+        // this.serverRequest = $.get(source, function (result) {
+        //     var res = (result['result']);
+        //     if (res.length > 0) {
+        //         this.setState({tableName: res['name']});
+        //     }
+        // }.bind(this), 'json');
+
+        console.log(this.props.data);
     },
 
     render: function () {
-         if (this.props.tableName == null) {
-           return (<div></div>);
-       }
 
-        console.log(this.state.tableName);
-        console.log(this.props.eqId);
-        switch(this.state.tableName){
-            case 'Air circuit breaker':
-                console.log("case1");
-                return (<AirBreakerParams/>);
-            case 'Bushing':
-                return (<BushingParams/>);
-            case 'Capacitor':
-                return (<CapacitorParams/>);
-            case 'Breaker':
-                return (<BreakerParams/>);
-            case 'Power source':
-                return (<PowerSourceParams/>);
-            case 'Cable':
-                return (<CableParams/>);
-            case 'Switchgear':
-                return (<SwitchGearParams/>);
-            case 'Induction Machine':
-                console.log("case7");
-                return (<InductionMachineParams/>);
-            case 'Synchronous machine':
-                return (<SyncroMachineParams/>);
-            case 'Tap changer':
-                return (<TapChangerParams/>);
-            case 'Rectifier':
-                return (<RectifierParams/>);
-            case 'Transformer':
-                return (<TransformerParams/>);
-            case 'Tank':
-                return (<TankParams/>);
-            case 'Switch':
-                return (<SwitchParams/>);
-            case 'Inductance':
-                return (<InductanceParams/>);
-            case 'Gas sensor':
-                return (<GasSensorParams/>);
-
-            default:
-                console.log("def");
-                return (<div></div>);
+        if ( typeof this.props.data == 'undefined') {
+            return null;
         }
+        console.log(this.props.data.text);
+        console.log(typeof this.props.data.text);
+
+        if(this.props.data.text==='Air circuit breaker')
+            return(<AirBreakerParams/>);
+        else if (this.props.data.text==='Bushing')
+            return(<BushingParams/>);
+        else return(null);
+
+        // switch(this.props.data.text.toString){
+        //     case 'Air circuit breaker':
+        //         return (<AirBreakerParams/>);
+        //     break;
+        //     case 'Bushing':
+        //         return (<BushingParams/>);
+        //     break;
+        //     case 'Capacitor':
+        //         return (<CapacitorParams/>);
+        //     break;
+        //     case 'Breaker':
+        //         return (<BreakerParams/>);
+        //     break;
+        //     case 'Power source':
+        //         return (<PowerSourceParams/>);
+        //     break;
+        //     case 'Cable':
+        //         return (<CableParams/>);
+        //     break;
+        //     case 'Switchgear':
+        //         return (<SwitchGearParams/>);
+        //     break;
+        //     case 'Induction Machine':
+        //        return (<InductionMachineParams/>);
+        //     break;
+        //     case 'Synchronous machine':
+        //         return (<SyncroMachineParams/>);
+        //     break;
+        //     case 'Tap changer':
+        //         return (<TapChangerParams/>);
+        //     break;
+        //     case 'Rectifier':
+        //         return (<RectifierParams/>);
+        //     break;
+        //     case 'Transformer':
+        //         return (<TransformerParams/>);
+        //     break;
+        //     case 'Tank':
+        //         return (<TankParams/>);
+        //     break;
+        //     case 'Switch':
+        //         return (<SwitchParams/>);
+        //     break;
+        //     case 'Inductance':
+        //         return (<InductanceParams/>);
+        //     break;
+        //     case 'Gas sensor':
+        //         return (<GasSensorParams/>);
+        //     break;
+        //
+        //     default:
+        //         return null;
+        // }
     }
 });
 
@@ -783,9 +803,18 @@ const EquipmentForm = React.createClass({
         }
         else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
+
         } else {
             state[e.target.name] = $.trim(e.target.value);
         }
+        if (e.target.name == 'equipment_type_id') {
+            state['option_text'] = {
+                name: e.target.name,
+                id: e.target.value,
+                text: e.target[e.target.selectedIndex].text
+            }
+        }
+
         this.setState(state);
     },
 
@@ -803,21 +832,6 @@ const EquipmentForm = React.createClass({
             className += " has-error"
         }
         return className;
-    },
-
-    onEquipmentTypeChange: function (e) {
-        $.get('/api/v1.0/equipment_type/1', function (result) {
-
-            var eqtype_fields = (result['result']);
-            this.setState({
-                eqtype_fields: eqtype_fields
-            });
-        }.bind(this), 'json');
-
-        console.log(this.state.eqtype_fields);
-        console.log(e.target);
-
-
     },
 
     handleClose: function (e) {
@@ -913,9 +927,6 @@ const EquipmentForm = React.createClass({
 
 
     render: function() {
-        console.log("PARAMS",this.state.equipment_type_id);
-        console.log("chill:"+this.state.equipment_type);
-
         return (
             <div className="form-container">
                 <form id="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -927,7 +938,6 @@ const EquipmentForm = React.createClass({
                                     <EquipmentTypeSelectField
                                         source="/api/v1.0/equipment_type"
                                         value={this.state.equipment_type_id}
-                                        onChange={this.onEquipmentTypeChange}
                                     />
                                 </div>
                                 <div className="col-md-1">
@@ -939,7 +949,7 @@ const EquipmentForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-12">
-                                    <EqAdditionalParams eqId={this.state.equipment_type_id} />
+                                    <EqAdditionalParams data={this.state.option_text}/>
                                 </div>
                             </div>
                             <div className="row">
