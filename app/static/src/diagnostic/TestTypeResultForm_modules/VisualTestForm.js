@@ -80,6 +80,20 @@ const TextField = React.createClass({
     }
 });
 
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        var checked = (this.props.value != null) ? this.props.value: false;
+        var is_checked = (checked) ? 'checked': '';
+        return (
+           <Checkbox checked={is_checked} name={name}>
+               <span className="glyphicon glyphicon-menu-left">
+               </span>
+           </Checkbox>
+        );
+    }
+});
+
 var VisualTestForm = React.createClass({
     getInitialState: function () {
         return {
@@ -90,6 +104,7 @@ var VisualTestForm = React.createClass({
                 "tank_sampling_valve_id", "tank_oil_level_id", "tank_oil_pump_id",
                 "tank_winding_temp_max", "tank_winding_temp_actual", "tank_gas_analyser",
                 "tank_oil_temp_max", "tank_oil_temp_actual", "tank_overall_condition_id",
+                "tank_oil_flag", "tank_winding_flag",
                 "misc_foundation_id", "misc_temp_ambiant", "misc_load", "grounding_value",
                 "grounding_connection_id", "tap_changer_gasket_id",
                 "tap_changer_overpressure_valve_id", "tap_changer_oil_level_id",
@@ -300,7 +315,8 @@ var VisualTestForm = React.createClass({
                                                    value={this.state.tank_winding_temp_actual}/>
                                     </div>
                                     <div className="col-md-2">
-                                        <Checkbox ><b>Ctc</b></Checkbox>
+                                        <b>Ctc</b><CheckBox name="tank_winding_flag"
+                                                            value={this.state.tank_winding_flag}/>
                                     </div>
                                     <div className="col-md-3 nopadding">
                                         <TextField name="tank_gas_analyser"
@@ -325,7 +341,8 @@ var VisualTestForm = React.createClass({
                                                    value={this.state.tank_oil_temp_actual}/>
                                     </div>
                                     <div className="col-md-2">
-                                        <Checkbox ><b>Ctc</b></Checkbox>
+                                        <b>Ctc</b><CheckBox name="tank_oil_flag"
+                                                            value={this.state.tank_oil_flag}/>
                                     </div>
                                     <div className="col-md-4">
                                         <SelectField name="tank_overall_condition_id"

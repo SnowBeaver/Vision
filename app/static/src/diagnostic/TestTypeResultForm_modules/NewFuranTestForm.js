@@ -32,27 +32,17 @@ const CheckBox = React.createClass({
     render: function () {
         var name = (this.props.name != null) ? this.props.name: "";
         var checked = (this.props.value != null) ? this.props.value: false;
-        if (checked) {
-            return (
-                <Checkbox checked name={name}>
-                    <span className="glyphicon glyphicon-menu-left">
-                    </span>
-                </Checkbox>
-            );
-        }
-        else {
-            return (
-                <Checkbox name={name}>
-                    <span className="glyphicon glyphicon-menu-left" >
-                    </span>
-                </Checkbox>
-            );
-        }
+        var is_checked = (checked) ? 'checked': '';
+        return (
+           <Checkbox checked={is_checked} name={name}>
+               <span className="glyphicon glyphicon-menu-left">
+               </span>
+           </Checkbox>
+        );
     }
 });
 
 var NewFuranTestForm = React.createClass({
-
     getInitialState: function () {
         return {
             loading: false,
@@ -146,9 +136,20 @@ var NewFuranTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
-        this.setState(state);
+       var state = {};
+       if (e.target.type == 'checkbox') {
+           state[e.target.name] = e.target.checked;
+       }
+       else if (e.target.type == 'radio') {
+           state[e.target.name] = e.target.value;
+       }
+       else if (e.target.type == 'select-one') {
+           state[e.target.name] = e.target.value;
+       }
+       else {
+           state[e.target.name] = $.trim(e.target.value);
+       }
+       this.setState(state);
     },
 
     _validate: function () {

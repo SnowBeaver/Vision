@@ -33,24 +33,14 @@ const CheckBox = React.createClass({
     render: function () {
         var name = (this.props.name != null) ? this.props.name: "";
         var checked = (this.props.value != null) ? this.props.value: false;
-        if (checked) {
-            return (
-                <Checkbox checked name={name}>
-                    <span className="glyphicon glyphicon-menu-left">
-                    </span>
-                </Checkbox>
-            );
-        }
-        else {
-            return (
-                <Checkbox name={name}>
-                    <span className="glyphicon glyphicon-menu-left" >
-                    </span>
-                </Checkbox>
-            );
-        }
+        var is_checked = (checked) ? 'checked': '';
+        return (
+           <Checkbox checked={is_checked} name={name}>
+               <span className="glyphicon glyphicon-menu-left">
+               </span>
+           </Checkbox>
+        );
     }
-
 });
 
 var SelectField = React.createClass({
