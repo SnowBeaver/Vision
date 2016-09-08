@@ -36,7 +36,7 @@ var NewParticleTestForm = React.createClass({
             errors: {},
             fields: [
                 '_2um', '_5um', '_10um', '_15um',
-                '_25um', '_50um', '_100um', '_nas1638',
+                '_25um', '_50um', '_100um', 'nas1638',
                 'iso4406_1', 'iso4406_2', 'iso4406_3'
             ]
         }
@@ -177,7 +177,7 @@ var NewParticleTestForm = React.createClass({
                             <TextField label=">100um" name="_100um" value={this.state._100um}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="NAS1638" name="_nas1638" value={this.state._nas1638}/>
+                            <TextField label="NAS1638" name="nas1638" value={this.state.nas1638}/>
                         </div>
                     </div>
                     <div className="row">
