@@ -617,7 +617,6 @@ var NewTestForm = React.createClass({
         // fill up form with data
 
         var url = '/api/v1.0/test_result/' + id; // edit
-        console.log(url);
         this.serverRequest = $.get(url, function (result){ 
             var data = (result['result']);
         
@@ -627,10 +626,22 @@ var NewTestForm = React.createClass({
                 var key = fields[i];
                 form[key] = data[key];
             }
+            form['id'] = id;
             this.setState(form);
-            console.log(this.state);
+            console.log(url, this.state);
            
         }.bind(this), 'json');
+    },
+    
+    _add: function(){ 
+        var fields = this.state.fields;
+        var form = {};
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            form[key] = '';
+        }
+        form['id'] = '';
+        this.setState(form);
     },
 
     _save: function () {
@@ -904,11 +915,12 @@ var NewTestForm = React.createClass({
 
     render: function () {
 
+        var title = (this.state.id) ? "Edit test": 'New test';
         return (
             this.props.show ?
                 <div className="form-container">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <Panel header="New Test">
+                        <Panel header={title}>
                             <div className="maxwidth">
                                 <div className="col-md-12">
                                     <div className="maxwidth">

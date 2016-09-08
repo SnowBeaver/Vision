@@ -6,6 +6,7 @@ import Panel from 'react-bootstrap/lib/Panel';
 import {Link} from 'react-router';
 import NewTestForm from './NewTestForm';
 import Button from 'react-bootstrap/lib/Button';
+import Table from 'react-bootstrap/lib/Table';
 
 
 var TestItem = React.createClass({
@@ -19,7 +20,7 @@ var TestItem = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: true,
+            isVisible: true
         };
     },
 
@@ -37,10 +38,10 @@ var TestItem = React.createClass({
     onRemove: function () {
     },
 
-    edit: function(){
+    edit: function () {
         this.props.editTestForm(this.props.data.id);
     },
-    
+
     render: function () {
 
         if (!this.props.data || typeof this.props.data == 'undefined' || !this.state.isVisible) {
@@ -52,31 +53,27 @@ var TestItem = React.createClass({
         var performed_by = test.performed_by;
 
         return (
-            <div className="row">
-                <div id="test_prof">
-                    <div className="col-md-1">
-                    </div>
-                    <div className="col-md-2">
-                        <a href="javascript: void(0);" onClick={this.edit}>{test_type.name}</a>
-                    </div>
-                    <div className="col-md-1">
-                        {test.analysis_number}
-                    </div>
-                    <div className="col-md-1">
-                        {test_status.name}
-                    </div>
-                    <div className="col-md-2">
-                        {performed_by.name}
-                    </div>
-                    <div className="col-md-1">
-                        <a href="javascript:void(0)"
-                           className="glyphicon glyphicon-remove text-danger"
-                           onClick={this.onRemove}
-                           aria-hidden="true">
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <tr>
+                <td className="col-md-2">
+                    <a href="javascript: void(0);" onClick={this.edit}>{test_type.name}</a>
+                </td>
+                <td className="col-md-1">
+                    {test.analysis_number}
+                </td>
+                <td className="col-md-1">
+                    {test_status.name}
+                </td>
+                <td className="col-md-2">
+                    {performed_by.name}
+                </td>
+                <td className="col-md-1">
+                    <a href="javascript:void(0)"
+                       className="glyphicon glyphicon-remove text-danger"
+                       onClick={this.onRemove}
+                       aria-hidden="true">
+                    </a>
+                </td>
+            </tr>
         );
     }
 });
@@ -118,6 +115,7 @@ var TestItemList = React.createClass({
     },
 
     showTestForm: function () {
+        this.refs.new_test_form._add();
         this.setState({
             showTestForm: true
         })
@@ -133,7 +131,7 @@ var TestItemList = React.createClass({
         if (typeof id == 'undefined') {
             return null;
         }
-        
+
         this.refs.new_test_form._edit(id);
         this.setState({
             showTestForm: true
@@ -149,13 +147,13 @@ var TestItemList = React.createClass({
         var equipment_id = this.props.id;
         var tests = [];
 
-        for (var i=0;i < this.props.data.length;i++) {
+        for (var i = 0; i < this.props.data.length; i++) {
             var item = this.props.data[i];
             if (item.equipment.id == equipment_id) {
                 tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm}/>)
             }
         }
-        
+
         // this.props.data.map(function (item) {
         //     if (item.equipment.id == equipment_id) {
         //         tests.push(<TestItem data={item} editTestForm={that.editTestForm}/>)
@@ -163,24 +161,30 @@ var TestItemList = React.createClass({
         // });
 
         return (
-                <div>
-                    <div className="row">
+            <div>
+                <div className="row">
+                    <div className="col-md-12">
+                    <Table responsive id="test_prof">
+                        <tbody>
                         {tests}
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <FormGroup>
-                                <Button onClick={this.showTestForm} className="success">Add new test</Button>
-                            </FormGroup>
+                        </tbody>
+                    </Table>
                         </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-6">
+                        <FormGroup>
+                            <Button onClick={this.showTestForm} className="success">Add new test</Button>
+                        </FormGroup>
                     </div>
-                    <NewTestForm ref="new_test_form"
-                                 show={this.state.showTestForm}
-                                 handleClose={this.closeTestForm}
-                                 reloadList={this.reloadList}
-                    />
+                </div>
+                <NewTestForm ref="new_test_form"
+                             show={this.state.showTestForm}
+                             handleClose={this.closeTestForm}
+                             reloadList={this.reloadList}
+                />
 
-                </div> 
+            </div>
         );
     }
 });
