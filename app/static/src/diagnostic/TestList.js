@@ -44,18 +44,20 @@ var TestItem = React.createClass({
 
     render: function () {
 
-        if (!this.props.data || typeof this.props.data == 'undefined' || !this.state.isVisible) {
+        if (typeof this.props.data.id == 'undefined' || !this.state.isVisible) {
             return (<div>No tests</div>);
         }
+        
         var test = this.props.data;
-        var test_type = test.test_type;
+        console.log(test);
         var test_status = test.test_status;
-        var performed_by = test.performed_by;
+        var test_type_name = (test.test_type != null) ? test.test_type.name: 'undefined';
+        var performed_by_name = (test.performed_by != null) ? test.performed_by.name: 'undefined';
 
         return (
             <tr>
                 <td className="col-md-2">
-                    <a href="javascript: void(0);" onClick={this.edit}>{test_type.name}</a>
+                    <a href="javascript: void(0);" onClick={this.edit}>{test_type_name}</a>
                 </td>
                 <td className="col-md-1">
                     {test.analysis_number}
@@ -64,7 +66,7 @@ var TestItem = React.createClass({
                     {test_status.name}
                 </td>
                 <td className="col-md-2">
-                    {performed_by.name}
+                    {performed_by_name}
                 </td>
                 <td className="col-md-1">
                     <a href="javascript:void(0)"
