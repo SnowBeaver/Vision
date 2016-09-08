@@ -28,8 +28,10 @@ var Home = React.createClass({
 
     onTreeNodeClick: function (treeItem) {
 
-        var src = (treeItem.equipment_id) ? '/api/v1.0/test_result/?equipment_id=' + treeItem.equipment_id : '#';
-        // console.log('got equipment id from tree click', treeItem.equipment_id);
+        // console.log('got equipment id from tree click', typeof treeItem.equipment_id);
+        // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
+        var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0; 
+        var src = '/api/v1.0/test_result/?equipment_id=' + id;
         this.setState({
             source: src
         });
