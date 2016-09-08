@@ -5,9 +5,8 @@ import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 import {Link} from 'react-router';
 import NewTestForm from './NewTestForm';
-import Button from 'react-bootstrap/lib/Button'; 
-
-// var Breadcrumbs = require('react-breadcrumbs');
+import Button from 'react-bootstrap/lib/Button';
+import Table from 'react-bootstrap/lib/Table';
 
 
 var TestItem = React.createClass({
@@ -21,24 +20,14 @@ var TestItem = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: true,
-            name: 'Electrical test 39489 by default',
-            id: null
+            isVisible: true
         };
     },
 
     componentDidMount: function () {
-        // this.serverRequest = $.get(this.props.source, function (result) {
-        //
-        //     items = (result['result']);
-        //     this.setState({
-        //         items: item
-        //     });
-        // }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
     },
 
     setVisible: function () {
@@ -46,26 +35,45 @@ var TestItem = React.createClass({
             isVisible: true
         });
     },
-    onRemove: function(){ 
+    onRemove: function () {
+    },
+
+    edit: function () {
+        this.props.editTestForm(this.props.data.id);
     },
 
     render: function () {
+
+        if (!this.props.data || typeof this.props.data == 'undefined' || !this.state.isVisible) {
+            return (<div>No tests</div>);
+        }
+        var test = this.props.data;
+        var test_type = test.test_type;
+        var test_status = test.test_status;
+        var performed_by = test.performed_by;
+
         return (
-            this.state.isVisible ?
-                <div className="row">
-                    <div id="test_prof">
-                        <div className="col-md-4">
-                            <Link to="/edit_test/{this.props.data.id}">{this.props.data.name}</Link>
-                            &nbsp;
-                            &nbsp;
-                            <a href="javascript:void(0)"
-                               className="glyphicon glyphicon-remove text-danger"
-                               onClick={this.onRemove}
-                               aria-hidden="true">
-                            </a>
-                        </div>
-                    </div>
-                </div> : null
+            <tr>
+                <td className="col-md-2">
+                    <a href="javascript: void(0);" onClick={this.edit}>{test_type.name}</a>
+                </td>
+                <td className="col-md-1">
+                    {test.analysis_number}
+                </td>
+                <td className="col-md-1">
+                    {test_status.name}
+                </td>
+                <td className="col-md-2">
+                    {performed_by.name}
+                </td>
+                <td className="col-md-1">
+                    <a href="javascript:void(0)"
+                       className="glyphicon glyphicon-remove text-danger"
+                       onClick={this.onRemove}
+                       aria-hidden="true">
+                    </a>
+                </td>
+            </tr>
         );
     }
 });
@@ -86,7 +94,7 @@ var TestItemList = React.createClass({
         };
     },
 
-    componentDidMount: function () { 
+    componentDidMount: function () {
         // load test_result and show tests for each equipment
         // this.serverRequest = $.get(this.props.source, function (result) { 
         //     items = (result['result']);
@@ -97,7 +105,7 @@ var TestItemList = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        // this.serverRequest.abort();
     },
 
     setVisible: function () {
@@ -105,44 +113,78 @@ var TestItemList = React.createClass({
             isVisible: true
         });
     },
-    
-    showTestForm: function () { 
+
+    showTestForm: function () {
+        this.refs.new_test_form._add();
         this.setState({
             showTestForm: true
         })
     },
-    
-    closeTestForm: function () { 
+
+    closeTestForm: function () {
         this.setState({
             showTestForm: false
         })
     },
 
-    render: function () {
-        var tests = [];
-        console.log(this.props.data);
-        for (var key in this.props.data) {
-            tests.push(
-                <TestItem data={this.props.data[key]}/>
-            );
-        } 
-        return (
-            this.state.isVisible ?
-                <div>
-                    <div className="row">
-                        {tests}
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <FormGroup>
-                                <Button onClick={this.showTestForm} className="success">Add new test</Button>
-                            </FormGroup>
-                        </div>
-                    </div>
+    editTestForm: function (id) {
+        if (typeof id == 'undefined') {
+            return null;
+        }
 
-                    <NewTestForm show={this.state.showTestForm} data={this.props.data} handleClose={this.closeTestForm} />
-                    
-                </div> : null
+        this.refs.new_test_form._edit(id);
+        this.setState({
+            showTestForm: true
+        })
+    },
+
+    reloadList: function () {
+        this.closeTestForm();
+        this.props.reloadList();
+    },
+
+    render: function () {
+        var equipment_id = this.props.id;
+        var tests = [];
+
+        for (var i = 0; i < this.props.data.length; i++) {
+            var item = this.props.data[i];
+            if (item.equipment.id == equipment_id) {
+                tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm}/>)
+            }
+        }
+
+        // this.props.data.map(function (item) {
+        //     if (item.equipment.id == equipment_id) {
+        //         tests.push(<TestItem data={item} editTestForm={that.editTestForm}/>)
+        //     }
+        // });
+
+        return (
+            <div>
+                <div className="row">
+                    <div className="col-md-12">
+                    <Table responsive id="test_prof">
+                        <tbody>
+                        {tests}
+                        </tbody>
+                    </Table>
+                        </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-6">
+                        <FormGroup>
+                            <Button onClick={this.showTestForm} className="success">Add new test</Button>
+                        </FormGroup>
+                    </div>
+                </div>
+                <NewTestForm ref="new_test_form"
+                             show={this.state.showTestForm}
+                             handleClose={this.closeTestForm}
+                             reloadList={this.reloadList}
+                />
+
+            </div>
         );
     }
 });
@@ -159,22 +201,28 @@ var TestList = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: true, 
-            // equipment: [
-            //     { id: 1, name: 'Test equoment 1' },
-            //     { id: 2, name: 'Test equoment 2' },
-            //     { id: 3, name: 'Test equoment 3' }
-            // ]
+            isVisible: true
         };
     },
 
     componentDidMount: function () {
         var campaign_id = this.props.params['campaign'];
         this.serverRequest = $.get('/api/v1.0/test_result/?campaign_id=' + campaign_id,
+
             function (result) {
-                this.setState({
-                    equipment: result['result']
+
+                var tests = result['result'];
+                var equipment = [];
+
+                tests.map(function (item) {
+                    equipment[item.equipment.id] = item.equipment;
                 });
+
+                this.setState({
+                    equipment: equipment,
+                    tests: tests
+                });
+
             }.bind(this), 'json');
     },
 
@@ -188,20 +236,23 @@ var TestList = React.createClass({
         });
     },
 
+    reloadList: function () {
+        this.componentDidMount();
+    },
+
     render: function () {
 
-        // console.log(this.props.params);
-        // console.log(this.state.equipment);
-        
         var items = [];
         for (var key in this.state.equipment) {
             items.push(
-                <Panel 
-                    key={this.state.equipment[key].equipment.id} 
-                    eventKey={this.state.equipment[key].equipment.id} 
-                    header={this.state.equipment[key].equipment.name}
+                <Panel
+                    key={this.state.equipment[key].id}
+                    eventKey={this.state.equipment[key].id}
+                    header={this.state.equipment[key].name}
                 >
-                    <TestItemList data={this.state.equipment[key]}/>
+                    <TestItemList data={this.state.tests} id={this.state.equipment[key].id}
+                                  reloadList={this.reloadList}
+                    />
                 </Panel>
             );
         }

@@ -314,16 +314,6 @@ var NewUserForm = React.createClass ({
                             />
                         </FormGroup>
                     </div>
-
-                    <div className="maxwidth">
-                        <FormGroup>
-                            <FormControl type="text"
-                                         placeholder="Photo"
-                                         name="photo"
-                            />
-                        </FormGroup>
-                    </div>
-
                     <div className="row">
                         <div className="col-md-12">
                             <FormGroup>

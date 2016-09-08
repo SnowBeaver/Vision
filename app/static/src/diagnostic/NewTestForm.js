@@ -66,7 +66,7 @@ var TestProfileSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.state.value}
+                    value={this.props.value}
                     onChange={this.handleChange}
                     name="test_type_id">
                     <option value="select_prof">Choose profile from saved</option>
@@ -136,7 +136,7 @@ var PerformedBySelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.props.value}
                         name="performed_by_id">
                         <option key="0" value="select">Performed by</option>
                         {menuItems}
@@ -206,7 +206,7 @@ var MaterialSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select material"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.props.value}
                         name="material_id">
                         <option key="0" value="select">Material</option>
                         {menuItems}
@@ -276,7 +276,7 @@ var FluidTypeSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.props.value}
                         name="fluid_type_id"
                     >
                         <option key="0" value="select">Fluid Type</option>
@@ -293,7 +293,7 @@ var LabAnalyserSelectField = React.createClass({
 
     handleChange: function (event, index, value) {
         this.setState({
-            value: event.target.value,
+            value: event.target.value
         });
     },
 
@@ -347,7 +347,7 @@ var LabAnalyserSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.props.value}
                         name="lab_id">
                         <option key="0" value="select">Lab/On-Line Analyser</option>
                         {menuItems}
@@ -418,7 +418,7 @@ var LabContractSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.props.value}
                         name="lab_contract_id">
                         <option key="0" value="select">Lab Contract</option>
                         {menuItems}
@@ -488,7 +488,7 @@ var SyringeNumberSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.props.value}
                         name="seringe_num">
                         <option key="0" value="select">Syringe Number</option>
                         {menuItems}
@@ -556,8 +556,8 @@ var TestReasonSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.state.value}
-                    name="test_reason_id"
+                    value={this.props.value}
+                    name="reason_id"
                     onChange={this.handleChange}
                 >
                     <option key="0" value="select">Reason for Testing</option>
@@ -573,7 +573,7 @@ var NewTestForm = React.createClass({
 
     //test_sampling_card
     //test_status_id - should be set separate
-    //test_commendation
+    //test_recommendation
     //'campaign_id' - should be passed
 
     getInitialState: function () {
@@ -590,14 +590,15 @@ var NewTestForm = React.createClass({
             showNewLabForm: false,
             showNewSyringeForm: false,
             date_analyse: new Date().toISOString(),
-            repair_date: new Date().toISOString(),
+            repair_date: new Date().toISOString(), 
             fields: [
-                'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
+                'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
-            ]
+            ],
+
             // profile_fields: [
             //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
             //     'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
@@ -610,10 +611,37 @@ var NewTestForm = React.createClass({
     },
 
     componentDidMount: function () {
+    },
+    
+    _edit: function(id) { 
         // fill up form with data
-        this.setState({
-            test_result_id: this.props.data['id']
-        });
+
+        var url = '/api/v1.0/test_result/' + id; // edit
+        this.serverRequest = $.get(url, function (result){ 
+            var data = (result['result']);
+        
+            var fields = this.state.fields;
+            var form = {};
+            for (var i = 0; i < fields.length; i++) {
+                var key = fields[i];
+                form[key] = data[key];
+            }
+            form['id'] = id;
+            this.setState(form);
+            console.log(url, this.state);
+           
+        }.bind(this), 'json');
+    },
+    
+    _add: function(){ 
+        var fields = this.state.fields;
+        var form = {};
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            form[key] = '';
+        }
+        form['id'] = '';
+        this.setState(form);
     },
 
     _save: function () {
@@ -623,19 +651,16 @@ var NewTestForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        console.log(this.props.data);
-        // console.log(this.props.data['campaign_id']);
-        data['campaign_id'] = this.props.data['campaign'];
-        var url = '/api/v1.0/test_result/' + this.state.test_result_id;
-
+        data['campaign_id'] = this.props.data['campaign_id'];
+        data['equipment_id'] = this.props.data['equipment_id'];
+        var url = '/api/v1.0/test_result/' + this.state.test_result_id; // edit when test_result_id is set
+        
         return $.ajax({
             url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) {
-            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -656,20 +681,20 @@ var NewTestForm = React.createClass({
             .fail(this._onError)
             .always(this.hideLoading)
     },
+    
     hideLoading: function () {
         this.setState({loading: false});
     },
 
     _onSuccess: function (data) {
-        // this.setState(this.getInitialState());
-        // console.log(data['result']['analysis_number']);
+        //this.setState(this.getInitialState());
         this.setState({
             analysis_number: data['result']['analysis_number']
             // show success message
         });
-        alert('Test saved');
-    },
-
+        this.props.reloadList();
+    }, 
+    
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -702,8 +727,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-            console.log(e.target.value);
-
         }
         else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
@@ -890,15 +913,14 @@ var NewTestForm = React.createClass({
         }
     },
 
-
-
     render: function () {
 
+        var title = (this.state.id) ? "Edit test": 'New test';
         return (
             this.props.show ?
                 <div className="form-container">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <Panel header="New Test">
+                        <Panel header={title}>
                             <div className="maxwidth">
                                 <div className="col-md-12">
                                     <div className="maxwidth">
@@ -917,6 +939,7 @@ var NewTestForm = React.createClass({
                                                 ref="test_reason"
                                                 source="/api/v1.0/test_reason"
                                                 handleChange={this.handleChange}
+                                                value={this.state.reason_id}
                                             />
                                         </div>
                                     </div>
@@ -925,7 +948,9 @@ var NewTestForm = React.createClass({
                                             <MaterialSelectField
                                                 ref="material"
                                                 source="/api/v1.0/material/"
-                                                handleChange={this.handleChange}/>
+                                                handleChange={this.handleChange}
+                                                value={this.state.material_id}
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="material"
@@ -940,6 +965,7 @@ var NewTestForm = React.createClass({
                                             <FluidTypeSelectField
                                                 ref="fluid_type"
                                                 source="/api/v1.0/fluid_type/"
+                                                value={this.state.fluid_type_id}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -956,6 +982,7 @@ var NewTestForm = React.createClass({
                                                 ref="performed_by"
                                                 source="/api/v1.0/user"
                                                 handleChange={this.handleChange}
+                                                value={this.state.performed_by_id}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -971,6 +998,7 @@ var NewTestForm = React.createClass({
                                             <LabAnalyserSelectField
                                                 ref="lab"
                                                 source="/api/v1.0/lab/"
+                                                value={this.state.lab_id}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -986,7 +1014,9 @@ var NewTestForm = React.createClass({
                                             <LabContractSelectField
                                                 ref="contract"
                                                 source="/api/v1.0/contract/"
-                                                handleChange={this.handleChange}/>
+                                                handleChange={this.handleChange}
+                                                value={this.state.lab_contract_id}
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="lab_contract"
@@ -1002,6 +1032,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl type="text"
                                                              placeholder="Charge"
                                                              name="charge"
+                                                             value={this.state.charge}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1013,14 +1044,19 @@ var NewTestForm = React.createClass({
                                                 <ControlLabel>Remark</ControlLabel>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="remark"
-                                                             name="remark"/>
+                                                             name="remark"
+                                                             value={this.state.remark}
+                                                />
                                             </FormGroup>
                                         </div>
                                     </div>
 
                                     <div className="maxwidth">
                                         <div className="col-md-4 nopadding padding-right-xs">
-                                            <Checkbox name="transmission">Sent to Laboratory</Checkbox>
+                                            <Checkbox name="transmission" 
+                                                      checked={this.state.transmission ? "checked" :null}>
+                                                Sent to Laboratory
+                                            </Checkbox>
                                         </div>
                                     </div>
 
@@ -1040,7 +1076,9 @@ var NewTestForm = React.createClass({
                                                 <ControlLabel>Repair Description</ControlLabel>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="repair description"
-                                                             name="repair_description"/>
+                                                             name="repair_description"
+                                                             value={this.state.repair_description}
+                                                />
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1052,6 +1090,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl componentClass="textarea"
                                                              placeholder="recommendations"
                                                              name="recommendation_notes"
+                                                             value={this.state.recommendation_notes}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1073,6 +1112,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl componentClass="textarea"
                                                              placeholder="comments"
                                                              name="comments"
+                                                             value={this.state.comments}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1083,7 +1123,9 @@ var NewTestForm = React.createClass({
                                             <FormGroup>
                                                 <FormControl type="text"
                                                              placeholder="Equipment Load mW"
-                                                             name="mws"/>
+                                                             name="mws"
+                                                             value={this.state.mws}
+                                                />
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1094,6 +1136,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl type="text"
                                                              placeholder="Temperature"
                                                              name="temperature"
+                                                             value={this.state.temperature}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1104,7 +1147,9 @@ var NewTestForm = React.createClass({
                                             <SyringeNumberSelectField
                                                 ref="syringe"
                                                 source="/api/v1.0/syringe/"
-                                                handleChange={this.handleChange}/>
+                                                handleChange={this.handleChange}
+                                                value={this.state.seringe_num}
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="syringe"
@@ -1120,6 +1165,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl type="text"
                                                              placeholder="Ambient Air Temperature"
                                                              name="ambient_air_temperature"
+                                                             value={this.state.ambient_air_temperature}
                                                 />
                                             </FormGroup>
                                         </div>
