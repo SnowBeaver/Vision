@@ -3,6 +3,7 @@ from app.users import constants as USER
 from hashlib import md5
 from sqlalchemy import event
 from sqlalchemy.sql import text
+from sqlalchemy.orm import class_mapper, ColumnProperty
 import datetime
 from flask.ext.security import RoleMixin, UserMixin
 
@@ -85,11 +86,12 @@ class User(db.Model, UserMixin):
     def __unicode__(self):
         return u"%s" % (self.name)
 
-    def __init__(self, name=None, email=None, alias=None, password=None):
-        self.name = name
-        self.email = email
-        self.alias = alias
-        self.password = password
+    def __init__(self, *args, **kwargs):
+        fields = [prop.key for prop in class_mapper(self.__class__).iterate_properties if
+                  isinstance(prop, ColumnProperty)]
+        for arg, val in kwargs.items():
+            if arg in fields:
+                setattr(self, arg, val)
 
     @property
     def initials(self):
