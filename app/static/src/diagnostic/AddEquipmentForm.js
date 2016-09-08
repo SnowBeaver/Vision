@@ -3,9 +3,10 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {Link} from 'react-router';
 import {hashHistory} from 'react-router';
-
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var EquipmentSelectField = React.createClass({
 
@@ -149,11 +150,10 @@ var AddEquipmentForm = React.createClass({
 
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
-        // show success message in console for now
-        console.log('Campaign equipment successfully saved.', data);
+        NotificationManager.success('Campaign equipment successfully saved.', null, 3000);
 
         var campaign = this.props.params['campaign'];
-        hashHistory.push('/testlist/' + campaign);
+        setTimeout(function(){ hashHistory.push('/testlist/' + campaign); }, 3000);
     },
 
     _onError: function (data) {
@@ -162,11 +162,21 @@ var AddEquipmentForm = React.createClass({
         if (res.message) {
             message = data.responseJSON.message;
         }
-        if (res.errors) {
+
+        if (res.error) {
+            // Join multiple error messages
+            for (var field in res.error){
+                var errorMessage = res.error[field];
+                if (Array.isArray(errorMessage)){
+                     errorMessage = errorMessage.join(". ");
+                }
+                res.error[field] = errorMessage;
+            }
             this.setState({
-                errors: res.errors
+                errors: res.error
             });
         }
+        NotificationManager.error(message);
     },
     _validate: function () {
         var errors = {};
@@ -244,8 +254,10 @@ var AddEquipmentForm = React.createClass({
 
         return (
             <div className="form-container">
+                <NotificationContainer/>
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Add equipment">
+                        <HelpBlock className="warning">{this.state.errors.equipment_id}</HelpBlock>
                         {this.getItems()}
                         <div className="row">
                             <div className="col-md-10">

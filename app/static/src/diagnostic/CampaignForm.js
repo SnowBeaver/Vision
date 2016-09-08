@@ -11,6 +11,7 @@ import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import { hashHistory } from 'react-router';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var items = [];
@@ -81,8 +82,9 @@ var CreatedBySelectField = React.createClass({
                         componentClass="select"
                         placeholder="select user"
                         onChange={this.handleChange}
-                        name="created_by_id">
-                        <option key="0" value="select">Created by</option>
+                        name="created_by_id"
+                        required={this.props.required}>
+                        <option key="0" value="">Created by{this.props.required ? " *" : ""}</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -228,8 +230,8 @@ var CampaignForm = React.createClass({
         this.setState({
             campaign_id: data.result
         });
-        console.log('Campaign successfully started.', data.result);
-        hashHistory.push('/add_equipment/' + data.result);
+        NotificationManager.success('Campaign successfully started.', null, 2000);
+        setTimeout(function(){ hashHistory.push('/add_equipment/' + data.result); }, 2000);
     },
 
     _onError: function (data) {
@@ -341,6 +343,7 @@ var CampaignForm = React.createClass({
 
         return (
             <div className="form-container">
+                <NotificationContainer/>
                 <Panel header="New Campaign">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
@@ -350,6 +353,7 @@ var CampaignForm = React.createClass({
                                     source="/api/v1.0/user"
                                     handleChange={this.handleChange}
                                     errors={this.state.errors}
+                                    required
                                 />
                             </div>
                             <div className="col-md-1">
@@ -394,7 +398,7 @@ var CampaignForm = React.createClass({
                                 <FormGroup validationState={this.state.errors.description ? 'error' : null}>
                                     <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
                                     <FormControl componentClass="textarea"
-                                                 placeholder="comments"
+                                                 placeholder="Comments"
                                                  name="description"/>
                                 </FormGroup>
                             </div>
