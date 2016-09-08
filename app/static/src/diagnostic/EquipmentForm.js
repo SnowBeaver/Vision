@@ -15,22 +15,22 @@ import NewNormForm from './EquipmentForm_modules/NewNormForm';
 import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 import CreatedByForm from './CampaignForm_modules/NewUserForm';
 
-import AirBreakerParams from './EquipmentTypeParameters';
-import BushingParams from './EquipmentTypeParameters';
-import CapacitorParams from './EquipmentTypeParameters';
-import BreakerParams from './EquipmentTypeParameters';
-import PowerSourceParams from './EquipmentTypeParameters';
-import CableParams from './EquipmentTypeParameters';
-import SwitchGearParams from './EquipmentTypeParameters';
-import InductionMachineParams from './EquipmentTypeParameters';
-import SyncroMachineParams from './EquipmentTypeParameters';
-import TapChangerParams from './EquipmentTypeParameters';
-import RectifierParams from './EquipmentTypeParameters';
-import TransformerParams from './EquipmentTypeParameters';
-import TankParams from './EquipmentTypeParameters';
-import SwitchParams from './EquipmentTypeParameters';
-import InductanceParams from './EquipmentTypeParameters';
-import GasSensorParams from './EquipmentTypeParameters';
+import AirBreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/AirBreakerParams';
+import BushingParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
+import CapacitorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/CapacitorParams';
+import BreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BreakerParams';
+import PowerSourceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/PowerSourceParams';
+import CableParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/CableParams';
+import SwitchGearParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SwitchGearParams';
+import InductionMachineParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductionMachineParams';
+import SyncroMachineParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SyncroMachineParams';
+import TapChangerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/TapChangerParams';
+import RectifierParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/RectifierParams';
+import TransformerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/TransformerParams';
+import TankParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/TankParams';
+import SwitchParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SwitchParams';
+import InductanceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductanceParams';
+import GasSensorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/GasSensorParams';
 
 
 import {findDOMNode} from 'react-dom';
@@ -506,7 +506,7 @@ var FrequencySelectField = React.createClass({
 
     getInitialState: function () {
         return {
-            items: [ '25', '50', '60', 'DC' ],
+            items: ['25', '50', '60', 'DC'],
             isVisible: false,
             showNewEquipmentTypeForm: false,
             showNewManufacturerForm: false,
@@ -549,7 +549,7 @@ var FrequencySelectField = React.createClass({
 });
 
 
-var ManufacturedSelectField = React.createClass ({
+var ManufacturedSelectField = React.createClass({
 
     handleChange: function (event, index, value) {
         this.setState({
@@ -599,93 +599,75 @@ var ManufacturedSelectField = React.createClass ({
 });
 
 
-var EqAdditionalParams = React.createClass ({
+var EqAdditionalParams = React.createClass({
 
     getInitialState: function () {
-        console.log(this.props.data);
         return {
             tableName: ''
         }
     },
     componentDidMount: function () {
-        // var source = '/api/v1.0/equipment_type/'+ this.props.data.id ;
-        // this.serverRequest = $.get(source, function (result) {
-        //     var res = (result['result']);
-        //     if (res.length > 0) {
-        //         this.setState({tableName: res['name']});
-        //     }
-        // }.bind(this), 'json');
-
-        console.log(this.props.data);
     },
 
     render: function () {
 
-        if ( typeof this.props.data == 'undefined') {
-            return null;
+        if (typeof this.props.data == 'undefined') {
+            return (<div></div>);
         }
-        console.log(this.props.data.text);
-        console.log(typeof this.props.data.text);
+        
+        switch(this.props.data.text){
+            case 'Air circuit breaker':
+                return (<AirBreakerParams/>);
+            break;
+            case 'Bushing':
+                return (<BushingParams/>);
+            break;
+            case 'Capacitor':
+                return (<CapacitorParams/>);
+            break;
+            case 'Breaker':
+                return (<BreakerParams/>);
+            break;
+            case 'Power Source':
+                return (<PowerSourceParams/>);
+            break;
+            case 'Cable':
+                return (<CableParams/>);
+            break;
+            case 'Switchgear':
+                return (<SwitchGearParams/>);
+            break;
+            case 'Induction machine':
+               return (<InductionMachineParams/>);
+            break;
+            case 'Synchronous machine':
+                return (<SyncroMachineParams/>);
+            break;
+            case 'Tap changer':
+                return (<TapChangerParams/>);
+            break;
+            case 'Rectifier':
+                return (<RectifierParams/>);
+            break;
+            case 'Transformer':
+                return (<TransformerParams/>);
+            break;
+            case 'Tank':
+                return (<TankParams/>);
+            break;
+            case 'Switch':
+                return (<SwitchParams/>);
+            break;
+            case 'Inductance':
+                return (<InductanceParams/>);
+            break;
+            case 'Gas sensor':
+                return (<GasSensorParams/>);
+            break;
 
-        if(this.props.data.text==='Air circuit breaker')
-            return(<AirBreakerParams/>);
-        else if (this.props.data.text==='Bushing')
-            return(<BushingParams/>);
-        else return(null);
-
-        // switch(this.props.data.text.toString){
-        //     case 'Air circuit breaker':
-        //         return (<AirBreakerParams/>);
-        //     break;
-        //     case 'Bushing':
-        //         return (<BushingParams/>);
-        //     break;
-        //     case 'Capacitor':
-        //         return (<CapacitorParams/>);
-        //     break;
-        //     case 'Breaker':
-        //         return (<BreakerParams/>);
-        //     break;
-        //     case 'Power source':
-        //         return (<PowerSourceParams/>);
-        //     break;
-        //     case 'Cable':
-        //         return (<CableParams/>);
-        //     break;
-        //     case 'Switchgear':
-        //         return (<SwitchGearParams/>);
-        //     break;
-        //     case 'Induction Machine':
-        //        return (<InductionMachineParams/>);
-        //     break;
-        //     case 'Synchronous machine':
-        //         return (<SyncroMachineParams/>);
-        //     break;
-        //     case 'Tap changer':
-        //         return (<TapChangerParams/>);
-        //     break;
-        //     case 'Rectifier':
-        //         return (<RectifierParams/>);
-        //     break;
-        //     case 'Transformer':
-        //         return (<TransformerParams/>);
-        //     break;
-        //     case 'Tank':
-        //         return (<TankParams/>);
-        //     break;
-        //     case 'Switch':
-        //         return (<SwitchParams/>);
-        //     break;
-        //     case 'Inductance':
-        //         return (<InductanceParams/>);
-        //     break;
-        //     case 'Gas sensor':
-        //         return (<GasSensorParams/>);
-        //     break;
-        //
-        //     default:
-        //         return null;
-        // }
+            default:
+                return null;
+        }
     }
 });
 
@@ -926,7 +908,7 @@ const EquipmentForm = React.createClass({
     },
 
 
-    render: function() {
+    render: function () {
         return (
             <div className="form-container">
                 <form id="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -948,7 +930,7 @@ const EquipmentForm = React.createClass({
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-md-12">
+                                <div className="col-md-11">
                                     <EqAdditionalParams data={this.state.option_text}/>
                                 </div>
                             </div>
@@ -1029,7 +1011,7 @@ const EquipmentForm = React.createClass({
                                     >New</a>
                                 </div>
                             </div>
-                            <FormGroup controlId="inputNameField" >
+                            <FormGroup controlId="inputNameField">
                                 <ControlLabel>Name</ControlLabel>
                                 <FormControl type="text"
                                              placeholder="Name"

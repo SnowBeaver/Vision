@@ -4,7 +4,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 import Form from 'react-bootstrap/lib/Form';
 import Panel from 'react-bootstrap/lib/Panel';
@@ -12,10 +12,10 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -31,7 +31,7 @@ const TextField = React.createClass({
 });
 
 var SelectField = React.createClass({
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
@@ -43,24 +43,24 @@ var SelectField = React.createClass({
             value: -1
         };
     },
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
-    componentDidMount: function(){
+    componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result){
-            this.setState({ items: (result['result']) });
+        this.serverRequest = $.get(source, function (result) {
+            this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
@@ -81,37 +81,36 @@ var SelectField = React.createClass({
 });
 
 
-
-
-var AirBreakerParams = React.createClass ({
+var AirBreakerParams = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-            fields: ["phase_number", "sealed", "welded_cover", "current_rating"
+            fields: [
+                "phase_number", "sealed", "welded_cover", "current_rating"
             ]
         }
     },
 
     componentDidMount: function () {
-        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
-            var res = (result['result']);
-            if (res.length > 0) {
-                var fields = this.state.fields;
-                fields.push('id');
-                var data = res[0];
-                var state = {};
-                for (var i = 0; i < fields.length; i++) {
-                    var key = fields[i];
-                    if (data.hasOwnProperty(key)) {
-                        state[key] = data[key];
-                    }
-                }
-                this.setState(state);
-            }
-        }.bind(this), 'json');
+        // var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        // this.serverRequest = $.get(source, function (result) {
+        //     var res = (result['result']);
+        //     if (res.length > 0) {
+        //         var fields = this.state.fields;
+        //         fields.push('id');
+        //         var data = res[0];
+        //         var state = {};
+        //         for (var i = 0; i < fields.length; i++) {
+        //             var key = fields[i];
+        //             if (data.hasOwnProperty(key)) {
+        //                 state[key] = data[key];
+        //             }
+        //         }
+        //         this.setState(state);
+        //     }
+        // }.bind(this), 'json');
     },
 
     _create: function () {
@@ -193,10 +192,9 @@ var AirBreakerParams = React.createClass ({
         return errors;
     },
 
-
-
-    render : function () {
-        return(
+    render: function () {
+        console.log('render inside air breaker');
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-3">
@@ -218,7 +216,7 @@ var AirBreakerParams = React.createClass ({
 });
 
 
-var BushingParams = React.createClass ({
+var BushingParams = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
@@ -333,8 +331,8 @@ var BushingParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -392,61 +390,77 @@ var BushingParams = React.createClass ({
 
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField label="Manufac. H1" name="bushing_manufacturer_h1" value={this.state.bushing_manufacturer_h1}/>
+                        <TextField label="Manufac. H1" name="bushing_manufacturer_h1"
+                                   value={this.state.bushing_manufacturer_h1}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. H2" name="bushing_manufacturer_h2" value={this.state.bushing_manufacturer_h2}/>
+                        <TextField label="Manufac. H2" name="bushing_manufacturer_h2"
+                                   value={this.state.bushing_manufacturer_h2}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. H3" name="bushing_manufacturer_h3" value={this.state.bushing_manufacturer_h3}/>
+                        <TextField label="Manufac. H3" name="bushing_manufacturer_h3"
+                                   value={this.state.bushing_manufacturer_h3}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. Hn" name="bushing_manufacturer_hn" value={this.state.bushing_manufacturer_hn}/>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-3">
-                        <TextField label="Manufac. X1" name="bushing_manufacturer_x1" value={this.state.bushing_manufacturer_x1}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField label="Manufac. X2" name="bushing_manufacturer_x2" value={this.state.bushing_manufacturer_x2}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField label="Manufac. X3" name="bushing_manufacturer_x3" value={this.state.bushing_manufacturer_x3}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField label="Manufac. Xn" name="bushing_manufacturer_xn" value={this.state.bushing_manufacturer_xn}/>
+                        <TextField label="Manufac. Hn" name="bushing_manufacturer_hn"
+                                   value={this.state.bushing_manufacturer_hn}/>
                     </div>
                 </div>
 
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField label="Manufac. T1" name="bushing_manufacturer_t1" value={this.state.bushing_manufacturer_t1}/>
+                        <TextField label="Manufac. X1" name="bushing_manufacturer_x1"
+                                   value={this.state.bushing_manufacturer_x1}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. T2" name="bushing_manufacturer_t2" value={this.state.bushing_manufacturer_t2}/>
+                        <TextField label="Manufac. X2" name="bushing_manufacturer_x2"
+                                   value={this.state.bushing_manufacturer_x2}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. T3" name="bushing_manufacturer_t3" value={this.state.bushing_manufacturer_t3}/>
+                        <TextField label="Manufac. X3" name="bushing_manufacturer_x3"
+                                   value={this.state.bushing_manufacturer_x3}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. Tn" name="bushing_manufacturer_tn" value={this.state.bushing_manufacturer_tn}/>
+                        <TextField label="Manufac. Xn" name="bushing_manufacturer_xn"
+                                   value={this.state.bushing_manufacturer_xn}/>
                     </div>
                 </div>
 
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField label="Manufac. Q1" name="bushing_manufacturer_q1" value={this.state.bushing_manufacturer_q1}/>
+                        <TextField label="Manufac. T1" name="bushing_manufacturer_t1"
+                                   value={this.state.bushing_manufacturer_t1}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. Q2" name="bushing_manufacturer_q2" value={this.state.bushing_manufacturer_q2}/>
+                        <TextField label="Manufac. T2" name="bushing_manufacturer_t2"
+                                   value={this.state.bushing_manufacturer_t2}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. Q3" name="bushing_manufacturer_q3" value={this.state.bushing_manufacturer_q3}/>
+                        <TextField label="Manufac. T3" name="bushing_manufacturer_t3"
+                                   value={this.state.bushing_manufacturer_t3}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField label="Manufac. Qn" name="bushing_manufacturer_qn" value={this.state.bushing_manufacturer_qn}/>
+                        <TextField label="Manufac. Tn" name="bushing_manufacturer_tn"
+                                   value={this.state.bushing_manufacturer_tn}/>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Q1" name="bushing_manufacturer_q1"
+                                   value={this.state.bushing_manufacturer_q1}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Q2" name="bushing_manufacturer_q2"
+                                   value={this.state.bushing_manufacturer_q2}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Q3" name="bushing_manufacturer_q3"
+                                   value={this.state.bushing_manufacturer_q3}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Manufac. Qn" name="bushing_manufacturer_qn"
+                                   value={this.state.bushing_manufacturer_qn}/>
                     </div>
                 </div>
 
@@ -485,7 +499,7 @@ var BushingParams = React.createClass ({
 });
 
 
-var CapacitorParams = React.createClass ({
+var CapacitorParams = React.createClass({
 
     getInitialState: function () {
         return {
@@ -595,8 +609,8 @@ var CapacitorParams = React.createClass ({
         // }
         return errors;
     },
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -624,7 +638,7 @@ var CapacitorParams = React.createClass ({
 });
 
 
-var BreakerParams = React.createClass ({
+var BreakerParams = React.createClass({
 
     getInitialState: function () {
         return {
@@ -734,8 +748,8 @@ var BreakerParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-3">
@@ -788,9 +802,9 @@ var BreakerParams = React.createClass ({
 });
 
 
-var PowerSourceParams = React.createClass ({
+var PowerSourceParams = React.createClass({
 
-     getInitialState: function () {
+    getInitialState: function () {
         return {
             loading: false,
             errors: {},
@@ -898,8 +912,8 @@ var PowerSourceParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div className="row">
                 <div className="col-md-2">
                     <TextField label="Phase Number" name="phase_number" value={this.state.phase_number}/>
@@ -922,7 +936,7 @@ var PowerSourceParams = React.createClass ({
 });
 
 
-var CableParams = React.createClass ({
+var CableParams = React.createClass({
 
     getInitialState: function () {
         return {
@@ -1033,8 +1047,8 @@ var CableParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div className="row">
                 <div className="col-md-3">
                     <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
@@ -1051,7 +1065,7 @@ var CableParams = React.createClass ({
 });
 
 
-var SwitchGearParams = React.createClass ({
+var SwitchGearParams = React.createClass({
 
     getInitialState: function () {
         return {
@@ -1163,8 +1177,8 @@ var SwitchGearParams = React.createClass ({
     },
 
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div className="row">
                 <div className="col-md-3">
                     <SelectField
@@ -1190,14 +1204,14 @@ var SwitchGearParams = React.createClass ({
 });
 
 
-var InductionMachineParams = React.createClass ({
+var InductionMachineParams = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
             fields: ["phase_number", "sealed", "model", "welded_cover", "current_rating", "threephase",
-                "hp" , "kva", "pf"
+                "hp", "kva", "pf"
 
             ]
         }
@@ -1302,8 +1316,8 @@ var InductionMachineParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div className="row">
                 <div className="col-md-2">
                     <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
@@ -1329,7 +1343,7 @@ var InductionMachineParams = React.createClass ({
 });
 
 
-var SyncroMachineParams = React.createClass ({
+var SyncroMachineParams = React.createClass({
 
     getInitialState: function () {
         return {
@@ -1439,8 +1453,8 @@ var SyncroMachineParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div className="row">
                 <div className="col-md-2">
                     <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
@@ -1464,7 +1478,7 @@ var SyncroMachineParams = React.createClass ({
 });
 
 
-var TapChangerParams = React.createClass ({
+var TapChangerParams = React.createClass({
 
     getInitialState: function () {
         return {
@@ -1575,8 +1589,8 @@ var TapChangerParams = React.createClass ({
     },
 
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-3">
@@ -1622,163 +1636,7 @@ var TapChangerParams = React.createClass ({
 });
 
 
-var RectifierParams = React.createClass ({
-
-     getInitialState: function () {
-        return {
-            loading: false,
-            errors: {},
-            fields: ["phase_number", "sealed", "model", "welded_cover", "fluid_volume", "cooling_rating"
-            ]
-        }
-    },
-
-    componentDidMount: function () {
-        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
-            var res = (result['result']);
-            if (res.length > 0) {
-                var fields = this.state.fields;
-                fields.push('id');
-                var data = res[0];
-                var state = {};
-                for (var i = 0; i < fields.length; i++) {
-                    var key = fields[i];
-                    if (data.hasOwnProperty(key)) {
-                        state[key] = data[key];
-                    }
-                }
-                this.setState(state);
-            }
-        }.bind(this), 'json');
-    },
-
-    _create: function () {
-        var fields = this.state.fields;
-        var data = {test_result_id: this.props.testResultId};
-        var url = '/api/v1.0/' + this.props.tableName + '/';
-        var type = 'POST';
-        for (var i = 0; i < fields.length; i++) {
-            var key = fields[i];
-            data[key] = this.state[key];
-        }
-        if ('id' in this.state) {
-            url += this.state['id'];
-            type = 'PUT';
-        }
-        return $.ajax({
-            url: url,
-            type: type,
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
-    },
-    _onSubmit: function (e) {
-        e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
-        var xhr = this._create();
-        xhr.done(this._onSuccess)
-            .fail(this._onError)
-            .always(this.hideLoading)
-    },
-
-    hideLoading: function () {
-        this.setState({loading: false});
-    },
-
-    _onSuccess: function (data) {
-        // this.setState(this.getInitialState());
-
-    },
-
-    _onError: function (data) {
-
-        var message = "Failed to create";
-        var res = data.responseJSON;
-        if (res.message) {
-            message = data.responseJSON.message;
-        }
-        if (res.error) {
-            this.setState({
-                errors: res.error
-            });
-        }
-    },
-
-    _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
-        this.setState(state);
-    },
-
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
-        return errors;
-    },
-
-    render : function () {
-        return(
-            <div>
-                <div className="row">
-                    <div className="col-md-4">
-                        <SelectField
-                            source="fluid_type"
-                            label="Fluid Type"
-                            value={this.state.fluid_type_id}/>
-                    </div>
-                    <div className="col-md-4">
-                        <SelectField
-                            source="fluid_level"
-                            label="Fluid Level"
-                            value={this.state.fluid_level_id}/>
-                    </div>
-                    <div className="col-md-4">
-                        <SelectField
-                            source="gas_sensor"
-                            label="Gas Sensor"
-                            value={this.state.gas_sensor}/>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-2">
-                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
-                    </div>
-
-                    <div className="col-md-2">
-                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
-                    </div>
-
-                    <div className="col-md-2">
-                        <TextField label="Fluid Volume" name="fluid_volume" value={this.state.fluid_volume}/>
-                    </div>
-
-                    <div className="col-md-2">
-                        <TextField label="Cooling Rating" name="cooling_rating" value={this.state.cooling_rating}/>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-});
-
-
-var TransformerParams = React.createClass ({
+var RectifierParams = React.createClass({
 
     getInitialState: function () {
         return {
@@ -1888,9 +1746,179 @@ var TransformerParams = React.createClass ({
         return errors;
     },
 
+    render: function () {
+        return (
+            <div>
+                <div className="row">
+                    <div className="col-md-4">
+                        <SelectField
+                            source="fluid_type"
+                            label="Fluid Type"
+                            value={this.state.fluid_type_id}/>
+                    </div>
+                    <div className="col-md-4">
+                        <SelectField
+                            source="fluid_level"
+                            label="Fluid Level"
+                            value={this.state.fluid_level_id}/>
+                    </div>
+                    <div className="col-md-4">
+                        <SelectField
+                            source="gas_sensor"
+                            label="Gas Sensor"
+                            value={this.state.gas_sensor}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Sealed" name="sealed" value={this.state.sealed}/>
+                    </div>
 
-    render : function () {
-        return(
+                    <div className="col-md-2">
+                        <TextField label="Welded Cover" name="welded_cover" value={this.state.welded_cover}/>
+                    </div>
+
+                    <div className="col-md-2">
+                        <TextField label="Fluid Volume" name="fluid_volume" value={this.state.fluid_volume}/>
+                    </div>
+
+                    <div className="col-md-2">
+                        <TextField label="Cooling Rating" name="cooling_rating" value={this.state.cooling_rating}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+});
+
+
+var TransformerParams = React.createClass({
+
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            isVisible: false,
+            fields: ["phase_number", "sealed", "model", "welded_cover", "fluid_volume", "cooling_rating"
+            ]
+        }
+    },
+
+    componentDidMount: function () {
+    },
+
+    setVisible: function () {
+        // var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        // this.serverRequest = $.get(source, function (result) {
+        //     var res = (result['result']);
+        //     if (res.length > 0) {
+        //         var fields = this.state.fields;
+        //         fields.push('id');
+        //         var data = res[0];
+        //         var state = {};
+        //         for (var i = 0; i < fields.length; i++) {
+        //             var key = fields[i];
+        //             if (data.hasOwnProperty(key)) {
+        //                 state[key] = data[key];
+        //             }
+        //         }
+        //         this.setState(state);
+        //     }
+        // }.bind(this), 'json');
+
+        this.setState({
+            isVisible: true
+        })
+    },
+
+    _create: function () {
+        var fields = this.state.fields;
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state[key];
+        }
+        if ('id' in this.state) {
+            url += this.state['id'];
+            type = 'PUT';
+        }
+        return $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+    _onSubmit: function (e) {
+        e.preventDefault();
+        var errors = this._validate();
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
+        }
+        var xhr = this._create();
+        xhr.done(this._onSuccess)
+            .fail(this._onError)
+            .always(this.hideLoading)
+    },
+
+    hideLoading: function () {
+        this.setState({loading: false});
+    },
+
+    _onSuccess: function (data) {
+        // this.setState(this.getInitialState());
+
+    },
+
+    _onError: function (data) {
+
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
+        }
+        if (res.error) {
+            this.setState({
+                errors: res.error
+            });
+        }
+    },
+
+    _onChange: function (e) {
+        var state = {};
+        state[e.target.name] = $.trim(e.target.value);
+        this.setState(state);
+    },
+
+    _validate: function () {
+        var errors = {};
+        // if(this.state.created_by_id == "") {
+        //   errors.created_by_id = "Create by field is required";
+        // }
+        // if(this.state.performed_by_id == "") {
+        //     errors.performed_by_id = "Performed by field is required";
+        // }
+        return errors;
+    },
+
+
+    render: function () {
+        console.log("transformer is invoked");
+        if (!this.state.isVisible) {
+
+            return null;
+        }
+
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -1920,19 +1948,24 @@ var TransformerParams = React.createClass ({
                         <TextField label="Primary Tension" name="primary_tension" value={this.state.primary_tension}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Secondary Tension" name="secondary_tension" value={this.state.secondary_tension}/>
+                        <TextField label="Secondary Tension" name="secondary_tension"
+                                   value={this.state.secondary_tension}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Tertiary Tension" name="tertiary_tension" value={this.state.tertiary_tension}/>
+                        <TextField label="Tertiary Tension" name="tertiary_tension"
+                                   value={this.state.tertiary_tension}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Based Power" name="based_transformerp_ower" value={this.state.based_transformerp_ower}/>
+                        <TextField label="Based Power" name="based_transformerp_ower"
+                                   value={this.state.based_transformerp_ower}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="First Cooling Stage Power" name="first_cooling_stage_power" value={this.state.first_cooling_stage_power}/>
+                        <TextField label="First Cooling Stage Power" name="first_cooling_stage_power"
+                                   value={this.state.first_cooling_stage_power}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Second Cooling Stage Power" name="second_cooling_stage_power" value={this.state.second_cooling_stage_power}/>
+                        <TextField label="Second Cooling Stage Power" name="second_cooling_stage_power"
+                                   value={this.state.second_cooling_stage_power}/>
                     </div>
                 </div>
                 <div className="row">
@@ -1940,13 +1973,16 @@ var TransformerParams = React.createClass ({
                         <TextField label="Autotransformer" name="autotransformer" value={this.state.autotransformer}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Primary Winding Connection" name="primary_winding_connection" value={this.state.primary_winding_connection}/>
+                        <TextField label="Primary Winding Connection" name="primary_winding_connection"
+                                   value={this.state.primary_winding_connection}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Secondary Winding Connection" name="secondary_winding_connection" value={this.state.secondary_winding_connection}/>
+                        <TextField label="Secondary Winding Connection" name="secondary_winding_connection"
+                                   value={this.state.secondary_winding_connection}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Tertiary Winding Connection" name="tertiary_winding_connection" value={this.state.tertiary_winding_connection}/>
+                        <TextField label="Tertiary Winding Connection" name="tertiary_winding_connection"
+                                   value={this.state.tertiary_winding_connection}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="Winding Metal" name="winding_metal" value={this.state.winding_metal}/>
@@ -1954,25 +1990,31 @@ var TransformerParams = React.createClass ({
                 </div>
                 <div className="row">
                     <div className="col-md-2">
-                        <TextField label="Bushing Neutral 1" name="bushing_neutral1" value={this.state.bushing_neutral1}/>
+                        <TextField label="Bushing Neutral 1" name="bushing_neutral1"
+                                   value={this.state.bushing_neutral1}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Bushing Neutral 2" name="bushing_neutral2" value={this.state.bushing_neutral2}/>
+                        <TextField label="Bushing Neutral 2" name="bushing_neutral2"
+                                   value={this.state.bushing_neutral2}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Bushing Neutral 3" name="bushing_neutral3" value={this.state.bushing_neutral3}/>
+                        <TextField label="Bushing Neutral 3" name="bushing_neutral3"
+                                   value={this.state.bushing_neutral3}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Bushing Neutral 4" name="bushing_neutral4" value={this.state.bushing_neutral4}/>
+                        <TextField label="Bushing Neutral 4" name="bushing_neutral4"
+                                   value={this.state.bushing_neutral4}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Temperature Rise" name="temperature_rise" value={this.state.temperature_rise}/>
+                        <TextField label="Temperature Rise" name="temperature_rise"
+                                   value={this.state.temperature_rise}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Quaternary Winding Connection" name="quaternary_winding_connection" value={this.state.quaternary_winding_connection}/>
+                        <TextField label="Quaternary Winding Connection" name="quaternary_winding_connection"
+                                   value={this.state.quaternary_winding_connection}/>
                     </div>
                 </div>
-                 <div className="row">
+                <div className="row">
                     <div className="col-md-2">
                         <TextField label="Ltc 1" name="ltc1" value={this.state.ltc1}/>
                     </div>
@@ -1989,7 +2031,7 @@ var TransformerParams = React.createClass ({
                         <TextField label="Impedance 2" name="impedance2" value={this.state.static_shield2}/>
                     </div>
                 </div>
-                 <div className="row">
+                <div className="row">
                     <div className="col-md-2">
                         <TextField label="Base Impedance 1" name="imp_base1" value={this.state.imp_base1}/>
                     </div>
@@ -2029,7 +2071,7 @@ var TransformerParams = React.createClass ({
                         <TextField label="Three Phase" name="threephase" value={this.state.threephase}/>
                     </div>
                 </div>
-                 <div className="row">
+                <div className="row">
                     <div className="col-md-1">
                         <TextField label="Ratio Tag 1" name="ratio_tag1" value={this.state.ratio_tag1}/>
                     </div>
@@ -2048,7 +2090,7 @@ var TransformerParams = React.createClass ({
                     <div className="col-md-1">
                         <TextField label="Ratio Tag 6" name="ratio_tag6" value={this.state.ratio_tag6}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Ratio Tag 7" name="ratio_tag7" value={this.state.ratio_tag7}/>
                     </div>
                     <div className="col-md-1">
@@ -2057,7 +2099,7 @@ var TransformerParams = React.createClass ({
 
                 </div>
                 <div className="row">
-                   <div className="col-md-2">
+                    <div className="col-md-2">
                         <SelectField
                             source="bushing_serial1"
                             label="Bushing Serial 1"
@@ -2095,7 +2137,7 @@ var TransformerParams = React.createClass ({
                     </div>
                 </div>
                 <div className="row">
-                   <div className="col-md-2">
+                    <div className="col-md-2">
                         <SelectField
                             source="bushing_serial7"
                             label="Bushing Serial 7"
@@ -2133,26 +2175,26 @@ var TransformerParams = React.createClass ({
                     </div>
 
                 </div>
-                 <div className="row">
-                     <div className="col-md-1">
+                <div className="row">
+                    <div className="col-md-1">
                         <TextField label="Mva Actual" name="mvaactual" value={this.state.mvaactual}/>
                     </div>
                     <div className="col-md-1">
                         <TextField label="Mvar Actual" name="mvaractual" value={this.state.mvaractual}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Reserve Mw" name="mwreserve" value={this.state.mwreserve}/>
                     </div>
                     <div className="col-md-1">
                         <TextField label="Reserve Mva" name="mvareserve" value={this.state.mvareserve}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Ultime Mw" name="mwultime" value={this.state.mwultime}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Ultime Mvar" name="mvarultime" value={this.state.mvarultime}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
@@ -2160,45 +2202,45 @@ var TransformerParams = React.createClass ({
                     </div>
                 </div>
                 <div className="row">
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="BIL 1" name="bil1" value={this.state.bil1}/>
                     </div>
                     <div className="col-md-1">
                         <TextField label="BIL 2" name="bil2" value={this.state.bil2}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="BIL 3" name="bil3" value={this.state.bil3}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="BIL 3" name="bil4" value={this.state.bil4}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Mva 1" name="mva1" value={this.state.mva1}/>
                     </div>
                     <div className="col-md-1">
                         <TextField label="Mva 2" name="mva2" value={this.state.mva2}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Mva 3" name="mva3" value={this.state.mva3}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Mva 4" name="mva4" value={this.state.mva4}/>
                     </div>
                 </div>
                 <div className="row">
-                     <div className="col-md-2">
+                    <div className="col-md-2">
                         <TextField label="Reserve Mw" name="mwreserve" value={this.state.mwreserve}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="Reserve Mva" name="mvareserve" value={this.state.mvareserve}/>
                     </div>
-                     <div className="col-md-2">
+                    <div className="col-md-2">
                         <TextField label="Ultime Mw" name="mwultime" value={this.state.mwultime}/>
                     </div>
-                     <div className="col-md-2">
+                    <div className="col-md-2">
                         <TextField label="Ultime Mvar" name="mvarultime" value={this.state.mvarultime}/>
                     </div>
-                     <div className="col-md-2">
+                    <div className="col-md-2">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
@@ -2206,13 +2248,13 @@ var TransformerParams = React.createClass ({
                     </div>
                 </div>
                 <div className="row">
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Formula Ratio 1" name="formula_ratio1" value={this.state.formula_ratio1}/>
                     </div>
                     <div className="col-md-1">
                         <TextField label="Formula Ratio 2" name="formula_ratio2" value={this.state.formula_ratio2}/>
                     </div>
-                     <div className="col-md-1">
+                    <div className="col-md-1">
                         <TextField label="Formula Ratio 3" name="formula_ratio3" value={this.state.formula_ratio3}/>
                     </div>
                 </div>
@@ -2223,13 +2265,13 @@ var TransformerParams = React.createClass ({
 });
 
 
-var TankParams = React.createClass ({
+var TankParams = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-            fields: ["sealed",  "welded_cover"]
+            fields: ["sealed", "welded_cover"]
         }
     },
 
@@ -2332,8 +2374,8 @@ var TankParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-4">
@@ -2361,13 +2403,13 @@ var TankParams = React.createClass ({
 });
 
 
-var SwitchParams = React.createClass ({
+var SwitchParams = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-            fields: ["sealed",  "welded_cover", "threephase", "current_rating"]
+            fields: ["sealed", "welded_cover", "threephase", "current_rating"]
         }
     },
 
@@ -2470,8 +2512,8 @@ var SwitchParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -2499,13 +2541,13 @@ var SwitchParams = React.createClass ({
 });
 
 
-var InductanceParams = React.createClass ({
+var InductanceParams = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-            fields: ["sealed",  "welded_cover", "winding", "fluid_volume", "cooling_rating"]
+            fields: ["sealed", "welded_cover", "winding", "fluid_volume", "cooling_rating"]
         }
     },
 
@@ -2608,8 +2650,8 @@ var InductanceParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div className="row">
                 <div className="col-md-2">
                     <SelectField
@@ -2650,13 +2692,13 @@ var InductanceParams = React.createClass ({
 });
 
 
-var GasSensorParams = React.createClass ({
+var GasSensorParams = React.createClass({
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-            fields: ["sealed",  "welded_cover", "winding", "fluid_volume", "cooling_rating", "h2",
+            fields: ["sealed", "welded_cover", "winding", "fluid_volume", "cooling_rating", "h2",
                 "c2h2", "c2h4", "c2h6", "co", "co2", "o2", "n2", "ppm_error", "percent_error", "model"
             ]
         }
@@ -2761,8 +2803,8 @@ var GasSensorParams = React.createClass ({
         return errors;
     },
 
-    render : function () {
-        return(
+    render: function () {
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -2809,21 +2851,20 @@ var GasSensorParams = React.createClass ({
     }
 });
 
-
-
-export default AirBreakerParams ;
-export default BushingParams ;
-export default CapacitorParams ;
-export default BreakerParams ;
-export default PowerSourceParams ;
-export default CableParams ;
-export default SwitchGearParams ;
-export default InductionMachineParams ;
-export default SyncroMachineParams ;
-export default TapChangerParams ;
-export default RectifierParams ;
-export default TransformerParams ;
-export default TankParams ;
-export default SwitchParams ;
-export default InductanceParams ;
-export default GasSensorParams ;
+//module.exports = AirBreakerParams ;
+//module.exports =  BushingParams ;
+// export default CapacitorParams ;
+// export default BreakerParams ;
+// export default PowerSourceParams ;
+// export default CableParams ;
+// export default SwitchGearParams ;
+// export default InductionMachineParams ;
+// export default SyncroMachineParams ;
+// export default TapChangerParams ;
+// export default RectifierParams ;
+//
+// export default TankParams ;
+// export default SwitchParams ;
+// export default GasSensorParams ;
+// export default InductanceParams ;
+export default TransformerParams;
