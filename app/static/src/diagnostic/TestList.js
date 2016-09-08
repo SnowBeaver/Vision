@@ -5,9 +5,7 @@ import Accordion from 'react-bootstrap/lib/Accordion';
 import Panel from 'react-bootstrap/lib/Panel';
 import {Link} from 'react-router';
 import NewTestForm from './NewTestForm';
-import Button from 'react-bootstrap/lib/Button'; 
-
-// var Breadcrumbs = require('react-breadcrumbs');
+import Button from 'react-bootstrap/lib/Button';
 
 
 var TestItem = React.createClass({
@@ -21,22 +19,14 @@ var TestItem = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: true
+            isVisible: true,
         };
     },
 
     componentDidMount: function () {
-        // this.serverRequest = $.get(this.props.source, function (result) {
-        //
-        //     items = (result['result']);
-        //     this.setState({
-        //         items: item
-        //     });
-        // }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
     },
 
     setVisible: function () {
@@ -44,26 +34,30 @@ var TestItem = React.createClass({
             isVisible: true
         });
     },
-    onRemove: function(){ 
+    onRemove: function () {
     },
 
+    edit: function(){
+        this.props.editTestForm(this.props.data.id);
+    },
+    
     render: function () {
 
         if (!this.props.data || typeof this.props.data == 'undefined' || !this.state.isVisible) {
-            return null;
-        } 
+            return (<div>No tests</div>);
+        }
         var test = this.props.data;
-        var edit_link = "/edit_test/" + test.id;
-        var test_type = {} || test.test_type;
-        var test_status = {} || test.test_status;
-        var performed_by = {} || test.performed_by;
-        // console.log(performed_by, test_status, test_type, edit_link, test);
+        var test_type = test.test_type;
+        var test_status = test.test_status;
+        var performed_by = test.performed_by;
 
         return (
             <div className="row">
                 <div id="test_prof">
                     <div className="col-md-1">
-                        <Link to={edit_link}>{test_type.name}</Link>
+                    </div>
+                    <div className="col-md-2">
+                        <a href="javascript: void(0);" onClick={this.edit}>{test_type.name}</a>
                     </div>
                     <div className="col-md-1">
                         {test.analysis_number}
@@ -71,7 +65,7 @@ var TestItem = React.createClass({
                     <div className="col-md-1">
                         {test_status.name}
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         {performed_by.name}
                     </div>
                     <div className="col-md-1">
@@ -103,7 +97,7 @@ var TestItemList = React.createClass({
         };
     },
 
-    componentDidMount: function () { 
+    componentDidMount: function () {
         // load test_result and show tests for each equipment
         // this.serverRequest = $.get(this.props.source, function (result) { 
         //     items = (result['result']);
@@ -114,7 +108,7 @@ var TestItemList = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        // this.serverRequest.abort();
     },
 
     setVisible: function () {
@@ -122,31 +116,53 @@ var TestItemList = React.createClass({
             isVisible: true
         });
     },
-    
-    showTestForm: function () { 
+
+    showTestForm: function () {
         this.setState({
             showTestForm: true
         })
     },
-    
-    closeTestForm: function () { 
+
+    closeTestForm: function () {
         this.setState({
             showTestForm: false
         })
     },
-    
-    reloadList: function(){
+
+    editTestForm: function (id) {
+        if (typeof id == 'undefined') {
+            return null;
+        }
+        
+        this.refs.new_test_form._edit(id);
+        this.setState({
+            showTestForm: true
+        })
+    },
+
+    reloadList: function () {
         this.closeTestForm();
         this.props.reloadList();
     },
 
     render: function () {
+        var equipment_id = this.props.id;
         var tests = [];
-        tests.push(
-            <TestItem data={this.props.data}/>
-        );
+
+        for (var i=0;i < this.props.data.length;i++) {
+            var item = this.props.data[i];
+            if (item.equipment.id == equipment_id) {
+                tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm}/>)
+            }
+        }
+        
+        // this.props.data.map(function (item) {
+        //     if (item.equipment.id == equipment_id) {
+        //         tests.push(<TestItem data={item} editTestForm={that.editTestForm}/>)
+        //     }
+        // });
+
         return (
-            this.state.isVisible ?
                 <div>
                     <div className="row">
                         {tests}
@@ -158,14 +174,13 @@ var TestItemList = React.createClass({
                             </FormGroup>
                         </div>
                     </div>
-
-                    <NewTestForm show={this.state.showTestForm} 
-                                 data={this.props.data} 
+                    <NewTestForm ref="new_test_form"
+                                 show={this.state.showTestForm}
                                  handleClose={this.closeTestForm}
-                                 reloadList={this.reloadList} 
+                                 reloadList={this.reloadList}
                     />
-                    
-                </div> : null
+
+                </div> 
         );
     }
 });
@@ -191,11 +206,11 @@ var TestList = React.createClass({
         this.serverRequest = $.get('/api/v1.0/test_result/?campaign_id=' + campaign_id,
 
             function (result) {
-                
+
                 var tests = result['result'];
                 var equipment = [];
-                
-                tests.map(function(item){
+
+                tests.map(function (item) {
                     equipment[item.equipment.id] = item.equipment;
                 });
 
@@ -203,7 +218,7 @@ var TestList = React.createClass({
                     equipment: equipment,
                     tests: tests
                 });
-                
+
             }.bind(this), 'json');
     },
 
@@ -217,7 +232,7 @@ var TestList = React.createClass({
         });
     },
 
-    reloadList: function(){
+    reloadList: function () {
         this.componentDidMount();
     },
 
@@ -226,10 +241,10 @@ var TestList = React.createClass({
         var items = [];
         for (var key in this.state.equipment) {
             items.push(
-                <Panel 
-                    key={this.state.equipment[key].equipment.id} 
-                    eventKey={this.state.equipment[key].equipment.id} 
-                    header={this.state.equipment[key].equipment.name}
+                <Panel
+                    key={this.state.equipment[key].id}
+                    eventKey={this.state.equipment[key].id}
+                    header={this.state.equipment[key].name}
                 >
                     <TestItemList data={this.state.tests} id={this.state.equipment[key].id}
                                   reloadList={this.reloadList}
