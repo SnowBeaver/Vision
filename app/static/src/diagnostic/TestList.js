@@ -38,7 +38,7 @@ var TestItem = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        //this.serverRequest.abort();
     },
 
     setVisible: function () {
@@ -55,7 +55,7 @@ var TestItem = React.createClass({
                 <div className="row">
                     <div id="test_prof">
                         <div className="col-md-4">
-                            <Link to="/edit_test/{this.props.data.id}">{this.props.data.name}</Link>
+                            <Link to={"/edit_test/" + this.props.data.id}>{this.props.data.name}</Link>
                             &nbsp;
                             &nbsp;
                             <a href="javascript:void(0)"
@@ -97,7 +97,7 @@ var TestItemList = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        //this.serverRequest.abort();
     },
 
     setVisible: function () {
@@ -120,11 +120,13 @@ var TestItemList = React.createClass({
 
     render: function () {
         var tests = [];
-        console.log(this.props.data);
         for (var key in this.props.data) {
-            tests.push(
-                <TestItem data={this.props.data[key]}/>
-            );
+            if (this.props.data[key] instanceof Object && Object.keys(this.props.data[key]).length){
+                tests.push(
+                    <TestItem data={this.props.data[key]}
+                              key={this.props.data[key].id}/>
+                );
+            }
         } 
         return (
             this.state.isVisible ?
@@ -189,10 +191,6 @@ var TestList = React.createClass({
     },
 
     render: function () {
-
-        // console.log(this.props.params);
-        // console.log(this.state.equipment);
-        
         var items = [];
         for (var key in this.state.equipment) {
             items.push(
