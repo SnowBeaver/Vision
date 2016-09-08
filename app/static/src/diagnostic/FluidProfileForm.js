@@ -7,6 +7,7 @@ import {findDOMNode} from 'react-dom';
 import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
 import Radio from 'react-bootstrap/lib/Radio';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var items =[];
 
@@ -285,9 +286,7 @@ const FluidProfileForm = React.createClass({
         }
     },
     componentDidMount: function(){
-        // console.log(this.props.data);
         //test_result_id
-        // console.log(this.props.data.id);
     },
     fillUpForm: function(saved_data){
 
@@ -311,12 +310,6 @@ const FluidProfileForm = React.createClass({
             form: data
         });
 
-        // console.log('fluid profile form data');
-        // console.log(data);
-        // console.log('fluid profile saved earlier data');
-        // console.log(this.state.data);
-        // console.log(this.state.name);
-
         // save part to test_result 
         $.ajax({
             url: '/api/v1.0/test_result/' + this.props.data.id,
@@ -325,7 +318,7 @@ const FluidProfileForm = React.createClass({
             contentType: 'application/json',
             data: JSON.stringify(this.state.form),
             success: function (data, textStatus) {
-                alert('Profile saved successfully')
+                NotificationManager.success('Profile saved successfully');
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -359,11 +352,8 @@ const FluidProfileForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if(Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
             return;
         }
         var xhr = this._save();
@@ -377,7 +367,6 @@ const FluidProfileForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        //console.log('Fluid profile saved successfully');
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState()); 
     },
@@ -388,11 +377,20 @@ const FluidProfileForm = React.createClass({
         if(res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.error) {
+            // Join multiple error messages
+            for (var field in res.error){
+                var errorMessage = res.error[field];
+                if (Array.isArray(errorMessage)){
+                     errorMessage = errorMessage.join(". ");
+                }
+                res.error[field] = errorMessage;
+            }
             this.setState({
-                errors: res.errors
+                errors: res.error
             });
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -413,11 +411,11 @@ const FluidProfileForm = React.createClass({
     },
 
     _validate: function () {
-        var errors = {};
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
-        return errors;
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
+        }
+        return response;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -437,9 +435,9 @@ const FluidProfileForm = React.createClass({
                     <div className="maxwidth">
                         <Panel header="Fluid profile">
                             <div className="row">
-                                <div className="col-md-10">
+                                <div className="col-md-9">
                                 </div>
-                                <div className="col-md-2">
+                                <div className="col-md-3">
                                     <FormGroup>
                                         <TestProfileSelectField fillUpForm={this.fillUpForm} source="/api/v1.0/fluid_profile"/>
                                     </FormGroup>
