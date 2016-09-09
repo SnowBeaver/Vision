@@ -757,9 +757,9 @@ const EquipmentForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
         this.setState(this.getInitialState());
         // show success message
+        alert('Equimpment successfully saved');
     },
 
     _onError: function (data) {
