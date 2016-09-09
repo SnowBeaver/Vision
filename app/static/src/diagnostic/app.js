@@ -48,12 +48,10 @@ const App = React.createClass({
     render() {
         return (
 			<div className="content">
+				<NotificationContainer/>
+				
 				<div className="row">
 					<ul className="pull-left">
-				<NotificationContainer/>
-				</ul>
-				<div>
-					<ul>
 						<li><Link to='/home'>Home</Link></li>
 						<li><Link to='/campaign'>New Campaign</Link></li>
 						<li><Link to='/equipment'>Equipment</Link></li>
@@ -102,8 +100,7 @@ const App = React.createClass({
 						<li><Link to='/visual_test'>visual test</Link></li>
 						<li><Link to='/water_test'>water test</Link></li>
 						<li><Link to='/winding2_test'>winding test2</Link></li>
-					</ul>
-
+					</ul> 
 				</div>
 				<div className="row">
 					<Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
@@ -112,7 +109,6 @@ const App = React.createClass({
 					<hr/>
 					{this.props.children}
 				</div>
-			</div>
 			</div>
         )
     }
