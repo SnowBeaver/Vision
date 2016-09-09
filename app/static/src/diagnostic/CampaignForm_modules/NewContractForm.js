@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
-
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var items = [];
 
@@ -61,8 +61,9 @@ var ContractStatusSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="contract_status_id">
-                        <option key="0" value="select">Contract Status</option>
+                        name="contract_status_id"
+                        required={this.props.required}>
+                        <option key="0" value="">Contract Status{this.props.required ? " *": ""}</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -81,14 +82,13 @@ var NewContractForm = React.createClass({
             equipment_number: '',
             contract_status_id: '',
             name: '',
-            code: ''
+            code: '',
+            changedFields: []
         }
     },
 
     _create: function () {
-        var fields = [
-            'name', 'code', 'contract_status_id'
-        ];
+        var fields = this.state.changedFields;
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
@@ -111,11 +111,8 @@ var NewContractForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
             return;
         }
         var xhr = this._create();
@@ -146,11 +143,20 @@ var NewContractForm = React.createClass({
         if (res.message) {
             message = data.responseJSON.message;
         }
-        if (res.errors) {
+        if (res.error) {
+            // Join multiple error messages
+            for (var field in res.error){
+                var errorMessage = res.error[field];
+                if (Array.isArray(errorMessage)){
+                     errorMessage = errorMessage.join(". ");
+                }
+                res.error[field] = errorMessage;
+            }
             this.setState({
-                errors: res.errors
+                errors: res.error
             });
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -163,21 +169,20 @@ var NewContractForm = React.createClass({
         } else {
             state[e.target.name] = $.trim(e.target.value);
         }
+        this.state.changedFields.push(e.target.name);
+
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[e.target.name];
         this.setState(state);
     },
 
     _validate: function () {
-        var errors = {};
-        if (this.state.contract_status_id == "") {
-            errors.contract_status_id = "Contract type should be selected";
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
         }
-        if (this.state.name == "") {
-            errors.name = "Name is required";
-        }
-        if (this.state.code == "") {
-            errors.code = "Code is required";
-        }
-        return errors;
+        return response;
     },
 
     _formGroupClass: function (field) {
@@ -214,41 +219,37 @@ var NewContractForm = React.createClass({
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
                             <div className="col-md-12">
-
-                                <FormGroup controlId="contract_status" validationState={this.getValidationState('contract_status_id')}>
-                                    { this.getValidationState('contract_status_id') == 'error' ?
-                                        <HelpBlock className="warning">{this.state.errors['contract_status_id']},
-                                            please choose any and resubmit the form</HelpBlock> : null
-                                    }
+                                <FormGroup controlId="contract_status"
+                                           validationState={this.state.errors.contract_status_id ? 'error' : null}>
+                                    <HelpBlock className="warning">{this.state.errors.contract_status_id}</HelpBlock>
                                     <ContractStatusSelectField
                                         source="/api/v1.0/contract_status"
-                                        handleChange={this.handleChange}/>
+                                        handleChange={this.handleChange}
+                                        required/>
                                 </FormGroup>
                             </div>
                         </div>
 
                         <div className="maxwidth">
-                            <FormGroup controlId="name" validationState={this.getValidationState('name')}>
-                                { this.getValidationState('name') == 'error' ?
-                                    <HelpBlock className="warning">{this.state.errors['name']},
-                                        please enter value and resubmit the form</HelpBlock> : null
-                                }
+                            <FormGroup controlId="name"
+                                       validationState={this.state.errors.name ? 'error' : null}>
+                                <HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
                                 <FormControl type="text"
-                                             placeholder="Name"
+                                             placeholder="Name *"
                                              name="name"
+                                             required
                                 /> 
                             </FormGroup>
                         </div>
 
                         <div className="maxwidth">
-                            <FormGroup controlId="name" validationState={this.getValidationState('code')}>
-                                { this.getValidationState('code') == 'error' ?
-                                    <HelpBlock className="warning">{this.state.errors['code']},
-                                        please enter value and resubmit the form</HelpBlock> : null
-                                }
+                            <FormGroup controlId="name"
+                                       validationState={this.state.errors.code ? 'error' : null}>
+                                <HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
                                 <FormControl type="text"
-                                             placeholder="Code"
+                                             placeholder="Code *"
                                              name="code"
+                                             required
                                 />
                             </FormGroup>
                         </div>
