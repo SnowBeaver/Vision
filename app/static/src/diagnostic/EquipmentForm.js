@@ -617,52 +617,52 @@ var EqAdditionalParams = React.createClass({
 
         switch (this.props.data.text) {
             case 'Air circuit breaker':
-                return (<AirBreakerParams/>);
+                return (<AirBreakerParams onChange={this.props.onChange}/>);
                 break;
             case 'Bushing':
-                return (<BushingParams/>);
+                return (<BushingParams  onChange={this.props.onChange}/>);
                 break;
             case 'Capacitor':
-                return (<CapacitorParams/>);
+                return (<CapacitorParams onChange={this.props.onChange}/>);
                 break;
             case 'Breaker':
-                return (<BreakerParams/>);
+                return (<BreakerParams onChange={this.props.onChange}/>);
                 break;
             case 'Power Source':
-                return (<PowerSourceParams/>);
+                return (<PowerSourceParams onChange={this.props.onChange}/>);
                 break;
             case 'Cable':
-                return (<CableParams/>);
+                return (<CableParams onChange={this.props.onChange}/>);
                 break;
             case 'Switchgear':
-                return (<SwitchGearParams/>);
+                return (<SwitchGearParams onChange={this.props.onChange}/>);
                 break;
             case 'Induction machine':
-                return (<InductionMachineParams/>);
+                return (<InductionMachineParams onChange={this.props.onChange}/>);
                 break;
             case 'Synchronous machine':
-                return (<SyncroMachineParams/>);
+                return (<SyncroMachineParams onChange={this.props.onChange}/>);
                 break;
             case 'Tap changer':
-                return (<TapChangerParams/>);
+                return (<TapChangerParams onChange={this.props.onChange}/>);
                 break;
             case 'Rectifier':
-                return (<RectifierParams/>);
+                return (<RectifierParams onChange={this.props.onChange}/>);
                 break;
             case 'Transformer':
-                return (<TransformerParams/>);
+                return (<TransformerParams onChange={this.props.onChange}/>);
                 break;
             case 'Tank':
-                return (<TankParams/>);
+                return (<TankParams onChange={this.props.onChange}/>);
                 break;
             case 'Switch':
-                return (<SwitchParams/>);
+                return (<SwitchParams onChange={this.props.onChange}/>);
                 break;
             case 'Inductance':
-                return (<InductanceParams/>);
+                return (<InductanceParams onChange={this.props.onChange}/>);
                 break;
             case 'Gas sensor':
-                return (<GasSensorParams/>);
+                return (<GasSensorParams onChange={this.props.onChange}/>);
                 break;
 
             default:
@@ -928,7 +928,8 @@ const EquipmentForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-11">
-                                    <EqAdditionalParams data={this.state.option_text}/>
+                                    <EqAdditionalParams onChange={this._onChange}
+                                                        data={this.state.option_text}/>
                                 </div>
                             </div>
                             <div className="row">
