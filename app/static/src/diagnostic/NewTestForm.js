@@ -638,7 +638,6 @@ var NewTestForm = React.createClass({
             }
             form['id'] = id;
             this.setState(form);
-            // console.log(url, this.state);
 
         }.bind(this), 'json');
     },
@@ -655,13 +654,13 @@ var NewTestForm = React.createClass({
     },
 
     _save: function () {
+        
         var fields = this.state.fields;
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
         var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
         delete data['analysis_number'];
 
@@ -687,6 +686,9 @@ var NewTestForm = React.createClass({
             return;
         }
         var xhr = this._save();
+        if (!xhr) {
+            alert('Something went wrong.')
+        }
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)

@@ -92,7 +92,8 @@ var TestItemList = React.createClass({
         return {
             items: [],
             isVisible: true,
-            showTestForm: false
+            showTestForm: false,
+            showAddTestButton: true
         };
     },
 
@@ -156,10 +157,11 @@ var TestItemList = React.createClass({
             var item = this.props.data[i];
 
             if (item.equipment.id == equipment_id) {
-                
+
                 if (item.performed_by_id === null && item.reason_id === null){
                     data = item;
                     showTestForm = true;
+                    showAddTestButton = false;
                     continue;
                 } 
                 

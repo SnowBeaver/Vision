@@ -288,7 +288,7 @@ const FluidProfileForm = React.createClass({
         }
     },
     componentDidMount: function () {
-        // console.log(this.props.data);
+        console.log(this.props.data);
         //test_result_id
         // console.log(this.props.data.id);
     },
@@ -312,31 +312,7 @@ const FluidProfileForm = React.createClass({
             data[key] = this.state[key];
         }
         this.setState({
-            form: data
-        });
-
-        // console.log('fluid profile form data');
-        // console.log(data);
-        //
-        // console.log('fluid profile saved earlier data');
-        // console.log(this.state.data);
-        // console.log(this.state.name);
-
-        // save part to test_result 
-        $.ajax({
-            url: '/api/v1.0/test_result/' + this.props.data.id,
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(this.state.form),
-            success: function (data, textStatus) {
-                this.props.handleClose();
-                alert('Profile saved successfully')
-                
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
+            data: data
         });
 
         // show success message
@@ -349,19 +325,32 @@ const FluidProfileForm = React.createClass({
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            return $.ajax({
+            $.ajax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(data),
+                data: JSON.stringify(this.state.data),
                 success: function (data, textStatus) {
+                    alert('Custom profile saved');
                 },
                 beforeSend: function () {
                     this.setState({loading: true});
                 }.bind(this)
             });
         }
+
+        // save part to test_result 
+        return $.ajax({
+            url: '/api/v1.0/test_result/' + this.props.data.id,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        });
     },
 
     _onSubmit: function (e) {
@@ -384,8 +373,8 @@ const FluidProfileForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        //console.log('Fluid profile saved successfully');
-        //this.setState(this.getInitialState());
+        alert('Profile saved successfully');
+        this.props.handleClose();
     },
 
     _onError: function (data) {
