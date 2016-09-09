@@ -282,7 +282,7 @@ const FluidProfileForm = React.createClass({
                 'point', 'viscosity', 'corr', 'dielec_i',
                 'visual', 'pcb_vial', 'antioxidant',
                 'sampling', 'sampling_jar', 'sampling_vial',
-                'qty', 'qty_jar', 'qty_vial', 'sampling', 'selection',
+                'qty', 'qty_jar', 'qty_vial', 'sampling',
                 'shared', 'name', 'description'
             ]
         }
@@ -292,6 +292,7 @@ const FluidProfileForm = React.createClass({
         //test_result_id
         // console.log(this.props.data.id);
     },
+
     fillUpForm: function (saved_data) {
 
         if (null == saved_data) {
@@ -316,6 +317,7 @@ const FluidProfileForm = React.createClass({
 
         // console.log('fluid profile form data');
         // console.log(data);
+        //
         // console.log('fluid profile saved earlier data');
         // console.log(this.state.data);
         // console.log(this.state.name);
@@ -328,7 +330,9 @@ const FluidProfileForm = React.createClass({
             contentType: 'application/json',
             data: JSON.stringify(this.state.form),
             success: function (data, textStatus) {
+                this.props.handleClose();
                 alert('Profile saved successfully')
+                
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -381,8 +385,7 @@ const FluidProfileForm = React.createClass({
 
     _onSuccess: function (data) {
         //console.log('Fluid profile saved successfully');
-        // this.refs.eqtype_form.getDOMNode().reset();
-        // this.setState(this.getInitialState()); 
+        //this.setState(this.getInitialState());
     },
 
     _onError: function (data) {
@@ -419,6 +422,7 @@ const FluidProfileForm = React.createClass({
         // }
         return errors;
     },
+
     _formGroupClass: function (field) {
         var className = "form-group ";
         if (field) {
@@ -426,7 +430,6 @@ const FluidProfileForm = React.createClass({
         }
         return className;
     },
-
 
     render: function () {
 

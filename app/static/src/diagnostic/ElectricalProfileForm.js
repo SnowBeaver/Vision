@@ -151,6 +151,7 @@ const ElectricalProfileForm = React.createClass({
             contentType: 'application/json',
             data: JSON.stringify(this.state.form),
             success: function (data, textStatus) {
+                this.props.handleClose();
                 alert('Profile saved successfully')
             },
             beforeSend: function () {
