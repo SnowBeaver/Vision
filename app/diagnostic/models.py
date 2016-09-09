@@ -2766,7 +2766,7 @@ class VisualInspectionTest(db.Model):
     tank_pressure_unit_id = db.Column(db.Integer, db.ForeignKey("pressure_unit.id"))  # TankPressureUnit
     tank_pressure = db.Column(db.Float(10))  # TankPressure
     tank_overpressure_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TankOverPressureValve
-    tank_ampling_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TankSamplingValve
+    tank_sampling_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TankSamplingValve
     tank_oil_pump_id = db.Column(db.Integer, db.ForeignKey("pump_condition.id"))  # TankOilPump
     tank_gas_analyser = db.Column(db.Float(10))  # TankGasSensor
     tank_overall_condition_id = db.Column(db.Integer, db.ForeignKey("overall_condition.id"))  # TankPaint
@@ -2792,7 +2792,7 @@ class VisualInspectionTest(db.Model):
     tap_changer_pressure_unit_id = db.Column(db.Integer, db.ForeignKey("pressure_unit.id"))  # TCPressureUnit
     tap_changer_tap_position = db.Column(db.Float(10))  # TCTapPosition
     tap_changer_overpressure_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TCOverPressureValve
-    tap_changer_ampling_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TCSamplingGasket
+    tap_changer_sampling_valve_id = db.Column(db.Integer, db.ForeignKey("valve_condition.id"))  # TCSamplingGasket
     tap_changer_operation_counter = db.Column(db.Integer)  # TCOperationCounter
     tap_changer_counter_id = db.Column(db.Integer, db.ForeignKey("tap_counter_status.id"))  # TCCounter
     tap_changer_filter_id = db.Column(db.Integer, db.ForeignKey("tap_filter_condition.id"))  # TCFilter
@@ -2833,7 +2833,7 @@ class VisualInspectionTest(db.Model):
     tank_oil_level = db.relationship('FluidLevel', foreign_keys='VisualInspectionTest.tank_oil_level_id')
     tank_pressure_unit = db.relationship('PressureUnit', foreign_keys='VisualInspectionTest.tank_pressure_unit_id')
     tank_overpressure_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tank_overpressure_valve_id')
-    tank_ampling_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tank_ampling_valve_id')
+    tank_ampling_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tank_sampling_valve_id')
     tank_oil_pump = db.relationship('PumpCondition', foreign_keys='VisualInspectionTest.tank_oil_pump_id')
     tank_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.tank_overall_condition_id')
     exp_tank_pipe_gasket = db.relationship('GasketCondition', foreign_keys='VisualInspectionTest.exp_tank_pipe_gasket_id')
@@ -2847,7 +2847,7 @@ class VisualInspectionTest(db.Model):
     tap_changer_oil_level = db.relationship('FluidLevel', foreign_keys='VisualInspectionTest.tap_changer_oil_level_id')
     tap_changer_pressure_unit = db.relationship('PressureUnit', foreign_keys='VisualInspectionTest.tap_changer_pressure_unit_id')
     tap_changer_overpressure_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tap_changer_overpressure_valve_id')
-    tap_changer_ampling_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tap_changer_ampling_valve_id')
+    tap_changer_ampling_valve = db.relationship('ValveCondition', foreign_keys='VisualInspectionTest.tap_changer_sampling_valve_id')
     tap_changer_counter = db.relationship('TapCounterStatus', foreign_keys='VisualInspectionTest.tap_changer_counter_id')
     tap_changer_filter = db.relationship('TapFilterCondition', foreign_keys='VisualInspectionTest.tap_changer_filter_id')
     tap_changer_overall_condition = db.relationship('OverallCondition', foreign_keys='VisualInspectionTest.tap_changer_overall_condition_id')
@@ -2881,7 +2881,7 @@ class VisualInspectionTest(db.Model):
                 'tank_pressure_unit_id': self.tank_pressure_unit_id,
                 'tank_pressure': self.tank_pressure,
                 'tank_overpressure_valve_id': self.tank_overpressure_valve_id,
-                'tank_ampling_valve_id': self.tank_ampling_valve_id,
+                'tank_sampling_valve_id': self.tank_sampling_valve_id,
                 'tank_oil_pump_id': self.tank_oil_pump_id,
                 'tank_gas_analyser': self.tank_gas_analyser,
                 'tank_overall_condition_id': self.tank_overall_condition_id,
@@ -2901,7 +2901,7 @@ class VisualInspectionTest(db.Model):
                 'tap_changer_pressure_unit_id': self.tap_changer_pressure_unit_id,
                 'tap_changer_tap_position': self.tap_changer_tap_position,
                 'tap_changer_overpressure_valve_id': self.tap_changer_overpressure_valve_id,
-                'tap_changer_ampling_valve_id': self.tap_changer_ampling_valve_id,
+                'tap_changer_sampling_valve_id': self.tap_changer_sampling_valve_id,
                 'tap_changer_operation_counter': self.tap_changer_operation_counter,
                 'tap_changer_counter_id': self.tap_changer_counter_id,
                 'tap_changer_filter_id': self.tap_changer_filter_id,

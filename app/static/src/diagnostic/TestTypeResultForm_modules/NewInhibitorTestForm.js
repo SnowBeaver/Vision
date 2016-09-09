@@ -10,15 +10,11 @@ import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 
-var items = [];
-
 const TextField = React.createClass({
-    render: function () {
-        var label = (this.props.label != null) ? this.props.label : "";
-        var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
-        console.log("NewFluidTestForm TextField " + name + " value: " + value);
-        console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -35,19 +31,20 @@ const TextField = React.createClass({
 
 const CheckBox = React.createClass({
     render: function () {
-        var name = (this.props.name != null) ? this.props.name : "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var checked = (this.props.value != null) ? this.props.value: false;
+        var is_checked = (checked) ? 'checked': '';
         return (
-            <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left">
-                </span>
-            </Checkbox>
+           <Checkbox checked={is_checked} name={name}>
+               <span className="glyphicon glyphicon-menu-left">
+               </span>
+           </Checkbox>
         );
     }
-
 });
 
 var SelectField = React.createClass({
-    handleChange: function (event, index, value) {
+    handleChange: function(event, index, value){
         this.setState({
             value: event.target.value
         });
@@ -62,9 +59,10 @@ var SelectField = React.createClass({
     isVisible: function () {
         return this.state.isVisible;
     },
-    componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
-            this.setState({items: (result['result'])});
+    componentDidMount: function(){
+        var source = '/api/v1.0/' + this.props.source + '/';
+        this.serverRequest = $.get(source, function (result){
+            this.setState({ items: (result['result']) });
         }.bind(this), 'json');
     },
     componentWillUnmount: function () {
@@ -73,91 +71,27 @@ var SelectField = React.createClass({
     setVisible: function () {
         this.state.isVisible = true;
     },
-    render: function () {
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
-        console.log("SelectField value" + (this.props.value || 'no data'));
-        console.log(this.props.value);
-        console.log(typeof(this.state.value) == "undefined");
-        console.log(this.state.value == null);
         return (
             <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
-                             defaultValue={this.props.value}
-                >
-                    <option>{this.props.label}</option>
+                             name={name}
+                             value={value}
+                             >
                     {menuItems}
+                    <FormControl.Feedback />
                 </FormControl>
             </FormGroup>
-        );
-    }
-});
-
-var InhibitorTypeSelectField = React.createClass({
-
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value,
-            location_id: event.target.value
-        })
-
-    },
-
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-
-    render: function () {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="inhibitor_type_id"
-                        value={this.state.selected}
-                    >
-                        <option value="select">Inhibitor Type</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
         );
     }
 });
@@ -173,22 +107,43 @@ var NewInhibitorTestForm = React.createClass({
                 'inhibitor_flag',
                 'inhibitor_type_id',
                 'remark'
-
-
             ]
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+        }
         return $.ajax({
-            url: '/api/v1.0/inhibitor_test/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -238,15 +193,20 @@ var NewInhibitorTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
-        } else if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
-        } else {
-            state[e.target.name] = e.target.value;
-        }
-        this.setState(state);
+       var state = {};
+       if (e.target.type == 'checkbox') {
+           state[e.target.name] = e.target.checked;
+       }
+       else if (e.target.type == 'radio') {
+           state[e.target.name] = e.target.value;
+       }
+       else if (e.target.type == 'select-one') {
+           state[e.target.name] = e.target.value;
+       }
+       else {
+           state[e.target.name] = $.trim(e.target.value);
+       }
+       this.setState(state);
     },
 
     _validate: function () {
@@ -269,7 +229,6 @@ var NewInhibitorTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -277,24 +236,31 @@ var NewInhibitorTestForm = React.createClass({
                         <div className="col-md-8">
                             <div className="row">
                                 <div className="col-xs-1 ">
-                                    <CheckBox name="inhibitor_flag"/>
+                                    <CheckBox name="inhibitor_flag" value={this.state.inhibitor_flag}/>
                                 </div>
                                 <div className="col-xs-6">
                                     <TextField label="Inhibitor" name="inhibitor" value={this.state.inhibitor}/>
                                 </div>
                             </div>
                             <div className="row">
-                                <div>
-                                    <SelectField source="" label="Inhibitor Type" value=""/>
+                                <div className="col-xs-7">
+                                    <SelectField label="Inhibitor Type"
+                                                 name="inhibitor_type_id"
+                                                 value={this.state.inhibitor_type_id}
+                                                 source="inhibitor_type"/>
                                 </div>
                             </div>
                             <div className="row">
-                                <FormGroup>
-                                    <FormControl componentClass="textarea"
-                                                 placeholder="Remark"
-                                                 name="remark"
-                                    />
-                                </FormGroup>
+                                <div className="col-xs-7">
+                                    <FormGroup>
+                                        <FormControl componentClass="textarea"
+                                                     placeholder="Remark"
+                                                     name="remark"
+                                                     value={this.state.remark}
+                                        />
+                                        <FormControl.Feedback />
+                                    </FormGroup>
+                                </div>
                             </div>
                         </div>
 
@@ -327,6 +293,5 @@ var NewInhibitorTestForm = React.createClass({
         );
     }
 });
-
 
 export default NewInhibitorTestForm;

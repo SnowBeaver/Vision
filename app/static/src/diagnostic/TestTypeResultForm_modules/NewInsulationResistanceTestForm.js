@@ -47,11 +47,14 @@ var NewInsulationResistanceTestForm = React.createClass({
         this.serverRequest = $.get(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
                 var data = res[0];
-                var state = {data: data};
-                for (var k in data) {
-                    if (data.hasOwnProperty(k)) {
-                        state[k] = data[k];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
                     }
                 }
                 this.setState(state);
@@ -63,18 +66,16 @@ var NewInsulationResistanceTestForm = React.createClass({
         var fields = this.state.fields;
         var data = {test_result_id: this.props.testResultId};
         var url = '/api/v1.0/' + this.props.tableName + '/';
-        var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
         if ('id' in this.state) {
             url += this.state['id'];
-            type = 'PUT';
         }
         return $.ajax({
             url: url,
-            type: type,
+            type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),

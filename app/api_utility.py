@@ -90,9 +90,9 @@ type_float_coerce_dict = {'type': 'float', 'coerce': float}
 type_integer_dict = {'type': 'integer'}
 type_datetime_required_dict = dict_copy_union(type_datetime_dict, required_dict)
 type_integer_coerce_dict = dict_copy_union(type_integer_dict, {'coerce': int})
-type_integer_coerce_4_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 9999}),
-type_integer_coerce_6_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 999999}),
-type_integer_coerce_8_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 99999999}),
+type_integer_coerce_4_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 9999})
+type_integer_coerce_6_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 999999})
+type_integer_coerce_8_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 99999999})
 type_integer_coerce_required_dict = dict_copy_union(type_integer_coerce_dict, required_dict)
 type_string_maxlength_5_dict = dict_copy_union(type_string_dict, {'maxlength': 5})
 type_string_maxlength_20_dict = dict_copy_union(type_string_dict, {'maxlength': 20})
@@ -807,7 +807,7 @@ visual_inspection_test_schema = {'id': readonly_dict,
                                  'tank_pressure_unit_id': type_integer_coerce_dict,
                                  'tank_pressure': type_float_coerce_dict,
                                  'tank_overpressure_valve_id': type_integer_coerce_dict,
-                                 'tank_ampling_valve_id': type_integer_coerce_dict,
+                                 'tank_sampling_valve_id': type_integer_coerce_dict,
                                  'tank_oil_pump_id': type_integer_coerce_dict,
                                  'tank_gas_analyser': type_float_coerce_dict,
                                  'tank_overall_condition_id': type_integer_coerce_dict,
@@ -827,7 +827,7 @@ visual_inspection_test_schema = {'id': readonly_dict,
                                  'tap_changer_pressure_unit_id': type_integer_coerce_dict,
                                  'tap_changer_tap_position': type_float_coerce_dict,
                                  'tap_changer_overpressure_valve_id': type_integer_coerce_dict,
-                                 'tap_changer_ampling_valve_id': type_integer_coerce_dict,
+                                 'tap_changer_sampling_valve_id': type_integer_coerce_dict,
                                  'tap_changer_operation_counter': type_integer_coerce_dict,
                                  'tap_changer_counter_id': type_integer_coerce_dict,
                                  'tap_changer_filter_id': type_integer_coerce_dict,
