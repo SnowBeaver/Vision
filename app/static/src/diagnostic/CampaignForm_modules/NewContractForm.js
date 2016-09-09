@@ -161,7 +161,7 @@ var NewContractForm = React.createClass({
         } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         } else {
-            state[e.target.name] = $.trim(e.target.value);
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -193,8 +193,8 @@ var NewContractForm = React.createClass({
     },
 
     getValidationState: function (field) {
-        
-        if(Object.keys(this.state.errors).length == 0){
+
+        if (Object.keys(this.state.errors).length == 0) {
             return;
         }
         var state = null;
@@ -212,61 +212,62 @@ var NewContractForm = React.createClass({
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <div className="row">
-                            <div className="col-md-12">
+                    <div className="row">
+                        <div className="col-md-12">
 
-                                <FormGroup controlId="contract_status" validationState={this.getValidationState('contract_status_id')}>
-                                    { this.getValidationState('contract_status_id') == 'error' ?
-                                        <HelpBlock className="warning">{this.state.errors['contract_status_id']},
-                                            please choose any and resubmit the form</HelpBlock> : null
-                                    }
-                                    <ContractStatusSelectField
-                                        source="/api/v1.0/contract_status"
-                                        handleChange={this.handleChange}/>
-                                </FormGroup>
-                            </div>
-                        </div>
-
-                        <div className="maxwidth">
-                            <FormGroup controlId="name" validationState={this.getValidationState('name')}>
-                                { this.getValidationState('name') == 'error' ?
-                                    <HelpBlock className="warning">{this.state.errors['name']},
-                                        please enter value and resubmit the form</HelpBlock> : null
+                            <FormGroup controlId="contract_status"
+                                       validationState={this.getValidationState('contract_status_id')}>
+                                { this.getValidationState('contract_status_id') == 'error' ?
+                                    <HelpBlock className="warning">{this.state.errors['contract_status_id']},
+                                        please choose any and resubmit the form</HelpBlock> : null
                                 }
-                                <FormControl type="text"
-                                             placeholder="Name"
-                                             name="name"
-                                /> 
+                                <ContractStatusSelectField
+                                    source="/api/v1.0/contract_status"
+                                    handleChange={this.handleChange}/>
                             </FormGroup>
                         </div>
+                    </div>
 
-                        <div className="maxwidth">
-                            <FormGroup controlId="name" validationState={this.getValidationState('code')}>
-                                { this.getValidationState('code') == 'error' ?
-                                    <HelpBlock className="warning">{this.state.errors['code']},
-                                        please enter value and resubmit the form</HelpBlock> : null
-                                }
-                                <FormControl type="text"
-                                             placeholder="Code"
-                                             name="code"
-                                />
-                            </FormGroup>
-                        </div>
+                    <div className="maxwidth">
+                        <FormGroup controlId="name" validationState={this.getValidationState('name')}>
+                            { this.getValidationState('name') == 'error' ?
+                                <HelpBlock className="warning">{this.state.errors['name']},
+                                    please enter value and resubmit the form</HelpBlock> : null
+                            }
+                            <FormControl type="text"
+                                         placeholder="Name"
+                                         name="name"
+                            />
+                        </FormGroup>
+                    </div>
 
-                        <div className="row">
-                            <div className="col-md-12 ">
-                                <Button bsStyle="success"
-                                        className="btn btn-success pull-right"
-                                        type="submit"
-                                >Save</Button>
-                                &nbsp;
-                                <Button bsStyle="danger"
-                                        className="pull-right"
-                                        onClick={this.props.handleClose}
-                                        className="pull-right margin-right-xs"
-                                >Cancel</Button>
-                            </div>
+                    <div className="maxwidth">
+                        <FormGroup controlId="name" validationState={this.getValidationState('code')}>
+                            { this.getValidationState('code') == 'error' ?
+                                <HelpBlock className="warning">{this.state.errors['code']},
+                                    please enter value and resubmit the form</HelpBlock> : null
+                            }
+                            <FormControl type="text"
+                                         placeholder="Code"
+                                         name="code"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-md-12 ">
+                            <Button bsStyle="success"
+                                    className="btn btn-success pull-right"
+                                    type="submit"
+                            >Save</Button>
+                            &nbsp;
+                            <Button bsStyle="danger"
+                                    className="pull-right"
+                                    onClick={this.props.handleClose}
+                                    className="pull-right margin-right-xs"
+                            >Cancel</Button>
                         </div>
+                    </div>
                 </form>
             </div>
         );

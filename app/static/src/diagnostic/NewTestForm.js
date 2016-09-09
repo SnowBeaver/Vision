@@ -25,13 +25,12 @@ var TestProfileSelectField = React.createClass({
 
     getInitialState: function () {
         return {
-            isVisible: true
+            isVisible: true,
+            value: this.props.value
         };
     },
 
     handleChange: function (event) {
-        // console.log(event.target.name);
-        // console.log(event.target.value);
         this.setState({
             value: event.target.value
         });
@@ -89,7 +88,8 @@ var PerformedBySelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -114,7 +114,7 @@ var PerformedBySelectField = React.createClass({
     setVisible: function () {
         this.state.isVisible = true;
     },
-    
+
     setSelected: function (data) {
         this.componentDidMount();
         this.setState({
@@ -136,7 +136,7 @@ var PerformedBySelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.state.value}
                         name="performed_by_id">
                         <option key="0" value="select">Performed by</option>
                         {menuItems}
@@ -159,7 +159,8 @@ var MaterialSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -191,7 +192,7 @@ var MaterialSelectField = React.createClass({
             selected: data.result
         });
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -206,7 +207,7 @@ var MaterialSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select material"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.state.value}
                         name="material_id">
                         <option key="0" value="select">Material</option>
                         {menuItems}
@@ -229,7 +230,8 @@ var FluidTypeSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -276,7 +278,7 @@ var FluidTypeSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.state.value}
                         name="fluid_type_id"
                     >
                         <option key="0" value="select">Fluid Type</option>
@@ -293,14 +295,15 @@ var LabAnalyserSelectField = React.createClass({
 
     handleChange: function (event, index, value) {
         this.setState({
-            value: event.target.value,
+            value: event.target.value
         });
     },
 
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -332,7 +335,7 @@ var LabAnalyserSelectField = React.createClass({
             selected: data.result
         });
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -347,7 +350,7 @@ var LabAnalyserSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.state.value}
                         name="lab_id">
                         <option key="0" value="select">Lab/On-Line Analyser</option>
                         {menuItems}
@@ -370,7 +373,8 @@ var LabContractSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -418,7 +422,7 @@ var LabContractSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.state.value}
                         name="lab_contract_id">
                         <option key="0" value="select">Lab Contract</option>
                         {menuItems}
@@ -441,7 +445,8 @@ var SyringeNumberSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -473,7 +478,7 @@ var SyringeNumberSelectField = React.createClass({
             selected: data.result
         });
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -488,7 +493,7 @@ var SyringeNumberSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.selected}
+                        value={this.state.value}
                         name="seringe_num">
                         <option key="0" value="select">Syringe Number</option>
                         {menuItems}
@@ -511,7 +516,8 @@ var TestReasonSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -543,7 +549,7 @@ var TestReasonSelectField = React.createClass({
             selected: selected
         })
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -557,7 +563,7 @@ var TestReasonSelectField = React.createClass({
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
-                    name="test_reason_id"
+                    name="reason_id"
                     onChange={this.handleChange}
                 >
                     <option key="0" value="select">Reason for Testing</option>
@@ -573,7 +579,7 @@ var NewTestForm = React.createClass({
 
     //test_sampling_card
     //test_status_id - should be set separate
-    //test_commendation
+    //test_recommendation
     //'campaign_id' - should be passed
 
     getInitialState: function () {
@@ -592,12 +598,14 @@ var NewTestForm = React.createClass({
             date_analyse: new Date().toISOString(),
             repair_date: new Date().toISOString(),
             fields: [
-                'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
+                'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
-            ]
+            ],
+            reason_id: ''
+
             // profile_fields: [
             //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
             //     'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
@@ -610,10 +618,40 @@ var NewTestForm = React.createClass({
     },
 
     componentDidMount: function () {
+        if (this.props.data != null) {
+            this._edit(this.props.data.id);
+        }
+    },
+
+    _edit: function (id) {
         // fill up form with data
-        this.setState({
-            test_result_id: this.props.data['id']
-        });
+
+        var url = '/api/v1.0/test_result/' + id; // edit
+        this.serverRequest = $.get(url, function (result) {
+            var data = (result['result']);
+
+            var fields = this.state.fields;
+            var form = {};
+            for (var i = 0; i < fields.length; i++) {
+                var key = fields[i];
+                form[key] = data[key];
+            }
+            form['id'] = id;
+            this.setState(form);
+            // console.log(url, this.state);
+
+        }.bind(this), 'json');
+    },
+
+    _add: function () {
+        var fields = this.state.fields;
+        var form = {};
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            form[key] = '';
+        }
+        form['id'] = '';
+        this.setState(form);
     },
 
     _save: function () {
@@ -623,10 +661,9 @@ var NewTestForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        console.log(this.props.data);
-        // console.log(this.props.data['campaign_id']);
-        data['campaign_id'] = this.props.data['campaign'];
-        var url = '/api/v1.0/test_result/' + this.state.test_result_id;
+        console.log(data);
+        var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
+        delete data['analysis_number'];
 
         return $.ajax({
             url: url,
@@ -634,8 +671,6 @@ var NewTestForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) {
-            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -656,18 +691,17 @@ var NewTestForm = React.createClass({
             .fail(this._onError)
             .always(this.hideLoading)
     },
+
     hideLoading: function () {
         this.setState({loading: false});
     },
 
     _onSuccess: function (data) {
-        // this.setState(this.getInitialState());
-        // console.log(data['result']['analysis_number']);
         this.setState({
             analysis_number: data['result']['analysis_number']
             // show success message
         });
-        alert('Test saved');
+        this.props.reloadList();
     },
 
     _onError: function (data) {
@@ -686,14 +720,14 @@ var NewTestForm = React.createClass({
     _onChange: function (e) {
         var state = {};
 
-        if(e.target.value != 'select_prof' && e.target.name == 'test_type_id'){
+        if (e.target.value != 'select_prof' && e.target.name == 'test_type_id') {
             this.setState({
-                showRadio:false
+                showRadio: false
             })
         }
-        else{
+        else {
             this.setState({
-                showRadio:true
+                showRadio: true
             })
         }
 
@@ -702,8 +736,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-            console.log(e.target.value);
-
         }
         else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
@@ -719,8 +751,8 @@ var NewTestForm = React.createClass({
                 });
             }
         }
-        else {
-            state[e.target.name] = $.trim(e.target.value);
+        else { 
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -802,26 +834,26 @@ var NewTestForm = React.createClass({
         this.closeNewUserForm();
         alert('User added');
     },
-    
+
     onLabCreate: function (response) {
         this.refs.lab.setSelected(response);
         this.closeNewLabForm();
-        alert('Laboratory added'); 
+        alert('Laboratory added');
     },
 
-    onMaterialCreate: function(response) { 
+    onMaterialCreate: function (response) {
         this.refs.material.setSelected(response);
         this.closeNewMaterialForm();
         alert('Material added');
     },
-    
-    onFluidTypeCreate: function(response) {
+
+    onFluidTypeCreate: function (response) {
         this.refs.fluid_type.setSelected(response);
         this.closeNewFluidForm();
         alert('Fluid type added');
     },
 
-    onSyringeCreate: function(response) {
+    onSyringeCreate: function (response) {
         this.refs.syringe.setSelected(response);
         this.closeNewSyringeForm();
         alert('Syringe added');
@@ -890,15 +922,14 @@ var NewTestForm = React.createClass({
         }
     },
 
-
-
     render: function () {
 
+        var title = (this.state.id) ? "Edit test" : 'New test';
         return (
             this.props.show ?
                 <div className="form-container">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <Panel header="New Test">
+                        <Panel header={title}>
                             <div className="maxwidth">
                                 <div className="col-md-12">
                                     <div className="maxwidth">
@@ -917,6 +948,7 @@ var NewTestForm = React.createClass({
                                                 ref="test_reason"
                                                 source="/api/v1.0/test_reason"
                                                 handleChange={this.handleChange}
+                                                value={this.state.reason_id}
                                             />
                                         </div>
                                     </div>
@@ -925,7 +957,9 @@ var NewTestForm = React.createClass({
                                             <MaterialSelectField
                                                 ref="material"
                                                 source="/api/v1.0/material/"
-                                                handleChange={this.handleChange}/>
+                                                handleChange={this.handleChange}
+                                                value={this.state.material_id}
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="material"
@@ -940,6 +974,7 @@ var NewTestForm = React.createClass({
                                             <FluidTypeSelectField
                                                 ref="fluid_type"
                                                 source="/api/v1.0/fluid_type/"
+                                                value={this.state.fluid_type_id}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -956,6 +991,7 @@ var NewTestForm = React.createClass({
                                                 ref="performed_by"
                                                 source="/api/v1.0/user"
                                                 handleChange={this.handleChange}
+                                                value={this.state.performed_by_id}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -971,6 +1007,7 @@ var NewTestForm = React.createClass({
                                             <LabAnalyserSelectField
                                                 ref="lab"
                                                 source="/api/v1.0/lab/"
+                                                value={this.state.lab_id}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -986,7 +1023,9 @@ var NewTestForm = React.createClass({
                                             <LabContractSelectField
                                                 ref="contract"
                                                 source="/api/v1.0/contract/"
-                                                handleChange={this.handleChange}/>
+                                                handleChange={this.handleChange}
+                                                value={this.state.lab_contract_id}
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="lab_contract"
@@ -1002,6 +1041,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl type="text"
                                                              placeholder="Charge"
                                                              name="charge"
+                                                             value={this.state.charge}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1013,14 +1053,19 @@ var NewTestForm = React.createClass({
                                                 <ControlLabel>Remark</ControlLabel>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="remark"
-                                                             name="remark"/>
+                                                             name="remark"
+                                                             value={this.state.remark}
+                                                />
                                             </FormGroup>
                                         </div>
                                     </div>
 
                                     <div className="maxwidth">
                                         <div className="col-md-4 nopadding padding-right-xs">
-                                            <Checkbox name="transmission">Sent to Laboratory</Checkbox>
+                                            <Checkbox name="transmission"
+                                                      checked={this.state.transmission ? "checked" :null}>
+                                                Sent to Laboratory
+                                            </Checkbox>
                                         </div>
                                     </div>
 
@@ -1040,7 +1085,9 @@ var NewTestForm = React.createClass({
                                                 <ControlLabel>Repair Description</ControlLabel>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="repair description"
-                                                             name="repair_description"/>
+                                                             name="repair_description"
+                                                             value={this.state.repair_description}
+                                                />
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1052,6 +1099,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl componentClass="textarea"
                                                              placeholder="recommendations"
                                                              name="recommendation_notes"
+                                                             value={this.state.recommendation_notes}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1073,6 +1121,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl componentClass="textarea"
                                                              placeholder="comments"
                                                              name="comments"
+                                                             value={this.state.comments}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1083,7 +1132,9 @@ var NewTestForm = React.createClass({
                                             <FormGroup>
                                                 <FormControl type="text"
                                                              placeholder="Equipment Load mW"
-                                                             name="mws"/>
+                                                             name="mws"
+                                                             value={this.state.mws}
+                                                />
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1094,6 +1145,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl type="text"
                                                              placeholder="Temperature"
                                                              name="temperature"
+                                                             value={this.state.temperature}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1104,7 +1156,9 @@ var NewTestForm = React.createClass({
                                             <SyringeNumberSelectField
                                                 ref="syringe"
                                                 source="/api/v1.0/syringe/"
-                                                handleChange={this.handleChange}/>
+                                                handleChange={this.handleChange}
+                                                value={this.state.seringe_num}
+                                            />
                                         </div>
                                         <div className="col-md-1">
                                             <a id="syringe"
@@ -1120,6 +1174,7 @@ var NewTestForm = React.createClass({
                                                 <FormControl type="text"
                                                              placeholder="Ambient Air Temperature"
                                                              name="ambient_air_temperature"
+                                                             value={this.state.ambient_air_temperature}
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1164,11 +1219,11 @@ var NewTestForm = React.createClass({
                     </form>
 
                     <Modal show={this.state.showElectroProfileForm}>
-                        <ElectricalProfileForm data={this.props.data} handleClose={this.closeElectricalProfileForm}/>
+                        <ElectricalProfileForm data={this.state} handleClose={this.closeElectricalProfileForm}/>
                     </Modal>
 
                     <Modal show={this.state.showFluidProfileForm}>
-                        <FluidProfileForm data={this.props.data} handleClose={this.closeFluidProfileForm}/>
+                        <FluidProfileForm data={this.state} handleClose={this.closeFluidProfileForm}/>
                     </Modal>
 
                     <Modal show={this.state.showNewLabForm}>
@@ -1187,8 +1242,8 @@ var NewTestForm = React.createClass({
                             <Modal.Title>New Contract</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <NewContractForm onCreate={this.onContractCreate} 
-                                handleClose={this.closeNewContractForm}/>
+                            <NewContractForm onCreate={this.onContractCreate}
+                                             handleClose={this.closeNewContractForm}/>
                         </Modal.Body>
                     </Modal>
 
@@ -1198,7 +1253,7 @@ var NewTestForm = React.createClass({
                         </Modal.Header>
                         <Modal.Body>
                             <NewMaterialForm handleClose={this.closeNewMaterialForm}
-                            onCreate={this.onMaterialCreate}/>
+                                             onCreate={this.onMaterialCreate}/>
                         </Modal.Body>
                     </Modal>
 
@@ -1208,7 +1263,7 @@ var NewTestForm = React.createClass({
                         </Modal.Header>
                         <Modal.Body>
                             <NewFluidForm handleClose={this.closeNewFluidForm}
-                            onCreate={this.onFluidTypeCreate}/>
+                                          onCreate={this.onFluidTypeCreate}/>
                         </Modal.Body>
                     </Modal>
 
@@ -1217,8 +1272,8 @@ var NewTestForm = React.createClass({
                             <Modal.Title>New User Profile</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <NewUserForm data={this.props.data} 
-                                         handleClose={this.closeNewUserForm} 
+                            <NewUserForm data={this.props.data}
+                                         handleClose={this.closeNewUserForm}
                                          onCreate={this.onPerformerCreate}
                             />
                         </Modal.Body>

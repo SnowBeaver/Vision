@@ -10,7 +10,7 @@ import {findDOMNode} from 'react-dom';
 import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 
 
 var items = [];
@@ -248,12 +248,10 @@ var CampaignForm = React.createClass({
         var state = {};
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if (e.target.type == 'select-one') {
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else {
-            state[e.target.name] = $.trim(e.target.value);
+        } else {
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -303,7 +301,7 @@ var CampaignForm = React.createClass({
         })
     },
 
-    closeNewContractForm: function () { 
+    closeNewContractForm: function () {
         this.setState({
             showNewContractForm: false
         })
@@ -317,13 +315,13 @@ var CampaignForm = React.createClass({
         this.refs.contract.setSelected(response);
         alert('Contract added');
     },
-    
+
     onUserCreate: function (response) {
         this.refs.created_by.setSelected(response);
         alert('User added');
     },
 
-    _getCampaign: function(){
+    _getCampaign: function () {
         return this.state.campaign_id;
     },
 
@@ -409,18 +407,18 @@ var CampaignForm = React.createClass({
                 </Panel>
                 <hr/>
 
-               <Modal show={this.state.showCreatedByForm}>
+                <Modal show={this.state.showCreatedByForm}>
                     <Modal.Header>
                         <Modal.Title>New User Profile</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <CreatedByForm data={this.props.data} 
+                        <CreatedByForm data={this.props.data}
                                        onCreate={this.onUserCreate}
                                        handleClose={this.closeCreatedByForm}
                         />
                     </Modal.Body>
                 </Modal>
-                
+
                 <Modal show={this.state.showNewContractForm}>
                     <Modal.Header>
                         <Modal.Title>New Contract</Modal.Title>
@@ -429,7 +427,7 @@ var CampaignForm = React.createClass({
                         <NewContractForm onCreate={this.onContractCreate} handleClose={this.closeNewContractForm}/>
                     </Modal.Body>
                 </Modal>
-                
+
             </div>
         );
     }

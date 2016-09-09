@@ -6,11 +6,10 @@ import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 
 
-var items= [];
+var items = [];
 
 
-
-var NewFluidForm = React.createClass ({
+var NewFluidForm = React.createClass({
 
 
     _create: function () {
@@ -18,8 +17,8 @@ var NewFluidForm = React.createClass ({
             'name'
         ];
         var data = {};
-        for (var i=0;i<fields.length;i++){
-            var key= fields[i];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
         console.log(data);
@@ -30,7 +29,8 @@ var NewFluidForm = React.createClass ({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) { },
+            success: function (data, textStatus) {
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -50,45 +50,43 @@ var NewFluidForm = React.createClass ({
             .fail(this._onError)
             .always(this.hideLoading)
     },
-    
+
     hideLoading: function () {
         this.setState({loading: false});
     },
-    
+
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         this.props.onCreate(data);
         // show success message
     },
-    
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
         }
     },
-    
+
     _onChange: function (e) {
         var state = {};
         // console.log(e.target.type);
-        if(e.target.type == 'checkbox'){
+        if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if(e.target.type == 'select-one'){
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
+        } else {
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
-    
+
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
@@ -102,10 +100,10 @@ var NewFluidForm = React.createClass ({
         // }
         // return errors;
     },
-    
+
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
@@ -118,41 +116,41 @@ var NewFluidForm = React.createClass ({
         }
     },
 
-    handleClick: function() {
+    handleClick: function () {
         document.getElementById('test_prof').remove();
     },
 
-    render : function() {
+    render: function () {
 
-        return(
+        return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 
-                        <div className="maxwidth">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Name"
-                                             name="name"
-                                />
-                            </FormGroup>
-                        </div>
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Name"
+                                         name="name"
+                            />
+                        </FormGroup>
+                    </div>
 
-                        <div className="row">
-                            <div className="col-md-12 ">
-                                <Button bsStyle="success"
-                                        className="btn btn-success pull-right"
-                                        type="submit"
-                                        onClick={this.props.handleClose}
-                                >Save</Button>
-                                &nbsp;
-                                <Button bsStyle="danger"
-                                        className="pull-right"
-                                        onClick={this.props.handleClose}
-                                        className="pull-right margin-right-xs"
-                                >Cancel</Button>
-                            </div>
+                    <div className="row">
+                        <div className="col-md-12 ">
+                            <Button bsStyle="success"
+                                    className="btn btn-success pull-right"
+                                    type="submit"
+                                    onClick={this.props.handleClose}
+                            >Save</Button>
+                            &nbsp;
+                            <Button bsStyle="danger"
+                                    className="pull-right"
+                                    onClick={this.props.handleClose}
+                                    className="pull-right margin-right-xs"
+                            >Cancel</Button>
                         </div>
-                    
+                    </div>
+
                 </form>
             </div>
         );

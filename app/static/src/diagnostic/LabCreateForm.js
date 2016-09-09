@@ -1,6 +1,6 @@
 import React from 'react';
 import injectTapEventPlugin from "react-tap-event-plugin";
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
@@ -12,29 +12,28 @@ import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar';
 var items = [];
 
 
+var CampaignSelectField = React.createClass({
 
-var CampaignSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value,
             camp: event.target.value
         })
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -43,15 +42,15 @@ var CampaignSelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
             // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
@@ -73,28 +72,28 @@ var CampaignSelectField = React.createClass ({
 });
 
 
-var SyringeSelectField = React.createClass ({
+var SyringeSelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value,
             syrin: event.target.value
         })
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -103,15 +102,15 @@ var SyringeSelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
             // menuItems.push(<MenuItem eventKey="{this.state.items[key].id}">{`${this.state.items[key].name}`}</MenuItem>);
@@ -133,8 +132,7 @@ var SyringeSelectField = React.createClass ({
 });
 
 
-
-const LabCreateForm = React.createClass ({
+const LabCreateForm = React.createClass({
 
     getInitialState: function () {
         return {
@@ -156,7 +154,8 @@ const LabCreateForm = React.createClass ({
                 'analyser': this.refs.analyser.state.camp,
                 'location_id': this.refs.syringe.state.syrin
             }),
-            success: function (data, textStatus) { },
+            success: function (data, textStatus) {
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -187,10 +186,10 @@ const LabCreateForm = React.createClass ({
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
@@ -198,7 +197,13 @@ const LabCreateForm = React.createClass ({
     },
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] =  $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
     _validate: function () {
@@ -216,33 +221,33 @@ const LabCreateForm = React.createClass ({
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
     },
-    
 
-    render : function () {
-        return(
+
+    render: function () {
+        return (
             <div className="form-container">
                 <form id="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div>
                         <Panel header="Add Laboratory">
 
-                            <FormGroup controlId="codeInput" >
+                            <FormGroup controlId="codeInput">
                                 <ControlLabel>Code</ControlLabel>
-                                <FormControl type="text"  ref="code"/>
+                                <FormControl type="text" ref="code"/>
                             </FormGroup>
 
-                            <FormGroup controlId="analyserInput" >
+                            <FormGroup controlId="analyserInput">
                                 <ControlLabel>Analyser</ControlLabel>
-                                <FormControl type="text"  ref="analyser"/>
+                                <FormControl type="text" ref="analyser"/>
                             </FormGroup>
 
-                            <FormGroup controlId="nameInput" >
+                            <FormGroup controlId="nameInput">
                                 <ControlLabel>Name</ControlLabel>
-                                <FormControl type="text"  ref="name"/>
+                                <FormControl type="text" ref="name"/>
                             </FormGroup>
 
                             <CampaignSelectField ref="campaign"
@@ -262,7 +267,6 @@ const LabCreateForm = React.createClass ({
     }
 
 });
-
 
 
 export default LabCreateForm;

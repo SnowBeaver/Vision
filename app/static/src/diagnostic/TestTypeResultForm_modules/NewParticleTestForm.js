@@ -5,33 +5,76 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
-var NewParticleTestForm = React.createClass({
 
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+
+var NewParticleTestForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
             fields: [
-                '2um', '5um', '10um', '15um',
-                '25um', '50um', '100um', 'nas1638',
+                '_2um', '_5um', '_10um', '_15um',
+                '_25um', '_50um', '_100um', 'nas1638',
                 'iso4406_1', 'iso4406_2', 'iso4406_3'
             ]
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+        }
         return $.ajax({
-            url: '/api/v1.0/particle_test/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -82,7 +125,13 @@ var NewParticleTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -106,126 +155,56 @@ var NewParticleTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-
                     <div className="row">
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >2um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="2um"
-                                />
-                            </FormGroup>
+                            <TextField label=">2um" name="_2um" value={this.state._2um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >5um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="5um"
-                                />
-                            </FormGroup>
+                            <TextField label=">5um" name="_5um" value={this.state._5um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >10um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="10um"
-                                />
-                            </FormGroup>
+                            <TextField label=">10um" name="_10um" value={this.state._10um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >15um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="15um"
-                                             name="15um"
-                                />
-                            </FormGroup>
+                            <TextField label=">15um" name="_15um" value={this.state._15um}/>
                         </div>
                     </div>
-
                     <div className="row">
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >25um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="25um"
-                                />
-                            </FormGroup>
+                            <TextField label=">25um" name="_25um" value={this.state._25um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >50um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="50um"
-                                />
-                            </FormGroup>
+                            <TextField label=">50um" name="_50um" value={this.state._50um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> >100um </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="100um"
-                                />
-                            </FormGroup>
+                            <TextField label=">100um" name="_100um" value={this.state._100um}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <ControlLabel> NAS1638 </ControlLabel>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="nas1638"
-                                />
-                            </FormGroup>
+                            <TextField label="NAS1638" name="nas1638" value={this.state.nas1638}/>
                         </div>
                     </div>
+                    <div className="row">
+                        <div className="col-md-6 pull-right" >
+                            <Panel header="ISO 4406">
+                            </Panel>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-2 pull-right">
+                            <TextField label="iso4406-1" name="iso4406_1" value={this.state.iso4406_1}/>
+                        </div>
 
+                        <div className="col-md-2 pull-right">
+                            <TextField label="iso4406-2" name="iso4406_2" value={this.state.iso4406_2}/>
+                        </div>
 
-                            <div className="row">
-                                <div className="col-md-6 pull-right" >
-                                    <Panel header="ISO 4406">
-                                    </Panel>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-2 pull-right">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="0"
-                                                     name="iso4406_2"
-                                        />
-                                    </FormGroup>
-                                </div>
-
-                                <div className="col-md-2 pull-right">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="0"
-                                                     name="iso4406_2"
-                                        />
-                                    </FormGroup>
-                                </div>
-
-                                <div className="col-md-2 pull-right">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="0"
-                                                     name="iso4406_3"
-                                        />
-                                    </FormGroup>
-                                </div>
-                            </div>
-
-
+                        <div className="col-md-2 pull-right">
+                            <TextField label="iso4406-3" name="iso4406_3" value={this.state.iso4406_3}/>
+                        </div>
+                    </div>
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"

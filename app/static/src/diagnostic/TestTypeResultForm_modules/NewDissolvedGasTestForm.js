@@ -6,8 +6,42 @@ import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
+
+
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name: "";
+        var checked = (this.props.value != null) ? this.props.value: false;
+        var is_checked = (checked) ? 'checked': '';
+        return (
+           <Checkbox checked={is_checked} name={name}>
+               <span className="glyphicon glyphicon-menu-left">
+               </span>
+           </Checkbox>
+        );
+    }
+});
 
 
 var NewDissolvedGasTestForm = React.createClass({
@@ -21,21 +55,44 @@ var NewDissolvedGasTestForm = React.createClass({
                 'co', 'co2', 'ch4', 'c2h2', 'c2h4', 'c2h6',
                 'h2_flag', 'o2_flag', 'n2_flag', 'co_flag', 'ch4_flag',
                 'co2_flag', 'c2h2_flag', 'c2h6_flag',
-                'cap_gaz',
+                'cap_gaz'
             ]
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+        }
         return $.ajax({
-            url: '/api/v1.0/dissolved_gas_test/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -85,10 +142,21 @@ var NewDissolvedGasTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
-        this.setState(state);
-    },
+       var state = {};
+       if (e.target.type == 'checkbox') {
+           state[e.target.name] = e.target.checked;
+       }
+       else if (e.target.type == 'radio') {
+           state[e.target.name] = e.target.value;
+       }
+       else if (e.target.type == 'select-one') {
+           state[e.target.name] = e.target.value;
+       }
+       else {
+           state[e.target.name] = $.trim(e.target.value);
+       }
+       this.setState(state);
+   },
 
     _validate: function () {
         var errors = {};
@@ -110,235 +178,107 @@ var NewDissolvedGasTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-
                     <div className="row">
                         <div className="col-md-9">
                             <div className="row">
                                 <div className="col-md-1 ">
-                                    <Checkbox name="h2_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="h2_flag" value={this.state.h2_flag}/>
                                 </div>
-
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="Hydrogen-H2"
-                                                     name="h2"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Hydrogen-H2" name="h2" value={this.state.h2}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <Checkbox name="o2_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="o2_flag" value={this.state.o2_flag}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="Oxygen-O2"
-                                                     name="o2"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Oxygen-O2" name="o2" value={this.state.o2}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <Checkbox name="n2_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="n2_flag" value={this.state.n2_flag}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="Nitrogen-N2"
-                                                     name="n2"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Nitrogen-N2" name="n2" value={this.state.n2}/>
                                 </div>
                             </div>
 
                             <div className="row">
                                 <div className="col-md-1 ">
-                                    <Checkbox name="co_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="co_flag" value={this.state.co_flag}/>
                                 </div>
-
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="CO"
-                                                     name="co"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="CO" name="co" value={this.state.co}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <Checkbox name="ch4_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="ch4_flag" value={this.state.ch4_flag}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="Methane-CH4"
-                                                     name="ch4"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Methane-CH4" name="ch4" value={this.state.ch4}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <Checkbox name="co2_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="co2_flag" value={this.state.co2_flag}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="CO2"
-                                                     name="co2"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="CO2" name="co2" value={this.state.co2}/>
                                 </div>
                             </div>
 
                             <div className="row">
                                 <div className="col-md-1 ">
-                                    <Checkbox name="c2h4_flag">
-                                <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="c2h4_flag" value={this.state.c2h4_flag}/>
                                 </div>
-
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="Ethylene-C2H4"
-                                                     name="c2h4"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Ethylene-C2H4" name="c2h4" value={this.state.c2h4}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <Checkbox name="c2h6_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="c2h6_flag" value={this.state.c2h6_flag}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="Ethane-C2H6"
-                                                     name="c2h6"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Ethane-C2H6" name="c2h6" value={this.state.c2h6}/>
                                 </div>
                                 <div className="col-md-1">
-                                    <Checkbox name="c2h2_flag">
-                                    <span className="glyphicon glyphicon-menu-left" >
-                                    </span>
-                                    </Checkbox>
+                                    <CheckBox name="c2h2_flag" value={this.state.c2h2_flag}/>
                                 </div>
                                 <div className="col-md-2">
-                                    <FormGroup>
-                                        <FormControl type="text"
-                                                     placeholder="Acetylene-C2H2"
-                                                     name="c2h2"
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Acetylene-C2H2" name="c2h2" value={this.state.c2h2}/>
                                 </div>
                             </div>
 
                             <div className="row">
                                 <div className="col-md-3">
-                                    <FormGroup>
-                                        <ControlLabel>TDCG</ControlLabel>
-                                        <FormControl type="text"
-                                                     placeholder="0.0"
-                                                     name="c2h2"
-                                                     disabled
-                                        />
-                                    </FormGroup>
+                                    <TextField label="TDCG" name="" value=""/>
                                 </div>
                                 <div className="col-md-3">
-                                    <FormGroup>
-                                        <ControlLabel>Total Hydrocarbons</ControlLabel>
-                                        <FormControl type="text"
-                                                     placeholder="0.0"
-                                                     name="c2h2"
-                                                     disabled
-                                        />
-                                    </FormGroup>
+                                    <TextField label="Total Hydrocarbons" name="" value=""/>
                                 </div>
                             </div>
 
                         </div>
                         <div className="col-md-3">
                             <Panel header="Gas Content(%)">
-
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="0.00"
-                                                 name="cap_gaz"
-                                                 bsStyle="info"
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="0"
-                                                 name="content_gaz"
-                                    />
-                                </FormGroup>
-
                             </Panel>
+                            <TextField label="Cap gaz" name="cap_gaz" value={this.state.cap_gaz}/>
+                            <TextField label="Content gaz" name="content_gaz" value={this.state.content_gaz}/>
                         </div>
                     </div>
-
 
                     <fieldset className="scheduler-border">
                         <legend className="scheduler-border">Gas Analyzer: concentration(ppm)</legend>
                         <div className="row">
 
                             <div className="col-md-4 ">
-                                <FormGroup>
-                                    <ControlLabel>Measured</ControlLabel>
-                                    <FormControl type="text"
-                                                 placeholder="0"
-                                                 name=""
-                                                 disabled
-                                    />
-                                </FormGroup>
+                                <TextField label="Measured" name="" value=""/>
                             </div>
                             <div className="col-md-4">
-                                <FormGroup>
-                                    <ControlLabel>-Calculated</ControlLabel>
-                                    <FormControl type="text"
-                                                 placeholder="N.D."
-                                                 name=""
-                                                 disabled
-                                    />
-                                </FormGroup>
+                                <TextField label="Calculated" name="" value=""/>
                             </div>
                             <div className="col-md-4">
-                                <FormGroup>
-                                    <ControlLabel>+Calculated</ControlLabel>
-                                    <FormControl type="text"
-                                                 placeholder="N.D."
-                                                 name=""
-                                                 disabled
-                                    />
-                                </FormGroup>
+                                <TextField label="+Calculated" name="" value=""/>
                             </div>
                         </div>
                     </fieldset>
-
-
 
                     <div className="row">
                         <div className="col-md-12 ">

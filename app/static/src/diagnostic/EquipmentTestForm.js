@@ -5,12 +5,12 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import NewBushingTestForm from './TestTypeResultForm_modules/NewBushingTestForm';
-// import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
+import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import NewInsulationResistanceTestForm from './TestTypeResultForm_modules/NewInsulationResistanceTestForm';
 import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
-// import WindingResistanceTestForm from './TestTypeResultForm_modules/WindingResistanceTestForm';
+import NewWindingResistanceTestForm from './TestTypeResultForm_modules/NewWindingResistanceTestForm';
 import PolymerisationDegreeTestForm from './TestTypeResultForm_modules/PolymerisationDegreeTestForm';
-// import TransformerTurnRatioTestForm from './TestTypeResultForm_modules/TransformerTurnRatioTestForm';
+import NewTransformerTestForm from './TestTypeResultForm_modules/NewTransformerTestForm';
 import NewDissolvedGasForm from './TestTypeResultForm_modules/NewDissolvedGasTestForm';
 import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
 import NewFuranTestForm from './TestTypeResultForm_modules/NewFuranTestForm';
@@ -21,13 +21,13 @@ import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestFor
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 
 var SelectField = React.createClass({
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
     updateMenuItems: function () {
-        this.serverRequest = $.get(this.props.source, function (result){
+        this.serverRequest = $.get(this.props.source, function (result) {
             var res = (result['result']);
             var menuItems = [];
             for (var key in res) {
@@ -37,7 +37,7 @@ var SelectField = React.createClass({
             this.setState({menuItems: menuItems});
         }.bind(this), 'json');
     },
-    onClick: function(e) {
+    onClick: function (e) {
         e.preventDefault();
         this.updateMenuItems();
     },
@@ -49,32 +49,32 @@ var SelectField = React.createClass({
             menuItems: []
         };
     },
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
-    componentDidMount: function(){
+    componentDidMount: function () {
         //this.serverRequest = $.get(this.props.source, function (result){
-            //this.setState({ items: (result['result']) });
+        //this.setState({ items: (result['result']) });
         //}.bind(this), 'json');
         this.updateMenuItems();
     },
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
-    render: function() {
+    render: function () {
         var menuItems = this.state.menuItems;
         // var menuItems = [];
         // for (var key in this.state.items) {
         //     menuItems.push(<option key={this.state.items[key].id}
         //                            value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         // }
-        console.log( "SelectField value" + (this.props.value || 'no data') );
-        console.log( this.props.value );
-        console.log( typeof(this.state.value) == "undefined" );
-        console.log( this.state.value == null );
+        // console.log( "SelectField value" + (this.props.value || 'no data') );
+        // console.log( this.props.value );
+        // console.log( typeof(this.state.value) == "undefined" );
+        // console.log( this.state.value == null );
         return (
             <FormGroup>
                 <ControlLabel>{this.props.label}</ControlLabel>
@@ -90,26 +90,30 @@ var SelectField = React.createClass({
 });
 
 const DateTimeFieldWithLabel = React.createClass({
-    render: function() {
+    render: function () {
         return (
             <div className="datetimepicker input-group date">
                 <ControlLabel>{this.props.label}</ControlLabel>
-                <DateTimeField datetime={this.props.value} />
+                <DateTimeField datetime={this.props.value}/>
             </div>
         );
     }
 });
 
 const TextField = React.createClass({
-    render: function() {
+    render: function () {
         var value = "";
         var label = "";
-        if (this.props.value != null) { value = this.props.value; }
-        if (this.props.label != null) { label = this.props.label; }
+        if (this.props.value != null) {
+            value = this.props.value;
+        }
+        if (this.props.label != null) {
+            label = this.props.label;
+        }
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
-                <FormControl type="text" value={value} />
+                <FormControl type="text" value={value}/>
             </FormGroup>
         );
     }
@@ -123,7 +127,7 @@ var EquipmentTestIdentificationForm = React.createClass({
             errors: {}
         }
     },
-    render: function() {
+    render: function () {
         console.log('EquipmentTestIdentificationForm render')
         console.log(this.props.data)
         return (
@@ -133,7 +137,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                     <div className="tab_row text-center">
                         <div className="col-lg-12 nopadding">
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <SelectField source="/api/v1.0/test_type" label="Test type" value={this.props.data.test_type_id}/>
+                                <SelectField source="/api/v1.0/test_type" label="Test type"
+                                             value={this.props.data.test_type_id}/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
                                 <SelectField source="/api/v1.0/user" label="Initials ?"/>
@@ -144,10 +149,12 @@ var EquipmentTestIdentificationForm = React.createClass({
                         </div>
                         <div className="col-lg-12 nopadding">
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <SelectField source="/api/v1.0/test_reason" label="Test reason" value={this.props.data.test_reason_id}/>
+                                <SelectField source="/api/v1.0/test_reason" label="Test reason"
+                                             value={this.props.data.test_reason_id}/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <SelectField source="/api/v1.0/test_status" label="Status" value={this.props.data.status_id}/>
+                                <SelectField source="/api/v1.0/test_status" label="Status"
+                                             value={this.props.data.status_id}/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
                                 <TextField label="Temperature" value={this.props.data.temperature}/>
@@ -158,7 +165,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                                 <TextField label="Insulating ?" value=""/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <SelectField source="/api/v1.0/contract" label="Lab contract" value={this.props.data.lab_contract_id}/>
+                                <SelectField source="/api/v1.0/contract" label="Lab contract"
+                                             value={this.props.data.lab_contract_id}/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
                                 <TextField label="Grouping ?" value=""/>
@@ -166,7 +174,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                         </div>
                         <div className="col-lg-12 nopadding">
                             <div className="col-lg-3 nopadding padding-right-xs">
-                                <SelectField source="/api/v1.0/sampling_point" label="Sampling" value={this.props.data.sampling_point_id}/>
+                                <SelectField source="/api/v1.0/sampling_point" label="Sampling"
+                                             value={this.props.data.sampling_point_id}/>
                             </div>
                             <div className="col-lg-3 nopadding padding-right-xs">
                                 <SelectField source="/api/v1.0/syringe" label="Syringe ?"/>
@@ -180,7 +189,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                         </div>
                         <div className="col-lg-12 nopadding">
                             <div className="col-lg-4 nopadding padding-right-xs">
-                                <SelectField source="/api/v1.0/equipment" label="Equipment" value={this.props.data.equipment_id}/>
+                                <SelectField source="/api/v1.0/equipment" label="Equipment"
+                                             value={this.props.data.equipment_id}/>
                             </div>
                             <div className="col-lg-4 nopadding padding-right-xs">
                                 <TextField label="Order status ?" value=""/>
@@ -341,28 +351,29 @@ var TestValuesForm = React.createClass({
             return (<div></div>);
         }
         var tableName = this.props.testType.test_table_name;
-        switch(tableName) {
+        console.log("Test table name: " + tableName);
+        switch (tableName) {
             case "bushing_test":
                 return (<NewBushingTestForm testResultId={this.props.testResultId}
                                             tableName={tableName}/>);
-            // case "winding_test":
-            //     return (<WindingTestForm testResultId={this.props.testResultId}
-            //                              tableName={tableName}/>);
+            case "winding_test":
+                return (<WindingTestForm testResultId={this.props.testResultId}
+                                         tableName={tableName}/>);
             case "insulation_resistance_test":
                 return (<NewInsulationResistanceTestForm testResultId={this.props.testResultId}
                                                          tableName={tableName}/>);
             case "visual_inspection_test":
                 return (<VisualTestForm testResultId={this.props.testResultId}
                                         tableName={tableName}/>);
-            // case "winding_resistance_test":
-            //     return (<WindingResistanceTestForm testResultId={this.props.testResultId}
-            //                                        tableName={tableName}/>);
+            case "winding_resistance_test":
+                return (<NewWindingResistanceTestForm testResultId={this.props.testResultId}
+                                                      tableName={tableName}/>);
             case "polymerisation_degree_test":
                 return (<PolymerisationDegreeTestForm testResultId={this.props.testResultId}
                                                       tableName={tableName}/>);
             case "transformer_turn_ratio_test":
-                return (<TransformerTurnRatioTestForm testResultId={this.props.testResultId}
-                                                      tableName={tableName}/>);
+                return (<NewTransformerTestForm testResultId={this.props.testResultId}
+                                                tableName={tableName}/>);
             case "dissolved_gas_test":
                 return (<NewDissolvedGasForm testResultId={this.props.testResultId}
                                              tableName={tableName}/>);
@@ -455,9 +466,14 @@ var EquipmentTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        console.log(e.target.name);
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -479,35 +495,37 @@ var EquipmentTestForm = React.createClass({
 
     componentDidMount: function () {
         this.serverRequest = $.get('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
-            this.setState({ data : (result['result']) });
+            this.setState({data: (result['result'])});
         }.bind(this), 'json');
     },
-    render: function() {
+    render: function () {
         console.log('EquipmentTestForm render');
         console.log(this.state.data);
-        if ((typeof(this.state.data) == "undefined") || (this.state.data == null)) { return null}
+        if ((typeof(this.state.data) == "undefined") || (this.state.data == null)) {
+            return null
+        }
         return (
             <div>
                 <div className="maxwidth padding-top-lg margin-bottom-xs">
                     <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
-                        <li className="active"> <a href="#tabs-1" data-toggle="tab"> Identification </a> </li>
-                        <li> <a href="#tabs-2" data-toggle="tab"> Test repair notes </a> </li>
-                        <li> <a href="#tabs-3" data-toggle="tab"> Records diagnostic </a> </li>
-                        <li> <a href="#tabs-4" data-toggle="tab"> Diagnosis and recommendations </a> </li>
-                        <li> <a href="#tabs-5" data-toggle="tab"> Test values </a> </li>
+                        <li className="active"><a href="#tabs-1" data-toggle="tab"> Identification </a></li>
+                        <li><a href="#tabs-2" data-toggle="tab"> Test repair notes </a></li>
+                        <li><a href="#tabs-3" data-toggle="tab"> Records diagnostic </a></li>
+                        <li><a href="#tabs-4" data-toggle="tab"> Diagnosis and recommendations </a></li>
+                        <li><a href="#tabs-5" data-toggle="tab"> Test values </a></li>
                     </ul>
                     <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                         <div id="tabs-1" role="tabpanel" className="tab-pane active ">
                             <EquipmentTestIdentificationForm data={this.state.data}/>
                         </div>
                         <div id="tabs-2" role="tabpanel" className="tab-pane">
-                            <EquipmentTestRepairForm data={this.state.data} />
+                            <EquipmentTestRepairForm data={this.state.data}/>
                         </div>
                         <div id="tabs-3" role="tabpanel" className="tab-pane">
                             <EquipmentTestDiagnosisForm data={this.state.data}/>
                         </div>
                         <div id="tabs-4" role="tabpanel" className="tab-pane">
-                            <EquipmentTestEqDiagnosisForm data={this.state.data} />
+                            <EquipmentTestEqDiagnosisForm data={this.state.data}/>
                         </div>
                         <div id="tabs-5" role="tabpanel" className="tab-pane">
                             <TestValuesForm testResultId={this.props.selectedRowId}

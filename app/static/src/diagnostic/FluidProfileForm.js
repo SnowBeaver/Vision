@@ -8,30 +8,30 @@ import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
 import Radio from 'react-bootstrap/lib/Radio';
 
-var items =[];
+var items = [];
 
-var SamplPointSelectField1 = React.createClass ({
+var SamplPointSelectField1 = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value,
             sam1: event.target.value
         })
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -40,18 +40,19 @@ var SamplPointSelectField1 = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -69,27 +70,27 @@ var SamplPointSelectField1 = React.createClass ({
     }
 });
 
-var SamplPointSelectField2 = React.createClass ({
+var SamplPointSelectField2 = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value,
         })
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -98,18 +99,19 @@ var SamplPointSelectField2 = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -127,27 +129,27 @@ var SamplPointSelectField2 = React.createClass ({
     }
 });
 
-var SamplPointSelectField3 = React.createClass ({
+var SamplPointSelectField3 = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value,
         })
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -156,18 +158,19 @@ var SamplPointSelectField3 = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -240,8 +243,9 @@ var TestProfileSelectField = React.createClass({
     render: function () {
         var options = [];
         for (var key in this.state.items) {
-            var index = Math.random() + '_'+ this.state.items[key].id;
-            options.push(<option key={index} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            var index = Math.random() + '_' + this.state.items[key].id;
+            options.push(<option key={index}
+                                 value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -259,7 +263,6 @@ var TestProfileSelectField = React.createClass({
         )
     }
 });
-
 
 
 const FluidProfileForm = React.createClass({
@@ -284,12 +287,12 @@ const FluidProfileForm = React.createClass({
             ]
         }
     },
-    componentDidMount: function(){
+    componentDidMount: function () {
         // console.log(this.props.data);
         //test_result_id
         // console.log(this.props.data.id);
     },
-    fillUpForm: function(saved_data){
+    fillUpForm: function (saved_data) {
 
         if (null == saved_data) {
             this.refs.fluid_profile.reset();
@@ -303,8 +306,8 @@ const FluidProfileForm = React.createClass({
     _save: function () {
         var fields = this.state.fields;
         var data = {};
-        for (var i=0;i<fields.length;i++){
-            var key= fields[i];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
         this.setState({
@@ -360,7 +363,7 @@ const FluidProfileForm = React.createClass({
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
-        if(Object.keys(errors).length != 0) {
+        if (Object.keys(errors).length != 0) {
             this.setState({
                 errors: errors
             });
@@ -385,10 +388,10 @@ const FluidProfileForm = React.createClass({
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
@@ -397,17 +400,14 @@ const FluidProfileForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        if(e.target.type == 'checkbox'){
+        if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if(e.target.type == 'radio'){
+        } else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
-        }
-        else if(e.target.type == 'select-one'){
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
+        } else {
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -421,15 +421,14 @@ const FluidProfileForm = React.createClass({
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
     },
 
 
-
-    render: function() {
+    render: function () {
 
         return (
             <div className="form-container">
@@ -441,7 +440,8 @@ const FluidProfileForm = React.createClass({
                                 </div>
                                 <div className="col-md-2">
                                     <FormGroup>
-                                        <TestProfileSelectField fillUpForm={this.fillUpForm} source="/api/v1.0/fluid_profile"/>
+                                        <TestProfileSelectField fillUpForm={this.fillUpForm}
+                                                                source="/api/v1.0/fluid_profile"/>
                                     </FormGroup>
                                 </div>
                             </div>
@@ -495,7 +495,8 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
                                                 <ControlLabel>Quantity</ControlLabel>
-                                                <FormControl type="text" ref="qty" name="qty" value={this.state.data.qty} />
+                                                <FormControl type="text" ref="qty" name="qty"
+                                                             value={this.state.data.qty}/>
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField1
@@ -668,7 +669,8 @@ const FluidProfileForm = React.createClass({
                                             <div className="maxwidth">
                                                 <div className="col-md-2 nopadding padding-right-xs">
                                                     <ControlLabel>Quantity</ControlLabel>
-                                                    <FormControl type="text" name="qty_jar" value={this.state.data.qty_jar} />
+                                                    <FormControl type="text" name="qty_jar"
+                                                                 value={this.state.data.qty_jar}/>
                                                 </div>
                                                 <div className="col-md-10 nopadding">
                                                     <SamplPointSelectField2
@@ -705,12 +707,13 @@ const FluidProfileForm = React.createClass({
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
                                                 <ControlLabel>Quantity</ControlLabel>
-                                                <FormControl type="text" name="qty_vial" value={this.state.data.qty_vial} />
+                                                <FormControl type="text" name="qty_vial"
+                                                             value={this.state.data.qty_vial}/>
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField3
                                                     source="/api/v1.0/sampling_point"
-                                                    value={ this.state.data.sampling_vial} />
+                                                    value={ this.state.data.sampling_vial}/>
                                             </div>
                                         </div>
                                     </div>
@@ -724,7 +727,7 @@ const FluidProfileForm = React.createClass({
                                             <FormGroup>
                                                 <FormControl type="text"
                                                              placeholder="Fluid profile name"
-                                                             name="name" />
+                                                             name="name"/>
                                             </FormGroup>
                                         </div>
                                         <div className="row">
@@ -751,9 +754,9 @@ const FluidProfileForm = React.createClass({
                                 <div className="row">
                                     <div className="col-md-12">
                                         <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
-                                        <Button bsStyle="danger" 
-                                                onClick={this.props.handleClose} 
-                                                className="pull-right margin-right-xs">Cancel</Button>
+                                        <Button bsStyle="danger"
+                                                onClick={this.props.handleClose}
+                                                className="pull-right margin-right-xs">Close</Button>
                                     </div>
                                 </div>
                             </div>
@@ -761,7 +764,8 @@ const FluidProfileForm = React.createClass({
                     </div>
                 </form>
             </div>
-        );}
+        );
+    }
 });
 
 export default FluidProfileForm;

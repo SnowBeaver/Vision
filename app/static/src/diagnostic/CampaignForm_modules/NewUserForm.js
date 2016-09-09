@@ -6,30 +6,30 @@ import Panel from 'react-bootstrap/lib/Panel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import {findDOMNode} from 'react-dom';
 
-var items=[];
+var items = [];
 
 
-var RoleSelectField = React.createClass ({
+var RoleSelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -38,18 +38,19 @@ var RoleSelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -70,22 +71,22 @@ var RoleSelectField = React.createClass ({
 });
 
 
-var CountrySelectField = React.createClass ({
+var CountrySelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: []
         };
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -94,14 +95,15 @@ var CountrySelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -111,7 +113,7 @@ var CountrySelectField = React.createClass ({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        name="country">
+                        name="country_id">
                         <option key="0" value="select">Country</option>
                         {menuItems}
                     </FormControl>
@@ -122,18 +124,18 @@ var CountrySelectField = React.createClass ({
 });
 
 
-var NewUserForm = React.createClass ({
+var NewUserForm = React.createClass({
 
 
     _create: function () {
         var fields = [
-            'role', 'name', 'email', 'alias',
+            'roles', 'name', 'email', 'alias',
             'website', 'photo', 'address', 'description',
-            'country', 'mobile', 'active', 'password'
+            'country_id', 'mobile', 'active', 'password'
         ];
         var data = {};
-        for (var i=0;i<fields.length;i++){
-            var key= fields[i];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
 
@@ -143,7 +145,8 @@ var NewUserForm = React.createClass ({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) { },
+            success: function (data, textStatus) {
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -152,56 +155,53 @@ var NewUserForm = React.createClass ({
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
-        if(Object.keys(errors).length != 0) {
-          this.setState({
-            errors: errors
-          });
-           return;
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
     },
-    
+
     hideLoading: function () {
         this.setState({loading: false});
     },
-    
+
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         // show success message
         this.props.onCreate(data);
-    }, 
-    
+    },
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
         }
     },
-    
+
     _onChange: function (e) {
         var state = {};
-        // console.log(e.target.type);
-        if(e.target.type == 'checkbox'){
+        if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if(e.target.type == 'select-one'){
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
+        } else {
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
-    
+
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
@@ -209,10 +209,10 @@ var NewUserForm = React.createClass ({
         // }
         return errors;
     },
-    
+
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
@@ -226,20 +226,20 @@ var NewUserForm = React.createClass ({
         }
     },
 
-    handleClick: function() {
+    handleClick: function () {
         document.getElementById('test_prof').remove();
     },
 
-    render : function() {
+    render: function () {
 
-        return(
+        return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-12">
                             <RoleSelectField
                                 source="/api/v1.0/role"
-                                handleChange={this.handleChange} />
+                                handleChange={this.handleChange}/>
                         </div>
                     </div>
 
@@ -314,16 +314,6 @@ var NewUserForm = React.createClass ({
                             />
                         </FormGroup>
                     </div>
-
-                    <div className="maxwidth">
-                        <FormGroup>
-                            <FormControl type="text"
-                                         placeholder="Photo"
-                                         name="photo"
-                            />
-                        </FormGroup>
-                    </div>
-
                     <div className="row">
                         <div className="col-md-12">
                             <FormGroup>
@@ -339,21 +329,100 @@ var NewUserForm = React.createClass ({
                         <div className="col-md-4 nopadding padding-right-xs">
                             <Checkbox name="active">Active</Checkbox>
                         </div>
-                    </div>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="password"
+                                             placeholder="Password"
+                                             name="password"
+                                />
+                            </FormGroup>
+                        </div>
 
-                    <div className="row">
-                        <div className="col-md-12 ">
-                            <Button bsStyle="success"
-                                    className="btn btn-success pull-right"
-                                    type="submit"
-                                    onClick={this.props.handleClose}
-                            >Save</Button>
-                            &nbsp;
-                            <Button bsStyle="danger"
-                                    className="pull-right"
-                                    onClick={this.props.handleClose}
-                                    className="pull-right margin-right-xs"
-                            >Cancel</Button>
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="E-mail"
+                                             name="email"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Adress"
+                                             name="address"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Mobile"
+                                             name="mobile"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Website"
+                                             name="website"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <CountrySelectField
+                                    source="/api/v1.0/country/"
+                                    handleChange={this.handleChange}
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="maxwidth">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Photo"
+                                             name="photo"
+                                />
+                            </FormGroup>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-12">
+                                <FormGroup>
+                                    <FormControl
+                                        componentClass="textarea"
+                                        placeholder="description"
+                                        name="description"/>
+                                </FormGroup>
+                            </div>
+                        </div>
+
+                        <div className="maxwidth">
+                            <div className="col-md-4 nopadding padding-right-xs">
+                                <Checkbox name="active">Active</Checkbox>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-12 ">
+                                <Button bsStyle="success"
+                                        className="btn btn-success pull-right"
+                                        type="submit"
+                                        onClick={this.props.handleClose}
+                                >Save</Button>
+                                &nbsp;
+                                <Button bsStyle="danger"
+                                        className="pull-right"
+                                        onClick={this.props.handleClose}
+                                        className="pull-right margin-right-xs"
+                                >Cancel</Button>
+                            </div>
                         </div>
                     </div>
                 </form>

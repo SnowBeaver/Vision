@@ -1,13 +1,43 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
+
+
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        return (
+            <FormGroup>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
+const CheckBox = React.createClass({
+    render: function () {
+        var name = (this.props.name != null) ? this.props.name : "";
+        return (
+            <Checkbox name={name}>
+                <span className="glyphicon glyphicon-menu-left">
+                </span>
+            </Checkbox>
+        );
+    }
+
+});
 
 
 var PolymerisationDegreeTestForm = React.createClass({
@@ -25,16 +55,39 @@ var PolymerisationDegreeTestForm = React.createClass({
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
+                var data = res[0];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
+                    }
+                }
+                this.setState(state);
+            }
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
+        var data = {test_result_id: this.props.testResultId};
+        var url = '/api/v1.0/' + this.props.tableName + '/';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
+        if ('id' in this.state) {
+            url += this.state['id'];
+        }
         return $.ajax({
-            url: '/api/v1.0/polymerisation_degree_test/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -85,7 +138,13 @@ var PolymerisationDegreeTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -109,20 +168,19 @@ var PolymerisationDegreeTestForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
-                        <div className="col-md-3 col-md-offset-3" >
+                        <div className="col-md-3 col-md-offset-3">
                             <Panel header="Primary">
                             </Panel>
                         </div>
-                        <div className="col-md-3" >
+                        <div className="col-md-3">
                             <Panel header="Secondary">
                             </Panel>
                         </div>
-                        <div className="col-md-3" >
+                        <div className="col-md-3">
                             <Panel header="Connection">
                             </Panel>
                         </div>
@@ -132,29 +190,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase A</b>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_a1"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_a1" name="phase_a1" value={this.state.phase_a1}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_a2"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_a2" name="phase_a2" value={this.state.phase_a2}/>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_a3"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_a3" name="phase_a3" value={this.state.phase_a3}/>
                         </div>
                     </div>
 
@@ -163,29 +205,13 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase B</b>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_b1"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_b1" name="phase_b1" value={this.state.phase_b1}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_b2"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_b2" name="phase_b2" value={this.state.phase_b2}/>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_b3"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_b3" name="phase_b3" value={this.state.phase_b3}/>
                         </div>
                     </div>
 
@@ -194,83 +220,54 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase C</b>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_c1"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_c1" name="phase_c1" value={this.state.phase_c1}/>
                         </div>
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_c2"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_c2" name="phase_c2" value={this.state.phase_c2}/>
                         </div>
-
                         <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="phase_c3"
-                                />
-                            </FormGroup>
+                            <TextField label="phase_c3" name="phase_c3" value={this.state.phase_c3}/>
                         </div>
                     </div>
 
                     <div className="row">
-                        <div className="col-md-12 " >
+                        <div className="col-md-12 ">
                             <Panel header="Lead & Winding">
                             </Panel>
                         </div>
 
                     </div>
                     <div className="row">
-                        <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_a"
-                                />
-                            </FormGroup>
+                        <div className="col-md-1">
+                            <b>Lead A</b>
                         </div>
-                        <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_b"
-                                />
-                            </FormGroup>
+                        <div className="col-md-2">
+                            <TextField label="lead_a" name="lead_a" value={this.state.lead_a}/>
                         </div>
-
-                        <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_c"
-                                />
-                            </FormGroup>
+                        <div className="col-md-1">
+                            <b>Lead B</b>
                         </div>
-                        <div className="col-md-3">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="lead_n"
-                                />
-                            </FormGroup>
+                        <div className="col-md-2">
+                            <TextField label="lead_b" name="lead_b" value={this.state.lead_b}/>
+                        </div>
+                        <div className="col-md-1">
+                            <b>Lead C</b>
+                        </div>
+                        <div className="col-md-2">
+                            <TextField label="lead_c" name="lead_c" value={this.state.lead_c}/>
+                        </div>
+                        <div className="col-md-1">
+                            <b>Lead N</b>
+                        </div>
+                        <div className="col-md-2">
+                            <TextField label="lead_n" name="lead_n" value={this.state.lead_n}/>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-3 pull-right">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="0.0"
-                                             name="winding"
-                                />
-                            </FormGroup>
+                            <b>Winding</b>
+                            <TextField label="winding" name="winding" value={this.state.winding}/>
                         </div>
 
                     </div>
@@ -296,4 +293,3 @@ var PolymerisationDegreeTestForm = React.createClass({
 
 
 export default PolymerisationDegreeTestForm;
-
