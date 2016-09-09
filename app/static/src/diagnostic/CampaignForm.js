@@ -10,7 +10,8 @@ import {findDOMNode} from 'react-dom';
 import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import NewContractForm from './CampaignForm_modules/NewContractForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
-import {hashHistory} from 'react-router';
+import { hashHistory } from 'react-router';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var items = [];
@@ -81,8 +82,9 @@ var CreatedBySelectField = React.createClass({
                         componentClass="select"
                         placeholder="select user"
                         onChange={this.handleChange}
-                        name="created_by_id">
-                        <option key="0" value="select">Created by</option>
+                        name="created_by_id"
+                        required={this.props.required}>
+                        <option key="0" value="">Created by{this.props.required ? " *" : ""}</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -145,7 +147,8 @@ var ContractNoSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.contract_id ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.contract_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -211,6 +214,7 @@ var CampaignForm = React.createClass({
             });
             return;
         }
+        this._clearErrors();
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -226,8 +230,8 @@ var CampaignForm = React.createClass({
         this.setState({
             campaign_id: data.result
         });
-        console.log('Campaign successfully started.', data.result);
-        hashHistory.push('/add_equipment/' + data.result);
+        NotificationManager.success('Campaign successfully started.', null, 2000);
+        setTimeout(function(){ hashHistory.push('/add_equipment/' + data.result); }, 2000);
     },
 
     _onError: function (data) {
@@ -253,7 +257,15 @@ var CampaignForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+
+        // Clear the errors
+        state.errors = this.state.errors;
+        delete state.errors[e.target.name];
         this.setState(state);
+    },
+
+    _clearErrors: function () {
+        this.setState({errors: {}});
     },
 
     _validate: function () {
@@ -313,12 +325,12 @@ var CampaignForm = React.createClass({
 
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
-        alert('Contract added');
+        NotificationManager.success("Contract added", null, 1000);
     },
 
     onUserCreate: function (response) {
         this.refs.created_by.setSelected(response);
-        alert('User added');
+        NotificationManager.success("User added");
     },
 
     _getCampaign: function () {
@@ -338,6 +350,7 @@ var CampaignForm = React.createClass({
                                     source="/api/v1.0/user"
                                     handleChange={this.handleChange}
                                     errors={this.state.errors}
+                                    required
                                 />
                             </div>
                             <div className="col-md-1">
@@ -353,9 +366,11 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-3">
                                 <div className="datetimepicker input-group date">
-                                    <FormGroup>
+                                    <FormGroup validationState={this.state.errors.date_created ? 'error' : null}>
+                                        <HelpBlock className="warning">{this.state.errors.date_created}</HelpBlock>
                                         <ControlLabel>Date Created</ControlLabel>
-                                        <DateTimeField name="date_created" datetime={this.state.date_created}/>
+                                        <DateTimeField name="date_created"
+                                                       datetime={this.state.date_created}/>
                                     </FormGroup>
                                 </div>
                             </div>
@@ -363,7 +378,8 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-11">
                                 <ContractNoSelectField ref="contract"
-                                                       source="/api/v1.0/contract/"/>
+                                                       source="/api/v1.0/contract/"
+                                                       errors={this.state.errors}/>
                             </div>
                             <div className="col-md-1">
                                 <a id="contract_no"
@@ -376,9 +392,10 @@ var CampaignForm = React.createClass({
 
                         <div className="row">
                             <div className="col-md-11">
-                                <FormGroup>
+                                <FormGroup validationState={this.state.errors.description ? 'error' : null}>
+                                    <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
                                     <FormControl componentClass="textarea"
-                                                 placeholder="comments"
+                                                 placeholder="Comments"
                                                  name="description"/>
                                 </FormGroup>
                             </div>
@@ -387,8 +404,12 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <ControlLabel>Lab measurement</ControlLabel>
-                                    <DateTimeField name="date_sampling" datetime={this.state.date_sampling}/>
+                                    <FormGroup validationState={this.state.errors.date_sampling ? 'error' : null}>
+                                        <HelpBlock className="warning">{this.state.errors.date_sampling}</HelpBlock>
+                                        <ControlLabel>Lab measurement</ControlLabel>
+                                        <DateTimeField name="date_sampling"
+                                                       datetime={this.state.date_sampling}/>
+                                    </FormGroup>
                                 </div>
                             </div>
                         </div>

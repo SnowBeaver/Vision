@@ -92,18 +92,19 @@ var TestItemList = React.createClass({
         return {
             items: [],
             isVisible: true,
-            showTestForm: false
+            showTestForm: false,
+            showAddTestButton: true
         };
     },
 
     componentDidMount: function () {
         // load test_result and show tests for each equipment
-        // this.serverRequest = $.get(this.props.source, function (result) { 
+        // this.serverRequest = $.get(this.props.source, function (result) {
         //     items = (result['result']);
         //     this.setState({
         //         items: items
         //     });
-        // }.bind(this), 'json'); 
+        // }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
@@ -156,16 +157,26 @@ var TestItemList = React.createClass({
             var item = this.props.data[i];
 
             if (item.equipment.id == equipment_id) {
-                
+
                 if (item.performed_by_id === null && item.reason_id === null){
                     data = item;
                     showTestForm = true;
+                    showAddTestButton = false;
                     continue;
-                } 
-                
+                }
+
                 tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm}/>)
             }
         }
+
+        //for (var key in this.props.data) {
+        //    if (this.props.data[key] instanceof Object && Object.keys(this.props.data[key]).length){
+        //        tests.push(
+        //            <TestItem data={this.props.data[key]}
+        //                      key={this.props.data[key].id}/>
+        //        );
+        //    }
+        //}
 
         return (
             <div>

@@ -17,6 +17,7 @@ import NewContractForm from './CampaignForm_modules/NewContractForm';
 import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var items = [];
@@ -661,7 +662,6 @@ var NewTestForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
         var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
         delete data['analysis_number'];
 
@@ -699,8 +699,8 @@ var NewTestForm = React.createClass({
     _onSuccess: function (data) {
         this.setState({
             analysis_number: data['result']['analysis_number']
-            // show success message
         });
+        NotificationManager.success('Test saved', null, 1000);
         this.props.reloadList();
     },
 
@@ -724,8 +724,7 @@ var NewTestForm = React.createClass({
             this.setState({
                 showRadio: false
             })
-        }
-        else {
+        } else {
             this.setState({
                 showRadio: true
             })
@@ -733,11 +732,9 @@ var NewTestForm = React.createClass({
 
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if (e.target.type == 'select-one') {
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else if (e.target.type == 'radio') {
+        } else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
             if ('fluid' === e.target.value) {
                 this.setState({
@@ -750,8 +747,7 @@ var NewTestForm = React.createClass({
                     showFluidProfileForm: false
                 });
             }
-        }
-        else { 
+        } else {
             state[e.target.name] = e.target.value;
         }
         this.setState(state);
@@ -826,37 +822,37 @@ var NewTestForm = React.createClass({
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
         this.closeNewContractForm();
-        alert('Contract added');
+        NotificationManager.success('Contract added', null, 1000);
     },
 
     onPerformerCreate: function (response) {
         this.refs.performed_by.setSelected(response);
         this.closeNewUserForm();
-        alert('User added');
+        NotificationManager.success('User added', null, 1000);
     },
 
     onLabCreate: function (response) {
         this.refs.lab.setSelected(response);
         this.closeNewLabForm();
-        alert('Laboratory added');
+        NotificationManager.success('Laboratory added', null, 1000);
     },
 
     onMaterialCreate: function (response) {
         this.refs.material.setSelected(response);
         this.closeNewMaterialForm();
-        alert('Material added');
+        NotificationManager.success('Material added', null, 1000);
     },
 
     onFluidTypeCreate: function (response) {
         this.refs.fluid_type.setSelected(response);
         this.closeNewFluidForm();
-        alert('Fluid type added');
+        NotificationManager.success('Fluid type added', null, 1000);
     },
 
     onSyringeCreate: function (response) {
         this.refs.syringe.setSelected(response);
         this.closeNewSyringeForm();
-        alert('Syringe added');
+        NotificationManager.success('Syringe added', null, 1000);
     },
 
     onNewButtonClick: function (e) {
@@ -1232,7 +1228,7 @@ var NewTestForm = React.createClass({
                         </Modal.Header>
                         <Modal.Body>
                             <NewLabForm handleClose={this.closeNewLabForm}
-                                        onLabCreate={this.onLabCreate}
+                                        onCreate={this.onLabCreate}
                             />
                         </Modal.Body>
                     </Modal>
