@@ -52,10 +52,8 @@ var NewLocationForm = React.createClass({
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
             return;
         }
 
