@@ -276,7 +276,7 @@ fluid_profile_schema = {
 test_result_schema = {
     'id': readonly_dict,
     'campaign_id': type_integer_coerce_required_dict,
-    'reason_id': type_integer_coerce_dict,
+    'test_reason_id': type_integer_coerce_dict,
     'date_analyse': type_datetime_dict,
     'test_type_id': type_integer_coerce_dict,
     'sampling_point_id': type_integer_coerce_dict,

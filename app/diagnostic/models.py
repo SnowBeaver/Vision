@@ -1993,7 +1993,7 @@ class TestResult(db.Model):
 
     # Reason: Code indicating why the analysis was performed.
     # Mainly use for oil sampling.
-    reason_id = db.Column('test_reason_id', db.ForeignKey("test_reason.id"), nullable=True)
+    test_reason_id = db.Column('test_reason_id', db.ForeignKey("test_reason.id"), nullable=True)
     test_reason = db.relationship('TestReason', backref='test_result')
 
     # Date filled by labratory when analysis was done
@@ -2116,7 +2116,7 @@ class TestResult(db.Model):
         return {
             'id': self.id,
             'campaign_id': self.campaign_id,
-            'reason_id': self.reason_id,
+            'test_reason_id': self.test_reason_id,
             'test_reason': self.test_reason and self.test_reason.serialize(),
             'date_analyse': dump_datetime(self.date_analyse),
             'test_type_id': self.test_type_id,
