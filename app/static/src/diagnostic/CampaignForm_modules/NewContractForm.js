@@ -126,7 +126,6 @@ var NewContractForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        this.setState(this.getInitialState());
         this.props.handleClose();
         this.props.onCreate(data);
     },

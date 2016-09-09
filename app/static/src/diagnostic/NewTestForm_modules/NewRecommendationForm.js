@@ -191,8 +191,8 @@ var NewRecommendationForm = React.createClass ({
         this.setState({loading: false});
     },
     _onSuccess: function (data) {
-        this.refs.eqtype_form.getDOMNode().reset();
-        this.setState(this.getInitialState());
+        //this.refs.eqtype_form.getDOMNode().reset();
+        //this.setState(this.getInitialState());
         NotificationManager.success("Recommendation added.");
     },
     _onError: function (data) {
