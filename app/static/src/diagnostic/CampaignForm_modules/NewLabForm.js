@@ -4,6 +4,8 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var items = [];
@@ -54,7 +56,8 @@ var NameSelectField = React.createClass ({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.name ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.name}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -73,17 +76,31 @@ var NameSelectField = React.createClass ({
 
 var NewLabForm = React.createClass ({
 
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            equipment_number: '',
+            changedFields: []
+        }
+    },
 
     _create: function () {
-        var fields = [
-            'code', 'analyser', 'name'
-        ];
+        //var fields = [
+        //    'code', 'analyser', 'name'
+        //];
+        var fields = this.state.changedFields;
+
+        if (fields.length == 0){
+            NotificationManager.info("No values were selected.");
+            return false;
+        }
+
         var data = {};
-        for (var i=0;i<fields.length;i++){
+        for (var i = 0; i < fields.length; i++){
             var key= fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
 
         return $.ajax({
             url: '/api/v1.0/lab/',
@@ -99,12 +116,9 @@ var NewLabForm = React.createClass ({
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if(Object.keys(errors).length != 0) {
-          this.setState({
-            errors: errors
-          });
-           return;
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
+            return;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -117,8 +131,13 @@ var NewLabForm = React.createClass ({
     
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
-        // show success message
-        this.props.onCreate(data);
+        NotificationManager.success('Laboratory has been successfully added', null, 1000);
+        // Let user to see the message for 1 sec
+        var that = this;
+        setTimeout(function(){
+            that.props.handleClose();
+            that.props.onCreate(data);
+        }, 1000);
     },
     componentDidMount: function(){
 
@@ -132,11 +151,24 @@ var NewLabForm = React.createClass ({
         if(res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
-            this.setState({
-                errors: res.errors
-            });
+        if (res.error) {
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
     _onChange: function (e) {
         var state = {};
@@ -149,14 +181,44 @@ var NewLabForm = React.createClass ({
         else{
             state[e.target.name] = $.trim(e.target.value);
         }
+
+        this.state.changedFields.push(e.target.name);
+        var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
-    _validate: function () {
+
+    _validateFieldType: function (value, type){
         var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
-        // }
+        if (type != undefined && value){
+            var typePatterns = {
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                errors = "Invalid value";
+            }
+        }
         return errors;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors
+        }
+        return state;
+    },
+
+    _validate: function () {
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
+        }
+        return response;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -166,14 +228,6 @@ var NewLabForm = React.createClass ({
         return className;
     },
 
-    getInitialState: function () {
-        return {
-            loading: false,
-            errors: {},
-            equipment_number: ''
-        }
-    },
-
     handleClick: function() {
         document.getElementById('test_prof').remove();
     },
@@ -181,21 +235,26 @@ var NewLabForm = React.createClass ({
     render : function() {
 
         return(
+
             <div className="form-container">
+                <NotificationContainer/>
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 
                         <div className="maxwidth">
-                            <FormGroup>
+                            <FormGroup validationState={this.state.errors.code ? 'error' : null}>
+                                <HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
                                 <FormControl type="text"
                                              placeholder="Code"
                                              name="code"
+                                             data-type="int"
                                 />
                             </FormGroup>
                         </div>
 
                         <div className="row">
                             <div className="col-md-12">
-                                <FormGroup>
+                                <FormGroup validationState={this.state.errors.analyser ? 'error' : null}>
+                                    <HelpBlock className="warning">{this.state.errors.analyser}</HelpBlock>
                                     <FormControl type="text"
                                                  placeholder="Analyser"
                                                  name="analyser"
@@ -208,7 +267,8 @@ var NewLabForm = React.createClass ({
                             <div className="col-md-12">
                                 <NameSelectField
                                     source="/api/v1.0/user"
-                                    handleChange={this.handleChange} />
+                                    handleChange={this.handleChange}
+                                    errors={this.state.errors}/>
                             </div>
                         </div>
 
@@ -217,7 +277,6 @@ var NewLabForm = React.createClass ({
                                 <Button bsStyle="success"
                                         className="btn btn-success pull-right"
                                         type="submit"
-                                        onClick={this.props.handleClose}
                                 >Save</Button>
                                 &nbsp;
                                 <Button bsStyle="danger"

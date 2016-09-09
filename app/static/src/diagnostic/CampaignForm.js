@@ -327,7 +327,7 @@ var CampaignForm = React.createClass({
 
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
-        NotificationManager.success("Contract added");
+        NotificationManager.success("Contract added", null, 1000);
     },
     
     onUserCreate: function (response) {
