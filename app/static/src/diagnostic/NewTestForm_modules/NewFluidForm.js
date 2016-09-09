@@ -107,7 +107,7 @@ var NewFluidForm = React.createClass ({
             state[e.target.name] = $.trim(e.target.value);
         }
 
-        this.state.changedFields.push(e.target.name);
+        state.changedFields = this.state.changedFields.concat([e.target.name]);
         // Clear the errors
         state.errors = this.state.errors;
         delete state.errors[e.target.name];

@@ -797,7 +797,7 @@ const EquipmentForm = React.createClass({
 
         // TODO: Exclude upstream field or let adding multiple upstreams
         if (e.target.name != "upstream1"){
-            this.state.changedFields.push(e.target.name);
+            state.changedFields = this.state.changedFields.concat([e.target.name]);
         }
 
         var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));

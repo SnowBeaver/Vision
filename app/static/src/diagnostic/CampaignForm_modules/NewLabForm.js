@@ -176,7 +176,7 @@ var NewLabForm = React.createClass ({
             state[e.target.name] = $.trim(e.target.value);
         }
 
-        this.state.changedFields.push(e.target.name);
+        state.changedFields = this.state.changedFields.concat([e.target.name]);
         var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
         state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);

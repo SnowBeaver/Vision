@@ -126,6 +126,7 @@ var NewContractForm = React.createClass({
     },
 
     _onSuccess: function (data) {
+        this.setState(this.getInitialState());
         this.props.handleClose();
         this.props.onCreate(data);
     },
@@ -170,7 +171,7 @@ var NewContractForm = React.createClass({
         } else {
             state[e.target.name] = $.trim(e.target.value);
         }
-        this.state.changedFields.push(e.target.name);
+        state.changedFields = this.state.changedFields.concat([e.target.name]);
 
         // Clear existing errors related to the current field as it has been edited
         state.errors = this.state.errors;
