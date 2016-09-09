@@ -229,9 +229,7 @@ var NewLabForm = React.createClass ({
     render : function() {
 
         return(
-
             <div className="form-container">
-
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 
                         <div className="maxwidth">

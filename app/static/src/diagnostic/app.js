@@ -41,6 +41,7 @@ import NewWindingResistanceTestForm from './TestTypeResultForm_modules/NewWindin
 import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
 import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
 import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 
@@ -50,6 +51,7 @@ const App = React.createClass({
         return (
 
             <div className="content">
+                <NotificationContainer/>
                 <div>
                     <ul>
                         <li><Link to='/home'>Home</Link></li>

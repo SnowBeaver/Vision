@@ -343,7 +343,6 @@ var CampaignForm = React.createClass({
 
         return (
             <div className="form-container">
-                <NotificationContainer/>
                 <Panel header="New Campaign">
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">

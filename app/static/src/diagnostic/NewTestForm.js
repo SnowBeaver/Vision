@@ -31,8 +31,6 @@ var TestProfileSelectField = React.createClass({
     },
 
     handleChange: function (event) {
-        // console.log(event.target.name);
-        // console.log(event.target.value);
         this.setState({
             value: event.target.value
         });
@@ -663,9 +661,8 @@ var NewTestForm = React.createClass({
         // this.setState(this.getInitialState());
         this.setState({
             analysis_number: data['result']['analysis_number']
-            // show success message
         });
-        alert('Test saved');
+        NotificationManager.success('Test saved', null, 1000);
     },
 
     _onError: function (data) {
@@ -700,7 +697,6 @@ var NewTestForm = React.createClass({
         }
         else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-            console.log(e.target.value);
 
         }
         else if (e.target.type == 'radio') {
@@ -822,7 +818,7 @@ var NewTestForm = React.createClass({
     onSyringeCreate: function(response) {
         this.refs.syringe.setSelected(response);
         this.closeNewSyringeForm();
-        alert('Syringe added');
+        NotificationManager.success('Syringe added', null, 1000);
     },
 
     onNewButtonClick: function (e) {
@@ -895,7 +891,6 @@ var NewTestForm = React.createClass({
         return (
             this.props.show ?
                 <div className="form-container">
-                    <NotificationContainer/>
                     <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <Panel header="New Test">
                             <div className="maxwidth">

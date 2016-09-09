@@ -254,7 +254,6 @@ var AddEquipmentForm = React.createClass({
 
         return (
             <div className="form-container">
-                <NotificationContainer/>
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Add equipment">
                         <HelpBlock className="warning">{this.state.errors.equipment_id}</HelpBlock>

@@ -954,7 +954,6 @@ const EquipmentForm = React.createClass({
 
         return (
             <div className="form-container">
-                <NotificationContainer/>
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div>
                         <Panel header="Add Equipment">
