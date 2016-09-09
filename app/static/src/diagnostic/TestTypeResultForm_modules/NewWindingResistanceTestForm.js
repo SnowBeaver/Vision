@@ -35,46 +35,51 @@ var PrimaryWindingTestPanel = React.createClass({
     _onChange: function (e) {
         this.props.onChange(this.props.testId, e.target.name, e.target.value);
     },
+    // handleFieldChange: function(name, value) {
+    // _onChange: function(name, value) {
+    //     this.props.onChange(this.props.testId, name, value);
+    // },
 
     render: function () {
+        var data = (this.props.data != null) ? this.props.data: {};
         return(
-            <div>
+            <div className="form-container">
                 <div className="row">
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="mesure1"
                                    label="H1-H2"
-                                   value={this.props.mesure1}/>
+                                   value={data.mesure1}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="temp1"
                                    label="Temperature(C)"
-                                   value={this.props.temp1}/>
+                                   value={data.temp1}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="corr1"
                                    label="Corr. 75C"
-                                   value={this.props.corr1}/>
+                                   value={data.corr1}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="mesure2"
                                    label="H2-H3"
-                                   value={this.props.mesure2}/>
+                                   value={data.mesure2}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="temp2"
                                    label="Temperature(C)"
-                                   value={this.props.temp2}/>
+                                   value={data.temp2}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="corr2"
                                    label="Corr. 75C"
-                                   value={this.props.corr2}/>
+                                   value={data.corr2}/>
                     </div>
                 </div>
 
@@ -83,33 +88,32 @@ var PrimaryWindingTestPanel = React.createClass({
                         <TextField onChange={this._onChange}
                                    name="mesure3"
                                    label="H3-H1"
-                                   value={this.props.mesure3}/>
+                                   value={data.mesure3}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="temp3"
                                    label="Temperature"
-                                   value={this.props.temp3}/>
+                                   value={data.temp3}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this._onChange}
                                    name="corr3"
                                    label="Corr. 75C"
-                                   value={this.props.corr3}/>
+                                   value={data.corr3}/>
                     </div>
                     <div className="col-md-3">
                         <TextField onChange={this._onChange}
                                    name="winding"
                                    label="Winding"
-                                   value={this.props.winding}/>
+                                   value={data.winding}/>
                     </div>
                     <div className="col-md-3">
                         <TextField onChange={this._onChange}
                                    name="tap_position"
                                    label="Tap Position"
-                                   value={this.props.tap_position}/>
+                                   value={data.tap_position}/>
                     </div>
-
                 </div>
             </div>
         )
@@ -376,9 +380,12 @@ var NewWindingResistanceTestForm = React.createClass({
     handleFieldChange: function(testId, name, value) {
         // {1: {'a': 1, 'b':2} 2: {'a': 3, 'b':4}}
         var tests = this.state.tests;
-        var fieldNameValue = this.state.tests[testId];
+        var fieldNameValue = this.state.tests[testId] || {};
         fieldNameValue[name] = value;
         tests[testId] = fieldNameValue;
+        console.log('handleFieldChange', testId);
+        console.log('handleFieldChange', JSON.stringify(fieldNameValue));
+        console.log('handleFieldChange', JSON.stringify(tests));
         this.setState({tests: tests});
         // this.setState({
         //     tests: update(this.state.tests, {testId: {name: {$set: value}}})
@@ -403,13 +410,13 @@ var NewWindingResistanceTestForm = React.createClass({
         for(var i=1; i<=numberOfTaps; i++){
             var headName = "Primary Winding " + i;
             var props = {
-                key: i.toString(),
                 testId: i.toString(),
                 onChange: this.handleFieldChange,
                 data: this.state.tests[i.toString()]
             };
             windings.push(
                 <Panel header={headName}
+                       key={"primary_winding_" + i}
                        eventKey={i}>
                     <PrimaryWindingTestPanel {...props}/>
                 </Panel>);
