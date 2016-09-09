@@ -177,7 +177,15 @@ var AirBreakerParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        }
+        else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        }
+        else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -316,7 +324,13 @@ var BushingParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -595,7 +609,13 @@ var CapacitorParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -733,7 +753,13 @@ var BreakerParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -897,7 +923,13 @@ var PowerSourceParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -1032,7 +1064,13 @@ var CableParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -1161,7 +1199,13 @@ var SwitchGearParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -1301,7 +1345,13 @@ var InductionMachineParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -1438,7 +1488,13 @@ var SyncroMachineParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -1573,7 +1629,13 @@ var TapChangerParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -1731,7 +1793,13 @@ var RectifierParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -1894,8 +1962,14 @@ var TransformerParams = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        var state = {}; 
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -2358,8 +2432,14 @@ var TankParams = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        var state = {}; 
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -2496,8 +2576,14 @@ var SwitchParams = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        var state = {}; 
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -2634,8 +2720,14 @@ var InductanceParams = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        var state = {}; 
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -2787,8 +2879,14 @@ var GasSensorParams = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        var state = {}; 
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 

@@ -6,14 +6,14 @@ import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         console.log("NewFluidTestForm TextField " + name + " value: " + value);
         console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
@@ -23,7 +23,7 @@ const TextField = React.createClass({
                              placeholder={label}
                              name={name}
                              value={value}
-                             />
+                />
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -32,17 +32,16 @@ const TextField = React.createClass({
 
 const CheckBox = React.createClass({
     render: function () {
-        var name = (this.props.name != null) ? this.props.name: "";
+        var name = (this.props.name != null) ? this.props.name : "";
         return (
             <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
+                <span className="glyphicon glyphicon-menu-left">
                 </span>
             </Checkbox>
         );
     }
 
 });
-
 
 
 var NewDissolvedGasTestForm = React.createClass({
@@ -121,7 +120,13 @@ var NewDissolvedGasTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -169,7 +174,7 @@ var NewDissolvedGasTestForm = React.createClass({
                                     <CheckBox name="n2_flag"/>
                                 </div>
                                 <div className="col-md-2">
-                                     <TextField label="Nitrogen-N2" name="n2" value={this.state.n2}/>
+                                    <TextField label="Nitrogen-N2" name="n2" value={this.state.n2}/>
                                 </div>
                             </div>
 
@@ -220,7 +225,7 @@ var NewDissolvedGasTestForm = React.createClass({
                                     <TextField label="TDCG" name="" value=""/>
                                 </div>
                                 <div className="col-md-3">
-                                     <TextField label="Total Hydrocarbons" name="" value=""/>
+                                    <TextField label="Total Hydrocarbons" name="" value=""/>
                                 </div>
                             </div>
 
@@ -232,7 +237,7 @@ var NewDissolvedGasTestForm = React.createClass({
                             </Panel>
                         </div>
                     </div>
-                    
+
                     <fieldset className="scheduler-border">
                         <legend className="scheduler-border">Gas Analyzer: concentration(ppm)</legend>
                         <div className="row">
@@ -248,7 +253,7 @@ var NewDissolvedGasTestForm = React.createClass({
                             </div>
                         </div>
                     </fieldset>
-                    
+
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"

@@ -182,7 +182,13 @@ var TransformerParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -199,7 +205,7 @@ var TransformerParams = React.createClass({
 
 
     render: function () {
-        
+
         return (
             <div>
                 <div className="row">
@@ -545,7 +551,6 @@ var TransformerParams = React.createClass({
         )
     }
 });
-
 
 
 export default TransformerParams;

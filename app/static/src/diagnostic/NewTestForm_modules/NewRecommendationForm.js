@@ -8,30 +8,30 @@ import {findDOMNode} from 'react-dom';
 import Modal from 'react-bootstrap/lib/Modal';
 
 
-var items=[];
+var items = [];
 
 
-var TestTypeSelectField = React.createClass ({
+var TestTypeSelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -40,18 +40,19 @@ var TestTypeSelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -72,27 +73,27 @@ var TestTypeSelectField = React.createClass ({
 });
 
 
-var NameSelectField = React.createClass ({
+var NameSelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -101,18 +102,19 @@ var NameSelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -133,17 +135,16 @@ var NameSelectField = React.createClass ({
 });
 
 
-
-var NewRecommendationForm = React.createClass ({
+var NewRecommendationForm = React.createClass({
 
 
     _create: function () {
         var fields = [
-            'name', 'name', 'code',  'description'
+            'name', 'name', 'code', 'description'
         ];
         var data = {};
-        for (var i=0;i<fields.length;i++){
-            var key= fields[i];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
         console.log(data);
@@ -154,7 +155,8 @@ var NewRecommendationForm = React.createClass ({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) { },
+            success: function (data, textStatus) {
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -185,10 +187,10 @@ var NewRecommendationForm = React.createClass ({
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
@@ -196,15 +198,12 @@ var NewRecommendationForm = React.createClass ({
     },
     _onChange: function (e) {
         var state = {};
-        // console.log(e.target.type);
-        if(e.target.type == 'checkbox'){
+        if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if(e.target.type == 'select-one'){
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
+        } else {
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -223,7 +222,7 @@ var NewRecommendationForm = React.createClass ({
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
@@ -237,13 +236,13 @@ var NewRecommendationForm = React.createClass ({
         }
     },
 
-    handleClick: function() {
+    handleClick: function () {
         document.getElementById('test_prof').remove();
     },
 
-    render : function() {
+    render: function () {
 
-        return(
+        return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="New Recommendation">
@@ -252,7 +251,7 @@ var NewRecommendationForm = React.createClass ({
                             <div className="col-md-12">
                                 <TestTypeSelectField
                                     source="/api/v1.0/test_type"
-                                    handleChange={this.handleChange} />
+                                    handleChange={this.handleChange}/>
                             </div>
                         </div>
 
@@ -261,7 +260,7 @@ var NewRecommendationForm = React.createClass ({
                             <div className="col-md-12">
                                 <NameSelectField
                                     source="/api/v1.0/user"
-                                    handleChange={this.handleChange} />
+                                    handleChange={this.handleChange}/>
                             </div>
                         </div>
 

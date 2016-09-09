@@ -5,15 +5,15 @@ import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         console.log("NewFluidTestForm TextField " + name + " value: " + value);
         console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
@@ -23,7 +23,7 @@ const TextField = React.createClass({
                              placeholder={label}
                              name={name}
                              value={value}
-                             />
+                />
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -32,10 +32,10 @@ const TextField = React.createClass({
 
 const CheckBox = React.createClass({
     render: function () {
-        var name = (this.props.name != null) ? this.props.name: "";
+        var name = (this.props.name != null) ? this.props.name : "";
         return (
             <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
+                <span className="glyphicon glyphicon-menu-left">
                 </span>
             </Checkbox>
         );
@@ -117,7 +117,13 @@ var NewPcbTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 

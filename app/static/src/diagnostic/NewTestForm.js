@@ -25,13 +25,12 @@ var TestProfileSelectField = React.createClass({
 
     getInitialState: function () {
         return {
-            isVisible: true
+            isVisible: true,
+            value: this.props.value
         };
     },
 
     handleChange: function (event) {
-        // console.log(event.target.name);
-        // console.log(event.target.value);
         this.setState({
             value: event.target.value
         });
@@ -66,7 +65,7 @@ var TestProfileSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.props.value}
+                    value={this.state.value}
                     onChange={this.handleChange}
                     name="test_type_id">
                     <option value="select_prof">Choose profile from saved</option>
@@ -114,7 +113,7 @@ var PerformedBySelectField = React.createClass({
     setVisible: function () {
         this.state.isVisible = true;
     },
-    
+
     setSelected: function (data) {
         this.componentDidMount();
         this.setState({
@@ -191,7 +190,7 @@ var MaterialSelectField = React.createClass({
             selected: data.result
         });
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -332,7 +331,7 @@ var LabAnalyserSelectField = React.createClass({
             selected: data.result
         });
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -473,7 +472,7 @@ var SyringeNumberSelectField = React.createClass({
             selected: data.result
         });
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -543,7 +542,7 @@ var TestReasonSelectField = React.createClass({
             selected: selected
         })
     },
-    
+
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
@@ -590,14 +589,14 @@ var NewTestForm = React.createClass({
             showNewLabForm: false,
             showNewSyringeForm: false,
             date_analyse: new Date().toISOString(),
-            repair_date: new Date().toISOString(), 
+            repair_date: new Date().toISOString(),
             fields: [
                 'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
-            ],
+            ]
 
             // profile_fields: [
             //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
@@ -611,15 +610,18 @@ var NewTestForm = React.createClass({
     },
 
     componentDidMount: function () {
+        if (this.props.data != null) {
+            this._edit(this.props.data.id);
+        }
     },
-    
-    _edit: function(id) { 
+
+    _edit: function (id) {
         // fill up form with data
 
         var url = '/api/v1.0/test_result/' + id; // edit
-        this.serverRequest = $.get(url, function (result){ 
+        this.serverRequest = $.get(url, function (result) {
             var data = (result['result']);
-        
+
             var fields = this.state.fields;
             var form = {};
             for (var i = 0; i < fields.length; i++) {
@@ -628,12 +630,12 @@ var NewTestForm = React.createClass({
             }
             form['id'] = id;
             this.setState(form);
-            console.log(url, this.state);
-           
+            // console.log(url, this.state);
+
         }.bind(this), 'json');
     },
-    
-    _add: function(){ 
+
+    _add: function () {
         var fields = this.state.fields;
         var form = {};
         for (var i = 0; i < fields.length; i++) {
@@ -651,10 +653,10 @@ var NewTestForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        data['campaign_id'] = this.props.data['campaign_id'];
-        data['equipment_id'] = this.props.data['equipment_id'];
-        var url = '/api/v1.0/test_result/' + this.state.test_result_id; // edit when test_result_id is set
-        
+        console.log(data);
+        var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
+        delete data['analysis_number'];
+
         return $.ajax({
             url: url,
             type: 'POST',
@@ -681,20 +683,19 @@ var NewTestForm = React.createClass({
             .fail(this._onError)
             .always(this.hideLoading)
     },
-    
+
     hideLoading: function () {
         this.setState({loading: false});
     },
 
     _onSuccess: function (data) {
-        //this.setState(this.getInitialState());
         this.setState({
             analysis_number: data['result']['analysis_number']
             // show success message
         });
         this.props.reloadList();
-    }, 
-    
+    },
+
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -711,14 +712,14 @@ var NewTestForm = React.createClass({
     _onChange: function (e) {
         var state = {};
 
-        if(e.target.value != 'select_prof' && e.target.name == 'test_type_id'){
+        if (e.target.value != 'select_prof' && e.target.name == 'test_type_id') {
             this.setState({
-                showRadio:false
+                showRadio: false
             })
         }
-        else{
+        else {
             this.setState({
-                showRadio:true
+                showRadio: true
             })
         }
 
@@ -742,8 +743,8 @@ var NewTestForm = React.createClass({
                 });
             }
         }
-        else {
-            state[e.target.name] = $.trim(e.target.value);
+        else { 
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -825,26 +826,26 @@ var NewTestForm = React.createClass({
         this.closeNewUserForm();
         alert('User added');
     },
-    
+
     onLabCreate: function (response) {
         this.refs.lab.setSelected(response);
         this.closeNewLabForm();
-        alert('Laboratory added'); 
+        alert('Laboratory added');
     },
 
-    onMaterialCreate: function(response) { 
+    onMaterialCreate: function (response) {
         this.refs.material.setSelected(response);
         this.closeNewMaterialForm();
         alert('Material added');
     },
-    
-    onFluidTypeCreate: function(response) {
+
+    onFluidTypeCreate: function (response) {
         this.refs.fluid_type.setSelected(response);
         this.closeNewFluidForm();
         alert('Fluid type added');
     },
 
-    onSyringeCreate: function(response) {
+    onSyringeCreate: function (response) {
         this.refs.syringe.setSelected(response);
         this.closeNewSyringeForm();
         alert('Syringe added');
@@ -915,7 +916,7 @@ var NewTestForm = React.createClass({
 
     render: function () {
 
-        var title = (this.state.id) ? "Edit test": 'New test';
+        var title = (this.state.id) ? "Edit test" : 'New test';
         return (
             this.props.show ?
                 <div className="form-container">
@@ -1053,7 +1054,7 @@ var NewTestForm = React.createClass({
 
                                     <div className="maxwidth">
                                         <div className="col-md-4 nopadding padding-right-xs">
-                                            <Checkbox name="transmission" 
+                                            <Checkbox name="transmission"
                                                       checked={this.state.transmission ? "checked" :null}>
                                                 Sent to Laboratory
                                             </Checkbox>
@@ -1210,11 +1211,11 @@ var NewTestForm = React.createClass({
                     </form>
 
                     <Modal show={this.state.showElectroProfileForm}>
-                        <ElectricalProfileForm data={this.props.data} handleClose={this.closeElectricalProfileForm}/>
+                        <ElectricalProfileForm data={this.state} handleClose={this.closeElectricalProfileForm}/>
                     </Modal>
 
                     <Modal show={this.state.showFluidProfileForm}>
-                        <FluidProfileForm data={this.props.data} handleClose={this.closeFluidProfileForm}/>
+                        <FluidProfileForm data={this.state} handleClose={this.closeFluidProfileForm}/>
                     </Modal>
 
                     <Modal show={this.state.showNewLabForm}>
@@ -1233,8 +1234,8 @@ var NewTestForm = React.createClass({
                             <Modal.Title>New Contract</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <NewContractForm onCreate={this.onContractCreate} 
-                                handleClose={this.closeNewContractForm}/>
+                            <NewContractForm onCreate={this.onContractCreate}
+                                             handleClose={this.closeNewContractForm}/>
                         </Modal.Body>
                     </Modal>
 
@@ -1244,7 +1245,7 @@ var NewTestForm = React.createClass({
                         </Modal.Header>
                         <Modal.Body>
                             <NewMaterialForm handleClose={this.closeNewMaterialForm}
-                            onCreate={this.onMaterialCreate}/>
+                                             onCreate={this.onMaterialCreate}/>
                         </Modal.Body>
                     </Modal>
 
@@ -1254,7 +1255,7 @@ var NewTestForm = React.createClass({
                         </Modal.Header>
                         <Modal.Body>
                             <NewFluidForm handleClose={this.closeNewFluidForm}
-                            onCreate={this.onFluidTypeCreate}/>
+                                          onCreate={this.onFluidTypeCreate}/>
                         </Modal.Body>
                     </Modal>
 
@@ -1263,8 +1264,8 @@ var NewTestForm = React.createClass({
                             <Modal.Title>New User Profile</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <NewUserForm data={this.props.data} 
-                                         handleClose={this.closeNewUserForm} 
+                            <NewUserForm data={this.props.data}
+                                         handleClose={this.closeNewUserForm}
                                          onCreate={this.onPerformerCreate}
                             />
                         </Modal.Body>

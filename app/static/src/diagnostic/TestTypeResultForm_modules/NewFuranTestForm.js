@@ -5,15 +5,15 @@ import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         console.log("NewFluidTestForm TextField " + name + " value: " + value);
         console.log("NewFluidTestForm TextField " + name + " props.value: " + this.props.value);
         return (
@@ -23,7 +23,7 @@ const TextField = React.createClass({
                              placeholder={label}
                              name={name}
                              value={value}
-                             />
+                />
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -32,10 +32,10 @@ const TextField = React.createClass({
 
 const CheckBox = React.createClass({
     render: function () {
-        var name = (this.props.name != null) ? this.props.name: "";
+        var name = (this.props.name != null) ? this.props.name : "";
         return (
             <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
+                <span className="glyphicon glyphicon-menu-left">
                 </span>
             </Checkbox>
         );
@@ -60,7 +60,9 @@ var NewFuranTestForm = React.createClass({
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
         this.serverRequest = $.get(source, function (result) {
             var res = (result['result']);
-            if (res.length > 0) { this.setState({data: res[0]}); }
+            if (res.length > 0) {
+                this.setState({data: res[0]});
+            }
         }.bind(this), 'json');
     },
 
@@ -124,7 +126,13 @@ var NewFuranTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -148,7 +156,9 @@ var NewFuranTestForm = React.createClass({
     },
 
     render: function () {
-        if (this.state.data == null) { return (<div></div>);}
+        if (this.state.data == null) {
+            return (<div></div>);
+        }
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -175,13 +185,13 @@ var NewFuranTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-1 ">
-                             <CheckBox name="acf_flag"/>
+                            <CheckBox name="acf_flag"/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="2-ACF" name="acf" value={this.state.acf}/>
                         </div>
                         <div className="col-md-1">
-                             <CheckBox name="mef_flag"/>
+                            <CheckBox name="mef_flag"/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="5-MEF" name="mef" value={this.state.mef}/>

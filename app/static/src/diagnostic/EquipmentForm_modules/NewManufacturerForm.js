@@ -5,8 +5,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
-
+import {hashHistory} from 'react-router';
 
 
 var NewManufacturerForm = React.createClass({
@@ -84,7 +83,13 @@ var NewManufacturerForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-            state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -115,64 +120,64 @@ var NewManufacturerForm = React.createClass({
 
         return (
             <div className="form-container">
-                    <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <div className="row">
-                            <div className="col-md-12">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Name"
-                                                 name="name"
-                                    />
-                                </FormGroup>
-                            </div>
+                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Name"
+                                             name="name"
+                                />
+                            </FormGroup>
                         </div>
+                    </div>
 
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <FormGroup>
-                                        <FormControl componentClass="textarea"
-                                                     placeholder="Markings"
-                                                     name="markings"/>
-                                    </FormGroup>
-                                </div>
-                            </div>
-
-                        <div className="row">
-                            <div className="col-md-12">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Location"
-                                                 name="location"
-                                    />
-                                </FormGroup>
-                            </div>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <FormGroup>
+                                <FormControl componentClass="textarea"
+                                             placeholder="Markings"
+                                             name="markings"/>
+                            </FormGroup>
                         </div>
+                    </div>
 
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <FormGroup>
-                                        <FormControl componentClass="textarea"
-                                                     placeholder="Description"
-                                                     name="description"/>
-                                    </FormGroup>
-                                </div>
-                            </div>
-
-
-                        <div className="row">
-                            <div className="col-md-12 ">
-                                <Button bsStyle="success"
-                                        className="pull-right"
-                                        onClick={this.props.handleClose}
-                                        type="submit">Save</Button>
-                                &nbsp;
-                                <Button bsStyle="danger"
-                                        className="pull-right margin-right-xs"
-                                        onClick={this.props.handleClose}
-                                >Cancel</Button>
-                            </div>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <FormGroup>
+                                <FormControl type="text"
+                                             placeholder="Location"
+                                             name="location"
+                                />
+                            </FormGroup>
                         </div>
-                    </form>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-md-12">
+                            <FormGroup>
+                                <FormControl componentClass="textarea"
+                                             placeholder="Description"
+                                             name="description"/>
+                            </FormGroup>
+                        </div>
+                    </div>
+
+
+                    <div className="row">
+                        <div className="col-md-12 ">
+                            <Button bsStyle="success"
+                                    className="pull-right"
+                                    onClick={this.props.handleClose}
+                                    type="submit">Save</Button>
+                            &nbsp;
+                            <Button bsStyle="danger"
+                                    className="pull-right margin-right-xs"
+                                    onClick={this.props.handleClose}
+                            >Cancel</Button>
+                        </div>
+                    </div>
+                </form>
             </div>
         );
     }

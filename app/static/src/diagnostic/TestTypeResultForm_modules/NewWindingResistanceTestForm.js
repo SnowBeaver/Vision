@@ -7,16 +7,15 @@ import Radio from 'react-bootstrap/lib/Radio';
 import Panel from 'react-bootstrap/lib/Panel';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
-
 
 
 var PrimaryWindingTestPanel = React.createClass({
 
 
     render: function () {
-        return(
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -135,7 +134,7 @@ var SecondaryWindingTestPanel = React.createClass({
 
 
     render: function () {
-        return(
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -254,7 +253,7 @@ var TertiaryWindingTestPanel = React.createClass({
 
 
     render: function () {
-        return(
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
@@ -454,24 +453,27 @@ var NewWindingResistanceTestForm = React.createClass({
                 showSecondaryWindingTestPanel: false,
                 showTertiaryWindingTestPanel: false
             })
-        }
-        else if (e.target.id === 'secondary') {
+        } else if (e.target.id === 'secondary') {
             this.setState({
                 showPrimaryWindingTestPanel: false,
                 showSecondaryWindingTestPanel: true,
                 showTertiaryWindingTestPanel: false
             })
-        }
-        else if (e.target.id === 'tertiary') {
+        } else if (e.target.id === 'tertiary') {
             this.setState({
                 showPrimaryWindingTestPanel: false,
                 showSecondaryWindingTestPanel: false,
                 showTertiaryWindingTestPanel: true
             })
-        }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
-        this.setState(state);
+        } else {
+            if (e.target.type == 'checkbox') {
+                state[e.target.name] = e.target.checked;
+            } else if (e.target.type == 'select-one') {
+                state[e.target.name] = e.target.value;
+            } else {
+                state[e.target.name] = e.target.value;
+            }
+            this.setState(state);
         }
     },
 
@@ -495,27 +497,26 @@ var NewWindingResistanceTestForm = React.createClass({
     },
 
 
-
     onClickTapAdd: function () {
 
         this.setState({
-            numberOfTaps : this.state.numberOfTaps + 1
+            numberOfTaps: this.state.numberOfTaps + 1
         });
     },
 
     onClickTapRemove: function () {
 
         this.setState({
-            numberOfTaps : this.state.numberOfTaps - 1
+            numberOfTaps: this.state.numberOfTaps - 1
         });
     },
 
 
     render: function () {
 
-        var windings=[];
-        var numberOfTaps= this.state.numberOfTaps;
-        for(var i=1; i<=numberOfTaps; i++){
+        var windings = [];
+        var numberOfTaps = this.state.numberOfTaps;
+        for (var i = 1; i <= numberOfTaps; i++) {
             var headName = "Primary Winding " + i;
             windings.push(
                 <Panel header={headName}
@@ -554,14 +555,14 @@ var NewWindingResistanceTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-offset-7">
-                            <div className="col-md-3" >
+                            <div className="col-md-3">
                                 <Radio name="filter" id="primary" onClick={this._onChange}>Primary(H)</Radio>
                             </div>
-                            <div className="col-md-3" >
-                                <Radio name="filter" id="secondary" onClick={this._onChange} >Secondary(X)</Radio>
+                            <div className="col-md-3">
+                                <Radio name="filter" id="secondary" onClick={this._onChange}>Secondary(X)</Radio>
                             </div>
-                            <div className="col-md-3" >
-                                <Radio name="filter"id="tertiary" onClick={this._onChange} >Tertiary(T)</Radio>
+                            <div className="col-md-3">
+                                <Radio name="filter" id="tertiary" onClick={this._onChange}>Tertiary(T)</Radio>
                             </div>
                         </div>
                     </div>

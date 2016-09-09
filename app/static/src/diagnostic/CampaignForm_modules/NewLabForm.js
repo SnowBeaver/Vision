@@ -9,27 +9,27 @@ import {findDOMNode} from 'react-dom';
 var items = [];
 
 
-var NameSelectField = React.createClass ({
+var NameSelectField = React.createClass({
 
-    handleChange: function(event, index, value){
+    handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         });
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false
         };
     },
 
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
 
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -38,18 +38,19 @@ var NameSelectField = React.createClass ({
         }.bind(this), 'json');
     },
 
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
 
-    render: function() {
+    render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -70,8 +71,7 @@ var NameSelectField = React.createClass ({
 });
 
 
-
-var NewLabForm = React.createClass ({
+var NewLabForm = React.createClass({
 
 
     _create: function () {
@@ -79,8 +79,8 @@ var NewLabForm = React.createClass ({
             'code', 'analyser', 'name'
         ];
         var data = {};
-        for (var i=0;i<fields.length;i++){
-            var key= fields[i];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
         console.log(data);
@@ -91,7 +91,8 @@ var NewLabForm = React.createClass ({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) { },
+            success: function (data, textStatus) {
+            },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -100,11 +101,11 @@ var NewLabForm = React.createClass ({
     _onSubmit: function (e) {
         e.preventDefault();
         var errors = this._validate();
-        if(Object.keys(errors).length != 0) {
-          this.setState({
-            errors: errors
-          });
-           return;
+        if (Object.keys(errors).length != 0) {
+            this.setState({
+                errors: errors
+            });
+            return;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -114,25 +115,25 @@ var NewLabForm = React.createClass ({
     hideLoading: function () {
         this.setState({loading: false});
     },
-    
+
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
         // show success message
         this.props.onCreate(data);
     },
-    componentDidMount: function(){
+    componentDidMount: function () {
 
     },
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
 
     },
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
+        if (res.errors) {
             this.setState({
                 errors: res.errors
             });
@@ -140,14 +141,14 @@ var NewLabForm = React.createClass ({
     },
     _onChange: function (e) {
         var state = {};
-        if(e.target.type == 'checkbox'){
+        if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         }
-        else if(e.target.type == 'select-one'){
+        else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
+        else {
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -160,7 +161,7 @@ var NewLabForm = React.createClass ({
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
@@ -174,59 +175,59 @@ var NewLabForm = React.createClass ({
         }
     },
 
-    handleClick: function() {
+    handleClick: function () {
         document.getElementById('test_prof').remove();
     },
 
-    render : function() {
+    render: function () {
 
-        return(
+        return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 
-                        <div className="maxwidth">
+                    <div className="maxwidth">
+                        <FormGroup>
+                            <FormControl type="text"
+                                         placeholder="Code"
+                                         name="code"
+                            />
+                        </FormGroup>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-md-12">
                             <FormGroup>
                                 <FormControl type="text"
-                                             placeholder="Code"
-                                             name="code"
+                                             placeholder="Analyser"
+                                             name="analyser"
                                 />
                             </FormGroup>
                         </div>
+                    </div>
 
-                        <div className="row">
-                            <div className="col-md-12">
-                                <FormGroup>
-                                    <FormControl type="text"
-                                                 placeholder="Analyser"
-                                                 name="analyser"
-                                    />
-                                </FormGroup>
-                            </div>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <NameSelectField
+                                source="/api/v1.0/user"
+                                handleChange={this.handleChange}/>
                         </div>
+                    </div>
 
-                        <div className="row">
-                            <div className="col-md-12">
-                                <NameSelectField
-                                    source="/api/v1.0/user"
-                                    handleChange={this.handleChange} />
-                            </div>
+                    <div className="row">
+                        <div className="col-md-12 ">
+                            <Button bsStyle="success"
+                                    className="btn btn-success pull-right"
+                                    type="submit"
+                                    onClick={this.props.handleClose}
+                            >Save</Button>
+                            &nbsp;
+                            <Button bsStyle="danger"
+                                    className="pull-right"
+                                    onClick={this.props.handleClose}
+                                    className="pull-right margin-right-xs"
+                            >Cancel</Button>
                         </div>
-
-                        <div className="row">
-                            <div className="col-md-12 ">
-                                <Button bsStyle="success"
-                                        className="btn btn-success pull-right"
-                                        type="submit"
-                                        onClick={this.props.handleClose}
-                                >Save</Button>
-                                &nbsp;
-                                <Button bsStyle="danger"
-                                        className="pull-right"
-                                        onClick={this.props.handleClose}
-                                        className="pull-right margin-right-xs"
-                                >Cancel</Button>
-                            </div>
-                        </div>
+                    </div>
                 </form>
             </div>
         );

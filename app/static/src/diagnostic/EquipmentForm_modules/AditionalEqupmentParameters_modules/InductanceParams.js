@@ -80,9 +80,9 @@ var SelectField = React.createClass({
 const CheckBox = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var checked = (this.props.value != null) ? this.props.value: false;
-        var is_checked = (checked) ? 'checked': '';
+        var name = (this.props.name != null) ? this.props.name : "";
+        var checked = (this.props.value != null) ? this.props.value : false;
+        var is_checked = (checked) ? 'checked' : '';
         return (
             <Checkbox checked={is_checked} name={name}>
                 {label}
@@ -186,7 +186,13 @@ var InductanceParams = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -235,7 +241,7 @@ var InductanceParams = React.createClass({
                     <b>Sealed</b> <CheckBox name="sealed" value={this.state.tank_winding_flag}/>
                 </div>
                 <div className="col-md-2">
-                      <b>Welded Cover</b> <CheckBox name="welded_cover" value={this.state.welded_cover}/>
+                    <b>Welded Cover</b> <CheckBox name="welded_cover" value={this.state.welded_cover}/>
                 </div>
             </div>
         )

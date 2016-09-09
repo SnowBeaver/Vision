@@ -4,14 +4,14 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -19,7 +19,7 @@ const TextField = React.createClass({
                              placeholder={label}
                              name={name}
                              value={value}
-                             />
+                />
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -33,9 +33,9 @@ var NewBushingTestForm = React.createClass({
             loading: false,
             errors: {},
             fields: [
-                'h1','h2','h3','hn','x1','x2','x3','xn','t1','t2','t3','tn','q1','q2','q3','qn',
-                'h1c1','h2c1', 'h3c1', 'hnc1', 'h1c2', 'h2c2', 'h3c2', 'hnc2',
-                'x1c1', 'x1c1','x1c1','xnc1', 'x1c2', 'x2c2', 'x3c2', 'xnc2',
+                'h1', 'h2', 'h3', 'hn', 'x1', 'x2', 'x3', 'xn', 't1', 't2', 't3', 'tn', 'q1', 'q2', 'q3', 'qn',
+                'h1c1', 'h2c1', 'h3c1', 'hnc1', 'h1c2', 'h2c2', 'h3c2', 'hnc2',
+                'x1c1', 'x1c1', 'x1c1', 'xnc1', 'x1c2', 'x2c2', 'x3c2', 'xnc2',
                 'q1c1', 'q2c1', 'q3c1', 'qnc1', 'q1c2', 'q2c2', 'q3c2', 'qnc2',
                 'test_kv_h1', 'test_kv_h2', 'test_kv_h3', 'test_kv_hn',
                 'test_kv_x1', 'test_kv_x2', 'test_kv_x3', 'test_kv_xn',
@@ -46,7 +46,7 @@ var NewBushingTestForm = React.createClass({
                 'test_pfc2_t1', 'test_pfc2_t2', 'test_pfc2_t3', 'test_pfc2_tn',
                 'test_pfc2_q1', 'test_pfc2_q2', 'test_pfc2_q3', 'test_pfc2_qn',
                 'facteur', 'facteur1', 'facteur2', 'facteur3',
-                'facteurn','facteur1','facteur2','facteur3',
+                'facteurn', 'facteur1', 'facteur2', 'facteur3',
                 'temperature', 'humidity'
             ]
         }
@@ -66,14 +66,14 @@ var NewBushingTestForm = React.createClass({
             type = 'PUT';
         }
         return $.ajax({
-                url: url,
-                type: type,
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                beforeSend: function () {
-                    this.setState({loading: true});
-                }.bind(this)
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
         })
     },
 
@@ -133,7 +133,13 @@ var NewBushingTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 

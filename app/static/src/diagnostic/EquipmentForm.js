@@ -614,56 +614,56 @@ var EqAdditionalParams = React.createClass({
         if (typeof this.props.data == 'undefined') {
             return (<div></div>);
         }
-        
-        switch(this.props.data.text){
+
+        switch (this.props.data.text) {
             case 'Air circuit breaker':
                 return (<AirBreakerParams/>);
-            break;
+                break;
             case 'Bushing':
                 return (<BushingParams/>);
-            break;
+                break;
             case 'Capacitor':
                 return (<CapacitorParams/>);
-            break;
+                break;
             case 'Breaker':
                 return (<BreakerParams/>);
-            break;
+                break;
             case 'Power Source':
                 return (<PowerSourceParams/>);
-            break;
+                break;
             case 'Cable':
                 return (<CableParams/>);
-            break;
+                break;
             case 'Switchgear':
                 return (<SwitchGearParams/>);
-            break;
+                break;
             case 'Induction machine':
-               return (<InductionMachineParams/>);
-            break;
+                return (<InductionMachineParams/>);
+                break;
             case 'Synchronous machine':
                 return (<SyncroMachineParams/>);
-            break;
+                break;
             case 'Tap changer':
                 return (<TapChangerParams/>);
-            break;
+                break;
             case 'Rectifier':
                 return (<RectifierParams/>);
-            break;
+                break;
             case 'Transformer':
                 return (<TransformerParams/>);
-            break;
+                break;
             case 'Tank':
                 return (<TankParams/>);
-            break;
+                break;
             case 'Switch':
                 return (<SwitchParams/>);
-            break;
+                break;
             case 'Inductance':
                 return (<InductanceParams/>);
-            break;
+                break;
             case 'Gas sensor':
                 return (<GasSensorParams/>);
-            break;
+                break;
 
             default:
                 return null;
@@ -779,15 +779,12 @@ const EquipmentForm = React.createClass({
         var state = {};
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if (e.target.type == 'radio') {
+        } else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
-        }
-        else if (e.target.type == 'select-one') {
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-
         } else {
-            state[e.target.name] = $.trim(e.target.value);
+            state[e.target.name] = e.target.value;
         }
         if (e.target.name == 'equipment_type_id') {
             state['option_text'] = {

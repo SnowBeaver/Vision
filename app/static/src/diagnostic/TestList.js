@@ -44,15 +44,15 @@ var TestItem = React.createClass({
 
     render: function () {
 
-        if (typeof this.props.data.id == 'undefined' || !this.state.isVisible) {
-            return (<div>No tests</div>);
+        if (!this.state.isVisible) {
+            return (<div></div>);
         }
-        
+
         var test = this.props.data;
         console.log(test);
         var test_status = test.test_status;
-        var test_type_name = (test.test_type != null) ? test.test_type.name: 'undefined';
-        var performed_by_name = (test.performed_by != null) ? test.performed_by.name: 'undefined';
+        var test_type_name = (test.test_type != null) ? test.test_type.name: 'undetermined';
+        var performed_by_name = (test.performed_by != null) ? test.performed_by.name: 'undetermined';
 
         return (
             <tr>
@@ -148,31 +148,47 @@ var TestItemList = React.createClass({
     render: function () {
         var equipment_id = this.props.id;
         var tests = [];
+        var data = null;
+        var showTestForm = this.state.showTestForm;
+        var showAddTestButton = this.state.showAddTestButton;
 
         for (var i = 0; i < this.props.data.length; i++) {
             var item = this.props.data[i];
+
             if (item.equipment.id == equipment_id) {
+                
+                if (item.performed_by_id === null && item.reason_id === null){
+                    data = item;
+                    showTestForm = true;
+                    continue;
+                } 
+                
                 tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm}/>)
             }
         }
 
-        // this.props.data.map(function (item) {
-        //     if (item.equipment.id == equipment_id) {
-        //         tests.push(<TestItem data={item} editTestForm={that.editTestForm}/>)
-        //     }
-        // });
-
         return (
             <div>
+
                 <div className="row">
                     <div className="col-md-12">
                     <Table responsive id="test_prof">
+                        <thead>
+                        <tr>
+                            <td>Test name</td>
+                            <td>Analisys number</td>
+                            <td>Status</td>
+                            <td>Performed by</td>
+                            <td>Delete</td>
+                        </tr>
+                        </thead>
                         <tbody>
                         {tests}
                         </tbody>
                     </Table>
                         </div>
                 </div>
+                {showAddTestButton ?
                 <div className="row">
                     <div className="col-md-6">
                         <FormGroup>
@@ -180,12 +196,14 @@ var TestItemList = React.createClass({
                         </FormGroup>
                     </div>
                 </div>
+                    :null}
+
                 <NewTestForm ref="new_test_form"
-                             show={this.state.showTestForm}
+                             show={showTestForm}
                              handleClose={this.closeTestForm}
                              reloadList={this.reloadList}
+                             data={data}
                 />
-
             </div>
         );
     }
