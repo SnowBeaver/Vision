@@ -86,9 +86,6 @@ var NewLabForm = React.createClass ({
     },
 
     _create: function () {
-        //var fields = [
-        //    'code', 'analyser', 'name'
-        //];
         var fields = this.state.changedFields;
 
         if (fields.length == 0){
@@ -118,12 +115,14 @@ var NewLabForm = React.createClass ({
         e.preventDefault();
         if (!this._validate()){
             NotificationManager.error('Please correct the errors');
-            return;
+            return false;
         }
         var xhr = this._create();
-        xhr.done(this._onSuccess)
-            .fail(this._onError)
-            .always(this.hideLoading)
+        if (xhr) {
+            xhr.done(this._onSuccess)
+                .fail(this._onError)
+                .always(this.hideLoading)
+        }
     },
     hideLoading: function () {
         this.setState({loading: false});
@@ -131,13 +130,8 @@ var NewLabForm = React.createClass ({
     
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
-        NotificationManager.success('Laboratory has been successfully added', null, 1000);
-        // Let user to see the message for 1 sec
-        var that = this;
-        setTimeout(function(){
-            that.props.handleClose();
-            that.props.onCreate(data);
-        }, 1000);
+        this.props.handleClose();
+        this.props.onCreate(data);
     },
     componentDidMount: function(){
 
@@ -195,7 +189,7 @@ var NewLabForm = React.createClass ({
                 "int": /^(-|\+)?(0|[1-9]\d*)$/
             };
             if (!typePatterns[type].test(value)){
-                errors = "Invalid value";
+                errors = "Invalid value. Should be " + type;
             }
         }
         return errors;
@@ -237,7 +231,7 @@ var NewLabForm = React.createClass ({
         return(
 
             <div className="form-container">
-                <NotificationContainer/>
+
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 
                         <div className="maxwidth">

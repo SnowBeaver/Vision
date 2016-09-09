@@ -813,7 +813,7 @@ const EquipmentForm = React.createClass({
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
             };
             if (!typePatterns[type].test(value)){
-                errors = "Invalid value";
+                errors = "Invalid value. Should be " + type;
             }
         }
         return errors;

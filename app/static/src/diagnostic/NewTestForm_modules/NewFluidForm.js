@@ -4,7 +4,8 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var items= [];
 
@@ -12,17 +13,29 @@ var items= [];
 
 var NewFluidForm = React.createClass ({
 
+    getInitialState: function () {
+        return {
+            loading: false,
+            errors: {},
+            fields: [
+                'name'
+            ],
+            changedFields: []
+        }
+    },
 
     _create: function () {
-        var fields = [
-            'name'
-        ];
+        var fields = this.state.changedFields;
+        if (fields.length == 0){
+            NotificationManager.info("No values were selected.");
+            return false;
+        }
+
         var data = {};
-        for (var i=0;i<fields.length;i++){
+        for (var i = 0; i < fields.length; i++){
             var key= fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
 
         return $.ajax({
             url: '/api/v1.0/fluid_type/',
@@ -38,17 +51,12 @@ var NewFluidForm = React.createClass ({
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
         var xhr = this._create();
-        xhr.done(this._onSuccess)
+        if (xhr){
+            xhr.done(this._onSuccess)
             .fail(this._onError)
-            .always(this.hideLoading)
+            .always(this.hideLoading);
+        }
     },
     
     hideLoading: function () {
@@ -57,8 +65,8 @@ var NewFluidForm = React.createClass ({
     
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
+        this.props.handleClose();
         this.props.onCreate(data);
-        // show success message
     },
     
     _onError: function (data) {
@@ -67,16 +75,28 @@ var NewFluidForm = React.createClass ({
         if(res.message) {
             message = data.responseJSON.message;
         }
-        if(res.errors) {
-            this.setState({
-                errors: res.errors
-            });
+        if (res.error) {
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
     
     _onChange: function (e) {
         var state = {};
-        // console.log(e.target.type);
         if(e.target.type == 'checkbox'){
             state[e.target.name] = e.target.checked;
         }
@@ -86,21 +106,20 @@ var NewFluidForm = React.createClass ({
         else{
             state[e.target.name] = $.trim(e.target.value);
         }
+
+        this.state.changedFields.push(e.target.name);
+        // Clear the errors
+        state.errors = this.state.errors;
+        delete state.errors[e.target.name];
         this.setState(state);
     },
     
     _validate: function () {
-        var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
-        // }
-        // if(this.state.email == "") {
-        //   errors.email = "Email is required";
-        // }
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
-        // return errors;
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
+        }
+        return response;
     },
     
     _formGroupClass: function (field) {
@@ -109,13 +128,6 @@ var NewFluidForm = React.createClass ({
             className += " has-error"
         }
         return className;
-    },
-
-    getInitialState: function () {
-        return {
-            loading: false,
-            errors: {}
-        }
     },
 
     handleClick: function() {
@@ -129,7 +141,8 @@ var NewFluidForm = React.createClass ({
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 
                         <div className="maxwidth">
-                            <FormGroup>
+                            <FormGroup validationState={this.state.errors.name ? 'error' : null}>
+                                <HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
                                 <FormControl type="text"
                                              placeholder="Name"
                                              name="name"
@@ -142,7 +155,6 @@ var NewFluidForm = React.createClass ({
                                 <Button bsStyle="success"
                                         className="btn btn-success pull-right"
                                         type="submit"
-                                        onClick={this.props.handleClose}
                                 >Save</Button>
                                 &nbsp;
                                 <Button bsStyle="danger"

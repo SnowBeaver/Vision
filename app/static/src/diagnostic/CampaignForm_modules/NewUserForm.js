@@ -176,7 +176,6 @@ var NewUserForm = React.createClass ({
     
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
-        NotificationManager.success("User Profile has been successfully added.");
         this.props.handleClose();
         this.props.onCreate(data);
     }, 
@@ -228,7 +227,7 @@ var NewUserForm = React.createClass ({
                 "url": /^\S+\.\S+$/
             };
             if (!typePatterns[type].test(value)){
-                errors = "Invalid value";
+                errors = "Invalid " + type;
             }
         }
         return errors;
