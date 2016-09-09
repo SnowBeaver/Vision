@@ -88,7 +88,8 @@ var PerformedBySelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -135,7 +136,7 @@ var PerformedBySelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.props.value}
+                        value={this.state.value}
                         name="performed_by_id">
                         <option key="0" value="select">Performed by</option>
                         {menuItems}
@@ -158,7 +159,8 @@ var MaterialSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -205,7 +207,7 @@ var MaterialSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select material"
                         onChange={this.handleChange}
-                        value={this.props.value}
+                        value={this.state.value}
                         name="material_id">
                         <option key="0" value="select">Material</option>
                         {menuItems}
@@ -228,7 +230,8 @@ var FluidTypeSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -275,7 +278,7 @@ var FluidTypeSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.props.value}
+                        value={this.state.value}
                         name="fluid_type_id"
                     >
                         <option key="0" value="select">Fluid Type</option>
@@ -299,7 +302,8 @@ var LabAnalyserSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -346,7 +350,7 @@ var LabAnalyserSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.props.value}
+                        value={this.state.value}
                         name="lab_id">
                         <option key="0" value="select">Lab/On-Line Analyser</option>
                         {menuItems}
@@ -369,7 +373,8 @@ var LabContractSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -417,7 +422,7 @@ var LabContractSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.props.value}
+                        value={this.state.value}
                         name="lab_contract_id">
                         <option key="0" value="select">Lab Contract</option>
                         {menuItems}
@@ -440,7 +445,8 @@ var SyringeNumberSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -487,7 +493,7 @@ var SyringeNumberSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.props.value}
+                        value={this.state.value}
                         name="seringe_num">
                         <option key="0" value="select">Syringe Number</option>
                         {menuItems}
@@ -510,7 +516,8 @@ var TestReasonSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            value: this.props.value
         };
     },
 
@@ -555,7 +562,7 @@ var TestReasonSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.props.value}
+                    value={this.state.value}
                     name="reason_id"
                     onChange={this.handleChange}
                 >
@@ -596,7 +603,8 @@ var NewTestForm = React.createClass({
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
-            ]
+            ],
+            reason_id: ''
 
             // profile_fields: [
             //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
