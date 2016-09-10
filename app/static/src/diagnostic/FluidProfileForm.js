@@ -311,16 +311,13 @@ const FluidProfileForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        this.setState({
-            data: data
-        });
 
         // show success message
         // if update a profile
         if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
             var url = '/api/v1.0/fluid_profile/';
-            if (this.state.data.id) {
-                url = url + this.state.data.id;
+            if (this.props.data.fluid_profile_id) {
+                url = url + this.props.data.fluid_profile_id;
             }
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
@@ -332,7 +329,7 @@ const FluidProfileForm = React.createClass({
                 contentType: 'application/json',
                 data: JSON.stringify(this.state.data),
                 success: function (data, textStatus) {
-                    alert('Custom profile saved');
+                    NotificationManager.success('Profile saved successfully');
                 },
                 beforeSend: function () {
                     this.setState({loading: true});
@@ -340,7 +337,6 @@ const FluidProfileForm = React.createClass({
             });
         }
 
-        // save part to test_result 
         return $.ajax({
             url: '/api/v1.0/test_result/' + this.props.data.id,
             type: 'POST',
@@ -373,8 +369,9 @@ const FluidProfileForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        alert('Profile saved successfully');
+        NotificationManager.success('Test updated successfully');
         this.props.handleClose();
+        this.hideLoading();
     },
 
     _onError: function (data) {

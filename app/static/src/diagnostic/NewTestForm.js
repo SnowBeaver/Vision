@@ -67,7 +67,7 @@ var TestProfileSelectField = React.createClass({
                     placeholder="select"
                     value={this.state.value}
                     onChange={this.handleChange}
-                    name="test_type_id">
+                    name="profile_type_id">
                     <option value="select_prof">Choose profile from saved</option>
                     {options}
                 </FormControl>
@@ -586,7 +586,6 @@ var NewTestForm = React.createClass({
         return {
             loading: false,
             errors: {},
-            showRadio: true,
             showFluidProfileForm: false,
             showElectroProfileForm: false,
             showNewUserForm: false,
@@ -654,7 +653,7 @@ var NewTestForm = React.createClass({
     },
 
     _save: function () {
-        
+
         var fields = this.state.fields;
         var data = {};
         for (var i = 0; i < fields.length; i++) {
@@ -722,38 +721,28 @@ var NewTestForm = React.createClass({
     _onChange: function (e) {
         var state = {};
 
-        if (e.target.value != 'select_prof' && e.target.name == 'test_type_id') {
-            this.setState({
-                showRadio: false
-            })
-        }
-        else {
-            this.setState({
-                showRadio: true
-            })
-        }
-
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         }
         else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else if (e.target.type == 'radio') {
+        } else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
-            if ('fluid' === e.target.value) {
+            // fluid
+            if ('1' === e.target.value) {
                 this.setState({
                     showFluidProfileForm: true,
                     showElectroProfileForm: false
                 });
-            } else if ('electro' === e.target.value) {
+            //electrical
+            } else if ('2' === e.target.value) {
                 this.setState({
                     showElectroProfileForm: true,
                     showFluidProfileForm: false
                 });
             }
         }
-        else { 
+        else {
             state[e.target.name] = e.target.value;
         }
         this.setState(state);
@@ -1184,25 +1173,14 @@ var NewTestForm = React.createClass({
 
                                     <fieldset className="scheduler-border">
                                         <legend className="scheduler-border">Choose test type</legend>
-                                        <div className="row">
-                                            <div>
-                                                <div className="col-md-2">
-                                                    <FormGroup>
-                                                        <TestProfileSelectField source="/api/v1.0/test_profile"/>
-                                                    </FormGroup>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {this.state.showRadio ?
                                             <div className="maxwidth">
-                                                <Radio name="profile" value="fluid">
+                                                <Radio name="test_type_id" value="1">
                                                     Fluid Profile
                                                 </Radio>
-                                                <Radio name="profile" value="electro">
+                                                <Radio name="test_type_id" value="2">
                                                     Electrical Profile
                                                 </Radio>
                                             </div>
-                                            : null}
                                     </fieldset>
                                     <div className="row">
                                         <div className="col-md-12">
