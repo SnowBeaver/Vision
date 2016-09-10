@@ -580,7 +580,6 @@ var NewTestForm = React.createClass({
     //test_sampling_card
     //test_status_id - should be set separate
     //test_recommendation
-    //'campaign_id' - should be passed
 
     getInitialState: function () {
         return {
@@ -598,21 +597,12 @@ var NewTestForm = React.createClass({
             repair_date: new Date().toISOString(),
             fields: [
                 'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
-                'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
+                'test_status_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
             ],
-            reason_id: ''
-
-            // profile_fields: [
-            //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
-            //     'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
-            //     'density', 'pcb_jar', 'inhibitor_jar', 'point', 'dielec_2', 'color', 'pf', 'particles', 'metals',
-            //     'viscosity', 'dielec_d', 'ift', 'pf_100', 'furans_f', 'water_w', 'corr', 'dielec_i', 'qty_jar',
-            //     'sampling_jar', 'pcb_vial', 'antioxidant', 'qty_vial', 'sampling_vial', 'percent_ratio',
-            //     'sampling_point_id'
-            // ]
+            reason_id: '' 
         }
     },
 
