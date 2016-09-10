@@ -4,6 +4,8 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var items = [];
@@ -11,227 +13,283 @@ var items = [];
 
 var NameSelectField = React.createClass({
 
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value
-        });
-    },
+	handleChange: function (event, index, value) {
+		this.setState({
+			value: event.target.value
+		});
+	},
 
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
+	getInitialState: function () {
+		return {
+			items: [],
+			isVisible: false
+		};
+	},
 
-    isVisible: function () {
-        return this.state.isVisible;
-    },
+	isVisible: function () {
+		return this.state.isVisible;
+	},
 
-    componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+	componentDidMount: function () {
+		this.serverRequest = $.get(this.props.source, function (result) {
 
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
+			items = (result['result']);
+			this.setState({
+				items: items
+			});
+		}.bind(this), 'json');
+	},
 
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
+	componentWillUnmount: function () {
+		this.serverRequest.abort();
+	},
 
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
+	setVisible: function () {
+		this.state.isVisible = true;
+	},
 
-    render: function () {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
+	render: function () {
+		var menuItems = [];
+		for (var key in this.state.items) {
+			menuItems.push(<option key={this.state.items[key].id}
+								   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+		}
 
-        return (
-            <div>
-                <FormGroup>
-                    <FormControl
-                        componentClass="select"
-                        placeholder="select"
-                        onChange={this.handleChange}
-                        name="name">
-                        <option key="0" value="select">Name</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
+		return (
+			<div>
+				<FormGroup validationState={this.props.errors.name ? 'error' : null}>
+					<HelpBlock className="warning">{this.props.errors.name}</HelpBlock>
+					<FormControl
+						componentClass="select"
+						placeholder="select"
+						onChange={this.handleChange}
+						name="name">
+						<option key="0" value="select">Name</option>
+						{menuItems}
+					</FormControl>
+				</FormGroup>
+			</div>
+		);
+	}
 });
 
 
 var NewLabForm = React.createClass({
 
+	getInitialState: function () {
+		return {
+			loading: false,
+			errors: {},
+			equipment_number: '',
+			changedFields: []
+		}
+	},
 
-    _create: function () {
-        var fields = [
-            'code', 'analyser', 'name'
-        ];
-        var data = {};
-        for (var i = 0; i < fields.length; i++) {
-            var key = fields[i];
-            data[key] = this.state[key];
-        }
-        console.log(data);
+	_create: function () {
+		var fields = this.state.changedFields;
 
-        return $.ajax({
-            url: '/api/v1.0/lab/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data, textStatus) {
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
-    },
-    _onSubmit: function (e) {
-        e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
-        var xhr = this._create();
-        xhr.done(this._onSuccess)
-            .fail(this._onError)
-            .always(this.hideLoading)
-    },
-    hideLoading: function () {
-        this.setState({loading: false});
-    },
+		if (fields.length == 0){
+			NotificationManager.info("No values were selected.");
+			return false;
+		}
 
-    _onSuccess: function (data) {
-        this.setState(this.getInitialState());
-        // show success message
-        this.props.onCreate(data);
-    },
-    componentDidMount: function () {
+		var data = {};
+		for (var i = 0; i < fields.length; i++) {
+			var key = fields[i];
+			data[key] = this.state[key];
+		}
 
-    },
-    componentWillUnmount: function () {
+		return $.ajax({
+			url: '/api/v1.0/lab/',
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			success: function (data, textStatus) {
+			},
+			beforeSend: function () {
+				this.setState({loading: true});
+			}.bind(this)
+		})
+	},
+	_onSubmit: function (e) {
+		e.preventDefault();
+		if (!this._validate()){
+			NotificationManager.error('Please correct the errors');
+			return false;
+		}
+		var xhr = this._create();
+		if (xhr) {
+			xhr.done(this._onSuccess)
+				.fail(this._onError)
+				.always(this.hideLoading)
+		}
+	},
+	hideLoading: function () {
+		this.setState({loading: false});
+	},
 
-    },
-    _onError: function (data) {
-        var message = "Failed to create";
-        var res = data.responseJSON;
-        if (res.message) {
-            message = data.responseJSON.message;
-        }
-        if (res.errors) {
-            this.setState({
-                errors: res.errors
-            });
-        }
-    },
-    _onChange: function (e) {
-        var state = {};
-        if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
-        }
-        else if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
-        }
-        else {
-            state[e.target.name] = e.target.value;
-        }
-        this.setState(state);
-    },
-    _validate: function () {
-        var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
-        // }
-        return errors;
-    },
-    _formGroupClass: function (field) {
-        var className = "form-group ";
-        if (field) {
-            className += " has-error"
-        }
-        return className;
-    },
+	_onSuccess: function (data) {
+		this.setState(this.getInitialState());
+		this.props.handleClose();
+		this.props.onCreate(data);
+	},
+	componentDidMount: function () {
 
-    getInitialState: function () {
-        return {
-            loading: false,
-            errors: {},
-            equipment_number: ''
-        }
-    },
+	},
+	componentWillUnmount: function () {
 
-    handleClick: function () {
-        document.getElementById('test_prof').remove();
-    },
+	},
+	_onError: function (data) {
+		var message = "Failed to create";
+		var res = data.responseJSON;
+		if (res.message) {
+			message = data.responseJSON.message;
+		}
+		if (res.error) {
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
+	},
+	_onChange: function (e) {
+		var state = {};
+		if (e.target.type == 'checkbox') {
+			state[e.target.name] = e.target.checked;
+		}
+		else if (e.target.type == 'select-one') {
+			state[e.target.name] = e.target.value;
+		}
+		else {
+			state[e.target.name] = e.target.value;
+		}
 
-    render: function () {
+		state.changedFields = this.state.changedFields.concat([e.target.name]);
+		var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+		state = this._updateFieldErrors(e.target.name, state, errors);
+		this.setState(state);
+	},
 
-        return (
-            <div className="form-container">
-                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+	_validateFieldType: function (value, type){
+		var errors = {};
+		if (type != undefined && value){
+			var typePatterns = {
+				"int": /^(-|\+)?(0|[1-9]\d*)$/
+			};
+			if (!typePatterns[type].test(value)){
+				errors = "Invalid value. Should be " + type;
+			}
+		}
+		return errors;
+	},
 
-                    <div className="maxwidth">
-                        <FormGroup>
-                            <FormControl type="text"
-                                         placeholder="Code"
-                                         name="code"
-                            />
-                        </FormGroup>
-                    </div>
+	_updateFieldErrors: function (fieldName, state, errors){
+		// Clear existing errors related to the current field as it has been edited
+		state.errors = this.state.errors;
+		delete state.errors[fieldName];
 
-                    <div className="row">
-                        <div className="col-md-12">
-                            <FormGroup>
-                                <FormControl type="text"
-                                             placeholder="Analyser"
-                                             name="analyser"
-                                />
-                            </FormGroup>
-                        </div>
-                    </div>
+		// Update errors with new ones, if present
+		if (Object.keys(errors).length){
+			state.errors[fieldName] = errors
+		}
+		return state;
+	},
 
-                    <div className="row">
-                        <div className="col-md-12">
-                            <NameSelectField
-                                source="/api/v1.0/user"
-                                handleChange={this.handleChange}/>
-                        </div>
-                    </div>
+	_validate: function () {
+		var response = true;
+		if (Object.keys(this.state.errors).length > 0){
+			response = false;
+		}
+		return response;
+	},
+	_formGroupClass: function (field) {
+		var className = "form-group ";
+		if (field) {
+			className += " has-error"
+		}
+		return className;
+	},
 
-                    <div className="row">
-                        <div className="col-md-12 ">
-                            <Button bsStyle="success"
-                                    className="btn btn-success pull-right"
-                                    type="submit"
-                                    onClick={this.props.handleClose}
-                            >Save</Button>
-                            &nbsp;
-                            <Button bsStyle="danger"
-                                    className="pull-right"
-                                    onClick={this.props.handleClose}
-                                    className="pull-right margin-right-xs"
-                            >Cancel</Button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        );
-    }
+	getInitialState: function () {
+		return {
+			loading: false,
+			errors: {},
+			equipment_number: ''
+		}
+	},
+
+	handleClick: function() {
+		document.getElementById('test_prof').remove();
+	},
+
+	render: function () {
+
+		return (
+			<div className="form-container">
+				<form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+
+						<div className="maxwidth">
+							<FormGroup validationState={this.state.errors.code ? 'error' : null}>
+								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
+								<FormControl type="text"
+											 placeholder="Code"
+											 name="code"
+											 data-type="int"
+								/>
+							</FormGroup>
+						</div>
+						<div className="row">
+							<div className="col-md-12">
+								<FormGroup validationState={this.state.errors.analyser ? 'error' : null}>
+									<HelpBlock className="warning">{this.state.errors.analyser}</HelpBlock>
+									<FormControl type="text"
+												 placeholder="Analyser"
+												 name="analyser"
+									/>
+								</FormGroup>
+							</div>
+						</div>
+
+						<div className="row">
+							<div className="col-md-12">
+								<NameSelectField
+									source="/api/v1.0/user"
+									handleChange={this.handleChange}
+									errors={this.state.errors}/>
+							</div>
+						</div>
+
+						<div className="row">
+							<div className="col-md-12 ">
+								<Button bsStyle="success"
+										className="btn btn-success pull-right"
+										type="submit"
+								>Save</Button>
+								&nbsp;
+								<Button bsStyle="danger"
+										className="pull-right"
+										onClick={this.props.handleClose}
+										className="pull-right margin-right-xs"
+								>Cancel</Button>
+							</div>
+						</div>
+				</form>
+			</div>
+		);
+	}
 });
 
 

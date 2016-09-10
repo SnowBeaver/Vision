@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import Radio from 'react-bootstrap/lib/Radio';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var TestProfileSelectField = React.createClass({
 
@@ -111,10 +112,9 @@ const ElectricalProfileForm = React.createClass({
     },
 
     componentDidMount: function () {
-        // console.log(this.props.data);
         //test_result_id
-        // console.log(this.props.data.id);
     },
+
     fillUpForm: function (saved_data) {
 
         if (null == saved_data) {
@@ -172,11 +172,8 @@ const ElectricalProfileForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
             return;
         }
         var xhr = this._save();
@@ -201,11 +198,20 @@ const ElectricalProfileForm = React.createClass({
         if (res.message) {
             message = data.responseJSON.message;
         }
-        if (res.errors) {
+        if (res.error) {
+            // Join multiple error messages
+            for (var field in res.error){
+                var errorMessage = res.error[field];
+                if (Array.isArray(errorMessage)){
+                     errorMessage = errorMessage.join(". ");
+                }
+                res.error[field] = errorMessage;
+            }
             this.setState({
-                errors: res.errors
+                errors: res.error
             });
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -223,11 +229,11 @@ const ElectricalProfileForm = React.createClass({
     },
 
     _validate: function () {
-        var errors = {};
-        // if(this.state.password == "") {
-        //   errors.password = "Password is required";
-        // }
-        return errors;
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
+        }
+        return response;
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -246,9 +252,9 @@ const ElectricalProfileForm = React.createClass({
                     <div className="maxwidth">
                         <Panel header="Electrical profile test parametres">
                             <div className="row">
-                                <div className="col-md-10">
+                                <div className="col-md-9">
                                 </div>
-                                <div className="col-md-2">
+                                <div className="col-md-3">
                                     <FormGroup>
                                         <TestProfileSelectField fillUpForm={this.fillUpForm}
                                                                 source="/api/v1.0/electrical_profile"/>

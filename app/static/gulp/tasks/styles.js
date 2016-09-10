@@ -5,11 +5,13 @@ var autoprefixer = require('gulp-autoprefixer');
 
 
 gulp.task('backend-style', function() {
-  gulp.src('src/www/**/*.css')
+  gulp.src(['src/www/**/*.css', 'node_modules/react-notifications/lib/notifications.css'])
       .pipe(cleanCSS({compatibility: 'ie8'}))
       .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
       .pipe(concat('admin.min.css'))
-      .pipe(gulp.dest('./build')) 
+      .pipe(gulp.dest('./build')),
+  gulp.src(['node_modules/react-notifications/lib/fonts/*{ttf,woff}'])
+      .pipe(gulp.dest('./build/fonts'))
 });
 
 gulp.task('frontend-style', function() {

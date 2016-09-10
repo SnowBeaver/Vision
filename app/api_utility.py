@@ -603,10 +603,10 @@ cable_schema = {'id': readonly_dict,
                 'insulation_id': type_integer_coerce_dict,
                 }
 recommendation_schema = {'id': readonly_dict,
-                         'name': type_string_maxlength_50_dict,
+                         'name': type_string_maxlength_50_required_dict,
                          'code': type_string_maxlength_50_dict,
                          'description': type_string_dict,
-                         'test_type_id': type_integer_coerce_dict,
+                         'test_type_id': type_integer_coerce_required_dict,
                          }
 test_recommendation_schema = {'id': readonly_dict,
                          'recommendation_id': type_integer_coerce_dict,

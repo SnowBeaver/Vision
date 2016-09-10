@@ -99,12 +99,12 @@ var TestItemList = React.createClass({
 
     componentDidMount: function () {
         // load test_result and show tests for each equipment
-        // this.serverRequest = $.get(this.props.source, function (result) { 
+        // this.serverRequest = $.get(this.props.source, function (result) {
         //     items = (result['result']);
         //     this.setState({
         //         items: items
         //     });
-        // }.bind(this), 'json'); 
+        // }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
@@ -163,11 +163,20 @@ var TestItemList = React.createClass({
                     showTestForm = true;
                     showAddTestButton = false;
                     continue;
-                } 
-                
+                }
+
                 tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm}/>)
             }
         }
+
+        //for (var key in this.props.data) {
+        //    if (this.props.data[key] instanceof Object && Object.keys(this.props.data[key]).length){
+        //        tests.push(
+        //            <TestItem data={this.props.data[key]}
+        //                      key={this.props.data[key].id}/>
+        //        );
+        //    }
+        //}
 
         return (
             <div>
