@@ -16,7 +16,6 @@ const TextField = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         return (
-            <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup>
                     <FormControl type="text"
                                  placeholder={label}
@@ -25,14 +24,12 @@ const TextField = React.createClass({
                     />
                     <FormControl.Feedback />
                 </FormGroup>
-            </OverlayTrigger>
         );
     }
 });
 
 const CheckBox = React.createClass({
     render: function () {
-        var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var checked = (this.props.value != null) ? this.props.value : false;
         var is_checked = (checked) ? 'checked' : '';
@@ -48,12 +45,14 @@ const CheckBox = React.createClass({
 var AirBreakerParams = React.createClass({
 
     getInitialState: function () {
+        return console.log(this.props);
         return {
             loading: false,
             errors: {},
             fields: [
                 "phase_number", "sealed", "welded_cover", "current_rating"
-            ]
+            ],
+            phase_number: this.props.data.phase_number
         }
     },
 
@@ -66,7 +65,7 @@ var AirBreakerParams = React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
+                        <TextField
                                    label="Phase Number"
                                    name="phase_number"
                                    value={this.state.phase_number}/>
