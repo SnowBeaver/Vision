@@ -27,6 +27,16 @@ def return_json(items_name, items_list):
     return jsonify({items_name: items_list})
 
 
+def validate_or_abort(path, req=None):
+    if not req:
+        req = request.json
+    validation_schema = model_dict[path]['schema']
+    v = Validator()
+    if not v.validate(req, validation_schema):
+        abort(400, v.errors)
+
+    return True
+
 def new_instance(model, **param_dict):
     item = model(**param_dict)
 
@@ -112,12 +122,8 @@ def delete_item(path, item_id):
 
 def add_items():
     path = 'test_result_equipment'
+    validate_or_abort(path)
     items_model = model_dict[path]['model']
-    validation_schema = model_dict[path]['schema']
-    v = Validator()
-    if not v.validate(request.json, validation_schema):
-        abort(400, v.errors)
-
     campaign_id = request.json.get('campaign_id')
     try:
         db.session.query(items_model).filter(items_model.campaign_id == campaign_id).delete(synchronize_session=False)
@@ -132,8 +138,25 @@ def add_items():
     return [new_instance(items_model, campaign_id=campaign_id, equipment_id=id).id for id in equipment_ids]
 
 
-def get_equipment_type_fields(item_id):
+def add_or_update_tests(path):
+    items_model = model_dict[path]['model']
+    items = []
+    for test in request.json:
+        if 'id' in test:
+            item = db.session.query(items_model).get(test['id'])
+        else:
+            validate_or_abort(path, test)
+            item = new_instance(items_model, **request.json)
 
+        items.append(item)
+        for k, v in test.items():
+            setattr(item, k, v)
+
+    db.session.commit()
+    return [item.serialize() for item in items]
+
+
+def get_equipment_type_fields(item_id):
     item = db.session.query(EquipmentType).get(item_id) or abort(404)
     return {str(c.name): str(c.type) for c in meta.tables[item.table_name].columns}
 
@@ -203,11 +226,23 @@ def get_test_profile():
 
 
 @api_blueprint.route('/test_result/equipment', methods=['POST', ])
-def handler_items():
+def handler_items(path):
+    if not request.json:
+        abort(400, 'JSON not found')
+    return return_json('result', add_items())
+
+
+@api_blueprint.route('/test_result/multi/<path>', methods=['POST', ])
+def handler_tests(path):
+    if path not in ('transformer_turn_ratio_test',
+                    'winding_resistance_test',
+                    'winding_test'):
+        abort(404)
     if not request.json:
         abort(400, 'JSON not found')
 
-    return return_json('result', add_items())
+    # path = 'test_result_' + path
+    return return_json('result', add_or_update_tests(path))
 
 
 api.register_blueprint(api_blueprint)

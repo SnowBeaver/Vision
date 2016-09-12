@@ -532,8 +532,6 @@ var EquipmentTestForm = React.createClass({
     },
 
     render: function () {
-        console.log('EquipmentTestForm render');
-        console.log(this.state.data);
         var data = (this.state.data != null) ? this.state.data: {};
         return (
             <div>
