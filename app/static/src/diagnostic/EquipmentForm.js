@@ -617,7 +617,7 @@ var EqAdditionalParams = React.createClass({
 
         switch (this.props.data.text) {
             case 'Air circuit breaker':
-                return (<AirBreakerParams onChange={this.props.onChange}/>);
+                return (<AirBreakerParams handleChange={this.props.handleChange}/>);
                 break;
             case 'Bushing':
                 return (<BushingParams  onChange={this.props.onChange}/>);
@@ -776,6 +776,7 @@ const EquipmentForm = React.createClass({
     },
 
     _onChange: function (e) {
+
         var state = {};
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
@@ -795,6 +796,7 @@ const EquipmentForm = React.createClass({
         }
 
         this.setState(state);
+        console.log(this.state);
     },
 
     _validate: function () {
@@ -928,8 +930,7 @@ const EquipmentForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-11">
-                                    <EqAdditionalParams onChange={this._onChange}
-                                                        data={this.state.option_text}/>
+                                    <EqAdditionalParams data={this.state.option_text}/>
                                 </div>
                             </div>
                             <div className="row">

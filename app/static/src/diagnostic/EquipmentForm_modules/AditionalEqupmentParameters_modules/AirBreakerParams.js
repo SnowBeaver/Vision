@@ -14,14 +14,12 @@ const TextField = React.createClass({
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
-                                 value={value}
                     />
                     <FormControl.Feedback />
                 </FormGroup>
@@ -34,7 +32,7 @@ const CheckBox = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var checked = (this.props.value != null) ? this.props.value : false;
+        var checked = (this.state.value != null) ? this.state.value: false;
         var is_checked = (checked) ? 'checked' : '';
         return (
             <Checkbox checked={is_checked} name={name}>
@@ -53,45 +51,48 @@ var AirBreakerParams = React.createClass({
             errors: {},
             fields: [
                 "phase_number", "sealed", "welded_cover", "current_rating"
-            ]
+            ],
+            phase_number: '',
+            current_rating: ''
         }
     },
 
     componentDidMount: function () {
     },
 
-
     render: function () {
         return (
             <div>
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
-                                   label="Phase Number"
+                        <TextField label="Phase Number"
                                    name="phase_number"
-                                   value={this.state.phase_number}/>
+                                   value={this.state.phase_number}
+                        />
                     </div>
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.onChange}
                                    label="Current Rating"
                                    name="current_rating"
-                                   value={this.state.current_rating}/>
+                                   value={this.state.current_rating}
+                        />
                     </div>
                     <div className="col-md-1 ">
-                        <CheckBox onChange={this.props.onChange}
+                        <CheckBox onChange={this.onChange}
                                   name="Sealed"
-                                  value={this.state.sealed}/>
+                                  value={this.state.sealed}
+                        />
                     </div>
                     <div className="col-md-2">
-                        <CheckBox onChange={this.props.onChange}
+                        <CheckBox onChange={this.onChange}
                                   name="Welded Cover"
-                                  value={this.state.welded_cover}/>
+                                  value={this.state.welded_cover}
+                        />
                     </div>
                 </div>
             </div>
         )
     }
 });
-
 
 export default AirBreakerParams;
