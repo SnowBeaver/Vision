@@ -16,7 +16,7 @@ import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 import CreatedByForm from './CampaignForm_modules/NewUserForm';
 
 import AirBreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/AirBreakerParams';
-import BushingParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
+import BushingParams  from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
 import CapacitorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/CapacitorParams';
 import BreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BreakerParams';
 import PowerSourceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/PowerSourceParams';
@@ -616,52 +616,52 @@ var EqAdditionalParams = React.createClass({
         }
         switch (this.props.data.option_text.text) {
             case 'Air circuit breaker':
-                return (<AirBreakerParams handleChange={this.props.handleChange}/>);
+                return (<AirBreakerParams />);
                 break;
             case 'Bushing':
-                return (<BushingParams  onChange={this.props.onChange}/>);
+                return (<BushingParams />);
                 break;
             case 'Capacitor':
-                return (<CapacitorParams onChange={this.props.onChange}/>);
+                return (<CapacitorParams/>);
                 break;
             case 'Breaker':
-                return (<BreakerParams onChange={this.props.onChange}/>);
+                return (<BreakerParams/>);
                 break;
             case 'Power Source':
-                return (<PowerSourceParams onChange={this.props.onChange}/>);
+                return (<PowerSourceParams />);
                 break;
             case 'Cable':
-                return (<CableParams onChange={this.props.onChange}/>);
+                return (<CableParams />);
                 break;
             case 'Switchgear':
-                return (<SwitchGearParams onChange={this.props.onChange}/>);
+                return (<SwitchGearParams />);
                 break;
             case 'Induction machine':
-                return (<InductionMachineParams onChange={this.props.onChange}/>);
+                return (<InductionMachineParams />);
                 break;
             case 'Synchronous machine':
-                return (<SyncroMachineParams onChange={this.props.onChange}/>);
+                return (<SyncroMachineParams />);
                 break;
             case 'Tap changer':
-                return (<TapChangerParams onChange={this.props.onChange}/>);
+                return (<TapChangerParams />);
                 break;
             case 'Rectifier':
-                return (<RectifierParams onChange={this.props.onChange}/>);
+                return (<RectifierParams />);
                 break;
             case 'Transformer':
-                return (<TransformerParams onChange={this.props.onChange}/>);
+                return (<TransformerParams />);
                 break;
             case 'Tank':
-                return (<TankParams onChange={this.props.onChange}/>);
+                return (<TankParams />);
                 break;
             case 'Switch':
-                return (<SwitchParams onChange={this.props.onChange}/>);
+                return (<SwitchParams />);
                 break;
             case 'Inductance':
-                return (<InductanceParams onChange={this.props.onChange}/>);
+                return (<InductanceParams />);
                 break;
             case 'Gas sensor':
-                return (<GasSensorParams onChange={this.props.onChange}/>);
+                return (<GasSensorParams />);
                 break;
 
             default:
@@ -679,6 +679,7 @@ const EquipmentForm = React.createClass({
             errors: {},
             visual_date: new Date().toISOString(),
             eqAdPar: {},
+
             fields: [
                 'equipment_type_id',
                 'manufacturer_id',

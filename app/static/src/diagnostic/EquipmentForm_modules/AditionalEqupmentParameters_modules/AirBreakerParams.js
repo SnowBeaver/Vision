@@ -15,6 +15,7 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         return (
+            <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup>
                     <FormControl type="text"
                                  placeholder={label}
@@ -22,37 +23,26 @@ const TextField = React.createClass({
                     />
                     <FormControl.Feedback />
                 </FormGroup>
+            </OverlayTrigger>
         );
     }
 });
-
-const CheckBox = React.createClass({
-    render: function () {
-        var name = (this.props.name != null) ? this.props.name : "";
-        //var checked = (this.state.value != null) ? this.state.value: false;
-        //var is_checked = (checked) ? 'checked' : '';
-        return (
-            <Checkbox name={name}>
-                <b>{this.props.name}</b>
-            </Checkbox>
-        );
-    }
-});
-
 
 var AirBreakerParams = React.createClass({
 
     getInitialState: function () {
         return {
-            loading: false,
-            errors: {},
-            fields: [
-                "phase_number", "sealed", "welded_cover", "current_rating"
-            ],
+            'phase_number': '',
+            'sealed': '',
+            'welded_cover': '',
+            'current_rating': ''
         }
     },
 
-    componentDidMount: function () {
+    handleChange: function(e){
+        var state = this.state;
+        state[e.target.name] = e.target.value;
+        this.setState(state);
     },
 
     render: function () {
@@ -60,29 +50,26 @@ var AirBreakerParams = React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField label="Phase Number"
-                                   name="phase_number"
-                                   value={this.state.phase_number}
+                        <TextField
+                            onChange={this.handleChange}
+                            label="Phase Number"
+                            name="phase_number"
+                            value={this.state.phase_number}
                         />
                     </div>
                     <div className="col-md-3">
-                        <TextField onChange={this.onChange}
-                                   label="Current Rating"
-                                   name="current_rating"
-                                   value={this.state.current_rating}
+                        <TextField
+                            onChange={this.handleChange}
+                            label="Current Rating"
+                            name="current_rating"
+                            value={this.state.current_rating}
                         />
                     </div>
                     <div className="col-md-1 ">
-                        <CheckBox onChange={this.onChange}
-                                  name="Sealed"
-                                  value={this.state.sealed}
-                        />
+                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
                     </div>
                     <div className="col-md-2">
-                        <CheckBox onChange={this.onChange}
-                                  name="Welded Cover"
-                                  value={this.state.welded_cover}
-                        />
+                        <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>
                     </div>
                 </div>
             </div>

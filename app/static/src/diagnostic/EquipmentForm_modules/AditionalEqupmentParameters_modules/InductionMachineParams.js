@@ -14,31 +14,16 @@ const TextField = React.createClass({
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
-                                 value={value}
                     />
                     <FormControl.Feedback />
                 </FormGroup>
             </OverlayTrigger>
-        );
-    }
-});
-
-const CheckBox = React.createClass({
-    render: function () {
-        var name = (this.props.name != null) ? this.props.name : "";
-        var checked = (this.props.value != null) ? this.props.value : false;
-        var is_checked = (checked) ? 'checked' : '';
-        return (
-            <Checkbox checked={is_checked} name={name}>
-                <b>{this.props.label}</b>
-            </Checkbox>
         );
     }
 });
@@ -48,13 +33,16 @@ var InductionMachineParams = React.createClass({
 
     getInitialState: function () {
         return {
-            loading: false,
-            errors: {},
-            fields: ['phase_number', 'sealed', 'model',
-                'welded_cover', 'current_rating', 'threephase',
-                'hp', 'kva', 'pf'
+            'phase_number':'',
+            'sealed':'',
+            'model':'',
+            'welded_cover':'',
+            'current_rating':'',
+            'threephase':'',
+            'hp':'',
+            'kva':'',
+            'pf':''
 
-            ]
         }
     },
 
@@ -65,41 +53,35 @@ var InductionMachineParams = React.createClass({
         return (
             <div className="row">
                 <div className="col-md-2">
-                    <TextField onChange={this.props.onChange}
+                    <TextField onChange={this.handleChange}
                                label="Current Rating"
                                name="current_rating"
                                value={this.state.current_rating}/>
                 </div>
                 <div className="col-md-2">
-                    <TextField onChange={this.props.onChange}
+                    <TextField onChange={this.handleChange}
                                label="Hp"
                                name="hp"
                                value={this.state.hp}/>
                 </div>
                 <div className="col-md-2">
-                    <TextField onChange={this.props.onChange}
+                    <TextField onChange={this.handleChange}
                                label="Kva"
                                name="kva"
                                value={this.state.kva}/>
                 </div>
                 <div className="col-md-2">
-                    <TextField onChange={this.props.onChange}
+                    <TextField onChange={this.handleChange}
                                label="Pf"
                                name="pf"
                                value={this.state.pf}/>
                 </div>
                 <div className="col-md-1 ">
-                    <CheckBox onChange={this.props.onChange}
-                              label="Sealed"
-                              name="sealed"
-                              value={this.state.tank_winding_flag}/>
-                </div>
-                <div className="col-md-2">
-                    <CheckBox onChange={this.props.onChange}
-                              label="Welded Cover"
-                              name="welded_cover"
-                              value={this.state.welded_cover}/>
-                </div>
+                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
+                    </div>
+                    <div className="col-md-2">
+                        <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>
+                    </div>
             </div>
         )
     }

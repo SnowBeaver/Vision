@@ -14,31 +14,16 @@ const TextField = React.createClass({
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
-                                 value={value}
                     />
                     <FormControl.Feedback />
                 </FormGroup>
             </OverlayTrigger>
-        );
-    }
-});
-
-const CheckBox = React.createClass({
-    render: function () {
-        var name = (this.props.name != null) ? this.props.name : "";
-        var checked = (this.props.value != null) ? this.props.value : false;
-        var is_checked = (checked) ? 'checked' : '';
-        return (
-            <Checkbox checked={is_checked} name={name}>
-                <b>{this.props.label}</b>
-            </Checkbox>
         );
     }
 });
@@ -99,17 +84,23 @@ var BreakerParams = React.createClass({
 
     getInitialState: function () {
         return {
-            loading: false,
-            errors: {},
-            fields: ['fluid_type_id', 'fluid_level_id', 'interrupting_medium_id', 'breaker_mechanism_id',
-                'phase_number', 'kv', 'kvar', 'sealed', 'welded_cover'
-            ]
+            'fluid_type_id':'',
+            'fluid_level_id':'',
+            'interrupting_medium_id':'',
+            'breaker_mechanism_id':'',
+            'phase_number':'',
+            'kv':'',
+            'kvar':'',
+            'sealed':'',
+            'welded_cover':''
         }
     },
 
-    componentDidMount: function () {
+    handleChange: function(e){
+        var state = this.state;
+        state[e.target.name] = e.target.value;
+        this.setState(state);
     },
-
 
     render: function () {
         return (
@@ -143,38 +134,31 @@ var BreakerParams = React.createClass({
 
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.handleChange}
                                    label="Phase Number"
                                    name="phase_number"
                                    value={this.state.phase_number}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField  onChange={this.props.onChange}
+                        <TextField  onChange={this.handleChange}
                                     label="Open"
                                     name="open"
                                     value={this.state.kv}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.handleChange}
                                    label="Current Rating"
                                    name="current_rating"
                                    value={this.state.kvar}/>
                     </div>
                     <div className="col-md-1 ">
-                        <CheckBox onChange={this.props.onChange}
-                                  label="Sealed"
-                                  name="sealed"
-                                  value={this.state.sealed}/>
+                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
                     </div>
                     <div className="col-md-2">
-                        <CheckBox onChange={this.props.onChange}
-                                  label="Welded Cover"
-                                  name="welded_cover"
-                                  value={this.state.welded_cover}/>
+                        <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>
                     </div>
                 </div>
             </div>
-
         )
     }
 });

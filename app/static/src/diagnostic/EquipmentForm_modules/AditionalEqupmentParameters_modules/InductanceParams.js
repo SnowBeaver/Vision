@@ -15,31 +15,16 @@ const TextField = React.createClass({
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
-                                 value={value}
                     />
                     <FormControl.Feedback />
                 </FormGroup>
             </OverlayTrigger>
-        );
-    }
-});
-
-const CheckBox = React.createClass({
-    render: function () {
-        var name = (this.props.name != null) ? this.props.name : "";
-        var checked = (this.props.value != null) ? this.props.value : false;
-        var is_checked = (checked) ? 'checked' : '';
-        return (
-            <Checkbox checked={is_checked} name={name}>
-                <b>{this.props.label}</b>
-            </Checkbox>
         );
     }
 });
@@ -100,13 +85,15 @@ var InductanceParams = React.createClass({
 
     getInitialState: function () {
         return {
-            loading: false,
-            errors: {},
-            fields: ['sealed', 'welded_cover', 'winding',
-                    'fluid_volume', 'fluid_type', 'cooling_rating',
-                    'gas_sensor', 'fluid_level'
-            ]
-        }
+            'sealed':'',
+            'welded_cover':'',
+            'winding':'',
+            'fluid_volume':'',
+            'fluid_type':'',
+            'cooling_rating':'',
+            'gas_sensor':'',
+            'fluid_level':''
+    }
     },
 
     componentDidMount: function () {
@@ -139,34 +126,28 @@ var InductanceParams = React.createClass({
                 </div>
                 <div className="row">
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.handleChange}
                                    label="Winding"
                                    name="winding"
                                    value={this.state.winding}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.handleChange}
                                    label="Fluid Volume"
                                    name="fluid_volume"
                                    value={this.state.fluid_volume}/>
                     </div>
                     <div className="col-md-3">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.handleChange}
                                    label="Cooling Rating"
                                    name="cooling_rating"
                                    value={this.state.cooling_rating}/>
                     </div>
                     <div className="col-md-1 ">
-                        <CheckBox onChange={this.props.onChange}
-                                  label="Sealed"
-                                  name="sealed"
-                                  value={this.state.sealed}/>
+                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
                     </div>
                     <div className="col-md-2">
-                        <CheckBox onChange={this.props.onChange}
-                                  label="Welded Cover"
-                                  name="welded_cover"
-                                  value={this.state.welded_cover}/>
+                        <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>
                     </div>
                 </div>
             </div>
