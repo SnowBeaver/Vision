@@ -153,7 +153,7 @@ var AddEquipmentForm = React.createClass({
         NotificationManager.success('Campaign equipment successfully saved.', null, 3000);
 
         var campaign = this.props.params['campaign'];
-        setTimeout(function(){ hashHistory.push('/testlist/' + campaign); }, 3000);
+        setTimeout(function(){ hashHistory.push('/campaign/' + campaign); }, 3000);
     },
 
     _onError: function (data) {

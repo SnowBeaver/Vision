@@ -309,6 +309,8 @@ const FluidProfileForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
+        data['campaign_id'] = this.props.data.campaign_id;
+        data['equipment_id'] = this.props.data.equipment_id;
 
         // show success message
         // if update a profile

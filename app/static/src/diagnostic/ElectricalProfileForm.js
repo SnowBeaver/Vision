@@ -133,6 +133,8 @@ const ElectricalProfileForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
+        data['campaign_id'] = this.props.data.campaign_id;
+        data['equipment_id'] = this.props.data.equipment_id;
 
         if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
             var url = '/api/v1.0/electrical_profile/';

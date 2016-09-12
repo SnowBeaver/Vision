@@ -46,10 +46,8 @@ var TestItem = React.createClass({
 
         if (!this.state.isVisible) {
             return (<div></div>);
-        }
-
+        } 
         var test = this.props.data;
-        console.log(test);
         var test_status = test.test_status;
         var test_type_name = (test.test_type != null) ? test.test_type.name: 'undetermined';
         var performed_by_name = (test.performed_by != null) ? test.performed_by.name: 'undetermined';
@@ -147,9 +145,13 @@ var TestItemList = React.createClass({
     },
 
     render: function () {
+        console.log(this.props);
         var equipment_id = this.props.id;
         var tests = [];
-        var data = null;
+        var data = {
+            campaign_id: this.props.campaign_id,
+            equipment_id: this.props.id
+        };
         var showTestForm = this.state.showTestForm;
         var showAddTestButton = this.state.showAddTestButton;
 
@@ -237,9 +239,10 @@ var TestList = React.createClass({
     },
 
     componentDidMount: function () {
-        var campaign_id = this.props.params['campaign'];
-        this.serverRequest = $.get('/api/v1.0/test_result/?campaign_id=' + campaign_id,
-
+        
+        var campaign_id = this.props.params.campaign;
+        var url = '/api/v1.0/test_result/?campaign_id=' + campaign_id;
+        this.serverRequest = $.get(url,
             function (result) {
 
                 var tests = result['result'];
@@ -250,6 +253,7 @@ var TestList = React.createClass({
                 });
 
                 this.setState({
+                    campaign_id: campaign_id,
                     equipment: equipment,
                     tests: tests
                 });
@@ -281,7 +285,9 @@ var TestList = React.createClass({
                     eventKey={this.state.equipment[key].id}
                     header={this.state.equipment[key].name}
                 >
-                    <TestItemList data={this.state.tests} id={this.state.equipment[key].id}
+                    <TestItemList data={this.state.tests} 
+                                  id={this.state.equipment[key].id}
+                                  campaign_id={this.state.campaign_id}
                                   reloadList={this.reloadList}
                     />
                 </Panel>

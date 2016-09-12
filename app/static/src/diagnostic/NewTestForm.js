@@ -607,8 +607,9 @@ var NewTestForm = React.createClass({
         }
     },
 
-    componentDidMount: function () {
-        if (this.props.data != null) {
+    componentDidMount: function () { 
+        if ((this.props.data != null) && (typeof this.props.data.id != 'undefined')) {
+            console.log(this.props.data.id);
             this._edit(this.props.data.id);
         }
     },
@@ -640,6 +641,13 @@ var NewTestForm = React.createClass({
             form[key] = '';
         }
         form['id'] = '';
+        
+        console.log("Add new test method");
+        console.log('props:', this.props.data);
+        console.log('state: ', this.state);
+        form['campaign_id'] = this.props.data['campaign_id'];
+        form['equipment_id'] = this.props.data['equipment_id']; 
+        console.log(form);
         this.setState(form);
     },
 
@@ -654,6 +662,11 @@ var NewTestForm = React.createClass({
         var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
         delete data['analysis_number'];
 
+        console.log("save method");
+        console.log('props: ', this.props.data);
+        console.log('state: ', this.state);
+        console.log(data);
+        
         return $.ajax({
             url: url,
             type: 'POST',
