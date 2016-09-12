@@ -18,7 +18,7 @@ import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import AirBreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/AirBreakerParams';
-import BushingParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
+import BushingParams  from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
 import CapacitorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/CapacitorParams';
 import BreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BreakerParams';
 import PowerSourceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/PowerSourceParams';
@@ -639,58 +639,57 @@ var EqAdditionalParams = React.createClass({
 
     render: function () {
 
-        if (typeof this.props.data == 'undefined') {
+        if (typeof this.props.data.option_text == 'undefined') {
             return (<div></div>);
         }
-
-        switch (this.props.data.text) {
+        switch (this.props.data.option_text.text) {
             case 'Air circuit breaker':
-                return (<AirBreakerParams onChange={this.props.onChange}/>);
+                return (<AirBreakerParams />);
                 break;
             case 'Bushing':
-                return (<BushingParams  onChange={this.props.onChange}/>);
+                return (<BushingParams />);
                 break;
             case 'Capacitor':
-                return (<CapacitorParams onChange={this.props.onChange}/>);
+                return (<CapacitorParams/>);
                 break;
             case 'Breaker':
-                return (<BreakerParams onChange={this.props.onChange}/>);
+                return (<BreakerParams/>);
                 break;
             case 'Power Source':
-                return (<PowerSourceParams onChange={this.props.onChange}/>);
+                return (<PowerSourceParams />);
                 break;
             case 'Cable':
-                return (<CableParams onChange={this.props.onChange}/>);
+                return (<CableParams />);
                 break;
             case 'Switchgear':
-                return (<SwitchGearParams onChange={this.props.onChange}/>);
+                return (<SwitchGearParams />);
                 break;
             case 'Induction machine':
-                return (<InductionMachineParams onChange={this.props.onChange}/>);
+                return (<InductionMachineParams />);
                 break;
             case 'Synchronous machine':
-                return (<SyncroMachineParams onChange={this.props.onChange}/>);
+                return (<SyncroMachineParams />);
                 break;
             case 'Tap changer':
-                return (<TapChangerParams onChange={this.props.onChange}/>);
+                return (<TapChangerParams />);
                 break;
             case 'Rectifier':
-                return (<RectifierParams onChange={this.props.onChange}/>);
+                return (<RectifierParams />);
                 break;
             case 'Transformer':
-                return (<TransformerParams onChange={this.props.onChange}/>);
+                return (<TransformerParams />);
                 break;
             case 'Tank':
-                return (<TankParams onChange={this.props.onChange}/>);
+                return (<TankParams />);
                 break;
             case 'Switch':
-                return (<SwitchParams onChange={this.props.onChange}/>);
+                return (<SwitchParams />);
                 break;
             case 'Inductance':
-                return (<InductanceParams onChange={this.props.onChange}/>);
+                return (<InductanceParams />);
                 break;
             case 'Gas sensor':
-                return (<GasSensorParams onChange={this.props.onChange}/>);
+                return (<GasSensorParams />);
                 break;
 
             default:
@@ -708,7 +707,8 @@ const EquipmentForm = React.createClass({
             loading: false,
             errors: {},
             visual_date: new Date().toISOString(),
-            eqAdPar: 'undefined',
+            eqAdPar: {},
+
             fields: [
                 'equipment_type_id',
                 'manufacturer_id',
@@ -845,7 +845,9 @@ const EquipmentForm = React.createClass({
 
         var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
         state = this._updateFieldErrors(e.target.name, state, errors);
+
         this.setState(state);
+        console.log(this.state);
     },
 
     _validateFieldType: function (value, type){
@@ -1018,8 +1020,7 @@ const EquipmentForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-11">
-                                    <EqAdditionalParams onChange={this._onChange}
-                                                        data={this.state.option_text}/>
+                                    <EqAdditionalParams data={this.state}/>
                                 </div>
                             </div>
                             <div className="row">
