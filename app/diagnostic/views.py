@@ -862,9 +862,9 @@ class TestResultView(MyModelView):
     column_hide_backrefs = False
 
     # # List of columns that can be sorted.
-    column_sortable_list = ('date_analyse', 'reason_id', 'test_type_id',
+    column_sortable_list = ('date_analyse', 'test_reason_id', 'test_type_id',
                             'test_status', 'sampling_point_id', 'campaign_id')
-    column_searchable_list = ('date_analyse', 'reason_id', 'test_type_id',
+    column_searchable_list = ('date_analyse', 'test_reason_id', 'test_type_id',
                               'test_status_id', 'sampling_point_id', 'campaign_id')
 
     # inline_models = (BushingTest, WindingTest, VisualInspectionTest, InsulationResistanceTest, PolymerisationDegreeTest,

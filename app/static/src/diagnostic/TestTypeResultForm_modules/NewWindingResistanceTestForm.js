@@ -233,8 +233,8 @@ var NewWindingResistanceTestForm = React.createClass({
             tests: {'1': {}},
             errors: {},
             fields: [
-                'temp1', 'corr1', 'measure1', 'temp2', 'corr2', 'measure2',
-                'temp3', 'corr3', 'measure3', 'winding', 'tap_position'
+                'temp1', 'corr1', 'mesure1', 'temp2', 'corr2', 'mesure2',
+                'temp3', 'corr3', 'mesure3', 'winding', 'tap_position'
 
             ]
         }
@@ -249,7 +249,7 @@ var NewWindingResistanceTestForm = React.createClass({
             var tests = {};
             for (var i = 1; i <= res.length; i++) {
                 var test = {};
-                var data = res[i];
+                var data = res[i-1];
                 for (var j = 0; j < fields.length; j++) {
                     var key = fields[j];
                     if (data.hasOwnProperty(key)) {
@@ -258,23 +258,26 @@ var NewWindingResistanceTestForm = React.createClass({
                 }
                 tests[i.toString()] = test;
             }
-            this.setState({numberOfTaps: i, tests: tests});
+            this.setState({numberOfTaps: res.length, tests: tests});
         }.bind(this), 'json');
     },
 
     _create: function () {
         var fields = this.state.fields;
-        var data = {test_result_id: this.props.testResultId};
-        var url = '/api/v1.0/' + this.props.tableName + '/';
-        for (var i = 0; i < fields.length; i++) {
-            var key = fields[i];
-            data[key] = this.state[key];
-        }
-        if ('id' in this.state) {
-            url += this.state['id'];
+        var numberOfTaps = this.state.numberOfTaps;
+        var tests = this.state.tests;
+        var data = [];
+        for (var i = 1; i <= numberOfTaps; i++) {
+            var test = {test_result_id: this.props.testResultId};
+            var tap = tests[i.toString()];
+            for (var j = 0; j < fields.length; j++) {
+                var key = fields[j];
+                test[key] = tap[key];
+            }
+            data.push(test)
         }
         return $.ajax({
-            url: url,
+            url: '/api/v1.0/test_result/multi/' + this.props.tableName,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -383,9 +386,6 @@ var NewWindingResistanceTestForm = React.createClass({
         var fieldNameValue = this.state.tests[testId] || {};
         fieldNameValue[name] = value;
         tests[testId] = fieldNameValue;
-        console.log('handleFieldChange', testId);
-        console.log('handleFieldChange', JSON.stringify(fieldNameValue));
-        console.log('handleFieldChange', JSON.stringify(tests));
         this.setState({tests: tests});
         // this.setState({
         //     tests: update(this.state.tests, {testId: {name: {$set: value}}})
@@ -421,6 +421,7 @@ var NewWindingResistanceTestForm = React.createClass({
                     <PrimaryWindingTestPanel {...props}/>
                 </Panel>);
         }
+
 
         return (
             <div className="form-container">
