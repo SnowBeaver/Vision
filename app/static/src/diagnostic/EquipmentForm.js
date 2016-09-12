@@ -611,11 +611,10 @@ var EqAdditionalParams = React.createClass({
 
     render: function () {
 
-        if (typeof this.props.data == 'undefined') {
+        if (typeof this.props.data.option_text == 'undefined') {
             return (<div></div>);
         }
-
-        switch (this.props.data.text) {
+        switch (this.props.data.option_text.text) {
             case 'Air circuit breaker':
                 return (<AirBreakerParams handleChange={this.props.handleChange}/>);
                 break;
@@ -679,7 +678,7 @@ const EquipmentForm = React.createClass({
             loading: false,
             errors: {},
             visual_date: new Date().toISOString(),
-            eqAdPar: 'undefined',
+            eqAdPar: {},
             fields: [
                 'equipment_type_id',
                 'manufacturer_id',
@@ -776,7 +775,6 @@ const EquipmentForm = React.createClass({
     },
 
     _onChange: function (e) {
-
         var state = {};
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
@@ -794,10 +792,10 @@ const EquipmentForm = React.createClass({
                 text: e.target[e.target.selectedIndex].text
             }
         }
-
         this.setState(state);
         console.log(this.state);
     },
+
 
     _validate: function () {
         var errors = {};
@@ -930,7 +928,7 @@ const EquipmentForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-11">
-                                    <EqAdditionalParams data={this.state.option_text}/>
+                                    <EqAdditionalParams data={this.state}/>
                                 </div>
                             </div>
                             <div className="row">
