@@ -338,7 +338,7 @@ var NewWindingResistanceTestForm = React.createClass({
            state[e.target.name] = e.target.value;
        }
        else {
-           state[e.target.name] = $.trim(e.target.value);
+           state[e.target.name] = e.target.value;
        }
        this.setState(state);
    },
@@ -381,7 +381,6 @@ var NewWindingResistanceTestForm = React.createClass({
     },
 
     handleFieldChange: function(testId, name, value) {
-        // {1: {'a': 1, 'b':2} 2: {'a': 3, 'b':4}}
         var tests = this.state.tests;
         var fieldNameValue = this.state.tests[testId] || {};
         fieldNameValue[name] = value;
@@ -390,7 +389,7 @@ var NewWindingResistanceTestForm = React.createClass({
         // this.setState({
         //     tests: update(this.state.tests, {testId: {name: {$set: value}}})
         // })
-      },
+    },
 
     onClickTapAdd: function () {
         this.setState({

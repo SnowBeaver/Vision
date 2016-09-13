@@ -146,7 +146,7 @@ def add_or_update_tests(path):
             item = db.session.query(items_model).get(test['id'])
         else:
             validate_or_abort(path, test)
-            item = new_instance(items_model, **request.json)
+            item = new_instance(items_model, **test)
 
         items.append(item)
         for k, v in test.items():
