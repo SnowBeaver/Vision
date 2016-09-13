@@ -18,7 +18,7 @@ import NewLabForm from './CampaignForm_modules/NewLabForm';
 import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
-
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 var items = [];
 
@@ -132,7 +132,8 @@ var PerformedBySelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.performed_by_id ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.performed_by_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -203,7 +204,8 @@ var MaterialSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.material_id ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.material_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select material"
@@ -274,7 +276,8 @@ var FluidTypeSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.fluid_type_id ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.fluid_type_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -346,7 +349,8 @@ var LabAnalyserSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.lab_id ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.lab_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -418,7 +422,8 @@ var LabContractSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.lab_contract_id ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.lab_contract_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -489,7 +494,8 @@ var SyringeNumberSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.seringe_num ? 'error' : null}>
+                    <HelpBlock className="warning">{this.props.errors.seringe_num}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
@@ -559,7 +565,8 @@ var TestReasonSelectField = React.createClass({
         }
 
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors.reason_id ? 'error' : null}>
+                <HelpBlock className="warning">{this.props.errors.reason_id}</HelpBlock>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
@@ -605,7 +612,8 @@ var NewTestForm = React.createClass({
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
             ],
-            reason_id: ''
+            reason_id: '',
+            changedFields: []
 
             // profile_fields: [
             //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
@@ -639,7 +647,6 @@ var NewTestForm = React.createClass({
             }
             form['id'] = id;
             this.setState(form);
-            // console.log(url, this.state);
 
         }.bind(this), 'json');
     },
@@ -656,7 +663,7 @@ var NewTestForm = React.createClass({
     },
 
     _save: function () {
-        var fields = this.state.fields;
+        var fields = this.state.changedFields;
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
@@ -679,17 +686,18 @@ var NewTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+			return false;
+		}
         var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     hideLoading: function () {
@@ -710,11 +718,24 @@ var NewTestForm = React.createClass({
         if (res.message) {
             message = data.responseJSON.message;
         }
-        if (res.errors) {
-            this.setState({
-                errors: res.errors
-            });
-        }
+        if (res.error) {
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -750,16 +771,51 @@ var NewTestForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+
+        state.changedFields = this.state.changedFields.concat([e.target.name]);
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
-
-    _validate: function () {
-        var errors = {};
-        if (this.state.lab_id == "") {
-            errors.lab_id = "Please choose laboratory";
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
         }
         return errors;
     },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    //_validate: function () {
+    //    //var errors = {};
+    //    //if (this.state.lab_id == "") {
+    //    //    errors.lab_id = "Please choose laboratory";
+    //    //}
+    //    //return errors;
+    //},
 
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -929,7 +985,8 @@ var NewTestForm = React.createClass({
                             <div className="maxwidth">
                                 <div className="col-md-12">
                                     <div className="maxwidth">
-                                        <FormGroup>
+                                        <FormGroup validationState={this.state.errors.analysis_number ? 'error' : null}>
+                                            <HelpBlock className="warning">{this.state.errors.analysis_number}</HelpBlock>
                                             <FormControl type="text"
                                                          placeholder="Analysis Number"
                                                          name="analysis_number"
@@ -945,6 +1002,7 @@ var NewTestForm = React.createClass({
                                                 source="/api/v1.0/test_reason"
                                                 handleChange={this.handleChange}
                                                 value={this.state.reason_id}
+                                                errors={this.state.errors}
                                             />
                                         </div>
                                     </div>
@@ -955,6 +1013,7 @@ var NewTestForm = React.createClass({
                                                 source="/api/v1.0/material/"
                                                 handleChange={this.handleChange}
                                                 value={this.state.material_id}
+                                                errors={this.state.errors}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -971,6 +1030,7 @@ var NewTestForm = React.createClass({
                                                 ref="fluid_type"
                                                 source="/api/v1.0/fluid_type/"
                                                 value={this.state.fluid_type_id}
+                                                errors={this.state.errors}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -988,6 +1048,7 @@ var NewTestForm = React.createClass({
                                                 source="/api/v1.0/user"
                                                 handleChange={this.handleChange}
                                                 value={this.state.performed_by_id}
+                                                errors={this.state.errors}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1004,6 +1065,7 @@ var NewTestForm = React.createClass({
                                                 ref="lab"
                                                 source="/api/v1.0/lab/"
                                                 value={this.state.lab_id}
+                                                errors={this.state.errors}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1021,6 +1083,7 @@ var NewTestForm = React.createClass({
                                                 source="/api/v1.0/contract/"
                                                 handleChange={this.handleChange}
                                                 value={this.state.lab_contract_id}
+                                                errors={this.state.errors}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1033,7 +1096,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.charge ? 'error' : null}>
+                                                <HelpBlock className="warning">{this.state.errors.charge}</HelpBlock>
                                                 <FormControl type="text"
                                                              placeholder="Charge"
                                                              name="charge"
@@ -1045,8 +1109,9 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.remark ? 'error' : null}>
                                                 <ControlLabel>Remark</ControlLabel>
+                                                <HelpBlock className="warning">{this.state.errors.remark}</HelpBlock>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="remark"
                                                              name="remark"
@@ -1068,8 +1133,9 @@ var NewTestForm = React.createClass({
 
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.repair_date ? 'error' : null}>
                                                 <ControlLabel>Repair Date</ControlLabel>
+                                                <HelpBlock className="warning">{this.state.errors.repair_date}</HelpBlock>
                                                 <DateTimeField name="repair_date" datetime={this.state.repair_date}/>
                                             </FormGroup>
                                         </div>
@@ -1077,8 +1143,9 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.repair_description ? 'error' : null}>
                                                 <ControlLabel>Repair Description</ControlLabel>
+                                                <HelpBlock className="warning">{this.state.errors.repair_description}</HelpBlock>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="repair description"
                                                              name="repair_description"
@@ -1090,8 +1157,9 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.recommendation_notes ? 'error' : null}>
                                                 <ControlLabel>Recommendation Notes</ControlLabel>
+                                                <HelpBlock className="warning">{this.state.errors.recommendation_notes}</HelpBlock>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="recommendations"
                                                              name="recommendation_notes"
@@ -1103,8 +1171,9 @@ var NewTestForm = React.createClass({
 
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}>
                                                 <ControlLabel>Date Applied</ControlLabel>
+                                                <HelpBlock className="warning">{this.state.errors.date_analyse}</HelpBlock>
                                                 <DateTimeField name="date_analyse" datetime={this.state.date_analyse}/>
                                             </FormGroup>
                                         </div>
@@ -1112,8 +1181,9 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.comments ? 'error' : null}>
                                                 <ControlLabel>Comments</ControlLabel>
+                                                <HelpBlock className="warning">{this.state.errors.comments}</HelpBlock>
                                                 <FormControl componentClass="textarea"
                                                              placeholder="comments"
                                                              name="comments"
@@ -1125,7 +1195,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.mws ? 'error' : null}>
+                                                <HelpBlock className="warning">{this.state.errors.mws}</HelpBlock>
                                                 <FormControl type="text"
                                                              placeholder="Equipment Load mW"
                                                              name="mws"
@@ -1137,7 +1208,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.temperature ? 'error' : null}>
+                                                <HelpBlock className="warning">{this.state.errors.temperature}</HelpBlock>
                                                 <FormControl type="text"
                                                              placeholder="Temperature"
                                                              name="temperature"
@@ -1154,6 +1226,7 @@ var NewTestForm = React.createClass({
                                                 source="/api/v1.0/syringe/"
                                                 handleChange={this.handleChange}
                                                 value={this.state.seringe_num}
+                                                errors={this.state.errors}
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1166,7 +1239,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.ambient_air_temperature ? 'error' : null}>
+                                                <HelpBlock className="warning">{this.state.errors.ambient_air_temperature}</HelpBlock>
                                                 <FormControl type="text"
                                                              placeholder="Ambient Air Temperature"
                                                              name="ambient_air_temperature"
@@ -1180,7 +1254,7 @@ var NewTestForm = React.createClass({
                                         <legend className="scheduler-border">Choose test type</legend>
                                         <div className="row">
                                             <div>
-                                                <div className="col-md-2">
+                                                <div className="col-md-3">
                                                     <FormGroup>
                                                         <TestProfileSelectField source="/api/v1.0/test_profile"/>
                                                     </FormGroup>
