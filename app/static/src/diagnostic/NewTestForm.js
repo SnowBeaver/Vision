@@ -564,7 +564,7 @@ var TestReasonSelectField = React.createClass({
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
-                    name="reason_id"
+                    name="test_reason_id"
                     onChange={this.handleChange}
                 >
                     <option key="0" value="select">Reason for Testing</option>
@@ -597,13 +597,13 @@ var NewTestForm = React.createClass({
             date_analyse: new Date().toISOString(),
             repair_date: new Date().toISOString(),
             fields: [
-                'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
+                'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
             ],
-            reason_id: ''
+            test_reason_id: ''
         }
     },
 
@@ -945,7 +945,7 @@ var NewTestForm = React.createClass({
                                                 ref="test_reason"
                                                 source="/api/v1.0/test_reason"
                                                 handleChange={this.handleChange}
-                                                value={this.state.reason_id}
+                                                value={this.state.test_reason_id}
                                             />
                                         </div>
                                     </div>
