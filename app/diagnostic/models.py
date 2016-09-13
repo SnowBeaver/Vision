@@ -540,6 +540,9 @@ class GasSensor(db.Model):
     # percentError. Calculated error in percent
     percent_error = db.Column(db.Float(53), server_default=db.text("0"))
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='GasSensor.equipment_id')
+
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
@@ -560,6 +563,7 @@ class GasSensor(db.Model):
                 'n2': self.n2,
                 'ppm_error': self.ppm_error,
                 'percent_error': self.percent_error,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -601,8 +605,8 @@ class Transformer(db.Model):
     first_cooling_stage_power = db.Column(db.Float(53))  # MVA2. First cooling stage power
     second_cooling_stage_power = db.Column(db.Float(53))  # MVA3. second cooling stage power
 
-
-
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Transformer.equipment_id')
     # is a separate device
     # PrimConnection. Primary windings connection on a multi phase transformer
     primary_winding_connection = db.Column(db.Integer)
@@ -880,6 +884,7 @@ class Transformer(db.Model):
                 'ratio_tag7': self.ratio_tag7,
                 'ratiot_ag8': self.ratiot_ag8,
                 'formula_ratio3': self.formula_ratio3,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -903,6 +908,9 @@ class Breaker(db.Model):
 
     breaker_mechanism_id = db.Column(db.Integer, db.ForeignKey("breaker_mechanism.id"))
     breaker_mechanism = db.relationship('BreakerMechanism', foreign_keys='Breaker.breaker_mechanism_id')
+
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Breaker.equipment_id')
     # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -927,6 +935,7 @@ class Breaker(db.Model):
                 'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
                 'breaker_mechanism_id': self.breaker_mechanism_id,
                 'breaker_mechanism': self.breaker_mechanism and self.breaker_mechanism.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -953,6 +962,8 @@ class LoadTapChanger(db.Model):
     interrupting_medium_id = db.Column(db.Integer, db.ForeignKey("interrupting_medium.id"))
     interrupting_medium = db.relationship('InterruptingMedium', foreign_keys='LoadTapChanger.interrupting_medium_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='LoadTapChanger.equipment_id')
     # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -980,6 +991,7 @@ class LoadTapChanger(db.Model):
                 'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'interrupting_medium_id': self.interrupting_medium_id,
                 'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1003,6 +1015,9 @@ class Bushing(db.Model):
 
     fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
     fluid_type = db.relationship('FluidType', foreign_keys='Bushing.fluid_type_id')
+
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Bushing.equipment_id')
     # #
     # # # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     # # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
@@ -1057,6 +1072,7 @@ class Bushing(db.Model):
                 'c2pf': self.c2pf,
                 'fluid_type_id': self.fluid_type_id,
                 'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1102,6 +1118,9 @@ class NeutralResistance(db.Model):
     bil = db.Column(db.Numeric(8))
     open = db.Column(db.Boolean)
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='NeutralResistance.equipment_id')
+
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
@@ -1121,6 +1140,7 @@ class NeutralResistance(db.Model):
                 'kv': self.kv,
                 'bil': self.bil,
                 'open': self.open,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1131,6 +1151,8 @@ class AirCircuitBreaker(db.Model):
     name = db.Column(db.String(50))
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='AirCircuitBreaker.equipment_id')
 
     # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -1145,6 +1167,7 @@ class AirCircuitBreaker(db.Model):
                 'name': self.name,
                 'serial': self.serial,
                 'current_rating': self.current_rating,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1157,6 +1180,8 @@ class Capacitor(db.Model):
     kv = db.Column(db.Float)  # voltage
     kvar = db.Column(db.Float)  # voltage
     bil = db.Column(db.Numeric(8))
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Capacitor.equipment_id')
     # #
     # # manufacturer_id = db.Column(
     # #     'manufacturer_id',
@@ -1188,6 +1213,7 @@ class Capacitor(db.Model):
                 'kv': self.kv,
                 'kvar': self.kvar,
                 'bil': self.bil,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1199,6 +1225,9 @@ class PowerSource(db.Model):
     serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     kv = db.Column(db.Float)  # voltage
     threephase = db.Column(db.Boolean)
+
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='PowerSource.equipment_id')
     #
     # manufacturer_id = db.Column(
     #     'manufacturer_id',
@@ -1226,6 +1255,7 @@ class PowerSource(db.Model):
                 'serial': self.serial,
                 'kv': self.kv,
                 'threephase': self.threephase,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1242,6 +1272,8 @@ class SwitchGear(db.Model):
     #
     # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='SwitchGear.equipment_id')
 
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
@@ -1254,6 +1286,7 @@ class SwitchGear(db.Model):
                 'current_rating': self.current_rating,
                 'insulation_id': self.insulation_id,
                 'insulation': self.insulation,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1268,6 +1301,8 @@ class InductionMachine(db.Model):
     kva = db.Column(db.String(50))
     pf = db.Column(db.String(50))
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='InductionMachine.equipment_id')
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     #
     # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
@@ -1285,6 +1320,7 @@ class InductionMachine(db.Model):
                 'hp': self.hp,
                 'kva': self.kva,
                 'pf': self.pf,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1298,6 +1334,8 @@ class SynchronousMachine(db.Model):
     hp = db.Column(db.String(50))
     kw = db.Column(db.String(50))
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='SynchronousMachine.equipment_id')
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     # welded_cover = db.Column(db.Boolean)
@@ -1313,6 +1351,7 @@ class SynchronousMachine(db.Model):
                 'current_rating': self.current_rating,
                 'hp': self.hp,
                 'kw': self.kw,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1339,6 +1378,9 @@ class Rectifier(db.Model):
     gas_sensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
     gas_sensor = relationship('GasSensor', foreign_keys='Rectifier.gas_sensor_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Rectifier.equipment_id')
+
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
@@ -1358,6 +1400,7 @@ class Rectifier(db.Model):
                 'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'gas_sensor_id': self.gas_sensor_id,
                 'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1383,6 +1426,9 @@ class Inductance(db.Model):
     gas_sensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
     gas_sensor = relationship('GasSensor', foreign_keys='Inductance.gas_sensor_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Inductance.equipment_id')
+
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
@@ -1401,6 +1447,7 @@ class Inductance(db.Model):
                 'fluid_level': self.fluid_level and self.fluid_level.serialize(),
                 'gas_sensor_id': self.gas_sensor_id,
                 'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1423,6 +1470,9 @@ class Tank(db.Model):
     fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
     fluid_level = db.relationship('FluidLevel', foreign_keys='Tank.fluid_level_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Tank.equipment_id')
+
     def __repr__(self):
         return "{} {} {}".format(self.__tablename__, self.name, self.serial)
 
@@ -1436,6 +1486,7 @@ class Tank(db.Model):
                 'fluid_type': self.fluid_type and self.fluid_type.serialize(),
                 'fluid_level_id': self.fluid_level_id,
                 'fluid_level': self.fluid_level and self.fluid_level.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1451,6 +1502,8 @@ class Switch(db.Model):
     interrupting_medium_id = db.Column(db.Integer, db.ForeignKey("interrupting_medium.id"))
     interrupting_medium = db.relationship('InterruptingMedium', foreign_keys='Switch.interrupting_medium_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Switch.equipment_id')
     # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     #
     #
@@ -1469,6 +1522,7 @@ class Switch(db.Model):
                 'threephase': self.threephase,
                 'interrupting_medium_id': self.interrupting_medium_id,
                 'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1484,6 +1538,9 @@ class Cable(db.Model):
 
     insulation_id = db.Column(db.Integer, db.ForeignKey("insulation.id"))
     insulation = db.relationship('Insulation', foreign_keys='Cable.insulation_id')
+
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Cable.equipment_id')
     # # Year manufactured
     # # manufactured = db.Column(db.Enum(",".join(map(str, range(1970, datetime.now().year))), name="years"))
     # manufactured = db.Column(db.Integer())
@@ -1502,6 +1559,7 @@ class Cable(db.Model):
                 'threephase': self.threephase,
                 'insulation_id': self.insulation_id,
                 'insulation': self.insulation and self.insulation.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
