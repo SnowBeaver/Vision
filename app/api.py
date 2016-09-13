@@ -102,12 +102,6 @@ def add_item(path):
 
 def update_item(path, item_id):
     items_model = model_dict[path]['model']
-    validation_schema = model_dict[path]['schema']
-    param_dict = {k: v for k, v in request.json.items()}
-    v = Validator()
-    if not v.validate(param_dict, validation_schema):
-        abort(400, v.errors)
-
     item = db.session.query(items_model).get(item_id)
     for k, v in request.json.items():
         setattr(item, k, v)
