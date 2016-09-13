@@ -599,7 +599,7 @@ var NewTestForm = React.createClass({
             fields: [
                 'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'material_id', 'fluid_type_id',
-                'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
+                'performed_by_id', 'lab_id', 'lab_contract_id', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
             ],
@@ -609,7 +609,6 @@ var NewTestForm = React.createClass({
 
     componentDidMount: function () { 
         if ((this.props.data != null) && (typeof this.props.data.id != 'undefined')) {
-            console.log(this.props.data.id);
             this._edit(this.props.data.id);
         }
     },
@@ -638,16 +637,14 @@ var NewTestForm = React.createClass({
         var form = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            form[key] = '';
+            form[key] = undefined;
         }
         form['id'] = '';
         
-        console.log("Add new test method");
-        console.log('props:', this.props.data);
-        console.log('state: ', this.state);
-        form['campaign_id'] = this.props.data['campaign_id'];
-        form['equipment_id'] = this.props.data['equipment_id']; 
-        console.log(form);
+        // console.log("Add new test method");
+        // console.log('props:', this.props.data);
+        // console.log('state: ', this.state);
+        // console.log(form);
         this.setState(form);
     },
 
@@ -657,7 +654,9 @@ var NewTestForm = React.createClass({
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            if (typeof this.state[key] != 'undefined'){ 
+                data[key] = this.state[key];
+            }
         }
         var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
         delete data['analysis_number'];
@@ -665,6 +664,8 @@ var NewTestForm = React.createClass({
         console.log("save method");
         console.log('props: ', this.props.data);
         console.log('state: ', this.state);
+        data['campaign_id'] = this.props.data['campaign_id'];
+        data['equipment_id'] = this.props.data['equipment_id'];
         console.log(data);
         
         return $.ajax({
@@ -705,7 +706,7 @@ var NewTestForm = React.createClass({
         this.setState({
             analysis_number: data['result']['analysis_number']
         });
-        NotificationManager.success('Test saved', null, 1000);
+        NotificationManager.success('Test saved', null, 4000);
         this.props.reloadList();
     },
 
@@ -819,37 +820,37 @@ var NewTestForm = React.createClass({
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
         this.closeNewContractForm();
-        NotificationManager.success('Contract added', null, 1000);
+        NotificationManager.success('Contract added', null, 2000);
     },
 
     onPerformerCreate: function (response) {
         this.refs.performed_by.setSelected(response);
         this.closeNewUserForm();
-        NotificationManager.success('User added', null, 1000);
+        NotificationManager.success('User added', null, 2000);
     },
 
     onLabCreate: function (response) {
         this.refs.lab.setSelected(response);
         this.closeNewLabForm();
-        NotificationManager.success('Laboratory added', null, 1000);
+        NotificationManager.success('Laboratory added', null, 2000);
     },
 
     onMaterialCreate: function (response) {
         this.refs.material.setSelected(response);
         this.closeNewMaterialForm();
-        NotificationManager.success('Material added', null, 1000);
+        NotificationManager.success('Material added', null, 2000);
     },
 
     onFluidTypeCreate: function (response) {
         this.refs.fluid_type.setSelected(response);
         this.closeNewFluidForm();
-        NotificationManager.success('Fluid type added', null, 1000);
+        NotificationManager.success('Fluid type added', null, 2000);
     },
 
     onSyringeCreate: function (response) {
         this.refs.syringe.setSelected(response);
         this.closeNewSyringeForm();
-        NotificationManager.success('Syringe added', null, 1000);
+        NotificationManager.success('Syringe added', null, 2000);
     },
 
     onNewButtonClick: function (e) {
@@ -1176,10 +1177,10 @@ var NewTestForm = React.createClass({
                                     <fieldset className="scheduler-border">
                                         <legend className="scheduler-border">Choose test type</legend>
                                             <div className="maxwidth">
-                                                <Radio name="test_type_id" value="1">
+                                                <Radio name="test_type_id" value="1" checked={this.state.test_type_id == 1}>
                                                     Fluid Profile
                                                 </Radio>
-                                                <Radio name="test_type_id" value="2">
+                                                <Radio name="test_type_id" value="2" checked={this.state.test_type_id == 2}>
                                                     Electrical Profile
                                                 </Radio>
                                             </div>

@@ -7,6 +7,7 @@ import {Link} from 'react-router';
 import NewTestForm from './NewTestForm';
 import Button from 'react-bootstrap/lib/Button';
 import Table from 'react-bootstrap/lib/Table';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var TestItem = React.createClass({
@@ -30,11 +31,6 @@ var TestItem = React.createClass({
     componentWillUnmount: function () {
     },
 
-    setVisible: function () {
-        this.setState({
-            isVisible: true
-        });
-    },
     onRemove: function () {
     },
 
@@ -49,7 +45,7 @@ var TestItem = React.createClass({
         } 
         var test = this.props.data;
         var test_status = test.test_status;
-        var test_type_name = (test.test_type != null) ? test.test_type.name: 'undetermined';
+        var test_type_name = (test.test_type_id == 1) ? 'Fluid': 'Electrical';
         var performed_by_name = (test.performed_by != null) ? test.performed_by.name: 'undetermined';
 
         return (
@@ -109,12 +105,6 @@ var TestItemList = React.createClass({
         // this.serverRequest.abort();
     },
 
-    setVisible: function () {
-        this.setState({
-            isVisible: true
-        });
-    },
-
     showTestForm: function () {
         this.refs.new_test_form._add();
         this.setState({
@@ -164,6 +154,8 @@ var TestItemList = React.createClass({
                     data = item;
                     showTestForm = true;
                     showAddTestButton = false;
+
+                    NotificationManager.warning('Please choose reason of testing and performer.', null, 6000);
                     continue;
                 }
 
@@ -263,12 +255,6 @@ var TestList = React.createClass({
 
     componentWillUnmount: function () {
         this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.setState({
-            isVisible: true
-        });
     },
 
     reloadList: function () {
