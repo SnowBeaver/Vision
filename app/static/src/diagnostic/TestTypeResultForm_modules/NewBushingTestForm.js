@@ -17,13 +17,13 @@ const TextField = React.createClass({
         return (
             <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <ControlLabel>{label}</ControlLabel>
-                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
                              data-type="float"
                              />
+                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -83,12 +83,10 @@ var NewBushingTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -160,7 +158,7 @@ var NewBushingTestForm = React.createClass({
         var errors = {};
         if (type != undefined && value){
             var typePatterns = {
-                "int": /^(-|\+)?(0|[1-9]\d*)$/
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
             };
             if (!typePatterns[type].test(value)){
                 errors = "Invalid " + type + " value";
@@ -204,186 +202,186 @@ var NewBushingTestForm = React.createClass({
                     <h4>Parameters and conditions</h4>
                     <div className="row">
                         <div className="col-md-1">
-                            <TextField label="H1" name="h1" value={this.state.h1} errors={this.state.errors.h1}
+                            <TextField label="H1" name="h1" value={this.state.h1} errors={this.state.errors}
                                 data-type="float"/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="H2" name="h2" value={this.state.h2} errors={this.state.errors.h2}
+                            <TextField label="H2" name="h2" value={this.state.h2} errors={this.state.errors}
                                 data-type="float"/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="H3" name="h3" value={this.state.h3} errors={this.state.errors.h3}
+                            <TextField label="H3" name="h3" value={this.state.h3} errors={this.state.errors}
                                 data-type="float"/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Hn" name="hn" value={this.state.hn} errors={this.state.errors.hn}
+                            <TextField label="Hn" name="hn" value={this.state.hn} errors={this.state.errors}
                                 data-type="float"/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="X1" name="x1" value={this.state.x1} errors={this.state.errors.x1}/>
+                            <TextField label="X1" name="x1" value={this.state.x1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="X2" name="x2" value={this.state.x2} errors={this.state.errors.x2}/>
+                            <TextField label="X2" name="x2" value={this.state.x2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="X3" name="x3" value={this.state.x3} errors={this.state.errors.x3}/>
+                            <TextField label="X3" name="x3" value={this.state.x3} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Xn" name="xn" value={this.state.xn} errors={this.state.errors.xn}/>
+                            <TextField label="Xn" name="xn" value={this.state.xn} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="T1" name="t1" value={this.state.t1} errors={this.state.errors.t1}/>
+                            <TextField label="T1" name="t1" value={this.state.t1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="T2" name="t2" value={this.state.t2} errors={this.state.errors.t2}/>
+                            <TextField label="T2" name="t2" value={this.state.t2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="T3" name="t3" value={this.state.t3} errors={this.state.errors.t3}/>
+                            <TextField label="T3" name="t3" value={this.state.t3} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Tn" name="tn" value={this.state.tn} errors={this.state.errors.tn}/>
+                            <TextField label="Tn" name="tn" value={this.state.tn} errors={this.state.errors}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-1">
-                            <TextField label="H1C1" name="h1c1" value={this.state.h1c1} errors={this.state.errors.h1c1}/>
+                            <TextField label="H1C1" name="h1c1" value={this.state.h1c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="H2C1" name="h2c1" value={this.state.h2c1} errors={this.state.errors.h2c1}/>
+                            <TextField label="H2C1" name="h2c1" value={this.state.h2c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="H3C1" name="h3c1" value={this.state.h3c1} errors={this.state.errors.h3c1}/>
+                            <TextField label="H3C1" name="h3c1" value={this.state.h3c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="HnC1" name="hnc1" value={this.state.hnc1} errors={this.state.errors.hnc1}/>
+                            <TextField label="HnC1" name="hnc1" value={this.state.hnc1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="X1C1" name="x1c1" value={this.state.x1c1} errors={this.state.errors.x1c1}/>
+                            <TextField label="X1C1" name="x1c1" value={this.state.x1c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="X2C1" name="x2c1" value={this.state.x2c1} errors={this.state.errors.x2c1}/>
+                            <TextField label="X2C1" name="x2c1" value={this.state.x2c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="X3C1" name="x3c1" value={this.state.x3c1} errors={this.state.errors.x3c1}/>
+                            <TextField label="X3C1" name="x3c1" value={this.state.x3c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="XnC1" name="xnc1" value={this.state.xnc1} errors={this.state.errors.xnc1}/>
+                            <TextField label="XnC1" name="xnc1" value={this.state.xnc1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="T1C1" name="t1c1" value={this.state.t1c1} errors={this.state.errors.t1c1}/>
+                            <TextField label="T1C1" name="t1c1" value={this.state.t1c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="T2C1" name="t2c1" value={this.state.t2c1} errors={this.state.errors.t2c1}/>
+                            <TextField label="T2C1" name="t2c1" value={this.state.t2c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="T3C1" name="t3c1" value={this.state.t3c1} errors={this.state.errors.t3c1}/>
+                            <TextField label="T3C1" name="t3c1" value={this.state.t3c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="TnC1" name="tnc1" value={this.state.tnc1} errors={this.state.errors.tnc1}/>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-1">
-                            <TextField label="H1C2" name="h1c2" value={this.state.h1c2} errors={this.state.errors.h1c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="H2C2" name="h2c2" value={this.state.h2c2} errors={this.state.errors.h2c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="H3C2" name="h3c2" value={this.state.h3c2} errors={this.state.errors.h3c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="HnC2" name="hnc2" value={this.state.hnc2} errors={this.state.errors.hnc2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="X1C2" name="x1c2" value={this.state.x1c2} errors={this.state.errors.x1c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="X2C2" name="x2c2" value={this.state.x2c2} errors={this.state.errors.x2c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="X3C2" name="x3c2" value={this.state.x3c2} errors={this.state.errors.x3c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="XnC2" name="xnc2" value={this.state.xnc2} errors={this.state.errors.xnc2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="T1C2" name="t1c2" value={this.state.t1c2} errors={this.state.errors.t1c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="T2C2" name="t2c2" value={this.state.t2c2} errors={this.state.errors.t2c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="T3C2" name="t3c2" value={this.state.t3c2} errors={this.state.errors.t3c2}/>
-                        </div>
-                        <div className="col-md-1">
-                            <TextField label="TnC2" name="tnc2" value={this.state.tnc2} errors={this.state.errors.tnc2}/>
+                            <TextField label="TnC1" name="tnc1" value={this.state.tnc1} errors={this.state.errors}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-1">
-                            <TextField label="Q1" name="q1" value={this.state.q1} errors={this.state.errors.q1}/>
+                            <TextField label="H1C2" name="h1c2" value={this.state.h1c2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Q2" name="q2" value={this.state.q2} errors={this.state.errors.q2}/>
+                            <TextField label="H2C2" name="h2c2" value={this.state.h2c2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Q3" name="q3" value={this.state.q3} errors={this.state.errors.q3}/>
+                            <TextField label="H3C2" name="h3c2" value={this.state.h3c2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Qn" name="qn" value={this.state.qn} errors={this.state.errors.qn}/>
+                            <TextField label="HnC2" name="hnc2" value={this.state.hnc2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="X1C2" name="x1c2" value={this.state.x1c2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="X2C2" name="x2c2" value={this.state.x2c2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="X3C2" name="x3c2" value={this.state.x3c2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="XnC2" name="xnc2" value={this.state.xnc2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="T1C2" name="t1c2" value={this.state.t1c2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="T2C2" name="t2c2" value={this.state.t2c2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="T3C2" name="t3c2" value={this.state.t3c2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="TnC2" name="tnc2" value={this.state.tnc2} errors={this.state.errors}/>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-1">
+                            <TextField label="Q1" name="q1" value={this.state.q1} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="Q2" name="q2" value={this.state.q2} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="Q3" name="q3" value={this.state.q3} errors={this.state.errors}/>
+                        </div>
+                        <div className="col-md-1">
+                            <TextField label="Qn" name="qn" value={this.state.qn} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor" name="facteur" value={this.state.facteur}
-                                       errors={this.state.errors.facteur}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor 1" name="facteur1" value={this.state.facteur1}
-                                       errors={this.state.errors.facteur1}/>
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-1">
-                            <TextField label="Q1C1" name="q1c1" value={this.state.q1c1} errors={this.state.errors.q1c1}/>
+                            <TextField label="Q1C1" name="q1c1" value={this.state.q1c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Q2C1" name="q2c1" value={this.state.q2c1} errors={this.state.errors.q2c1}/>
+                            <TextField label="Q2C1" name="q2c1" value={this.state.q2c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Q3C1" name="q3c1" value={this.state.q3c1} errors={this.state.errors.q3c1}/>
+                            <TextField label="Q3C1" name="q3c1" value={this.state.q3c1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="QnC1" name="qnc1" value={this.state.qnc1} errors={this.state.errors.qnc1}/>
+                            <TextField label="QnC1" name="qnc1" value={this.state.qnc1} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor 2" name="facteur2" value={this.state.facteur2}
-                                       errors={this.state.errors.facteur2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor 3" name="facteur3" value={this.state.facteur3}
-                                       errors={this.state.errors.facteur3}/>
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-1">
-                            <TextField label="Q1C2" name="q1c2" value={this.state.q1c2} errors={this.state.errors.q1c2}/>
+                            <TextField label="Q1C2" name="q1c2" value={this.state.q1c2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Q2C2" name="q2c2" value={this.state.q2c2} errors={this.state.errors.q2c2}/>
+                            <TextField label="Q2C2" name="q2c2" value={this.state.q2c2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="Q3C2" name="q3c2" value={this.state.q3c2} errors={this.state.errors.q3c2}/>
+                            <TextField label="Q3C2" name="q3c2" value={this.state.q3c2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
-                            <TextField label="QnC2" name="qnc2" value={this.state.qnc2} errors={this.state.errors.qnc2}/>
+                            <TextField label="QnC2" name="qnc2" value={this.state.qnc2} errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4 ">
                             <TextField label="Temperature" name="temperature" value={this.state.temperature}
-                                       errors={this.state.errors.temperature}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4 ">
                             <TextField label="Humidity" name="humidity" value={this.state.humidity}
-                                       errors={this.state.errors.humidity}/>
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
 
@@ -393,78 +391,78 @@ var NewBushingTestForm = React.createClass({
                     <div className="row">
                         <div className="col-md-1">
                             <TextField label="kV H1" name="test_kv_h1" value={this.state.test_kv_h1}
-                                       errors={this.state.errors.test_kv_h1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV H2" name="test_kv_h2" value={this.state.test_kv_h2}
-                                       errors={this.state.errors.test_kv_h2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV H3" name="test_kv_h3" value={this.state.test_kv_h3}
-                                       errors={this.state.errors.test_kv_h3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV Hn" name="test_kv_hn" value={this.state.test_kv_hn}
-                                       errors={this.state.errors.test_kv_hn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV X1" name="test_kv_x1" value={this.state.test_kv_x1}
-                                       errors={this.state.errors.test_kv_x1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV X2" name="test_kv_x2" value={this.state.test_kv_x2}
-                                       errors={this.state.errors.test_kv_x2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV X3" name="test_kv_x3" value={this.state.test_kv_x3}
-                                       errors={this.state.errors.test_kv_x3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV Xn" name="test_kv_xn" value={this.state.test_kv_xn}
-                                       errors={this.state.errors.test_kv_xn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor n" name="facteurn" value={this.state.facteurn}
-                                       errors={this.state.errors.facteurn}/>
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-1">
                             <TextField label="kV T1" name="test_kv_t1" value={this.state.test_kv_t1}
-                                       errors={this.state.errors.test_kv_t1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV T2" name="test_kv_t2" value={this.state.test_kv_t2}
-                                       errors={this.state.errors.test_kv_t2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV T3" name="test_kv_t3" value={this.state.test_kv_t3}
-                                       errors={this.state.errors.test_kv_t3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV Tn" name="test_kv_tn" value={this.state.test_kv_tn}
-                                       errors={this.state.errors.test_kv_tn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV Q1" name="test_kv_q1" value={this.state.test_kv_q1}
-                                       errors={this.state.errors.test_kv_q1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV Q2" name="test_kv_q2" value={this.state.test_kv_q2}
-                                       errors={this.state.errors.test_kv_q2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV Q3" name="test_kv_q3" value={this.state.test_kv_q3}
-                                       errors={this.state.errors.test_kv_q3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="kV Qn" name="test_kv_qn" value={this.state.test_kv_qn}
-                                       errors={this.state.errors.test_kv_qn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor n1" name="facteurn1" value={this.state.facteurn1}
-                                       errors={this.state.errors.facteurn1}/>
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
 
@@ -472,77 +470,77 @@ var NewBushingTestForm = React.createClass({
                     <div className="row">
                         <div className="col-md-1">
                             <TextField label="Test PFC H1" name="test_pfc2_h1" value={this.state.test_pfc2_h1}
-                                       errors={this.state.errors.test_pfc2_h1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC H2" name="test_pfc2_h2" value={this.state.test_pfc2_h2}
-                                       errors={this.state.errors.test_pfc2_h2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC H3" name="test_pfc2_h3" value={this.state.test_pfc2_h3}
-                                       errors={this.state.errors.test_pfc2_h3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC Hn" name="test_pfc2_hn" value={this.state.test_pfc2_hn}
-                                       errors={this.state.errors.test_pfc2_hn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC X1" name="test_pfc2_x1" value={this.state.test_pfc2_x1}
-                                       errors={this.state.errors.test_pfc2_x1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC X2" name="test_pfc2_x2" value={this.state.test_pfc2_x2}
-                                       errors={this.state.errors.test_pfc2_x2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC X3" name="test_pfc2_x3" value={this.state.test_pfc2_x3}
-                                       errors={this.state.errors.test_pfc2_x3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC Xn" name="test_pfc2_xn" value={this.state.test_pfc2_xn}
-                                       errors={this.state.errors.test_pfc2_xn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor n2" name="facteurn2" value={this.state.facteurn2}
-                                       errors={this.state.errors.facteurn2}/>
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-1">
                             <TextField label="Test PFC T1" name="test_pfc2_t1" value={this.state.test_pfc2_t1}
-                                       errors={this.state.errors.test_pfc2_t1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC T2" name="test_pfc2_t2" value={this.state.test_pfc2_t2}
-                                       errors={this.state.errors.test_pfc2_t2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC T3" name="test_pfc2_t3" value={this.state.test_pfc2_t3}
-                                       errors={this.state.errors.test_pfc2_t3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC Tn" name="test_pfc2_tn" value={this.state.test_pfc2_tn}
-                                       errors={this.state.errors.test_pfc2_tn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC Q1" name="test_pfc2_q1" value={this.state.test_pfc2_q1}
-                                       errors={this.state.errors.test_pfc2_q1}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC Q2" name="test_pfc2_q2" value={this.state.test_pfc2_q2}
-                                       errors={this.state.errors.test_pfc2_q2}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC Q3" name="test_pfc2_q3" value={this.state.test_pfc2_q3}
-                                       errors={this.state.errors.test_pfc2_q3}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-1">
                             <TextField label="Test PFC Qn" name="test_pfc2_qn" value={this.state.test_pfc2_qn}
-                                       errors={this.state.errors.test_pfc2_qn}/>
+                                       errors={this.state.errors}/>
                         </div>
                         <div className="col-md-4">
                             <TextField label="Factor n3" name="facteurn3" value={this.state.facteurn3}
-                                       errors={this.state.errors.facteurn3}/>
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
 

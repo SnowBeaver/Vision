@@ -19,6 +19,7 @@ import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
 import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var SelectField = React.createClass({
     handleChange: function(event, index, value){
@@ -71,10 +72,6 @@ var SelectField = React.createClass({
         //     menuItems.push(<option key={this.state.items[key].id}
         //                            value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         // }
-        // console.log( "SelectField value" + (this.props.value || 'no data') );
-        // console.log( this.props.value );
-        // console.log( typeof(this.state.value) == "undefined" );
-        // console.log( this.state.value == null );
         return (
             <FormGroup>
                 <ControlLabel>{this.props.label}</ControlLabel>
@@ -124,8 +121,6 @@ var EquipmentTestIdentificationForm = React.createClass({
         }
     },
     render: function() {
-        console.log('EquipmentTestIdentificationForm render')
-        console.log(this.props.data)
         return (
             <div className="form-container">
                 <form method="post" action="#">
@@ -341,7 +336,6 @@ var TestValuesForm = React.createClass({
             return (<div></div>);
         }
         var tableName = this.props.testType.test_table_name;
-        console.log("Test table name: " + tableName);
         switch(tableName) {
             case "bushing_test":
                 return (<NewBushingTestForm testResultId={this.props.testResultId}
@@ -439,7 +433,7 @@ var EquipmentTestForm = React.createClass({
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
         // show success message
-        alert('Saved');
+        NotificationManager.success('Saved');
     },
 
     _onError: function (data) {
@@ -456,7 +450,6 @@ var EquipmentTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        console.log(e.target.name);
         var state = {};
         state[e.target.name] = $.trim(e.target.value);
         this.setState(state);
@@ -484,8 +477,6 @@ var EquipmentTestForm = React.createClass({
         }.bind(this), 'json');
     },
     render: function() {
-        console.log('EquipmentTestForm render');
-        console.log(this.state.data);
         if ((typeof(this.state.data) == "undefined") || (this.state.data == null)) { return null}
         return (
             <div>
