@@ -565,13 +565,13 @@ var TestReasonSelectField = React.createClass({
         }
 
         return (
-            <FormGroup validationState={this.props.errors.reason_id ? 'error' : null}>
-                <HelpBlock className="warning">{this.props.errors.reason_id}</HelpBlock>
+            <FormGroup validationState={this.props.errors.test_reason_id ? 'error' : null}>
+                <HelpBlock className="warning">{this.props.errors.test_reason_id}</HelpBlock>
                 <FormControl
                     componentClass="select"
                     placeholder="select"
                     value={this.state.value}
-                    name="reason_id"
+                    name="test_reason_id"
                     onChange={this.handleChange}
                 >
                     <option key="0" value="select">Reason for Testing</option>
@@ -604,13 +604,13 @@ var NewTestForm = React.createClass({
             date_analyse: new Date().toISOString(),
             repair_date: new Date().toISOString(),
             fields: [
-                'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
+                'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'material_id', 'fluid_type_id',
-                'performed_by_id', 'lab_id', 'lab_contract_id', 'analysis_number', 'comments', 'mws',
+                'performed_by_id', 'lab_id', 'lab_contract_id', 'analysis_number', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
-                'recommendation_notes', 'ambient_air_temperature'
+                'ambient_air_temperature'
             ],
-            reason_id: '',
+            test_reason_id: '',
             changedFields: []
         }
     },
@@ -990,7 +990,7 @@ var NewTestForm = React.createClass({
                                                 ref="test_reason"
                                                 source="/api/v1.0/test_reason"
                                                 handleChange={this.handleChange}
-                                                value={this.state.reason_id}
+                                                value={this.state.test_reason_id}
                                                 errors={this.state.errors}
                                             />
                                         </div>
@@ -1144,40 +1144,12 @@ var NewTestForm = React.createClass({
                                         </div>
                                     </div>
 
-                                    <div className="row">
-                                        <div className="col-md-12">
-                                            <FormGroup validationState={this.state.errors.recommendation_notes ? 'error' : null}>
-                                                <ControlLabel>Recommendation Notes</ControlLabel>
-                                                <HelpBlock className="warning">{this.state.errors.recommendation_notes}</HelpBlock>
-                                                <FormControl componentClass="textarea"
-                                                             placeholder="recommendations"
-                                                             name="recommendation_notes"
-                                                             value={this.state.recommendation_notes}
-                                                />
-                                            </FormGroup>
-                                        </div>
-                                    </div>
-
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
                                             <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}>
                                                 <ControlLabel>Date Applied</ControlLabel>
                                                 <HelpBlock className="warning">{this.state.errors.date_analyse}</HelpBlock>
                                                 <DateTimeField name="date_analyse" datetime={this.state.date_analyse}/>
-                                            </FormGroup>
-                                        </div>
-                                    </div>
-
-                                    <div className="row">
-                                        <div className="col-md-12">
-                                            <FormGroup validationState={this.state.errors.comments ? 'error' : null}>
-                                                <ControlLabel>Comments</ControlLabel>
-                                                <HelpBlock className="warning">{this.state.errors.comments}</HelpBlock>
-                                                <FormControl componentClass="textarea"
-                                                             placeholder="comments"
-                                                             name="comments"
-                                                             value={this.state.comments}
-                                                />
                                             </FormGroup>
                                         </div>
                                     </div>
