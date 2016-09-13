@@ -128,13 +128,6 @@ var NewFluidForm = React.createClass({
 		return className;
 	},
 
-	getInitialState: function () {
-		return {
-			loading: false,
-			errors: {}
-		}
-	},
-
 	handleClick: function() {
 		document.getElementById('test_prof').remove();
 	},
