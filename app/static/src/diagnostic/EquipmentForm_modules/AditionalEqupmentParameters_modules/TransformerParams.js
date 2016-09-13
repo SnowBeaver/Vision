@@ -71,6 +71,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}

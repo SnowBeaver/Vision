@@ -9,26 +9,6 @@ import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
 
 
-const TextField = React.createClass({
-
-    render: function () {
-        let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
-        var label = (this.props.label != null) ? this.props.label : "";
-        var name = (this.props.name != null) ? this.props.name : "";
-        return (
-            <OverlayTrigger overlay={tooltip} placement="top">
-                <FormGroup>
-                    <FormControl type="text"
-                                 placeholder={label}
-                                 name={name}
-                    />
-                    <FormControl.Feedback />
-                </FormGroup>
-            </OverlayTrigger>
-        );
-    }
-});
-
 var SelectField = React.createClass({
     handleChange: function (event, index, value) {
         this.setState({
@@ -71,6 +51,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
@@ -104,12 +85,14 @@ getInitialState: function () {
                         <SelectField
                             source="fluid_type"
                             label="Fluid Type"
+                            name="fluid_type_id"
                             value={this.state.fluid_type_id}/>
                     </div>
                     <div className="col-md-4">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
+                            name="fluid_level_id"
                             value={this.state.fluid_level_id}/>
                     </div>
                     <div className="col-md-1 ">

@@ -32,7 +32,6 @@ import SwitchParams from './EquipmentForm_modules/AditionalEqupmentParameters_mo
 import InductanceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductanceParams';
 import GasSensorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/GasSensorParams';
 
-
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
 
@@ -55,13 +54,14 @@ var EquipmentTypeSelectField = React.createClass({
     handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
+
         });
     },
 
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false,
+            isVisible: false
         };
     },
 
@@ -77,6 +77,7 @@ var EquipmentTypeSelectField = React.createClass({
                 items: items
             });
         }.bind(this), 'json');
+
     },
 
     componentWillUnmount: function () {
@@ -91,7 +92,10 @@ var EquipmentTypeSelectField = React.createClass({
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+                                   value={this.state.items[key].id}
+                                   accessKey={this.state.items[key].table_name}
+            >{`${this.state.items[key].name}`}</option>);
+
         }
         return (
             <div>
@@ -678,8 +682,7 @@ const EquipmentForm = React.createClass({
             loading: false,
             errors: {},
             visual_date: new Date().toISOString(),
-            eqAdPar: {},
-
+            subform: {},
             fields: [
                 'equipment_type_id',
                 'manufacturer_id',
@@ -701,7 +704,8 @@ const EquipmentForm = React.createClass({
                 'validated',
                 'invalidation',
                 'prev_serial_number',
-                'prev_equipment_number'
+                'prev_equipment_number',
+                'manufactured'
             ]
         }
     },
@@ -709,19 +713,17 @@ const EquipmentForm = React.createClass({
 
     _save: function () {
 
-        // console.log(this.state);
         var fields = this.state.fields;
+        var subform = this.state.subform;
         var data = {};
+
+        var path = this.state.table_name;
+
 
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
-
-        // console.log(data);
-        this.setState({
-            form: data
-        });
 
         return $.ajax({
             url: '/api/v1.0/equipment/',
@@ -729,12 +731,24 @@ const EquipmentForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data, textStatus) {
+            success: function (data) {
+                if (subform != 0) {
+                    $.ajax({
+                        url: '/api/v1.0/' + path + '/',
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify(subform),
+                        success: function (data) {
+                        }
+                    });
+                }
             },
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
         })
+
     },
 
     _onSubmit: function (e) {
@@ -777,6 +791,26 @@ const EquipmentForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
+
+        if(typeof e.target.options[e.target.selectedIndex].accessKey!= 'undefined'){
+              state['table_name']= e.target.options[e.target.selectedIndex].accessKey;
+        }
+
+        if ((this.state.fields.indexOf(e.target.name) == -1) || e.target.name === 'serial') {
+            if (e.target.type == 'checkbox') {
+                this.state.subform[e.target.name] = e.target.checked;
+            } else if (e.target.type == 'radio') {
+                this.state.subform[e.target.name] = e.target.value;
+            } else if (e.target.type == 'select-one') {
+                this.state.subform[e.target.name] = e.target.value;
+            } else {
+                this.state.subform[e.target.name] = e.target.value;
+            }
+        }
+
+// ||e.target.name === 'equipment_type_id'
+//
+
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         } else if (e.target.type == 'radio') {
@@ -786,6 +820,7 @@ const EquipmentForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+
         if (e.target.name == 'equipment_type_id') {
             state['option_text'] = {
                 name: e.target.name,
@@ -794,7 +829,7 @@ const EquipmentForm = React.createClass({
             }
         }
         this.setState(state);
-        console.log(this.state);
+
     },
 
 
@@ -1113,17 +1148,6 @@ const EquipmentForm = React.createClass({
                                                      name="nbr_of_tap_change_ltc"
                                                      placeholder="tap changes"
                                                      ref="nr_taps"
-                                        />
-                                    </FormGroup>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-lg-12">
-                                    <FormGroup controlId="upstream1Input">
-                                        <ControlLabel>Select equipment in Upstream 1</ControlLabel>
-                                        <EquipmentSelectField
-                                            source="/api/v1.0/equipment"
-                                            value={this.state.upstream1}
                                         />
                                     </FormGroup>
                                 </div>

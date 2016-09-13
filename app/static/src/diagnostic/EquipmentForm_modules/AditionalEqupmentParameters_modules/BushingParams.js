@@ -71,6 +71,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
@@ -157,6 +158,7 @@ var BushingParams = React.createClass({
                         <SelectField
                             source="fluid_type"
                             label="Fluid Type"
+                            name="fluid_type_id"
                             value={this.state.fluid_type_id}/>
                     </div>
                     <div className="col-md-4">
