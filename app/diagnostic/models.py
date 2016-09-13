@@ -2629,55 +2629,55 @@ class WindingTest(db.Model):
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
     test_result = db.relationship('TestResult', backref='winding_test')
     test_kv1 = db.Column(db.Float(53))  # Remaining field names are equivalent
-    test_kv2 = db.Column(db.Float(53))
-    test_kv3 = db.Column(db.Float(53))
-    test_kv4 = db.Column(db.Float(53))
-    test_kv5 = db.Column(db.Float(53))
-    test_kv6 = db.Column(db.Float(53))
-    test_kv7 = db.Column(db.Float(53))
-    test_kv8 = db.Column(db.Float(53))
-    test_kv9 = db.Column(db.Float(53))
-    test_kv10 = db.Column(db.Float(53))
+    # test_kv2 = db.Column(db.Float(53))
+    # test_kv3 = db.Column(db.Float(53))
+    # test_kv4 = db.Column(db.Float(53))
+    # test_kv5 = db.Column(db.Float(53))
+    # test_kv6 = db.Column(db.Float(53))
+    # test_kv7 = db.Column(db.Float(53))
+    # test_kv8 = db.Column(db.Float(53))
+    # test_kv9 = db.Column(db.Float(53))
+    # test_kv10 = db.Column(db.Float(53))
     m_meter1 = db.Column(db.Float(53))
-    m_meter2 = db.Column(db.Float(53))
-    m_meter3 = db.Column(db.Float(53))
-    m_meter4 = db.Column(db.Float(53))
-    m_meter5 = db.Column(db.Float(53))
-    m_meter6 = db.Column(db.Float(53))
-    m_meter7 = db.Column(db.Float(53))
-    m_meter8 = db.Column(db.Float(53))
-    m_meter9 = db.Column(db.Float(53))
-    m_meter10 = db.Column(db.Float(53))
+    # m_meter2 = db.Column(db.Float(53))
+    # m_meter3 = db.Column(db.Float(53))
+    # m_meter4 = db.Column(db.Float(53))
+    # m_meter5 = db.Column(db.Float(53))
+    # m_meter6 = db.Column(db.Float(53))
+    # m_meter7 = db.Column(db.Float(53))
+    # m_meter8 = db.Column(db.Float(53))
+    # m_meter9 = db.Column(db.Float(53))
+    # m_meter10 = db.Column(db.Float(53))
     m_multiplier1 = db.Column(db.Float(53))
-    m_multiplier2 = db.Column(db.Float(53))
-    m_multiplier3 = db.Column(db.Float(53))
-    m_multiplier4 = db.Column(db.Float(53))
-    m_multiplier5 = db.Column(db.Float(53))
-    m_multiplier6 = db.Column(db.Float(53))
-    m_multiplier7 = db.Column(db.Float(53))
-    m_multiplier8 = db.Column(db.Float(53))
-    m_multiplier9 = db.Column(db.Float(53))
-    m_multiplier10 = db.Column(db.Float(53))
+    # m_multiplier2 = db.Column(db.Float(53))
+    # m_multiplier3 = db.Column(db.Float(53))
+    # m_multiplier4 = db.Column(db.Float(53))
+    # m_multiplier5 = db.Column(db.Float(53))
+    # m_multiplier6 = db.Column(db.Float(53))
+    # m_multiplier7 = db.Column(db.Float(53))
+    # m_multiplier8 = db.Column(db.Float(53))
+    # m_multiplier9 = db.Column(db.Float(53))
+    # m_multiplier10 = db.Column(db.Float(53))
     w_meter1 = db.Column(db.Float(53))
-    w_meter2 = db.Column(db.Float(53))
-    w_meter3 = db.Column(db.Float(53))
-    w_meter4 = db.Column(db.Float(53))
-    w_meter5 = db.Column(db.Float(53))
-    w_meter6 = db.Column(db.Float(53))
-    w_meter7 = db.Column(db.Float(53))
-    w_meter8 = db.Column(db.Float(53))
-    w_meter9 = db.Column(db.Float(53))
-    w_meter10 = db.Column(db.Float(53))
+    # w_meter2 = db.Column(db.Float(53))
+    # w_meter3 = db.Column(db.Float(53))
+    # w_meter4 = db.Column(db.Float(53))
+    # w_meter5 = db.Column(db.Float(53))
+    # w_meter6 = db.Column(db.Float(53))
+    # w_meter7 = db.Column(db.Float(53))
+    # w_meter8 = db.Column(db.Float(53))
+    # w_meter9 = db.Column(db.Float(53))
+    # w_meter10 = db.Column(db.Float(53))
     w_multiplier1 = db.Column(db.Float(53))
-    w_multiplier2 = db.Column(db.Float(53))
-    w_multiplier3 = db.Column(db.Float(53))
-    w_multiplier4 = db.Column(db.Float(53))
-    w_multiplier5 = db.Column(db.Float(53))
-    w_multiplier6 = db.Column(db.Float(53))
-    w_multiplier7 = db.Column(db.Float(53))
-    w_multiplier8 = db.Column(db.Float(53))
-    w_multiplier9 = db.Column(db.Float(53))
-    w_multiplier10 = db.Column(db.Float(53))
+    # w_multiplier2 = db.Column(db.Float(53))
+    # w_multiplier3 = db.Column(db.Float(53))
+    # w_multiplier4 = db.Column(db.Float(53))
+    # w_multiplier5 = db.Column(db.Float(53))
+    # w_multiplier6 = db.Column(db.Float(53))
+    # w_multiplier7 = db.Column(db.Float(53))
+    # w_multiplier8 = db.Column(db.Float(53))
+    # w_multiplier9 = db.Column(db.Float(53))
+    # w_multiplier10 = db.Column(db.Float(53))
     type_doble = db.Column(db.Boolean)
     humidity = db.Column(db.Float(53))  # Humidity
 
@@ -2686,61 +2686,62 @@ class WindingTest(db.Model):
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'test_result_id': self.test_result_id,
-                'test_kv1': self.test_kv1,
-                'test_kv2': self.test_kv2,
-                'test_kv3': self.test_kv3,
-                'test_kv4': self.test_kv4,
-                'test_kv5': self.test_kv5,
-                'test_kv6': self.test_kv6,
-                'test_kv7': self.test_kv7,
-                'test_kv8': self.test_kv8,
-                'test_kv9': self.test_kv9,
-                'test_kv10': self.test_kv10,
-                'm_meter1': self.m_meter1,
-                'm_meter2': self.m_meter2,
-                'm_meter3': self.m_meter3,
-                'm_meter4': self.m_meter4,
-                'm_meter5': self.m_meter5,
-                'm_meter6': self.m_meter6,
-                'm_meter7': self.m_meter7,
-                'm_meter8': self.m_meter8,
-                'm_meter9': self.m_meter9,
-                'm_meter10': self.m_meter10,
-                'm_multiplier1': self.m_multiplier1,
-                'm_multiplier2': self.m_multiplier2,
-                'm_multiplier3': self.m_multiplier3,
-                'm_multiplier4': self.m_multiplier4,
-                'm_multiplier5': self.m_multiplier5,
-                'm_multiplier6': self.m_multiplier6,
-                'm_multiplier7': self.m_multiplier7,
-                'm_multiplier8': self.m_multiplier8,
-                'm_multiplier9': self.m_multiplier9,
-                'm_multiplier10': self.m_multiplier10,
-                'w_meter1': self.w_meter1,
-                'w_meter2': self.w_meter2,
-                'w_meter3': self.w_meter3,
-                'w_meter4': self.w_meter4,
-                'w_meter5': self.w_meter5,
-                'w_meter6': self.w_meter6,
-                'w_meter7': self.w_meter7,
-                'w_meter8': self.w_meter8,
-                'w_meter9': self.w_meter9,
-                'w_meter10': self.w_meter10,
-                'w_multiplier1': self.w_multiplier1,
-                'w_multiplier2': self.w_multiplier2,
-                'w_multiplier3': self.w_multiplier3,
-                'w_multiplier4': self.w_multiplier4,
-                'w_multiplier5': self.w_multiplier5,
-                'w_multiplier6': self.w_multiplier6,
-                'w_multiplier7': self.w_multiplier7,
-                'w_multiplier8': self.w_multiplier8,
-                'w_multiplier9': self.w_multiplier9,
-                'w_multiplier10': self.w_multiplier10,
-                'type_doble': self.type_doble,
-                'humidity': self.humidity,
-                }
+        return {
+            'id': self.id,
+            'test_result_id': self.test_result_id,
+            'test_kv1': self.test_kv1,
+            # 'test_kv2': self.test_kv2,
+            # 'test_kv3': self.test_kv3,
+            # 'test_kv4': self.test_kv4,
+            # 'test_kv5': self.test_kv5,
+            # 'test_kv6': self.test_kv6,
+            # 'test_kv7': self.test_kv7,
+            # 'test_kv8': self.test_kv8,
+            # 'test_kv9': self.test_kv9,
+            # 'test_kv10': self.test_kv10,
+            'm_meter1': self.m_meter1,
+            # 'm_meter2': self.m_meter2,
+            # 'm_meter3': self.m_meter3,
+            # 'm_meter4': self.m_meter4,
+            # 'm_meter5': self.m_meter5,
+            # 'm_meter6': self.m_meter6,
+            # 'm_meter7': self.m_meter7,
+            # 'm_meter8': self.m_meter8,
+            # 'm_meter9': self.m_meter9,
+            # 'm_meter10': self.m_meter10,
+            'm_multiplier1': self.m_multiplier1,
+            # 'm_multiplier2': self.m_multiplier2,
+            # 'm_multiplier3': self.m_multiplier3,
+            # 'm_multiplier4': self.m_multiplier4,
+            # 'm_multiplier5': self.m_multiplier5,
+            # 'm_multiplier6': self.m_multiplier6,
+            # 'm_multiplier7': self.m_multiplier7,
+            # 'm_multiplier8': self.m_multiplier8,
+            # 'm_multiplier9': self.m_multiplier9,
+            # 'm_multiplier10': self.m_multiplier10,
+            'w_meter1': self.w_meter1,
+            # 'w_meter2': self.w_meter2,
+            # 'w_meter3': self.w_meter3,
+            # 'w_meter4': self.w_meter4,
+            # 'w_meter5': self.w_meter5,
+            # 'w_meter6': self.w_meter6,
+            # 'w_meter7': self.w_meter7,
+            # 'w_meter8': self.w_meter8,
+            # 'w_meter9': self.w_meter9,
+            # 'w_meter10': self.w_meter10,
+            'w_multiplier1': self.w_multiplier1,
+            # 'w_multiplier2': self.w_multiplier2,
+            # 'w_multiplier3': self.w_multiplier3,
+            # 'w_multiplier4': self.w_multiplier4,
+            # 'w_multiplier5': self.w_multiplier5,
+            # 'w_multiplier6': self.w_multiplier6,
+            # 'w_multiplier7': self.w_multiplier7,
+            # 'w_multiplier8': self.w_multiplier8,
+            # 'w_multiplier9': self.w_multiplier9,
+            # 'w_multiplier10': self.w_multiplier10,
+            'type_doble': self.type_doble,
+            'humidity': self.humidity,
+        }
 
 
 class VisualInspectionTest(db.Model):
