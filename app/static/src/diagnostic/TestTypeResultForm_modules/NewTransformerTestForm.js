@@ -65,9 +65,11 @@ var ActualTapSelectField = React.createClass({
 
 
 var TapTestPanel = React.createClass({
-
-
+    _onChange: function (e) {
+        this.props.onChange(this.props.testId, e.target.name, e.target.value);
+    },
     render: function () {
+        var data = (this.props.data != null) ? this.props.data: {};
         return (
             <div>
                 <div className="row">
@@ -77,6 +79,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase1"
                                          name="measured_current1"
+                                         value={data.measured_current1}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -86,6 +90,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase1"
                                          name="calculated_current1"
+                                         value={data.calculated_current1}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -95,6 +101,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase1"
                                          name="error1"
+                                         value={data.error1}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -104,6 +112,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase2"
                                          name="measured_current2"
+                                         value={data.measured_current2}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -113,6 +123,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase2"
                                          name="calculated_current2"
+                                         value={data.calculated_current2}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -122,6 +134,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase2"
                                          name="error2"
+                                         value={data.error2}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -134,6 +148,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase3"
                                          name="measured_current3"
+                                         value={data.measured_current3}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -143,6 +159,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase3"
                                          name="calculated_current3"
+                                         value={data.calculated_current3}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -152,6 +170,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="Phase3"
                                          name="error3"
+                                         value={data.error3}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -161,6 +181,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="0.0"
                                          name="winding"
+                                         value={data.winding}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -170,6 +192,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="0.0"
                                          name="ratio"
+                                         value={data.ratio}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -179,6 +203,8 @@ var TapTestPanel = React.createClass({
                             <FormControl type="text"
                                          placeholder="tap pos"
                                          name="tap_position"
+                                         value={data.tap_position}
+                                         onChange={this._onChange}
                             />
                         </FormGroup>
                     </div>
@@ -189,8 +215,6 @@ var TapTestPanel = React.createClass({
             </div>
         )
     }
-
-
 });
 
 
@@ -201,7 +225,7 @@ var NewTransformerTestForm = React.createClass({
             loading: false,
             numberOfTaps: 1,
             errors: {},
-            test_result_id,
+            tests: {'1': {}},
             keys: 1,
             testData: {'test_result_id': 1, 'taps': []},
             fields: [
@@ -213,24 +237,48 @@ var NewTransformerTestForm = React.createClass({
         }
     },
 
-    _create: function () {
-        var i;
-        for (i = 1; i <= this.state.keys; i++) {
-            document.getElementById(i);
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
             var fields = this.state.fields;
-            for (i = 0; i < fields.length; i++) {
-                var key = fields[i];
-                this.state.testData.taps.push({key: this.state[key]});
-                console.log("testData Fields", this.state.testData);
+            fields.push('id');
+            var tests = {};
+            for (var i = 1; i <= res.length; i++) {
+                var test = {};
+                var data = res[i-1];
+                for (var j = 0; j < fields.length; j++) {
+                    var key = fields[j];
+                    if (data.hasOwnProperty(key)) {
+                        test[key] = data[key];
+                    }
+                }
+                tests[i.toString()] = test;
             }
-        }
+            this.setState({numberOfTaps: res.length, tests: tests});
+        }.bind(this), 'json');
+    },
 
+    _create: function () {
+        var fields = this.state.fields;
+        var numberOfTaps = this.state.numberOfTaps;
+        var tests = this.state.tests;
+        var data = [];
+        for (var i = 1; i <= numberOfTaps; i++) {
+            var test = {test_result_id: this.props.testResultId};
+            var tap = tests[i.toString()];
+            for (var j = 0; j < fields.length; j++) {
+                var key = fields[j];
+                test[key] = tap[key];
+            }
+            data.push(test)
+        }
         return $.ajax({
-            url: '/api/v1.0/transformer_turn_ratio_test/',
+            url: '/api/v1.0/test_result/multi/' + this.props.tableName,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify(this.state.testData),
+            data: JSON.stringify(data),
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
@@ -306,34 +354,39 @@ var NewTransformerTestForm = React.createClass({
         return className;
     },
 
-    onClickTapAdd: function () {
+    handleFieldChange: function(testId, name, value) {
+        var tests = this.state.tests;
+        var fieldNameValue = this.state.tests[testId] || {};
+        fieldNameValue[name] = value;
+        tests[testId] = fieldNameValue;
+        this.setState({tests: tests});
+    },
 
+    onClickTapAdd: function () {
         this.setState({
-            keys: this.state.keys + 1,
             numberOfTaps: this.state.numberOfTaps + 1
         });
     },
 
     onClickTapRemove: function () {
-
         this.setState({
-            keys: this.state.keys - 1,
             numberOfTaps: this.state.numberOfTaps - 1
         });
     },
 
-
     render: function () {
-
         var taps = [];
         var numberOfTaps = this.state.numberOfTaps;
         for (var i = 1; i <= numberOfTaps; i++) {
             var headName = "Tap Number " + i;
+            var props = {
+                testId: i.toString(),
+                onChange: this.handleFieldChange,
+                data: this.state.tests[i.toString()]
+            };
             taps.push(
-                <Panel header={headName}
-                       eventKey={i}
-                       id={i}>
-                    <TapTestPanel/>
+                <Panel header={headName} eventKey={i} id={i} key={'tap' + i}>
+                    <TapTestPanel {...props}/>
                 </Panel>
             );
         }
