@@ -7,6 +7,8 @@ import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 const TextField = React.createClass({
@@ -15,13 +17,15 @@ const TextField = React.createClass({
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
+                             data-type={this.props["data-type"]}
                 />
+                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -87,12 +91,10 @@ var NewParticleTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this.is_valid()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -110,17 +112,29 @@ var NewParticleTestForm = React.createClass({
     },
 
     _onError: function (data) {
-
         var message = "Failed to create";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -132,18 +146,48 @@ var NewParticleTestForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     _formGroupClass: function (field) {
@@ -160,30 +204,38 @@ var NewParticleTestForm = React.createClass({
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-3">
-                            <TextField label=">2um" name="_2um" value={this.state._2um}/>
+                            <TextField label=">2um" name="_2um" value={this.state._2um}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">5um" name="_5um" value={this.state._5um}/>
+                            <TextField label=">5um" name="_5um" value={this.state._5um}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">10um" name="_10um" value={this.state._10um}/>
+                            <TextField label=">10um" name="_10um" value={this.state._10um}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">15um" name="_15um" value={this.state._15um}/>
+                            <TextField label=">15um" name="_15um" value={this.state._15um}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-3">
-                            <TextField label=">25um" name="_25um" value={this.state._25um}/>
+                            <TextField label=">25um" name="_25um" value={this.state._25um}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">50um" name="_50um" value={this.state._50um}/>
+                            <TextField label=">50um" name="_50um" value={this.state._50um}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label=">100um" name="_100um" value={this.state._100um}/>
+                            <TextField label=">100um" name="_100um" value={this.state._100um}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="NAS1638" name="nas1638" value={this.state.nas1638}/>
+                            <TextField label="NAS1638" name="nas1638" value={this.state.nas1638}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
                     <div className="row">
@@ -194,15 +246,18 @@ var NewParticleTestForm = React.createClass({
                     </div>
                     <div className="row">
                         <div className="col-md-2 pull-right">
-                            <TextField label="iso4406-1" name="iso4406_1" value={this.state.iso4406_1}/>
+                            <TextField label="iso4406-1" name="iso4406_1" value={this.state.iso4406_1}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
 
                         <div className="col-md-2 pull-right">
-                            <TextField label="iso4406-2" name="iso4406_2" value={this.state.iso4406_2}/>
+                            <TextField label="iso4406-2" name="iso4406_2" value={this.state.iso4406_2}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
 
                         <div className="col-md-2 pull-right">
-                            <TextField label="iso4406-3" name="iso4406_3" value={this.state.iso4406_3}/>
+                            <TextField label="iso4406-3" name="iso4406_3" value={this.state.iso4406_3}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
                     <div className="row">
