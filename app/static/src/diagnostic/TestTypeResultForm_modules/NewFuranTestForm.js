@@ -7,7 +7,8 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
-
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 const TextField = React.createClass({
     render: function() {
@@ -15,13 +16,15 @@ const TextField = React.createClass({
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
+                             data-type={this.props["data-type"]}
                 />
+                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -99,12 +102,10 @@ var NewFuranTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -129,38 +130,75 @@ var NewFuranTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
-       var state = {};
-       if (e.target.type == 'checkbox') {
-           state[e.target.name] = e.target.checked;
-       }
-       else if (e.target.type == 'radio') {
-           state[e.target.name] = e.target.value;
-       }
-       else if (e.target.type == 'select-one') {
-           state[e.target.name] = e.target.value;
-       }
-       else {
-           state[e.target.name] = $.trim(e.target.value);
-       }
-       this.setState(state);
+        var state = {};
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        }
+        else if (e.target.type == 'radio') {
+            state[e.target.name] = e.target.value;
+        }
+        else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        }
+        else {
+            state[e.target.name] = $.trim(e.target.value);
+        }
+        var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        state = this._updateFieldErrors(e.target.name, state, errors);
+        this.setState(state);
+    },
+
+    _validateFieldType: function (value, type){
+        var errors = {};
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
+            };
+            if (!typePatterns[type].test(value)){
+                errors = "Invalid " + type + " value";
+            }
+        }
+        return errors;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors
+        }
+        return state;
     },
 
     _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
-        return errors;
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
+        }
+        return response;
     },
 
     _formGroupClass: function (field) {
@@ -180,19 +218,22 @@ var NewFuranTestForm = React.createClass({
                             <CheckBox name="hmf_flag" value={this.state.hmf_flag}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="5-HMF" name="hmf" value={this.state.hmf}/>
+                            <TextField label="5-HMF" name="hmf" value={this.state.hmf} errors={this.state.errors}
+                                data-type="float"/>
                         </div>
                         <div className="col-md-1">
                             <CheckBox name="fol_flag" value={this.state.fol_flag}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="2-FOL" name="fol" value={this.state.fol}/>
+                            <TextField label="2-FOL" name="fol" value={this.state.fol} errors={this.state.errors}
+                                data-type="float"/>
                         </div>
                         <div className="col-md-1">
                             <CheckBox name="fal_flag" value={this.state.fal_flag}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="2-FAL" name="fal" value={this.state.fal}/>
+                            <TextField label="2-FAL" name="fal" value={this.state.fal} errors={this.state.errors}
+                                data-type="float"/>
                         </div>
                     </div>
 
@@ -201,13 +242,15 @@ var NewFuranTestForm = React.createClass({
                              <CheckBox name="acf_flag" value={this.state.acf_flag}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="2-ACF" name="acf" value={this.state.acf}/>
+                            <TextField label="2-ACF" name="acf" value={this.state.acf} errors={this.state.errors}
+                                data-type="float"/>
                         </div>
                         <div className="col-md-1">
                              <CheckBox name="mef_flag" value={this.state.mef_flag}/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="5-MEF" name="mef" value={this.state.mef}/>
+                            <TextField label="5-MEF" name="mef" value={this.state.mef} errors={this.state.errors}
+                                data-type="float"/>
                         </div>
                     </div>
 
