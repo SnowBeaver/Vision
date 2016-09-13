@@ -139,8 +139,9 @@ var PerformedBySelectField = React.createClass({
                         placeholder="select"
                         onChange={this.handleChange}
                         value={this.state.value}
-                        name="performed_by_id">
-                        <option key="0" value="select">Performed by</option>
+                        name="performed_by_id"
+                        required={this.props.required}>
+                        <option key="0" value="">Performed by{this.props.required ? " *": ""}</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -211,8 +212,9 @@ var MaterialSelectField = React.createClass({
                         placeholder="select material"
                         onChange={this.handleChange}
                         value={this.state.value}
-                        name="material_id">
-                        <option key="0" value="select">Material</option>
+                        name="material_id"
+                        required={this.props.required}>
+                        <option key="0" value="">Material{this.props.required ? " *" : ""}</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -356,8 +358,9 @@ var LabAnalyserSelectField = React.createClass({
                         placeholder="select"
                         onChange={this.handleChange}
                         value={this.state.value}
-                        name="lab_id">
-                        <option key="0" value="select">Lab/On-Line Analyser</option>
+                        name="lab_id"
+                        required={this.props.required}>
+                        <option key="0" value="">Lab/On-Line Analyser{this.props.required ? " *" : ""}</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -429,8 +432,9 @@ var LabContractSelectField = React.createClass({
                         placeholder="select"
                         onChange={this.handleChange}
                         value={this.state.value}
-                        name="lab_contract_id">
-                        <option key="0" value="select">Lab Contract</option>
+                        name="lab_contract_id"
+                        required={this.props.required}>
+                        <option key="0" value="">Lab Contract{this.props.required ? " *" : ""}</option>
                         {menuItems}
                     </FormControl>
                 </FormGroup>
@@ -501,7 +505,8 @@ var SyringeNumberSelectField = React.createClass({
                         placeholder="select"
                         onChange={this.handleChange}
                         value={this.state.value}
-                        name="seringe_num">
+                        name="seringe_num"
+                        data-len={this.props["data-len"]}>
                         <option key="0" value="select">Syringe Number</option>
                         {menuItems}
                     </FormControl>
@@ -573,8 +578,9 @@ var TestReasonSelectField = React.createClass({
                     value={this.state.value}
                     name="test_reason_id"
                     onChange={this.handleChange}
+                    required={this.props.required}
                 >
-                    <option key="0" value="select">Reason for Testing</option>
+                    <option key="0" value="">Reason for Testing{this.props.required ? " *": ""}</option>
                     {menuItems}
                 </FormControl>
             </FormGroup>
@@ -769,11 +775,29 @@ var NewTestForm = React.createClass({
     _validate: function (e) {
         var errors = [];
         var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
         error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
         if (error){
             errors.push(error);
         }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
     },
 
     _validateFieldLength: function (value, length){
@@ -798,13 +822,13 @@ var NewTestForm = React.createClass({
         return state;
     },
 
-    //_validate: function () {
-    //    //var errors = {};
-    //    //if (this.state.lab_id == "") {
-    //    //    errors.lab_id = "Please choose laboratory";
-    //    //}
-    //    //return errors;
-    //},
+    setRepairDate: function (timestamp){
+        //this.setState({repair_state: moment(timestamp)});
+    },
+
+    setDateAnalyse: function (timestamp){
+        //this.setState({date_analyse: moment(timestamp)});
+    },
 
     _formGroupClass: function (field) {
         var className = "form-group ";
@@ -992,6 +1016,7 @@ var NewTestForm = React.createClass({
                                                 handleChange={this.handleChange}
                                                 value={this.state.test_reason_id}
                                                 errors={this.state.errors}
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -1003,6 +1028,7 @@ var NewTestForm = React.createClass({
                                                 handleChange={this.handleChange}
                                                 value={this.state.material_id}
                                                 errors={this.state.errors}
+                                                required
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1038,6 +1064,7 @@ var NewTestForm = React.createClass({
                                                 handleChange={this.handleChange}
                                                 value={this.state.performed_by_id}
                                                 errors={this.state.errors}
+                                                required
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1055,6 +1082,7 @@ var NewTestForm = React.createClass({
                                                 source="/api/v1.0/lab/"
                                                 value={this.state.lab_id}
                                                 errors={this.state.errors}
+                                                required
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1073,6 +1101,7 @@ var NewTestForm = React.createClass({
                                                 handleChange={this.handleChange}
                                                 value={this.state.lab_contract_id}
                                                 errors={this.state.errors}
+                                                required
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1091,6 +1120,7 @@ var NewTestForm = React.createClass({
                                                              placeholder="Charge"
                                                              name="charge"
                                                              value={this.state.charge}
+                                                             data-type="float"
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1125,7 +1155,9 @@ var NewTestForm = React.createClass({
                                             <FormGroup validationState={this.state.errors.repair_date ? 'error' : null}>
                                                 <ControlLabel>Repair Date</ControlLabel>
                                                 <HelpBlock className="warning">{this.state.errors.repair_date}</HelpBlock>
-                                                <DateTimeField name="repair_date" datetime={this.state.repair_date}/>
+                                                <DateTimeField name="repair_date"
+                                                               datetime={this.state.repair_date}
+                                                               onChange={this.setRepairDate}/>
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1149,7 +1181,9 @@ var NewTestForm = React.createClass({
                                             <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}>
                                                 <ControlLabel>Date Applied</ControlLabel>
                                                 <HelpBlock className="warning">{this.state.errors.date_analyse}</HelpBlock>
-                                                <DateTimeField name="date_analyse" datetime={this.state.date_analyse}/>
+                                                <DateTimeField name="date_analyse" datetime={this.state.date_analyse}
+                                                               onChange={this.setDateAnalyse}
+                                                               required/>
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1162,6 +1196,7 @@ var NewTestForm = React.createClass({
                                                              placeholder="Equipment Load mW"
                                                              name="mws"
                                                              value={this.state.mws}
+                                                             data-type="float"
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1175,6 +1210,7 @@ var NewTestForm = React.createClass({
                                                              placeholder="Temperature"
                                                              name="temperature"
                                                              value={this.state.temperature}
+                                                             data-type="float"
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1188,6 +1224,7 @@ var NewTestForm = React.createClass({
                                                 handleChange={this.handleChange}
                                                 value={this.state.seringe_num}
                                                 errors={this.state.errors}
+                                                data-len="50"
                                             />
                                         </div>
                                         <div className="col-md-1">
@@ -1206,6 +1243,7 @@ var NewTestForm = React.createClass({
                                                              placeholder="Ambient Air Temperature"
                                                              name="ambient_air_temperature"
                                                              value={this.state.ambient_air_temperature}
+                                                             data-type="float"
                                                 />
                                             </FormGroup>
                                         </div>
@@ -1214,10 +1252,10 @@ var NewTestForm = React.createClass({
                                     <fieldset className="scheduler-border">
                                         <legend className="scheduler-border">Choose test type</legend>
                                             <div className="maxwidth">
-                                                <Radio name="test_type_id" value="1" checked={this.state.test_type_id == 1}>
+                                                <Radio name="test_type_id" value="1" required checked={this.state.test_type_id == 1}>
                                                     Fluid Profile
                                                 </Radio>
-                                                <Radio name="test_type_id" value="2" checked={this.state.test_type_id == 2}>
+                                                <Radio name="test_type_id" value="2" required checked={this.state.test_type_id == 2}>
                                                     Electrical Profile
                                                 </Radio>
                                             </div>
