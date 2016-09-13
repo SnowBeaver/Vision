@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/lib/Button';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 const TextField = React.createClass({
@@ -15,13 +17,14 @@ const TextField = React.createClass({
         var value = (this.props.value != null) ? this.props.value : "";
 
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
-
+                             data-type={this.props["data-type"]}
                 />
+                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -86,12 +89,10 @@ var NewInsulationResistanceTestForm = React.createClass({
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this.is_valid()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -116,10 +117,23 @@ var NewInsulationResistanceTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -131,18 +145,48 @@ var NewInsulationResistanceTestForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length > 0) ? false : true;
     },
 
     _formGroupClass: function (field) {
@@ -164,19 +208,22 @@ var NewInsulationResistanceTestForm = React.createClass({
                         </div>
 
                         <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv1" value={this.state.test_kv1}/>
+                            <TextField label="Test kV" name="test_kv1" value={this.state.test_kv1}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance1" value={this.state.resistance1}/>
+                            <TextField label="Mego ohM" name="resistance1" value={this.state.resistance1}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier1" value={this.state.multiplier1}/>
+                            <TextField label="Multiplier" name="multiplier1" value={this.state.multiplier1}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Measured" name="" value=""/>
+                            <TextField label="Measured" name="" value="" errors={{}}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value=""/>
+                            <TextField label="Corr. 20C" name="" value="" errors={{}}/>
                         </div>
                     </div>
 
@@ -185,19 +232,22 @@ var NewInsulationResistanceTestForm = React.createClass({
                             <b>LO to HI+TER+GND</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv2" value={this.state.test_kv2}/>
+                            <TextField label="Test kV" name="test_kv2" value={this.state.test_kv2}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance2" value={this.state.resistance2}/>
+                            <TextField label="Mego ohM" name="resistance2" value={this.state.resistance2}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier2" value={this.state.multiplier2}/>
+                            <TextField label="Multiplier" name="multiplier2" value={this.state.multiplier2}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
+                            <TextField label="Measured" name="" value="" disabled errors={{}}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
+                            <TextField label="Corr. 20C" name="" value="" disabled errors={{}}/>
                         </div>
                     </div>
 
@@ -206,19 +256,22 @@ var NewInsulationResistanceTestForm = React.createClass({
                             <b>TER to HI+LO+GND</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv3" value={this.state.test_kv3}/>
+                            <TextField label="Test kV" name="test_kv3" value={this.state.test_kv3}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance3" value={this.state.resistance3}/>
+                            <TextField label="Mego ohM" name="resistance3" value={this.state.resistance3}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier3" value={this.state.multiplier3}/>
+                            <TextField label="Multiplier" name="multiplier3" value={this.state.multiplier3}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
+                            <TextField label="Measured" name="" value="" disabled errors={{}}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
+                            <TextField label="Corr. 20C" name="" value="" disabled errors={{}}/>
                         </div>
                     </div>
 
@@ -227,19 +280,22 @@ var NewInsulationResistanceTestForm = React.createClass({
                             <b>Hi+LO+TER to GND</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv4" value={this.state.test_kv4}/>
+                            <TextField label="Test kV" name="test_kv4" value={this.state.test_kv4}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance4" value={this.state.resistance4}/>
+                            <TextField label="Mego ohM" name="resistance4" value={this.state.resistance4}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier4" value={this.state.multiplier4}/>
+                            <TextField label="Multiplier" name="multiplier4" value={this.state.multiplier4}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
+                            <TextField label="Measured" name="" value="" disabled errors={{}}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
+                            <TextField label="Corr. 20C" name="" value="" disabled errors={{}}/>
                         </div>
                     </div>
 
@@ -248,19 +304,22 @@ var NewInsulationResistanceTestForm = React.createClass({
                             <b>Core to GND</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Test kV" name="test_kv5" value={this.state.test_kv5}/>
+                            <TextField label="Test kV" name="test_kv5" value={this.state.test_kv5}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Mego ohM" name="resistance5" value={this.state.resistance5}/>
+                            <TextField label="Mego ohM" name="resistance5" value={this.state.resistance5}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Multiplier" name="multiplier5" value={this.state.multiplier5}/>
+                            <TextField label="Multiplier" name="multiplier5" value={this.state.multiplier5}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" disabled/>
+                            <TextField label="Measured" name="" value="" disabled errors={{}}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" disabled/>
+                            <TextField label="Corr. 20C" name="" value="" disabled errors={{}}/>
                         </div>
                     </div>
 

@@ -174,7 +174,7 @@ var NewFluidTestForm = React.createClass({
 
         // Update errors with new ones, if present
         if (Object.keys(errors).length){
-            state.errors[fieldName] = errors
+            state.errors[fieldName] = errors.join(". ");
         }
         return state;
     },
@@ -217,11 +217,7 @@ var NewFluidTestForm = React.createClass({
     },
 
     is_valid: function () {
-        var response = true;
-        if (Object.keys(this.state.errors).length > 0){
-            response = false;
-        }
-        return response;
+        return (Object.keys(this.state.errors).length > 0) ? false : true;
     },
 
     _formGroupClass: function (field) {
