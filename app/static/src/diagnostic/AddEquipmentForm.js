@@ -204,7 +204,7 @@ var AddEquipmentForm = React.createClass({
         var state = {};
         var eq = this.state.equipment;
         eq[e.target.id] = parseInt(e.target.value);
-        state[e.target.name] = $.trim(e.target.value);
+        state[e.target.name] = e.target.value;
         state['equipment'] = Array.from(new Set(eq));
         this.setState(state);
     },

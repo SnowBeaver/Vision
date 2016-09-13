@@ -17,6 +17,23 @@ import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
+import AirBreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/AirBreakerParams';
+import BushingParams  from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
+import CapacitorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/CapacitorParams';
+import BreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BreakerParams';
+import PowerSourceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/PowerSourceParams';
+import CableParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/CableParams';
+import SwitchGearParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SwitchGearParams';
+import InductionMachineParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductionMachineParams';
+import SyncroMachineParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SyncroMachineParams';
+import TapChangerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/TapChangerParams';
+import RectifierParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/RectifierParams';
+import TransformerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/TransformerParams';
+import TankParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/TankParams';
+import SwitchParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SwitchParams';
+import InductanceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductanceParams';
+import GasSensorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/GasSensorParams';
+
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
@@ -40,13 +57,13 @@ var EquipmentTypeSelectField = React.createClass({
     handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
-        })
+        });
     },
 
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
         };
     },
 
@@ -236,64 +253,6 @@ var ManufacturerSelectField = React.createClass({
     }
 });
 
-var LocationSelectField = React.createClass ({
-
-    handleChange: function(event, index, value){
-        this.setState({
-            value: event.target.value,
-            location_id: event.target.value
-        })
-
-    },
-
-    getInitialState: function(){
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function(){
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function(){
-        this.serverRequest = $.get(this.props.source, function (result){
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function() {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function(){
-        this.state.isVisible = true;
-    },
-
-    render: function() {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup controlId="formControlsSelect3">
-                    <FormControl componentClass="select" placeholder="select location" onChange={this.handleChange}>
-                        <option key="0" value="select">Location</option>
-                        {menuItems}
-                    </FormControl>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
 
 var LocationSelectField = React.createClass({
 
@@ -361,6 +320,7 @@ var LocationSelectField = React.createClass({
     }
 });
 
+
 var VisualInspBySelectField = React.createClass({
 
     handleChange: function (event, index, value) {
@@ -427,7 +387,6 @@ var VisualInspBySelectField = React.createClass({
 });
 
 
-
 var AssignedToSelectField = React.createClass({
 
     handleChange: function (event, index, value) {
@@ -492,6 +451,7 @@ var AssignedToSelectField = React.createClass({
         );
     }
 });
+
 
 var NormSelectField = React.createClass({
 
@@ -570,7 +530,7 @@ var FrequencySelectField = React.createClass({
 
     getInitialState: function () {
         return {
-            items: [ '25', '50', '60', 'DC' ],
+            items: ['25', '50', '60', 'DC'],
             isVisible: false,
             showNewEquipmentTypeForm: false,
             showNewManufacturerForm: false,
@@ -614,7 +574,8 @@ var FrequencySelectField = React.createClass({
     }
 });
 
-var ManufacturedSelectField = React.createClass ({
+
+var ManufacturedSelectField = React.createClass({
 
     handleChange: function (event, index, value) {
         this.setState({
@@ -666,6 +627,78 @@ var ManufacturedSelectField = React.createClass ({
 });
 
 
+var EqAdditionalParams = React.createClass({
+
+    getInitialState: function () {
+        return {
+            tableName: ''
+        }
+    },
+    componentDidMount: function () {
+    },
+
+    render: function () {
+
+        if (typeof this.props.data.option_text == 'undefined') {
+            return (<div></div>);
+        }
+        switch (this.props.data.option_text.text) {
+            case 'Air circuit breaker':
+                return (<AirBreakerParams />);
+                break;
+            case 'Bushing':
+                return (<BushingParams />);
+                break;
+            case 'Capacitor':
+                return (<CapacitorParams/>);
+                break;
+            case 'Breaker':
+                return (<BreakerParams/>);
+                break;
+            case 'Power Source':
+                return (<PowerSourceParams />);
+                break;
+            case 'Cable':
+                return (<CableParams />);
+                break;
+            case 'Switchgear':
+                return (<SwitchGearParams />);
+                break;
+            case 'Induction machine':
+                return (<InductionMachineParams />);
+                break;
+            case 'Synchronous machine':
+                return (<SyncroMachineParams />);
+                break;
+            case 'Tap changer':
+                return (<TapChangerParams />);
+                break;
+            case 'Rectifier':
+                return (<RectifierParams />);
+                break;
+            case 'Transformer':
+                return (<TransformerParams />);
+                break;
+            case 'Tank':
+                return (<TankParams />);
+                break;
+            case 'Switch':
+                return (<SwitchParams />);
+                break;
+            case 'Inductance':
+                return (<InductanceParams />);
+                break;
+            case 'Gas sensor':
+                return (<GasSensorParams />);
+                break;
+
+            default:
+                return null;
+        }
+    }
+});
+
+
 const EquipmentForm = React.createClass({
 
     getInitialState: function () {
@@ -673,6 +706,9 @@ const EquipmentForm = React.createClass({
         var response = {
             loading: false,
             errors: {},
+            visual_date: new Date().toISOString(),
+            eqAdPar: {},
+
             fields: [
                 'equipment_type_id',
                 'manufacturer_id',
@@ -700,12 +736,13 @@ const EquipmentForm = React.createClass({
             changedFields: []
         };
 
-        for (var i = 0; i < response.fields.length; i++){
+        for (var i = 0; i < response.fields.length; i++) {
             response[response.fields[i]] = "";
         }
         response["visual_date"] = new Date().toISOString();
         return response;
     },
+
 
     _save: function () {
 
@@ -785,14 +822,20 @@ const EquipmentForm = React.createClass({
         var state = {};
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if (e.target.type == 'radio') {
+        } else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
-        }
-        else if (e.target.type == 'select-one') {
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         } else {
-            state[e.target.name] = $.trim(e.target.value);
+            state[e.target.name] = e.target.value;
+        }
+
+        if (e.target.name == 'equipment_type_id') {
+            state['option_text'] = {
+                name: e.target.name,
+                id: e.target.value,
+                text: e.target[e.target.selectedIndex].text
+            }
         }
 
         // TODO: Exclude upstream field or let adding multiple upstreams
@@ -802,7 +845,9 @@ const EquipmentForm = React.createClass({
 
         var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
         state = this._updateFieldErrors(e.target.name, state, errors);
+
         this.setState(state);
+        console.log(this.state);
     },
 
     _validateFieldType: function (value, type){
@@ -891,7 +936,6 @@ const EquipmentForm = React.createClass({
         })
     },
 
-
     onNewButtonClick: function (e) {
         if (e.target.id === 'eq_type') {
             this.setState({
@@ -950,8 +994,7 @@ const EquipmentForm = React.createClass({
     },
 
 
-    render: function() {
-
+    render: function () {
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -975,7 +1018,11 @@ const EquipmentForm = React.createClass({
                                     >New</a>
                                 </div>
                             </div>
-
+                            <div className="row">
+                                <div className="col-md-11">
+                                    <EqAdditionalParams data={this.state}/>
+                                </div>
+                            </div>
                             <div className="row">
                                 <div className="col-lg-11">
                                     <ManufacturerSelectField
@@ -1163,7 +1210,7 @@ const EquipmentForm = React.createClass({
                                         <DateTimePicker name="visual_date"
                                                         defaultText="Please select a date"
                                                         datetime={this.state.visual_date}
-                                                        ref="visual_date"
+                                                        ref=" visual_date"
                                         />
                                     </FormGroup>
                                 </div>
@@ -1346,7 +1393,6 @@ const EquipmentForm = React.createClass({
                         <NewNormForm data={this.props.data} handleClose={this.closeNewNormForm}/>
                     </Modal.Body>
                 </Modal>
-
             </div>
         );
     }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Router, Route, IndexRoute, Link, hashHistory } from 'react-router'
+import {Router, Route, IndexRoute, Link, hashHistory} from 'react-router'
 import {Component} from 'react'
-import { render } from 'react-dom'
+import {render} from 'react-dom'
 import Equipment from './Components/Equipment';
 import Home from './Components/Home';
 import Campaign from './Components/Campaign';
@@ -44,60 +44,72 @@ import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
-
-
 const App = React.createClass({
     render() {
         return (
+			<div className="content">
+				<NotificationContainer/>
+				
+				<div className="row">
+					<ul className="pull-left">
+						<li><Link to='/home'>Home</Link></li>
+						<li><Link to='/campaign'>New Campaign</Link></li>
+						<li><Link to='/equipment'>Equipment</Link></li>
+						<li><Link to='/add_equipment'>Add Equipment</Link></li>
+						<li><Link to='/testlist'>Testlist</Link></li>
 
-            <div className="content">
-                <NotificationContainer/>
-                <div>
-                    <ul>
-                        <li><Link to='/home'>Home</Link></li>
-                        <li><Link to='/campaign'>New Campaign</Link></li>
-                        <li><Link to='/equipment'>Equipment</Link></li>
-                        <li><Link to='/add_equipment'>Add Equipment</Link></li>
-                        <li><Link to='/testlist'>Testlist</Link></li>
-                        <li><Link to='/add_test'>New Test</Link></li>
-                        <li><Link to='/edit_test/1'>Edit Test</Link></li>
-                        <li><Link to='/electro'>Electrical Profile</Link></li>
-                        <li><Link to='/fluid'>Fluid Profile</Link></li>
-                        <li><Link to='/choose_profile'>Choose Test Profile</Link></li>
-                        <li><Link to='/add_createdby'>created by</Link></li>
-                        <li><Link to='/add_contract'>contract</Link></li>
-                        <li><Link to='/add_lab'>lab</Link></li>
-                        <li><Link to='/add_material'>material</Link></li>
-                        <li><Link to='/add_fluid'>new fluid</Link></li>
-                        <li><Link to='/add_recommend'>recommend</Link></li>
-                        <li><Link to='/eq_type_add'>new eq type</Link></li>
-                        <li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
-                        <li><Link to='/eq_add_location'>new eq location</Link></li>
-                        <li><Link to='/eq_add_norm'>new eq norms</Link></li>
-                        <li><Link to='/bushing_test'>bushing test</Link></li>
-                        <li><Link to='/furan_test'>furan test</Link></li>
-                        <li><Link to='/fluid_test'>fluid test</Link></li>
-                        <li><Link to='/dissolved_test'>dissolved gas test</Link></li>
-                        <li><Link to='/inhibit_test'>inhibitor gas test</Link></li>
-                        <li><Link to='/insulation_test'>insulation test</Link></li>
-                        <li><Link to='/me_oil__test'>metals on oil test</Link></li>
-                        <li><Link to='/particle_test'>particles test</Link></li>
-                        <li><Link to='/pcb_test'>pcb test</Link></li>
-                        <li><Link to='/polymer_test'>polymer test</Link></li>
-                        <li><Link to='/transformer_test'>transformer test</Link></li>
-                        <li><Link to='/winding_test'>winding test</Link></li>
-                        <li><Link to='/visual_test'>visual test</Link></li>
-                        <li><Link to='/water_test'>water test</Link></li>
-                        <li><Link to='/winding2_test'>winding test2</Link></li>
-                    </ul>
-                    <Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
-
-                </div>
-                <div className='app-container'>
-                    <hr/>
-                    {this.props.children}
-                </div>
-            </div>
+					</ul>
+					<ul className="pull-left">
+						<li><Link to='/add_test'>New Test</Link></li>
+						<li><Link to='/edit_test/1'>Edit Test</Link></li>
+						<li><Link to='/electro'>Electrical Profile</Link></li>
+						<li><Link to='/fluid'>Fluid Profile</Link></li>
+						<li><Link to='/choose_profile'>Choose Test Profile</Link></li>
+					</ul>
+					<ul className="pull-left">
+						<li><Link to='/add_createdby'>created by</Link></li>
+						<li><Link to='/add_contract'>contract</Link></li>
+						<li><Link to='/add_lab'>lab</Link></li>
+						<li><Link to='/add_material'>material</Link></li>
+						<li><Link to='/add_fluid'>new fluid</Link></li>
+					</ul>
+					<ul className="pull-left">
+						<li><Link to='/add_recommend'>recommend</Link></li>
+						<li><Link to='/eq_type_add'>new eq type</Link></li>
+						<li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
+						<li><Link to='/eq_add_location'>new eq location</Link></li>
+						<li><Link to='/eq_add_norm'>new eq norms</Link></li>
+					</ul>
+					<ul className="pull-left">
+						<li><Link to='/bushing_test'>bushing test</Link></li>
+						<li><Link to='/furan_test'>furan test</Link></li>
+						<li><Link to='/fluid_test'>fluid test</Link></li>
+						<li><Link to='/dissolved_test'>dissolved gas test</Link></li>
+						<li><Link to='/inhibit_test'>inhibitor gas test</Link></li>
+					</ul>
+					<ul className="pull-left">
+						<li><Link to='/insulation_test'>insulation test</Link></li>
+						<li><Link to='/me_oil__test'>metals on oil test</Link></li>
+						<li><Link to='/particle_test'>particles test</Link></li>
+						<li><Link to='/pcb_test'>pcb test</Link></li>
+						<li><Link to='/polymer_test'>polymer test</Link></li>
+					</ul>
+					<ul className="pull-left">
+						<li><Link to='/transformer_test'>transformer test</Link></li>
+						<li><Link to='/winding_test'>winding test</Link></li>
+						<li><Link to='/visual_test'>visual test</Link></li>
+						<li><Link to='/water_test'>water test</Link></li>
+						<li><Link to='/winding2_test'>winding test2</Link></li>
+					</ul> 
+				</div>
+				<div className="row">
+					<Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
+				</div>
+				<div className='app-container'>
+					<hr/>
+					{this.props.children}
+				</div>
+			</div>
         )
     }
 });
@@ -105,42 +117,42 @@ const App = React.createClass({
 render((
     <Router history={hashHistory}>
         <Route path="/" component={App}>
-            <IndexRoute component={Home} />
-            <Route path="campaign" component={Campaign} />
-            <Route path="equipment" component={Equipment} />
-            <Route path="add_equipment/:campaign" component={AddEquipmentForm} />
-            <Route path="testlist/:campaign" component={TestList} />
-            <Route path="electro" component={ElectricalProfileForm} />
-            <Route path="fluid" component={FluidProfileForm} />
-            <Route path="choose_profile" component={ChooseTestForm} />
-            <Route path="add_test" component={NewTestForm} />
-            <Route path="edit_test/:id" component={NewTestForm} />
-            <Route path="add_createdby" component={CreatedByForm} />
-            <Route path="add_contract" component={NewContractForm} />
-            <Route path="add_lab" component={NewLabForm} />
-            <Route path="add_material" component={NewMaterialForm} />
-            <Route path="add_fluid" component={NewFluidForm} />
-            <Route path="add_recommend" component={NewRecommendationForm} />
-            <Route path="test_result" component={TestResultForm} />
-            <Route path="eq_type_add" component={NewEquipmentTypeForm} />
-            <Route path="eq_add_manufac" component={NewManufacturerForm} />
-            <Route path="eq_add_location" component={NewLocationForm} />
-            <Route path="eq_add_norm" component={NewNormForm} />
-            <Route path="bushing_test" component={NewBushingTestForm} />
-            <Route path="furan_test" component={NewFuranTestForm} />
-            <Route path="fluid_test" component={NewFluidTestForm} />
-            <Route path="dissolved_test" component={NewDissolvedGasTestForm} />
-            <Route path="inhibit_test" component={NewInhibitorTestForm} />
-            <Route path="insulation_test" component={NewInsulationResistanceTestForm} />
-            <Route path="me_oil__test" component={NewMetalsInOilTestForm} />
-            <Route path="particle_test" component={NewParticleTestForm} />
-            <Route path="pcb_test" component={NewPcbTestForm} />
-            <Route path="polymer_test" component={PolymerisationDegreeTestForm} />
-            <Route path="transformer_test" component={NewTransformerTestForm} />
-            <Route path="winding_test" component={NewWindingResistanceTestForm} />
-            <Route path="visual_test" component={VisualTestForm} />
-            <Route path="water_test" component={WaterTestForm} />
-            <Route path="winding2_test" component={WindingTestForm} />
+            <IndexRoute component={Home}/>
+            <Route path="campaign" component={Campaign}/>
+            <Route path="equipment" component={Equipment}/>
+            <Route path="add_equipment/:campaign" component={AddEquipmentForm}/>
+            <Route path="testlist/:campaign" component={TestList}/>
+            <Route path="electro" component={ElectricalProfileForm}/>
+            <Route path="fluid" component={FluidProfileForm}/>
+            <Route path="choose_profile" component={ChooseTestForm}/>
+            <Route path="add_test" component={NewTestForm}/>
+            <Route path="edit_test/:id" component={NewTestForm}/>
+            <Route path="add_createdby" component={CreatedByForm}/>
+            <Route path="add_contract" component={NewContractForm}/>
+            <Route path="add_lab" component={NewLabForm}/>
+            <Route path="add_material" component={NewMaterialForm}/>
+            <Route path="add_fluid" component={NewFluidForm}/>
+            <Route path="add_recommend" component={NewRecommendationForm}/>
+            <Route path="test_result" component={TestResultForm}/>
+            <Route path="eq_type_add" component={NewEquipmentTypeForm}/>
+            <Route path="eq_add_manufac" component={NewManufacturerForm}/>
+            <Route path="eq_add_location" component={NewLocationForm}/>
+            <Route path="eq_add_norm" component={NewNormForm}/>
+            <Route path="bushing_test" component={NewBushingTestForm}/>
+            <Route path="furan_test" component={NewFuranTestForm}/>
+            <Route path="fluid_test" component={NewFluidTestForm}/>
+            <Route path="dissolved_test" component={NewDissolvedGasTestForm}/>
+            <Route path="inhibit_test" component={NewInhibitorTestForm}/>
+            <Route path="insulation_test" component={NewInsulationResistanceTestForm}/>
+            <Route path="me_oil__test" component={NewMetalsInOilTestForm}/>
+            <Route path="particle_test" component={NewParticleTestForm}/>
+            <Route path="pcb_test" component={NewPcbTestForm}/>
+            <Route path="polymer_test" component={PolymerisationDegreeTestForm}/>
+            <Route path="transformer_test" component={NewTransformerTestForm}/>
+            <Route path="winding_test" component={NewWindingResistanceTestForm}/>
+            <Route path="visual_test" component={VisualTestForm}/>
+            <Route path="water_test" component={WaterTestForm}/>
+            <Route path="winding2_test" component={WindingTestForm}/>
 
 
         </Route>

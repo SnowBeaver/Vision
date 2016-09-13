@@ -5,7 +5,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
@@ -70,7 +70,7 @@ var NewLocationForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        // this.setState(this.getInitialState());
+        //this.setState(this.getInitialState());
         NotificationManager.success("Location added.");
     },
 
@@ -103,7 +103,13 @@ var NewLocationForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-            state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         state.changedFields = this.state.changedFields.concat([e.target.name]);
         state.errors = this.state.errors;
         delete state.errors[e.target.name];
@@ -129,38 +135,36 @@ var NewLocationForm = React.createClass({
     render: function () {
 
         return (
-            <div className="form-container">
-                    <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                        <div className="row">
-                            <div className="col-md-12">
-                                <FormGroup validationState={this.state.errors.name ? 'error' : null}>
-                                    <HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
-                                    <FormControl type="text"
-                                                 placeholder="Name"
-                                                 name="name"
-                                    />
-                                </FormGroup>
-                            </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-12 ">
-                                <Button bsStyle="success"
-                                        className="pull-right"
-                                        onClick={this.props.handleClose}
-                                        type="submit">Save</Button>
-                                &nbsp;
-                                <Button bsStyle="danger"
-                                        className="pull-right margin-right-xs"
-                                        onClick={this.props.handleClose}
-                                >Cancel</Button>
-                            </div>
-                        </div>
-                    </form>
-            </div>
+			<div className="form-container">
+				<form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+					<div className="row">
+						<div className="col-md-12">
+							<FormGroup validationState={this.state.errors.name ? 'error' : null}>
+								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+								<FormControl type="text"
+												placeholder="Name"
+												name="name"
+								/>
+							</FormGroup>
+						</div>
+					</div>
+					<div className="row">
+						<div className="col-md-12 ">
+							<Button bsStyle="success"
+									className="pull-right"
+									onClick={this.props.handleClose}
+									type="submit">Save</Button>
+							&nbsp;
+							<Button bsStyle="danger"
+									className="pull-right margin-right-xs"
+									onClick={this.props.handleClose}
+							>Cancel</Button>
+						</div>
+					</div>
+				</form>
+			</div>
         );
     }
 });
-
 
 export default NewLocationForm;

@@ -1,7 +1,6 @@
 import React from 'react';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import Modal from 'react-bootstrap/lib/Modal';
-import Button from 'react-bootstrap/lib/Button';
 import EquipmentTestForm from './EquipmentTestForm';
 
 
@@ -124,10 +123,6 @@ var TestResultForm = React.createClass({
                 <Modal show={this.state.showEquipmentTestForm}>
                     <EquipmentTestForm handleClose={this.closeEquipmentTestForm}
                                        selectedRowId={this.state.selectedRowId}/>
-                    <Modal.Footer>
-                        <Button bsStyle="primary" onClick={this.closeEquipmentTestForm}>Close</Button>
-                        <Button bsStyle="primary">Save changes</Button>
-                    </Modal.Footer>
                 </Modal>
             </div>
         );

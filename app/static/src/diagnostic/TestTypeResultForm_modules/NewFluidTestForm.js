@@ -5,15 +5,15 @@ import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -21,7 +21,7 @@ const TextField = React.createClass({
                              placeholder={label}
                              name={name}
                              value={value}
-                             />
+                />
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -31,10 +31,10 @@ const TextField = React.createClass({
 
 const CheckBox = React.createClass({
     render: function () {
-        var name = (this.props.name != null) ? this.props.name: "";
+        var name = (this.props.name != null) ? this.props.name : "";
         return (
             <Checkbox name={name}>
-                <span className="glyphicon glyphicon-menu-left" >
+                <span className="glyphicon glyphicon-menu-left">
                 </span>
             </Checkbox>
         );
@@ -50,10 +50,10 @@ var NewFluidTestForm = React.createClass({
             loading: false,
             errors: {},
             fields: [
-                'dielectric_1816', 'dielectric_1816_2','dielectric_877', 'dielectric_iec_156',
-                'dielectric_1816_flag', 'dielectric_1816_2_flag','dielectric_877_flag', 'dielectric_iec_156_flag',
+                'dielectric_1816', 'dielectric_1816_2', 'dielectric_877', 'dielectric_iec_156',
+                'dielectric_1816_flag', 'dielectric_1816_2_flag', 'dielectric_877_flag', 'dielectric_iec_156_flag',
                 'acidity', 'color', 'ift', 'visual', 'density', 'pf20c', 'pf100c', 'sludge', 'aniline_point',
-                'corrosive_sulfur', 'viscosity', 'flash_point','pour_point'
+                'corrosive_sulfur', 'viscosity', 'flash_point', 'pour_point'
             ],
         }
     },
@@ -89,14 +89,14 @@ var NewFluidTestForm = React.createClass({
             type = 'PUT';
         }
         return $.ajax({
-                url: url,
-                type: type,
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                beforeSend: function () {
-                    this.setState({loading: true});
-                }.bind(this)
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
         })
     },
 
@@ -140,7 +140,13 @@ var NewFluidTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -173,14 +179,16 @@ var NewFluidTestForm = React.createClass({
                             <CheckBox name="dielectric_1816_flag"/>
                         </div>
                         <div className="col-md-5">
-                            <TextField label="Dielec. D1816(1mm)(Kv)" name="dielectric_1816" value={this.state.dielectric_1816}/>
+                            <TextField label="Dielec. D1816(1mm)(Kv)" name="dielectric_1816"
+                                       value={this.state.dielectric_1816}/>
                         </div>
                         <div className="col-md-1 ">
                             <CheckBox name="dielectric_1816_2_flag"/>
                         </div>
 
                         <div className="col-md-5">
-                            <TextField label="Dielec. D1816(2mm)(Kv)" name="dielectric_1816_2" value={this.state.dielectric_1816_2}/>
+                            <TextField label="Dielec. D1816(2mm)(Kv)" name="dielectric_1816_2"
+                                       value={this.state.dielectric_1816_2}/>
                         </div>
                     </div>
 
@@ -190,13 +198,15 @@ var NewFluidTestForm = React.createClass({
                             <CheckBox name="dielectric_877_flag"/>
                         </div>
                         <div className="col-md-5">
-                            <TextField label="Dielec. D877(Kv)" name="dielectric_877" value={this.state.dielectric_877}/>
+                            <TextField label="Dielec. D877(Kv)" name="dielectric_877"
+                                       value={this.state.dielectric_877}/>
                         </div>
                         <div className="col-md-1 ">
                             <CheckBox name="dielectric_iec_156_flag"/>
                         </div>
                         <div className="col-md-5">
-                            <TextField label="Dielec. IEC-156(Kv)" name="dielectric_iec_156" value={this.state.dielectric_iec_156}/>
+                            <TextField label="Dielec. IEC-156(Kv)" name="dielectric_iec_156"
+                                       value={this.state.dielectric_iec_156}/>
                         </div>
                     </div>
 
@@ -239,7 +249,8 @@ var NewFluidTestForm = React.createClass({
 
                     <div className="row">
                         <div className="col-md-3">
-                            <TextField label="Aniline Point(D611)" name="aniline_point" value={this.state.aniline_point}/>
+                            <TextField label="Aniline Point(D611)" name="aniline_point"
+                                       value={this.state.aniline_point}/>
                         </div>
                         <div className="col-md-3">
                             <TextField label="Viscosity(D88)" name="viscosity" value={this.state.viscosity}/>
@@ -254,10 +265,11 @@ var NewFluidTestForm = React.createClass({
                         </div>
                     </div>
 
-                    
+
                     <div className="row">
                         <div className="col-md-6 col-md-offset-3">
-                            <TextField label="Corrosive Sulfur(D1275)" name="corrosive_sulfur" value={this.state.corrosive_sulfur}/>
+                            <TextField label="Corrosive Sulfur(D1275)" name="corrosive_sulfur"
+                                       value={this.state.corrosive_sulfur}/>
                         </div>
                     </div>
 

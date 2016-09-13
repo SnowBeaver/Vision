@@ -4,16 +4,15 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
-        var active = (this.props.active != null) ? "disabled" : "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
 
         return (
             <FormGroup>
@@ -48,11 +47,14 @@ var NewInsulationResistanceTestForm = React.createClass({
         this.serverRequest = $.get(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
+                var fields = this.state.fields;
+                fields.push('id');
                 var data = res[0];
-                var state = {data: data};
-                for (var k in data) {
-                    if (data.hasOwnProperty(k)) {
-                        state[k] = data[k];
+                var state = {};
+                for (var i = 0; i < fields.length; i++) {
+                    var key = fields[i];
+                    if (data.hasOwnProperty(key)) {
+                        state[key] = data[key];
                     }
                 }
                 this.setState(state);
@@ -64,18 +66,16 @@ var NewInsulationResistanceTestForm = React.createClass({
         var fields = this.state.fields;
         var data = {test_result_id: this.props.testResultId};
         var url = '/api/v1.0/' + this.props.tableName + '/';
-        var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
         }
         if ('id' in this.state) {
             url += this.state['id'];
-            type = 'PUT';
         }
         return $.ajax({
             url: url,
-            type: type,
+            type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -124,7 +124,13 @@ var NewInsulationResistanceTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        state[e.target.name] = $.trim(e.target.value);
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
         this.setState(state);
     },
 
@@ -167,10 +173,10 @@ var NewInsulationResistanceTestForm = React.createClass({
                             <TextField label="Multiplier" name="multiplier1" value={this.state.multiplier1}/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Measured" name="" value="" />
+                            <TextField label="Measured" name="" value=""/>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="Corr. 20C" name="" value="" />
+                            <TextField label="Corr. 20C" name="" value=""/>
                         </div>
                     </div>
 

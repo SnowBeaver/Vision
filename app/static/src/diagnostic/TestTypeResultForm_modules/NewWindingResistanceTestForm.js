@@ -7,246 +7,166 @@ import Radio from 'react-bootstrap/lib/Radio';
 import Panel from 'react-bootstrap/lib/Panel';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import {findDOMNode} from 'react-dom';
-import { hashHistory } from 'react-router';
+import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 
 
+const TextField = React.createClass({
+    render: function() {
+        var label = (this.props.label != null) ? this.props.label: "";
+        var name = (this.props.name != null) ? this.props.name: "";
+        var value = (this.props.value != null) ? this.props.value: "";
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                             onChange={this.props.onChange}
+                />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
 
 var PrimaryWindingTestPanel = React.createClass({
-
+    _onChange: function (e) {
+        this.props.onChange(this.props.testId, e.target.name, e.target.value);
+    },
+    // handleFieldChange: function(name, value) {
+    // _onChange: function(name, value) {
+    //     this.props.onChange(this.props.testId, name, value);
+    // },
 
     render: function () {
+        var data = (this.props.data != null) ? this.props.data: {};
         return(
-            <div>
+            <div className="form-container">
                 <div className="row">
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>H1-H2</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="mesure1"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="mesure1"
+                                   label="H1-H2"
+                                   value={data.mesure1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature(C)</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="temp1"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="temp1"
+                                   label="Temperature(C)"
+                                   value={data.temp1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="corr1"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="corr1"
+                                   label="Corr. 75C"
+                                   value={data.corr1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>H2-H3</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="mesure2"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="mesure2"
+                                   label="H2-H3"
+                                   value={data.mesure2}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature(C)</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="temp2"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="temp2"
+                                   label="Temperature(C)"
+                                   value={data.temp2}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="corr2"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="corr2"
+                                   label="Corr. 75C"
+                                   value={data.corr2}/>
                     </div>
                 </div>
 
                 <div className="row">
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>H3-H1</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="mesure3"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="mesure3"
+                                   label="H3-H1"
+                                   value={data.mesure3}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="temp3"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="temp3"
+                                   label="Temperature"
+                                   value={data.temp3}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="corr3"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="corr3"
+                                   label="Corr. 75C"
+                                   value={data.corr3}/>
                     </div>
                     <div className="col-md-3">
-                        <FormGroup>
-                            <ControlLabel>Winding</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="0.0"
-                                         name="winding"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="winding"
+                                   label="Winding"
+                                   value={data.winding}/>
                     </div>
                     <div className="col-md-3">
-                        <FormGroup>
-                            <ControlLabel>Tap Position</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="0.0"
-                                         name="tap_position"
-                            />
-                        </FormGroup>
+                        <TextField onChange={this._onChange}
+                                   name="tap_position"
+                                   label="Tap Position"
+                                   value={data.tap_position}/>
                     </div>
-
                 </div>
             </div>
         )
     }
-
-
 });
 
 
 var SecondaryWindingTestPanel = React.createClass({
-
-
     render: function () {
-        return(
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>X1-X2</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="mesure1"
-                            />
-                        </FormGroup>
+                        <TextField name="mesure1" label="X1-X2" value={this.state.mesure1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature(C)</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="temp1"
-                            />
-                        </FormGroup>
+                        <TextField name="temp1" label="Temperature(C)" value={this.state.temp1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="corr1"
-                            />
-                        </FormGroup>
+                        <TextField name="corr1" label="Corr. 75C" value={this.state.corr1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>X2-X3</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="mesure2"
-                            />
-                        </FormGroup>
+                        <TextField name="mesure2" label="X2-X3" value={this.state.mesure2}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature(C)</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="temp2"
-                            />
-                        </FormGroup>
+                        <TextField name="temp2" label="Temperature(C)" value={this.state.temp2}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="corr2"
-                            />
-                        </FormGroup>
+                        <TextField name="corr2" label="Corr. 75C" value={this.state.corr2}/>
                     </div>
                 </div>
 
                 <div className="row">
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>X3-X1</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="mesure3"
-                            />
-                        </FormGroup>
+                        <TextField name="mesure3" label="X3-X1" value={this.state.mesure3}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="temp3"
-                            />
-                        </FormGroup>
+                        <TextField name="temp3" label="Temperature" value={this.state.temp3}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="corr3"
-                            />
-                        </FormGroup>
+                        <TextField name="corr3" label="Corr. 75C" value={this.state.corr3}/>
                     </div>
                     <div className="col-md-3">
-                        <FormGroup>
-                            <ControlLabel>Winding</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="0.0"
-                                         name="winding"
-                            />
-                        </FormGroup>
+                        <TextField name="winding" label="Winding" value={this.state.winding}/>
                     </div>
                     <div className="col-md-3">
-                        <FormGroup>
-                            <ControlLabel>Tap Position</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="0.0"
-                                         name="tap_position"
-                            />
-                        </FormGroup>
+                        <TextField name="tap_position" label="Tap Position" value={this.state.tap_position}/>
                     </div>
 
                 </div>
             </div>
         )
     }
-
-
 });
 
 
@@ -254,110 +174,44 @@ var TertiaryWindingTestPanel = React.createClass({
 
 
     render: function () {
-        return(
+        return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>X1-X2</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="mesure1"
-                            />
-                        </FormGroup>
+                        <TextField name="mesure1" label="X1-X2" value={this.state.mesure1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature(C)</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="temp1"
-                            />
-                        </FormGroup>
+                        <TextField name="temp1" label="Temperature(C)" value={this.state.temp1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase1"
-                                         name="corr1"
-                            />
-                        </FormGroup>
+                        <TextField name="corr1" label="Corr. 75C" value={this.state.corr1}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>X2-X3</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="mesure2"
-                            />
-                        </FormGroup>
+                        <TextField name="mesure2" label="X2-X3" value={this.state.mesure2}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature(C)</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="temp2"
-                            />
-                        </FormGroup>
+                        <TextField name="temp2" label="Temperature(C)" value={this.state.temp2}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase2"
-                                         name="corr2"
-                            />
-                        </FormGroup>
+                        <TextField name="corr2" label="Corr. 75C" value={this.state.corr2}/>
                     </div>
                 </div>
 
                 <div className="row">
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>X3-X1</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="mesure3"
-                            />
-                        </FormGroup>
+                        <TextField name="mesure3" label="X3-X1" value={this.state.mesure3}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Temperature</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="temp3"
-                            />
-                        </FormGroup>
+                        <TextField name="temp3" label="Temperature" value={this.state.temp3}/>
                     </div>
                     <div className="col-md-2">
-                        <FormGroup>
-                            <ControlLabel>Corr. 75C</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="Phase3"
-                                         name="corr3"
-                            />
-                        </FormGroup>
+                        <TextField name="corr3" label="Corr. 75C" value={this.state.corr3}/>
                     </div>
                     <div className="col-md-3">
-                        <FormGroup>
-                            <ControlLabel>Winding</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="0.0"
-                                         name="winding"
-                            />
-                        </FormGroup>
+                        <TextField name="winding" label="Winding" value={this.state.winding}/>
                     </div>
                     <div className="col-md-3">
-                        <FormGroup>
-                            <ControlLabel>Tap Position</ControlLabel>
-                            <FormControl type="text"
-                                         placeholder="0.0"
-                                         name="tap_position"
-                            />
-                        </FormGroup>
+                        <TextField name="tap_position" label="Tap Position" value={this.state.tap_position}/>
                     </div>
 
                 </div>
@@ -365,12 +219,10 @@ var TertiaryWindingTestPanel = React.createClass({
         )
     }
 
-
 });
 
 
 var NewWindingResistanceTestForm = React.createClass({
-
     getInitialState: function () {
         return {
             loading: false,
@@ -378,25 +230,54 @@ var NewWindingResistanceTestForm = React.createClass({
             showPrimaryWindingTestPanel: true,
             showSecondaryWindingTestPanel: false,
             showTertiaryWindingTestPanel: false,
+            tests: {'1': {}},
             errors: {},
             fields: [
-                'temp1', 'corr1', 'measure1', 'temp2', 'corr2', 'measure2',
-                'temp3', 'corr3', 'measure3', 'winding', 'tap_position'
+                'temp1', 'corr1', 'mesure1', 'temp2', 'corr2', 'mesure2',
+                'temp3', 'corr3', 'mesure3', 'winding', 'tap_position'
 
             ]
         }
     },
 
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
+        this.serverRequest = $.get(source, function (result) {
+            var res = (result['result']);
+            var fields = this.state.fields;
+            fields.push('id');
+            var tests = {};
+            for (var i = 1; i <= res.length; i++) {
+                var test = {};
+                var data = res[i-1];
+                for (var j = 0; j < fields.length; j++) {
+                    var key = fields[j];
+                    if (data.hasOwnProperty(key)) {
+                        test[key] = data[key];
+                    }
+                }
+                tests[i.toString()] = test;
+            }
+            this.setState({numberOfTaps: res.length, tests: tests});
+        }.bind(this), 'json');
+    },
+
     _create: function () {
         var fields = this.state.fields;
-        var data = {};
-        for (var i = 0; i < fields.length; i++) {
-            var key = fields[i];
-            data[key] = this.state[key];
+        var numberOfTaps = this.state.numberOfTaps;
+        var tests = this.state.tests;
+        var data = [];
+        for (var i = 1; i <= numberOfTaps; i++) {
+            var test = {test_result_id: this.props.testResultId};
+            var tap = tests[i.toString()];
+            for (var j = 0; j < fields.length; j++) {
+                var key = fields[j];
+                test[key] = tap[key];
+            }
+            data.push(test)
         }
-
         return $.ajax({
-            url: '/api/v1.0/winding_resistance_test/',
+            url: '/api/v1.0/test_result/multi/' + this.props.tableName,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -446,33 +327,38 @@ var NewWindingResistanceTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
+       var state = {};
+       if (e.target.type == 'checkbox') {
+           state[e.target.name] = e.target.checked;
+       }
+       else if (e.target.type == 'radio') {
+           state[e.target.name] = e.target.value;
+       }
+       else if (e.target.type == 'select-one') {
+           state[e.target.name] = e.target.value;
+       }
+       else {
+           state[e.target.name] = $.trim(e.target.value);
+       }
+       this.setState(state);
+   },
 
+    _onFilterChange: function (e) {
+        var state = {
+            showPrimaryWindingTestPanel: false,
+            showSecondaryWindingTestPanel: false,
+            showTertiaryWindingTestPanel: false
+        };
         if (e.target.id === 'primary') {
-            this.setState({
-                showPrimaryWindingTestPanel: true,
-                showSecondaryWindingTestPanel: false,
-                showTertiaryWindingTestPanel: false
-            })
+            state['showPrimaryWindingTestPanel'] = true;
         }
         else if (e.target.id === 'secondary') {
-            this.setState({
-                showPrimaryWindingTestPanel: false,
-                showSecondaryWindingTestPanel: true,
-                showTertiaryWindingTestPanel: false
-            })
+            state['showSecondaryWindingTestPanel'] = true;
         }
         else if (e.target.id === 'tertiary') {
-            this.setState({
-                showPrimaryWindingTestPanel: false,
-                showSecondaryWindingTestPanel: false,
-                showTertiaryWindingTestPanel: true
-            })
+            state['showTertiaryWindingTestPanel'] = true;
         }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
         this.setState(state);
-        }
     },
 
     _validate: function () {
@@ -494,33 +380,45 @@ var NewWindingResistanceTestForm = React.createClass({
         return className;
     },
 
-
+    handleFieldChange: function(testId, name, value) {
+        // {1: {'a': 1, 'b':2} 2: {'a': 3, 'b':4}}
+        var tests = this.state.tests;
+        var fieldNameValue = this.state.tests[testId] || {};
+        fieldNameValue[name] = value;
+        tests[testId] = fieldNameValue;
+        this.setState({tests: tests});
+        // this.setState({
+        //     tests: update(this.state.tests, {testId: {name: {$set: value}}})
+        // })
+      },
 
     onClickTapAdd: function () {
-
         this.setState({
-            numberOfTaps : this.state.numberOfTaps + 1
+            numberOfTaps: this.state.numberOfTaps + 1
         });
     },
 
     onClickTapRemove: function () {
-
         this.setState({
-            numberOfTaps : this.state.numberOfTaps - 1
+            numberOfTaps: this.state.numberOfTaps - 1
         });
     },
 
-
     render: function () {
-
         var windings=[];
         var numberOfTaps= this.state.numberOfTaps;
         for(var i=1; i<=numberOfTaps; i++){
             var headName = "Primary Winding " + i;
+            var props = {
+                testId: i.toString(),
+                onChange: this.handleFieldChange,
+                data: this.state.tests[i.toString()]
+            };
             windings.push(
                 <Panel header={headName}
+                       key={"primary_winding_" + i}
                        eventKey={i}>
-                    <PrimaryWindingTestPanel/>
+                    <PrimaryWindingTestPanel {...props}/>
                 </Panel>);
         }
 
@@ -528,7 +426,6 @@ var NewWindingResistanceTestForm = React.createClass({
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-
                     <div className="row">
                         <PanelGroup defaultActiveKey={this.state.eventKey=1} accordion>
                             {windings}
@@ -550,22 +447,19 @@ var NewWindingResistanceTestForm = React.createClass({
                             </div>
                         </div>
                     </div>
-
-
                     <div className="row">
                         <div className="col-md-offset-7">
                             <div className="col-md-3" >
-                                <Radio name="filter" id="primary" onClick={this._onChange}>Primary(H)</Radio>
+                                <Radio name="filter" id="primary" onClick={this._onFilterChange}>Primary(H)</Radio>
                             </div>
                             <div className="col-md-3" >
-                                <Radio name="filter" id="secondary" onClick={this._onChange} >Secondary(X)</Radio>
+                                <Radio name="filter" id="secondary" onClick={this._onFilterChange} >Secondary(X)</Radio>
                             </div>
                             <div className="col-md-3" >
-                                <Radio name="filter"id="tertiary" onClick={this._onChange} >Tertiary(T)</Radio>
+                                <Radio name="filter" id="tertiary" onClick={this._onFilterChange} >Tertiary(T)</Radio>
                             </div>
                         </div>
                     </div>
-
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"

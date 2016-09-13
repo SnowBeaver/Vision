@@ -1,7 +1,7 @@
 import React from 'react';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Panel from 'react-bootstrap/lib/Panel';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
@@ -65,8 +65,9 @@ var TestProfileSelectField = React.createClass({
     render: function () {
         var options = [];
         for (var key in this.state.items) {
-            var index = Math.random() + '_'+ this.state.items[key].id;
-            options.push(<option key={index} value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+            var index = Math.random() + '_' + this.state.items[key].id;
+            options.push(<option key={index}
+                                 value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -110,10 +111,11 @@ const ElectricalProfileForm = React.createClass({
         }
     },
 
-    componentDidMount: function(){
+    componentDidMount: function () {
         //test_result_id
     },
-    fillUpForm: function(saved_data){
+
+    fillUpForm: function (saved_data) {
 
         if (null == saved_data) {
             this.refs.electrical_profile.reset();
@@ -127,15 +129,15 @@ const ElectricalProfileForm = React.createClass({
     _save: function () {
         var fields = this.state.fields;
         var data = {};
-        for (var i=0;i<fields.length;i++){
-            var key= fields[i];
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
             data[key] = this.state[key];
         }
         this.setState({
             form: data
         });
 
-        // save part to test_result 
+        // save part to test_result
         $.ajax({
             url: '/api/v1.0/test_result/' + this.props.data.id,
             type: 'POST',
@@ -143,6 +145,7 @@ const ElectricalProfileForm = React.createClass({
             contentType: 'application/json',
             data: JSON.stringify(this.state.form),
             success: function (data, textStatus) {
+                this.props.handleClose();
                 NotificationManager.success('Profile saved successfully');
             },
             beforeSend: function () {
@@ -193,13 +196,13 @@ const ElectricalProfileForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.refs.electrical_profile.getDOMNode().reset();
-        // this.setState(this.getInitialState()); 
+        // this.setState(this.getInitialState());
     },
 
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
-        if(res.message) {
+        if (res.message) {
             message = data.responseJSON.message;
         }
         if (res.error) {
@@ -220,17 +223,14 @@ const ElectricalProfileForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-        if(e.target.type == 'checkbox'){
+        if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
-        }
-        else if(e.target.type == 'select-one'){
+        } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        }
-        else if(e.target.type == 'radio'){
+        } else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
-        }
-        else{
-            state[e.target.name] = $.trim(e.target.value);
+        } else {
+            state[e.target.name] = e.target.value;
         }
         this.setState(state);
     },
@@ -244,17 +244,18 @@ const ElectricalProfileForm = React.createClass({
     },
     _formGroupClass: function (field) {
         var className = "form-group ";
-        if(field) {
+        if (field) {
             className += " has-error"
         }
         return className;
     },
 
 
-    render:function (){
-        return(
+    render: function () {
+        return (
             <div className="form-container">
-                <form ref="electrical_profile" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                <form ref="electrical_profile" method="post" action="#" onSubmit={this._onSubmit}
+                      onChange={this._onChange}>
                     <div className="maxwidth">
                         <Panel header="Electrical profile test parametres">
                             <div className="row">
@@ -262,7 +263,8 @@ const ElectricalProfileForm = React.createClass({
                                 </div>
                                 <div className="col-md-3">
                                     <FormGroup>
-                                        <TestProfileSelectField fillUpForm={this.fillUpForm} source="/api/v1.0/electrical_profile"/>
+                                        <TestProfileSelectField fillUpForm={this.fillUpForm}
+                                                                source="/api/v1.0/electrical_profile"/>
                                     </FormGroup>
                                 </div>
                             </div>
@@ -373,9 +375,9 @@ const ElectricalProfileForm = React.createClass({
                                         <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
                                         <Button bsStyle="danger"
                                                 onClick={this.props.handleClose}
-                                                className="pull-right margin-right-xs">Cancel</Button>
+                                                className="pull-right margin-right-xs">Close</Button>
                                     </div>
-                                </div> 
+                                </div>
                             </div>
                         </Panel>
                     </div>

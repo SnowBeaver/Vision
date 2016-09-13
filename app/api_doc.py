@@ -1105,7 +1105,7 @@ doc = ApiDoc(app=api)
         "result": {
             "id": 1,
             "campaign_id": 1,
-            "reason_id": 1,
+            "test_reason_id": 1,
             "date_analyse": [
                 "2016-07-29",
                 "17:52:19"
@@ -1119,8 +1119,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}   id
 @apiSuccess {Integer}   campaign_id
 @apiSuccess {Dict}      campaign            see: campaign->get an item
-@apiSuccess {Integer}   reason_id
-@apiSuccess {Dict}      reason              see: reason->get an item
+@apiSuccess {Integer}   test_reason_id
+@apiSuccess {Dict}      test_reason         see: reason->get an item
 @apiSuccess {DateTime}  date_analyse
 @apiSuccess {Integer}   test_type_id
 @apiSuccess {Dict}      test_type           see: test_type->get an item
@@ -1211,11 +1211,11 @@ doc = ApiDoc(app=api)
 @apiGroup test_result
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"campaign_id":1, "reason_id": 5, "test_type_id": 1, "date_analyse": "2016-07-29 17:52:19"}' \
+         -d '{"campaign_id":1, "test_reason_id": 5, "test_type_id": 1, "date_analyse": "2016-07-29 17:52:19"}' \
          http://localhost:8001/api/v1.0/test_result/
 
 @apiParam {Integer}   campaign_id       required
-@apiParam {Integer}   reason_id
+@apiParam {Integer}   test_reason_id
 @apiParam {DateTime}  date_analyse      format "2016-07-29 17:52:19"
 @apiParam {Integer}   test_type_id
 @apiParam {Integer}   sampling_point_id
@@ -4304,7 +4304,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}    tap_changer_pressure_unit_id
 @apiSuccess {Float}      tap_changer_tap_position
 @apiSuccess {Integer}    tap_changer_overpressure_valve_id
-@apiSuccess {Integer}    tap_changer_ampling_valve_id
+@apiSuccess {Integer}    tap_changer_sampling_valve_id
 @apiSuccess {Integer}    tap_changer_operation_counter
 @apiSuccess {Integer}    tap_changer_counter_id
 @apiSuccess {Integer}    tap_changer_filter_id
@@ -4367,7 +4367,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}    tap_changer_pressure_unit_id
 @apiParam   {Float}    tap_changer_tap_position
 @apiParam   {Integer}    tap_changer_overpressure_valve_id
-@apiParam   {Integer}    tap_changer_ampling_valve_id
+@apiParam   {Integer}    tap_changer_sampling_valve_id
 @apiParam   {Integer}    tap_changer_operation_counter
 @apiParam   {Integer}    tap_changer_counter_id
 @apiParam   {Integer}    tap_changer_filter_id
