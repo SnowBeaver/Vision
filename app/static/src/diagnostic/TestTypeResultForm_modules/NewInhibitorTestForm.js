@@ -8,6 +8,8 @@ import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 const TextField = React.createClass({
@@ -16,13 +18,15 @@ const TextField = React.createClass({
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
+                             data-type={this.props["data-type"]}
                 />
+                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -81,7 +85,7 @@ var SelectField = React.createClass({
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
@@ -89,6 +93,7 @@ var SelectField = React.createClass({
                              value={value}
                              >
                     {menuItems}
+                    <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                     <FormControl.Feedback />
                 </FormControl>
             </FormGroup>
@@ -156,12 +161,10 @@ var NewInhibitorTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this.is_valid()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -186,38 +189,99 @@ var NewInhibitorTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
-       var state = {};
-       if (e.target.type == 'checkbox') {
-           state[e.target.name] = e.target.checked;
-       }
-       else if (e.target.type == 'radio') {
-           state[e.target.name] = e.target.value;
-       }
-       else if (e.target.type == 'select-one') {
-           state[e.target.name] = e.target.value;
-       }
-       else {
-           state[e.target.name] = $.trim(e.target.value);
-       }
-       this.setState(state);
+        var state = {};
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        }
+        else if (e.target.type == 'radio') {
+            state[e.target.name] = e.target.value;
+        }
+        else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        }
+        else {
+            state[e.target.name] = $.trim(e.target.value);
+        }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
+        this.setState(state);
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (errors.length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    is_valid: function () {
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
+        }
+        return response;
     },
 
     _formGroupClass: function (field) {
@@ -239,7 +303,8 @@ var NewInhibitorTestForm = React.createClass({
                                     <CheckBox name="inhibitor_flag" value={this.state.inhibitor_flag}/>
                                 </div>
                                 <div className="col-xs-6">
-                                    <TextField label="Inhibitor" name="inhibitor" value={this.state.inhibitor}/>
+                                    <TextField label="Inhibitor" name="inhibitor" value={this.state.inhibitor}
+                                               errors={this.state.errors} data-type="float"/>
                                 </div>
                             </div>
                             <div className="row">
@@ -247,17 +312,20 @@ var NewInhibitorTestForm = React.createClass({
                                     <SelectField label="Inhibitor Type"
                                                  name="inhibitor_type_id"
                                                  value={this.state.inhibitor_type_id}
-                                                 source="inhibitor_type"/>
+                                                 source="inhibitor_type"
+                                                 errors={this.state.errors}/>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-xs-7">
-                                    <FormGroup>
+                                    <FormGroup validationState={this.state.errors.remark ? 'error' : null}>
                                         <FormControl componentClass="textarea"
                                                      placeholder="Remark"
                                                      name="remark"
                                                      value={this.state.remark}
+                                                     data-len="80"
                                         />
+                                        <HelpBlock className="warning">{this.state.errors.remark}</HelpBlock>
                                         <FormControl.Feedback />
                                     </FormGroup>
                                 </div>
@@ -266,11 +334,11 @@ var NewInhibitorTestForm = React.createClass({
 
                         <div className="col-md-4">
                             <Panel header="Calculation of inhibitor quantity to add to the transformer">
-                                <TextField label="Final inhibitor concentration(ppm)" name="" value=""/>
-                                <TextField label="Aditive mixture concetration(% v/v)" name="" value=""/>
-                                <TextField label="Required quantity of additive(liters)" disabled name="" value=""/>
-                                <TextField label="Required dry crystal weight(kg)" disabled name="" value=""/>
-                                <TextField label="Equipment oil volume(liters)" disabled name="" value=""/>
+                                <TextField label="Final inhibitor concentration(ppm)" name="" value="" errors={{}}/>
+                                <TextField label="Aditive mixture concetration(% v/v)" name="" value="" errors={{}}/>
+                                <TextField label="Required quantity of additive(liters)" disabled name="" value="" errors={{}}/>
+                                <TextField label="Required dry crystal weight(kg)" disabled name="" value="" errors={{}}/>
+                                <TextField label="Equipment oil volume(liters)" disabled name="" value="" errors={{}}/>
                             </Panel>
                         </div>
                     </div>

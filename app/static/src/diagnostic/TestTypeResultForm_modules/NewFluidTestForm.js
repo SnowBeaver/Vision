@@ -23,6 +23,7 @@ const TextField = React.createClass({
                              name={name}
                              value={value}
                              data-type={this.props["data-type"]}
+                             data-len={this.props["data-len"]}
                 />
                 <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
@@ -105,7 +106,7 @@ var NewFluidTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this._validate()){
+        if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
             e.stopPropagation();
             return false;
@@ -161,27 +162,9 @@ var NewFluidTestForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
-        var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
-    },
-
-    _validateFieldType: function (value, type){
-        var errors = {};
-        var errorMessages = {
-            "float": "Invalid float value",
-            "string_maxlength_25": "Value should be maximum 25 characters long"
-        };
-        if (type != undefined && value){
-            var typePatterns = {
-                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
-                "string_maxlength_25": /^\S{0,25}$/
-            };
-            if (!typePatterns[type].test(value)){
-                errors = errorMessages[type];
-            }
-        }
-        return errors;
     },
 
     _updateFieldErrors: function (fieldName, state, errors){
@@ -196,7 +179,44 @@ var NewFluidTestForm = React.createClass({
         return state;
     },
 
-    _validate: function () {
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
+        return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    is_valid: function () {
         var response = true;
         if (Object.keys(this.state.errors).length > 0){
             response = false;
@@ -270,7 +290,7 @@ var NewFluidTestForm = React.createClass({
                         </div>
                         <div className="col-md-3">
                             <TextField label="Visual(D1524)" name="visual" value={this.state.visual}
-                                       errors={this.state.errors} data-type="string_maxlength_25"/>
+                                       errors={this.state.errors} data-len="25"/>
                         </div>
                     </div>
 
@@ -324,7 +344,7 @@ var NewFluidTestForm = React.createClass({
                         <div className="col-md-6 col-md-offset-3">
                             <TextField label="Corrosive Sulfur(D1275)" name="corrosive_sulfur"
                                        value={this.state.corrosive_sulfur} errors={this.state.errors}
-                                       data-type="string_maxlength_25"/>
+                                       data-len="25"/>
                         </div>
                     </div>
 
