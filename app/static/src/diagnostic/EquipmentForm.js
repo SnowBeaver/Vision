@@ -1131,7 +1131,6 @@ const EquipmentForm = React.createClass({
                                     placeholder="Equipment number"
                                     name="equipment_number"
                                     value={this.state.equipment_number}
-                                    data-type="int"
                                     required
                                 />
                             </FormGroup>
