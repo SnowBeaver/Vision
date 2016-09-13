@@ -9,15 +9,16 @@ import {Link} from 'react-router';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
-const TextField = React.createClass({
+var TextField = React.createClass({ 
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var state = (typeof this.props.errors != 'undefined') ? this.props.errors[name] : null;
         return (
-            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
+            <FormGroup validationState={state}>
                 <ControlLabel>{label}</ControlLabel>
-                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
+                <HelpBlock className="warning">{state}</HelpBlock>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
@@ -166,9 +167,9 @@ var NewBushingTestForm = React.createClass({
             var typePatterns = {
                 "int": /^(-|\+)?(0|[1-9]\d*)$/
             };
-            if (!typePatterns[type].test(value)){
-                errors = "Invalid " + type + " value";
-            }
+            // if (!typePatterns[type].test(value)){
+            //     errors = "Invalid " + type + " value";
+            // }
         }
         return errors;
     },

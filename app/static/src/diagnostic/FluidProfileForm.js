@@ -309,49 +309,44 @@ const FluidProfileForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        this.setState({
-            form: data
-        });
-
-        // save part to test_result
-        $.ajax({
-            url: '/api/v1.0/test_result/' + this.props.data.id,
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(this.state.form),
-            success: function (data, textStatus) {
-                this.props.handleClose();
-                NotificationManager.success('Profile saved successfully');
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        });
+        data['campaign_id'] = this.props.data.campaign_id;
+        data['equipment_id'] = this.props.data.equipment_id;
 
         // show success message
         // if update a profile
         if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
             var url = '/api/v1.0/fluid_profile/';
-            if (this.state.data.id) {
-                url = url + this.state.data.id;
+            if (this.props.data.fluid_profile_id) {
+                url = url + this.props.data.fluid_profile_id;
             }
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            return $.ajax({
+            $.ajax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(data),
+                data: JSON.stringify(this.state.data),
                 success: function (data, textStatus) {
+                    NotificationManager.success('Profile saved successfully');
                 },
                 beforeSend: function () {
                     this.setState({loading: true});
                 }.bind(this)
             });
         }
+
+        return $.ajax({
+            url: '/api/v1.0/test_result/' + this.props.data.id,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        });
     },
 
     _onSubmit: function (e) {
@@ -371,6 +366,9 @@ const FluidProfileForm = React.createClass({
     },
 
     _onSuccess: function (data) {
+        NotificationManager.success('Test updated successfully');
+        this.props.handleClose();
+        this.hideLoading();
     },
 
     _onError: function (data) {

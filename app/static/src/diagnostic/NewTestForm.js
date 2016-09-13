@@ -68,7 +68,7 @@ var TestProfileSelectField = React.createClass({
                     placeholder="select"
                     value={this.state.value}
                     onChange={this.handleChange}
-                    name="test_type_id">
+                    name="profile_type_id">
                     <option value="select_prof">Choose profile from saved</option>
                     {options}
                 </FormControl>
@@ -581,13 +581,11 @@ var NewTestForm = React.createClass({
     //test_sampling_card
     //test_status_id - should be set separate
     //test_recommendation
-    //'campaign_id' - should be passed
 
     getInitialState: function () {
         return {
             loading: false,
             errors: {},
-            showRadio: true,
             showFluidProfileForm: false,
             showElectroProfileForm: false,
             showNewUserForm: false,
@@ -600,26 +598,17 @@ var NewTestForm = React.createClass({
             repair_date: new Date().toISOString(),
             fields: [
                 'reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
-                'test_status_id', 'fluid_profile_id', 'electrical_profile_id', 'material_id', 'fluid_type_id',
-                'performed_by_id', 'lab_id', 'lab_contract_id', 'comments', 'analysis_number', 'comments', 'mws',
+                'test_status_id', 'material_id', 'fluid_type_id',
+                'performed_by_id', 'lab_id', 'lab_contract_id', 'analysis_number', 'comments', 'mws',
                 'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
                 'recommendation_notes', 'ambient_air_temperature'
             ],
             reason_id: ''
-
-            // profile_fields: [
-            //     'bushing', 'winding', 'insulation_pf', 'insulation', 'visual_inspection', 'resistance', 'degree',
-            //     'turns', 'gas', 'water', 'furans', 'inhibitor', 'pcb', 'qty', 'sampling', 'dielec', 'acidity',
-            //     'density', 'pcb_jar', 'inhibitor_jar', 'point', 'dielec_2', 'color', 'pf', 'particles', 'metals',
-            //     'viscosity', 'dielec_d', 'ift', 'pf_100', 'furans_f', 'water_w', 'corr', 'dielec_i', 'qty_jar',
-            //     'sampling_jar', 'pcb_vial', 'antioxidant', 'qty_vial', 'sampling_vial', 'percent_ratio',
-            //     'sampling_point_id'
-            // ]
         }
     },
 
-    componentDidMount: function () {
-        if (this.props.data != null) {
+    componentDidMount: function () { 
+        if ((this.props.data != null) && (typeof this.props.data.id != 'undefined')) {
             this._edit(this.props.data.id);
         }
     },
@@ -639,7 +628,6 @@ var NewTestForm = React.createClass({
             }
             form['id'] = id;
             this.setState(form);
-            // console.log(url, this.state);
 
         }.bind(this), 'json');
     },
@@ -649,22 +637,37 @@ var NewTestForm = React.createClass({
         var form = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            form[key] = '';
+            form[key] = undefined;
         }
         form['id'] = '';
+        
+        // console.log("Add new test method");
+        // console.log('props:', this.props.data);
+        // console.log('state: ', this.state);
+        // console.log(form);
         this.setState(form);
     },
 
     _save: function () {
+
         var fields = this.state.fields;
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            if (typeof this.state[key] != 'undefined'){ 
+                data[key] = this.state[key];
+            }
         }
         var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
         delete data['analysis_number'];
 
+        console.log("save method");
+        console.log('props: ', this.props.data);
+        console.log('state: ', this.state);
+        data['campaign_id'] = this.props.data['campaign_id'];
+        data['equipment_id'] = this.props.data['equipment_id'];
+        console.log(data);
+        
         return $.ajax({
             url: url,
             type: 'POST',
@@ -687,6 +690,9 @@ var NewTestForm = React.createClass({
             return;
         }
         var xhr = this._save();
+        if (!xhr) {
+            alert('Something went wrong.')
+        }
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
@@ -700,7 +706,7 @@ var NewTestForm = React.createClass({
         this.setState({
             analysis_number: data['result']['analysis_number']
         });
-        NotificationManager.success('Test saved', null, 1000);
+        NotificationManager.success('Test saved', null, 4000);
         this.props.reloadList();
     },
 
@@ -720,28 +726,20 @@ var NewTestForm = React.createClass({
     _onChange: function (e) {
         var state = {};
 
-        if (e.target.value != 'select_prof' && e.target.name == 'test_type_id') {
-            this.setState({
-                showRadio: false
-            })
-        } else {
-            this.setState({
-                showRadio: true
-            })
-        }
-
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         } else if (e.target.type == 'radio') {
             state[e.target.name] = e.target.value;
-            if ('fluid' === e.target.value) {
+            // fluid
+            if ('1' === e.target.value) {
                 this.setState({
                     showFluidProfileForm: true,
                     showElectroProfileForm: false
                 });
-            } else if ('electro' === e.target.value) {
+            //electrical
+            } else if ('2' === e.target.value) {
                 this.setState({
                     showElectroProfileForm: true,
                     showFluidProfileForm: false
@@ -822,37 +820,37 @@ var NewTestForm = React.createClass({
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
         this.closeNewContractForm();
-        NotificationManager.success('Contract added', null, 1000);
+        NotificationManager.success('Contract added', null, 2000);
     },
 
     onPerformerCreate: function (response) {
         this.refs.performed_by.setSelected(response);
         this.closeNewUserForm();
-        NotificationManager.success('User added', null, 1000);
+        NotificationManager.success('User added', null, 2000);
     },
 
     onLabCreate: function (response) {
         this.refs.lab.setSelected(response);
         this.closeNewLabForm();
-        NotificationManager.success('Laboratory added', null, 1000);
+        NotificationManager.success('Laboratory added', null, 2000);
     },
 
     onMaterialCreate: function (response) {
         this.refs.material.setSelected(response);
         this.closeNewMaterialForm();
-        NotificationManager.success('Material added', null, 1000);
+        NotificationManager.success('Material added', null, 2000);
     },
 
     onFluidTypeCreate: function (response) {
         this.refs.fluid_type.setSelected(response);
         this.closeNewFluidForm();
-        NotificationManager.success('Fluid type added', null, 1000);
+        NotificationManager.success('Fluid type added', null, 2000);
     },
 
     onSyringeCreate: function (response) {
         this.refs.syringe.setSelected(response);
         this.closeNewSyringeForm();
-        NotificationManager.success('Syringe added', null, 1000);
+        NotificationManager.success('Syringe added', null, 2000);
     },
 
     onNewButtonClick: function (e) {
@@ -1178,25 +1176,14 @@ var NewTestForm = React.createClass({
 
                                     <fieldset className="scheduler-border">
                                         <legend className="scheduler-border">Choose test type</legend>
-                                        <div className="row">
-                                            <div>
-                                                <div className="col-md-2">
-                                                    <FormGroup>
-                                                        <TestProfileSelectField source="/api/v1.0/test_profile"/>
-                                                    </FormGroup>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {this.state.showRadio ?
                                             <div className="maxwidth">
-                                                <Radio name="profile" value="fluid">
+                                                <Radio name="test_type_id" value="1" checked={this.state.test_type_id == 1}>
                                                     Fluid Profile
                                                 </Radio>
-                                                <Radio name="profile" value="electro">
+                                                <Radio name="test_type_id" value="2" checked={this.state.test_type_id == 2}>
                                                     Electrical Profile
                                                 </Radio>
                                             </div>
-                                            : null}
                                     </fieldset>
                                     <div className="row">
                                         <div className="col-md-12">

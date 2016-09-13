@@ -56,7 +56,7 @@ const App = React.createClass({
 						<li><Link to='/campaign'>New Campaign</Link></li>
 						<li><Link to='/equipment'>Equipment</Link></li>
 						<li><Link to='/add_equipment'>Add Equipment</Link></li>
-						<li><Link to='/testlist'>Testlist</Link></li>
+						<li><Link to='/campaign/1'>Campaign tests</Link></li>
 
 					</ul>
 					<ul className="pull-left">
@@ -121,7 +121,7 @@ render((
             <Route path="campaign" component={Campaign}/>
             <Route path="equipment" component={Equipment}/>
             <Route path="add_equipment/:campaign" component={AddEquipmentForm}/>
-            <Route path="testlist/:campaign" component={TestList}/>
+            <Route path="campaign/:campaign" component={TestList}/>
             <Route path="electro" component={ElectricalProfileForm}/>
             <Route path="fluid" component={FluidProfileForm}/>
             <Route path="choose_profile" component={ChooseTestForm}/>

@@ -7,6 +7,7 @@ import {Link} from 'react-router';
 import NewTestForm from './NewTestForm';
 import Button from 'react-bootstrap/lib/Button';
 import Table from 'react-bootstrap/lib/Table';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var TestItem = React.createClass({
@@ -30,11 +31,6 @@ var TestItem = React.createClass({
     componentWillUnmount: function () {
     },
 
-    setVisible: function () {
-        this.setState({
-            isVisible: true
-        });
-    },
     onRemove: function () {
     },
 
@@ -46,12 +42,10 @@ var TestItem = React.createClass({
 
         if (!this.state.isVisible) {
             return (<div></div>);
-        }
-
+        } 
         var test = this.props.data;
-        console.log(test);
         var test_status = test.test_status;
-        var test_type_name = (test.test_type != null) ? test.test_type.name: 'undetermined';
+        var test_type_name = (test.test_type_id == 1) ? 'Fluid': 'Electrical';
         var performed_by_name = (test.performed_by != null) ? test.performed_by.name: 'undetermined';
 
         return (
@@ -111,12 +105,6 @@ var TestItemList = React.createClass({
         // this.serverRequest.abort();
     },
 
-    setVisible: function () {
-        this.setState({
-            isVisible: true
-        });
-    },
-
     showTestForm: function () {
         this.refs.new_test_form._add();
         this.setState({
@@ -147,9 +135,13 @@ var TestItemList = React.createClass({
     },
 
     render: function () {
+        console.log(this.props);
         var equipment_id = this.props.id;
         var tests = [];
-        var data = null;
+        var data = {
+            campaign_id: this.props.campaign_id,
+            equipment_id: this.props.id
+        };
         var showTestForm = this.state.showTestForm;
         var showAddTestButton = this.state.showAddTestButton;
 
@@ -162,6 +154,8 @@ var TestItemList = React.createClass({
                     data = item;
                     showTestForm = true;
                     showAddTestButton = false;
+
+                    NotificationManager.warning('Please choose reason of testing and performer.', null, 6000);
                     continue;
                 }
 
@@ -237,9 +231,10 @@ var TestList = React.createClass({
     },
 
     componentDidMount: function () {
-        var campaign_id = this.props.params['campaign'];
-        this.serverRequest = $.get('/api/v1.0/test_result/?campaign_id=' + campaign_id,
-
+        
+        var campaign_id = this.props.params.campaign;
+        var url = '/api/v1.0/test_result/?campaign_id=' + campaign_id;
+        this.serverRequest = $.get(url,
             function (result) {
 
                 var tests = result['result'];
@@ -250,6 +245,7 @@ var TestList = React.createClass({
                 });
 
                 this.setState({
+                    campaign_id: campaign_id,
                     equipment: equipment,
                     tests: tests
                 });
@@ -259,12 +255,6 @@ var TestList = React.createClass({
 
     componentWillUnmount: function () {
         this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.setState({
-            isVisible: true
-        });
     },
 
     reloadList: function () {
@@ -281,7 +271,9 @@ var TestList = React.createClass({
                     eventKey={this.state.equipment[key].id}
                     header={this.state.equipment[key].name}
                 >
-                    <TestItemList data={this.state.tests} id={this.state.equipment[key].id}
+                    <TestItemList data={this.state.tests} 
+                                  id={this.state.equipment[key].id}
+                                  campaign_id={this.state.campaign_id}
                                   reloadList={this.reloadList}
                     />
                 </Panel>

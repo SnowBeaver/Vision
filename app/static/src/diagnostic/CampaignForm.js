@@ -230,7 +230,7 @@ var CampaignForm = React.createClass({
         this.setState({
             campaign_id: data.result
         });
-        NotificationManager.success('Campaign successfully started.', null, 2000);
+        NotificationManager.success('Campaign successfully started.', null, 4000);
         setTimeout(function(){ hashHistory.push('/add_equipment/' + data.result); }, 2000);
     },
 
