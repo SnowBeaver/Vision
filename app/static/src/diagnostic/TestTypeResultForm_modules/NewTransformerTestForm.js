@@ -215,8 +215,6 @@ var TapTestPanel = React.createClass({
             </div>
         )
     }
-
-
 });
 
 
