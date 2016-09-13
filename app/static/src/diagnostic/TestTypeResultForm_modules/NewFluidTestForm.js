@@ -7,7 +7,8 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
-
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 const TextField = React.createClass({
     render: function () {
@@ -15,13 +16,15 @@ const TextField = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
+                             data-type={this.props["data-type"]}
                 />
+                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -102,12 +105,10 @@ var NewFluidTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this._validate()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -132,10 +133,23 @@ var NewFluidTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -147,18 +161,47 @@ var NewFluidTestForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+        var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
+    _validateFieldType: function (value, type){
         var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+        var errorMessages = {
+            "float": "Invalid float value",
+            "string_maxlength_25": "Value should be maximum 25 characters long"
+        };
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "string_maxlength_25": /^\S{0,25}$/
+            };
+            if (!typePatterns[type].test(value)){
+                errors = errorMessages[type];
+            }
+        }
         return errors;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors
+        }
+        return state;
+    },
+
+    _validate: function () {
+        var response = true;
+        if (Object.keys(this.state.errors).length > 0){
+            response = false;
+        }
+        return response;
     },
 
     _formGroupClass: function (field) {
@@ -180,7 +223,7 @@ var NewFluidTestForm = React.createClass({
                         </div>
                         <div className="col-md-5">
                             <TextField label="Dielec. D1816(1mm)(Kv)" name="dielectric_1816"
-                                       value={this.state.dielectric_1816}/>
+                                       value={this.state.dielectric_1816} errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-1 ">
                             <CheckBox name="dielectric_1816_2_flag"/>
@@ -188,7 +231,7 @@ var NewFluidTestForm = React.createClass({
 
                         <div className="col-md-5">
                             <TextField label="Dielec. D1816(2mm)(Kv)" name="dielectric_1816_2"
-                                       value={this.state.dielectric_1816_2}/>
+                                       value={this.state.dielectric_1816_2} errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
 
@@ -199,50 +242,58 @@ var NewFluidTestForm = React.createClass({
                         </div>
                         <div className="col-md-5">
                             <TextField label="Dielec. D877(Kv)" name="dielectric_877"
-                                       value={this.state.dielectric_877}/>
+                                       value={this.state.dielectric_877} errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-1 ">
                             <CheckBox name="dielectric_iec_156_flag"/>
                         </div>
                         <div className="col-md-5">
                             <TextField label="Dielec. IEC-156(Kv)" name="dielectric_iec_156"
-                                       value={this.state.dielectric_iec_156}/>
+                                       value={this.state.dielectric_iec_156} errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
 
 
                     <div className="row">
                         <div className="col-md-3">
-                            <TextField label="Acidity(D974)" name="acidity" value={this.state.acidity}/>
+                            <TextField label="Acidity(D974)" name="acidity" value={this.state.acidity}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="Color(D1500)" name="color" value={this.state.color}/>
+                            <TextField label="Color(D1500)" name="color" value={this.state.color}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
 
                         <div className="col-md-3">
-                            <TextField label="IFT(D971)" name="ift" value={this.state.ift}/>
+                            <TextField label="IFT(D971)" name="ift" value={this.state.ift}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="Visual(D1524)" name="visual" value={this.state.visual}/>
+                            <TextField label="Visual(D1524)" name="visual" value={this.state.visual}
+                                       errors={this.state.errors} data-type="string_maxlength_25"/>
                         </div>
                     </div>
 
 
                     <div className="row">
                         <div className="col-md-3">
-                            <TextField label="Density(D1298)" name="density" value={this.state.density}/>
+                            <TextField label="Density(D1298)" name="density" value={this.state.density}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
 
                         <div className="col-md-3">
-                            <TextField label="PF 25C(D924)" name="pf20c" value={this.state.pf20c}/>
+                            <TextField label="PF 25C(D924)" name="pf20c" value={this.state.pf20c}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
 
                         <div className="col-md-3">
-                            <TextField label="PF 100C(D924)" name="pf100c" value={this.state.pf100c}/>
+                            <TextField label="PF 100C(D924)" name="pf100c" value={this.state.pf100c}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
 
                         <div className="col-md-3">
-                            <TextField label="Sludge(D2112)" name="sludge" value={this.state.sludge}/>
+                            <TextField label="Sludge(D2112)" name="sludge" value={this.state.sludge}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
 
@@ -250,18 +301,21 @@ var NewFluidTestForm = React.createClass({
                     <div className="row">
                         <div className="col-md-3">
                             <TextField label="Aniline Point(D611)" name="aniline_point"
-                                       value={this.state.aniline_point}/>
+                                       value={this.state.aniline_point} errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="Viscosity(D88)" name="viscosity" value={this.state.viscosity}/>
-                        </div>
-
-                        <div className="col-md-3">
-                            <TextField label="Flash Point(D92)" name="flash_point" value={this.state.flash_point}/>
+                            <TextField label="Viscosity(D88)" name="viscosity" value={this.state.viscosity}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
 
                         <div className="col-md-3">
-                            <TextField label="Pour Point(D97)" name="pour_point" value={this.state.pour_point}/>
+                            <TextField label="Flash Point(D92)" name="flash_point" value={this.state.flash_point}
+                                       errors={this.state.errors} data-type="float"/>
+                        </div>
+
+                        <div className="col-md-3">
+                            <TextField label="Pour Point(D97)" name="pour_point" value={this.state.pour_point}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
 
@@ -269,7 +323,8 @@ var NewFluidTestForm = React.createClass({
                     <div className="row">
                         <div className="col-md-6 col-md-offset-3">
                             <TextField label="Corrosive Sulfur(D1275)" name="corrosive_sulfur"
-                                       value={this.state.corrosive_sulfur}/>
+                                       value={this.state.corrosive_sulfur} errors={this.state.errors}
+                                       data-type="string_maxlength_25"/>
                         </div>
                     </div>
 
