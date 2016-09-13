@@ -71,6 +71,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
@@ -112,6 +113,7 @@ var CableParams = React.createClass({
                         <SelectField
                             source="insulation"
                             label="insulation_id"
+                            name="insulation_id"
                             value={this.state.insulation_id}/>
                     </div>
                 <div className="col-md-2">

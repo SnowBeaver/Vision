@@ -32,6 +32,7 @@ var AirBreakerParams = React.createClass({
 
     getInitialState: function () {
         return {
+            params:[],
             'phase_number': '',
             'sealed': '',
             'welded_cover': '',
@@ -40,9 +41,12 @@ var AirBreakerParams = React.createClass({
     },
 
     handleChange: function(e){
+
         var state = this.state;
         state[e.target.name] = e.target.value;
         this.setState(state);
+
+
     },
 
     render: function () {

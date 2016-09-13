@@ -71,6 +71,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
@@ -108,6 +109,7 @@ var SwitchParams = React.createClass({
                         <SelectField
                             source="interrupting_medium"
                             label="Interrupting Medium"
+                            name="interrupting_medium_id"
                             value={this.state.interrupting_medium_id}/>
                     </div>
                     <div className="col-md-3">

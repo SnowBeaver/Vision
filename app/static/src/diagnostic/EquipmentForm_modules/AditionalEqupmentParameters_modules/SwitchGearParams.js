@@ -72,6 +72,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
@@ -108,6 +109,7 @@ var SwitchGearParams = React.createClass({
                     <SelectField onChange={this.props.onChange}
                                  source="insulation"
                                  label="Insulation Type"
+                                 name="insulation_id"
                                  value={this.state.insulation_id}/>
                 </div>
                 <div className="col-md-3">

@@ -70,6 +70,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
@@ -110,24 +111,28 @@ var BreakerParams = React.createClass({
                         <SelectField
                             source="fluid_type"
                             label="Fluid Type"
+                            name="fluid_type_id"
                             value={this.state.fluid_type_id}/>
                     </div>
                     <div className="col-md-3">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
+                            name="fluid_level_id"
                             value={this.state.fluid_level_id}/>
                     </div>
                     <div className="col-md-3">
                         <SelectField
                             source="interrupting_medium"
                             label="Interrupting Medium"
+                            name="interrupting_medium_id"
                             value={this.state.interrupting_medium_id}/>
                     </div>
                     <div className="col-md-3">
                         <SelectField
                             source="breaker_mechanism"
                             label="Breaker Mechanism"
+                            name="breaker_mechanism_id"
                             value={this.state.breaker_mechanism_id}/>
                     </div>
                 </div>
