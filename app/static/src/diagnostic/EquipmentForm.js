@@ -754,8 +754,6 @@ const EquipmentForm = React.createClass({
         var data = {};
         var path = this.state.table_name;
 
-        console.log("SAVE", subform);
-
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state[key];
@@ -883,7 +881,6 @@ const EquipmentForm = React.createClass({
             }
         }
 
-        console.log("subform", subform);
 
         // TODO: Exclude upstream field or let adding multiple upstreams
         if (e.target.name != "upstream1") {
@@ -895,7 +892,6 @@ const EquipmentForm = React.createClass({
 
 
         this.setState(form);
-        // console.log("FORM",form);
     },
 
     _validateFieldType: function (value, type) {

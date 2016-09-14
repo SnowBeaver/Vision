@@ -29,25 +29,25 @@ var SelectField = React.createClass({
             isVisible: false,
         };
     },
-    isVisible: function(){
+    isVisible: function () {
         return this.state.isVisible;
     },
-    componentDidMount: function(){
+    componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result){
-            this.setState({ items: (result['result']) });
+        this.serverRequest = $.get(source, function (result) {
+            this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
-    componentWillUnmount: function() {
+    componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function(){
+    setVisible: function () {
         this.state.isVisible = true;
     },
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
@@ -60,8 +60,8 @@ var SelectField = React.createClass({
                              onChange={this.props.onChange}
                              name={name}
                              value={value}
-                             >
-                    <option key={null} value={null}> </option>
+                >
+                    <option key={null} value={null}></option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -72,9 +72,9 @@ var SelectField = React.createClass({
 
 const DateTimeFieldWithLabel = React.createClass({
     render: function () {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <div className="datetimepicker input-group date">
                 <ControlLabel>{label}</ControlLabel>
@@ -85,10 +85,10 @@ const DateTimeFieldWithLabel = React.createClass({
 });
 
 const TextField = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -102,10 +102,10 @@ const TextField = React.createClass({
 });
 
 const TextArea = React.createClass({
-    render: function() {
-        var label = (this.props.label != null) ? this.props.label: "";
-        var name = (this.props.name != null) ? this.props.name: "";
-        var value = (this.props.value != null) ? this.props.value: "";
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -126,130 +126,108 @@ var EquipmentTestIdentificationForm = React.createClass({
         }
     },
     render: function () {
-        var data = (this.props.data != null) ? this.props.data: {};
+        var data = (this.props.data != null) ? this.props.data : {};
         return (
             <div className="form-container">
-                <div className="tab_row text-center">
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <SelectField source="test_type"
-                                         label="Test type"
-                                         name='test_type_id'
-                                         value={data.test_type_id}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <SelectField source="user"
-                                         label="Initials ?"
-                                         name="initials"
-                                         value={data.initials}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-4 nopadding pht-xs">
-                            <DateTimeFieldWithLabel label="Date analyse"
-                                                    name='date_analyse'
-                                                    value={data.date_analyse}
-                                                    onChange={this.props.onChange}/>
-                        </div>
+                <div className="row">
+                    <div className="col-md-4">
+                        <SelectField source="test_type"
+                                     label="Test type"
+                                     name='test_type_id'
+                                     value={data.test_type_id}/>
                     </div>
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <SelectField source="test_reason"
-                                         label="Test reason"
-                                         name='test_reason_id'
-                                         value={data.test_reason_id}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <SelectField source="test_status"
-                                         label="Status"
-                                         name='status_id'
-                                         value={data.status_id}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-g padding-right-xs">
-                            <TextField label="Temperature"
-                                       name='temperature'
-                                       value={data.temperature}
-                                       onChange={this.props.onChange}/>
-                        </div>
+
+                    <div className="col-md-3 col-md-offset-2">
+                        <TextField label="Performed By"
+                                   name='initials'
+                                   value={data.initials}
+                                   disabled/>
                     </div>
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <TextField label="Insulating ?"
-                                       name='insulating'
-                                       value=""
-                                       onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <SelectField source="contract"
-                                         label="Lab contract"
-                                         name='lab_contract_id'
-                                         value={data.lab_contract_id}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <TextField label="Grouping ?"
-                                       name="grouping"
-                                       onChange={this.props.onChange}
-                                       value=""/>
-                        </div>
+                    <div className="col-md-3 nopadding padding-right-xs">
+                        <DateTimeFieldWithLabel label="Date analyse"
+                                                name='date_analyse'
+                                                value={data.date_analyse}
+                                                onChange={this.props.onChange}/>
                     </div>
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-3 nopadding padding-right-xs">
-                            <SelectField source="sampling_point"
-                                         label="Sampling"
-                                         name='sampling_point_id'
-                                         value={data.sampling_point_id}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-3 nopadding padding-right-xs">
-                            <SelectField source="syringe"
-                                         label="Syringe ?"
-                                         name='syringe'
-                                         value={data.syringe}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-3 nopadding padding-right-xs">
-                            <TextField label="Test number ?"
-                                       value=""
-                                       name="test_number"
-                                       onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-3 nopadding padding-right-xs">
-                            <TextField label="Load mva ?"
-                                       value=""
-                                       name="load_mva"
-                                       onChange={this.props.onChange}/>
-                        </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-2">
+                        <TextField label="Insulating Fluid"
+                                   name='insulating'
+                                   value=""
+                                   onChange={this.props.onChange}/>
                     </div>
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <SelectField source="equipment"
-                                         label="Equipment"
-                                         name='equipment_id'
-                                         value={data.equipment_id}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-4 nopadding padding-right-xs">
-                            <TextField label="Order status ?"
-                                       value=""
-                                       name="order_status"
-                                       onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-2 nopadding padding-right-xs">
-                            <SelectField source="lab"
-                                         label="Lab"
-                                         name='lab_id'
-                                         value={data.lab_id}
-                                         onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-2 nopadding padding-right-xs">
-                            <DateTimeFieldWithLabel label="Lab date ?"
-                                                    name='lab_date'
-                                                    value={data.lab_date}
-                                                    onChange={this.props.onChange} />
-                        </div>
+                    <div className="col-md-2">
+                        <TextField label="Lab contract No."
+                                   name='lab_contract_id'
+                                   value={data.lab_contract_id}/>
+                    </div>
+                    <div className="col-md-3 col-md-offset-2">
+                        <SelectField source="test_status"
+                                     label="Status"
+                                     name='status_id'
+                                     value={data.status_id}
+                                     onChange={this.props.onChange}/>
+                    </div>
+                    <div className="col-md-2 nopadding padding-right-xs">
+                        <TextField label="Fluid Temperature (&#8451;)"
+                                   name='temperature'
+                                   value={data.temperature}
+                                   onChange={this.props.onChange}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-3 ">
+                        <SelectField source="sampling_point"
+                                     label="Sampling point"
+                                     name='sampling_point_id'
+                                     value={data.sampling_point_id}
+                                     onChange={this.props.onChange}/>
+                    </div>
+                    <div className="col-md-3">
+                        <SelectField source="syringe"
+                                     label="Syringe No./Jar No."
+                                     name='syringe'
+                                     value={data.syringe}
+                                     onChange={this.props.onChange}/>
+                    </div>
+                    <div className="col-md-3 ">
+                        <DateTimeFieldWithLabel label="Lab Analysis Date "
+                                                name='lab_date'
+                                                value={data.lab_date}
+                                                onChange={this.props.onChange}/>
+                    </div>
+                    <div className="col-md-2 nopadding padding-right-xs">
+                        <TextField label="Load (MVA)"
+                                   value=""
+                                   name="load_mva"
+                                   onChange={this.props.onChange}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <TextField label="Equipment"
+                                   name='equipment_id'
+                                   value={data.equipment_id}/>
+                    </div>
+
+                    <div className="col-md-3">
+                        <TextField label="Test reason"
+                                   name='test_reason_id'
+                                   value={data.test_reason_id}/>
+                    </div>
+                    <div className="col-md-3">
+                        <TextField label="Analysis Number"
+                                   value=""
+                                   name="test_number"
+                                   onChange={this.props.onChange}/>
+                    </div>
+                    <div className="col-md-3 nopadding padding-right-xs">
+                        <SelectField source="lab"
+                                     label="Lab./On-line analyser"
+                                     name='lab_id'
+                                     value={data.lab_id}
+                                     onChange={this.props.onChange}/>
                     </div>
                 </div>
             </div>
@@ -259,7 +237,7 @@ var EquipmentTestIdentificationForm = React.createClass({
 
 var EquipmentTestRepairForm = React.createClass({
     render: function () {
-        var data = (this.props.data != null) ? this.props.data: {};
+        var data = (this.props.data != null) ? this.props.data : {};
         return (
             <div className="tab_row">
                 <div className="col-lg-12 nopadding">
@@ -284,7 +262,7 @@ var EquipmentTestRepairForm = React.createClass({
                         <DateTimeFieldWithLabel label="Repair date"
                                                 name='lab_date'
                                                 value={data.repair_date}
-                                                onChange={this.props.onChange} />
+                                                onChange={this.props.onChange}/>
                     </div>
                 </div>
             </div>
@@ -426,9 +404,9 @@ var EquipmentTestForm = React.createClass({
             loading: false,
             csrf_token: 'not set',
             fields: ['test_type_id', 'test_reason_id',
-                     'status_id', 'temperature', 'lab_contract_id',
-                     'sampling_point_id', 'equipment_id', 'lab_id',
-                     'remark', 'repair_description'],
+                'status_id', 'temperature', 'lab_contract_id',
+                'sampling_point_id', 'equipment_id', 'lab_id',
+                'remark', 'repair_description'],
             errors: {},
             data: null
         }
@@ -498,11 +476,11 @@ var EquipmentTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var data = (this.state.data != null) ? this.state.data: {};
+        var data = (this.state.data != null) ? this.state.data : {};
         if (e.target.type == 'checkbox') {
-           data[e.target.name] = e.target.checked;
+            data[e.target.name] = e.target.checked;
         } else {
-           data[e.target.name] = e.target.value;
+            data[e.target.name] = e.target.value;
         }
         this.setState({data: data});
     },
@@ -530,7 +508,7 @@ var EquipmentTestForm = React.createClass({
     },
 
     render: function () {
-        var data = (this.state.data != null) ? this.state.data: {};
+        var data = (this.state.data != null) ? this.state.data : {};
         return (
             <div>
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -568,16 +546,19 @@ var EquipmentTestForm = React.createClass({
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-12 ">
-                            <Button bsStyle="primary"
-                                    className="pull-right"
-                                    onClick={this.props.handleClose}
-                                    type="submit">Save changes</Button>
-                            &nbsp;
-                            <Button bsStyle="primary"
-                                    className="pull-right margin-right-xs"
-                                    onClick={this.props.handleClose}
-                            >Close</Button>
+                        <div className="col-md-1 col-md-offset-9">
+                            <FormGroup>
+                                <Button bsStyle="primary"
+                                        onClick={this.props.handleClose}
+                                >Close</Button>
+                            </FormGroup>
+                        </div>
+                        <div className="col-md-1 nopadding padding-right-xs">
+                            <FormGroup>
+                                <Button bsStyle="primary"
+                                        onClick={this.props.handleClose}
+                                        type="submit">Save changes</Button>
+                            </FormGroup>
                         </div>
                     </div>
                 </form>
