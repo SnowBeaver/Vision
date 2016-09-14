@@ -7,6 +7,7 @@ import {findDOMNode} from 'react-dom';
 import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
 import Radio from 'react-bootstrap/lib/Radio';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var items = [];
@@ -355,7 +356,7 @@ const FluidProfileForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this._validate()){
+        if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
             return;
         }
@@ -381,20 +382,24 @@ const FluidProfileForm = React.createClass({
         if (res.message) {
             message = data.responseJSON.message;
         }
-        if (res.errors) {
-            // Join multiple error messages
-            for (var field in res.error){
-                var errorMessage = res.error[field];
-                if (Array.isArray(errorMessage)){
-                     errorMessage = errorMessage.join(". ");
-                }
-                res.error[field] = errorMessage;
-            }
-            this.setState({
-                errors: res.error
-            });
-        }
-        NotificationManager.error(message);
+        if (res.error) {
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -408,15 +413,49 @@ const FluidProfileForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
-        var response = true;
-        if (Object.keys(this.state.errors).length > 0){
-            response = false;
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
         }
-        return response;
+        return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     _formGroupClass: function (field) {
@@ -493,9 +532,13 @@ const FluidProfileForm = React.createClass({
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
-                                                <ControlLabel>Quantity</ControlLabel>
-                                                <FormControl type="text" ref="qty" name="qty"
-                                                             value={this.state.data.qty}/>
+                                                <FormGroup validationState={this.state.errors.qty ? 'error' : null}>
+                                                    <ControlLabel>Quantity</ControlLabel>
+                                                    <FormControl type="text" ref="qty" name="qty"
+                                                                 value={this.state.data.qty}
+                                                                 data-type="float"/>
+                                                    <HelpBlock className="warning">{this.state.errors.qty}</HelpBlock>
+                                                </FormGroup>
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField1
@@ -667,9 +710,13 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                             <div className="maxwidth">
                                                 <div className="col-md-2 nopadding padding-right-xs">
-                                                    <ControlLabel>Quantity</ControlLabel>
-                                                    <FormControl type="text" name="qty_jar"
-                                                                 value={this.state.data.qty_jar}/>
+                                                    <FormGroup validationState={this.state.errors.qty_jar ? 'error' : null}>
+                                                        <ControlLabel>Quantity</ControlLabel>
+                                                        <FormControl type="text" name="qty_jar"
+                                                                     value={this.state.data.qty_jar}
+                                                                     data-type="float"/>
+                                                        <HelpBlock className="warning">{this.state.errors.qty_jar}</HelpBlock>
+                                                    </FormGroup>
                                                 </div>
                                                 <div className="col-md-10 nopadding">
                                                     <SamplPointSelectField2
@@ -705,9 +752,13 @@ const FluidProfileForm = React.createClass({
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-2 nopadding padding-right-xs">
-                                                <ControlLabel>Quantity</ControlLabel>
-                                                <FormControl type="text" name="qty_vial"
-                                                             value={this.state.data.qty_vial}/>
+                                                <FormGroup validationState={this.state.errors.qty_vial ? 'error' : null}>
+                                                    <ControlLabel>Quantity</ControlLabel>
+                                                    <FormControl type="text" name="qty_vial"
+                                                                 value={this.state.data.qty_vial}
+                                                                 data-type="float"/>
+                                                    <HelpBlock className="warning">{this.state.errors.qty_vial}</HelpBlock>
+                                                </FormGroup>
                                             </div>
                                             <div className="col-md-10 nopadding">
                                                 <SamplPointSelectField3
