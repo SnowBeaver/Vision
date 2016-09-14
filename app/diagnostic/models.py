@@ -578,12 +578,12 @@ class Transformer(db.Model):
     autotransformer = db.Column(db.Boolean)  # Autotransformer. True if it is
     threephase = db.Column(db.Boolean)
 
-    # FluidType. Insulating fluid used in equipment
-    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=False)
-    fluid_type = relationship('FluidType', backref='transformer')
-
-    fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
-    fluid_level = db.relationship('FluidLevel', foreign_keys='Transformer.fluid_level_id')
+    # # FluidType. Insulating fluid used in equipment
+    # fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=False)
+    # fluid_type = relationship('FluidType', backref='transformer')
+    #
+    # fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
+    # fluid_level = db.relationship('FluidLevel', foreign_keys='Transformer.fluid_level_id')
 
     gassensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
     gas_sensor = relationship('GasSensor', backref='transformer')
@@ -664,89 +664,89 @@ class Transformer(db.Model):
     ratio_tag5 = db.Column(db.String(20))  # RatioTag5. Tag use for TTR
     ratio_tag6 = db.Column(db.String(20))  # RatioTag6. Tag use for TTR
 
-    bushing_serial1_id = db.Column(
-        'bushing_serial1',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial1 = relationship('Bushing', foreign_keys="Transformer.bushing_serial1_id")
-
-    bushing_serial2_id = db.Column(
-        'bushing_serial2',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial2 = relationship('Bushing', foreign_keys="Transformer.bushing_serial2_id")
-
-    bushing_serial3_id = db.Column(
-        'bushing_serial3',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial3 = relationship('Bushing', foreign_keys="Transformer.bushing_serial3_id")
-
-    bushing_serial4_id = db.Column(
-        'bushing_serial4',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial4 = relationship('Bushing', foreign_keys="Transformer.bushing_serial4_id")
-
-    bushing_serial5_id = db.Column(
-        'bushing_serial5',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial5 = relationship('Bushing', foreign_keys="Transformer.bushing_serial5_id")
-
-    bushing_serial6_id = db.Column(
-        'bushing_serial6',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial6 = relationship('Bushing', foreign_keys="Transformer.bushing_serial6_id")
-
-    bushing_serial7_id = db.Column(
-        'bushing_serial7',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial7 = relationship('Bushing', foreign_keys="Transformer.bushing_serial7_id")
-
-    bushing_serial8_id = db.Column(
-        'bushing_serial8',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial8 = relationship('Bushing', foreign_keys="Transformer.bushing_serial8_id")
-
-    bushing_serial9_id = db.Column(
-        'bushing_serial9',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial9 = relationship('Bushing', foreign_keys="Transformer.bushing_serial9_id")
-
-    bushing_serial10_id = db.Column(
-        'bushing_serial10',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial10 = relationship('Bushing', foreign_keys="Transformer.bushing_serial10_id")
-
-    bushing_serial11_id = db.Column(
-        'bushing_serial11',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial11 = relationship('Bushing', foreign_keys="Transformer.bushing_serial11_id")
-
-    bushing_serial12_id = db.Column(
-        'bushing_serial12',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial12 = relationship('Bushing', foreign_keys="Transformer.bushing_serial12_id")
+    # bushing_serial1_id = db.Column(
+    #     'bushing_serial1',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial1 = relationship('Bushing', foreign_keys="Transformer.bushing_serial1_id")
+    #
+    # bushing_serial2_id = db.Column(
+    #     'bushing_serial2',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial2 = relationship('Bushing', foreign_keys="Transformer.bushing_serial2_id")
+    #
+    # bushing_serial3_id = db.Column(
+    #     'bushing_serial3',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial3 = relationship('Bushing', foreign_keys="Transformer.bushing_serial3_id")
+    #
+    # bushing_serial4_id = db.Column(
+    #     'bushing_serial4',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial4 = relationship('Bushing', foreign_keys="Transformer.bushing_serial4_id")
+    #
+    # bushing_serial5_id = db.Column(
+    #     'bushing_serial5',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial5 = relationship('Bushing', foreign_keys="Transformer.bushing_serial5_id")
+    #
+    # bushing_serial6_id = db.Column(
+    #     'bushing_serial6',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial6 = relationship('Bushing', foreign_keys="Transformer.bushing_serial6_id")
+    #
+    # bushing_serial7_id = db.Column(
+    #     'bushing_serial7',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial7 = relationship('Bushing', foreign_keys="Transformer.bushing_serial7_id")
+    #
+    # bushing_serial8_id = db.Column(
+    #     'bushing_serial8',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial8 = relationship('Bushing', foreign_keys="Transformer.bushing_serial8_id")
+    #
+    # bushing_serial9_id = db.Column(
+    #     'bushing_serial9',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial9 = relationship('Bushing', foreign_keys="Transformer.bushing_serial9_id")
+    #
+    # bushing_serial10_id = db.Column(
+    #     'bushing_serial10',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial10 = relationship('Bushing', foreign_keys="Transformer.bushing_serial10_id")
+    #
+    # bushing_serial11_id = db.Column(
+    #     'bushing_serial11',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial11 = relationship('Bushing', foreign_keys="Transformer.bushing_serial11_id")
+    #
+    # bushing_serial12_id = db.Column(
+    #     'bushing_serial12',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial12 = relationship('Bushing', foreign_keys="Transformer.bushing_serial12_id")
 
     # device property ,  for  transformer
     mvaactual = db.Column(db.Float(53))  # MVAActual. Actual MVA used
