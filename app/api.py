@@ -226,7 +226,7 @@ def get_test_profile():
 
 
 @api_blueprint.route('/test_result/equipment', methods=['POST', ])
-def handler_items(path):
+def handler_items():
     if not request.json:
         abort(400, 'JSON not found')
     return return_json('result', add_items())

@@ -71,6 +71,7 @@ var SelectField = React.createClass({
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
@@ -108,19 +109,22 @@ var InductanceParams = React.createClass({
                         <SelectField
                             source="fluid_type"
                             label="Fluid Type"
+                            name="fluid_type_id"
                             value={this.state.fluid_type_id}/>
                     </div>
                     <div className="col-md-4">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
+                            name="fluid_level_id"
                             value={this.state.fluid_level_id}/>
                     </div>
                     <div className="col-md-4">
                         <SelectField
                             source="gas_sensor"
                             label="Gas Sensor"
-                            value={this.state.gas_sensor}/>
+                            name="gas_sensor_id"
+                            value={this.state.gas_sensor_id}/>
                     </div>
 
                 </div>

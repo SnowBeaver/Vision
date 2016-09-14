@@ -133,9 +133,6 @@ const ElectricalProfileForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        data['campaign_id'] = this.props.data.campaign_id;
-        data['equipment_id'] = this.props.data.equipment_id;
-
         if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
             var url = '/api/v1.0/electrical_profile/';
             if (this.state.data.electrical_profile_id) {
@@ -157,7 +154,13 @@ const ElectricalProfileForm = React.createClass({
                     this.setState({loading: true});
                 }.bind(this)
             });
+            
+            delete data['name'];
+            delete data['shared'];
         }
+
+        data['campaign_id'] = this.props.data.campaign_id;
+        data['equipment_id'] = this.props.data.equipment_id;
 
         // save part to test_result
         return $.ajax({

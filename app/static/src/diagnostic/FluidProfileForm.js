@@ -309,8 +309,6 @@ const FluidProfileForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        data['campaign_id'] = this.props.data.campaign_id;
-        data['equipment_id'] = this.props.data.equipment_id;
 
         // show success message
         // if update a profile
@@ -335,7 +333,13 @@ const FluidProfileForm = React.createClass({
                     this.setState({loading: true});
                 }.bind(this)
             });
+
+            delete data['name'];
+            delete data['shared'];
         }
+        
+        data['campaign_id'] = this.props.data.campaign_id;
+        data['equipment_id'] = this.props.data.equipment_id;
 
         return $.ajax({
             url: '/api/v1.0/test_result/' + this.props.data.id,
