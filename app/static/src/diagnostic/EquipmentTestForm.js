@@ -20,6 +20,7 @@ import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
 import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var SelectField = React.createClass({
     getInitialState: function () {
@@ -367,7 +368,6 @@ var TestValuesForm = React.createClass({
             return (<div></div>);
         }
         var tableName = this.props.testType.test_table_name;
-        console.log("Test table name: " + tableName);
         switch (tableName) {
             case "bushing_test":
                 return (<NewBushingTestForm testResultId={this.props.testResultId}
@@ -481,7 +481,7 @@ var EquipmentTestForm = React.createClass({
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
         // show success message
-        alert('Saved');
+        NotificationManager.success('Saved');
     },
 
     _onError: function (data) {
@@ -498,8 +498,6 @@ var EquipmentTestForm = React.createClass({
     },
 
     _onChange: function (e) {
-        console.log('onChange');
-        console.log(e);
         var data = (this.state.data != null) ? this.state.data: {};
         if (e.target.type == 'checkbox') {
            data[e.target.name] = e.target.checked;

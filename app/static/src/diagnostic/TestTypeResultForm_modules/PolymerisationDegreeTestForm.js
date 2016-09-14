@@ -6,7 +6,8 @@ import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
-
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 const TextField = React.createClass({
     render: function() {
@@ -14,12 +15,15 @@ const TextField = React.createClass({
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
         return (
-            <FormGroup>
+            <FormGroup validationState={this.props.errors[name] ? 'error' : null}>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
+                             data-type={this.props["data-type"]}
+                             data-len={this.props["data-len"]}
                 />
+                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -100,12 +104,10 @@ var PolymerisationDegreeTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this.is_valid()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -123,17 +125,29 @@ var PolymerisationDegreeTestForm = React.createClass({
     },
 
     _onError: function (data) {
-
         var message = "Failed to create";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
+            // Join multiple error messages
+            if (res.error instanceof Object){
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
         }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -145,18 +159,62 @@ var PolymerisationDegreeTestForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     _formGroupClass: function (field) {
@@ -190,13 +248,16 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase A</b>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_a1" name="phase_a1" value={this.state.phase_a1}/>
+                            <TextField label="phase_a1" name="phase_a1" value={this.state.phase_a1}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_a2" name="phase_a2" value={this.state.phase_a2}/>
+                            <TextField label="phase_a2" name="phase_a2" value={this.state.phase_a2}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_a3" name="phase_a3" value={this.state.phase_a3}/>
+                            <TextField label="phase_a3" name="phase_a3" value={this.state.phase_a3}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
 
@@ -205,13 +266,16 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase B</b>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_b1" name="phase_b1" value={this.state.phase_b1}/>
+                            <TextField label="phase_b1" name="phase_b1" value={this.state.phase_b1}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_b2" name="phase_b2" value={this.state.phase_b2}/>
+                            <TextField label="phase_b2" name="phase_b2" value={this.state.phase_b2}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_b3" name="phase_b3" value={this.state.phase_b3}/>
+                            <TextField label="phase_b3" name="phase_b3" value={this.state.phase_b3}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
 
@@ -220,13 +284,16 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Phase C</b>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_c1" name="phase_c1" value={this.state.phase_c1}/>
+                            <TextField label="phase_c1" name="phase_c1" value={this.state.phase_c1}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_c2" name="phase_c2" value={this.state.phase_c2}/>
+                            <TextField label="phase_c2" name="phase_c2" value={this.state.phase_c2}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                         <div className="col-md-3">
-                            <TextField label="phase_c3" name="phase_c3" value={this.state.phase_c3}/>
+                            <TextField label="phase_c3" name="phase_c3" value={this.state.phase_c3}
+                                       errors={this.state.errors} data-type="float"/>
                         </div>
                     </div>
 
@@ -242,32 +309,37 @@ var PolymerisationDegreeTestForm = React.createClass({
                             <b>Lead A</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="lead_a" name="lead_a" value={this.state.lead_a}/>
+                            <TextField label="lead_a" name="lead_a" value={this.state.lead_a}
+                                       errors={this.state.errors} data-type="float" data-len="4"/>
                         </div>
                         <div className="col-md-1">
                             <b>Lead B</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="lead_b" name="lead_b" value={this.state.lead_b}/>
+                            <TextField label="lead_b" name="lead_b" value={this.state.lead_b}
+                                       errors={this.state.errors} data-type="float" data-len="4"/>
                         </div>
                         <div className="col-md-1">
                             <b>Lead C</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="lead_c" name="lead_c" value={this.state.lead_c}/>
+                            <TextField label="lead_c" name="lead_c" value={this.state.lead_c}
+                                       errors={this.state.errors} data-type="float" data-len="4"/>
                         </div>
                         <div className="col-md-1">
                             <b>Lead N</b>
                         </div>
                         <div className="col-md-2">
-                            <TextField label="lead_n" name="lead_n" value={this.state.lead_n}/>
+                            <TextField label="lead_n" name="lead_n" value={this.state.lead_n}
+                                       errors={this.state.errors} data-type="float" data-len="4"/>
                         </div>
                     </div>
 
                     <div className="row">
                         <div className="col-md-3 pull-right">
                             <b>Winding</b>
-                            <TextField label="winding" name="winding" value={this.state.winding}/>
+                            <TextField label="winding" name="winding" value={this.state.winding}
+                                       errors={this.state.errors} data-type="float" data-len="4"/>
                         </div>
 
                     </div>

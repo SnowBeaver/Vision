@@ -26,7 +26,7 @@ var NewFluidForm = React.createClass({
 	_create: function () {
 		var fields = this.state.changedFields;
 		if (fields.length == 0){
-			NotificationManager.info("No values were selected.");
+			NotificationManager.info("No values were entered.");
 			return false;
 		}
 
@@ -126,13 +126,6 @@ var NewFluidForm = React.createClass({
 			className += " has-error"
 		}
 		return className;
-	},
-
-	getInitialState: function () {
-		return {
-			loading: false,
-			errors: {}
-		}
 	},
 
 	handleClick: function() {

@@ -4,6 +4,8 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
 import {findDOMNode} from 'react-dom';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var items = [];
 
@@ -54,15 +56,16 @@ var LabAnalyserSelectField = React.createClass({
 
         return (
             <div>
-                <FormGroup>
+                <FormGroup validationState={this.props.errors.lab_id ? 'error' : null}>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
                         name="lab_id">
-                        <option key="0" value="select">Lab/On-Line Analyser</option>
+                        <option key="0" value="">Lab/On-Line Analyser</option>
                         {menuItems}
                     </FormControl>
+                    <HelpBlock className="warning">{this.props.errors.lab_id}</HelpBlock>
                 </FormGroup>
             </div>
         );
@@ -82,7 +85,6 @@ var NewSyringeForm = React.createClass({
             var key = fields[i];
             data[key] = this.state[key];
         }
-        console.log(data);
 
         return $.ajax({
             url: '/api/v1.0/syringe/',
@@ -99,13 +101,10 @@ var NewSyringeForm = React.createClass({
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        // var errors = this._validate();
-        // if(Object.keys(errors).length != 0) {
-        //   this.setState({
-        //     errors: errors
-        //   });
-        //    return;
-        // }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+			return false;
+		}
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -116,8 +115,8 @@ var NewSyringeForm = React.createClass({
     },
     _onSuccess: function (data) {
         this.setState(this.getInitialState());
+        this.props.handleClose();
         this.props.onCreate(data);
-        // show success message
     },
     _onError: function (data) {
         var message = "Failed to create";
@@ -125,11 +124,24 @@ var NewSyringeForm = React.createClass({
         if (res.message) {
             message = data.responseJSON.message;
         }
-        if (res.errors) {
-            this.setState({
-                errors: res.errors
-            });
-        }
+        if (res.error) {
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
     _onChange: function (e) {
         var state = {};
@@ -140,15 +152,45 @@ var NewSyringeForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
-    
-    _validate: function () {
-        var errors = {};
-        // if(this.state.username == "") {
-        //   errors.username = "Username is required";
-        // }
+
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+    
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
     
     _formGroupClass: function (field) {
@@ -181,15 +223,19 @@ var NewSyringeForm = React.createClass({
                         <div className="col-md-12">
                             <LabAnalyserSelectField
                                 source="/api/v1.0/lab"
-                                handleChange={this.handleChange}/>
+                                handleChange={this.handleChange}
+                                errors={this.state.errors}/>
                         </div>
                     </div>
 
                     <div className="maxwidth">
-                        <FormGroup>
+                        <FormGroup validationState={this.state.errors.serial ? 'error' : null}>
+                            <HelpBlock className="warning">{this.state.errors.serial}</HelpBlock>
                             <FormControl type="text"
                                          placeholder="Serial"
                                          name="serial"
+                                         data-len="50"
+                                         required
                             />
                         </FormGroup>
                     </div>

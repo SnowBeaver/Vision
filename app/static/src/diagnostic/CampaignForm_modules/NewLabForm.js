@@ -89,7 +89,7 @@ var NewLabForm = React.createClass({
 		var fields = this.state.changedFields;
 
 		if (fields.length == 0){
-			NotificationManager.info("No values were selected.");
+			NotificationManager.info("No values were entered.");
 			return false;
 		}
 
