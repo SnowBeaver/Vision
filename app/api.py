@@ -107,7 +107,7 @@ def update_item(path, item_id):
         try:
             setattr(item, k, v)
         except AttributeError:
-            abort(500, "can't set attribute {}: {}".format(k, v))
+            abort(500, "can't set attribute - {}: {}".format(k, v))
 
     db.session.commit()
     return item.serialize()
@@ -154,7 +154,10 @@ def add_or_update_tests(path):
 
         items.append(item)
         for k, v in test.items():
-            setattr(item, k, v)
+            try:
+                setattr(item, k, v)
+            except AttributeError:
+                abort(500, "can't set attribute - {}: {}".format(k, v))
 
     db.session.commit()
     return [item.serialize() for item in items]
