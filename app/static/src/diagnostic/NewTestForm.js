@@ -66,7 +66,7 @@ var TestProfileSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.state.value}
+                    value={this.props.value}
                     onChange={this.handleChange}
                     name="profile_type_id">
                     <option value="select_prof">Choose profile from saved</option>
@@ -138,7 +138,7 @@ var PerformedBySelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="performed_by_id"
                         required={this.props.required}>
                         <option key="0" value="">Performed by{this.props.required ? " *": ""}</option>
@@ -211,7 +211,7 @@ var MaterialSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select material"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="material_id"
                         required={this.props.required}>
                         <option key="0" value="">Material{this.props.required ? " *" : ""}</option>
@@ -284,7 +284,7 @@ var FluidTypeSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="fluid_type_id"
                     >
                         <option key="0" value="select">Fluid Type</option>
@@ -357,7 +357,7 @@ var LabAnalyserSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="lab_id"
                         required={this.props.required}>
                         <option key="0" value="">Lab/On-Line Analyser{this.props.required ? " *" : ""}</option>
@@ -431,7 +431,7 @@ var LabContractSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="lab_contract_id"
                         required={this.props.required}>
                         <option key="0" value="">Lab Contract{this.props.required ? " *" : ""}</option>
@@ -504,7 +504,7 @@ var SyringeNumberSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="seringe_num"
                         data-len={this.props["data-len"]}>
                         <option key="0" value="select">Syringe Number</option>
@@ -575,7 +575,7 @@ var TestReasonSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.state.value}
+                    value={this.props.value}
                     name="test_reason_id"
                     onChange={this.handleChange}
                     required={this.props.required}
