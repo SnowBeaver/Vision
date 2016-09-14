@@ -752,9 +752,9 @@ const EquipmentForm = React.createClass({
         var fields = this.state.fields;
         var subform = this.state.subform;
         var data = {};
-
         var path = this.state.table_name;
 
+        console.log("SAVE", subform);
 
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
@@ -768,7 +768,7 @@ const EquipmentForm = React.createClass({
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function (data) {
-                if (subform != 0) {
+                if (Object.keys(subform).length != 0) {
                     $.ajax({
                         url: '/api/v1.0/' + path + '/',
                         type: 'POST',
@@ -789,7 +789,7 @@ const EquipmentForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this._validate()){
+        if (!this._validate()) {
             NotificationManager.error('Please correct the errors');
             return;
         }
@@ -818,10 +818,10 @@ const EquipmentForm = React.createClass({
         }
         if (res.error) {
             // Join multiple error messages
-            for (var field in res.error){
+            for (var field in res.error) {
                 var errorMessage = res.error[field];
-                if (Array.isArray(errorMessage)){
-                     errorMessage = errorMessage.join(". ");
+                if (Array.isArray(errorMessage)) {
+                    errorMessage = errorMessage.join(". ");
                 }
                 res.error[field] = errorMessage;
             }
@@ -837,78 +837,88 @@ const EquipmentForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
+        var form = {};
+        var subform = this.state.subform;
 
-        if(typeof e.target.options[e.target.selectedIndex].accessKey!= 'undefined'){
-              state['table_name']= e.target.options[e.target.selectedIndex].accessKey;
-        }
-
-        if ((this.state.fields.indexOf(e.target.name) == -1) || e.target.name === 'serial') {
-            if (e.target.type == 'checkbox') {
-                this.state.subform[e.target.name] = e.target.checked;
-            } else if (e.target.type == 'radio') {
-                this.state.subform[e.target.name] = e.target.value;
-            } else if (e.target.type == 'select-one') {
-                this.state.subform[e.target.name] = e.target.value;
-            } else {
-                this.state.subform[e.target.name] = e.target.value;
+        if (e.target.type == 'select-one' && e.target.name === 'equipment_type_id') {
+            if (typeof e.target.options[e.target.selectedIndex].accessKey != 'undefined') {
+                form['table_name'] = e.target.options[e.target.selectedIndex].accessKey;
             }
         }
 
-// ||e.target.name === 'equipment_type_id'
-//
+        if (this.state.fields.indexOf(e.target.name) == -1) {
+
+            if (e.target.type == 'checkbox') {
+                subform[e.target.name] = e.target.checked;
+            } else if (e.target.type == 'radio') {
+                subform[e.target.name] = e.target.value;
+            } else if (e.target.type == 'select-one') {
+                subform[e.target.name] = e.target.value;
+            } else {
+                subform[e.target.name] = e.target.value;
+            }
+            this.setState({subform: subform});
+        } else if (e.target.name === 'equipment_type_id') {
+            subform = {};
+            this.setState({
+                subform: subform
+            });
+        }
 
         if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
+            form[e.target.name] = e.target.checked;
         } else if (e.target.type == 'radio') {
-            state[e.target.name] = e.target.value;
+            form[e.target.name] = e.target.value;
         } else if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
+            form[e.target.name] = e.target.value;
         } else {
-            state[e.target.name] = e.target.value;
+            form[e.target.name] = e.target.value;
         }
 
         if (e.target.name == 'equipment_type_id') {
-            state['option_text'] = {
+            form['option_text'] = {
                 name: e.target.name,
                 id: e.target.value,
                 text: e.target[e.target.selectedIndex].text
             }
         }
 
+        console.log("subform", subform);
+
         // TODO: Exclude upstream field or let adding multiple upstreams
-        if (e.target.name != "upstream1"){
-            state.changedFields = this.state.changedFields.concat([e.target.name]);
+        if (e.target.name != "upstream1") {
+            form.changedFields = this.state.changedFields.concat([e.target.name]);
         }
 
         var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
-        state = this._updateFieldErrors(e.target.name, state, errors);
+        form = this._updateFieldErrors(e.target.name, form, errors);
 
-        this.setState(state);
 
+        this.setState(form);
+        // console.log("FORM",form);
     },
 
-    _validateFieldType: function (value, type){
+    _validateFieldType: function (value, type) {
         var errors = {};
-        if (type != undefined && value){
+        if (type != undefined && value) {
             var typePatterns = {
                 "int": /^(-|\+)?(0|[1-9]\d*)$/,
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/
             };
-            if (!typePatterns[type].test(value)){
+            if (!typePatterns[type].test(value)) {
                 errors = "Invalid value. Should be " + type;
             }
         }
         return errors;
     },
 
-    _updateFieldErrors: function (fieldName, state, errors){
+    _updateFieldErrors: function (fieldName, state, errors) {
         // Clear existing errors related to the current field as it has been edited
         state.errors = this.state.errors;
         delete state.errors[fieldName];
 
         // Update errors with new ones, if present
-        if (Object.keys(errors).length){
+        if (Object.keys(errors).length) {
             state.errors[fieldName] = errors
         }
         return state;
@@ -916,7 +926,7 @@ const EquipmentForm = React.createClass({
 
     _validate: function () {
         var response = true;
-        if (Object.keys(this.state.errors).length > 0){
+        if (Object.keys(this.state.errors).length > 0) {
             response = false;
         }
         return response;
@@ -928,20 +938,6 @@ const EquipmentForm = React.createClass({
             className += " has-error"
         }
         return className;
-    },
-
-    onEquipmentTypeChange: function (e) {
-        $.get('/api/v1.0/equipment_type/1', function (result) {
-
-            var eqtype_fields = (result['result']);
-            this.setState({
-                eqtype_fields: eqtype_fields
-            });
-        }.bind(this), 'json');
-    },
-
-    handleClose: function (e) {
-
     },
 
     closeNewEquipmentTypeForm: function () {
@@ -1044,7 +1040,6 @@ const EquipmentForm = React.createClass({
                                     <EquipmentTypeSelectField
                                         source="/api/v1.0/equipment_type"
                                         value={this.state.equipment_type_id}
-                                        onChange={this.onEquipmentTypeChange}
                                         errors={this.state.errors}
                                         required
                                     />
@@ -1259,7 +1254,8 @@ const EquipmentForm = React.createClass({
                                     <FormGroup controlId="visualInspectionCommentsTextarea"
                                                validationState={this.state.errors.visual_inspection_comments ? 'error' : null}>
                                         <ControlLabel>Visual Inspection Comments</ControlLabel>
-                                        <HelpBlock className="warning">{this.state.errors.visual_inspection_comments}</HelpBlock>
+                                        <HelpBlock
+                                            className="warning">{this.state.errors.visual_inspection_comments}</HelpBlock>
                                         <FormControl componentClass="textarea"
                                                      name="visual_inspection_comments"
                                                      placeholder="visComments"
@@ -1272,10 +1268,11 @@ const EquipmentForm = React.createClass({
                             <div className="row">
                                 <div className="col-lg-12">
                                     <FormGroup controlId="tapChangesTextarea" ref="nr_taps"
-                                              validationState={this.state.errors.nbr_of_tap_change_ltc ? 'error' : null}>
+                                               validationState={this.state.errors.nbr_of_tap_change_ltc ? 'error' : null}>
                                         <ControlLabel>Nbr of Tap Changes LTC</ControlLabel>
-                                        <HelpBlock className="warning">{this.state.errors.nbr_of_tap_change_ltc}</HelpBlock>
-                                        <FormControl componentClass="textarea"
+                                        <HelpBlock
+                                            className="warning">{this.state.errors.nbr_of_tap_change_ltc}</HelpBlock>
+                                        <FormControl type="text"
                                                      name="nbr_of_tap_change_ltc"
                                                      placeholder="tap changes"
                                                      ref="nr_taps"
@@ -1336,7 +1333,8 @@ const EquipmentForm = React.createClass({
                                     <FormGroup controlId="prevSerialNumInput"
                                                validationState={this.state.errors.prev_serial_number ? 'error' : null}>
                                         <ControlLabel>Prev Serial Number</ControlLabel>
-                                        <HelpBlock className="warning">{this.state.errors.prev_serial_number}</HelpBlock>
+                                        <HelpBlock
+                                            className="warning">{this.state.errors.prev_serial_number}</HelpBlock>
                                         <FormControl type="text"
                                                      name="prev_serial_number"
                                                      placeholder="Previous serial number"
@@ -1352,7 +1350,8 @@ const EquipmentForm = React.createClass({
                                     <FormGroup controlId="prevEquipNumInput"
                                                validationState={this.state.errors.prev_equipment_number ? 'error' : null}>
                                         <ControlLabel>Prev Equipment Number</ControlLabel>
-                                        <HelpBlock className="warning">{this.state.errors.prev_equipment_number}</HelpBlock>
+                                        <HelpBlock
+                                            className="warning">{this.state.errors.prev_equipment_number}</HelpBlock>
                                         <FormControl type="text"
                                                      name="prev_equipment_number"
                                                      placeholder="Previous equipment number"
