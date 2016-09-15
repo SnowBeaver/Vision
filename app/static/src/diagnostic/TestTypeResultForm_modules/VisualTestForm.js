@@ -41,13 +41,15 @@ var SelectField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
+            <FormGroup validationState={validationState}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
@@ -55,8 +57,9 @@ var SelectField = React.createClass({
                              value={value}
                              >
                     {menuItems}
-                    <FormControl.Feedback />
                 </FormControl>
+                <HelpBlock className="warning">{error}</HelpBlock>
+                <FormControl.Feedback />
             </FormGroup>
         );
     }
@@ -192,7 +195,6 @@ var VisualTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
-
     },
 
     _onError: function (data) {
@@ -303,7 +305,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tank_cover_gasket_id"
                                                      source="gasket_condition"
                                                      label="Cover gasket"
-                                                     value={this.state.tank_cover_gasket_id}/>
+                                                     value={this.state.tank_cover_gasket_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-2">
                                         <b>Pressure</b>
@@ -312,7 +315,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tank_pressure_unit_id"
                                                      source="pressure_unit"
                                                      label=""
-                                                     value={this.state.tank_pressure_unit_id}/>
+                                                     value={this.state.tank_pressure_unit_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-2">
                                         <TextField name="tank_pressure"
@@ -328,13 +332,15 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tank_manhole_gasket_id"
                                                      source="gasket_condition"
                                                      label="Manhole gasket"
-                                                     value={this.state.tank_manhole_gasket_id}/>
+                                                     value={this.state.tank_manhole_gasket_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-6 ">
                                         <SelectField name="tank_overpressure_valve_id"
                                                      source="valve_condition"
                                                      label="Sud.Pres.Valve"
-                                                     value={this.state.tank_overpressure_valve_id}/>
+                                                     value={this.state.tank_overpressure_valve_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -343,13 +349,15 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tank_gas_relay_id"
                                                      source="gas_relay"
                                                      label="Gas relay"
-                                                     value={this.state.tank_gas_relay_id}/>
+                                                     value={this.state.tank_gas_relay_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-6 ">
                                         <SelectField name="tank_sampling_valve_id"
                                                      source="valve_condition"
                                                      label="Sampling Valves"
-                                                     value={this.state.tank_sampling_valve_id}/>
+                                                     value={this.state.tank_sampling_valve_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -358,13 +366,15 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tank_oil_level_id"
                                                      source="fluid_level"
                                                      label="Oil level"
-                                                     value={this.state.tank_oil_level_id}/>
+                                                     value={this.state.tank_oil_level_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-6 ">
                                         <SelectField name="tank_oil_pump_id"
                                                      source="pump_condition"
                                                      label="Oil Pump"
-                                                     value={this.state.tank_oil_pump_id}/>
+                                                     value={this.state.tank_oil_pump_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -424,7 +434,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tank_overall_condition_id"
                                                      source="overall_condition"
                                                      label="Overall Condition"
-                                                     value={this.state.tank_overall_condition_id}/>
+                                                     value={this.state.tank_overall_condition_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                             </div>
@@ -441,7 +452,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="misc_foundation_id"
                                                      source="foundation_condition"
                                                      label="Foundation"
-                                                     value={this.state.misc_foundation_id}/>
+                                                     value={this.state.misc_foundation_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -482,7 +494,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="grounding_connection_id"
                                                      source="connection_condition"
                                                      label="Connection"
-                                                     value={this.state.grounding_connection_id}/>
+                                                     value={this.state.grounding_connection_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                             </div>
@@ -502,13 +515,15 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tap_changer_gasket_id"
                                                      source="gasket_condition"
                                                      label="Gasket"
-                                                     value={this.state.tap_changer_gasket_id}/>
+                                                     value={this.state.tap_changer_gasket_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-6 ">
                                         <SelectField name="tap_changer_overpressure_valve_id"
                                                      source="valve_condition"
                                                      label="Sud Pres. Valve"
-                                                     value={this.state.tap_changer_overpressure_valve_id}/>
+                                                     value={this.state.tap_changer_overpressure_valve_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -517,13 +532,15 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tap_changer_oil_level_id"
                                                      source="fluid_level"
                                                      label="Oil Level"
-                                                     value={this.state.tap_changer_oil_level_id}/>
+                                                     value={this.state.tap_changer_oil_level_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-6 ">
                                         <SelectField name="tap_changer_sampling_valve_id"
                                                      source="valve_condition"
                                                      label="Sampling Valves"
-                                                     value={this.state.tap_changer_sampling_valve_id}/>
+                                                     value={this.state.tap_changer_sampling_valve_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -558,7 +575,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tap_changer_counter_id"
                                                      source="tap_counter_status"
                                                      label="Counter"
-                                                     value={this.state.tap_changer_counter_id}/>
+                                                     value={this.state.tap_changer_counter_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -569,7 +587,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tap_changer_pressure_unit_id"
                                                      source="pressure_unit"
                                                      label="Counter"
-                                                     value={this.state.tap_changer_pressure_unit_id}/>
+                                                     value={this.state.tap_changer_pressure_unit_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                     <div className="col-md-2">
                                         <TextField name="tap_changer_pressure_max"
@@ -589,7 +608,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tap_changer_filter_id"
                                                      source="tap_filter_condition"
                                                      label="Filter"
-                                                     value={this.state.tap_changer_filter_id}/>
+                                                     value={this.state.tap_changer_filter_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -606,7 +626,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="tap_changer_overall_condition_id"
                                                      source="overall_condition"
                                                      label="Overall Condition"
-                                                     value={this.state.tap_changer_overall_condition_id}/>
+                                                     value={this.state.tap_changer_overall_condition_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                             </div>
@@ -623,7 +644,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="exp_tank_pipe_gasket_id"
                                                      source="gasket_condition"
                                                      label="Pipe Tightness"
-                                                     value={this.state.exp_tank_pipe_gasket_id}/>
+                                                     value={this.state.exp_tank_pipe_gasket_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -631,7 +653,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="exp_tank_oil_level_id"
                                                      source="fluid_level"
                                                      label="Oil Level"
-                                                     value={this.state.exp_tank_oil_level_id}/>
+                                                     value={this.state.exp_tank_oil_level_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -639,7 +662,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="exp_tank_paint_id"
                                                      source="paint_types"
                                                      label="Silica Gel Breather"
-                                                     value={this.state.exp_tank_paint_id}/>
+                                                     value={this.state.exp_tank_paint_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -647,7 +671,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="exp_tank_overall_condition_id"
                                                      source="overall_condition"
                                                      label="Overall Condition"
-                                                     value={this.state.exp_tank_overall_condition_id}/>
+                                                     value={this.state.exp_tank_overall_condition_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                             </div>
@@ -667,7 +692,8 @@ var VisualTestForm = React.createClass({
                                             <SelectField name="radiator_fan_id"
                                                          source="fan_condition"
                                                          label="Fan"
-                                                         value={this.state.radiator_fan_id}/>
+                                                         value={this.state.radiator_fan_id}
+                                                         errors={this.state.errors}/>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -675,7 +701,8 @@ var VisualTestForm = React.createClass({
                                             <SelectField name="radiator_gasket_id"
                                                          source="gasket_condition"
                                                          label="Gasket"
-                                                         value={this.state.radiator_gasket_id}/>
+                                                         value={this.state.radiator_gasket_id}
+                                                         errors={this.state.errors}/>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -683,7 +710,8 @@ var VisualTestForm = React.createClass({
                                             <SelectField name="radiator_overall_condition_id"
                                                          source="overall_condition"
                                                          label="Overall Condition"
-                                                         value={this.state.radiator_overall_condition_id}/>
+                                                         value={this.state.radiator_overall_condition_id}
+                                                         errors={this.state.errors}/>
                                         </div>
                                     </div>
                                 </div>
@@ -700,7 +728,8 @@ var VisualTestForm = React.createClass({
                                             <SelectField name="control_cab_connection_id"
                                                          source="connection_condition"
                                                          label="Connection"
-                                                         value={this.state.control_cab_connection_id}/>
+                                                         value={this.state.control_cab_connection_id}
+                                                         errors={this.state.errors}/>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -708,7 +737,8 @@ var VisualTestForm = React.createClass({
                                             <SelectField name="control_cab_heating_id"
                                                          source="heating_condition"
                                                          label="Heating"
-                                                         value={this.state.control_cab_heating_id}/>
+                                                         value={this.state.control_cab_heating_id}
+                                                         errors={this.state.errors}/>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -716,7 +746,8 @@ var VisualTestForm = React.createClass({
                                             <SelectField name="control_cab_overall_condition_id"
                                                          source="overall_condition"
                                                          label="Overall Condition"
-                                                         value={this.state.control_cab_overall_condition_id}/>
+                                                         value={this.state.control_cab_overall_condition_id}
+                                                         errors={this.state.errors}/>
                                         </div>
                                     </div>
                                 </div>
@@ -734,7 +765,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="bushing_gasket_id"
                                                      source="gasket_condition"
                                                      label="Gasket"
-                                                     value={this.state.bushing_gasket_id}/>
+                                                     value={this.state.bushing_gasket_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -742,7 +774,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="bushing_oil_level_id"
                                                      source="fluid_level"
                                                      label="Oil Level"
-                                                     value={this.state.bushing_oil_level_id}/>
+                                                     value={this.state.bushing_oil_level_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -750,7 +783,8 @@ var VisualTestForm = React.createClass({
                                         <SelectField name="bushing_overall_condition_id"
                                                      source="overall_condition"
                                                      label="Overall Condition"
-                                                     value={this.state.bushing_overall_condition_id}/>
+                                                     value={this.state.bushing_overall_condition_id}
+                                                     errors={this.state.errors}/>
                                     </div>
                                 </div>
                             </div>
