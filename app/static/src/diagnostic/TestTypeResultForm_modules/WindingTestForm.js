@@ -6,6 +6,8 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var TapTestPanel = React.createClass({
@@ -13,103 +15,127 @@ var TapTestPanel = React.createClass({
         this.props.onChange(this.props.testId, e.target.name, e.target.value);
     },
     render: function () {
-        var data = (this.props.data != null) ? this.props.data: {};
+        var data = (this.props.data != null) ? this.props.data : {};
+        var errors = this.props.errors;
         return (
             <div>
                 <div className="row">
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.test_kv1) ? 'error' : null}>
                             <ControlLabel>Test KV</ControlLabel>
                             <FormControl type='text'
                                          placeholder='0'
                                          name="test_kv1"
                                          value={data.test_kv1}
+                                         data-type="float"
                                          onChange={this._onChange}
                             />
+                            <HelpBlock className="warning">{errors.test_kv1}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.m_meter1) ? 'error' : null}>
                             <ControlLabel>Reading</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          name="m_meter1"
                                          value={data.m_meter1}
+                                         data-type="float"
                                          onChange={this._onChange}
                             />
+                            <HelpBlock className="warning">{errors.m_meter1}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.m_multiplier1) ? 'error' : null}>
                             <ControlLabel>Mult.</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          name="m_multiplier1"
                                          value={data.m_multiplier1}
+                                         data-type="float"
                                          onChange={this._onChange}
                             />
+                            <HelpBlock className="warning">{errors.m_multiplier1}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.milliamperes) ? 'error' : null}>
                             <ControlLabel>Milliamperes</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          value={data.milliamperes}
                                          disabled
                             />
+                            <HelpBlock className="warning">{errors.milliamperes}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.w_meter1) ? 'error' : null}>
                             <ControlLabel>Reading</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          name="w_meter1"
                                          value={data.w_meter1}
+                                         data-type="float"
                                          onChange={this._onChange}
                             />
+                            <HelpBlock className="warning">{errors.w_meter1}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.w_multiplier1) ? 'error' : null}>
                             <ControlLabel>Mult.</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          name="w_multiplier1"
                                          value={data.w_multiplier1}
+                                         data-type="float"
                                          onChange={this._onChange}
                             />
+                            <HelpBlock className="warning">{errors.w_multiplier1}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.watts) ? 'error' : null}>
                             <ControlLabel>Watts</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          value={data.watts}
                                          disabled
                             />
+                            <HelpBlock className="warning">{errors.watts}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.pf) ? 'error' : null}>
                             <ControlLabel>PF</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          value={data.pf}
                                          disabled
                             />
+                            <HelpBlock className="warning">{errors.pf}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                     <div className="col-md-1">
-                        <FormGroup>
+                        <FormGroup validationState={(errors.corr) ? 'error' : null}>
                             <ControlLabel>Corr 20C</ControlLabel>
                             <FormControl type="text"
                                          placeholder="0"
                                          value={data.corr}
                                          disabled
                             />
+                            <HelpBlock className="warning">{errors.corr}</HelpBlock>
+                            <FormControl.Feedback />
                         </FormGroup>
                     </div>
                 </div>
@@ -184,13 +210,11 @@ var WindingTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+			return false;
+		}
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -203,21 +227,32 @@ var WindingTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
-
     },
 
     _onError: function (data) {
-
         var message = "Failed to create";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
-        }
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -229,18 +264,50 @@ var WindingTestForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     _formGroupClass: function (field) {
@@ -251,7 +318,7 @@ var WindingTestForm = React.createClass({
         return className;
     },
 
-    handleFieldChange: function(testId, name, value) {
+    handleFieldChange: function(testId, name, value, type) {
         var tests = this.state.tests;
         var fieldNameValue = this.state.tests[testId] || {};
         fieldNameValue[name] = value;
@@ -278,7 +345,8 @@ var WindingTestForm = React.createClass({
             var props = {
                 testId: i.toString(),
                 onChange: this.handleFieldChange,
-                data: this.state.tests[i.toString()]
+                data: this.state.tests[i.toString()],
+                errors: this.state.errors
             };
             taps.push(
                 <Panel header={headName} eventKey={i} id={i} key={'tap' + i}>
