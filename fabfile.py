@@ -208,6 +208,15 @@ def deploy(branch='master'):
     restart_services()
 
 
+def local_update():
+    with cd(env.directory):
+        with source_virtualenv():
+            run(env.pip + ' install -r requirements.txt')
+            run('python manage.py db upgrade')
+            update_static()
+    restart_services()
+
+
 def update_flaskbb():
     with cd(env.directory):
         with source_virtualenv():
