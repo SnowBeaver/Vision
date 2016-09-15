@@ -1398,12 +1398,12 @@ doc = ApiDoc(app=api)
 @apiGroup campaign
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"created_by_id":1, "date_created": "2016-07-29 17:52:19"}' \
+         -d '{"created_by_id":1, "date_created": "2016-07-29 17:52:19", "contract_id":1}' \
          http://localhost:8001/api/v1.0/campaign/
 
 @apiParam   {Datetime}      date_created        required format "2016-07-29 17:52:19"
 @apiParam   {Integer}       created_by_id       required
-@apiParam   {Integer}       contract_id
+@apiParam   {Integer}       contract_id         required
 @apiParam   {Datetime}      date_sampling       format "2016-07-29 17:52:19"
 @apiParam   {String}        description
 @apiParam   {Integer}       status_id
