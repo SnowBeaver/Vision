@@ -767,6 +767,7 @@ const EquipmentForm = React.createClass({
             data: JSON.stringify(data),
             success: function (data) {
                 if (Object.keys(subform).length != 0) {
+                    subform['equipment_id'] = data['result'];
                     $.ajax({
                         url: '/api/v1.0/' + path + '/',
                         type: 'POST',
