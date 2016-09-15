@@ -104,7 +104,11 @@ def update_item(path, item_id):
     items_model = model_dict[path]['model']
     item = db.session.query(items_model).get(item_id)
     for k, v in request.json.items():
-        setattr(item, k, v)
+        try:
+            setattr(item, k, v)
+        except AttributeError:
+            abort(500, "can't set attribute - {}: {}".format(k, v))
+
     db.session.commit()
     return item.serialize()
 
@@ -150,7 +154,10 @@ def add_or_update_tests(path):
 
         items.append(item)
         for k, v in test.items():
-            setattr(item, k, v)
+            try:
+                setattr(item, k, v)
+            except AttributeError:
+                abort(500, "can't set attribute - {}: {}".format(k, v))
 
     db.session.commit()
     return [item.serialize() for item in items]
@@ -174,6 +181,11 @@ def not_found(error):
 @api.errorhandler(400)
 def bad_request(error):
     return make_response(return_json('error', error.description), 400)
+
+
+@api.errorhandler(500)
+def internal_server_error(error):
+    return make_response(return_json('error', error.description), 500)
 
 
 @api_blueprint.route('/<path>/', methods=['GET', 'POST'])

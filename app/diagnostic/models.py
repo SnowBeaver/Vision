@@ -520,8 +520,6 @@ class GasSensor(db.Model):
     __tablename__ = u'gas_sensor'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))  # Sensor. Sensor commercial name
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     model = db.Column(db.String(50))
 
     h2 = db.Column(db.Float(53), server_default=db.text("0"))  # Remaining are equivalent
@@ -540,35 +538,36 @@ class GasSensor(db.Model):
     # percentError. Calculated error in percent
     percent_error = db.Column(db.Float(53), server_default=db.text("0"))
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='GasSensor.equipment_id')
+
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id, )
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'model': self.model,
-                'h2': self.h2,
-                'ch4': self.ch4,
-                'c2h2': self.c2h2,
-                'c2h4': self.c2h4,
-                'c2h6': self.c2h6,
-                'co': self.co,
-                'co2': self.co2,
-                'o2': self.o2,
-                'n2': self.n2,
-                'ppm_error': self.ppm_error,
-                'percent_error': self.percent_error,
-                }
+        return {
+            'id': self.id,
+            'model': self.model,
+            'h2': self.h2,
+            'ch4': self.ch4,
+            'c2h2': self.c2h2,
+            'c2h4': self.c2h4,
+            'c2h6': self.c2h6,
+            'co': self.co,
+            'co2': self.co2,
+            'o2': self.o2,
+            'n2': self.n2,
+            'ppm_error': self.ppm_error,
+            'percent_error': self.percent_error,
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Transformer(db.Model):
     __tablename__ = u'transformer'
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     # FluidVolume. Quantity of insulating fluid in equipment in litre
     fluid_volume = db.Column(db.Float)
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -579,12 +578,12 @@ class Transformer(db.Model):
     autotransformer = db.Column(db.Boolean)  # Autotransformer. True if it is
     threephase = db.Column(db.Boolean)
 
-    # FluidType. Insulating fluid used in equipment
-    fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=False)
-    fluid_type = relationship('FluidType', backref='transformer')
-
-    fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
-    fluid_level = db.relationship('FluidLevel', foreign_keys='Transformer.fluid_level_id')
+    # # FluidType. Insulating fluid used in equipment
+    # fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=False)
+    # fluid_type = relationship('FluidType', backref='transformer')
+    #
+    # fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
+    # fluid_level = db.relationship('FluidLevel', foreign_keys='Transformer.fluid_level_id')
 
     gassensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
     gas_sensor = relationship('GasSensor', backref='transformer')
@@ -601,8 +600,8 @@ class Transformer(db.Model):
     first_cooling_stage_power = db.Column(db.Float(53))  # MVA2. First cooling stage power
     second_cooling_stage_power = db.Column(db.Float(53))  # MVA3. second cooling stage power
 
-
-
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Transformer.equipment_id')
     # is a separate device
     # PrimConnection. Primary windings connection on a multi phase transformer
     primary_winding_connection = db.Column(db.Integer)
@@ -665,89 +664,89 @@ class Transformer(db.Model):
     ratio_tag5 = db.Column(db.String(20))  # RatioTag5. Tag use for TTR
     ratio_tag6 = db.Column(db.String(20))  # RatioTag6. Tag use for TTR
 
-    bushing_serial1_id = db.Column(
-        'bushing_serial1',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial1 = relationship('Bushing', foreign_keys="Transformer.bushing_serial1_id")
-
-    bushing_serial2_id = db.Column(
-        'bushing_serial2',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial2 = relationship('Bushing', foreign_keys="Transformer.bushing_serial2_id")
-
-    bushing_serial3_id = db.Column(
-        'bushing_serial3',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial3 = relationship('Bushing', foreign_keys="Transformer.bushing_serial3_id")
-
-    bushing_serial4_id = db.Column(
-        'bushing_serial4',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial4 = relationship('Bushing', foreign_keys="Transformer.bushing_serial4_id")
-
-    bushing_serial5_id = db.Column(
-        'bushing_serial5',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial5 = relationship('Bushing', foreign_keys="Transformer.bushing_serial5_id")
-
-    bushing_serial6_id = db.Column(
-        'bushing_serial6',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial6 = relationship('Bushing', foreign_keys="Transformer.bushing_serial6_id")
-
-    bushing_serial7_id = db.Column(
-        'bushing_serial7',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial7 = relationship('Bushing', foreign_keys="Transformer.bushing_serial7_id")
-
-    bushing_serial8_id = db.Column(
-        'bushing_serial8',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial8 = relationship('Bushing', foreign_keys="Transformer.bushing_serial8_id")
-
-    bushing_serial9_id = db.Column(
-        'bushing_serial9',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial9 = relationship('Bushing', foreign_keys="Transformer.bushing_serial9_id")
-
-    bushing_serial10_id = db.Column(
-        'bushing_serial10',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial10 = relationship('Bushing', foreign_keys="Transformer.bushing_serial10_id")
-
-    bushing_serial11_id = db.Column(
-        'bushing_serial11',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial11 = relationship('Bushing', foreign_keys="Transformer.bushing_serial11_id")
-
-    bushing_serial12_id = db.Column(
-        'bushing_serial12',
-        db.ForeignKey("bushing.id"),
-        nullable=True
-    )
-    bushing_serial12 = relationship('Bushing', foreign_keys="Transformer.bushing_serial12_id")
+    # bushing_serial1_id = db.Column(
+    #     'bushing_serial1',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial1 = relationship('Bushing', foreign_keys="Transformer.bushing_serial1_id")
+    #
+    # bushing_serial2_id = db.Column(
+    #     'bushing_serial2',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial2 = relationship('Bushing', foreign_keys="Transformer.bushing_serial2_id")
+    #
+    # bushing_serial3_id = db.Column(
+    #     'bushing_serial3',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial3 = relationship('Bushing', foreign_keys="Transformer.bushing_serial3_id")
+    #
+    # bushing_serial4_id = db.Column(
+    #     'bushing_serial4',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial4 = relationship('Bushing', foreign_keys="Transformer.bushing_serial4_id")
+    #
+    # bushing_serial5_id = db.Column(
+    #     'bushing_serial5',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial5 = relationship('Bushing', foreign_keys="Transformer.bushing_serial5_id")
+    #
+    # bushing_serial6_id = db.Column(
+    #     'bushing_serial6',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial6 = relationship('Bushing', foreign_keys="Transformer.bushing_serial6_id")
+    #
+    # bushing_serial7_id = db.Column(
+    #     'bushing_serial7',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial7 = relationship('Bushing', foreign_keys="Transformer.bushing_serial7_id")
+    #
+    # bushing_serial8_id = db.Column(
+    #     'bushing_serial8',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial8 = relationship('Bushing', foreign_keys="Transformer.bushing_serial8_id")
+    #
+    # bushing_serial9_id = db.Column(
+    #     'bushing_serial9',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial9 = relationship('Bushing', foreign_keys="Transformer.bushing_serial9_id")
+    #
+    # bushing_serial10_id = db.Column(
+    #     'bushing_serial10',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial10 = relationship('Bushing', foreign_keys="Transformer.bushing_serial10_id")
+    #
+    # bushing_serial11_id = db.Column(
+    #     'bushing_serial11',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial11 = relationship('Bushing', foreign_keys="Transformer.bushing_serial11_id")
+    #
+    # bushing_serial12_id = db.Column(
+    #     'bushing_serial12',
+    #     db.ForeignKey("bushing.id"),
+    #     nullable=True
+    # )
+    # bushing_serial12 = relationship('Bushing', foreign_keys="Transformer.bushing_serial12_id")
 
     # device property ,  for  transformer
     mvaactual = db.Column(db.Float(53))  # MVAActual. Actual MVA used
@@ -779,116 +778,114 @@ class Transformer(db.Model):
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'fluid_volume': self.fluid_volume,
-                'sealed': self.sealed,
-                'welded_cover': self.welded_cover,
-                'windings': self.windings,
-                'cooling_rating': self.cooling_rating,
-                'autotransformer': self.autotransformer,
-                'threephase': self.threephase,
-                'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-                'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
-                'gassensor_id': self.gassensor_id,
-                'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
-                'phase_number': self.phase_number,
-                'frequency': self.frequency,
-                'primary_tension': self.primary_tension,
-                'secondary_tension': self.secondary_tension,
-                'tertiary_tension': self.tertiary_tension,
-                'based_transformerp_ower': self.based_transformerp_ower,
-                'first_cooling_stage_power': self.first_cooling_stage_power,
-                'second_cooling_stage_power': self.second_cooling_stage_power,
-                'primary_winding_connection': self.primary_winding_connection,
-                'secondary_winding_connection': self.secondary_winding_connection,
-                'tertiary_winding_connection': self.tertiary_winding_connection,
-                'windind_metal': self.windind_metal,
-                'bil1': self.bil1,
-                'bil2': self.bil2,
-                'bil3': self.bil3,
-                'static_shield1': self.static_shield1,
-                'static_shield2': self.static_shield2,
-                'static_shield3': self.static_shield3,
-                'bushing_neutral1': self.bushing_neutral1,
-                'bushing_neutral2': self.bushing_neutral2,
-                'bushing_neutral3': self.bushing_neutral3,
-                'bushing_neutral4': self.bushing_neutral4,
-                'ltc1': self.ltc1,
-                'ltc2': self.ltc2,
-                'ltc3': self.ltc3,
-                'temperature_rise': self.temperature_rise,
-                'impedance1': self.impedance1,
-                'imp_base1': self.imp_base1,
-                'impedance2': self.impedance2,
-                'imp_base2': self.imp_base2,
-                'mvaforced11': self.mvaforced11,
-                'mvaforced12': self.mvaforced12,
-                'mvaforced13': self.mvaforced13,
-                'mvaforced14': self.mvaforced14,
-                'mvaforced21': self.mvaforced21,
-                'mvaforced22': self.mvaforced22,
-                'mvaforced23': self.mvaforced23,
-                'mvaforced24': self.mvaforced24,
-                'impedance3': self.impedance3,
-                'impbasedmva3': self.impbasedmva3,
-                'formula_ratio2': self.formula_ratio2,
-                'formula_ratio': self.formula_ratio,
-                'ratio_tag1': self.ratio_tag1,
-                'ratio_tag2': self.ratio_tag2,
-                'ratio_tag3': self.ratio_tag3,
-                'ratio_tag4': self.ratio_tag4,
-                'ratio_tag5': self.ratio_tag5,
-                'ratio_tag6': self.ratio_tag6,
-                'bushing_serial1_id': self.bushing_serial1_id,
-                'bushing_serial1': self.bushing_serial1 and self.bushing_serial1.serialize(),
-                'bushing_serial2_id': self.bushing_serial2_id,
-                'bushing_serial2': self.bushing_serial2 and self.bushing_serial2.serialize(),
-                'bushing_serial3_id': self.bushing_serial3_id,
-                'bushing_serial3': self.bushing_serial3 and self.bushing_serial3.serialize(),
-                'bushing_serial4_id': self.bushing_serial4_id,
-                'bushing_serial4': self.bushing_serial4 and self.bushing_serial4.serialize(),
-                'bushing_serial5_id': self.bushing_serial5_id,
-                'bushing_serial5': self.bushing_serial5 and self.bushing_serial5.serialize(),
-                'bushing_serial6_id': self.bushing_serial6_id,
-                'bushing_serial6': self.bushing_serial6 and self.bushing_serial6.serialize(),
-                'bushing_serial7_id': self.bushing_serial7_id,
-                'bushing_serial7': self.bushing_serial7 and self.bushing_serial7.serialize(),
-                'bushing_serial8_id': self.bushing_serial8_id,
-                'bushing_serial8': self.bushing_serial8 and self.bushing_serial8.serialize(),
-                'bushing_serial9_id': self.bushing_serial9_id,
-                'bushing_serial9': self.bushing_serial9 and self.bushing_serial9.serialize(),
-                'bushing_serial10_id': self.bushing_serial10_id,
-                'bushing_serial10': self.bushing_serial10 and self.bushing_serial10.serialize(),
-                'bushing_serial11_id': self.bushing_serial11_id,
-                'bushing_serial11': self.bushing_serial11 and self.bushing_serial11.serialize(),
-                'bushing_serial12_id': self.bushing_serial12_id,
-                'bushing_serial12': self.bushing_serial12 and self.bushing_serial12.serialize(),
-                'mvaactual': self.mvaactual,
-                'mvaractual': self.mvaractual,
-                'mwreserve': self.mwreserve,
-                'mvarreserve': self.mvarreserve,
-                'mwultime': self.mwultime,
-                'mvarultime': self.mvarultime,
-                'mva4': self.mva4,
-                'quaternary_winding_connection': self.quaternary_winding_connection,
-                'bil4': self.bil4,
-                'static_shield4': self.static_shield4,
-                'ratio_tag7': self.ratio_tag7,
-                'ratiot_ag8': self.ratiot_ag8,
-                'formula_ratio3': self.formula_ratio3,
-                }
+        return {
+            'id': self.id,
+            'fluid_volume': self.fluid_volume,
+            'sealed': self.sealed,
+            'welded_cover': self.welded_cover,
+            'windings': self.windings,
+            'cooling_rating': self.cooling_rating,
+            'autotransformer': self.autotransformer,
+            'threephase': self.threephase,
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'fluid_level_id': self.fluid_level_id,
+            'fluid_level': self.fluid_level and self.fluid_level.serialize(),
+            'gassensor_id': self.gassensor_id,
+            'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
+            'phase_number': self.phase_number,
+            'frequency': self.frequency,
+            'primary_tension': self.primary_tension,
+            'secondary_tension': self.secondary_tension,
+            'tertiary_tension': self.tertiary_tension,
+            'based_transformerp_ower': self.based_transformerp_ower,
+            'first_cooling_stage_power': self.first_cooling_stage_power,
+            'second_cooling_stage_power': self.second_cooling_stage_power,
+            'primary_winding_connection': self.primary_winding_connection,
+            'secondary_winding_connection': self.secondary_winding_connection,
+            'tertiary_winding_connection': self.tertiary_winding_connection,
+            'windind_metal': self.windind_metal,
+            'bil1': self.bil1,
+            'bil2': self.bil2,
+            'bil3': self.bil3,
+            'static_shield1': self.static_shield1,
+            'static_shield2': self.static_shield2,
+            'static_shield3': self.static_shield3,
+            'bushing_neutral1': self.bushing_neutral1,
+            'bushing_neutral2': self.bushing_neutral2,
+            'bushing_neutral3': self.bushing_neutral3,
+            'bushing_neutral4': self.bushing_neutral4,
+            'ltc1': self.ltc1,
+            'ltc2': self.ltc2,
+            'ltc3': self.ltc3,
+            'temperature_rise': self.temperature_rise,
+            'impedance1': self.impedance1,
+            'imp_base1': self.imp_base1,
+            'impedance2': self.impedance2,
+            'imp_base2': self.imp_base2,
+            'mvaforced11': self.mvaforced11,
+            'mvaforced12': self.mvaforced12,
+            'mvaforced13': self.mvaforced13,
+            'mvaforced14': self.mvaforced14,
+            'mvaforced21': self.mvaforced21,
+            'mvaforced22': self.mvaforced22,
+            'mvaforced23': self.mvaforced23,
+            'mvaforced24': self.mvaforced24,
+            'impedance3': self.impedance3,
+            'impbasedmva3': self.impbasedmva3,
+            'formula_ratio2': self.formula_ratio2,
+            'formula_ratio': self.formula_ratio,
+            'ratio_tag1': self.ratio_tag1,
+            'ratio_tag2': self.ratio_tag2,
+            'ratio_tag3': self.ratio_tag3,
+            'ratio_tag4': self.ratio_tag4,
+            'ratio_tag5': self.ratio_tag5,
+            'ratio_tag6': self.ratio_tag6,
+            'bushing_serial1_id': self.bushing_serial1_id,
+            'bushing_serial1': self.bushing_serial1 and self.bushing_serial1.serialize(),
+            'bushing_serial2_id': self.bushing_serial2_id,
+            'bushing_serial2': self.bushing_serial2 and self.bushing_serial2.serialize(),
+            'bushing_serial3_id': self.bushing_serial3_id,
+            'bushing_serial3': self.bushing_serial3 and self.bushing_serial3.serialize(),
+            'bushing_serial4_id': self.bushing_serial4_id,
+            'bushing_serial4': self.bushing_serial4 and self.bushing_serial4.serialize(),
+            'bushing_serial5_id': self.bushing_serial5_id,
+            'bushing_serial5': self.bushing_serial5 and self.bushing_serial5.serialize(),
+            'bushing_serial6_id': self.bushing_serial6_id,
+            'bushing_serial6': self.bushing_serial6 and self.bushing_serial6.serialize(),
+            'bushing_serial7_id': self.bushing_serial7_id,
+            'bushing_serial7': self.bushing_serial7 and self.bushing_serial7.serialize(),
+            'bushing_serial8_id': self.bushing_serial8_id,
+            'bushing_serial8': self.bushing_serial8 and self.bushing_serial8.serialize(),
+            'bushing_serial9_id': self.bushing_serial9_id,
+            'bushing_serial9': self.bushing_serial9 and self.bushing_serial9.serialize(),
+            'bushing_serial10_id': self.bushing_serial10_id,
+            'bushing_serial10': self.bushing_serial10 and self.bushing_serial10.serialize(),
+            'bushing_serial11_id': self.bushing_serial11_id,
+            'bushing_serial11': self.bushing_serial11 and self.bushing_serial11.serialize(),
+            'bushing_serial12_id': self.bushing_serial12_id,
+            'bushing_serial12': self.bushing_serial12 and self.bushing_serial12.serialize(),
+            'mvaactual': self.mvaactual,
+            'mvaractual': self.mvaractual,
+            'mwreserve': self.mwreserve,
+            'mvarreserve': self.mvarreserve,
+            'mwultime': self.mwultime,
+            'mvarultime': self.mvarultime,
+            'mva4': self.mva4,
+            'quaternary_winding_connection': self.quaternary_winding_connection,
+            'bil4': self.bil4,
+            'static_shield4': self.static_shield4,
+            'ratio_tag7': self.ratio_tag7,
+            'ratiot_ag8': self.ratiot_ag8,
+            'formula_ratio3': self.formula_ratio3,
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Breaker(db.Model):
     __tablename__ = u'breaker'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
     open = db.Column(db.Boolean, default=True)
 
@@ -903,39 +900,35 @@ class Breaker(db.Model):
 
     breaker_mechanism_id = db.Column(db.Integer, db.ForeignKey("breaker_mechanism.id"))
     breaker_mechanism = db.relationship('BreakerMechanism', foreign_keys='Breaker.breaker_mechanism_id')
-    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
+
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Breaker.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id,)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'current_rating': self.current_rating,
-                'open': self.open,
-                'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-                'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
-                'interrupting_medium_id': self.interrupting_medium_id,
-                'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
-                'breaker_mechanism_id': self.breaker_mechanism_id,
-                'breaker_mechanism': self.breaker_mechanism and self.breaker_mechanism.serialize(),
-                }
+        return {
+            'id': self.id,
+            'current_rating': self.current_rating,
+            'open': self.open,
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'fluid_level_id': self.fluid_level_id,
+            'fluid_level': self.fluid_level and self.fluid_level.serialize(),
+            'interrupting_medium_id': self.interrupting_medium_id,
+            'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
+            'breaker_mechanism_id': self.breaker_mechanism_id,
+            'breaker_mechanism': self.breaker_mechanism and self.breaker_mechanism.serialize(),
+            'equipment_id': self.equipment_id,
+        }
 
 
 class LoadTapChanger(db.Model):
     __tablename__ = u'tap_changer'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
     # Filter. What condition is the filter. We must make this field a selection choice such Good, bad, replace etc..
     filter = db.Column(db.String(30))
@@ -953,34 +946,28 @@ class LoadTapChanger(db.Model):
     interrupting_medium_id = db.Column(db.Integer, db.ForeignKey("interrupting_medium.id"))
     interrupting_medium = db.relationship('InterruptingMedium', foreign_keys='LoadTapChanger.interrupting_medium_id')
 
-    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # # description = db.Column(db.UnicodeText)
-    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
-    # # tap changer property property
-    # ltc4 = db.Column(db.Float(53))  # LTC4
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='LoadTapChanger.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'filter': self.filter,
-                'counter': self.counter,
-                'number_of_taps': self.number_of_taps,
-                'model': self.model,
-                'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-                'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
-                'interrupting_medium_id': self.interrupting_medium_id,
-                'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
-                }
+        return {
+            'id': self.id,
+            'filter': self.filter,
+            'counter': self.counter,
+            'number_of_taps': self.number_of_taps,
+            'model': self.model,
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'fluid_level_id': self.fluid_level_id,
+            'fluid_level': self.fluid_level and self.fluid_level.serialize(),
+            'interrupting_medium_id': self.interrupting_medium_id,
+            'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Bushing(db.Model):
@@ -988,8 +975,6 @@ class Bushing(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     type = ['phase', 'Neutral']
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     model = db.Column(db.String(50))
     kv = db.Column(db.Float)  # voltage
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
@@ -1003,48 +988,17 @@ class Bushing(db.Model):
 
     fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
     fluid_type = db.relationship('FluidType', foreign_keys='Bushing.fluid_type_id')
-    # #
-    # # # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    # # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
-    # #
-    # # # frequency. Operating frequency
-    # # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
-    # # description = db.Column(sqla.UnicodeText())  # description. Describe the equipment function
-    # winding = db.Column(db.Integer, nullable=False)  # Winding. Winding, primary, secondary, etc. been measured
-    # bushing_manufacturer_h1 = db.Column(db.String(25))  # Bushing manufacturer for H1
-    # bushing_manufacturer_h2 = db.Column(db.String(25))  # Bushing manufacturer for H2
-    # bushing_manufacturer_h3 = db.Column(db.String(25))  # Bushing manufacturer for H3
-    # bushing_manufacturer_hn = db.Column(db.String(25))  # Bushing manufacturer for HN
-    # bushing_manufacturer_x1 = db.Column(db.String(25))  # Bushing manufacturer for X1
-    # bushing_manufacturer_x2 = db.Column(db.String(25))  # Bushing manufacturer for X2
-    # bushing_manufacturer_x3 = db.Column(db.String(25))  # Bushing manufacturer for X3
-    # bushing_manufacturer_xn = db.Column(db.String(25))  # Bushing manufacturer for XN
-    # bushing_manufacturer_t1 = db.Column(db.String(25))  # Bushing manufacturer for T1
-    # bushing_manufacturer_t2 = db.Column(db.String(25))  # Bushing manufacturer for T2
-    # bushing_manufacturer_t3 = db.Column(db.String(25))  # Bushing manufacturer for T3
-    # bushing_manufacturer_tn = db.Column(db.String(25))  # Bushing manufacturer for TN
-    # bushing_manufacturer_q1 = db.Column(db.String(25))  # Bushing manufacturer for Q1
-    # bushing_manufacturer_q2 = db.Column(db.String(25))  # Bushing manufacturer for Q2
-    # bushing_manufacturer_q3 = db.Column(db.String(25))  # Bushing manufacturer for Q3
-    # bushing_manufacturer_qn = db.Column(db.String(25))  # Bushing manufacturer for QN
-    # bushing_type_h = db.Column(db.String(25))  # Bushing type for H
-    # bushing_type_hn = db.Column(db.String(25))  # Bushing type for HN
-    # bushing_type_x = db.Column(db.String(25))  # Bushing type for X
-    # bushing_type_xn = db.Column(db.String(25))  # Bushing type for XN
-    # bushing_type_t = db.Column(db.String(25))  # Bushing type for T
-    # bushing_type_tn = db.Column(db.String(25))  # Bushing type for TN
-    # bushing_type_q = db.Column(db.String(25))  # Bushing type for Q
-    # bushing_type_qn = db.Column(db.String(25))  # Bushing type for QN
+
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Bushing.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
                 'type': self.type,
-                'name': self.name,
-                'serial': self.serial,
                 'model': self.model,
                 'kv': self.kv,
                 'sealed': self.sealed,
@@ -1057,6 +1011,7 @@ class Bushing(db.Model):
                 'c2pf': self.c2pf,
                 'fluid_type_id': self.fluid_type_id,
                 'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1083,8 +1038,6 @@ class NeutralResistance(db.Model):
     __tablename__ = u'resistance'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
 
     # its a separate device should be splitted into another table
     neutral_resistance = db.Column(db.Float(53))  # NeutralResistance1.
@@ -1102,14 +1055,15 @@ class NeutralResistance(db.Model):
     bil = db.Column(db.Numeric(8))
     open = db.Column(db.Boolean)
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='NeutralResistance.equipment_id')
+
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
                 'neutral_resistance': self.neutral_resistance,
                 'neutral_resistance1': self.neutral_resistance1,
                 'neutral_resistance0': self.neutral_resistance0,
@@ -1121,6 +1075,7 @@ class NeutralResistance(db.Model):
                 'kv': self.kv,
                 'bil': self.bil,
                 'open': self.open,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1128,163 +1083,116 @@ class AirCircuitBreaker(db.Model):
     __tablename__ = u'air_breaker'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
-
-    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='AirCircuitBreaker.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'current_rating': self.current_rating,
-                }
+        return {
+            'id': self.id,
+            'current_rating': self.current_rating,
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Capacitor(db.Model):
     __tablename__ = u'capacitor'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     kv = db.Column(db.Float)  # voltage
     kvar = db.Column(db.Float)  # voltage
     bil = db.Column(db.Numeric(8))
-    # #
-    # # manufacturer_id = db.Column(
-    # #     'manufacturer_id',
-    # #     db.ForeignKey("manufacturer.id"),
-    # #     nullable=False
-    # # )
-    # # manufacturer = relationship('Manufacturer', foreign_keys='Capacitor.manufacturer_id')
-    #
-    # # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))
-    #
-    # # frequency. Operating frequency
-    # # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    # # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
-    #
-    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Capacitor.equipment_id')
 
     def __repr__(self):
         return self.__tablename__
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'kv': self.kv,
-                'kvar': self.kvar,
-                'bil': self.bil,
-                }
+        return {
+            'id': self.id,
+            'kv': self.kv,
+            'kvar': self.kvar,
+            'bil': self.bil,
+            'equipment_id': self.equipment_id,
+        }
 
 
 class PowerSource(db.Model):
     __tablename__ = u'powersource'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     kv = db.Column(db.Float)  # voltage
     threephase = db.Column(db.Boolean)
-    #
-    # manufacturer_id = db.Column(
-    #     'manufacturer_id',
-    #     db.ForeignKey("manufacturer.id"),
-    #     nullable=False
-    # )
-    #
-    # manufacturer = relationship('Manufacturer', foreign_keys='PowerSource.manufacturer_id')
-    # phase_number = db.Column(sqla.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    # frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
 
-    # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='PowerSource.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'kv': self.kv,
-                'threephase': self.threephase,
-                }
+        return {
+            'id': self.id,
+            'kv': self.kv,
+            'threephase': self.threephase,
+            'equipment_id': self.equipment_id,
+        }
 
 
 class SwitchGear(db.Model):
     __tablename__ = u'switchgear'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
     insulation_id = db.Column(db.Integer, db.ForeignKey("insulation.id"))
     insulation = db.relationship('Insulation', foreign_keys='SwitchGear.insulation_id')
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    #
-    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='SwitchGear.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'current_rating': self.current_rating,
-                'insulation_id': self.insulation_id,
-                'insulation': self.insulation,
-                }
+        return {
+            'id': self.id,
+            'current_rating': self.current_rating,
+            'insulation_id': self.insulation_id,
+            'insulation': self.insulation,
+            'equipment_id': self.equipment_id,
+        }
 
 
 class InductionMachine(db.Model):
     __tablename__ = u'induction_machine'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
     hp = db.Column(db.String(50))
     kva = db.Column(db.String(50))
     pf = db.Column(db.String(50))
 
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    #
-    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='InductionMachine.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
                 'current_rating': self.current_rating,
                 'hp': self.hp,
                 'kva': self.kva,
                 'pf': self.pf,
+                'equipment_id': self.equipment_id,
                 }
 
 
@@ -1292,39 +1200,34 @@ class SynchronousMachine(db.Model):
     __tablename__ = u'synchronous_machine'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
     hp = db.Column(db.String(50))
     kw = db.Column(db.String(50))
 
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='SynchronousMachine.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'current_rating': self.current_rating,
-                'hp': self.hp,
-                'kw': self.kw,
-                }
+        return {
+            'id': self.id,
+            'current_rating': self.current_rating,
+            'hp': self.hp,
+            'kw': self.kw,
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Rectifier(db.Model):
     __tablename__ = u'rectifier'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     fluid_volume = db.Column(db.Float)
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    windings = db.Column(db.Integer)  # Windings. Number of windings in transformer
+    # windings = db.Column(db.Integer)  # Windings. Number of windings in transformer
 
     # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
@@ -1339,34 +1242,35 @@ class Rectifier(db.Model):
     gas_sensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
     gas_sensor = relationship('GasSensor', foreign_keys='Rectifier.gas_sensor_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Rectifier.equipment_id')
+
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'fluid_volume': self.fluid_volume,
-                'sealed': self.sealed,
-                'windings': self.windings,
-                'welded_cover': self.welded_cover,
-                'cooling_rating': self.cooling_rating,
-                'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-                'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
-                'gas_sensor_id': self.gas_sensor_id,
-                'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
-                }
+        return {
+            'id': self.id,
+            'fluid_volume': self.fluid_volume,
+            'sealed': self.sealed,
+            'windings': self.windings,
+            'welded_cover': self.welded_cover,
+            'cooling_rating': self.cooling_rating,
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'fluid_level_id': self.fluid_level_id,
+            'fluid_level': self.fluid_level and self.fluid_level.serialize(),
+            'gas_sensor_id': self.gas_sensor_id,
+            'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Inductance(db.Model):
     __tablename__ = u'inductance'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50))
     fluid_volume = db.Column(db.Float)
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
 
@@ -1383,39 +1287,34 @@ class Inductance(db.Model):
     gas_sensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
     gas_sensor = relationship('GasSensor', foreign_keys='Inductance.gas_sensor_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Inductance.equipment_id')
+
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'fluid_volume': self.fluid_volume,
-                'sealed': self.sealed,
-                'welded_cover': self.welded_cover,
-                'cooling_rating': self.cooling_rating,
-                'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-                'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
-                'gas_sensor_id': self.gas_sensor_id,
-                'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
-                }
+        return {
+            'id': self.id,
+            'fluid_volume': self.fluid_volume,
+            'sealed': self.sealed,
+            'welded_cover': self.welded_cover,
+            'cooling_rating': self.cooling_rating,
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'fluid_level_id': self.fluid_level_id,
+            'fluid_level': self.fluid_level and self.fluid_level.serialize(),
+            'gas_sensor_id': self.gas_sensor_id,
+            'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Tank(db.Model):
     __tablename__ = u'tank'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
-
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    # manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
-
-    # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
     welded_cover = db.Column(db.Boolean)
     fluid_type_id = db.Column('fluid_type_id', db.ForeignKey("fluid_type.id"), nullable=True)
     fluid_type = db.relationship('FluidType', foreign_keys='Tank.fluid_type_id')
@@ -1423,86 +1322,81 @@ class Tank(db.Model):
     fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
     fluid_level = db.relationship('FluidLevel', foreign_keys='Tank.fluid_level_id')
 
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Tank.equipment_id')
+
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'welded_cover': self.welded_cover,
-                'fluid_type_id': self.fluid_type_id,
-                'fluid_type': self.fluid_type and self.fluid_type.serialize(),
-                'fluid_level_id': self.fluid_level_id,
-                'fluid_level': self.fluid_level and self.fluid_level.serialize(),
-                }
+        return {
+            'id': self.id,
+            'welded_cover': self.welded_cover,
+            'fluid_type_id': self.fluid_type_id,
+            'fluid_type': self.fluid_type and self.fluid_type.serialize(),
+            'fluid_level_id': self.fluid_level_id,
+            'fluid_level': self.fluid_level and self.fluid_level.serialize(),
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Switch(db.Model):
     __tablename__ = u'switch'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     current_rating = db.Column(db.Numeric(6))
     threephase = db.Column(db.Boolean)
 
     interrupting_medium_id = db.Column(db.Integer, db.ForeignKey("interrupting_medium.id"))
     interrupting_medium = db.relationship('InterruptingMedium', foreign_keys='Switch.interrupting_medium_id')
 
-    # sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
-    #
-    #
-    # # welded_cover. Is cover welded. Important to planned work as it is much longer to remove cover
-    # welded_cover = db.Column(db.Boolean)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Switch.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'current_rating': self.current_rating,
-                'threephase': self.threephase,
-                'interrupting_medium_id': self.interrupting_medium_id,
-                'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
-                }
+        return {
+            'id': self.id,
+            'current_rating': self.current_rating,
+            'threephase': self.threephase,
+            'interrupting_medium_id': self.interrupting_medium_id,
+            'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Cable(db.Model):
     __tablename__ = u'cable'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    name = db.Column(db.String(50))
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
     model = db.Column(db.String(50))
     sealed = db.Column(db.Boolean)  # sealed. Is equipment sealed.
     threephase = db.Column(db.Boolean)
 
     insulation_id = db.Column(db.Integer, db.ForeignKey("insulation.id"))
     insulation = db.relationship('Insulation', foreign_keys='Cable.insulation_id')
-    # # Year manufactured
-    # # manufactured = db.Column(db.Enum(",".join(map(str, range(1970, datetime.now().year))), name="years"))
-    # manufactured = db.Column(db.Integer())
-    # description = db.Column(db.UnicodeText())  # description. Describe the equipment function
+
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Cable.equipment_id')
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return "{} {}".format(self.__tablename__, self.id)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'name': self.name,
-                'serial': self.serial,
-                'model': self.model,
-                'sealed': self.sealed,
-                'threephase': self.threephase,
-                'insulation_id': self.insulation_id,
-                'insulation': self.insulation and self.insulation.serialize(),
-                }
+        return {
+            'id': self.id,
+            'model': self.model,
+            'sealed': self.sealed,
+            'threephase': self.threephase,
+            'insulation_id': self.insulation_id,
+            'insulation': self.insulation and self.insulation.serialize(),
+            'equipment_id': self.equipment_id,
+        }
 
 
 class Equipment(db.Model):
