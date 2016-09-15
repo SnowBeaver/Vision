@@ -49,7 +49,7 @@ var AirBreakerParams = React.createClass({
             sealed: '',
             welded_cover: '',
             current_rating: '',
-            errors: []
+            errors: {}
         }
     },
 
