@@ -18,11 +18,9 @@ var Home = React.createClass({
     },
 
     onTreeSearch: function (e) {
-        // console.log(e.target);
-        // console.log(e.target.value);
-        // this.setState({
-        //     searchValue: e.target.value
-        // });
+        this.setState({
+            searchValue: e.target.value
+        });
         this.refs.tree.handleTreeSearch(e.target.value);
     },
 
@@ -44,14 +42,13 @@ var Home = React.createClass({
                 <div className="col-md-3 equal_col">
                     <div className="maxwidth">
                         <FormGroup>
-                            <ControlLabel>Search</ControlLabel>
+                            <ControlLabel>Search equipment</ControlLabel>
                             <FormControl
                                 type="text"
-                                placeholder="searchTree"
+                                placeholder="Search equipmemt"
                                 ref="search"
                                 id="plugins4_q"
                                 className="input col-md-12"
-                                value={this.state.searchValue}
                                 onKeyUp={this.onTreeSearch}/>
                         </FormGroup>
                         <br/>
@@ -67,8 +64,6 @@ var Home = React.createClass({
                 </div>
                 <div className="col-md-9">
                     <TestResultForm ref="testResultList" source={this.state.source}/>
-                    {/* <EquipmentList ref="equipmentList" source={this.state.source} /> */}
-                    {/*<EquipmentTestForm />*/}
                 </div>
             </div>
         )

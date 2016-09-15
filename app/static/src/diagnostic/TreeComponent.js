@@ -19,23 +19,7 @@ var TreeComponent = React.createClass({
     },
     handleNodeClick: function(e, data) {
         var item = data.instance.get_node(data.node.id);
-        // console.log(data);
-        // console.log(data.node.id);
-        // console.log(item);
         this.props.onTreeNodeClick(item.state);
-
-        // data.instance.refresh();
-        // ReactDOM.unmountComponentAtNode(this)function (e, data) {
-        //
-        // $("#treeView #node_id").val(data.node.id);
-        //
-        // $.post(url.treeGetView, { 'node_id' : data.node.id } ,function(res){
-        //     if(res.view){
-        //         $("#treeView #view").val(res.view);
-        //         $("#treeView #tooltip").val(res.tooltip);
-        //     }
-        // }).fail(function () {
-        // });
     },
     
     handleMoveNode: function(e, data){ 
@@ -80,9 +64,12 @@ var TreeComponent = React.createClass({
         return;
     },
     
-    handleTreeSearch: function(value){
-        console.log(value);
-        data.instance.search(value);
+    handleTreeSearch: function(value){ 
+        $('#tree').jstree(true).search(value);
+    },
+
+    handleSearchResult: function(data){
+
     },
 
     handleTreeReady: function(e, data){
@@ -131,8 +118,9 @@ var TreeComponent = React.createClass({
         ).on('rename_node.jstree', this.handleRenameNode
         ).on('move_node.jstree', this.handleMoveNode
         ).on('select_node.jstree',this.handleNodeClick 
-        ).on('ready.jstree', this.handleTreeReady 
-        ); 
+        ).on('ready.jstree', this.handleTreeReady
+        ).on('search.jstree', this.handleSearchResult
+        );
     },
     
     componentWillUnmount: function() {
@@ -297,7 +285,6 @@ const contextMenu = {
                                 obj = inst.get_node(data.reference);
 
                             var id = obj.state.id;
-                            console.log(obj);
                             $.post(url.treeStatus, {'node_id': id, 'status': 1}
                                 , function(data){
                                     if(data.status == "OK"){ 
@@ -306,7 +293,6 @@ const contextMenu = {
                                         );
                                     }
                                 }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }

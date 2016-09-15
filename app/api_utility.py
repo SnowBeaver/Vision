@@ -175,7 +175,7 @@ campaign_schema = {
     'id': readonly_dict,
     'date_created': type_datetime_required_dict,
     'created_by_id': type_integer_coerce_required_dict,
-    'contract_id': type_integer_coerce_dict,
+    'contract_id': type_integer_coerce_required_dict,
     'date_sampling': type_datetime_dict,
     'description': type_string_dict,
     'status_id': type_integer_coerce_dict,

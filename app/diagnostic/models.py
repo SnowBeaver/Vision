@@ -231,7 +231,7 @@ class Campaign(db.Model):
     date_created = db.Column(db.DateTime, index=True) # date of campaign start
     created_by_id = db.Column(db.ForeignKey("users_user.id"), nullable=False)
     created_by = db.relationship('User', foreign_keys='Campaign.created_by_id')
-    contract_id = db.Column(db.ForeignKey("contract.id"), nullable=True)
+    contract_id = db.Column(db.ForeignKey("contract.id"), nullable=False)
     contract = db.relationship('Contract', foreign_keys='Campaign.contract_id')
     date_sampling = db.Column(db.DateTime, index=True)
     description = db.Column(db.Text)
