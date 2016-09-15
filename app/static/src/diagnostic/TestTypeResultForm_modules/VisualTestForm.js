@@ -6,10 +6,11 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var SelectField = React.createClass({
     handleChange: function(event, index, value){
-        console.log("Handle change");
         this.setState({
             value: event.target.value
         });
@@ -66,14 +67,21 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         return (
-            <FormGroup>
+            <FormGroup validationState={validationState}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
+                             data-type={type}
+                             data-len={len}
                 />
+                <HelpBlock className="warning">{error}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -167,13 +175,11 @@ var VisualTestForm = React.createClass({
     },
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+			return false;
+		}
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -190,34 +196,92 @@ var VisualTestForm = React.createClass({
     },
 
     _onError: function (data) {
-
         var message = "Failed to create";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
-        }
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
 
     _onChange: function (e) {
         var state = {};
         state[e.target.name] = $.trim(e.target.value);
+
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     render: function() {
@@ -253,7 +317,9 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-2">
                                         <TextField name="tank_pressure"
                                                    label=""
-                                                   value={this.state.tank_pressure}/>
+                                                   value={this.state.tank_pressure}
+                                                   data-type="float"
+                                                   errors={this.state.errors}/>
                                     </div>
                                 </div>
 
@@ -307,12 +373,16 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-2">
                                         <TextField name="tank_winding_temp_max"
                                                    label="Max"
-                                                   value={this.state.tank_winding_temp_max}/>
+                                                   value={this.state.tank_winding_temp_max}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-2">
                                         <TextField name="tank_winding_temp_actual"
                                                    label="Actual"
-                                                   value={this.state.tank_winding_temp_actual}/>
+                                                   value={this.state.tank_winding_temp_actual}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-2">
                                         <b>Ctc</b><CheckBox name="tank_winding_flag"
@@ -321,7 +391,9 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-3 nopadding">
                                         <TextField name="tank_gas_analyser"
                                                    label="Diss. Gas Analyzer"
-                                                   value={this.state.tank_gas_analyser}/>
+                                                   value={this.state.tank_gas_analyser}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-1 nopadding">
                                         <b>ppm</b>
@@ -333,12 +405,16 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-2">
                                         <TextField name="tank_oil_temp_max"
                                                    label="Max"
-                                                   value={this.state.tank_oil_temp_max}/>
+                                                   value={this.state.tank_oil_temp_max}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-2">
                                         <TextField name="tank_oil_temp_actual"
                                                    label="Actual"
-                                                   value={this.state.tank_oil_temp_actual}/>
+                                                   value={this.state.tank_oil_temp_actual}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-2">
                                         <b>Ctc</b><CheckBox name="tank_oil_flag"
@@ -372,14 +448,18 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-11 col-md-offset-1">
                                         <TextField name="misc_temp_ambiant"
                                                    label="Ambient temp.(C)"
-                                                   value={this.state.misc_temp_ambiant}/>
+                                                   value={this.state.misc_temp_ambiant}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <div className="col-md-11 col-md-offset-1">
                                         <TextField name="misc_load"
                                                    label="Load(MVA)"
-                                                   value={this.state.misc_load}/>
+                                                   value={this.state.misc_load}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -392,7 +472,9 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-11 col-md-offset-1">
                                         <TextField name="grounding_value"
                                                    label="Value"
-                                                   value={this.state.grounding_value}/>
+                                                   value={this.state.grounding_value}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                 </div>
                                 <div className="row">
@@ -449,7 +531,9 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-6 col-md-offset-6">
                                         <TextField name="tap_changer_operation_counter"
                                                    label="No. of Operations"
-                                                   value={this.state.tap_changer_operation_counter}/>
+                                                   value={this.state.tap_changer_operation_counter}
+                                                   errors={this.state.errors}
+                                                   data-type="int"/>
                                     </div>
                                 </div>
 
@@ -459,12 +543,16 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-2 col-md-offset-2">
                                         <TextField name="tap_changer_temp_max"
                                                    label="Max"
-                                                   value={this.state.tap_changer_temp_max}/>
+                                                   value={this.state.tap_changer_temp_max}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-2">
                                         <TextField name="tap_changer_temp_actual"
                                                    label="Actual"
-                                                   value={this.state.tap_changer_temp_actual}/>
+                                                   value={this.state.tap_changer_temp_actual}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-4 ">
                                         <SelectField name="tap_changer_counter_id"
@@ -486,12 +574,16 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-2">
                                         <TextField name="tap_changer_pressure_max"
                                                    label="Max"
-                                                   value={this.state.tap_changer_pressure_max}/>
+                                                   value={this.state.tap_changer_pressure_max}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-2">
                                         <TextField name="tap_changer_pressure_actual"
                                                    label="Actual"
-                                                   value={this.state.tap_changer_pressure_actual}/>
+                                                   value={this.state.tap_changer_pressure_actual}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-4">
                                         <SelectField name="tap_changer_filter_id"
@@ -506,7 +598,9 @@ var VisualTestForm = React.createClass({
                                     <div className="col-md-2 col-md-offset-4">
                                         <TextField name="tap_changer_tap_position"
                                                    label="Actual"
-                                                   value={this.state.tap_changer_tap_position}/>
+                                                   value={this.state.tap_changer_tap_position}
+                                                   errors={this.state.errors}
+                                                   data-type="float"/>
                                     </div>
                                     <div className="col-md-4">
                                         <SelectField name="tap_changer_overall_condition_id"
@@ -664,10 +758,13 @@ var VisualTestForm = React.createClass({
 
                         <div className="row">
                                 <div className="col-md-12">
-                                    <FormGroup>
+                                    <FormGroup validationState={this.state.errors.notes ? 'error' : null}>
                                         <FormControl componentClass="textarea" placeholder="Notes" multiple
                                                      name="notes"
-                                                     value={this.state.notes}/>
+                                                     value={this.state.notes}
+                                                     data-len="1000"/>
+                                        <HelpBlock className="warning">{this.state.errors.notes}</HelpBlock>
+                                        <FormControl.Feedback />
                                     </FormGroup>
                                 </div>
                             </div>
