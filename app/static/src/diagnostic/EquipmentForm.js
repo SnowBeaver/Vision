@@ -666,13 +666,13 @@ var EqAdditionalParams = React.createClass({
                 return (<CapacitorParams errors={this.props.data.errors}/>);
                 break;
             case 'Breaker':
-                return (<BreakerParams/>);
+                return (<BreakerParams errors={this.props.data.errors}/>);
                 break;
             case 'Power Source':
-                return (<PowerSourceParams />);
+                return (<PowerSourceParams errors={this.props.data.errors}/>);
                 break;
             case 'Cable':
-                return (<CableParams />);
+                return (<CableParams errors={this.props.data.errors}/>);
                 break;
             case 'Switchgear':
                 return (<SwitchGearParams />);

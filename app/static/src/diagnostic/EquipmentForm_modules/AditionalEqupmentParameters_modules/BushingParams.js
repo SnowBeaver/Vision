@@ -72,13 +72,16 @@ var SelectField = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
+            <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
@@ -87,6 +90,7 @@ var SelectField = React.createClass({
                     <option>{this.props.label}</option>);
                     {menuItems}
                 </FormControl>
+                <HelpBlock className="warning">{error}</HelpBlock>
             </FormGroup>
         );
     }
@@ -161,7 +165,8 @@ var BushingParams = React.createClass({
                             source="fluid_type"
                             label="Fluid Type"
                             name="fluid_type_id"
-                            value={this.state.fluid_type_id}/>
+                            value={this.state.fluid_type_id}
+                            errors={errors}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
