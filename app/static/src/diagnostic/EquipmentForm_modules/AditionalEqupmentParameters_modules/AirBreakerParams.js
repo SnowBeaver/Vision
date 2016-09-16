@@ -118,6 +118,8 @@ var AirBreakerParams = React.createClass({
 
     render: function () {
         var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
+
+        // TODO: Resolve extra fields problem: phase_number, sealed, welded_cover
         return (
             <div>
                 <div className="row">

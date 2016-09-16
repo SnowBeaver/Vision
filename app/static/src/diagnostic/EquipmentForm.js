@@ -660,7 +660,7 @@ var EqAdditionalParams = React.createClass({
                 return (<AirBreakerParams errors={this.props.data.errors}/>);
                 break;
             case 'Bushing':
-                return (<BushingParams />);
+                return (<BushingParams errors={this.props.data.errors}/>);
                 break;
             case 'Capacitor':
                 return (<CapacitorParams/>);

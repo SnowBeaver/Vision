@@ -189,7 +189,8 @@ var BushingParams = React.createClass({
 
     render: function () {
         var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
-        errors = (errors == undefined) ? {} : errors;
+
+        // TODO: Resolve extra fields problem (for instance, bushing_manufacturer_h3)
         return (
             <div>
                 <div className="row">
@@ -225,7 +226,7 @@ var BushingParams = React.createClass({
                             value={this.state.fluid_type_id}/>
                     </div>
                     <div className="col-md-4">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.handleChange}
                                    label="Model" name
                                        ="model" value
                                        ={this.state.model}
