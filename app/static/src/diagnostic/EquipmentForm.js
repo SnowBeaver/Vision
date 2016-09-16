@@ -663,7 +663,7 @@ var EqAdditionalParams = React.createClass({
                 return (<BushingParams errors={this.props.data.errors}/>);
                 break;
             case 'Capacitor':
-                return (<CapacitorParams/>);
+                return (<CapacitorParams errors={this.props.data.errors}/>);
                 break;
             case 'Breaker':
                 return (<BreakerParams/>);
@@ -785,13 +785,13 @@ const EquipmentForm = React.createClass({
                         data: JSON.stringify(subform),
                         success: function () {
                             that.setState({option_text: {}});
-                            path = path.replace(/_/g, " ");     // Make readable name
-                            path = path.charAt(0).toUpperCase() + path.slice(1);    // Make first letter uppercase
                             that._onSuccess();
                         },
                         error: that._onError,
                         always: that.hideLoading
                     });
+                } else {
+                    that._onSuccess();
                 }
             },
             beforeSend: function () {
@@ -830,19 +830,23 @@ const EquipmentForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            // Join multiple error messages
-            for (var field in res.error) {
-                var errorMessage = res.error[field];
-                if (Array.isArray(errorMessage)) {
-                    errorMessage = errorMessage.join(". ");
-                }
-                res.error[field] = errorMessage;
-            }
-            this.setState({
-                errors: res.error
-            });
-        }
-        NotificationManager.error(message);
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
 
     _clearErrors: function () {
