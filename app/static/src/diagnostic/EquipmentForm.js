@@ -675,16 +675,16 @@ var EqAdditionalParams = React.createClass({
                 return (<CableParams errors={this.props.data.errors}/>);
                 break;
             case 'Switchgear':
-                return (<SwitchGearParams />);
+                return (<SwitchGearParams errors={this.props.data.errors}/>);
                 break;
             case 'Induction machine':
-                return (<InductionMachineParams />);
+                return (<InductionMachineParams errors={this.props.data.errors}/>);
                 break;
             case 'Synchronous machine':
-                return (<SyncroMachineParams />);
+                return (<SyncroMachineParams errors={this.props.data.errors}/>);
                 break;
             case 'Tap changer':
-                return (<TapChangerParams />);
+                return (<TapChangerParams errors={this.props.data.errors}/>);
                 break;
             case 'Rectifier':
                 return (<RectifierParams />);

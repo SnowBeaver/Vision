@@ -7,20 +7,32 @@ import {Link} from 'react-router';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+
 
 const TextField = React.createClass({
-
+    _onChange: function (e) {
+        this.props.onChange(e);
+    },
     render: function () {
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
-                <FormGroup>
+                <FormGroup validationState={validationState}>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
+                                 data-type={type}
+                                 data-len={len}
+                                 onChange={this._onChange}
                     />
+                    <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
                 </FormGroup>
             </OverlayTrigger>
@@ -59,14 +71,16 @@ var SelectField = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
-
+            <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
@@ -75,6 +89,7 @@ var SelectField = React.createClass({
                     <option>{this.props.label}</option>);
                     {menuItems}
                 </FormControl>
+                <HelpBlock className="warning">{error}</HelpBlock>
             </FormGroup>
         );
     }
@@ -90,7 +105,10 @@ var TapChangerParams = React.createClass({
             'welded_cover':'',
             'current_rating':'',
             'hp':'',
-            'kw':''
+            'filter':'',
+            'counter': '',
+            'number_of_taps': '',
+            'errors': {}
         }
     },
 
@@ -101,6 +119,7 @@ var TapChangerParams = React.createClass({
     },
     
     render: function () {
+        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         return (
             <div>
                 <div className="row">
@@ -109,47 +128,58 @@ var TapChangerParams = React.createClass({
                             source="fluid_type"
                             label="Fluid Type"
                             name="fluid_type_id"
-                            value={this.state.fluid_type_id}/>
+                            value={this.state.fluid_type_id}
+                            errors={errors}/>
                     </div>
                     <div className="col-md-3">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
                             name="fluid_level_id"
-                            value={this.state.fluid_level_id}/>
+                            value={this.state.fluid_level_id}
+                            errors={errors}/>
                     </div>
                     <div className="col-md-3">
                         <SelectField
                             source="interrupting_medium"
                             label="Interrupting Medium"
                             name="interrupting_medium_id"
-                            value={this.state.interrupting_medium_id}/>
+                            value={this.state.interrupting_medium_id}
+                            errors={errors}/>
                     </div>
-                    <div className="col-md-1 ">
-                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
+                    <div className="col-md-3">
+                        <TextField onChange={this.handleChange}
+                                   label="Filter"
+                                   name="filter"
+                                   value={this.state.filter}
+                                   errors={errors}
+                                   data-len="30"/>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-3">
                         <TextField onChange={this.handleChange}
-                                   label="Current Rating"
-                                   name="current_rating"
-                                   value={this.state.current_rating}/>
+                                   label="Model"
+                                   name="model"
+                                   value={this.state.model}
+                                   errors={errors}
+                                   data-len="50"/>
                     </div>
                     <div className="col-md-3">
                         <TextField onChange={this.handleChange}
-                                   label="Hp"
-                                   name="hp"
-                                   value={this.state.hp}/>
+                                   label="Counter"
+                                   name="counter"
+                                   value={this.state.counter}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-3">
                         <TextField onChange={this.handleChange}
-                                   label="Kw"
-                                   name="kw"
-                                   value={this.state.kw}/>
-                    </div>
-                    <div className="col-md-2">
-                        <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>
+                                   label="Number of Taps"
+                                   name="number_of_taps"
+                                   value={this.state.number_of_taps}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                 </div>
             </div>
