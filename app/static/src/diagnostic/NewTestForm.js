@@ -66,7 +66,7 @@ var TestProfileSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.state.value}
+                    value={this.props.value}
                     onChange={this.handleChange}
                     name="profile_type_id">
                     <option value="select_prof">Choose profile from saved</option>
@@ -138,7 +138,7 @@ var PerformedBySelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="performed_by_id"
                         required={this.props.required}>
                         <option key="0" value="">Performed by{this.props.required ? " *": ""}</option>
@@ -211,7 +211,7 @@ var MaterialSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select material"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="material_id"
                         required={this.props.required}>
                         <option key="0" value="">Material{this.props.required ? " *" : ""}</option>
@@ -284,7 +284,7 @@ var FluidTypeSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="fluid_type_id"
                     >
                         <option key="0" value="select">Fluid Type</option>
@@ -357,7 +357,7 @@ var LabAnalyserSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="lab_id"
                         required={this.props.required}>
                         <option key="0" value="">Lab/On-Line Analyser{this.props.required ? " *" : ""}</option>
@@ -431,7 +431,7 @@ var LabContractSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="lab_contract_id"
                         required={this.props.required}>
                         <option key="0" value="">Lab Contract{this.props.required ? " *" : ""}</option>
@@ -504,7 +504,7 @@ var SyringeNumberSelectField = React.createClass({
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
-                        value={this.state.value}
+                        value={this.props.value}
                         name="seringe_num"
                         data-len={this.props["data-len"]}>
                         <option key="0" value="select">Syringe Number</option>
@@ -575,7 +575,7 @@ var TestReasonSelectField = React.createClass({
                 <FormControl
                     componentClass="select"
                     placeholder="select"
-                    value={this.state.value}
+                    value={this.props.value}
                     name="test_reason_id"
                     onChange={this.handleChange}
                     required={this.props.required}
@@ -700,7 +700,7 @@ var NewTestForm = React.createClass({
 		}
         var xhr = this._save();
         if (!xhr) {
-            alert('Something went wrong.')
+            NotificationManager.error('Something went wrong.');
         }
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -751,7 +751,6 @@ var NewTestForm = React.createClass({
 
     _onChange: function (e) {
         var state = {};
-
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         } else if (e.target.type == 'select-one') {
@@ -772,7 +771,11 @@ var NewTestForm = React.createClass({
                 });
             }
         } else {
-            state[e.target.name] = e.target.value;
+            // Ignore this method when user deletes manually date from the DateTime input
+            // Let the special method for setting the date be called
+            if (["date_analyse", "repair_date"].indexOf(e.target.name) == -1){
+                state[e.target.name] = e.target.value;
+            }
         }
 
         state.changedFields = this.state.changedFields.concat([e.target.name]);
@@ -831,11 +834,29 @@ var NewTestForm = React.createClass({
     },
 
     setRepairDate: function (timestamp){
-        //this.setState({repair_state: moment(timestamp)});
+        this._setDateTimeFieldDate(timestamp, "repair_date");
     },
 
     setDateAnalyse: function (timestamp){
-        //this.setState({date_analyse: moment(timestamp)});
+        this._setDateTimeFieldDate(timestamp, "date_analyse");
+    },
+
+    _setDateTimeFieldDate(timestamp, fieldName){
+        var state = {};
+        // If date is not valid (for example, date is deleted) string "Invalid date" is received
+        if (timestamp == "Invalid date"){
+            timestamp = null;
+        } else if (timestamp){
+            // Can be UNIX timestamp in milliseconds
+            if (/^\d+$/.test(timestamp)){
+                timestamp = parseInt(timestamp);
+            }
+            // Format date here instead of specifying format in DateTimeField,
+            // because error is raised when format is specified, but date is empty.
+            state[fieldName] = moment(timestamp).format("YYYY-MM-DD HH:mm:ss");
+        }
+        state.changedFields = this.state.changedFields.concat([fieldName]);
+        this.setState(state);
     },
 
     _formGroupClass: function (field) {
@@ -849,7 +870,6 @@ var NewTestForm = React.createClass({
     closeElectricalProfileForm: function () {
         this.setState({
             showElectroProfileForm: false
-
         })
     },
 
@@ -998,6 +1018,11 @@ var NewTestForm = React.createClass({
     render: function () {
 
         var title = (this.state.id) ? "Edit test" : 'New test';
+        var dateRepair = (this.state.repair_date instanceof Array) ? this.state.repair_date.join(" ") : (this.state.repair_date) ? this.state.repair_date : null;
+        var dateAnalyse = (this.state.date_analyse instanceof Array) ? this.state.date_analyse.join(" ") : (this.state.date_analyse) ? this.state.date_analyse : null;
+        dateRepair = (dateRepair) ? {"dateTime": dateRepair, "format": "YYYY-MM-DD HH:mm:ss"} : {"defaultText": ""};
+        dateAnalyse = (dateAnalyse) ? {"dateTime": dateAnalyse, "format": "YYYY-MM-DD HH:mm:ss"} : {};
+
         return (
             this.props.show ?
                 <div className="form-container">
@@ -1164,8 +1189,10 @@ var NewTestForm = React.createClass({
                                                 <ControlLabel>Repair Date</ControlLabel>
                                                 <HelpBlock className="warning">{this.state.errors.repair_date}</HelpBlock>
                                                 <DateTimeField name="repair_date"
-                                                               datetime={this.state.repair_date}
-                                                               onChange={this.setRepairDate}/>
+                                                               onChange={this.setRepairDate}
+                                                               inputProps={{"name": "repair_date"}}
+                                                               {...dateRepair}
+                                                    />
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1187,11 +1214,12 @@ var NewTestForm = React.createClass({
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
                                             <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}>
-                                                <ControlLabel>Date Applied</ControlLabel>
+                                                <ControlLabel>Date Applied *</ControlLabel>
                                                 <HelpBlock className="warning">{this.state.errors.date_analyse}</HelpBlock>
-                                                <DateTimeField name="date_analyse" datetime={this.state.date_analyse}
+                                                <DateTimeField name="date_analyse"
                                                                onChange={this.setDateAnalyse}
-                                                               required/>
+                                                               inputProps={{"required":"required", "name": "date_analyse"}}
+                                                               {...dateAnalyse}/>
                                             </FormGroup>
                                         </div>
                                     </div>
@@ -1258,7 +1286,7 @@ var NewTestForm = React.createClass({
                                     </div>
 
                                     <fieldset className="scheduler-border">
-                                        <legend className="scheduler-border">Choose test type</legend>
+                                        <legend className="scheduler-border">Choose test type *</legend>
                                             <div className="maxwidth">
                                                 <Radio name="test_type_id" value="1" required checked={this.state.test_type_id == 1}>
                                                     Fluid Profile

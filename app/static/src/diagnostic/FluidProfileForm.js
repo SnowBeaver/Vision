@@ -333,6 +333,9 @@ const FluidProfileForm = React.createClass({
                     this.setState({loading: true});
                 }.bind(this)
             });
+
+            delete data['name'];
+            delete data['shared'];
         }
         
         data['campaign_id'] = this.props.data.campaign_id;

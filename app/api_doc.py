@@ -1398,12 +1398,12 @@ doc = ApiDoc(app=api)
 @apiGroup campaign
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"created_by_id":1, "date_created": "2016-07-29 17:52:19"}' \
+         -d '{"created_by_id":1, "date_created": "2016-07-29 17:52:19", "contract_id":1}' \
          http://localhost:8001/api/v1.0/campaign/
 
 @apiParam   {Datetime}      date_created        required format "2016-07-29 17:52:19"
 @apiParam   {Integer}       created_by_id       required
-@apiParam   {Integer}       contract_id
+@apiParam   {Integer}       contract_id         required
 @apiParam   {Datetime}      date_sampling       format "2016-07-29 17:52:19"
 @apiParam   {String}        description
 @apiParam   {Integer}       status_id
@@ -1693,13 +1693,10 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {String(50)}    model
 @apiSuccess {Float}         h2
 @apiSuccess {Float}         ch4
@@ -1712,6 +1709,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Float}         n2
 @apiSuccess {Float}         percent_error
 @apiSuccess {Integer}       ppm_error
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -1721,11 +1719,10 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup gas_sensor
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id":"1"}' \
          http://localhost:8001/api/v1.0/gas_sensor/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial
 @apiParam   {String(50)}    model
 @apiParam   {Float}         h2
 @apiParam   {Float}         ch4
@@ -1738,6 +1735,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Float}         n2
 @apiParam   {Float}         percent_error
 @apiParam   {Integer}       ppm_error
+@apiParam   {Integer}       equipment_id required
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -1747,7 +1745,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup gas_sensor
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"h2": 5}'\
     http://localhost:8001/api/v1.0/gas_sensor/1
 
 @apiUse PutItemSuccess
@@ -1792,17 +1790,16 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
+            ...
         }
     }
 
 @apiSuccess {Integer}     id
-@apiSuccess {String(50)}  name
-@apiSuccess {String(50)}  serial
 @apiSuccess {Integer}     fluid_type_id
 @apiSuccess {Dict}        fluid_type        see: fluid_type->get an item
 @apiSuccess {Integer}     gassensor_id
 @apiSuccess {Dict}        gassensor     see: gassensor->get an item
+@apiSuccess {Integer}     equipment_id
 @apiSuccess {Float}       fluid_volume
 @apiSuccess {Boolean}     sealed
 @apiSuccess {Boolean}     welded_cover
@@ -1907,13 +1904,12 @@ doc = ApiDoc(app=api)
 @apiGroup transformer
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"name":"some name", "serial": "some serial", "fluid_type_id": 1, "gassensor_id": 1}' \
+         -d '{"fluid_type_id": 1, "gassensor_id": 1, "equipment_id": 1}' \
          http://localhost:8001/api/v1.0/transformer/
 
-@apiParam   {String(50)}  name
-@apiParam   {String(50)}  serial    required
 @apiParam   {Integer}     fluid_type_id    required
 @apiParam   {Integer}     gassensor_id required
+@apiParam   {Integer}     equipment_id required
 @apiParam   {Float}       fluid_volume
 @apiParam   {Boolean}     sealed
 @apiParam   {Boolean}     welded_cover
@@ -2004,7 +2000,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup transformer
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"fluid_volume": 2}'\
     http://localhost:8001/api/v1.0/transformer/1
 
 @apiUse PutItemSuccess
@@ -2049,24 +2045,22 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
-@apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
-@apiSuccess {Integer(6)}    current_rating
-@apiSuccess {Boolean}       open
-@apiSuccess {Integer}       fluid_type_id
-@apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
-@apiSuccess {Integer}       fluid_level_id
-@apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
-@apiSuccess {Integer}       interrupting_medium_id
-@apiSuccess {Dict}          interrupting_medium     see: interrupting_medium->get an item
-@apiSuccess {Integer}       breaker_mechanism_id
-@apiSuccess {Dict}          breaker_mechanism       see: breaker_mechanism->get an item
+@apiSuccess {Integer}   id
+@apiSuccess {Integer}   current_rating
+@apiSuccess {Integer}   equipment_id
+@apiSuccess {Boolean}   open
+@apiSuccess {Integer}   fluid_type_id
+@apiSuccess {Dict}      fluid_type      see: fluid_type->get an item
+@apiSuccess {Integer}   fluid_level_id
+@apiSuccess {Dict}      fluid_level     see: fluid_level->get an item
+@apiSuccess {Integer}   interrupting_medium_id
+@apiSuccess {Dict}      interrupting_medium     see: interrupting_medium->get an item
+@apiSuccess {Integer}   breaker_mechanism_id
+@apiSuccess {Dict}      breaker_mechanism       see: breaker_mechanism->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2076,11 +2070,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup breaker
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "current_rating": 1}' \
          http://localhost:8001/api/v1.0/breaker/
 
-@apiParam   {String(50)}  name
-@apiParam   {String(50)}  serial    required
+@apiParam   {Integer}     equipment_id required
 @apiParam   {Integer(6)}  current_rating
 @apiParam   {Boolean}     open
 @apiParam   {Integer}     fluid_type_id
@@ -2096,7 +2090,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup breaker
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"current_rating": 2}'\
     http://localhost:8001/api/v1.0/breaker/1
 
 @apiUse PutItemSuccess
@@ -2141,24 +2135,22 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
-@apiSuccess {Integer}        id
-@apiSuccess {String(50)}     name
-@apiSuccess {String(50)}     serial
-@apiSuccess {String(50)}     model
-@apiSuccess {String(30)}     filter
-@apiSuccess {Integer}        counter
-@apiSuccess {Integer}        number_of_taps
-@apiSuccess {Integer}        fluid_type_id
-@apiSuccess {Dict}           fluid_type                 see: fluid_type->get an item
-@apiSuccess {Integer}        fluid_level_id
-@apiSuccess {Dict}           fluid_level                see: fluid_level->get an item
-@apiSuccess {Integer}        interrupting_medium_id
-@apiSuccess {Dict}           interrupting_medium        see: interrupting_medium->get an item
+@apiSuccess {Integer}   id
+@apiSuccess {String}    model
+@apiSuccess {String}    filter
+@apiSuccess {Integer}   counter
+@apiSuccess {Integer}   number_of_taps
+@apiSuccess {Integer}   fluid_type_id
+@apiSuccess {Dict}      fluid_type                 see: fluid_type->get an item
+@apiSuccess {Integer}   fluid_level_id
+@apiSuccess {Dict}      fluid_level                see: fluid_level->get an item
+@apiSuccess {Integer}   interrupting_medium_id
+@apiSuccess {Dict}      interrupting_medium        see: interrupting_medium->get an item
+@apiSuccess {Integer}   equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2168,11 +2160,10 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup tap_changer
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1}' \
          http://localhost:8001/api/v1.0/tap_changer/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial    required
 @apiParam   {String(50)}    model
 @apiParam   {String(30)}    filter
 @apiParam   {Integer}       counter
@@ -2180,6 +2171,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Integer}       fluid_level_id
 @apiParam   {Integer}       interrupting_medium_id
+@apiParam   {Integer}       equipment_id required
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -2189,7 +2181,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup tap_changer
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"model": "some other model"}'\
     http://localhost:8001/api/v1.0/tap_changer/1
 
 @apiUse PutItemSuccess
@@ -2234,26 +2226,24 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
         }
     }
 
-@apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
-@apiSuccess {String(50)}    model
-@apiSuccess {String}        type    'phase' or 'Neutral'
-@apiSuccess {Float}         kv
-@apiSuccess {Boolean}       sealed
-@apiSuccess {Integer}       current
-@apiSuccess {Float}         fluid_volume
-@apiSuccess {Integer(8)}    bil
-@apiSuccess {Float}         c1
-@apiSuccess {Float}         c1pf
-@apiSuccess {Float}         c2
-@apiSuccess {Float}         c2pf
-@apiSuccess {Integer}       fluid_type_id
-@apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
+@apiSuccess {Integer}   id
+@apiSuccess {String}    model
+@apiSuccess {String}    type    'phase' or 'Neutral'
+@apiSuccess {Float}     kv
+@apiSuccess {Boolean}   sealed
+@apiSuccess {Integer}   current
+@apiSuccess {Float}     fluid_volume
+@apiSuccess {Integer}   bil
+@apiSuccess {Float}     c1
+@apiSuccess {Float}     c1pf
+@apiSuccess {Float}     c2
+@apiSuccess {Float}     c2pf
+@apiSuccess {Integer}   fluid_type_id
+@apiSuccess {Dict}      fluid_type      see: fluid_type->get an item
+@apiSuccess {Integer}   equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2263,11 +2253,10 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup bushing
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "model": "some model"}' \
          http://localhost:8001/api/v1.0/bushing/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial
 @apiParam   {String(50)}    model
 @apiParam   {String}        type      allowed: 'phase' or 'Neutral'
 @apiParam   {Float}         kv
@@ -2280,6 +2269,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Float}         c2
 @apiParam   {Float}         c2pf
 @apiParam   {Integer}       fluid_type_id
+@apiParam   {Integer}       equipment_id required
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -2289,7 +2279,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup bushing
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"model": "some other model"}'\
     http://localhost:8001/api/v1.0/bushing/1
 
 @apiUse PutItemSuccess
@@ -2334,24 +2324,22 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
         }
     }
 
-@apiSuccess {Integer}        id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
-@apiSuccess {Float}         neutral_resistance
-@apiSuccess {Float}         neutral_resistance1
-@apiSuccess {Boolean}       neutral_resistance0
-@apiSuccess {Float}         neutral_resistance2
-@apiSuccess {Float}         neutral_resistance3
-@apiSuccess {Boolean}       neutral_resistance_open1
-@apiSuccess {Boolean}       neutral_resistance_open2
-@apiSuccess {Float}         neutral_resistance_open3
-@apiSuccess {Float}         kv
-@apiSuccess {Integer(8)}    bil
-@apiSuccess {Boolean}       open
+@apiSuccess {Integer}   id
+@apiSuccess {Float}     neutral_resistance
+@apiSuccess {Float}     neutral_resistance1
+@apiSuccess {Boolean}   neutral_resistance0
+@apiSuccess {Float}     neutral_resistance2
+@apiSuccess {Float}     neutral_resistance3
+@apiSuccess {Boolean}   neutral_resistance_open1
+@apiSuccess {Boolean}   neutral_resistance_open2
+@apiSuccess {Float}     neutral_resistance_open3
+@apiSuccess {Float}     kv
+@apiSuccess {Integer}   bil
+@apiSuccess {Boolean}   open
+@apiSuccess {Integer}   equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2361,11 +2349,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup resistance
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "neutral_resistance": 5}' \
          http://localhost:8001/api/v1.0/resistance/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Float}         neutral_resistance
 @apiParam   {Float}         neutral_resistance1
 @apiParam   {Boolean}       neutral_resistance0
@@ -2386,7 +2374,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup resistance
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"neutral_resistance": 6}'\
     http://localhost:8001/api/v1.0/resistance/1
 
 @apiUse PutItemSuccess
@@ -2431,14 +2419,12 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
         }
     }
 
-@apiSuccess {Integer}       id
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial
-@apiParam   {Integer(6)}    current_rating
+@apiSuccess {Integer}   id
+@apiSuccess {Integer}   current_rating
+@apiSuccess {Integer}   equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2448,12 +2434,12 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup air_breaker
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "current_rating": 1}' \
          http://localhost:8001/api/v1.0/air_breaker/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial          required
 @apiParam   {Integer(6)}    current_rating
+@apiParam   {Integer}       equipment_id required
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -2463,7 +2449,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup air_breaker
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"current_rating": 2}'\
     http://localhost:8001/api/v1.0/air_breaker/1
 
 @apiUse PutItemSuccess
@@ -2508,17 +2494,15 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {Float}         kv
 @apiSuccess {Float}         kvar
 @apiSuccess {Integer(8)}    bil
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2528,14 +2512,14 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup capacitor
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name": "some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "kv": 10}' \
          http://localhost:8001/api/v1.0/capacitor/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial  required
 @apiParam   {Float}         kv
 @apiParam   {Float}         kvar
 @apiParam   {Integer(8)}    bil
+@apiParam   {Integer}       equipment_id required
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -2545,7 +2529,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup capacitor
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"kv": 11}'\
     http://localhost:8001/api/v1.0/capacitor/1
 
 @apiUse PutItemSuccess
@@ -2590,16 +2574,14 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {Float}         kv
 @apiSuccess {Boolean}       threephase
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2609,11 +2591,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup powersource
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "kv": 10}' \
          http://localhost:8001/api/v1.0/powersource/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial    required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Float}         kv
 @apiParam   {Boolean}       threephase
 @apiUse PostItemSuccess
@@ -2625,7 +2607,7 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup powersource
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"kv": 11}'\
     http://localhost:8001/api/v1.0/powersource/1
 
 @apiUse PutItemSuccess
@@ -2670,17 +2652,15 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {Integer}       insulation_id
 @apiSuccess {Dict}          insulation      see: insulation->get an item
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2690,13 +2670,13 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup switchgear
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+    -d '{"equipment_id": 1, "current_rating": 1}' \
          http://localhost:8001/api/v1.0/switchgear/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial          required
 @apiParam   {Integer(6)}    current_rating
 @apiParam   {Integer}       insulation_id
+@apiParam   {Integer}       equipment_id required
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -2706,7 +2686,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup switchgear
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"current_rating": 2}'\
     http://localhost:8001/api/v1.0/switchgear/1
 
 @apiUse PutItemSuccess
@@ -2751,18 +2732,16 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {String(50)}    hp
 @apiSuccess {String(50)}    kva
 @apiSuccess {String(50)}    pf
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2772,11 +2751,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup induction_machine
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "current_rating":1}' \
          http://localhost:8001/api/v1.0/induction_machine/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial            required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Integer(6)}    current_rating
 @apiParam   {String(50)}    hp
 @apiParam   {String(50)}    kva
@@ -2790,7 +2769,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup induction_machine
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"current_rating": 2}'\
     http://localhost:8001/api/v1.0/induction_machine/1
 
 @apiUse PutItemSuccess
@@ -2835,17 +2815,15 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {String(50)}    hp
 @apiSuccess {String(50)}    kw
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2855,11 +2833,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup synchronous_machine
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "current_rating": 1}' \
          http://localhost:8001/api/v1.0/synchronous_machine/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial          required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Integer(6)}    current_rating
 @apiParam   {String(50)}    hp
 @apiParam   {String(50)}    kw
@@ -2872,7 +2850,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup synchronous_machine
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"current_rating": 2}'\
     http://localhost:8001/api/v1.0/synchronous_machine/1
 
 @apiUse PutItemSuccess
@@ -2917,14 +2896,11 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {Float}         fluid_volume
 @apiSuccess {Boolean}       sealed
 @apiSuccess {Integer}       windings
@@ -2936,6 +2912,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
 @apiSuccess {Integer}       gas_sensor_id
 @apiSuccess {Dict}          gas_sensor      see: gas_sensor->get an item
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -2945,11 +2922,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup rectifier
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "fluid_volume": 10}' \
          http://localhost:8001/api/v1.0/rectifier/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial          required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Float}         fluid_volume
 @apiParam   {Boolean}       sealed
 @apiParam   {Integer}       windings
@@ -2967,7 +2944,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup rectifier
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"fluid_volume": 11}'\
     http://localhost:8001/api/v1.0/rectifier/1
 
 @apiUse PutItemSuccess
@@ -3012,14 +2990,11 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
 @apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
 @apiSuccess {Float}         fluid_volume
 @apiSuccess {Boolean}       sealed
 @apiSuccess {Boolean}       welded_cover
@@ -3030,6 +3005,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
 @apiSuccess {Integer}       gas_sensor_id
 @apiSuccess {Dict}          gas_sensor      see: gas_sensor->get an item
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3039,11 +3015,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup inductance
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "fluid_volume": 10}' \
          http://localhost:8001/api/v1.0/inductance/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial          required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Float}         fluid_volume
 @apiParam   {Boolean}       sealed
 @apiParam   {Boolean}       welded_cover
@@ -3060,7 +3036,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup inductance
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"fluid_volume": 11}'\
     http://localhost:8001/api/v1.0/inductance/1
 
 @apiUse PutItemSuccess
@@ -3105,19 +3082,17 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
-@apiSuccess {Integer}        id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
+@apiSuccess {Integer}       id
 @apiSuccess {Boolean}       welded_cover
 @apiSuccess {Integer}       fluid_type_id
 @apiSuccess {Dict}          fluid_type      see: fluid_type->get an item
 @apiSuccess {Integer}       fluid_level_id
 @apiSuccess {Dict}          fluid_level     see: fluid_level->get an item
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3127,11 +3102,11 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup tank
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "welded_cover": true}' \
          http://localhost:8001/api/v1.0/tank/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial          required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Boolean}       welded_cover
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Integer}       fluid_level_id
@@ -3144,7 +3119,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup tank
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"welded_cover": false}'\
     http://localhost:8001/api/v1.0/tank/1
 
 @apiUse PutItemSuccess
@@ -3189,18 +3165,16 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
-@apiSuccess {Integer}        id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial
+@apiSuccess {Integer}       id
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {Boolean}       threephase
 @apiSuccess {Integer}       interrupting_medium_id
 @apiSuccess {Dict}          interrupting_medium     see: interrupting_medium->get an item
+@apiSuccess {Integer}       equipment_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3210,14 +3184,14 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup switch
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "current_rating": 10}' \
          http://localhost:8001/api/v1.0/switch/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial         required
+@apiParam   {Integer}       equipment_id required
 @apiParam   {Integer(6)}    current_rating
-@apiParam   {Boolean}    threephase
-@apiParam   {Integer}    interrupting_medium_id                 }
+@apiParam   {Boolean}       threephase
+@apiParam   {Integer}       interrupting_medium_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -3227,7 +3201,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup switch
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"current_rating": 11}'\
     http://localhost:8001/api/v1.0/switch/1
 
 @apiUse PutItemSuccess
@@ -3272,19 +3247,17 @@ doc = ApiDoc(app=api)
     {
         "result": {
             "id": 1,
-            "name": "some name",
             ...
         }
     }
 
-@apiSuccess {Integer}        id
-@apiSuccess {String(50)}    name
-@apiSuccess {String(50)}    serial          required
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       equipment_id
 @apiSuccess {String(50)}    model
-@apiSuccess {Boolean}    sealed
-@apiSuccess {Boolean}    threephase
-@apiSuccess {Integer}    insulation_id
-@apiSuccess {Dict}       insulation     see: insulation->get an item
+@apiSuccess {Boolean}       sealed
+@apiSuccess {Boolean}       threephase
+@apiSuccess {Integer}       insulation_id
+@apiSuccess {Dict}          insulation     see: insulation->get an item
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3294,15 +3267,15 @@ doc = ApiDoc(app=api)
 @apiName add_item
 @apiGroup cable
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name", "serial": "some serial"}' \
+    curl -i -H "Content-Type: application/json" -X POST \
+         -d '{"equipment_id": 1, "model" : "some model"}' \
          http://localhost:8001/api/v1.0/cable/
 
-@apiParam   {String(50)}    name
-@apiParam   {String(50)}    serial          required
+@apiParam   {Integer}       equipment_id    required
 @apiParam   {String(50)}    model
-@apiParam   {Boolean}    sealed
-@apiParam   {Boolean}    threephase
-@apiParam   {Integer}    insulation_id
+@apiParam   {Boolean}       sealed
+@apiParam   {Boolean}       threephase
+@apiParam   {Integer}       insulation_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -3312,7 +3285,8 @@ doc = ApiDoc(app=api)
 @apiName update_item
 @apiGroup cable
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    curl -i -H "Content-Type: application/json" -X PUT \
+         -d '{"model": "some other model"}'\
     http://localhost:8001/api/v1.0/cable/1
 
 @apiUse PutItemSuccess
