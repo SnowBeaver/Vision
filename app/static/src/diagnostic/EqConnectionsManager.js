@@ -10,17 +10,19 @@ var UpstreamSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false,
+            isVisible: false
         };
     },
     isVisible: function () {
         return this.state.isVisible;
     },
     componentDidMount: function () {
-        var source = '/api/v1.0/' + this.props.source + '/';
+        if (typeof this.props.streams_id != 'undefined') {
+            var source = '/api/v1.0/' + this.props.streams_id + '/up_down_stream/';
         this.serverRequest = $.get(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
+        }
     },
     componentWillUnmount: function () {
         this.serverRequest.abort();
@@ -28,33 +30,117 @@ var UpstreamSelectField = React.createClass({
     setVisible: function () {
         this.state.isVisible = true;
     },
+    removeSelect: function () {
+        this.props.removeSelect(this.props.index);
+    },
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         var menuItems = [];
         for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].equipment_id}`}</option>);
+            menuItems.push(<div className="row" id={id}>
+                <div className="col-md-10">
+                    <FormGroup>
+                        <ControlLabel>{label}</ControlLabel>
+                        <FormControl componentClass="select"
+                                     onChange={this.props.onChange}
+                                     name={name}
+                                     value={value}
+                                     disabled={this.props.disabled}
+                        >
+                            <option key={this.state.items[key].id}
+                                    value={this.state.items[key].id}>{`${this.state.items[key].parent_id}`}</option>
+
+                            <FormControl.Feedback />
+                        </FormControl>
+                    </FormGroup>
+                </div>
+                <div className="col-md-2">
+                    <a href="javascript:void(0)"
+                       className="glyphicon glyphicon-remove text-danger"
+                       onClick={this.removeSelect}
+                       aria-hidden="true">
+                    </a>
+                </div>
+            </div>);
         }
         return (
-            <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
-                <FormControl componentClass="select"
-                             onChange={this.props.onChange}
-                             name={name}
-                             value={value}
-                >
-                    <option key={null} value={null}></option>
-                    {menuItems}
-                    <FormControl.Feedback />
-                </FormControl>
-            </FormGroup>
+            <div>
+                {menuItems}
+            </div>
         );
     }
 });
 
 var DownstreamSelectField = React.createClass({
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+    isVisible: function () {
+        return this.state.isVisible;
+    },
+    componentDidMount: function () {
+        if (typeof this.props.streams_id != 'undefined') {
+            var source = '/api/v1.0/' + this.props.streams_id + '/up_down_stream/';
+        this.serverRequest = $.get(source, function (result) {
+            this.setState({items: (result['result'])});
+        }.bind(this), 'json');
+        }
+    },
+    componentWillUnmount: function () {
+        this.serverRequest.abort();
+    },
+    setVisible: function () {
+        this.state.isVisible = true;
+    },
+    removeSelect: function () {
+        this.props.removeSelect(this.props.index);
+    },
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<div className="row" id={id}>
+                <div className="col-md-10">
+                    <FormGroup>
+                        <ControlLabel>{label}</ControlLabel>
+                        <FormControl componentClass="select"
+                                     onChange={this.props.onChange}
+                                     name={name}
+                                     value={value}
+                                     disabled={this.props.disabled}
+                        >
+                            <option key={this.state.items[key].id}
+                                    value={this.state.items[key].id}>{`${this.state.items[key].equipment_id}`}</option>
+
+                            <FormControl.Feedback />
+                        </FormControl>
+                    </FormGroup>
+                </div>
+                <div className="col-md-2">
+                    <a href="javascript:void(0)"
+                       className="glyphicon glyphicon-remove text-danger"
+                       onClick={this.removeSelect}
+                       aria-hidden="true">
+                    </a>
+                </div>
+            </div>);
+        }
+        return (
+            <div>
+                {menuItems}
+            </div>
+        );
+    }
+});
+
+var SelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
@@ -77,23 +163,24 @@ var DownstreamSelectField = React.createClass({
         this.state.isVisible = true;
     },
     render: function () {
-        var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].parent_id}`}</option>);
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+
+
         return (
             <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.props.onChange}
                              name={name}
                              value={value}
+                             disabled={this.props.disabled}
                 >
-                    <option key={null} value={null}></option>
+                    <option key={null} value={null}>Choose Equipment</option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -102,11 +189,11 @@ var DownstreamSelectField = React.createClass({
     }
 });
 
-
 var EqConnectionsManager = React.createClass({
 
     getInitialState: function () {
         return {
+            streams_id: 0,
             loading: false,
             errors: {}
         }
@@ -190,43 +277,48 @@ var EqConnectionsManager = React.createClass({
     },
 
     _onChange: function (e) {
-        var form = {};
+        var state = {};
 
         if (e.target.type == 'checkbox') {
-            form[e.target.name] = e.target.checked;
+            state[e.target.name] = e.target.checked;
         } else if (e.target.type == 'radio') {
-            form[e.target.name] = e.target.value;
+            state[e.target.name] = e.target.value;
         } else if (e.target.type == 'select-one') {
-            form[e.target.name] = e.target.value;
+            state[e.target.name] = e.target.value;
+        } else if (e.target.type == 'select-one' && e.target.name === 'equipment_id') {
+            state['streams_id']  = this.state.equipment_id;
         } else {
-            form[e.target.name] = e.target.value;
+            state[e.target.name] = e.target.value;
         }
-        this.setState(form);
+        this.setState(state);
+        console.log("stream",this.state.streams_id);
     },
-    
+
     render: function () {
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-4">
                             <UpstreamSelectField source="equipment_connection"
                                                  label="Upstream"
                                                  name='equipment_id'
                                                  value={this.state.equipment_id}
                             />
                         </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-4 col-md-offset-4">
+                        <div className="col-md-4 ">
                             <Panel header="Equipment" className="text-center">
                             </Panel>
+                            <SelectField source="equipment"
+                                         name='equipment_id'
+                                         value={this.state.equipment_id}
+                            />
+                            <fieldset className="scheduler-border">
+                                <legend className="scheduler-border">Hint</legend>
+                                <b>You can change equipment's upstreams/downstreams using selectfields</b>
+                            </fieldset>
                         </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-4">
                             <DownstreamSelectField source="equipment_connection"
                                                    label="Downstream"
                                                    name='parent_id'
@@ -234,15 +326,14 @@ var EqConnectionsManager = React.createClass({
                             />
                         </div>
                     </div>
-
                     <div className="row">
-                                <div className="col-md-12">
-                                    <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
-                                    <Button bsStyle="danger"
-                                            onClick={this.handleClose}
-                                            className="pull-right margin-right-xs">Cancel</Button>
-                                </div>
-                            </div>
+                        <div className="col-md-12">
+                            <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
+                            <Button bsStyle="danger"
+                                    onClick={this.handleClose}
+                                    className="pull-right margin-right-xs">Cancel</Button>
+                        </div>
+                    </div>
                 </form>
             </div>
 
