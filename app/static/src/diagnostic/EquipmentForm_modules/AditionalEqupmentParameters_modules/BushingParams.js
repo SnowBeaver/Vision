@@ -231,7 +231,7 @@ var BushingParams = React.createClass({
                                        ="model" value
                                        ={this.state.model}
                                    errors={errors}
-                                   data-type="float"/>
+                                   data-len="50"/>
                     </div>
                 </div>
 
@@ -292,7 +292,7 @@ var BushingParams = React.createClass({
                                    name="current"
                                    value={this.state.current}
                                    errors={errors}
-                                   data-type="float"/>
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
@@ -300,7 +300,8 @@ var BushingParams = React.createClass({
                                    name="bil"
                                    value={this.state.bil}
                                    errors={errors}
-                                   data-type="float"/>
+                                   data-type="int"
+                                   data-len="8"/>
                     </div>
                     <div className="col-md-1 ">
                         <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
