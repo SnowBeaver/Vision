@@ -687,10 +687,10 @@ var EqAdditionalParams = React.createClass({
                 return (<TapChangerParams errors={this.props.data.errors}/>);
                 break;
             case 'Rectifier':
-                return (<RectifierParams />);
+                return (<RectifierParams errors={this.props.data.errors}/>);
                 break;
             case 'Transformer':
-                return (<TransformerParams />);
+                return (<TransformerParams errors={this.props.data.errors} edited={this.props.edited}/>);
                 break;
             case 'Tank':
                 return (<TankParams />);
@@ -905,7 +905,7 @@ const EquipmentForm = React.createClass({
         if (e.target.name != "upstream1" && this.state.fields.indexOf(e.target.name) > -1) {
             form.changedFields = this.state.changedFields.concat([e.target.name]);
         }
-
+        console.log(e.target.name, "  ", e.target.value)
         var errors = this._validate(e);
         form = this._updateFieldErrors(e.target.name, form, errors);
         this.setState(form);
@@ -919,6 +919,10 @@ const EquipmentForm = React.createClass({
             errors.push(error);
         }
         error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldChoice(e.target.value, e.target.getAttribute("data-choice"));
         if (error){
             errors.push(error);
         }
@@ -945,6 +949,15 @@ const EquipmentForm = React.createClass({
             if (value.length > length){
                 error = "Value should be maximum " + length + " characters long"
             }
+        }
+        return error;
+    },
+
+    _validateFieldChoice: function (value, validChoice){
+        var error = "";
+        validChoice = (typeof validChoice == "string") ? validChoice.split(",") : null;
+        if (Array.isArray(validChoice) && validChoice.indexOf(value) == -1){
+            error = "Not a valid choice. Value should be one of the following: " + validChoice.join(", ");
         }
         return error;
     },
@@ -1085,7 +1098,9 @@ const EquipmentForm = React.createClass({
                             </div>
                             <div className="row">
                                 <div className="col-md-11">
-                                    <EqAdditionalParams data={this.state}/>
+                                    <EqAdditionalParams
+                                        data={this.state}
+                                        edited={(this.state.subform && Object.keys(this.state.subform).length > 0) ? true : false}/>
                                 </div>
                             </div>
                             <div className="row">
