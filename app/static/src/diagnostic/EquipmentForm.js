@@ -693,16 +693,16 @@ var EqAdditionalParams = React.createClass({
                 return (<TransformerParams errors={this.props.data.errors} edited={this.props.edited}/>);
                 break;
             case 'Tank':
-                return (<TankParams />);
+                return (<TankParams errors={this.props.data.errors}/>);
                 break;
             case 'Switch':
-                return (<SwitchParams />);
+                return (<SwitchParams errors={this.props.data.errors}/>);
                 break;
             case 'Inductance':
-                return (<InductanceParams />);
+                return (<InductanceParams errors={this.props.data.errors}/>);
                 break;
             case 'Gas sensor':
-                return (<GasSensorParams />);
+                return (<GasSensorParams errors={this.props.data.errors}/>);
                 break;
 
             default:
@@ -745,7 +745,9 @@ const EquipmentForm = React.createClass({
                 'prev_equipment_number',
                 'manufactured'
             ],
-            changedFields: []
+            changedFields: [],
+            option_text: {},
+            equipmentId: null   // Is set when main form is saved
         };
 
         for (var i = 0; i < response.fields.length; i++) {
@@ -767,38 +769,49 @@ const EquipmentForm = React.createClass({
             data[key] = this.state[key];
         }
 
-        var that = this;
-        return $.ajax({
-            url: '/api/v1.0/equipment/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data) {
-                if (Object.keys(subform).length != 0) {
-                    subform['equipment_id'] = data['result'];
-                    $.ajax({
-                        url: '/api/v1.0/' + path + '/',
-                        type: 'POST',
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(subform),
-                        success: function () {
-                            that.setState({option_text: {}});
-                            that._onSuccess();
-                        },
-                        error: that._onError,
-                        always: that.hideLoading
-                    });
-                } else {
-                    that._onSuccess();
-                }
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
+        var that = this
+            , xhr;
 
+        // If the main form haven't been saved yet
+        if (!this.state.equipmentId){
+            xhr = $.ajax({
+                url: '/api/v1.0/equipment/',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (data) {
+                    that.setState({equipmentId: data['result']});
+                    that._saveSubform(subform, data['result'], path);
+                },
+                beforeSend: function () {
+                    this.setState({loading: true});
+                }.bind(this)
+            })
+        } else {
+            // Save only subform (for instance, when saving subform for the first time, API returned errors)
+            xhr = this._saveSubform(subform, this.state.equipmentId, path);
+        }
+        return xhr;
+    },
+
+    _saveSubform(subform, equipmentId, path){
+        var that = this;
+        if (Object.keys(subform).length != 0) {
+            subform['equipment_id'] = equipmentId;
+            return $.ajax({
+                url: '/api/v1.0/' + path + '/',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(subform),
+                success: that._onSuccess,
+                error: that._onError,
+                always: that.hideLoading
+            });
+        } else {
+            this._onSuccess();
+        }
     },
 
     _onSubmit: function (e) {
@@ -809,8 +822,10 @@ const EquipmentForm = React.createClass({
         }
         this._clearErrors();
         var xhr = this._save();
-        xhr.fail(this._onError)
-            .always(this.hideLoading)
+        if (xhr){
+            xhr.fail(this._onError)
+                .always(this.hideLoading)
+        }
     },
 
     hideLoading: function () {
