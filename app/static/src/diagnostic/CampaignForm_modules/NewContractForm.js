@@ -92,7 +92,11 @@ var NewContractForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++) {
 			var key = fields[i];
-			data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({

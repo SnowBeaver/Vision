@@ -96,7 +96,11 @@ var NewLabForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++) {
 			var key = fields[i];
-			data[key] = this.state[key];
+			var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({
@@ -221,14 +225,6 @@ var NewLabForm = React.createClass({
 			className += " has-error"
 		}
 		return className;
-	},
-
-	getInitialState: function () {
-		return {
-			loading: false,
-			errors: {},
-			equipment_number: ''
-		}
 	},
 
 	handleClick: function() {

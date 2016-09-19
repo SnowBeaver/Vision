@@ -667,9 +667,11 @@ var NewTestForm = React.createClass({
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            if (typeof this.state[key] != 'undefined'){
-                data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == ""){
+                value = null;
             }
+            data[key] = value;
         }
         var url = '/api/v1.0/test_result/' + this.state.id; // edit when id is set
         delete data['analysis_number'];
