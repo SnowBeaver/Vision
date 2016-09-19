@@ -59,7 +59,6 @@ var SelectField = React.createClass({
                     {menuItems}
                 </FormControl>
                 <HelpBlock className="warning">{error}</HelpBlock>
-                <FormControl.Feedback />
             </FormGroup>
         );
     }

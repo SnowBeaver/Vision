@@ -298,11 +298,11 @@ var NewRecommendationForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup controlId="contract_status"
 										   validationState={this.state.errors.test_type_id ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 									<TestTypeSelectField
 										source="/api/v1.0/test_type"
 										handleChange={this.handleChange}
 										required/>
+									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 								</FormGroup>
 							</div>
 						</div>
@@ -312,22 +312,23 @@ var NewRecommendationForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup controlId="contract_status"
 										   validationState={this.state.errors.name ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 									<NameSelectField
 										source="/api/v1.0/user"
 										handleChange={this.handleChange}
 										required/>
+									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								</FormGroup>
 							</div>
 						</div>
 
 						<div className="maxwidth">
 							<FormGroup validationState={this.state.errors.code ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Code"
 											 name="code"
 								/>
+								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 
@@ -335,10 +336,11 @@ var NewRecommendationForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.description ? 'error' : null}>
 									<ControlLabel>Recommendations</ControlLabel>
-									<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
 									<FormControl componentClass="textarea"
 												 placeholder="Repair description"
 												 name="description"/>
+									<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>

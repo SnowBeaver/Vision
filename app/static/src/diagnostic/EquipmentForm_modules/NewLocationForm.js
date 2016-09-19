@@ -144,11 +144,12 @@ var NewLocationForm = React.createClass({
 					<div className="row">
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.name ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								<FormControl type="text"
 												placeholder="Name"
 												name="name"
 								/>
+								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+							    <FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>

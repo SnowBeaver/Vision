@@ -14,18 +14,18 @@ var TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
-        var state = (typeof this.props.errors != 'undefined') ? this.props.errors[name] : null;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         return (
-            <FormGroup validationState={state}>
+            <FormGroup validationState={validationState}>
                 <ControlLabel>{label}</ControlLabel>
-                <HelpBlock className="warning">{state}</HelpBlock>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
                              data-type="float"
                              />
-                <HelpBlock className="warning">{this.props.errors[name]}</HelpBlock>
+                <HelpBlock className="warning">{error}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );

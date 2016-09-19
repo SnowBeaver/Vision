@@ -538,6 +538,7 @@ const FluidProfileForm = React.createClass({
                                                                  value={this.state.data.qty}
                                                                  data-type="float"/>
                                                     <HelpBlock className="warning">{this.state.errors.qty}</HelpBlock>
+								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-10 nopadding">
@@ -716,6 +717,7 @@ const FluidProfileForm = React.createClass({
                                                                      value={this.state.data.qty_jar}
                                                                      data-type="float"/>
                                                         <HelpBlock className="warning">{this.state.errors.qty_jar}</HelpBlock>
+								                        <FormControl.Feedback />
                                                     </FormGroup>
                                                 </div>
                                                 <div className="col-md-10 nopadding">
@@ -758,6 +760,7 @@ const FluidProfileForm = React.createClass({
                                                                  value={this.state.data.qty_vial}
                                                                  data-type="float"/>
                                                     <HelpBlock className="warning">{this.state.errors.qty_vial}</HelpBlock>
+								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-10 nopadding">

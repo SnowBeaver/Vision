@@ -230,13 +230,14 @@ var NewSyringeForm = React.createClass({
 
                     <div className="maxwidth">
                         <FormGroup validationState={this.state.errors.serial ? 'error' : null}>
-                            <HelpBlock className="warning">{this.state.errors.serial}</HelpBlock>
                             <FormControl type="text"
                                          placeholder="Serial"
                                          name="serial"
                                          data-len="50"
                                          required
                             />
+                            <HelpBlock className="warning">{this.state.errors.serial}</HelpBlock>
+							<FormControl.Feedback />
                         </FormGroup>
                     </div>
 

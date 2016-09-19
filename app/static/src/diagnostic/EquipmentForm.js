@@ -114,7 +114,6 @@ var EquipmentTypeSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.equipment_type_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -188,7 +187,6 @@ var EquipmentSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.equipment_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -253,7 +251,6 @@ var ManufacturerSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufacturer_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -321,7 +318,6 @@ var LocationSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.location_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -388,7 +384,6 @@ var VisualInspBySelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.visual_inspection_by_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -455,7 +450,6 @@ var AssignedToSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.assigned_to_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -522,7 +516,6 @@ var NormSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.norm_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -579,7 +572,6 @@ var FrequencySelectField = React.createClass({
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.frequency}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -632,7 +624,6 @@ var ManufacturedSelectField = React.createClass({
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufactured}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );

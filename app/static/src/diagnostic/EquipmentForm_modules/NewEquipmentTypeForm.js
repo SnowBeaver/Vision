@@ -142,11 +142,12 @@ var NewEquipmentTypeForm = React.createClass({
 						<div className="row">
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.name ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 									<FormControl type="text"
 												 placeholder="Name"
 												 name="name"
 									/>
+									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>
@@ -154,11 +155,12 @@ var NewEquipmentTypeForm = React.createClass({
 						<div className="row">
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.code ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
 									<FormControl type="text"
 												 placeholder="Code"
 												 name="code"
 									/>
+									<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>
@@ -166,11 +168,12 @@ var NewEquipmentTypeForm = React.createClass({
 						<div className="row">
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.table_name ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.table_name}</HelpBlock>
 									<FormControl type="text"
 												 placeholder="Table Name"
 												 name="table_name"
 									/>
+									<HelpBlock className="warning">{this.state.errors.table_name}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>

@@ -50,6 +50,7 @@ var RoleSelectField = React.createClass({
 	},
 
 	render: function () {
+		var required = this.props.required;
 		var menuItems = [];
 		for (var key in this.state.items) {
 			menuItems.push(<option key={this.state.items[key].id}
@@ -60,16 +61,17 @@ var RoleSelectField = React.createClass({
 		return (
 			<div>
 				<FormGroup validationState={this.props.errors.roles ? 'error' : null}>
-					<ControlLabel>Roles</ControlLabel>
-					<HelpBlock className="warning">{this.props.errors.roles}</HelpBlock>
+					<ControlLabel>Roles</ControlLabel><span className="text-danger"> *</span>
 					<FormControl
 						componentClass="select"
 						placeholder="select"
 						onChange={this.handleChange}
-						name="roles">
-						<option key="0" value="select">Roles</option>
+						name="roles"
+						required={required}>
+						<option key="0" value="">Roles</option>
 						{menuItems}
 					</FormControl>
+					<HelpBlock className="warning">{this.props.errors.roles}</HelpBlock>
 				</FormGroup>
 			</div>
 		);
@@ -116,15 +118,15 @@ var CountrySelectField = React.createClass({
 			<div>
 				<FormGroup validationState={this.props.errors.country ? 'error' : null}>
 					<ControlLabel>Country</ControlLabel>
-					<HelpBlock className="warning">{this.props.errors.country}</HelpBlock>
 					<FormControl
 						componentClass="select"
 						placeholder="select"
 						onChange={this.handleChange}
 						name="country_id">
-						<option key="0" value="select">Country</option>
+						<option key="0" value="">Country</option>
 						{menuItems}
 					</FormControl>
+					<HelpBlock className="warning">{this.props.errors.country}</HelpBlock>
 				</FormGroup>
 			</div>
 		);
@@ -284,87 +286,95 @@ var NewUserForm = React.createClass({
 								source="/api/v1.0/role"
 								handleChange={this.handleChange}
 								errors={this.state.errors}
+								required
 							/>
 						</div>
 					</div>
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.name ? 'error' : null}>
 							<ControlLabel>Name</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Full Name"
 										 name="name"
 							/>
+							<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.alias ? 'error' : null}>
 							<ControlLabel>Username</ControlLabel><span className="text-danger"> *</span>
-							<HelpBlock className="warning">{this.state.errors.alias}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Username"
 										 name="alias"
 										 required
 							/>
+							<HelpBlock className="warning">{this.state.errors.alias}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.password ? 'error' : null}>
 							<ControlLabel>Password</ControlLabel><span className="text-danger"> *</span>
-							<HelpBlock className="warning">{this.state.errors.password}</HelpBlock>
 							<FormControl type="password"
 										 placeholder="Password"
 										 name="password"
 										 required
 							/>
+							<HelpBlock className="warning">{this.state.errors.password}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.email ? 'error' : null}>
 							<ControlLabel>E-mail</ControlLabel><span className="text-danger"> *</span>
-							<HelpBlock className="warning">{this.state.errors.email}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="E-mail"
 										 name="email"
 										 data-type="email"
 										 required/>
+							<HelpBlock className="warning">{this.state.errors.email}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.address ? 'error' : null}>
 							<ControlLabel>Address</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.address}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Address"
 										 name="address"
 							/>
+							<HelpBlock className="warning">{this.state.errors.address}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.mobile ? 'error' : null}>
 							<ControlLabel>Mobile</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.mobile}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Mobile"
 										 name="mobile"
 							/>
+							<HelpBlock className="warning">{this.state.errors.mobile}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.website ? 'error' : null}>
 							<ControlLabel>Website</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.website}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Website"
 										 name="website"
 										 data-type="url"
 							/>
+							<HelpBlock className="warning">{this.state.errors.website}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
@@ -381,11 +391,12 @@ var NewUserForm = React.createClass({
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.description ? 'error' : null}>
 								<ControlLabel>Description</ControlLabel>
-								<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
 								<FormControl
 									componentClass="textarea"
 									placeholder="Description"
 									name="description"/>
+								<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>
@@ -395,14 +406,6 @@ var NewUserForm = React.createClass({
 							<FormGroup validationState={this.state.errors.active ? 'error' : null}>
 								<HelpBlock className="warning">{this.state.errors.active}</HelpBlock>
 								<Checkbox name="active">Active</Checkbox>
-							</FormGroup>
-						</div>
-						<div className="maxwidth">
-							<FormGroup>
-								<FormControl type="password"
-											 placeholder="Password"
-											 name="password"
-								/>
 							</FormGroup>
 						</div>
 					</div>

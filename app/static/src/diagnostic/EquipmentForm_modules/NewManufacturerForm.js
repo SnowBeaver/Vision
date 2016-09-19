@@ -140,43 +140,47 @@ var NewManufacturerForm = React.createClass({
 					<div className="row">
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.name ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								<FormControl type="text"
 												placeholder="Name *"
 												name="name"
 												required
 								/>
+								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>
 					<div className="row">
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.markings ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.markings}</HelpBlock>
 								<FormControl componentClass="textarea"
 												placeholder="Markings"
 												name="markings"/>
+								<HelpBlock className="warning">{this.state.errors.markings}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>
 					<div className="row">
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.location ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.location}</HelpBlock>
 								<FormControl type="text"
 												placeholder="Location"
 												name="location"
 								/>
+								<HelpBlock className="warning">{this.state.errors.location}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>
 					<div className="row">
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.description ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
 								<FormControl componentClass="textarea"
 												placeholder="Description"
 												name="description"/>
+								<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>
