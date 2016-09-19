@@ -184,7 +184,7 @@ var EquipmentSelectField = React.createClass({
                         name="equipment_id"
                         onChange={this.handleChange}
                         value={this.props.value}>
-                        <option value="select">Choose equipment in upstream</option>
+                        <option value="">Choose equipment in upstream</option>
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.equipment_id}</HelpBlock>
@@ -249,7 +249,7 @@ var ManufacturerSelectField = React.createClass({
                         placeholder="Manufacturer"
                         onChange={this.handleChange}
                         value={this.props.value}>
-                        <option value="select">Choose manufacturer</option>
+                        <option value="">Choose manufacturer</option>
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufacturer_id}</HelpBlock>
@@ -575,7 +575,7 @@ var FrequencySelectField = React.createClass({
                                  placeholder="Select frequency"
                                  onChange={this.handleChange}
                                  value={this.props.value}>
-                        <option value="select">Choose Frequency</option>
+                        <option value="">Choose Frequency</option>
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.frequency}</HelpBlock>
@@ -628,7 +628,7 @@ var ManufacturedSelectField = React.createClass({
                                  onChange={this.handleChange}
                                  value={this.props.value}>
 
-                        <option value="select">Year manufactured</option>
+                        <option value="">Year manufactured</option>
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufactured}</HelpBlock>
@@ -766,7 +766,11 @@ const EquipmentForm = React.createClass({
 
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
         }
 
         var that = this
@@ -799,6 +803,11 @@ const EquipmentForm = React.createClass({
         var that = this;
         if (Object.keys(subform).length != 0) {
             subform['equipment_id'] = equipmentId;
+            for (var field in subform){
+                if (subform[field] == ""){
+                    subform[field] = null;
+                }
+            }
             return $.ajax({
                 url: '/api/v1.0/' + path + '/',
                 type: 'POST',
@@ -920,7 +929,6 @@ const EquipmentForm = React.createClass({
         if (e.target.name != "upstream1" && this.state.fields.indexOf(e.target.name) > -1) {
             form.changedFields = this.state.changedFields.concat([e.target.name]);
         }
-        console.log(e.target.name, "  ", e.target.value)
         var errors = this._validate(e);
         form = this._updateFieldErrors(e.target.name, form, errors);
         this.setState(form);
