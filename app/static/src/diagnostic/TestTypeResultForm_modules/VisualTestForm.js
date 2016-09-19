@@ -194,6 +194,7 @@ var VisualTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
+        this.props.handleClose();
     },
 
     _onError: function (data) {
@@ -806,7 +807,6 @@ var VisualTestForm = React.createClass({
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
                                     className="pull-right"
-                                    onClick={this.props.handleClose}
                                     type="submit">Save</Button>
                             &nbsp;
                             <Button bsStyle="danger"

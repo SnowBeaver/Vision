@@ -525,6 +525,7 @@ var EquipmentTestForm = React.createClass({
     _onSuccess: function (data) {
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
+        this.props.handleClose();
         // show success message
         NotificationManager.success('Saved');
     },
@@ -620,7 +621,6 @@ var EquipmentTestForm = React.createClass({
                         <div className="col-md-1 pull-right nopadding padding-right-xs">
                             <FormGroup>
                                 <Button bsStyle="success"
-                                        onClick={this.props.handleClose}
                                         type="submit">Save</Button>
                             </FormGroup>
                         </div>

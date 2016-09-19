@@ -67,6 +67,7 @@ var NewManufacturerForm = React.createClass({
 	},
 
 	_onSuccess: function (data) {
+		this.props.handleClose();
 		NotificationManager.success("Manufacturer added.");
 	},
 
@@ -188,7 +189,6 @@ var NewManufacturerForm = React.createClass({
 						<div className="col-md-12 ">
 							<Button bsStyle="success"
 									className="pull-right"
-									onClick={this.props.handleClose}
 									type="submit">Save</Button>
 							&nbsp;
 							<Button bsStyle="danger"
