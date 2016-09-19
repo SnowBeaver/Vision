@@ -85,9 +85,9 @@ def new_instance(path, param_dict):
 
 # Standard CRUD functions
 # Create
-def add_item(path):
-    abort_if_not_validates(path)
-    item = new_instance(path, request.json)
+def add_item(path, param_dict):
+    abort_if_not_validates(path, param_dict)
+    item = new_instance(path, param_dict)
     return item.id
 
 
@@ -98,13 +98,12 @@ def get_item(path, item_id):
     return item.serialize()
 
 
-def get_items(path):
+def get_items(path, args):
     items_model = model_dict[path]['model']
-    if request.args:
+    if args:
         kwargs = {
-            key: request.args.get(key) for key in request.args
-            if hasattr(items_model, key)
-            or abort(400, 'Wrong attribute: {}'.format(key))
+            k: v for k,v in args.items() if hasattr(items_model, k)
+                 or abort(400, 'Wrong attribute: {}'.format(k))
         }
         if items_model == Campaign and 'equipment_id' in kwargs:
             campaing_ids = {item.campaign_id for item in db.session.query(TestResult).filter_by(**kwargs)}
@@ -137,7 +136,8 @@ def delete_item(path, item_id):
 
 # Custom CRUD functions
 # Add equipment and add related objects automaticaly
-def add_equipment(path):
+def add_equipment():
+    path = 'equipment'
     abort_if_not_validates(path)
     # item = new_instance(path, param_dict)
     extra_fields_dict = request.json.pop('extra_fields', {})
@@ -166,6 +166,50 @@ def add_equipment(path):
         extra_fields_dict['equipment_id'] = item.id
         new_instance(extra_table_name, extra_fields_dict)
     return item.id
+
+
+# Get equipment upstreams and downstreams
+def get_up_down_stream_of_equipment(item_id):
+    path = 'equipment_connection'
+    model = model_dict[path]['model']
+    kwargs = {'equipment_id': item_id}
+    upstream = [item.parent_id for item in db.session.query(model).filter_by(**kwargs)]
+    kwargs = {'parent_id': item_id}
+    downstream = [item.equipment_id for item in db.session.query(model).filter_by(**kwargs)]
+    return {'upstream': upstream, 'downstream': downstream}
+
+
+def add_up_down_stream_to_equipment(item_id):
+    path = 'equipment_connection'
+    upstream_list = request.json.get('upstream', [])
+    for upstream_id in upstream_list:
+        add_item(path, {'equipment_id': item_id, 'parent_id': upstream_id})
+
+    downstream_list = request.json.get('downstream', [])
+    for downstream_id in downstream_list:
+        add_item(path, {'equipment_id': downstream_id, 'parent_id': item_id})
+
+    return get_up_down_stream_of_equipment(item_id)
+
+
+# Remove connection between equipment and its upstreams and downstreams
+def delete_up_down_stream_of_equipment(item_id):
+    path = 'equipment_connection'
+    model = model_dict[path]['model']
+    upstream = request.json.get('upstream', [])
+    downstream = request.json.get('downstream', [])
+    try:
+        db.session.query(model)\
+            .filter(model.parent_id.in_(upstream), model.equipment_id == item_id)\
+            .delete(synchronize_session=False)
+        db.session.query(model)\
+            .filter(model.equipment_id.in_(downstream), model.parent_id == item_id)\
+            .delete(synchronize_session=False)
+    except:
+        return False
+    else:
+        db.session.commit()
+        return True
 
 
 # Add a lot of test results
@@ -233,14 +277,14 @@ def internal_server_error(error):
 def create_item_handler(path):
     abort_if_wrong_path(path)
     abort_if_json_missing()
-    return return_json('result', add_item(path))
+    return return_json('result', add_item(path, request.json))
 
 
 # Read
 @api_blueprint.route('/<path>/', methods=['GET'])
 def read_items_handler(path):
     abort_if_wrong_path(path)
-    return return_json('result', get_items(path))
+    return return_json('result', get_items(path, request.args))
 
 
 @api_blueprint.route('/<path>/<int:item_id>', methods=['GET'])
@@ -286,10 +330,28 @@ def get_test_profile():
 # Create equipment
 @api_blueprint.route('/equipment/', methods=['POST'])
 def create_equipment_handler():
-    path = 'equipment'
-    abort_if_wrong_path(path)
     abort_if_json_missing()
-    return return_json('result', add_equipment(path))
+    return return_json('result', add_equipment())
+
+
+# Create equipment upstreams and downstreams
+@api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['POST'])
+def create_equipment_up_down_stream_handler(item_id):
+    abort_if_json_missing()
+    return return_json('result', add_up_down_stream_to_equipment(item_id))
+
+
+# Get equipment upstreams and downstreams
+@api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['GET'])
+def read_equipment_up_down_stream_handler(item_id):
+    return return_json('result', get_up_down_stream_of_equipment(item_id))
+
+
+# Remove connection between equipment and its upstreams and downstreams
+@api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['DELETE'])
+def delete_equipment_up_down_stream_handler(item_id):
+    abort_if_json_missing()
+    return return_json('result', delete_up_down_stream_of_equipment(item_id))
 
 
 # Create a lot of test_results with equipment using one query
