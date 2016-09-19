@@ -1,8 +1,8 @@
 from flask import Flask, Blueprint, jsonify, abort, make_response, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
-from api_utility import model_dict, eq_type_dict, Tree, TreeTranslation
-from app.diagnostic.models import Equipment, EquipmentType, TestResult, Campaign, FluidProfile, Country
+from api_utility import model_dict, eq_type_dict
+from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProfile, Country
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
@@ -23,11 +23,8 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(api, user_datastore)
 
 
-def return_json(items_name, items_list):
-    return jsonify({items_name: items_list})
-
-
-def validate_or_abort(path, req=None):
+# Verifications
+def abort_if_not_validates(path, req=None):
     if not req:
         req = request.json
     validation_schema = model_dict[path]['schema']
@@ -35,12 +32,42 @@ def validate_or_abort(path, req=None):
     if not v.validate(req, validation_schema):
         abort(400, v.errors)
 
-    return True
 
-def new_instance(model, **param_dict):
-    item = model(**param_dict)
+def abort_if_json_missing():
+    if not request.json:
+        abort(400, 'JSON not found')
 
-    if model == User:
+
+def abort_if_wrong_path(path):
+    if path not in model_dict:
+        abort(404)
+
+
+def abort_if_wrong_id(item_id):
+    if not item_id:
+        abort(404)
+
+
+# Accessory functions
+def return_json(items_name, items_list):
+    return jsonify({items_name: items_list})
+
+
+def set_attrs_to_item(item, attr_dict):
+    for k, v in attr_dict.items():
+        try:
+            setattr(item, k, v)
+        except AttributeError:
+            abort(500, "can't set attribute - {}: {}".format(k, v))
+
+
+def new_instance(path, param_dict):
+    # item = items_model(**param_dict)
+    items_model = model_dict[path]['model']
+    item = items_model()
+    set_attrs_to_item(item, param_dict)
+
+    if items_model == User:
         role = db.session.query(Role).filter(Role.id == param_dict["roles"]).first()
         item.roles = [role] if role else abort(400, {"roles": "invalid value"})
         item.password = encrypt_password(param_dict["password"])
@@ -56,15 +83,29 @@ def new_instance(model, **param_dict):
     return item
 
 
-def get_item(path, item_id=None):
+# Standard CRUD functions
+# Create
+def add_item(path):
+    abort_if_not_validates(path)
+    item = new_instance(path, request.json)
+    return item.id
+
+
+# Read
+def get_item(path, item_id):
     items_model = model_dict[path]['model']
-    if item_id:
-        item = db.session.query(items_model).get(item_id) or abort(404)
-        return item.serialize()
+    item = db.session.query(items_model).get(item_id) or abort(404)
+    return item.serialize()
+
+
+def get_items(path):
+    items_model = model_dict[path]['model']
     if request.args:
-        kwargs = {key: request.args.get(key) for key in request.args if hasattr(items_model, key)
-                  or abort(400, 'Wrong attribute: {}'.format(key))
-                  }
+        kwargs = {
+            key: request.args.get(key) for key in request.args
+            if hasattr(items_model, key)
+            or abort(400, 'Wrong attribute: {}'.format(key))
+        }
         if items_model == Campaign and 'equipment_id' in kwargs:
             campaing_ids = {item.campaign_id for item in db.session.query(TestResult).filter_by(**kwargs)}
             return [item.serialize() for item in db.session.query(Campaign).filter(Campaign.id.in_(campaing_ids))]
@@ -73,46 +114,16 @@ def get_item(path, item_id=None):
     return [item.serialize() for item in db.session.query(items_model).all()]
 
 
-def add_item(path):
-    items_model = model_dict[path]['model']
-    validation_schema = model_dict[path]['schema']
-    param_dict = {k: v for k, v in request.json.items()}
-    v = Validator()
-    if not v.validate(param_dict, validation_schema):
-        abort(400, v.errors)
-
-    item = new_instance(items_model, **param_dict)
-    if items_model == Equipment:
-        param_tree_dict = {
-            'equipment_id': item.id,
-            'parent_id': 32,
-            'icon': '../app/static/img/icons/{0}_b.ico'.format(eq_type_dict.get(item.equipment_type_id, '')),
-            'type': '{0}'.format(eq_type_dict.get(item.equipment_type_id, ''))
-        }
-        item_tree = new_instance(Tree, **param_tree_dict)
-
-        param_tree_trans_dict = {
-            'id': item_tree.id, 'locale': 'en',
-            'text': param_dict['name'],
-            'tooltip': param_dict['name']
-        }
-        new_instance(TreeTranslation, **param_tree_trans_dict)
-    return item.id
-
-
+# Update
 def update_item(path, item_id):
     items_model = model_dict[path]['model']
     item = db.session.query(items_model).get(item_id)
-    for k, v in request.json.items():
-        try:
-            setattr(item, k, v)
-        except AttributeError:
-            abort(500, "can't set attribute - {}: {}".format(k, v))
-
+    set_attrs_to_item(item, request.json)
     db.session.commit()
     return item.serialize()
 
 
+# Delete
 def delete_item(path, item_id):
     items_model = model_dict[path]['model']
     try:
@@ -124,11 +135,47 @@ def delete_item(path, item_id):
         return rows > 0
 
 
+# Custom CRUD functions
+# Add equipment and add related objects automaticaly
+def add_equipment(path):
+    abort_if_not_validates(path)
+    # item = new_instance(path, param_dict)
+    extra_fields_dict = request.json.pop('extra_fields', {})
+    item = new_instance(path, request.json)
+    short_name = eq_type_dict.get(item.equipment_type_id, '')
+    param_tree_dict = {
+        'equipment_id': item.id,
+        'parent_id': 32,
+        'icon': '../app/static/img/icons/{0}_b.ico'.format(short_name),
+        'type': '{0}'.format(short_name)
+    }
+    item_tree = new_instance('tree', param_tree_dict)
+
+    param_tree_trans_dict = {
+        'id': item_tree.id,
+        'locale': 'en',
+        'text': item.name,
+        'tooltip': item.name
+        # 'text': param_dict['name'],
+        # 'tooltip': param_dict['name']
+    }
+    new_instance('tree_translation', param_tree_trans_dict)
+
+    extra_table_name = item.equipment_type and item.equipment_type.table_name
+    if extra_fields_dict:
+        extra_fields_dict['equipment_id'] = item.id
+        new_instance(extra_table_name, extra_fields_dict)
+    return item.id
+
+
+# Add a lot of test results
 def add_items():
     path = 'test_result_equipment'
-    validate_or_abort(path)
+    abort_if_not_validates(path)
     items_model = model_dict[path]['model']
     campaign_id = request.json.get('campaign_id')
+    # TODO - deleting of all related test results IMHO isn't the best way
+    # because of related to test results objects like tests
     try:
         db.session.query(items_model).filter(items_model.campaign_id == campaign_id).delete(synchronize_session=False)
     except:
@@ -139,7 +186,7 @@ def add_items():
     equipment_ids = request.json.get('equipment_id')
     if not isinstance(equipment_ids, Iterable):
         equipment_ids = [equipment_ids]
-    return [new_instance(items_model, campaign_id=campaign_id, equipment_id=id).id for id in equipment_ids]
+    return [new_instance(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
 
 
 def add_or_update_tests(path):
@@ -149,28 +196,20 @@ def add_or_update_tests(path):
         if 'id' in test:
             item = db.session.query(items_model).get(test['id'])
         else:
-            validate_or_abort(path, test)
-            item = new_instance(items_model, **test)
+            abort_if_not_validates(path, test)
+            item = new_instance(path, test)
 
         items.append(item)
-        for k, v in test.items():
-            try:
-                setattr(item, k, v)
-            except AttributeError:
-                abort(500, "can't set attribute - {}: {}".format(k, v))
+        set_attrs_to_item(item, test)
 
     db.session.commit()
     return [item.serialize() for item in items]
 
 
+# Get fields from corresponding table of specified equipment type
 def get_equipment_type_fields(item_id):
     item = db.session.query(EquipmentType).get(item_id) or abort(404)
     return {str(c.name): str(c.type) for c in meta.tables[item.table_name].columns}
-
-
-@api_blueprint.route('/equipment_type/<int:item_id>/fields', methods=['GET', ])
-def handler_equipment_type_fields(item_id):
-    return return_json('result', get_equipment_type_fields(item_id))
 
 
 @api.errorhandler(404)
@@ -188,72 +227,86 @@ def internal_server_error(error):
     return make_response(return_json('error', error.description), 500)
 
 
-@api_blueprint.route('/<path>/', methods=['GET', 'POST'])
-def handler(path, item_id=None):
-    if path not in model_dict:
-        abort(404)
-
-    if request.method == 'POST' and not request.json:
-            abort(400, 'JSON not found')
-
-    crud_functions = {
-        'GET': get_item,
-        'POST': add_item,
-        # 'PUT': update_item,
-        # 'DELETE': delete_item
-    }
-    crud_func = crud_functions[request.method]
-    args = [path]
-    if item_id:
-        args.append(item_id)
-    return return_json('result', crud_func(*args))
+# Standard routes
+# Create
+@api_blueprint.route('/<path>/', methods=['POST'])
+def create_item_handler(path):
+    abort_if_wrong_path(path)
+    abort_if_json_missing()
+    return return_json('result', add_item(path))
 
 
-@api_blueprint.route('/<path>/<int:item_id>', methods=['GET', 'PUT', 'POST', 'DELETE'])
-def handler_with_id(path, item_id=None):
-    if path not in model_dict:
-        abort(404)
-
-    if request.method in ('POST', 'PUT') and not request.json:
-            abort(400, 'JSON not found')
-
-    crud_functions = {
-        'GET': get_item,
-        'POST': update_item,
-        'PUT': update_item,
-        'DELETE': delete_item
-    }
-    crud_func = crud_functions[request.method]
-    args = [path]
-    if item_id:
-        args.append(item_id)
-    return return_json('result', crud_func(*args))
+# Read
+@api_blueprint.route('/<path>/', methods=['GET'])
+def read_items_handler(path):
+    abort_if_wrong_path(path)
+    return return_json('result', get_items(path))
 
 
-@api_blueprint.route('/test_profile/', methods=['GET', ])
+@api_blueprint.route('/<path>/<int:item_id>', methods=['GET'])
+def read_item_handler(path, item_id):
+    abort_if_wrong_path(path)
+    abort_if_wrong_id(item_id)
+    return return_json('result', get_item(path, item_id))
+
+
+# Update
+@api_blueprint.route('/<path>/<int:item_id>', methods=['PUT', 'POST'])
+def update_item_handler(path, item_id):
+    abort_if_wrong_path(path)
+    abort_if_wrong_id(item_id)
+    abort_if_json_missing()
+    return return_json('result', update_item(path, item_id))
+
+
+# Delete
+@api_blueprint.route('/<path>/<int:item_id>', methods=['DELETE'])
+def delete_item_handler(path, item_id):
+    abort_if_wrong_path(path)
+    abort_if_wrong_id(item_id)
+    return return_json('result', delete_item(path, item_id))
+
+
+# Custom routes
+# Get fields from corresponding table of specified equipment type
+@api_blueprint.route('/equipment_type/<int:item_id>/fields', methods=['GET'])
+def handler_equipment_type_fields(item_id):
+    abort_if_wrong_id(item_id)
+    return return_json('result', get_equipment_type_fields(item_id))
+
+
+# Get fluid and electrical profiles in one responce
+@api_blueprint.route('/test_profile/', methods=['GET'])
 def get_test_profile():
     rows_fluid = db.session.query(FluidProfile).all()
     rows_electrical = db.session.query(ElectricalProfile).all()
     return return_json('result', [item.serialize() for rows in (rows_fluid, rows_electrical) for item in rows])
 
 
-@api_blueprint.route('/test_result/equipment', methods=['POST', ])
+# Create equipment
+@api_blueprint.route('/equipment/', methods=['POST'])
+def create_equipment_handler():
+    path = 'equipment'
+    abort_if_wrong_path(path)
+    abort_if_json_missing()
+    return return_json('result', add_equipment(path))
+
+
+# Create a lot of test_results with equipment using one query
+@api_blueprint.route('/test_result/equipment', methods=['POST'])
 def handler_items():
-    if not request.json:
-        abort(400, 'JSON not found')
+    abort_if_json_missing()
     return return_json('result', add_items())
 
 
-@api_blueprint.route('/test_result/multi/<path>', methods=['POST', ])
+# Create or update a lot of tests
+@api_blueprint.route('/test_result/multi/<path>', methods=['POST'])
 def handler_tests(path):
     if path not in ('transformer_turn_ratio_test',
                     'winding_resistance_test',
                     'winding_test'):
         abort(404)
-    if not request.json:
-        abort(400, 'JSON not found')
-
-    # path = 'test_result_' + path
+    abort_if_json_missing()
     return return_json('result', add_or_update_tests(path))
 
 
