@@ -53,8 +53,6 @@ var SelectField = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
-
-
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
@@ -66,6 +64,47 @@ var SelectField = React.createClass({
                 >
                     <option key={null} value={null}></option>
                     {menuItems}
+                    <FormControl.Feedback />
+                </FormControl>
+            </FormGroup>
+        );
+    }
+});
+
+var StatusSelectField = React.createClass({
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+    isVisible: function () {
+        return this.state.isVisible;
+    },
+    componentDidMount: function () {
+
+    },
+    componentWillUnmount: function () {
+        this.serverRequest.abort();
+    },
+    setVisible: function () {
+        this.state.isVisible = true;
+    },
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
+
+        return (
+            <FormGroup>
+                <ControlLabel>{label}</ControlLabel>
+                <FormControl componentClass="select"
+                             onChange={this.props.onChange}
+                             name={name}
+                             value={this.state.value}>
+                    <option  value="normal"> Normal </option>
+                    <option  value="warning"> Warning </option>
+                    <option  value="danger"> Danger </option>
                     <FormControl.Feedback />
                 </FormControl>
             </FormGroup>
@@ -246,6 +285,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Sampling point"
                                      name='sampling_point_id'
                                      value={data.sampling_point_id}
+                                     disabled
                                      />
                     </div>
                     <div className="col-md-3">
@@ -388,18 +428,18 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
-                    <div className="col-lg-12 nopadding">Diagnosis
-                        <FormControl componentClass="textarea" placeholder="textarea" value=""/>
+                    <div className="col-md-12">
+                        <SelectField source="user"
+                                     label="Indicator"
+                                     name='performed_by_id'
+                                     disabled
+                                     />
                     </div>
-                    <div className="col-lg-12 nopadding">Indicator
-                        <FormControl type="text" value=""/>
-                    </div>
-                    <div className="col-lg-12 nopadding">Condition
-                        <FormGroup>
-                            <Checkbox inline>
-                                {/*{this.state.condition.value}*/}
-                            </Checkbox>
-                        </FormGroup>
+                    <div className="col-md-5">
+                        <StatusSelectField
+                                     label="Equipment Condition"
+                                     name="status"
+                                     />
                     </div>
                 </div>
             </form>
@@ -587,10 +627,10 @@ var EquipmentTestForm = React.createClass({
                     <div className="maxwidth padding-top-lg margin-bottom-xs">
                         <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
                             <li className="active"><a href="#tabs-1" data-toggle="tab"> Identification </a></li>
-                            <li><a href="#tabs-2" data-toggle="tab"> Test repair notes </a></li>
-                            <li><a href="#tabs-3" data-toggle="tab"> Records diagnostic </a></li>
-                            <li><a href="#tabs-4" data-toggle="tab"> Diagnosis and recommendations </a></li>
-                            <li><a href="#tabs-5" data-toggle="tab"> Test values </a></li>
+                            <li><a href="#tabs-2" data-toggle="tab"> Test values  </a></li>
+                            <li><a href="#tabs-3" data-toggle="tab"> Test repair notes  </a></li>
+                            <li><a href="#tabs-4" data-toggle="tab"> Records diagnostic </a></li>
+                            <li><a href="#tabs-5" data-toggle="tab"> Diagnosis and recommendations </a></li>
                         </ul>
                         <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                             <div id="tabs-1" role="tabpanel" className="tab-pane active ">
@@ -598,21 +638,21 @@ var EquipmentTestForm = React.createClass({
                                                                  onChange={this._onChange}/>
                             </div>
                             <div id="tabs-2" role="tabpanel" className="tab-pane">
-                                <EquipmentTestRepairForm data={data}
-                                                         onChange={this._onChange}/>
-                            </div>
-                            <div id="tabs-3" role="tabpanel" className="tab-pane">
-                                <EquipmentTestDiagnosisForm data={data}
-                                                            onChange={this._onChange}/>
-                            </div>
-                            <div id="tabs-4" role="tabpanel" className="tab-pane">
-                                <EquipmentTestEqDiagnosisForm data={data}
-                                                              onChange={this._onChange}/>
-                            </div>
-                            <div id="tabs-5" role="tabpanel" className="tab-pane">
                                 <TestValuesForm testResultId={this.props.selectedRowId}
                                                 testType={data.test_type}
                                 />
+                            </div>
+                            <div id="tabs-3" role="tabpanel" className="tab-pane">
+                                <EquipmentTestRepairForm data={data}
+                                                         onChange={this._onChange}/>
+                            </div>
+                            <div id="tabs-4" role="tabpanel" className="tab-pane">
+                                <EquipmentTestDiagnosisForm data={data}
+                                                            onChange={this._onChange}/>
+                            </div>
+                            <div id="tabs-5" role="tabpanel" className="tab-pane">
+                                <EquipmentTestEqDiagnosisForm data={data}
+                                                              onChange={this._onChange}/>
                             </div>
                         </div>
                     </div>
