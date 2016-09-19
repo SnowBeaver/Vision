@@ -383,6 +383,7 @@ doc = ApiDoc(app=api)
 @apiParam {String(50)}      prev_serial_number
 @apiParam {String(50)}      prev_equipment_number
 @apiParam {Integer}         sibling
+@apiParam {Dict}            extra_fields                depending on equipment type
 
 @apiUse PostItemSuccess
 @apiUse Error400

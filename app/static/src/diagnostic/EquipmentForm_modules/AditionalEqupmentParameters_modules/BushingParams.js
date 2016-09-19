@@ -7,21 +7,33 @@ import {Link} from 'react-router';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 
 const TextField = React.createClass({
+    _onChange: function (e) {
+        this.props.onChange(e);
+    },
 
     render: function () {
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
-                <FormGroup>
+                <FormGroup validationState={validationState}>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
+                                 data-type={type}
+                                 data-len={len}
+                                 onChange={this._onChange}
                     />
+                    <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
                 </FormGroup>
             </OverlayTrigger>
@@ -60,14 +72,16 @@ var SelectField = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
-
+            <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
@@ -76,6 +90,7 @@ var SelectField = React.createClass({
                     <option>{this.props.label}</option>);
                     {menuItems}
                 </FormControl>
+                <HelpBlock className="warning">{error}</HelpBlock>
             </FormGroup>
         );
     }
@@ -120,7 +135,8 @@ var BushingParams = React.createClass({
             'c1pf':'',
             'c2':'',
             'c2pf':'',
-            'bil':''
+            'bil':'',
+            errors: {}
 
     }
     },
@@ -131,259 +147,97 @@ var BushingParams = React.createClass({
         this.setState(state);
     },
 
-
     render: function () {
+        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         return (
             <div>
                 <div className="row">
                     <div className="col-md-2">
-                        <TextField onChange={this.props.onChange}
-                                   label="Phase Number"
-                                   name="phase_number"
-                                   value={this.state.phase_number}/>
-                    </div>
-                    <div className="col-md-2">
-                        <TextField onChange={this.props.onChange}
-                                   label="Frequency" name
-                                       ="frequency" value
-                                       ={this.state.frequency}/>
-                    </div>
-                    <div className="col-md-2">
-                        <TextField onChange={this.props.onChange}
+                        <TextField onChange={this.handleChange}
                                    label="Fluid Volume"
                                    name="fluid_volume"
-                                   value={this.state.fluid_volume}/>
+                                   value={this.state.fluid_volume}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <SelectField
                             source="fluid_type"
                             label="Fluid Type"
                             name="fluid_type_id"
-                            value={this.state.fluid_type_id}/>
-                    </div>
-                    <div className="col-md-4">
-                        <TextField onChange={this.props.onChange}
-                                   label="Model" name
-                                       ="model" value
-                                       ={this.state.model}/>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-2">
-                        <TextField onChange={this.handleChange}
-                                   label="Winding"
-                                   name="winding"
-                                   value={this.state.winding}/>
+                            value={this.state.fluid_type_id}
+                            errors={errors}/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Voltage"
                                    name="kv"
-                                   value={this.state.kv}/>
+                                   value={this.state.kv}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="C1"
                                    name="c1"
-                                   value={this.state.c1}/>
+                                   value={this.state.c1}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
+                    <div className="col-md-4">
+                        <TextField onChange={this.handleChange}
+                                   label="Model"
+                                   name="model"
+                                   value={this.state.model}
+                                   errors={errors}
+                                   data-len="50"/>
+                    </div>
+                </div>
+
+                <div className="row">
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="C1PF"
                                    name="c1pf"
-                                   value={this.state.c1pf}/>
+                                   value={this.state.c1pf}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="C2"
                                    name="c2"
-                                   value={this.state.c2}/>
+                                   value={this.state.c2}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="C2PF"
                                    name="c2pf"
-                                   value={this.state.c2pf}/>
+                                   value={this.state.c2pf}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
-                </div>
-                <div className="row">
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Current"
                                    name="current"
-                                   value={this.state.current}/>
+                                   value={this.state.current}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="BIL"
                                    name="bil"
-                                   value={this.state.bil}/>
+                                   value={this.state.bil}
+                                   errors={errors}
+                                   data-type="int"
+                                   data-len="8"/>
                     </div>
                     <div className="col-md-1 ">
                         <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. H1"
-                                   name="bushing_manufacturer_h1"
-                                   value={this.state.bushing_manufacturer_h1}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. H2"
-                                   name="bushing_manufacturer_h2"
-                                   value={this.state.bushing_manufacturer_h2}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. H3"
-                                   name="bushing_manufacturer_h3"
-                                   value={this.state.bushing_manufacturer_h3}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. Hn"
-                                   name="bushing_manufacturer_hn"
-                                   value={this.state.bushing_manufacturer_hn}/>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. X1"
-                                   name="bushing_manufacturer_x1"
-                                   value={this.state.bushing_manufacturer_x1}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. X2"
-                                   name="bushing_manufacturer_x2"
-                                   value={this.state.bushing_manufacturer_x2}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. X3"
-                                   name="bushing_manufacturer_x3"
-                                   value={this.state.bushing_manufacturer_x3}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. Xn"
-                                   name="bushing_manufacturer_xn"
-                                   value={this.state.bushing_manufacturer_xn}/>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. T1"
-                                   name="bushing_manufacturer_t1"
-
-                                   value={this.state.bushing_manufacturer_t1}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. T2"
-                                   name="bushing_manufacturer_t2"
-                                   value={this.state.bushing_manufacturer_t2}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. T3"
-                                   name="bushing_manufacturer_t3"
-                                   value={this.state.bushing_manufacturer_t3}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. Tn"
-                                   name="bushing_manufacturer_tn"
-                                   value={this.state.bushing_manufacturer_tn}/>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. Q1"
-                                   name="bushing_manufacturer_q1"
-                                   value={this.state.bushing_manufacturer_q1}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. Q2"
-                                   name="bushing_manufacturer_q2"
-                                   value={this.state.bushing_manufacturer_q2}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. Q3"
-                                   name="bushing_manufacturer_q3"
-                                   value={this.state.bushing_manufacturer_q3}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Manufac. Qn"
-                                   name="bushing_manufacturer_qn"
-                                   value={this.state.bushing_manufacturer_qn}/>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type H"
-                                   name="bushing_type_h"
-                                   value={this.state.bushing_type_h}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type Hn"
-                                   name="bushing_type_hn"
-                                   value={this.state.bushing_type_hn}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type X"
-                                   name="bushing_type_x"
-                                   value={this.state.bushing_type_x}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type Xn"
-                                   name="bushing_type_xn"
-                                   value={this.state.bushing_type_xn}/>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type T"
-                                   name="bushing_type_t"
-                                   value={this.state.bushing_type_t}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type Tn"
-                                   name="bushing_type_tn"
-                                   value={this.state.bushing_type_tn}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type Q"
-                                   name="bushing_type_q"
-                                   value={this.state.bushing_type_q}/>
-                    </div>
-                    <div className="col-md-3">
-                        <TextField onChange={this.handleChange}
-                                   label="Type Qn"
-                                   name="bushing_type_qn"
-                                   value={this.state.bushing_type_qn}/>
                     </div>
                 </div>
             </div>

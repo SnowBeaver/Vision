@@ -4,6 +4,8 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Button from 'react-bootstrap/lib/Button';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 
 const TextField = React.createClass({
@@ -11,14 +13,21 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label: "";
         var name = (this.props.name != null) ? this.props.name: "";
         var value = (this.props.value != null) ? this.props.value: "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         return (
-            <FormGroup>
+            <FormGroup validationState={validationState}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
                              value={value}
+                             data-type={type}
+                             data-len={len}
                              />
+                <HelpBlock className="warning">{error}</HelpBlock>
                 <FormControl.Feedback />
             </FormGroup>
         );
@@ -93,13 +102,11 @@ var WaterTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+			return false;
+		}
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -112,7 +119,6 @@ var WaterTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
-
     },
 
     _onError: function (data) {
@@ -123,38 +129,96 @@ var WaterTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
-        }
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
 
     _onChange: function (e) {
-       var state = {};
-       if (e.target.type == 'checkbox') {
-           state[e.target.name] = e.target.checked;
-       }
-       else if (e.target.type == 'radio') {
-           state[e.target.name] = e.target.value;
-       }
-       else if (e.target.type == 'select-one') {
-           state[e.target.name] = e.target.value;
-       }
-       else {
-           state[e.target.name] = $.trim(e.target.value);
-       }
-       this.setState(state);
+        var state = {};
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        }
+        else if (e.target.type == 'radio') {
+            state[e.target.name] = e.target.value;
+        }
+        else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        }
+        else {
+            state[e.target.name] = $.trim(e.target.value);
+        }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
+        this.setState(state);
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
         return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     _formGroupClass: function (field) {
@@ -179,21 +243,28 @@ var WaterTestForm = React.createClass({
                                 </FormGroup>
                             </div>
                             <div className="col-lg-6 nopadding padding-right-xs">
-                                <TextField label="Dissolved water" name="water" value={this.state.water}/>
+                                <TextField label="Dissolved water"
+                                           name="water"
+                                           value={this.state.water}
+                                           data-type="float"
+                                           errors={this.state.errors}/>
                             </div>
                             <div className="col-lg-5 nopadding padding-right-xs">
                                 Moisture at 25C(%): 17,8
                             </div>
                         </div>
                         <div className="col-lg-12 nopadding">
-                            <TextField label="Remark" name="remark" value={this.state.remark}/>
+                            <TextField label="Remark"
+                                       name="remark"
+                                       value={this.state.remark}
+                                       data-len="80"
+                                       errors={this.state.errors}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
                                     className="pull-right"
-                                    onClick={this.props.handleClose}
                                     type="submit">Save</Button>
                             &nbsp;
                             <Button bsStyle="danger"

@@ -7,21 +7,34 @@ import {Link} from 'react-router';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 
 const TextField = React.createClass({
-
+    _onChange: function (e) {
+        this.props.onChange(e);
+    },
     render: function () {
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var choice = (this.props["data-choice"] != null) ? this.props["data-choice"]: undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
-                <FormGroup>
+                <FormGroup validationState={validationState}>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
+                                 data-type={type}
+                                 data-len={len}
+                                 data-choice={choice}
+                                 onChange={this._onChange}
                     />
+                    <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
                 </FormGroup>
             </OverlayTrigger>
@@ -60,22 +73,27 @@ var SelectField = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
+        var required = this.props.required ? this.props.required : null;
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
-
+            <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
-                             name={this.props.name}
+                             name={name}
+                             required={required}
                 >
-                    <option>{this.props.label}</option>);
+                    <option value="">{required ? this.props.label + " *" : this.props.label}</option>);
                     {menuItems}
                 </FormControl>
+                <HelpBlock className="warning">{error}</HelpBlock>
             </FormGroup>
         );
     }
@@ -112,21 +130,25 @@ var BushSerialSelectField = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
-
+            <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
+                             name={name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
                 </FormControl>
+                <HelpBlock className="warning">{error}</HelpBlock>
             </FormGroup>
         );
     }
@@ -137,10 +159,10 @@ var TransformerParams = React.createClass({
     getInitialState: function () {
         return {
             'phase_number':'', 'threephase':'', 'fluid_volume':'', 'fluid_type_id':'',
-                'fluid_level_id':'', 'gas_sensor':'', 'bushing_serial1':'', 'bushing_serial2':'',
-                'bushing_serial3':'', 'bushing_serial4':'', 'bushing_serial5':'', 'bushing_serial6':'',
-                'bushing_serial7':'', 'bushing_serial8':'', 'bushing_serial9':'', 'bushing_serial10':'',
-                'bushing_serial11':'', 'bushing_serial12':'', 'mvaforced11':'', 'mvaforced12':'', 'mvaforced13':'',
+                'fluid_level_id':'', 'gas_sensor_id':'', 'bushing_serial1_id':'', 'bushing_serial2_id':'',
+                'bushing_serial3_id':'', 'bushing_serial4_id':'', 'bushing_serial5_id':'', 'bushing_serial6_id':'',
+                'bushing_serial7_id':'', 'bushing_serial8_id':'', 'bushing_serial9_id':'', 'bushing_serial10_id':'',
+                'bushing_serial11_id':'', 'bushing_serial12_id':'', 'mvaforced11':'', 'mvaforced12':'', 'mvaforced13':'',
                 'mvaforced14':'', 'imp_base1':'', 'imp_base2':'', 'mvaforced21':'', 'mvaforced22':'',
                 'mvaforced23':'', 'mvaforced24':'', 'mvaactual':'', 'mvaractual':'',
                 'mwreserve':'', 'mvareserve':'', 'mwultime':'', 'mvarultime':'',
@@ -148,7 +170,7 @@ var TransformerParams = React.createClass({
                 ',static_shield1':'', ',static_shield2':'', 'ratio_tag5':'', 'ratio_tag6':'',
                 'ratio_tag7':'', 'ratiot_ag8':'', 'static_shield3':'', 'static_shield4':'',
                 'bushing_neutral1':'', 'bushing_neutral2':'', 'bushing_neutral3':'', 'bushing_neutral4':'',
-                'windings':'', 'winding_metal':'', 'primary_winding_connection':'', 'secondary_winding_connection':'',
+                'windings':'', 'windind_metal':'', 'primary_winding_connection':'', 'secondary_winding_connection':'',
                 'tertiary_winding_connection':'', 'quaternary_winding_connection':'', 'based_transformerp_ower':'', 'autotransformer':'',
                 'bil1':'', 'bil2':'', 'ltc1':'', 'ltc2':'',
                 'first_cooling_stage_power':'', 'second_cooling_stage_power':'',
@@ -156,7 +178,8 @@ var TransformerParams = React.createClass({
                 'temperature_rise':'', 'cooling_rating':'', 'primary_tension':'', 'secondary_tension':'',
                 'tertiary_tension':'', 'impedance1':'', 'impedance2':'', 'impedance3':'',
                 'formula_ratio1':'', 'formula_ratio2':'', 'formula_ratio3':'',
-                'sealed':'', 'welded_cover':''
+                'sealed':'', 'welded_cover':'',
+            'errors': {}
 
         }
     },
@@ -168,7 +191,7 @@ var TransformerParams = React.createClass({
     },
 
     render: function () {
-
+        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         return (
             <div>
                 <div className="row">
@@ -176,75 +199,96 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Phase Number"
                                    name="phase_number"
-                                   value={this.state.phase_number}/>
+                                   value={this.state.phase_number}
+                                   errors={errors}
+                                   data-choice={['1', '3', '6']}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField onChange={this.handleChange}
-                                   label="Three Phase"
-                                   name="threephase"
-                                   value={this.state.threephase}/>
+                        <Checkbox name="threephase" value="1"><b>Three Phase</b></Checkbox>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Fluid Volume"
                                    name="fluid_volume"
-                                   value={this.state.fluid_volume}/>
+                                   value={this.state.fluid_volume}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <SelectField
                             source="fluid_type"
                             label="Fluid Type"
-                            value={this.state.fluid_type_id}/>
+                            value={this.state.fluid_type_id}
+                            errors={errors}
+                            name="fluid_type_id"
+                            required={(this.props.edited)}/>
                     </div>
-                    <div className="col-md-2">
+                    {/*<div className="col-md-2">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
-                            value={this.state.fluid_level_id}/>
-                    </div>
+                            value={this.state.fluid_level_id}
+                            errors={errors}
+                            name="fluid_level_id"/>
+                    </div>*/}
                     <div className="col-md-2">
                         <SelectField
                             source="gas_sensor"
                             label="Gas Sensor"
-                            value={this.state.gas_sensor}/>
+                            value={this.state.gassensor_id}
+                            errors={errors}
+                            name="gassensor_id"
+                            required={(this.props.edited)}/>
                     </div>
                 </div>
-                <div className="row">
+                {/*<div className="row">
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 1"
-                            value={this.state.bushing_serial1}/>
+                            value={this.state.bushing_serial1_id}
+                            errors={errors}
+                            name="bushing_serial1_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 2"
-                            value={this.state.bushing_serial2}/>
+                            value={this.state.bushing_serial2_id}
+                            errors={errors}
+                            name="bushing_serial2_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 3"
-                            value={this.state.bushing_serial3}/>
+                            value={this.state.bushing_serial3_id}
+                            errors={errors}
+                            name="bushing_serial3_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 4"
-                            value={this.state.bushing_serial4}/>
+                            value={this.state.bushing_serial4}
+                            errors={errors}
+                            name="bushing_serial4_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 5"
-                            value={this.state.bushing_serial5}/>
+                            value={this.state.bushing_serial5_id}
+                            errors={errors}
+                            name="bushing_serial5_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 1"
-                            value={this.state.bushing_serial6}/>
+                            value={this.state.bushing_serial6_id}
+                            errors={errors}
+                            name="bushing_serial6_id"/>
                     </div>
                 </div>
                 <div className="row">
@@ -252,75 +296,99 @@ var TransformerParams = React.createClass({
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 7"
-                            value={this.state.bushing_serial7}/>
+                            value={this.state.bushing_serial7}
+                            errors={errors}
+                            name="bushing_serial7_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 8"
-                            value={this.state.bushing_serial8}/>
+                            value={this.state.bushing_serial8_id}
+                            errors={errors}
+                            name="bushing_serial8_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 9"
-                            value={this.state.bushing_serial9}/>
+                            value={this.state.bushing_serial9_id}
+                            errors={errors}
+                            name="bushing_serial9_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 10"
-                            value={this.state.bushing_serial10}/>
+                            value={this.state.bushing_serial10_id}
+                            errors={errors}
+                            name="bushing_serial10_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 11"
-                            value={this.state.bushing_serial11}/>
+                            value={this.state.bushing_serial11_id}
+                            errors={errors}
+                            name="bushing_serial11_id"/>
                     </div>
                     <div className="col-md-2">
                         <BushSerialSelectField
                             source="bushing"
                             label="Bushing Serial 12"
-                            value={this.state.bushing_serial12}/>
+                            value={this.state.bushing_serial12_id}
+                            errors={errors}
+                            name="bushing_serial12_id"/>
                     </div>
-                </div>
+                </div> */}
                 <div className="row">
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 11"
                                    name="mvaforced11"
-                                   value={this.state.mvaforced11}/>
+                                   value={this.state.mvaforced11}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 12"
                                    name="mvaforced12"
-                                   value={this.state.mvaforced12}/>
+                                   value={this.state.mvaforced12}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 13"
                                    name="mvaforced13"
-                                   value={this.state.mvaforced13}/>
+                                   value={this.state.mvaforced13}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 14"
                                    name="mvaforced14"
-                                   value={this.state.mvaforced14}/>
+                                   value={this.state.mvaforced14}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Base Impedance 1"
                                    name="imp_base1"
-                                   value={this.state.imp_base1}/>
+                                   value={this.state.imp_base1}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Base Impedance 2"
                                    name="imp_base2"
-                                   value={this.state.imp_base2}/>
+                                   value={this.state.imp_base2}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                 </div>
                 <div className="row">
@@ -328,25 +396,33 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 21"
                                    name="mvaforced21"
-                                   value={this.state.mvaforced21}/>
+                                   value={this.state.mvaforced21}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 22"
                                    name="mvaforced22"
-                                   value={this.state.mvaforced22}/>
+                                   value={this.state.mvaforced22}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 23"
                                    name="mvaforced23"
-                                   value={this.state.mvaforced23}/>
+                                   value={this.state.mvaforced23}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva Forced 24"
                                    name="mvaforced24"
-                                   value={this.state.mvaforced24}/>
+                                   value={this.state.mvaforced24}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                 </div>
                 <div className="row">
@@ -354,37 +430,49 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Mva Actual"
                                    name="mvaactual"
-                                   value={this.state.mvaactual}/>
+                                   value={this.state.mvaactual}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mvar Actual"
                                    name="mvaractual"
-                                   value={this.state.mvaractual}/>
+                                   value={this.state.mvaractual}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Reserve Mw"
                                    name="mwreserve"
-                                   value={this.state.mwreserve}/>
+                                   value={this.state.mwreserve}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Reserve Mva"
-                                   name="mvareserve"
-                                   value={this.state.mvareserve}/>
+                                   name="mvarreserve"
+                                   value={this.state.mvarreserve}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ultime Mw"
                                    name="mwultime"
-                                   value={this.state.mwultime}/>
+                                   value={this.state.mwultime}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ultime Mvar"
                                    name="mvarultime"
-                                   value={this.state.mvarultime}/>
+                                   value={this.state.mvarultime}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                 </div>
                 <div className="row">
@@ -392,38 +480,40 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 1"
                                    name="ratio_tag1"
-                                   value={this.state.ratio_tag1}/>
+                                   value={this.state.ratio_tag1}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 2"
                                    name="ratio_tag2"
-                                   value={this.state.ratio_tag2}/>
+                                   value={this.state.ratio_tag2}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 3"
                                    name="ratio_tag3"
-                                   value={this.state.ratio_tag3}/>
+                                   value={this.state.ratio_tag3}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 4"
                                    name="ratio_tag4"
-                                   value={this.state.ratio_tag4}/>
+                                   value={this.state.ratio_tag4}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
 
                     <div className="col-md-2">
-                        <TextField onChange={this.handleChange}
-                                   label="Static Shield 1"
-                                   name="static_shield1"
-                                   value={this.state.static_shield1}/>
+                        <Checkbox name="static_shield1" value="1"><b>Static Shield 1</b></Checkbox>
                     </div>
                     <div className="col-md-2">
-                        <TextField onChange={this.handleChange}
-                                   label="Static Shield 2"
-                                   name="static_shield2"
-                                   value={this.state.static_shield2}/>
+                        <Checkbox name="static_shield2" value="1"><b>Static Shield 2</b></Checkbox>
                     </div>
                 </div>
                 <div className="row">
@@ -431,37 +521,44 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 5"
                                    name="ratio_tag5"
-                                   value={this.state.ratio_tag5}/>
+                                   value={this.state.ratio_tag5}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 6"
                                    name="ratio_tag6"
-                                   value={this.state.ratio_tag6}/>
+                                   value={this.state.ratio_tag6}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 7"
                                    name="ratio_tag7"
-                                   value={this.state.ratio_tag7}/>
+                                   value={this.state.ratio_tag7}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 8"
                                    name="ratiot_ag8"
-                                   value={this.state.ratiot_ag8}/>
+                                   value={this.state.ratiot_ag8}
+                                   errors={errors}
+                                   data-len="20"/>
                     </div>
                     <div className="col-md-2">
-                        <TextField onChange={this.handleChange}
-                                   label="Static Shield 3"
-                                   name="static_shield3"
-                                   value={this.state.static_shield3}/>
+                        <Checkbox name="static_shield3" value="1"><b>Static Shield 3</b></Checkbox>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Static Shield 4"
                                    name="static_shield4"
-                                   value={this.state.static_shield4}/>
+                                   value={this.state.static_shield4}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                 </div>
                 <div className="row">
@@ -469,37 +566,49 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Bushing Neutral 1"
                                    name="bushing_neutral1"
-                                   value={this.state.bushing_neutral1}/>
+                                   value={this.state.bushing_neutral1}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Bushing Neutral 2"
                                    name="bushing_neutral2"
-                                   value={this.state.bushing_neutral2}/>
+                                   value={this.state.bushing_neutral2}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Bushing Neutral 3"
                                    name="bushing_neutral3"
-                                   value={this.state.bushing_neutral3}/>
+                                   value={this.state.bushing_neutral3}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Bushing Neutral 4"
                                    name="bushing_neutral4"
-                                   value={this.state.bushing_neutral4}/>
+                                   value={this.state.bushing_neutral4}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Windings"
                                    name="windings"
-                                   value={this.state.windings}/>
+                                   value={this.state.windings}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Winding Metal"
-                                   name="winding_metal"
-                                   value={this.state.winding_metal}/>
+                                   name="windind_metal"
+                                   value={this.state.windind_metal}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                 </div>
                 <div className="row">
@@ -507,37 +616,44 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Primary Winding Connection"
                                    name="primary_winding_connection"
-                                   value={this.state.primary_winding_connection}/>
+                                   value={this.state.primary_winding_connection}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Secondary Winding Connection"
                                    name="secondary_winding_connection"
-                                   value={this.state.secondary_winding_connection}/>
+                                   value={this.state.secondary_winding_connection}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Tertiary Winding Connection"
                                    name="tertiary_winding_connection"
-                                   value={this.state.tertiary_winding_connection}/>
+                                   value={this.state.tertiary_winding_connection}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Quaternary Winding Connection"
                                    name="quaternary_winding_connection"
-                                   value={this.state.quaternary_winding_connection}/>
+                                   value={this.state.quaternary_winding_connection}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Based Power"
                                    name="based_transformerp_ower"
-                                   value={this.state.based_transformerp_ower}/>
+                                   value={this.state.based_transformerp_ower}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
-                        <TextField onChange={this.handleChange}
-                                   label="Autotransformer"
-                                   name="autotransformer"
-                                   value={this.state.autotransformer}/>
+                        <Checkbox name="autotransformer" value="1"><b>Autotransformer</b></Checkbox>
                     </div>
                 </div>
                 <div className="row">
@@ -545,37 +661,49 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="BIL 1"
                                    name="bil1"
-                                   value={this.state.bil1}/>
+                                   value={this.state.bil1}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="BIL 2"
                                    name="bil2"
-                                   value={this.state.bil2}/>
+                                   value={this.state.bil2}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ltc 1"
                                    name="ltc1"
-                                   value={this.state.ltc1}/>
+                                   value={this.state.ltc1}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ltc 2"
                                    name="ltc2"
-                                   value={this.state.ltc2}/>
+                                   value={this.state.ltc2}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="First Cooling Stage Power"
                                    name="first_cooling_stage_power"
-                                   value={this.state.first_cooling_stage_power}/>
+                                   value={this.state.first_cooling_stage_power}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Second Cooling Stage Power"
                                    name="second_cooling_stage_power"
-                                   value={this.state.second_cooling_stage_power}/>
+                                   value={this.state.second_cooling_stage_power}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                 </div>
                 <div className="row">
@@ -583,37 +711,49 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="BIL 3"
                                    name="bil3"
-                                   value={this.state.bil3}/>
+                                   value={this.state.bil3}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="BIL 4"
                                    name="bil4"
-                                   value={this.state.bil4}/>
+                                   value={this.state.bil4}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ltc 3"
                                    name="ltc3"
-                                   value={this.state.ltc3}/>
+                                   value={this.state.ltc3}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva 4"
                                    name="mva4"
-                                   value={this.state.mva4}/>
+                                   value={this.state.mva4}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Temperature Rise"
                                    name="temperature_rise"
-                                   value={this.state.temperature_rise}/>
+                                   value={this.state.temperature_rise}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Cooling Rating"
                                    name="cooling_rating"
-                                   value={this.state.cooling_rating}/>
+                                   value={this.state.cooling_rating}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                 </div>
                 <div className="row">
@@ -621,57 +761,75 @@ var TransformerParams = React.createClass({
                         <TextField onChange={this.handleChange}
                                    label="Primary Tension"
                                    name="primary_tension"
-                                   value={this.state.primary_tension}/>
+                                   value={this.state.primary_tension}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Secondary Tension"
                                    name="secondary_tension"
-                                   value={this.state.secondary_tension}/>
+                                   value={this.state.secondary_tension}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Tertiary Tension"
                                    name="tertiary_tension"
-                                   value={this.state.tertiary_tension}/>
+                                   value={this.state.tertiary_tension}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Impedance 1"
                                    name="impedance1"
-                                   value={this.state.impedance1}/>
+                                   value={this.state.impedance1}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Impedance 2"
                                    name="impedance2"
-                                   value={this.state.impedance2}/>
+                                   value={this.state.impedance2}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Impedance 3"
                                    name="impedance3"
-                                   value={this.state.impedance3}/>
+                                   value={this.state.impedance3}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Formula Ratio 1"
-                                   name="formula_ratio1"
-                                   value={this.state.formula_ratio1}/>
+                                   name="formula_ratio"
+                                   value={this.state.formula_ratio}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Formula Ratio 2"
                                    name="formula_ratio2"
-                                   value={this.state.formula_ratio2}/>
+                                   value={this.state.formula_ratio2}
+                                   errors={errors}
+                                   data-type="int"/>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Formula Ratio 3"
                                    name="formula_ratio3"
-                                   value={this.state.formula_ratio3}/>
+                                   value={this.state.formula_ratio3}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                     <div className="col-md-1 ">
                         <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>

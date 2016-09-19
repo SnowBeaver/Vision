@@ -651,17 +651,14 @@ var NewTestForm = React.createClass({
         var form = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            form[key] = undefined;
+            form[key] = '';
         }
         form['id'] = '';
 
-        // console.log("Add new test method");
-        // console.log('props:', this.props.data);
-        // console.log('state: ', this.state);
         form['campaign_id'] = this.props.data['campaign_id'];
         form['equipment_id'] = this.props.data['equipment_id'];
 
-        // console.log(form);
+
         this.setState(form);
     },
 
