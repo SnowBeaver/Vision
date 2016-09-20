@@ -52,10 +52,12 @@ var EquipmentSelectField = React.createClass({
 
     render: function () {
         var menuItems = [];
+        var previousValues = (this.props.previousValues) ? this.props.previousValues : [];
         for (var key in this.state.items) {
             menuItems.push(
                 <option key={this.state.items[key].id}
-                        value={this.state.items[key].id}>
+                        value={this.state.items[key].id}
+                        disabled={previousValues.indexOf(this.state.items[key].id) > -1 ? true : false}>
                     {`${this.state.items[key].name} ${this.state.items[key].serial}`}
                 </option>
             );
@@ -130,14 +132,11 @@ var AddEquipmentForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+			return false;
+		}
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -179,13 +178,11 @@ var AddEquipmentForm = React.createClass({
         NotificationManager.error(message);
     },
     _validate: function () {
-        var errors = {};
-        // if(this.state.campaign_id == "") {
-        //   errors.username = "Campaign should be started first";
-        // }
-        return errors;
+        return  {};
     },
-
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
     _formGroupClass: function (field) {
         var className = "form-group ";
         if (field) {
@@ -233,10 +230,12 @@ var AddEquipmentForm = React.createClass({
     getItems: function () {
 
         var items = [];
+        var previousValues = [];
         var numberOfSelects = this.state.numberOfSelects;
 
         for (var i = 0; i < numberOfSelects; i++) {
             var value = null || this.state.equipment[i];
+            previousValues.push(value);
             items.push(
                 <EquipmentSelectField
                     key={i}
@@ -244,9 +243,11 @@ var AddEquipmentForm = React.createClass({
                     source="/api/v1.0/equipment"
                     removeSelect={this.removeSelect}
                     value={value}
+                    previousValues={previousValues}
                 />
             );
         }
+
         return items;
     },
 
