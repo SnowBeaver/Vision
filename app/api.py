@@ -23,13 +23,37 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(api, user_datastore)
 
 
+# Accessory functions
+def return_json(items_name, items_list):
+    return jsonify({items_name: items_list})
+
+
+def set_attrs_to_item(item, attr_dict):
+    for k, v in attr_dict.items():
+        try:
+            setattr(item, k, v)
+        except AttributeError:
+            abort(500, "can't set attribute - {}: {}".format(k, v))
+
+
+def get_model_by_path(path):
+    return model_dict[path].get('model') or abort(500, 'Model missing')
+
+
+def get_add_schema_by_path(path):
+    return model_dict[path].get('schema') or abort(500, 'Validation schema missing')
+
+
+def get_upd_schema_by_path(path):
+    return model_dict[path].get('upd_schema') or get_add_schema_by_path(path)
+
+
 # Verifications
-def abort_if_not_validates(path, req=None):
-    if not req:
-        req = request.json
-    validation_schema = model_dict[path]['schema']
-    v = Validator()
-    if not v.validate(req, validation_schema):
+def abort_if_not_validates(validation_schema, data_to_validate=None):
+    if not data_to_validate:
+        data_to_validate = request.json
+    v = Validator(ignore_none_values=True)
+    if not v.validate(data_to_validate, validation_schema):
         abort(400, v.errors)
 
 
@@ -48,38 +72,12 @@ def abort_if_wrong_id(item_id):
         abort(404)
 
 
-# Accessory functions
-def return_json(items_name, items_list):
-    return jsonify({items_name: items_list})
-
-
-def set_attrs_to_item(item, attr_dict):
-    for k, v in attr_dict.items():
-        try:
-            setattr(item, k, v)
-        except AttributeError:
-            abort(500, "can't set attribute - {}: {}".format(k, v))
-
-
-def new_instance(path, param_dict):
-    # item = items_model(**param_dict)
-    items_model = model_dict[path]['model']
+# Standard CRUD functions
+# Create
+def add_item(path, param_dict):
+    items_model = get_model_by_path(path)
     item = items_model()
-    if items_model == User:
-        role_id = param_dict.pop("roles", None)
-        if role_id:
-            role = db.session.query(Role).filter(Role.id == role_id).first()
-            item.roles = [role] if role else abort(400, {"roles": "invalid value"})
-        item.password = encrypt_password(param_dict["password"])
-
-        country_id = param_dict.get("country_id")
-        if country_id:
-            country_exists = db.session.query(db.exists().where(Country.id == country_id)).scalar()
-            if not country_exists:
-                abort(400, {"country_id": "invalid value"})
-
     set_attrs_to_item(item, param_dict)
-
     try:
         db.session.add(item)
         db.session.commit()
@@ -89,23 +87,15 @@ def new_instance(path, param_dict):
     return item
 
 
-# Standard CRUD functions
-# Create
-def add_item(path, param_dict):
-    abort_if_not_validates(path, param_dict)
-    item = new_instance(path, param_dict)
-    return item.id
-
-
 # Read
 def get_item(path, item_id):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     item = db.session.query(items_model).get(item_id) or abort(404)
     return item.serialize()
 
 
 def get_items(path, args):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     if args:
         kwargs = {
             k: v for k,v in args.items() if hasattr(items_model, k)
@@ -120,10 +110,10 @@ def get_items(path, args):
 
 
 # Update
-def update_item(path, item_id):
-    items_model = model_dict[path]['model']
-    item = db.session.query(items_model).get(item_id)
-    set_attrs_to_item(item, request.json)
+def update_item(path, item_id, data):
+    abort_if_not_validates(get_upd_schema_by_path(path), data)
+    item = db.session.query(get_model_by_path(path)).get(item_id)
+    set_attrs_to_item(item, data)
     try:
         db.session.commit()
     except Exception as e:
@@ -134,7 +124,7 @@ def update_item(path, item_id):
 
 # Delete
 def delete_item(path, item_id):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     try:
         rows = db.session.query(items_model).filter(items_model.id == item_id).delete(synchronize_session=False)
     except:
@@ -148,10 +138,9 @@ def delete_item(path, item_id):
 # Add equipment and add related objects automaticaly
 def add_equipment():
     path = 'equipment'
-    abort_if_not_validates(path)
-    # item = new_instance(path, param_dict)
+    abort_if_not_validates(get_add_schema_by_path(path))
     extra_fields_dict = request.json.pop('extra_fields', {})
-    item = new_instance(path, request.json)
+    item = add_item(path, request.json)
     short_name = eq_type_dict.get(item.equipment_type_id, '')
     param_tree_dict = {
         'equipment_id': item.id,
@@ -159,7 +148,7 @@ def add_equipment():
         'icon': '../app/static/img/icons/{0}_b.ico'.format(short_name),
         'type': '{0}'.format(short_name)
     }
-    item_tree = new_instance('tree', param_tree_dict)
+    item_tree = add_item('tree', param_tree_dict)
 
     param_tree_trans_dict = {
         'id': item_tree.id,
@@ -169,19 +158,20 @@ def add_equipment():
         # 'text': param_dict['name'],
         # 'tooltip': param_dict['name']
     }
-    new_instance('tree_translation', param_tree_trans_dict)
+    add_item('tree_translation', param_tree_trans_dict)
 
     extra_table_name = item.equipment_type and item.equipment_type.table_name
     if extra_fields_dict:
         extra_fields_dict['equipment_id'] = item.id
-        new_instance(extra_table_name, extra_fields_dict)
+        # abort_if_not_validates(get_add_schema_by_path(extra_table_name), extra_fields_dict)
+        add_item(extra_table_name, extra_fields_dict)
     return item.id
 
 
 # Get equipment upstreams and downstreams
 def get_up_down_stream_of_equipment(item_id):
     path = 'equipment_connection'
-    model = model_dict[path]['model']
+    model = get_model_by_path(path)
     kwargs = {'equipment_id': item_id}
     upstream = [item.parent_id for item in db.session.query(model).filter_by(**kwargs)]
     kwargs = {'parent_id': item_id}
@@ -205,7 +195,7 @@ def add_up_down_stream_to_equipment(item_id):
 # Remove connection between equipment and its upstreams and downstreams
 def delete_up_down_stream_of_equipment(item_id):
     path = 'equipment_connection'
-    model = model_dict[path]['model']
+    model = get_model_by_path(path)
     upstream = request.json.get('upstream', [])
     downstream = request.json.get('downstream', [])
     try:
@@ -225,8 +215,8 @@ def delete_up_down_stream_of_equipment(item_id):
 # Add a lot of test results
 def add_items():
     path = 'test_result_equipment'
-    abort_if_not_validates(path)
-    items_model = model_dict[path]['model']
+    abort_if_not_validates(get_add_schema_by_path(path))
+    items_model = get_model_by_path(path)
     campaign_id = request.json.get('campaign_id')
     # TODO - deleting of all related test results IMHO isn't the best way
     # because of related to test results objects like tests
@@ -240,18 +230,18 @@ def add_items():
     equipment_ids = request.json.get('equipment_id')
     if not isinstance(equipment_ids, Iterable):
         equipment_ids = [equipment_ids]
-    return [new_instance(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
+    return [add_item(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
 
 
 def add_or_update_tests(path):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     items = []
     for test in request.json:
         if 'id' in test:
             item = db.session.query(items_model).get(test['id'])
         else:
-            abort_if_not_validates(path, test)
-            item = new_instance(path, test)
+            abort_if_not_validates(get_add_schema_by_path(path), test)
+            item = add_item(path, test)
 
         items.append(item)
         set_attrs_to_item(item, test)
@@ -262,6 +252,34 @@ def add_or_update_tests(path):
         abort(500, e.args)
 
     return [item.serialize() for item in items]
+
+
+# Create user
+def add_user():
+    path = 'user'
+    abort_if_not_validates(get_add_schema_by_path(path))
+    items_model = get_model_by_path(path)
+    item = items_model()
+    role_id = request.json.pop("roles", None)
+    if role_id:
+        role = db.session.query(Role).filter(Role.id == role_id).first()
+        item.roles = [role] if role else abort(400, {"roles": "invalid value"})
+
+    item.password = encrypt_password(request.json["password"])
+    country_id = request.json.get("country_id")
+    if country_id:
+        country_exists = db.session.query(db.exists().where(Country.id == country_id)).scalar()
+        if not country_exists:
+            abort(400, {"country_id": "invalid value"})
+
+    set_attrs_to_item(item, request.json)
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
+    return item
 
 
 # Get fields from corresponding table of specified equipment type
@@ -291,7 +309,8 @@ def internal_server_error(error):
 def create_item_handler(path):
     abort_if_wrong_path(path)
     abort_if_json_missing()
-    return return_json('result', add_item(path, request.json))
+    abort_if_not_validates(get_add_schema_by_path(path))
+    return return_json('result', add_item(path, request.json).id)
 
 
 # Read
@@ -314,7 +333,7 @@ def update_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_json_missing()
-    return return_json('result', update_item(path, item_id))
+    return return_json('result', update_item(path, item_id, request.args))
 
 
 # Delete
@@ -384,6 +403,13 @@ def handler_tests(path):
         abort(404)
     abort_if_json_missing()
     return return_json('result', add_or_update_tests(path))
+
+
+# Create user
+@api_blueprint.route('/user/', methods=['POST'])
+def create_user_handler():
+    abort_if_json_missing()
+    return return_json('result', add_user().id)
 
 
 api.register_blueprint(api_blueprint)

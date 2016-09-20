@@ -157,6 +157,7 @@ def coerce_to_date_str(value):
         return None
 
 
+# Schemas for creation
 readonly_dict = {'readonly': True}
 required_dict = {'required': True}
 type_string_dict = {'type': 'string', 'coerce': coerce_to_str}
@@ -1252,10 +1253,120 @@ tree_translation_schema = {
     'text': type_string_maxlength_250_dict,
     'tooltip': type_string_maxlength_250_dict,
 }
+
+
+# Schemas for updating
+not_nullable = {'nullable': False}
+type_datetime_not_nullable = dict_copy_union(type_datetime_dict, not_nullable)
+type_integer_coerce_not_nullable = dict_copy_union(type_integer_coerce_dict, not_nullable)
+type_string_maxlength_50_not_nullable = dict_copy_union(type_string_maxlength_50_dict, not_nullable)
+
+manufacturer_upd_schema = manufacturer_schema.copy()
+test_result_upd_schema = test_result_schema.copy()
+gas_sensor_upd_schema = gas_sensor_schema.copy()
+breaker_upd_schema = breaker_schema.copy()
+tap_changer_upd_schema = tap_changer_schema.copy()
+bushing_upd_schema = bushing_schema.copy()
+resistance_upd_schema = resistance_schema.copy()
+air_breaker_upd_schema = air_breaker_schema.copy()
+capacitor_upd_schema = capacitor_schema.copy()
+powersource_upd_schema = powersource_schema.copy()
+switchgear_upd_schema = switchgear_schema.copy()
+induction_machine_upd_schema = induction_machine_schema.copy()
+synchronous_machine_upd_schema = synchronous_machine_schema.copy()
+rectifier_upd_schema = rectifier_schema.copy()
+inductance_upd_schema = inductance_schema.copy()
+tank_upd_schema = tank_schema.copy()
+switch_upd_schema = switch_schema.copy()
+cable_upd_schema = cable_schema.copy()
+syringe_upd_schema = syringe_schema.copy()
+transformer_turn_ratio_test_upd_schema = transformer_turn_ratio_test_schema.copy()
+winding_resistance_test_upd_schema = winding_resistance_test_schema.copy()
+tree_upd_schema = tree_schema.copy()
+equipment_upd_schema = equipment_schema.copy()
+campaign_upd_schema = campaign_schema.copy()
+contract_upd_schema = contract_schema.copy()
+user_upd_schema = user_schema.copy()
+transformer_upd_schema = transformer_schema.copy()
+recommendation_upd_schema = recommendation_schema.copy()
+schedule_upd_schema = schedule_schema.copy()
+test_type_upd_schema = test_type_schema.copy()
+norm_physic_upd_schema = norm_physic_schema.copy()
+
+manufacturer_upd_schema['name'] = type_string_maxlength_50_not_nullable
+test_result_upd_schema['campaign_id'] = type_integer_coerce_not_nullable
+gas_sensor_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+breaker_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+tap_changer_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+bushing_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+resistance_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+air_breaker_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+capacitor_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+powersource_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+switchgear_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+induction_machine_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+synchronous_machine_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+rectifier_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+inductance_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+tank_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+switch_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+cable_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+cable_upd_schema['serial'] = type_string_maxlength_50_not_nullable
+transformer_turn_ratio_test_upd_schema['winding'] = type_integer_coerce_not_nullable
+winding_resistance_test_upd_schema['winding'] = type_integer_coerce_not_nullable
+tree_upd_schema['equipment_id'] = type_integer_coerce_not_nullable
+equipment_upd_schema.update({
+    'name': type_string_maxlength_50_not_nullable,
+    'equipment_number': type_string_maxlength_50_not_nullable,
+    'equipment_type_id': type_integer_coerce_not_nullable,
+    'location_id': type_integer_coerce_not_nullable,
+    'visual_inspection_by_id': type_integer_coerce_not_nullable,
+    'assigned_to_id': type_integer_coerce_not_nullable,
+    'norm_id': type_integer_coerce_not_nullable,
+})
+campaign_upd_schema.update({
+    'date_created': type_datetime_not_nullable,
+    'created_by_id': type_integer_coerce_not_nullable,
+    'contract_id': type_integer_coerce_not_nullable,
+})
+contract_upd_schema.update({
+    'id': readonly_dict,
+    'name': type_string_maxlength_50_not_nullable,
+    'code': type_string_maxlength_50_not_nullable,
+    'contract_status_id': type_integer_coerce_not_nullable,
+})
+user_upd_schema.update({
+    'alias': type_string_maxlength_50_not_nullable,
+    'email': dict_copy_union(type_string_dict, not_nullable, {'maxlength': 120}),
+    'password': type_string_maxlength_50_not_nullable,
+    'roles': type_integer_coerce_not_nullable,
+})
+transformer_upd_schema.update({
+    'gassensor_id': type_integer_coerce_not_nullable,
+    'equipment_id': type_integer_coerce_not_nullable,
+})
+recommendation_upd_schema.update({
+    'name': type_string_maxlength_50_not_nullable,
+    'test_type_id': type_integer_coerce_not_nullable,
+})
+schedule_upd_schema.update({
+    'equipment_id': type_integer_coerce_not_nullable,
+    'assigned_to_id': type_integer_coerce_not_nullable,
+    'order': type_integer_coerce_not_nullable,
+})
+test_type_upd_schema.update({
+    'name': type_string_maxlength_50_not_nullable,
+    'is_group': dict_copy_union(type_boolean_coerce_dict, not_nullable),
+})
+norm_physic_upd_schema.update({
+    'name': dict_copy_union(type_string_maxlength_20_dict, not_nullable),
+    'equipment_id': type_integer_coerce_not_nullable,
+})
 model_dict = {
     'equipment': {
         'model': Equipment,
-        'schema': equipment_schema
+        'schema': equipment_schema,
+        'upd_schema': equipment_upd_schema,
     },
     'equipment_type': {
         'model': EquipmentType,
@@ -1263,11 +1374,13 @@ model_dict = {
     },
     'campaign': {
         'model': Campaign,
-        'schema': campaign_schema
+        'schema': campaign_schema,
+        'upd_schema': campaign_upd_schema,
     },
     'contract': {
         'model': Contract,
-        'schema': contract_schema
+        'schema': contract_schema,
+        'upd_schema': contract_upd_schema,
     },
     'norm': {
         'model': Norm,
@@ -1279,11 +1392,13 @@ model_dict = {
     },
     'manufacturer': {
         'model': Manufacturer,
-        'schema': manufacturer_schema
+        'schema': manufacturer_schema,
+        'upd_schema': manufacturer_upd_schema,
     },
     'user': {
         'model': User,
-        'schema': user_schema
+        'schema': user_schema,
+        'upd_schema': user_upd_schema,
     },
     'assigned_to': {
         'model': User,
@@ -1303,7 +1418,8 @@ model_dict = {
     },
     'test_result': {
         'model': TestResult,
-        'schema': test_result_schema
+        'schema': test_result_schema,
+        'upd_schema': test_result_upd_schema,
     },
     'test_result_equipment': {
         'model': TestResult,
@@ -1335,15 +1451,18 @@ model_dict = {
     },
     'gas_sensor': {
         'model': GasSensor,
-        'schema': gas_sensor_schema
+        'schema': gas_sensor_schema,
+        'upd_schema': gas_sensor_upd_schema,
     },
     'transformer': {
         'model': Transformer,
-        'schema': transformer_schema
+        'schema': transformer_schema,
+        'upd_schema': transformer_upd_schema,
     },
     'breaker': {
         'model': Breaker,
-        'schema': breaker_schema
+        'schema': breaker_schema,
+        'upd_schema': breaker_upd_schema,
     },
     'tap_changer': {
         'model': LoadTapChanger,
@@ -1351,7 +1470,8 @@ model_dict = {
     },
     'bushing': {
         'model': Bushing,
-        'schema': bushing_schema
+        'schema': bushing_schema,
+        'upd_schema': bushing_upd_schema,
     },
     'equipment_connection': {
         'model': EquipmentConnection,
@@ -1359,55 +1479,68 @@ model_dict = {
     },
     'resistance': {
         'model': NeutralResistance,
-        'schema': resistance_schema
+        'schema': resistance_schema,
+        'upd_schema': resistance_upd_schema,
     },
     'air_breaker': {
         'model': AirCircuitBreaker,
-        'schema': air_breaker_schema
+        'schema': air_breaker_schema,
+        'upd_schema': air_breaker_upd_schema,
     },
     'capacitor': {
         'model': Capacitor,
-        'schema': capacitor_schema
+        'schema': capacitor_schema,
+        'upd_schema': capacitor_upd_schema,
     },
     'powersource': {
         'model': PowerSource,
-        'schema': powersource_schema
+        'schema': powersource_schema,
+        'upd_schema': powersource_upd_schema,
     },
     'switchgear': {
         'model': SwitchGear,
-        'schema': switchgear_schema
+        'schema': switchgear_schema,
+        'upd_schema': switchgear_upd_schema,
     },
     'induction_machine': {
         'model': InductionMachine,
-        'schema': induction_machine_schema
+        'schema': induction_machine_schema,
+        'upd_schema': induction_machine_upd_schema,
     },
     'synchronous_machine': {
         'model': SynchronousMachine,
-        'schema': synchronous_machine_schema
+        'schema': synchronous_machine_schema,
+        'upd_schema': synchronous_machine_upd_schema,
     },
     'rectifier': {
         'model': Rectifier,
-        'schema': rectifier_schema
+        'schema': rectifier_schema,
+        'upd_schema': rectifier_upd_schema,
     },
     'inductance': {
         'model': Inductance,
-        'schema': inductance_schema
+        'schema': inductance_schema,
+        'upd_schema': inductance_upd_schema,
     },
     'tank': {
         'model': Tank,
-        'schema': tank_schema
+        'schema': tank_schema,
+        'upd_schema': tank_upd_schema,
     },
     'switch': {
         'model': Switch,
-        'schema': switch_schema
+        'schema': switch_schema,
+        'upd_schema': switch_upd_schema,
     },
     'cable': {
         'model': Cable,
-        'schema': cable_schema
+        'schema': cable_schema,
+        'upd_schema': cable_upd_schema,
     },
     'recommendation': {
         'model': Recommendation,
-        'schema': recommendation_schema
+        'schema': recommendation_schema,
+        'upd_schema': recommendation_upd_schema,
     },
     'test_recommendation': {
         'model': TestRecommendation,
@@ -1431,7 +1564,8 @@ model_dict = {
     },
     'syringe': {
         'model': Syringe,
-        'schema': syringe_schema
+        'schema': syringe_schema,
+        'upd_schema': syringe_upd_schema,
     },
     'test_reason': {
         'model': TestReason,
@@ -1447,11 +1581,13 @@ model_dict = {
     },
     'schedule': {
         'model': TestSchedule,
-        'schema': schedule_schema
+        'schema': schedule_schema,
+        'upd_schema': schedule_upd_schema,
     },
     'test_type': {
         'model': TestType,
-        'schema': test_type_schema
+        'schema': test_type_schema,
+        'upd_schema': test_type_upd_schema,
     },
     'gasket_condition': {
         'model': GasketCondition,
@@ -1531,11 +1667,13 @@ model_dict = {
     },
     'transformer_turn_ratio_test': {
         'model': TransformerTurnRatioTest,
-        'schema': transformer_turn_ratio_test_schema
+        'schema': transformer_turn_ratio_test_schema,
+        'upd_schema': transformer_turn_ratio_test_upd_schema,
     },
     'winding_resistance_test': {
         'model': WindingResistanceTest,
-        'schema': winding_resistance_test_schema
+        'schema': winding_resistance_test_schema,
+        'upd_schema': winding_resistance_test_upd_schema,
     },
     'dissolved_gas_test': {
         'model': DissolvedGasTest,
@@ -1575,7 +1713,8 @@ model_dict = {
     },
     'norm_physic': {
         'model': NormPhysic,
-        'schema': norm_physic_schema
+        'schema': norm_physic_schema,
+        'upd_schema': norm_physic_upd_schema,
     },
     'norm_gas': {
         'model': NormGas,
@@ -1603,7 +1742,8 @@ model_dict = {
     },
     'tree': {
         'model': Tree,
-        'schema': tree_schema
+        'schema': tree_schema,
+        'upd_schema': tree_upd_schema,
     },
     'tree_translation': {
         'model': TreeTranslation,
