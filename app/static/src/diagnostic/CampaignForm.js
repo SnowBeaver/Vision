@@ -74,10 +74,6 @@ var CreatedBySelectField = React.createClass({
         return (
             <div>
                 <FormGroup controlId="created_by" validationState={this.getValidationState()}>
-                    { this.getValidationState() == 'error' ?
-                        <HelpBlock className="warning">{this.props.errors['created_by_id']},
-                            please choose user and resubmit the form</HelpBlock> : null
-                    }
                     <FormControl
                         componentClass="select"
                         placeholder="select user"
@@ -87,6 +83,10 @@ var CreatedBySelectField = React.createClass({
                         <option key="0" value="">Created by{this.props.required ? " *" : ""}</option>
                         {menuItems}
                     </FormControl>
+                    { this.getValidationState() == 'error' ?
+                        <HelpBlock className="warning">{this.props.errors['created_by_id']},
+                            please choose user and resubmit the form</HelpBlock> : null
+                    }
                 </FormGroup>
             </div>
         );
@@ -148,17 +148,18 @@ var ContractNoSelectField = React.createClass({
         return (
             <div>
                 <FormGroup validationState={this.props.errors.contract_id ? 'error' : null}>
-                    <HelpBlock className="warning">{this.props.errors.contract_id}</HelpBlock>
                     <FormControl
                         componentClass="select"
                         placeholder="select"
                         onChange={this.handleChange}
                         name="contract_id"
                         value={this.state.selected}
+                        required
                     >
-                        <option value="select">Contract No.</option>
+                        <option value="">Contract No. *</option>
                         {menuItems}
                     </FormControl>
+                    <HelpBlock className="warning">{this.props.errors.contract_id}</HelpBlock>
                 </FormGroup>
             </div>
         );
@@ -367,10 +368,10 @@ var CampaignForm = React.createClass({
                             <div className="col-md-3">
                                 <div className="datetimepicker input-group date">
                                     <FormGroup validationState={this.state.errors.date_created ? 'error' : null}>
-                                        <HelpBlock className="warning">{this.state.errors.date_created}</HelpBlock>
                                         <ControlLabel>Date Created</ControlLabel>
                                         <DateTimeField name="date_created"
                                                        datetime={this.state.date_created}/>
+                                        <HelpBlock className="warning">{this.state.errors.date_created}</HelpBlock>
                                     </FormGroup>
                                 </div>
                             </div>
@@ -393,10 +394,11 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-11">
                                 <FormGroup validationState={this.state.errors.description ? 'error' : null}>
-                                    <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
                                     <FormControl componentClass="textarea"
                                                  placeholder="Comments"
                                                  name="description"/>
+                                    <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+                                    <FormControl.Feedback />
                                 </FormGroup>
                             </div>
                         </div>
@@ -405,10 +407,10 @@ var CampaignForm = React.createClass({
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
                                     <FormGroup validationState={this.state.errors.date_sampling ? 'error' : null}>
-                                        <HelpBlock className="warning">{this.state.errors.date_sampling}</HelpBlock>
                                         <ControlLabel>Lab measurement</ControlLabel>
                                         <DateTimeField name="date_sampling"
                                                        datetime={this.state.date_sampling}/>
+                                        <HelpBlock className="warning">{this.state.errors.date_sampling}</HelpBlock>
                                     </FormGroup>
                                 </div>
                             </div>

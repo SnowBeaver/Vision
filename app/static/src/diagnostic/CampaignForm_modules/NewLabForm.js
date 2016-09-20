@@ -58,7 +58,6 @@ var NameSelectField = React.createClass({
 		return (
 			<div>
 				<FormGroup validationState={this.props.errors.name ? 'error' : null}>
-					<HelpBlock className="warning">{this.props.errors.name}</HelpBlock>
 					<FormControl
 						componentClass="select"
 						placeholder="select"
@@ -67,6 +66,7 @@ var NameSelectField = React.createClass({
 						<option key="0" value="select">Name</option>
 						{menuItems}
 					</FormControl>
+					<HelpBlock className="warning">{this.props.errors.name}</HelpBlock>
 				</FormGroup>
 			</div>
 		);
@@ -96,7 +96,11 @@ var NewLabForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++) {
 			var key = fields[i];
-			data[key] = this.state[key];
+			var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({
@@ -223,14 +227,6 @@ var NewLabForm = React.createClass({
 		return className;
 	},
 
-	getInitialState: function () {
-		return {
-			loading: false,
-			errors: {},
-			equipment_number: ''
-		}
-	},
-
 	handleClick: function() {
 		document.getElementById('test_prof').remove();
 	},
@@ -243,22 +239,24 @@ var NewLabForm = React.createClass({
 
 						<div className="maxwidth">
 							<FormGroup validationState={this.state.errors.code ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Code"
 											 name="code"
 											 data-type="int"
 								/>
+								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 						<div className="row">
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.analyser ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.analyser}</HelpBlock>
 									<FormControl type="text"
 												 placeholder="Analyser"
 												 name="analyser"
 									/>
+									<HelpBlock className="warning">{this.state.errors.analyser}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>

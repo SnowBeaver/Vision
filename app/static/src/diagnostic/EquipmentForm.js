@@ -114,7 +114,6 @@ var EquipmentTypeSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.equipment_type_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -184,11 +183,10 @@ var EquipmentSelectField = React.createClass({
                         name="equipment_id"
                         onChange={this.handleChange}
                         value={this.props.value}>
-                        <option value="select">Choose equipment in upstream</option>
+                        <option value="">Choose equipment in upstream</option>
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.equipment_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -249,11 +247,10 @@ var ManufacturerSelectField = React.createClass({
                         placeholder="Manufacturer"
                         onChange={this.handleChange}
                         value={this.props.value}>
-                        <option value="select">Choose manufacturer</option>
+                        <option value="">Choose manufacturer</option>
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufacturer_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -321,7 +318,6 @@ var LocationSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.location_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -388,7 +384,6 @@ var VisualInspBySelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.visual_inspection_by_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -455,7 +450,6 @@ var AssignedToSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.assigned_to_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -522,7 +516,6 @@ var NormSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.norm_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -575,11 +568,10 @@ var FrequencySelectField = React.createClass({
                                  placeholder="Select frequency"
                                  onChange={this.handleChange}
                                  value={this.props.value}>
-                        <option value="select">Choose Frequency</option>
+                        <option value="">Choose Frequency</option>
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.frequency}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -628,11 +620,10 @@ var ManufacturedSelectField = React.createClass({
                                  onChange={this.handleChange}
                                  value={this.props.value}>
 
-                        <option value="select">Year manufactured</option>
+                        <option value="">Year manufactured</option>
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufactured}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -693,16 +684,16 @@ var EqAdditionalParams = React.createClass({
                 return (<TransformerParams errors={this.props.data.errors} edited={this.props.edited}/>);
                 break;
             case 'Tank':
-                return (<TankParams />);
+                return (<TankParams errors={this.props.data.errors}/>);
                 break;
             case 'Switch':
-                return (<SwitchParams />);
+                return (<SwitchParams errors={this.props.data.errors}/>);
                 break;
             case 'Inductance':
-                return (<InductanceParams />);
+                return (<InductanceParams errors={this.props.data.errors}/>);
                 break;
             case 'Gas sensor':
-                return (<GasSensorParams />);
+                return (<GasSensorParams errors={this.props.data.errors}/>);
                 break;
 
             default:
@@ -745,7 +736,9 @@ const EquipmentForm = React.createClass({
                 'prev_equipment_number',
                 'manufactured'
             ],
-            changedFields: []
+            changedFields: [],
+            option_text: {},
+            equipmentId: null   // Is set when main form is saved
         };
 
         for (var i = 0; i < response.fields.length; i++) {
@@ -764,41 +757,61 @@ const EquipmentForm = React.createClass({
 
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
         }
 
-        var that = this;
-        return $.ajax({
-            url: '/api/v1.0/equipment/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data) {
-                if (Object.keys(subform).length != 0) {
-                    subform['equipment_id'] = data['result'];
-                    $.ajax({
-                        url: '/api/v1.0/' + path + '/',
-                        type: 'POST',
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(subform),
-                        success: function () {
-                            that.setState({option_text: {}});
-                            that._onSuccess();
-                        },
-                        error: that._onError,
-                        always: that.hideLoading
-                    });
-                } else {
-                    that._onSuccess();
-                }
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
+        var that = this
+            , xhr;
 
+        // If the main form haven't been saved yet
+        if (!this.state.equipmentId){
+            xhr = $.ajax({
+                url: '/api/v1.0/equipment/',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (data) {
+                    that.setState({equipmentId: data['result']});
+                    that._saveSubform(subform, data['result'], path);
+                },
+                beforeSend: function () {
+                    this.setState({loading: true});
+                }.bind(this)
+            })
+        } else {
+            // Save only subform (for instance, when saving subform for the first time, API returned errors)
+            xhr = this._saveSubform(subform, this.state.equipmentId, path);
+        }
+        return xhr;
+    },
+
+    _saveSubform(subform, equipmentId, path){
+        var that = this;
+        if (Object.keys(subform).length != 0) {
+            subform['equipment_id'] = equipmentId;
+            for (var field in subform){
+                if (subform[field] == ""){
+                    subform[field] = null;
+                }
+            }
+            return $.ajax({
+                url: '/api/v1.0/' + path + '/',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(subform),
+                success: that._onSuccess,
+                error: that._onError,
+                always: that.hideLoading
+            });
+        } else {
+            this._onSuccess();
+        }
     },
 
     _onSubmit: function (e) {
@@ -809,8 +822,10 @@ const EquipmentForm = React.createClass({
         }
         this._clearErrors();
         var xhr = this._save();
-        xhr.fail(this._onError)
-            .always(this.hideLoading)
+        if (xhr){
+            xhr.fail(this._onError)
+                .always(this.hideLoading)
+        }
     },
 
     hideLoading: function () {
@@ -905,7 +920,6 @@ const EquipmentForm = React.createClass({
         if (e.target.name != "upstream1" && this.state.fields.indexOf(e.target.name) > -1) {
             form.changedFields = this.state.changedFields.concat([e.target.name]);
         }
-        console.log(e.target.name, "  ", e.target.value)
         var errors = this._validate(e);
         form = this._updateFieldErrors(e.target.name, form, errors);
         this.setState(form);

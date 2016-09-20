@@ -7,6 +7,7 @@ import {Link} from 'react-router';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 
 var SelectField = React.createClass({
@@ -40,22 +41,25 @@ var SelectField = React.createClass({
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
         return (
-            <FormGroup>
-
+            <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              defaultValue={value}
-                             name={this.props.name}
+                             name={name}
                 >
                     <option>{this.props.label}</option>);
                     {menuItems}
                 </FormControl>
+                <HelpBlock className="warning">{error}</HelpBlock>
             </FormGroup>
         );
     }
@@ -63,10 +67,11 @@ var SelectField = React.createClass({
 
 
 var TankParams = React.createClass({
-getInitialState: function () {
+    getInitialState: function () {
         return {
-    'sealed':'',
-    'welded_cover':''
+            'sealed': '',
+            'welded_cover': '',
+            'errors': {}
         }
     },
 
@@ -78,6 +83,7 @@ getInitialState: function () {
 
 
     render: function () {
+        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         return (
             <div>
                 <div className="row">
@@ -86,17 +92,16 @@ getInitialState: function () {
                             source="fluid_type"
                             label="Fluid Type"
                             name="fluid_type_id"
-                            value={this.state.fluid_type_id}/>
+                            value={this.state.fluid_type_id}
+                            errors={errors}/>
                     </div>
                     <div className="col-md-4">
                         <SelectField
                             source="fluid_level"
                             label="Fluid Level"
                             name="fluid_level_id"
-                            value={this.state.fluid_level_id}/>
-                    </div>
-                    <div className="col-md-1 ">
-                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
+                            value={this.state.fluid_level_id}
+                            errors={errors}/>
                     </div>
                     <div className="col-md-2">
                         <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>

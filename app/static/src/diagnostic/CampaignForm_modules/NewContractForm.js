@@ -92,7 +92,11 @@ var NewContractForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++) {
 			var key = fields[i];
-			data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({
@@ -222,11 +226,11 @@ var NewContractForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup controlId="contract_status"
 										   validationState={this.state.errors.contract_status_id ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.contract_status_id}</HelpBlock>
 									<ContractStatusSelectField
 										source="/api/v1.0/contract_status"
 										handleChange={this.handleChange}
 										required/>
+									<HelpBlock className="warning">{this.state.errors.contract_status_id}</HelpBlock>
 								</FormGroup>
 							</div>
 						</div>
@@ -234,24 +238,26 @@ var NewContractForm = React.createClass({
 						<div className="maxwidth">
 							<FormGroup controlId="name"
 									   validationState={this.state.errors.name ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Name *"
 											 name="name"
 											 required
 								/>
+								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 
 						<div className="maxwidth">
 							<FormGroup controlId="name"
 									   validationState={this.state.errors.code ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Code *"
 											 name="code"
 											 required
 								/>
+								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 

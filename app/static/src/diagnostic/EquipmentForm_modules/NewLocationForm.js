@@ -34,7 +34,11 @@ var NewLocationForm = React.createClass({
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
         }
 
         return $.ajax({
@@ -71,6 +75,7 @@ var NewLocationForm = React.createClass({
 
     _onSuccess: function (data) {
         //this.setState(this.getInitialState());
+        this.props.handleClose();
         NotificationManager.success("Location added.");
     },
 
@@ -140,11 +145,12 @@ var NewLocationForm = React.createClass({
 					<div className="row">
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.name ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								<FormControl type="text"
 												placeholder="Name"
 												name="name"
 								/>
+								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+							    <FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>
@@ -152,7 +158,6 @@ var NewLocationForm = React.createClass({
 						<div className="col-md-12 ">
 							<Button bsStyle="success"
 									className="pull-right"
-									onClick={this.props.handleClose}
 									type="submit">Save</Button>
 							&nbsp;
 							<Button bsStyle="danger"

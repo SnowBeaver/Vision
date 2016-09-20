@@ -33,7 +33,11 @@ var NewFluidForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++) {
 			var key = fields[i];
-			data[key] = this.state[key];
+			var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({
@@ -139,11 +143,12 @@ var NewFluidForm = React.createClass({
 				<form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 						<div className="maxwidth">
 							<FormGroup validationState={this.state.errors.name ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Name"
 											 name="name"
 								/>
+								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 						<div className="row">
