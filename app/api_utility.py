@@ -66,7 +66,6 @@ class MyValidator(Validator):
         if quantity != value:
             self._error(field, "Wrong quantity, must be {}".format(quantity))
 
-
     def _validate_fluid_tests_qty_jar(self, fluid_tests_qty, field, value):
         quantity_ml_jar = 0
         # POTS. Jar
@@ -117,21 +116,55 @@ class MyValidator(Validator):
     #     self.document.get('corr')):
     #     testcheckedtemp = 1
 
+
 def dict_copy_union(dict1, *kargs):
     dict3 = dict1.copy()
     for dict_item in kargs:
         dict3.update(dict_item)
     return dict3
 
+
+def coerce_to_bool(value):
+    if value is None:
+        return None
+    return bool(value)
+
+
+def coerce_to_int(value):
+    try:
+        return int(value)
+    except TypeError:
+        return None
+
+
+def coerce_to_float(value):
+    try:
+        return int(value)
+    except TypeError:
+        return None
+
+
+def coerce_to_str(value):
+    if value is None:
+        return None
+    return str(value)
+
+
+def coerce_to_date_str(value):
+    try:
+        return "{} {}".format(*value)
+    except (IndexError, TypeError):
+        return None
+
+
 readonly_dict = {'readonly': True}
 required_dict = {'required': True}
-type_string_dict = {'type': 'string'}
-type_datetime_dict = {'type': 'string'}
-type_boolean_coerce_dict = {'type': 'boolean', 'coerce': bool}
-type_float_coerce_dict = {'type': 'float', 'coerce': float}
-type_integer_dict = {'type': 'integer'}
+type_string_dict = {'type': 'string', 'coerce': coerce_to_str}
+type_datetime_dict = {'type': 'list', 'schema': {'type': 'string'}, 'coerce': coerce_to_date_str}
+type_boolean_coerce_dict = {'type': 'boolean', 'coerce': coerce_to_bool}
+type_float_coerce_dict = {'type': 'float', 'coerce': coerce_to_float}
 type_datetime_required_dict = dict_copy_union(type_datetime_dict, required_dict)
-type_integer_coerce_dict = dict_copy_union(type_integer_dict, {'coerce': int})
+type_integer_coerce_dict = {'type': 'integer', 'coerce': coerce_to_int}
 type_integer_coerce_4_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 9999})
 type_integer_coerce_6_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 999999})
 type_integer_coerce_8_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 99999999})
@@ -262,7 +295,7 @@ user_schema = {
     'description': type_string_dict,
     'active': type_boolean_coerce_dict,
     'confirmed': type_boolean_coerce_dict,
-    'confirmed_at': type_datetime_dict,
+    # 'confirmed_at': type_datetime_dict,
     'created': type_datetime_dict,
     'updated': type_datetime_dict,
 }
@@ -434,7 +467,7 @@ gas_sensor_schema = {
 }
 transformer_schema = {
     'id': readonly_dict,
-    'fluid_type_id': type_integer_coerce_required_dict,
+    # 'fluid_type_id': type_integer_coerce_required_dict,
     'gassensor_id': type_integer_coerce_required_dict,
     'equipment_id': type_integer_coerce_required_dict,
     'fluid_volume': type_float_coerce_dict,
@@ -444,7 +477,7 @@ transformer_schema = {
     'cooling_rating': type_integer_coerce_dict,
     'autotransformer': type_boolean_coerce_dict,
     'threephase': type_boolean_coerce_dict,
-    'fluid_level_id': type_integer_coerce_dict,
+    # 'fluid_level_id': type_integer_coerce_dict,
     'phase_number': dict_copy_union(type_string_dict, {'allowed': ['1', '3', '6']}),
     'frequency': type_string_frequency_dict,
     'primary_tension': type_float_coerce_dict,

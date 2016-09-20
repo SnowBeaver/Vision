@@ -65,11 +65,11 @@ def new_instance(path, param_dict):
     # item = items_model(**param_dict)
     items_model = model_dict[path]['model']
     item = items_model()
-    set_attrs_to_item(item, param_dict)
-
     if items_model == User:
-        role = db.session.query(Role).filter(Role.id == param_dict["roles"]).first()
-        item.roles = [role] if role else abort(400, {"roles": "invalid value"})
+        role_id = param_dict.pop("roles", None)
+        if role_id:
+            role = db.session.query(Role).filter(Role.id == role_id).first()
+            item.roles = [role] if role else abort(400, {"roles": "invalid value"})
         item.password = encrypt_password(param_dict["password"])
 
         country_id = param_dict.get("country_id")
@@ -78,8 +78,14 @@ def new_instance(path, param_dict):
             if not country_exists:
                 abort(400, {"country_id": "invalid value"})
 
-    db.session.add(item)
-    db.session.commit()
+    set_attrs_to_item(item, param_dict)
+
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
     return item
 
 
@@ -118,7 +124,11 @@ def update_item(path, item_id):
     items_model = model_dict[path]['model']
     item = db.session.query(items_model).get(item_id)
     set_attrs_to_item(item, request.json)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
     return item.serialize()
 
 
@@ -246,7 +256,11 @@ def add_or_update_tests(path):
         items.append(item)
         set_attrs_to_item(item, test)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
     return [item.serialize() for item in items]
 
 
