@@ -32,6 +32,13 @@ var CreatedBySelectField = React.createClass({
         };
     },
 
+    setSelected: function (data) {
+        this.componentDidMount();
+        this.setState({
+            selected: data.result
+        });
+    },
+
     isVisible: function () {
         return this.state.isVisible;
     },
@@ -79,7 +86,8 @@ var CreatedBySelectField = React.createClass({
                         placeholder="select user"
                         onChange={this.handleChange}
                         name="created_by_id"
-                        required={this.props.required}>
+                        required={this.props.required}
+                        value={this.state.selected}>
                         <option key="0" value="">Created by{this.props.required ? " *" : ""}</option>
                         {menuItems}
                     </FormControl>
@@ -208,13 +216,11 @@ var CampaignForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
-        }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+			return false;
+		}
         this._clearErrors();
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -243,10 +249,23 @@ var CampaignForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            this.setState({
-                errors: res.error
-            });
-        }
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -269,15 +288,8 @@ var CampaignForm = React.createClass({
         this.setState({errors: {}});
     },
 
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
-        return errors;
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
     },
 
     _formGroupClass: function (field) {
@@ -325,11 +337,13 @@ var CampaignForm = React.createClass({
     },
 
     onContractCreate: function (response) {
+        this.setState({contract: response.result});
         this.refs.contract.setSelected(response);
         NotificationManager.success("Contract added", null, 1000);
     },
 
     onUserCreate: function (response) {
+        this.setState({created_by: response.result});
         this.refs.created_by.setSelected(response);
         NotificationManager.success("User added");
     },
