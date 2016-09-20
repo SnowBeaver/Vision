@@ -182,7 +182,7 @@ var NewRecommendationForm = React.createClass({
 	},
 	_onSubmit: function (e) {
 		e.preventDefault();
-		if (!this._validate()){
+		if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
 			return false;
 		}
@@ -237,44 +237,65 @@ var NewRecommendationForm = React.createClass({
 		}
 
 		state.changedFields = this.state.changedFields.concat([e.target.name]);
-		var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
-		state = this._updateFieldErrors(e.target.name, state, errors);
+		var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
 		this.setState(state);
 	},
 
-	 _validateFieldType: function (value, type){
-		var errors = {};
-		if (type != undefined && value){
-			var typePatterns = {
-				"email": /\S+@\S+\.\S+/,
-				"url": /^\S+\.\S+$/
-			};
-			if (!typePatterns[type].test(value)){
-				errors = "Invalid " + type;
-			}
-		}
-		return errors;
-	},
+	 _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
+        return errors;
+    },
 
-	_updateFieldErrors: function (fieldName, state, errors){
-		// Clear existing errors related to the current field as it has been edited
-		state.errors = this.state.errors;
-		delete state.errors[fieldName];
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
 
-		// Update errors with new ones, if present
-		if (Object.keys(errors).length){
-			state.errors[fieldName] = errors
-		}
-		return state;
-	},
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
 
-	_validate: function () {
-		var response = true;
-		if (Object.keys(this.state.errors).length > 0){
-			response = false;
-		}
-		return response;
-	},
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
+
 	_formGroupClass: function (field) {
 		var className = "form-group ";
 		if (field) {
@@ -326,6 +347,7 @@ var NewRecommendationForm = React.createClass({
 								<FormControl type="text"
 											 placeholder="Code"
 											 name="code"
+											 data-len="50"
 								/>
 								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
 								<FormControl.Feedback />
