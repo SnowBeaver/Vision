@@ -917,36 +917,42 @@ var NewTestForm = React.createClass({
 
     onContractCreate: function (response) {
         this.refs.contract.setSelected(response);
+        this.setState({lab_contract_id: response.result, changedFields: this.state.changedFields.concat(["lab_contract_id"])});
         this.closeNewContractForm();
         NotificationManager.success('Contract added', null, 2000);
     },
 
     onPerformerCreate: function (response) {
         this.refs.performed_by.setSelected(response);
+        this.setState({performed_by_id: response.result, changedFields: this.state.changedFields.concat(["performed_by_id"])});
         this.closeNewUserForm();
         NotificationManager.success('User added', null, 2000);
     },
 
     onLabCreate: function (response) {
         this.refs.lab.setSelected(response);
+        this.setState({lab_id: response.result, changedFields: this.state.changedFields.concat(["lab_id"])});
         this.closeNewLabForm();
         NotificationManager.success('Laboratory added', null, 2000);
     },
 
     onMaterialCreate: function (response) {
         this.refs.material.setSelected(response);
+        this.setState({material_id: response.result, changedFields: this.state.changedFields.concat(["material_id"])});
         this.closeNewMaterialForm();
         NotificationManager.success('Material added', null, 2000);
     },
 
     onFluidTypeCreate: function (response) {
         this.refs.fluid_type.setSelected(response);
+        this.setState({fluid_type_id: response.result, changedFields: this.state.changedFields.concat(["fluid_type_id"])});
         this.closeNewFluidForm();
         NotificationManager.success('Fluid type added', null, 2000);
     },
 
     onSyringeCreate: function (response) {
         this.refs.syringe.setSelected(response);
+        this.setState({seringe_num: response.result, changedFields: this.state.changedFields.concat(["seringe_num"])});
         this.closeNewSyringeForm();
         NotificationManager.success('Syringe added', null, 2000);
     },
