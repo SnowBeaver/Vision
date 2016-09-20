@@ -6,6 +6,48 @@ from datetime import datetime
 from cerberus import Validator
 
 
+class Tree(db.Model):
+    __tablename__ = 'tree'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    parent_id = db.Column('parent_id', db.ForeignKey("tree.id"), nullable=True)
+    equipment_id = db.Column('equipment_id', db.ForeignKey(Equipment.id), nullable=False)
+    equipment = db.relationship(Equipment, foreign_keys='Tree.equipment_id')
+    icon = db.Column(db.String(126))
+    opened = db.Column(db.Boolean)
+    disabled = db.Column(db.Boolean)
+    selected = db.Column(db.Boolean)
+    type = db.Column(db.String(58))
+    view = db.Column(db.String(126))
+    status = db.Column(db.SMALLINT)
+
+    #
+    # def __repr__(self):
+    #     return "{}".format(self.id)
+    #
+    # def serialize(self):
+    #     """Return object data in easily serializeable format"""
+    #     return {'id': self.id,
+    #             'parent_id': self.parent_id,
+    #             'icon': self.icon,
+    #             'opened': self.opened,
+    #             'disabled': self.disabled,
+    #             'selected': self.selected,
+    #             'type': self.type,
+    #             'view': self.view,
+    #             'status': self.status,
+    #             }
+
+
+class TreeTranslation(db.Model):
+    __tablename__ = 'tree_translation'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    locale = db.Column(db.String(10))
+    text = db.Column(db.String(250))
+    tooltip = db.Column(db.String(250))
+
+
 class MyValidator(Validator):
     def _validate_fluid_tests_qty(self, fluid_tests_qty, field, value):
         quantity_ml_syringe = 0
@@ -23,7 +65,6 @@ class MyValidator(Validator):
 
         if quantity != value:
             self._error(field, "Wrong quantity, must be {}".format(quantity))
-
 
     def _validate_fluid_tests_qty_jar(self, fluid_tests_qty, field, value):
         quantity_ml_jar = 0
@@ -75,31 +116,68 @@ class MyValidator(Validator):
     #     self.document.get('corr')):
     #     testcheckedtemp = 1
 
+
 def dict_copy_union(dict1, *kargs):
     dict3 = dict1.copy()
     for dict_item in kargs:
         dict3.update(dict_item)
     return dict3
 
+
+def coerce_to_bool(value):
+    if value is None:
+        return None
+    return bool(value)
+
+
+def coerce_to_int(value):
+    try:
+        return int(value)
+    except TypeError:
+        return None
+
+
+def coerce_to_float(value):
+    try:
+        return int(value)
+    except TypeError:
+        return None
+
+
+def coerce_to_str(value):
+    if value is None:
+        return None
+    return str(value)
+
+
+def coerce_to_date_str(value):
+    try:
+        return "{} {}".format(*value)
+    except (IndexError, TypeError):
+        return None
+
+
 readonly_dict = {'readonly': True}
 required_dict = {'required': True}
-type_string_dict = {'type': 'string'}
-type_datetime_dict = {'type': 'string'}
-type_boolean_coerce_dict = {'type': 'boolean', 'coerce': bool}
-type_float_coerce_dict = {'type': 'float', 'coerce': float}
-type_integer_dict = {'type': 'integer'}
+type_string_dict = {'type': 'string', 'coerce': coerce_to_str}
+type_datetime_dict = {'type': 'list', 'schema': {'type': 'string'}, 'coerce': coerce_to_date_str}
+type_boolean_coerce_dict = {'type': 'boolean', 'coerce': coerce_to_bool}
+type_float_coerce_dict = {'type': 'float', 'coerce': coerce_to_float}
 type_datetime_required_dict = dict_copy_union(type_datetime_dict, required_dict)
-type_integer_coerce_dict = dict_copy_union(type_integer_dict, {'coerce': int})
+type_integer_coerce_dict = {'type': 'integer', 'coerce': coerce_to_int}
 type_integer_coerce_4_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 9999})
 type_integer_coerce_6_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 999999})
 type_integer_coerce_8_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 99999999})
 type_integer_coerce_required_dict = dict_copy_union(type_integer_coerce_dict, required_dict)
 type_string_maxlength_5_dict = dict_copy_union(type_string_dict, {'maxlength': 5})
+type_string_maxlength_10_dict = dict_copy_union(type_string_dict, {'maxlength': 10})
 type_string_maxlength_20_dict = dict_copy_union(type_string_dict, {'maxlength': 20})
 type_string_maxlength_25_dict = dict_copy_union(type_string_dict, {'maxlength': 25})
 type_string_maxlength_50_dict = dict_copy_union(type_string_dict, {'maxlength': 50})
 type_string_maxlength_80_dict = dict_copy_union(type_string_dict, {'maxlength': 80})
 type_string_maxlength_100_dict = dict_copy_union(type_string_dict, {'maxlength': 100})
+type_string_maxlength_126_dict = dict_copy_union(type_string_dict, {'maxlength': 126})
+type_string_maxlength_250_dict = dict_copy_union(type_string_dict, {'maxlength': 250})
 type_string_maxlength_255_dict = dict_copy_union(type_string_dict, {'maxlength': 255})
 type_string_maxlength_256_dict = dict_copy_union(type_string_dict, {'maxlength': 256})
 type_string_maxlength_1024_dict = dict_copy_union(type_string_dict, {'maxlength': 1024})
@@ -165,6 +243,7 @@ equipment_schema = {
     'prev_serial_number':    type_string_maxlength_50_dict,
     'prev_equipment_number': type_string_maxlength_50_dict,
     'sibling':   type_integer_coerce_dict,
+    'extra_fields': {'type': 'dict'},
 }
 equipment_type_schema = {
     'id': readonly_dict,
@@ -216,7 +295,7 @@ user_schema = {
     'description': type_string_dict,
     'active': type_boolean_coerce_dict,
     'confirmed': type_boolean_coerce_dict,
-    'confirmed_at': type_datetime_dict,
+    # 'confirmed_at': type_datetime_dict,
     'created': type_datetime_dict,
     'updated': type_datetime_dict,
 }
@@ -388,7 +467,7 @@ gas_sensor_schema = {
 }
 transformer_schema = {
     'id': readonly_dict,
-    'fluid_type_id': type_integer_coerce_required_dict,
+    # 'fluid_type_id': type_integer_coerce_required_dict,
     'gassensor_id': type_integer_coerce_required_dict,
     'equipment_id': type_integer_coerce_required_dict,
     'fluid_volume': type_float_coerce_dict,
@@ -398,7 +477,7 @@ transformer_schema = {
     'cooling_rating': type_integer_coerce_dict,
     'autotransformer': type_boolean_coerce_dict,
     'threephase': type_boolean_coerce_dict,
-    'fluid_level_id': type_integer_coerce_dict,
+    # 'fluid_level_id': type_integer_coerce_dict,
     'phase_number': dict_copy_union(type_string_dict, {'allowed': ['1', '3', '6']}),
     'frequency': type_string_frequency_dict,
     'primary_tension': type_float_coerce_dict,
@@ -982,7 +1061,7 @@ inhibitor_test_schema = {
 }
 inhibitor_type_schema = {
     'id': readonly_dict,
-    'name': dict_copy_union(type_string_dict, {'maxlength': 10}),
+    'name': type_string_maxlength_10_dict,
 }
 pcb_test_schema = {
     'id': readonly_dict,
@@ -1154,6 +1233,24 @@ test_sampling_card_schema = {
     'test_result_id': type_integer_coerce_dict,
     'date_created': type_datetime_dict,
     'printed': type_boolean_coerce_dict,
+}
+tree_schema = {
+    'id': readonly_dict,
+    'parent_id': type_integer_coerce_dict,
+    'equipment_id': type_integer_coerce_required_dict,
+    'icon': type_string_maxlength_126_dict,
+    'opened': type_boolean_coerce_dict,
+    'disabled': type_boolean_coerce_dict,
+    'selected': type_boolean_coerce_dict,
+    'type': dict_copy_union(type_string_dict, {'maxlength': 58}),
+    'view': type_string_maxlength_126_dict,
+    'status': type_integer_coerce_dict,
+}
+tree_translation_schema = {
+    'id': readonly_dict,
+    'locale': type_string_maxlength_10_dict,
+    'text': type_string_maxlength_250_dict,
+    'tooltip': type_string_maxlength_250_dict,
 }
 model_dict = {
     'equipment': {
@@ -1504,6 +1601,14 @@ model_dict = {
         'model': Country,
         'schema': country_schema
     },
+    'tree': {
+        'model': Tree,
+        'schema': tree_schema
+    },
+    'tree_translation': {
+        'model': TreeTranslation,
+        'schema': tree_translation_schema
+    },
     # 'test_result_winding_test': {
     #     'model': WindingTest,
     #     'schema': test_result_winding_test_schema
@@ -1539,45 +1644,3 @@ eq_type_dict = {
     # 18: 'neutral resistance',
     # 19: 'gas sensor',
 }
-
-
-class Tree(db.Model):
-    __tablename__ = 'tree'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    parent_id = db.Column('parent_id', db.ForeignKey("tree.id"), nullable=True)
-    equipment_id = db.Column('equipment_id', db.ForeignKey(Equipment.id), nullable=False)
-    equipment = db.relationship(Equipment, foreign_keys='Tree.equipment_id')
-    icon = db.Column(db.String(126))
-    opened = db.Column(db.Boolean)
-    disabled = db.Column(db.Boolean)
-    selected = db.Column(db.Boolean)
-    type = db.Column(db.String(58))
-    view = db.Column(db.String(126))
-    status = db.Column(db.SMALLINT)
-
-    #
-    # def __repr__(self):
-    #     return "{}".format(self.id)
-    #
-    # def serialize(self):
-    #     """Return object data in easily serializeable format"""
-    #     return {'id': self.id,
-    #             'parent_id': self.parent_id,
-    #             'icon': self.icon,
-    #             'opened': self.opened,
-    #             'disabled': self.disabled,
-    #             'selected': self.selected,
-    #             'type': self.type,
-    #             'view': self.view,
-    #             'status': self.status,
-    #             }
-
-
-class TreeTranslation(db.Model):
-    __tablename__ = 'tree_translation'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    locale = db.Column(db.String(10))
-    text = db.Column(db.String(250))
-    tooltip = db.Column(db.String(250))
