@@ -421,11 +421,25 @@ const FluidProfileForm = React.createClass({
     _validate: function (e) {
         var errors = [];
         var error;
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
         error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
         if (error){
             errors.push(error);
         }
         return errors;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
     },
 
     _validateFieldType: function (value, type){
@@ -777,10 +791,14 @@ const FluidProfileForm = React.createClass({
                                     </div>
                                     <div className="col-md-2">
                                         <div className="row">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.name ? 'error' : null}>
                                                 <FormControl type="text"
                                                              placeholder="Fluid profile name"
-                                                             name="name"/>
+                                                             name="name"
+                                                             data-len="256"
+                                                             value={this.state.name}/>
+                                                <HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+                                                <FormControl.Feedback />
                                             </FormGroup>
                                         </div>
                                         <div className="row">
@@ -793,13 +811,18 @@ const FluidProfileForm = React.createClass({
                                         </div>
                                     </div>
                                     <div className="col-md-4">
-                                        <FormGroup controlId="descTextarea">
+                                        <FormGroup controlId="descTextarea"
+                                                   validationState={this.state.errors.description ? 'error' : null}>
                                             <FormControl
                                                 componentClass="textarea"
                                                 placeholder="Description"
                                                 ref="description"
                                                 name="description"
+                                                data-len="1024"
+                                                value={this.state.description}
                                             />
+                                            <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+                                            <FormControl.Feedback />
                                         </FormGroup>
                                     </div>
 

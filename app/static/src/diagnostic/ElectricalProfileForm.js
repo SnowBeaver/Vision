@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import Radio from 'react-bootstrap/lib/Radio';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var TestProfileSelectField = React.createClass({
@@ -177,10 +178,11 @@ const ElectricalProfileForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this._validate()){
-            NotificationManager.error('Please correct the errors');
-            return;
-        }
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+			return false;
+		}
         var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -230,16 +232,46 @@ const ElectricalProfileForm = React.createClass({
         } else {
             state[e.target.name] = e.target.value;
         }
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
     },
 
-    _validate: function () {
-        var response = true;
-        if (Object.keys(this.state.errors).length > 0){
-            response = false;
+    _validate: function (e) {
+        var errors = [];
+        var error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
         }
-        return response;
+        return errors;
     },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
+
     _formGroupClass: function (field) {
         var className = "form-group ";
         if (field) {
@@ -340,11 +372,15 @@ const ElectricalProfileForm = React.createClass({
                                     </div>
                                     <div className="col-md-2">
                                         <div className="row">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.name ? 'error' : null}>
                                                 <FormControl type="text"
                                                              placeholder="Electrical profile name"
                                                              name="name"
+                                                             data-len="256"
+                                                             value={this.state.name}
                                                 />
+                                                <HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+                                                <FormControl.Feedback />
                                             </FormGroup>
                                         </div>
                                         <div className="row">
@@ -357,13 +393,18 @@ const ElectricalProfileForm = React.createClass({
                                         </div>
                                     </div>
                                     <div className="col-md-4">
-                                        <FormGroup controlId="descTextarea">
+                                        <FormGroup controlId="descTextarea"
+                                                   validationState={this.state.errors.description ? 'error' : null}>
                                             <FormControl
                                                 componentClass="textarea"
                                                 placeholder="Description"
                                                 ref="description"
                                                 name="description"
+                                                data-len="1024"
+                                                value={this.state.description}
                                             />
+                                            <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+                                            <FormControl.Feedback />
                                         </FormGroup>
                                     </div>
 
