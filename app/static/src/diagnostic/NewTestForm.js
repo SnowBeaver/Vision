@@ -638,7 +638,7 @@ var NewTestForm = React.createClass({
             var form = {};
             for (var i = 0; i < fields.length; i++) {
                 var key = fields[i];
-                form[key] = data[key];
+                form[key] = (data[key] !== null) ? data[key] : "";
             }
             form['id'] = id;
             this.setState(form);
