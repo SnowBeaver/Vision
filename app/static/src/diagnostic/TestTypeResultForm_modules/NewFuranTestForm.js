@@ -102,6 +102,8 @@ var NewFuranTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
+        // Do not propagate the submit event of the main form
+        e.stopPropagation();
         if (!this._validate()){
             NotificationManager.error('Please correct the errors');
             e.stopPropagation();
@@ -119,7 +121,7 @@ var NewFuranTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
-
+        NotificationManager.success('Test values have been saved successfully.');
     },
 
     _onError: function (data) {

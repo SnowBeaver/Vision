@@ -85,7 +85,6 @@ var StatusSelectField = React.createClass({
 
     },
     componentWillUnmount: function () {
-        this.serverRequest.abort();
     },
     setVisible: function () {
         this.state.isVisible = true;
@@ -562,11 +561,10 @@ var EquipmentTestForm = React.createClass({
         this.setState({loading: false});
     },
 
-    _onSuccess: function (data) {
+    _onSuccess: function (data, status, xhr) {
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
         this.props.handleClose();
-        // show success message
         NotificationManager.success('Saved');
     },
 

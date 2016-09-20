@@ -89,6 +89,8 @@ var NewInsulationResistanceTestForm = React.createClass({
     },
     _onSubmit: function (e) {
         e.preventDefault();
+        // Do not propagate the submit event of the main form
+        e.stopPropagation();
         if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
             e.stopPropagation();
@@ -104,9 +106,9 @@ var NewInsulationResistanceTestForm = React.createClass({
         this.setState({loading: false});
     },
 
-    _onSuccess: function (data) {
+    _onSuccess: function (data, status, xhr) {
         // this.setState(this.getInitialState());
-        this.props.handleClose();
+        NotificationManager.success('Test values have been saved successfully.');
     },
 
     _onError: function (data) {
