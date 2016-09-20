@@ -17,12 +17,11 @@ var UpstreamSelectField = React.createClass({
         return this.state.isVisible;
     },
     componentDidMount: function () {
-        if (typeof this.props.streams_id != 'undefined') {
-            var source = '/api/v1.0/' + this.props.streams_id + '/up_down_stream/';
+        var source = '/api/v1.0//equipment/2/up_down_stream/';
         this.serverRequest = $.get(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
-        }
+        console.log('route from didmount:', source);
     },
     componentWillUnmount: function () {
         this.serverRequest.abort();
@@ -38,19 +37,17 @@ var UpstreamSelectField = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<div className="row" id={id}>
+        for (var key in  this.state.items.upstream) {
+            menuItems.push(<div className="row" >
                 <div className="col-md-10">
                     <FormGroup>
-                        <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props.onChange}
                                      name={name}
                                      value={value}
-                                     disabled={this.props.disabled}
                         >
-                            <option key={this.state.items[key].id}
-                                    value={this.state.items[key].id}>{`${this.state.items[key].parent_id}`}</option>
+                            <option
+                                    value={'Upstream '+`${this.state.items.upstream[key]}`}>{'Upstream '+`${this.state.items.upstream[key]}`}</option>
 
                             <FormControl.Feedback />
                         </FormControl>
@@ -84,12 +81,10 @@ var DownstreamSelectField = React.createClass({
         return this.state.isVisible;
     },
     componentDidMount: function () {
-        if (typeof this.props.streams_id != 'undefined') {
-            var source = '/api/v1.0/' + this.props.streams_id + '/up_down_stream/';
-        this.serverRequest = $.get(source, function (result) {
-            this.setState({items: (result['result'])});
-        }.bind(this), 'json');
-        }
+            var source = '/api/v1.0//equipment/2/up_down_stream/';
+            this.serverRequest = $.get(source, function (result) {
+                this.setState({items: (result['result'])});
+            }.bind(this), 'json');
     },
     componentWillUnmount: function () {
         this.serverRequest.abort();
@@ -105,19 +100,17 @@ var DownstreamSelectField = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<div className="row" id={id}>
+        for (var key in  this.state.items.downstream) {
+            menuItems.push(<div className="row" >
                 <div className="col-md-10">
                     <FormGroup>
-                        <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props.onChange}
                                      name={name}
                                      value={value}
-                                     disabled={this.props.disabled}
                         >
-                            <option key={this.state.items[key].id}
-                                    value={this.state.items[key].id}>{`${this.state.items[key].equipment_id}`}</option>
+                            <option
+                                    value={'Upstream '+`${this.state.items.upstream[key]}`}>{'Downstream '+`${this.state.items.downstream[key]}`}</option>
 
                             <FormControl.Feedback />
                         </FormControl>
@@ -178,7 +171,6 @@ var SelectField = React.createClass({
                              onChange={this.props.onChange}
                              name={name}
                              value={value}
-                             disabled={this.props.disabled}
                 >
                     <option key={null} value={null}>Choose Equipment</option>
                     {menuItems}
@@ -193,7 +185,6 @@ var EqConnectionsManager = React.createClass({
 
     getInitialState: function () {
         return {
-            streams_id: 0,
             loading: false,
             errors: {}
         }
@@ -201,24 +192,12 @@ var EqConnectionsManager = React.createClass({
 
     _save: function () {
         return $.ajax({
-            url: '/api/v1.0/equipment/',
+            url: '/api/v1.0/equipment/' + this.props.source,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function (data) {
-                if (Object.keys(subform).length != 0) {
-                    subform['equipment_id'] = data['result'];
-                    $.ajax({
-                        url: '/api/v1.0/' + path + '/',
-                        type: 'POST',
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(subform),
-                        success: function (data) {
-                        }
-                    });
-                }
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -285,22 +264,26 @@ var EqConnectionsManager = React.createClass({
             state[e.target.name] = e.target.value;
         } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
-        } else if (e.target.type == 'select-one' && e.target.name === 'equipment_id') {
-            state['streams_id']  = this.state.equipment_id;
         } else {
             state[e.target.name] = e.target.value;
         }
+
+        if (e.target.name == 'equipment_id') {
+            state['url_id'] = e.target.value;
+        }
         this.setState(state);
-        console.log("stream",this.state.streams_id);
     },
 
     render: function () {
+        var stream_source = '/equipment/' + this.state.url_id + '/up_down_stream';
+        console.log(stream_source);
+
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-4">
-                            <UpstreamSelectField source="equipment_connection"
+                            <UpstreamSelectField source={stream_source}
                                                  label="Upstream"
                                                  name='equipment_id'
                                                  value={this.state.equipment_id}
@@ -313,13 +296,9 @@ var EqConnectionsManager = React.createClass({
                                          name='equipment_id'
                                          value={this.state.equipment_id}
                             />
-                            <fieldset className="scheduler-border">
-                                <legend className="scheduler-border">Hint</legend>
-                                <b>You can change equipment's upstreams/downstreams using selectfields</b>
-                            </fieldset>
                         </div>
                         <div className="col-md-4">
-                            <DownstreamSelectField source="equipment_connection"
+                            <DownstreamSelectField source={stream_source}
                                                    label="Downstream"
                                                    name='parent_id'
                                                    value={this.state.parent_id}
