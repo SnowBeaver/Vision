@@ -348,7 +348,6 @@ var CampaignForm = React.createClass({
     onUserCreate: function (response) {
         this.setState({created_by_id: response.result});
         this.refs.created_by.setSelected(response);
-        NotificationManager.success("User added");
     },
 
     _getCampaign: function () {

@@ -68,6 +68,7 @@ var NewManufacturerForm = React.createClass({
 
 	_onSuccess: function (data) {
 		this.props.handleClose();
+		this.props.onCreate(data, this.props.fieldName);
 		NotificationManager.success("Manufacturer added.");
 	},
 

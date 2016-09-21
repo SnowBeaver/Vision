@@ -539,7 +539,8 @@ var FrequencySelectField = React.createClass({
             showNewEquipmentTypeForm: false,
             showNewManufacturerForm: false,
             showNewLocationForm: false,
-            showCreatedByForm: false,
+            showVisualInspectionForm: false,
+            showAssignToForm: false,
             showNewNormForm: false
         };
     },
@@ -611,7 +612,6 @@ var ManufacturedSelectField = React.createClass({
 
         return (
             <div>
-
                 <FormGroup controlId="formControlsSelect8"
                            validationState={this.props.errors.manufactured ? 'error' : null}>
                     <FormControl componentClass="select"
@@ -1021,9 +1021,15 @@ const EquipmentForm = React.createClass({
         })
     },
 
-    closeCreatedByForm: function () {
+    closeVisualInspectionForm: function () {
         this.setState({
-            showCreatedByForm: false
+            showVisualInspectionForm: false,
+        })
+    },
+
+    closeAssignToForm: function () {
+        this.setState({
+            showAssignToForm: false,
         })
     },
 
@@ -1039,7 +1045,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: true,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1048,7 +1055,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: true,
                 showNewLocationForm: false,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1057,7 +1065,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: true,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1066,7 +1075,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: true,
+                showVisualInspectionForm: true,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1075,7 +1085,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: true,
+                showVisualInspectionForm: false,
+                showAssignToForm: true,
                 showNewNormForm: false
             })
         }
@@ -1084,12 +1095,20 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: true
             })
         }
     },
 
+    onCreate: function (response, fieldName) {
+        var state = {};
+        state[fieldName] = response.result;
+        state.changedFields = this.state.changedFields.concat([fieldName]);
+        this.setState(state);
+        this.refs[fieldName].componentDidMount();
+    },
 
     render: function () {
         return (
@@ -1103,6 +1122,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/equipment_type"
                                         value={this.state.equipment_type_id}
                                         errors={this.state.errors}
+                                        ref="equipment_type_id"
                                         required
                                     />
                                 </div>
@@ -1127,6 +1147,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/manufacturer"
                                         value={this.state.manufacturer_id}
                                         errors={this.state.errors}
+                                        ref="manufacturer_id"
                                     />
                                 </div>
                                 <div className="col-md-1">
@@ -1144,6 +1165,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/location"
                                         value={this.state.location_id}
                                         errors={this.state.errors}
+                                        ref="location_id"
                                         required/>
                                 </div>
                                 <div className="col-md-1">
@@ -1161,6 +1183,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/visual_inspection_by"
                                         value={this.state.visual_inspection_by_id}
                                         errors={this.state.errors}
+                                        ref="visual_inspection_by_id"
                                         required/>
                                 </div>
                                 <div className="col-md-1">
@@ -1178,6 +1201,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/assigned_to"
                                         value={this.state.assigned_to_id}
                                         errors={this.state.errors}
+                                        ref="assigned_to_id"
                                         required
                                     />
                                 </div>
@@ -1196,6 +1220,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/norm"
                                         value={this.state.norm_id}
                                         errors={this.state.errors}
+                                        ref="norm_id"
                                         required
                                     />
                                 </div>
@@ -1458,7 +1483,10 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Equipment Type</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewEquipmentTypeForm data={this.props.data} handleClose={this.closeNewEquipmentTypeForm}/>
+                        <NewEquipmentTypeForm data={this.props.data}
+                                              handleClose={this.closeNewEquipmentTypeForm}
+                                              onCreate={this.onCreate}
+                                              fieldName="equipment_type_id"/>
                     </Modal.Body>
                 </Modal>
 
@@ -1467,7 +1495,10 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Manufacturer</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewManufacturerForm data={this.props.data} handleClose={this.closeNewManufacturerForm}/>
+                        <NewManufacturerForm data={this.props.data}
+                                             handleClose={this.closeNewManufacturerForm}
+                                             onCreate={this.onCreate}
+                                             fieldName="manufacturer_id"/>
                     </Modal.Body>
                 </Modal>
 
@@ -1476,16 +1507,34 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Location</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewLocationForm data={this.props.data} handleClose={this.closeNewLocationForm}/>
+                        <NewLocationForm data={this.props.data}
+                                         handleClose={this.closeNewLocationForm}
+                                         onCreate={this.onCreate}
+                                         fieldName="location_id"/>
                     </Modal.Body>
                 </Modal>
 
-                <Modal show={this.state.showCreatedByForm}>
+                <Modal show={this.state.showVisualInspectionForm}>
                     <Modal.Header>
                         <Modal.Title>New User Profile</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <CreatedByForm data={this.props.data} handleClose={this.closeCreatedByForm}/>
+                        <CreatedByForm data={this.props.data}
+                                       handleClose={this.closeVisualInspectionForm}
+                                       onCreate={this.onCreate}
+                                       fieldName="visual_inspection_by_id"/>
+                    </Modal.Body>
+                </Modal>
+
+                <Modal show={this.state.showAssignToForm}>
+                    <Modal.Header>
+                        <Modal.Title>New User Profile</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <CreatedByForm data={this.props.data}
+                                       handleClose={this.closeAssignToForm}
+                                       onCreate={this.onCreate}
+                                       fieldName="assigned_to_id"/>
                     </Modal.Body>
                 </Modal>
 
@@ -1494,7 +1543,10 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Norm</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewNormForm data={this.props.data} handleClose={this.closeNewNormForm}/>
+                        <NewNormForm data={this.props.data}
+                                     handleClose={this.closeNewNormForm}
+                                     onCreate={this.onCreate}
+                                     fieldName="norm_id"/>
                     </Modal.Body>
                 </Modal>
             </div>

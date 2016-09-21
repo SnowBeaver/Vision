@@ -74,6 +74,7 @@ var NewEquipmentTypeForm = React.createClass({
 	_onSuccess: function (data) {
 		this.setState(this.getInitialState());
 		this.props.handleClose();
+		this.props.onCreate(data, this.props.fieldName);
 		NotificationManager.success("Equipment Type added.");
 	},
 

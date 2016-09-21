@@ -182,7 +182,8 @@ var NewUserForm = React.createClass({
 	_onSuccess: function (data) {
 		this.setState(this.getInitialState());
 		this.props.handleClose();
-		this.props.onCreate(data);
+		this.props.onCreate(data, this.props.fieldName);
+		NotificationManager.success("User added.");
 	},
 
 	_onError: function (data) {

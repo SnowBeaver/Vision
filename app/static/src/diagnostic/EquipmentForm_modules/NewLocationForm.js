@@ -55,7 +55,6 @@ var NewLocationForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        var errors = this._validate();
         if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
 			return false;
@@ -76,6 +75,7 @@ var NewLocationForm = React.createClass({
     _onSuccess: function (data) {
         //this.setState(this.getInitialState());
         this.props.handleClose();
+        this.props.onCreate(data, this.props.fieldName);
         NotificationManager.success("Location added.");
     },
 
