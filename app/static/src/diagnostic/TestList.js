@@ -34,6 +34,35 @@ var TestItem = React.createClass({
     onRemove: function () {
     },
 
+    onDuplicate: function () {
+        var data = this.props.data;
+        // Remove extra fields which has not be sent by POST request
+        [
+            'id', 'analysis_number', 'equipment', 'lab', 'lab_contract',
+            'material', 'performed_by', 'test_reason', 'test_recommendations',
+            'test_sampling_cards', 'test_status', 'test_type', 'tests'
+        ].forEach(e => delete data[e]);
+
+        var url = '/api/v1.0/test_result/';
+        var that = this;
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {},
+            success: function () {
+                that.props.reloadList();
+                NotificationManager.success('Test has been duplicated successfully');
+            },
+            error: function () {
+                NotificationManager.error('Sorry an error occured');
+            },
+            complete: function () {}
+        });
+    },
+
     edit: function () {
         this.props.editTestForm(this.props.data.id);
     },
@@ -50,22 +79,23 @@ var TestItem = React.createClass({
 
         return (
             <tr>
-                <td className="col-md-2">
+                <td>
                     <a href="javascript: void(0);" onClick={this.edit}>{test_type_name}</a>
                 </td>
-                <td className="col-md-1">
-                    {test.analysis_number}
-                </td>
-                <td className="col-md-1">
-                    {test_status.name}
-                </td>
-                <td className="col-md-2">
-                    {performed_by_name}
-                </td>
-                <td className="col-md-1">
+                <td>{test.analysis_number}</td>
+                <td>{test_status.name}</td>
+                <td>{performed_by_name}</td>
+                <td>
                     <a href="javascript:void(0)"
                        className="glyphicon glyphicon-remove text-danger"
                        onClick={this.onRemove}
+                       aria-hidden="true">
+                    </a>
+                </td>
+                <td>
+                    <a href="javascript:void(0)"
+                       onClick={this.onDuplicate}
+                       className="glyphicon glyphicon-duplicate text-success"
                        aria-hidden="true">
                     </a>
                 </td>
@@ -135,7 +165,6 @@ var TestItemList = React.createClass({
     },
 
     render: function () {
-        console.log(this.props);
         var equipment_id = this.props.id;
         var tests = [];
         var data = {
@@ -159,7 +188,7 @@ var TestItemList = React.createClass({
                     continue;
                 }
 
-                tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm}/>)
+                tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm} reloadList={this.props.reloadList}/>)
             }
         }
 
@@ -177,14 +206,15 @@ var TestItemList = React.createClass({
 
                 <div className="row">
                     <div className="col-md-12">
-                    <Table responsive id="test_prof">
+                    <Table responsive hover id="test_prof">
                         <thead>
                         <tr>
-                            <td>Test name</td>
-                            <td>Analisys number</td>
-                            <td>Status</td>
-                            <td>Performed by</td>
-                            <td>Delete</td>
+                            <th className="col-md-2">Test name</th>
+                            <th className="col-md-1">Analisys number</th>
+                            <th className="col-md-1">Status</th>
+                            <th className="col-md-2">Performed by</th>
+                            <th className="col-md-1">Delete</th>
+                            <th className="col-md-1">Duplicate</th>
                         </tr>
                         </thead>
                         <tbody>
