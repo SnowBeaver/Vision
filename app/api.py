@@ -40,21 +40,40 @@ def get_model_by_path(path):
     return model_dict[path].get('model') or abort(500, 'Model missing')
 
 
-def get_add_schema_by_path(path):
+def get_schema_by_path(path):
     return model_dict[path].get('schema') or abort(500, 'Validation schema missing')
 
 
-def get_upd_schema_by_path(path):
-    return model_dict[path].get('upd_schema') or get_add_schema_by_path(path)
+# Returns dict with data for Tree model based on item information
+def prepare_data_for_tree(equipment):
+    short_name = eq_type_dict.get(equipment.equipment_type_id, '')
+    return {
+        'equipment_id': equipment.id,
+        'parent_id': 32,
+        'icon': '../app/static/img/icons/{0}_b.ico'.format(short_name),
+        'type': '{0}'.format(short_name)
+    }
+
+
+def prepare_data_for_tree_translation(tree_item_id, equipment_name):
+    return {
+        'id': tree_item_id,
+        'locale': 'en',
+        'text': equipment_name,
+        'tooltip': equipment_name
+        # 'text': param_dict['name'],
+        # 'tooltip': param_dict['name']
+    }
 
 
 # Verifications
-def abort_if_not_validates(validation_schema, data_to_validate=None):
+def validate_or_abort(path, data_to_validate=None, update=False, context=None):
     if not data_to_validate:
         data_to_validate = request.json
     v = Validator(ignore_none_values=True)
-    if not v.validate(data_to_validate, validation_schema):
+    if not v.validate(data_to_validate, get_schema_by_path(path), update, context):
         abort(400, v.errors)
+    return v.document
 
 
 def abort_if_json_missing():
@@ -74,10 +93,10 @@ def abort_if_wrong_id(item_id):
 
 # Standard CRUD functions
 # Create
-def add_item(path, param_dict):
+def add_item(path, data):
     items_model = get_model_by_path(path)
     item = items_model()
-    set_attrs_to_item(item, param_dict)
+    set_attrs_to_item(item, data)
     try:
         db.session.add(item)
         db.session.commit()
@@ -111,7 +130,6 @@ def get_items(path, args):
 
 # Update
 def update_item(path, item_id, data):
-    abort_if_not_validates(get_upd_schema_by_path(path), data)
     item = db.session.query(get_model_by_path(path)).get(item_id)
     set_attrs_to_item(item, data)
     try:
@@ -119,7 +137,7 @@ def update_item(path, item_id, data):
     except Exception as e:
         abort(500, e.args)
 
-    return item.serialize()
+    return item
 
 
 # Delete
@@ -136,36 +154,24 @@ def delete_item(path, item_id):
 
 # Custom CRUD functions
 # Add equipment and add related objects automaticaly
-def add_equipment():
-    path = 'equipment'
-    abort_if_not_validates(get_add_schema_by_path(path))
-    extra_fields_dict = request.json.pop('extra_fields', {})
-    item = add_item(path, request.json)
-    short_name = eq_type_dict.get(item.equipment_type_id, '')
-    param_tree_dict = {
-        'equipment_id': item.id,
-        'parent_id': 32,
-        'icon': '../app/static/img/icons/{0}_b.ico'.format(short_name),
-        'type': '{0}'.format(short_name)
-    }
-    item_tree = add_item('tree', param_tree_dict)
+def add_equipment(path, data):
+    extra_fields_dict = data.pop('extra_fields', {})
+    item = add_item(path, data)
 
-    param_tree_trans_dict = {
-        'id': item_tree.id,
-        'locale': 'en',
-        'text': item.name,
-        'tooltip': item.name
-        # 'text': param_dict['name'],
-        # 'tooltip': param_dict['name']
-    }
-    add_item('tree_translation', param_tree_trans_dict)
+    tree_data = prepare_data_for_tree(item)
+    # validate_or_abort('tree', tree_data)
+    item_tree = add_item('tree', tree_data)
 
-    extra_table_name = item.equipment_type and item.equipment_type.table_name
+    tree_trans_data = prepare_data_for_tree_translation(item_tree.id, item.name)
+    # validate_or_abort('tree_translation', tree_trans_data)
+    add_item('tree_translation', tree_trans_data)
+
     if extra_fields_dict:
+        extra_table_name = item.equipment_type and item.equipment_type.table_name
         extra_fields_dict['equipment_id'] = item.id
-        # abort_if_not_validates(get_add_schema_by_path(extra_table_name), extra_fields_dict)
+        # validate_or_abort(extra_table_name, extra_fields_dict)
         add_item(extra_table_name, extra_fields_dict)
-    return item.id
+    return item
 
 
 # Get equipment upstreams and downstreams
@@ -179,13 +185,13 @@ def get_up_down_stream_of_equipment(item_id):
     return {'upstream': upstream, 'downstream': downstream}
 
 
-def add_up_down_stream_to_equipment(item_id):
+def add_up_down_stream_to_equipment(item_id, data):
     path = 'equipment_connection'
-    upstream_list = request.json.get('upstream', [])
+    upstream_list = data.get('upstream', [])
     for upstream_id in upstream_list:
         add_item(path, {'equipment_id': item_id, 'parent_id': upstream_id})
 
-    downstream_list = request.json.get('downstream', [])
+    downstream_list = data.get('downstream', [])
     for downstream_id in downstream_list:
         add_item(path, {'equipment_id': downstream_id, 'parent_id': item_id})
 
@@ -213,11 +219,9 @@ def delete_up_down_stream_of_equipment(item_id):
 
 
 # Add a lot of test results
-def add_items():
-    path = 'test_result_equipment'
-    abort_if_not_validates(get_add_schema_by_path(path))
+def add_items(path, data):
     items_model = get_model_by_path(path)
-    campaign_id = request.json.get('campaign_id')
+    campaign_id = data.get('campaign_id')
     # TODO - deleting of all related test results IMHO isn't the best way
     # because of related to test results objects like tests
     try:
@@ -227,7 +231,7 @@ def add_items():
     else:
         db.session.commit()
 
-    equipment_ids = request.json.get('equipment_id')
+    equipment_ids = data.get('equipment_id')
     if not isinstance(equipment_ids, Iterable):
         equipment_ids = [equipment_ids]
     return [add_item(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
@@ -240,8 +244,8 @@ def add_or_update_tests(path):
         if 'id' in test:
             item = db.session.query(items_model).get(test['id'])
         else:
-            abort_if_not_validates(get_add_schema_by_path(path), test)
-            item = add_item(path, test)
+            validated_data = validate_or_abort(path, test)
+            item = add_item(path, validated_data)
 
         items.append(item)
         set_attrs_to_item(item, test)
@@ -255,24 +259,22 @@ def add_or_update_tests(path):
 
 
 # Create user
-def add_user():
-    path = 'user'
-    abort_if_not_validates(get_add_schema_by_path(path))
+def add_user(path, data):
     items_model = get_model_by_path(path)
     item = items_model()
-    role_id = request.json.pop("roles", None)
+    role_id = data.pop("roles", None)
     if role_id:
         role = db.session.query(Role).filter(Role.id == role_id).first()
         item.roles = [role] if role else abort(400, {"roles": "invalid value"})
 
-    item.password = encrypt_password(request.json["password"])
-    country_id = request.json.get("country_id")
+    item.password = encrypt_password(data["password"])
+    country_id = data.get("country_id")
     if country_id:
         country_exists = db.session.query(db.exists().where(Country.id == country_id)).scalar()
         if not country_exists:
             abort(400, {"country_id": "invalid value"})
 
-    set_attrs_to_item(item, request.json)
+    set_attrs_to_item(item, data)
     try:
         db.session.add(item)
         db.session.commit()
@@ -309,8 +311,9 @@ def internal_server_error(error):
 def create_item_handler(path):
     abort_if_wrong_path(path)
     abort_if_json_missing()
-    abort_if_not_validates(get_add_schema_by_path(path))
-    return return_json('result', add_item(path, request.json).id)
+    validated_data = validate_or_abort(path)
+    new_item = add_item(path, validated_data)
+    return return_json('result', new_item.id)
 
 
 # Read
@@ -333,7 +336,9 @@ def update_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_json_missing()
-    return return_json('result', update_item(path, item_id, request.args))
+    validated_data = validate_or_abort(path, update=True)
+    updated_item = update_item(path, item_id, validated_data)
+    return return_json('result', updated_item.serialize())
 
 
 # Delete
@@ -363,15 +368,19 @@ def get_test_profile():
 # Create equipment
 @api_blueprint.route('/equipment/', methods=['POST'])
 def create_equipment_handler():
+    path = 'equipment'
     abort_if_json_missing()
-    return return_json('result', add_equipment())
+    validated_data = validate_or_abort(path)
+    new_item = add_equipment(path, validated_data)
+    return return_json('result', new_item.id)
 
 
 # Create equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['POST'])
 def create_equipment_up_down_stream_handler(item_id):
     abort_if_json_missing()
-    return return_json('result', add_up_down_stream_to_equipment(item_id))
+    # validated_data = validate_or_abort('equipment_up_down_stream')
+    return return_json('result', add_up_down_stream_to_equipment(item_id, request.json))
 
 
 # Get equipment upstreams and downstreams
@@ -390,8 +399,10 @@ def delete_equipment_up_down_stream_handler(item_id):
 # Create a lot of test_results with equipment using one query
 @api_blueprint.route('/test_result/equipment', methods=['POST'])
 def handler_items():
+    path = 'test_result_equipment'
     abort_if_json_missing()
-    return return_json('result', add_items())
+    validated_data = validate_or_abort(path)
+    return return_json('result', add_items(path, validated_data))
 
 
 # Create or update a lot of tests
@@ -408,8 +419,11 @@ def handler_tests(path):
 # Create user
 @api_blueprint.route('/user/', methods=['POST'])
 def create_user_handler():
+    path = 'user'
     abort_if_json_missing()
-    return return_json('result', add_user().id)
+    validated_data = validate_or_abort(path)
+    new_user = add_user(path, validated_data)
+    return return_json('result', new_user.id)
 
 
 api.register_blueprint(api_blueprint)
