@@ -302,6 +302,7 @@ user_schema = {
 }
 electrical_profile_schema = {
     'id': readonly_dict,
+    'user_id': type_integer_coerce_dict,
     'name': type_string_maxlength_256_dict,
     'description': type_string_maxlength_1024_dict,
     'shared': type_boolean_coerce_dict,
@@ -321,6 +322,7 @@ country_schema = {
 }
 fluid_profile_schema = {
     'id': readonly_dict,
+    'user_id': type_integer_coerce_dict,
     'name': type_string_maxlength_256_dict,
     'description': type_string_maxlength_1024_dict,
     'shared': type_boolean_coerce_dict,

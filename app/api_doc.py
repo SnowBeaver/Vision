@@ -849,6 +849,7 @@ doc = ApiDoc(app=api)
             "resistance": true,
             "degree": true,
             "turns": true,
+            "user_id": 1
         }
     }
 
@@ -865,6 +866,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}       resistance
 @apiSuccess {Boolean}       degree
 @apiSuccess {Boolean}       turns
+@apiSuccess {Integer}       user_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -889,6 +891,7 @@ doc = ApiDoc(app=api)
 @apiParam {Boolean}       resistance
 @apiParam {Boolean}       degree
 @apiParam {Boolean}       turns
+@apiParam {Integer}       user_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -988,6 +991,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {Boolean}       visual
 @apiSuccess {Boolean}       pcb_vial
 @apiSuccess {Boolean}       antioxidant
+@apiSuccess {Integer}       user_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -1037,6 +1041,7 @@ doc = ApiDoc(app=api)
 @apiParam {Boolean}       visual
 @apiParam {Boolean}       pcb_vial
 @apiParam {Boolean}       antioxidant
+@apiParam {Integer}       user_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """

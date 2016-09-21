@@ -78,6 +78,9 @@ class ElectricalProfile(db.Model):
     degree = db.Column(db.Boolean(False))
     turns = db.Column(db.Boolean(False))
 
+    user_id = db.Column(db.ForeignKey("users_user.id"))
+    user = db.relationship('User', foreign_keys='ElectricalProfile.user_id')
+
     def dump(self, _indent=0):
         return "   " * _indent + repr(self) + \
                "\n" + \
@@ -129,6 +132,7 @@ class ElectricalProfile(db.Model):
                 'degree': self.degree,
                 'turns': self.turns,
                 'profile_type': 'electrical_profile',
+                'user_id': self.user_id,
                 }
 
 
@@ -304,6 +308,9 @@ class FluidProfile(db.Model):
     description = db.Column(db.Unicode(1024))
     shared = db.Column(db.Boolean)
 
+    user_id = db.Column(db.ForeignKey("users_user.id"))
+    user = db.relationship('User', foreign_keys='FluidProfile.user_id')
+
     # syringe
     gas = db.Column(db.Boolean(False))
     water = db.Column(db.Boolean(False))
@@ -413,6 +420,7 @@ class FluidProfile(db.Model):
                 'qty_vial': self.qty_vial,
                 'sampling_vial': self.sampling_vial,
                 'profile_type': 'fluid_profile',
+                'user_id': self.user_id,
                 }
 
 
