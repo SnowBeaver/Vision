@@ -337,13 +337,13 @@ var CampaignForm = React.createClass({
     },
 
     onContractCreate: function (response) {
-        this.setState({contract: response.result});
+        this.setState({contract_id: response.result});
         this.refs.contract.setSelected(response);
         NotificationManager.success("Contract added", null, 1000);
     },
 
     onUserCreate: function (response) {
-        this.setState({created_by: response.result});
+        this.setState({created_by_id: response.result});
         this.refs.created_by.setSelected(response);
         NotificationManager.success("User added");
     },
