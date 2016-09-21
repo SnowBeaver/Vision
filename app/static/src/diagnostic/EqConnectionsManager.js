@@ -6,6 +6,7 @@ import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
+
 var UpstreamSelectField = React.createClass({
     getInitialState: function () {
         return {
@@ -23,23 +24,21 @@ var UpstreamSelectField = React.createClass({
             });
         }.bind(this), 'json');
     },
+
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function () {
-        this.state.isVisible = true;
+
+    removeUpstream: function () {
+        this.props.removeUpstreamSelect(0);
     },
-    removeSelect: function () {
-        this.props.removeSelect(this.props.index);
-    },
+
     render: function () {
 
-        console.log(this.props.upstream);
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
         }
-        var id;
         var key;
         var label_num = 0;
         var menuItems = [];
@@ -56,17 +55,16 @@ var UpstreamSelectField = React.createClass({
             label = 'Upstream ' + label_num;
             var name = 'upstream' + key;
             upstreams.push(<div className="row">
-                <div className="col-md-10">
+                <div className="col-md-10" id={this.props.upstream[key]}>
                     <FormGroup >
                         <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props.onChange}
                                      name={name}
                                      value={this.props.upstream[key]}
+
                         >
-                            <option key={this.state.equipment[this.props.upstream[key]].id}
-                                    value={this.state.equipment[this.props.upstream[key]].id}>
-                                {`${this.state.equipment[this.props.upstream[key]].name}`}</option>
+                            <option value='undefined'>Choose equipment</option>
                             {menuItems}
                             <FormControl.Feedback />
                         </FormControl>
@@ -75,7 +73,7 @@ var UpstreamSelectField = React.createClass({
                 <div className="col-md-2">
                     <a href="javascript:void(0)"
                        className="glyphicon glyphicon-remove text-danger"
-                       onClick={this.removeSelect}
+                       onClick={this.removeUpstream}
                        aria-hidden="true">
                     </a>
                 </div>
@@ -89,6 +87,7 @@ var UpstreamSelectField = React.createClass({
         );
     }
 });
+
 
 var DownstreamSelectField = React.createClass({
     getInitialState: function () {
@@ -110,20 +109,18 @@ var DownstreamSelectField = React.createClass({
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function () {
-        this.state.isVisible = true;
+
+    removeDownstream: function () {
+        this.props.removeDownstreamSelect(2);
     },
-    removeSelect: function () {
-        this.props.removeSelect(this.props.index);
-    },
+
     render: function () {
 
-        console.log(this.props.downstream);
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
         }
-        var id;
+
         var key;
         var label_num = 0;
         var menuItems = [];
@@ -135,22 +132,25 @@ var DownstreamSelectField = React.createClass({
                         value={this.state.equipment[key].id}>{`${this.state.equipment[key].name}`}</option>
             );
         }
+
         for (key in this.props.downstream) {
             label_num++;
-            label = 'downstream ' + label_num;
+            label = 'Downstream ' + label_num;
             var name = 'downstream' + key;
+            var id = this.props.downstream[key];
             downstreams.push(<div className="row">
-                <div className="col-md-10">
+                <div className="col-md-10" id={this.props.downstream[key]} key={key}>
                     <FormGroup >
                         <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props.onChange}
                                      name={name}
                                      value={this.props.downstream[key]}
+
                         >
-                            <option key={this.state.equipment[this.props.downstream[key]].id}
-                                    value={this.state.equipment[this.props.downstream[key]].id}>
-                                {`${this.state.equipment[this.props.downstream[key]].name}`}</option>
+                            <option key={this.props.downstream[key]}
+                                    value='undefined'> Choose equipment
+                            </option>
                             {menuItems}
                             <FormControl.Feedback />
                         </FormControl>
@@ -159,7 +159,7 @@ var DownstreamSelectField = React.createClass({
                 <div className="col-md-2">
                     <a href="javascript:void(0)"
                        className="glyphicon glyphicon-remove text-danger"
-                       onClick={this.removeSelect}
+                       onClick={this.removeDownstream}
                        aria-hidden="true">
                     </a>
                 </div>
@@ -174,11 +174,12 @@ var DownstreamSelectField = React.createClass({
     }
 });
 
+
 var SelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false,
+            isVisible: false
         };
     },
     isVisible: function () {
@@ -222,11 +223,14 @@ var SelectField = React.createClass({
     }
 });
 
+
 var EqConnectionsManager = React.createClass({
 
     getInitialState: function () {
         return {
             items: {},
+            data: {"upstream": [], "downstream": []},
+            deldata: {"upstream2": [], "downstream2": []},
             loading: false,
             errors: {},
             equipment_id: 2
@@ -235,13 +239,32 @@ var EqConnectionsManager = React.createClass({
     },
 
     _save: function () {
+
+        var data = this.state;
+        var deldata = this.state.deldata;
+        var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
+
+
         return $.ajax({
-            url: '/api/v1.0/equipment/' + this.props.source,
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data) {
+            success: function (deldata) {
+                if (Object.keys(deldata).length != 0) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify(deldata),
+                        success: function (data) {
+                        },
+                        beforeSend: function () {
+                        }
+                    })
+                }
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -252,10 +275,6 @@ var EqConnectionsManager = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this._validate()) {
-            NotificationManager.error('Please correct the errors');
-            return;
-        }
         this._clearErrors();
         var xhr = this._save();
         xhr.done(this._onSuccess)
@@ -307,17 +326,18 @@ var EqConnectionsManager = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
+        var state = {
+            upstream: [],
+            downstream: []
+        };
 
-        if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
-        } else if (e.target.type == 'radio') {
-            state[e.target.name] = e.target.value;
-        } else if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
-        } else {
-            state[e.target.name] = e.target.value;
+        if (e.target.name.indexOf('upstream')) {
+            state['upstream'][e.target.name] = e.target.value;
+        } else if (e.target.name.indexOf('downstream')) {
+            state['downstream'][e.target.name] = e.target.value;
         }
+
+        state[e.target.name] = e.target.value;
 
         if (e.target.name === 'equipment_id') {
             var id = e.target.value;
@@ -328,9 +348,27 @@ var EqConnectionsManager = React.createClass({
                     equipment_id: id
                 });
             }.bind(this), 'json');
-
-            this.setState({});
         }
+        this.setState(state);
+    },
+
+    removeUpstreamSelect: function (id) {
+        console.log("handler id", id);
+        var items = this.state.items.upstream;
+        items.splice(items.indexOf(id), 1);
+        this.state.deldata.upstream2.push(id);
+        this.setState({
+            upstream: items
+        });
+    },
+
+    removeDownstreamSelect: function (id) {
+        var items = this.state.items.downstream;
+        items.splice(items.indexOf(id), 1);
+        this.state.deldata.downstream2.push(id);
+        this.setState({
+            downstream: items
+        });
 
     },
 
@@ -347,6 +385,7 @@ var EqConnectionsManager = React.createClass({
                         <div className="col-md-4">
                             <UpstreamSelectField upstream={this.state.items.upstream}
                                                  value={this.state.equipment_id}
+                                                 removeUpstreamSelect={this.removeUpstreamSelect}
                             />
                         </div>
                         <div className="col-md-4 ">
@@ -360,6 +399,7 @@ var EqConnectionsManager = React.createClass({
                         <div className="col-md-4">
                             <DownstreamSelectField downstream={this.state.items.downstream}
                                                    value={this.state.parent_id}
+                                                   removeDownstreamSelect={this.removeDownstreamSelect}
                             />
                         </div>
                     </div>
