@@ -234,7 +234,7 @@ const ElectricalProfileForm = React.createClass({
         } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         } else if (e.target.type == 'radio') {
-            state[e.target.name] = e.target.value;
+            state[e.target.name] = (e.target.value == "1");
         } else {
             state[e.target.name] = e.target.value;
         }

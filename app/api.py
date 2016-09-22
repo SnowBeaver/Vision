@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, MetaData
 from flask.ext.blogging import SQLAStorage
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
+from flask.ext import login
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -171,6 +172,22 @@ def add_equipment(path, data):
         extra_fields_dict['equipment_id'] = item.id
         # validate_or_abort(extra_table_name, extra_fields_dict)
         add_item(extra_table_name, extra_fields_dict)
+    return item
+
+
+def add_fluid_profile(path, data):
+    if data.get("shared") is False:
+        # Save id of the current user
+        data["user_id"] = login.current_user.id if login.current_user else None
+    item = add_item(path, data)
+    return item
+
+
+def add_electrical_profile(path, data):
+    if data.get("shared") is False:
+        # Save id of the current user
+        data["user_id"] = login.current_user.id if login.current_user else None
+    item = add_item(path, data)
     return item
 
 
@@ -424,6 +441,26 @@ def create_user_handler():
     validated_data = validate_or_abort(path)
     new_user = add_user(path, validated_data)
     return return_json('result', new_user.id)
+
+
+# Create fluid_profile
+@api_blueprint.route('/fluid_profile/', methods=['POST'])
+def create_fluid_profile_handler():
+    path = 'fluid_profile'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_item = add_fluid_profile(path, validated_data)
+    return return_json('result', new_item.id)
+
+
+# Create fluid_profile
+@api_blueprint.route('/electrical_profile/', methods=['POST'])
+def create_electrical_profile_handler():
+    path = 'electrical_profile'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_item = add_electrical_profile(path, validated_data)
+    return return_json('result', new_item.id)
 
 
 api.register_blueprint(api_blueprint)

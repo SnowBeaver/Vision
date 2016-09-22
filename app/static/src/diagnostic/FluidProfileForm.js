@@ -410,7 +410,7 @@ const FluidProfileForm = React.createClass({
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         } else if (e.target.type == 'radio') {
-            state[e.target.name] = e.target.value;
+            state[e.target.name] = (e.target.value == "1");
         } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         } else {
