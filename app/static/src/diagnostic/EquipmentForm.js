@@ -6,7 +6,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
-import DateTimePicker from 'react-bootstrap-datetimepicker';
+import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
 import Modal from 'react-bootstrap/lib/Modal';
 import NewManufacturerForm from './EquipmentForm_modules/NewManufacturerForm';
@@ -710,7 +710,6 @@ const EquipmentForm = React.createClass({
         var response = {
             loading: false,
             errors: {},
-            visual_date: new Date().toISOString(),
             subform: {},
             fields: [
                 'equipment_type_id',
@@ -734,7 +733,8 @@ const EquipmentForm = React.createClass({
                 'invalidation',
                 'prev_serial_number',
                 'prev_equipment_number',
-                'manufactured'
+                'manufactured',
+                'visual_date'
             ],
             changedFields: [],
             option_text: {},
@@ -744,7 +744,6 @@ const EquipmentForm = React.createClass({
         for (var i = 0; i < response.fields.length; i++) {
             response[response.fields[i]] = "";
         }
-        response["visual_date"] = new Date().toISOString();
         return response;
     },
 
@@ -1110,7 +1109,34 @@ const EquipmentForm = React.createClass({
         this.refs[fieldName].componentDidMount();
     },
 
+    setVisualDate: function (timestamp){
+        this._setDateTimeFieldDate(timestamp, "visual_date");
+    },
+
+    _setDateTimeFieldDate(timestamp, fieldName){
+        var state = {};
+        // If date is not valid (for example, date is deleted) string "Invalid date" is received
+        if (timestamp == "Invalid date"){
+            timestamp = null;
+        } else if (timestamp){
+            // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
+            // Format date here instead of specifying format in DateTimeField,
+            // because error is raised when format is specified, but date is null/undefined/empty string.
+            if (/^\d+$/.test(timestamp)){
+                timestamp = parseInt(timestamp);
+                timestamp = moment(timestamp).toISOString();
+            }
+            state[fieldName] = timestamp;    // Already formatted to ISO string
+        }
+        state.changedFields = this.state.changedFields.concat(["visual_date"]);
+        this.setState(state);
+    },
+
     render: function () {
+        var ISODateFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
+        // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
+        var visualDate = this.state.visual_date;
+        visualDate = (visualDate) ? {dateTime: visualDate, format: ISODateFormat} : {defaultText: "Please select a date"};
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -1332,14 +1358,13 @@ const EquipmentForm = React.createClass({
 
                             <div className="row">
                                 <div className="col-lg-5">
-                                    <FormGroup controlId="DateTimePicker"
+                                    <FormGroup controlId="DateTimeField"
                                                validationState={this.state.errors.visual_date ? 'error' : null}>
                                         <ControlLabel>Visual Date</ControlLabel>
-                                        <DateTimePicker name="visual_date"
-                                                        defaultText="Please select a date"
-                                                        datetime={this.state.visual_date}
-                                                        ref="visual_date"
-                                        />
+                                        <DateTimeField name="visual_date"
+                                                       ref="visual_date"
+                                                       onChange={this.setVisualDate}
+                                                       {...visualDate}/>
                                         <HelpBlock className="warning">{this.state.errors.visual_date}</HelpBlock>
                                         <FormControl.Feedback />
                                     </FormGroup>

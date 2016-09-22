@@ -164,14 +164,21 @@ var SyringeNumberSelectField = React.createClass({
 });
 
 const DateTimeFieldWithLabel = React.createClass({
+    _onChange: function (timestamp) {
+        this.props.onDateTimeFieldChange(timestamp, this.props.name);
+    },
     render: function () {
+        var ISODateFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
+        // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
+        var dateValue = this.props.value;
+        dateValue = (dateValue) ? {dateTime: dateValue, format: ISODateFormat} : {defaultText: "Please select a date"};
+
         return (
             <div className="datetimepicker input-group date">
                 <ControlLabel>{label}</ControlLabel>
-                <DateTimeField datetime={value} name={name} onChange={this.props.onChange}/>
+                <DateTimeField name={name} onChange={this._onChange} {...dateValue}/>
             </div>
         );
     }
@@ -242,11 +249,11 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      value={data.performed_by_id}
                                      disabled/>
                     </div>
-                    <div className="col-md-3 nopadding padding-right-xs">
-                        <DateTimeFieldWithLabel label="Date analyse"
-                                                name='date_analyse'
-                                                value={data.date_analyse}
-                                                onChange={this.props.onChange}/>
+                    <div className="col-md-2 nopadding padding-right-xs">
+                        <TextField label="Fluid Temperature (&#8451;)"
+                                   name='temperature'
+                                   value={data.temperature}
+                                   />
                     </div>
                 </div>
                 <div className="row">
@@ -272,9 +279,9 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      />
                     </div>
                     <div className="col-md-2 nopadding padding-right-xs">
-                        <TextField label="Fluid Temperature (&#8451;)"
-                                   name='temperature'
-                                   value={data.temperature}
+                        <TextField label="Load (MVA)"
+                                   value={data.charge}
+                                   name="charge"
                                    />
                     </div>
                 </div>
@@ -295,16 +302,18 @@ var EquipmentTestIdentificationForm = React.createClass({
                                                   />
                     </div>
                     <div className="col-md-3 ">
-                        <DateTimeFieldWithLabel label="Lab Analysis Date "
-                                                name='lab_date'
-                                                value={data.lab_date}
-                                                onChange={this.props.onChange}/>
+                        <DateTimeFieldWithLabel label="Lab Analysis Date"
+                                                name='date_analyse'
+                                                value={data.date_analyse}
+                                                onChange={this.props.onChange}
+                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
                     </div>
-                    <div className="col-md-2 nopadding padding-right-xs">
-                        <TextField label="Load (MVA)"
-                                   value={data.charge}
-                                   name="charge"
-                                   />
+                    <div className="col-md-3 nopadding padding-right-xs">
+                        <SelectField source="lab"
+                                     label="Lab./On-line analyser"
+                                     name='lab_id'
+                                     value={data.lab_id}
+                                     />
                     </div>
                 </div>
                 <div className="row">
@@ -327,13 +336,6 @@ var EquipmentTestIdentificationForm = React.createClass({
                                    value={data.analysis_number}
                                    name="test_number"
                                    disabled/>
-                    </div>
-                    <div className="col-md-3 nopadding padding-right-xs">
-                        <SelectField source="lab"
-                                     label="Lab./On-line analyser"
-                                     name='lab_id'
-                                     value={data.lab_id}
-                                     />
                     </div>
                 </div>
             </div>
@@ -361,14 +363,15 @@ var EquipmentTestRepairForm = React.createClass({
                     </div>
                 </div>
                 <div className="col-lg-12 nopadding">
-                    <div className="col-lg-6 nopadding padding-right-xs">Sample ?
+                    <div className="col-lg-6 nopadding padding-right-xs">Sample
                         <FormControl type="text" value=""/>
                     </div>
                     <div className="col-lg-6 nopadding">
                         <DateTimeFieldWithLabel label="Repair date"
-                                                name='lab_date'
+                                                name='repair_date'
                                                 value={data.repair_date}
-                                                onChange={this.props.onChange}/>
+                                                onChange={this.props.onChange}
+                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
                     </div>
                 </div>
             </div>
@@ -512,7 +515,8 @@ var EquipmentTestForm = React.createClass({
             fields: ['test_type_id', 'test_reason_id',
                 'status_id', 'temperature', 'lab_contract_id',
                 'sampling_point_id', 'equipment_id', 'lab_id',
-                'remark', 'repair_description', 'fluid_type_id'],
+                'remark', 'repair_description', 'fluid_type_id',
+                'date_analyse', 'repair_date'],
             errors: {},
             data: null
         }
@@ -617,6 +621,24 @@ var EquipmentTestForm = React.createClass({
         }.bind(this), 'json');
     },
 
+    _onDateTimeFieldChange: function (timestamp, fieldName) {
+        var stateData = this.state.data;
+        // If date is not valid (for example, date is deleted) string "Invalid date" is received
+        if (timestamp == "Invalid date"){
+            timestamp = null;
+        } else if (timestamp){
+            // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
+            // Format date here instead of specifying format in DateTimeField,
+            // because error is raised when format is specified, but date is null/undefined/empty string.
+            if (/^\d+$/.test(timestamp)){
+                timestamp = parseInt(timestamp);
+                timestamp = moment(timestamp).toISOString();
+            }
+            stateData[fieldName] = timestamp;    // Already formatted to ISO string
+        }
+        this.setState({data: stateData});
+    },
+
     render: function () {
         var data = (this.state.data != null) ? this.state.data : {};
         return (
@@ -634,7 +656,8 @@ var EquipmentTestForm = React.createClass({
                         <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                             <div id="tabs-1" role="tabpanel" className="tab-pane active ">
                                 <EquipmentTestIdentificationForm data={data}
-                                                                 onChange={this._onChange}/>
+                                                                 onChange={this._onChange}
+                                                                 onDateTimeFieldChange={this._onDateTimeFieldChange}/>
                             </div>
                             <div id="tabs-2" role="tabpanel" className="tab-pane">
                                 <TestValuesForm testResultId={this.props.selectedRowId}
@@ -643,7 +666,8 @@ var EquipmentTestForm = React.createClass({
                             </div>
                             <div id="tabs-3" role="tabpanel" className="tab-pane">
                                 <EquipmentTestRepairForm data={data}
-                                                         onChange={this._onChange}/>
+                                                         onChange={this._onChange}
+                                                         onDateTimeFieldChange={this._onDateTimeFieldChange}/>
                             </div>
                             <div id="tabs-4" role="tabpanel" className="tab-pane">
                                 <EquipmentTestDiagnosisForm data={data}

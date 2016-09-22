@@ -182,7 +182,6 @@ var CampaignForm = React.createClass({
             loading: false,
             campaign_id: false,
             date_created: new Date().toISOString(),
-            date_sampling: new Date().toISOString(),
             errors: {},
             showCreatedByForm: false,
             showNewContractForm: false,
@@ -354,8 +353,37 @@ var CampaignForm = React.createClass({
         return this.state.campaign_id;
     },
 
-    render: function () {
+    setDateCreated: function (timestamp){
+        this._setDateTimeFieldDate(timestamp, "date_created");
+    },
 
+    setDateSampling: function (timestamp){
+        this._setDateTimeFieldDate(timestamp, "date_sampling");
+    },
+
+    _setDateTimeFieldDate(timestamp, fieldName){
+        var state = {};
+        // If date is not valid (for example, date is deleted) string "Invalid date" is received
+        if (timestamp == "Invalid date"){
+            timestamp = null;
+        } else if (timestamp){
+            // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
+            // Format date here instead of specifying format in DateTimeField,
+            // because error is raised when format is specified, but date is null/undefined/empty string.
+            if (/^\d+$/.test(timestamp)){
+                timestamp = parseInt(timestamp);
+                timestamp = moment(timestamp).toISOString();
+            }
+            state[fieldName] = timestamp;    // Already formatted to ISO string
+        }
+        this.setState(state);
+    },
+
+    render: function () {
+        var ISODateFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
+        // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
+        var dateSampling = this.state.date_sampling;
+        dateSampling = (dateSampling) ? {dateTime: dateSampling, format: ISODateFormat} : {defaultText: "Please select a date"};
         return (
             <div className="form-container">
                 <Panel header="New Campaign">
@@ -384,9 +412,12 @@ var CampaignForm = React.createClass({
                             <div className="col-md-3">
                                 <div className="datetimepicker input-group date">
                                     <FormGroup validationState={this.state.errors.date_created ? 'error' : null}>
-                                        <ControlLabel>Date Created</ControlLabel>
+                                        <ControlLabel>Date Created *</ControlLabel>
                                         <DateTimeField name="date_created"
-                                                       datetime={this.state.date_created}/>
+                                                       inputProps={{required: true}}
+                                                       dateTime={this.state.date_created}
+                                                       format = {ISODateFormat}
+                                                       onChange={this.setDateCreated}/>
                                         <HelpBlock className="warning">{this.state.errors.date_created}</HelpBlock>
                                     </FormGroup>
                                 </div>
@@ -425,7 +456,8 @@ var CampaignForm = React.createClass({
                                     <FormGroup validationState={this.state.errors.date_sampling ? 'error' : null}>
                                         <ControlLabel>Lab measurement</ControlLabel>
                                         <DateTimeField name="date_sampling"
-                                                       datetime={this.state.date_sampling}/>
+                                                       onChange={this.setDateSampling}
+                                                       {...dateSampling} />
                                         <HelpBlock className="warning">{this.state.errors.date_sampling}</HelpBlock>
                                     </FormGroup>
                                 </div>
