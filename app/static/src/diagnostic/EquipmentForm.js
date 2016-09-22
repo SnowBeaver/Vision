@@ -33,6 +33,7 @@ import TankParams from './EquipmentForm_modules/AditionalEqupmentParameters_modu
 import SwitchParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SwitchParams';
 import InductanceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductanceParams';
 import GasSensorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/GasSensorParams';
+import EqConnectionsManager from './EqConnectionsManager';
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
@@ -830,23 +831,23 @@ const EquipmentForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-			// Join multiple error messages
-			if (res.error instanceof Object){
-				for (var field in res.error) {
-					var errorMessage = res.error[field];
-					if (Array.isArray(errorMessage)) {
-						errorMessage = errorMessage.join(". ");
-					}
-					res.error[field] = errorMessage;
-				}
-				this.setState({
-					errors: res.error
-				});
-			} else {
-				message = res.error;
-			}
-		}
-		NotificationManager.error(message);
+            // Join multiple error messages
+            if (res.error instanceof Object) {
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
+        }
+        NotificationManager.error(message);
     },
 
     _clearErrors: function () {
@@ -915,60 +916,60 @@ const EquipmentForm = React.createClass({
         var errors = [];
         var error;
         error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         error = this._validateFieldChoice(e.target.value, e.target.getAttribute("data-choice"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         return errors;
     },
 
-    _validateFieldType: function (value, type){
+    _validateFieldType: function (value, type) {
         var error = "";
-        if (type != undefined && value){
+        if (type != undefined && value) {
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/
             };
-            if (!typePatterns[type].test(value)){
+            if (!typePatterns[type].test(value)) {
                 error = "Invalid " + type + " value";
             }
         }
         return error;
     },
 
-    _validateFieldLength: function (value, length){
+    _validateFieldLength: function (value, length) {
         var error = "";
-        if (value && length){
-            if (value.length > length){
+        if (value && length) {
+            if (value.length > length) {
                 error = "Value should be maximum " + length + " characters long"
             }
         }
         return error;
     },
 
-    _validateFieldChoice: function (value, validChoice){
+    _validateFieldChoice: function (value, validChoice) {
         var error = "";
         validChoice = (typeof validChoice == "string") ? validChoice.split(",") : null;
-        if (Array.isArray(validChoice) && validChoice.indexOf(value) == -1){
+        if (Array.isArray(validChoice) && validChoice.indexOf(value) == -1) {
             error = "Not a valid choice. Value should be one of the following: " + validChoice.join(", ");
         }
         return error;
     },
 
-    _updateFieldErrors: function (fieldName, state, errors){
+    _updateFieldErrors: function (fieldName, state, errors) {
         // Clear existing errors related to the current field as it has been edited
         state.errors = this.state.errors;
         delete state.errors[fieldName];
 
         // Update errors with new ones, if present
-        if (Object.keys(errors).length){
+        if (Object.keys(errors).length) {
             state.errors[fieldName] = errors.join(". ");
         }
         return state;
@@ -1015,6 +1016,13 @@ const EquipmentForm = React.createClass({
             showNewNormForm: false
         })
     },
+
+    closeConnectionManager: function () {
+        this.setState({
+            showEqConnectionsManager: false
+        })
+    },
+
 
     onNewButtonClick: function (e) {
         if (e.target.id === 'eq_type') {
@@ -1073,6 +1081,11 @@ const EquipmentForm = React.createClass({
         }
     },
 
+    ConnectionsButtonClick: function () {
+        this.setState({
+            showEqConnectionsManager: true
+        });
+    },
 
     render: function () {
         return (
@@ -1286,8 +1299,6 @@ const EquipmentForm = React.createClass({
                                     </FormGroup>
                                 </div>
                             </div>
-
-
                             <div className="row">
                                 <div className="col-lg-5">
                                     <FormGroup controlId="DateTimePicker"
@@ -1303,7 +1314,6 @@ const EquipmentForm = React.createClass({
                                     </FormGroup>
                                 </div>
                             </div>
-
                             <div className="row">
                                 <div className="col-lg-12">
                                     <FormGroup controlId="visualInspectionCommentsTextarea"
@@ -1387,6 +1397,14 @@ const EquipmentForm = React.createClass({
                                 </div>
                             </div>
 
+                            <div className="row">
+                                    <div className="col-md-5">
+                                        <a className="btn btn-primary"
+                                           onClick={this.ConnectionsButtonClick}
+                                        >Upstreams / Downstreams</a>
+                                    </div>
+                            </div>
+                            
                             <div className="row">
                                 <div className="col-lg-12">
                                     <FormGroup controlId="prevSerialNumInput"
@@ -1478,6 +1496,15 @@ const EquipmentForm = React.createClass({
                     </Modal.Header>
                     <Modal.Body>
                         <NewNormForm data={this.props.data} handleClose={this.closeNewNormForm}/>
+                    </Modal.Body>
+                </Modal>
+
+                <Modal show={this.state.showEqConnectionsManager}>
+                    <Modal.Header>
+                        <Modal.Title>New equipment's upstreams/downstreams</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <EqConnectionsManager data={this.props.data} handleClose={this.closeConnectionManager}/>
                     </Modal.Body>
                 </Modal>
             </div>

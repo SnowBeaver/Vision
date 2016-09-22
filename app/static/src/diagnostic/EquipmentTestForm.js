@@ -102,9 +102,9 @@ var StatusSelectField = React.createClass({
                              onChange={this.props.onChange}
                              name={name}
                              value={this.state.value}>
-                    <option  value="normal"> Normal </option>
-                    <option  value="warning"> Warning </option>
-                    <option  value="danger"> Danger </option>
+                    <option value="normal"> Normal</option>
+                    <option value="warning"> Warning</option>
+                    <option value="danger"> Danger</option>
                     <FormControl.Feedback />
                 </FormControl>
             </FormGroup>
@@ -114,7 +114,7 @@ var StatusSelectField = React.createClass({
 
 var SyringeNumberSelectField = React.createClass({
 
-   getInitialState: function () {
+    getInitialState: function () {
         return {
             items: [],
             isVisible: false,
@@ -170,9 +170,13 @@ const DateTimeFieldWithLabel = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         return (
-            <div className="datetimepicker input-group date">
+            <div className="datetimepicker input-group date ">
                 <ControlLabel>{label}</ControlLabel>
-                <DateTimeField datetime={value} name={name} onChange={this.props.onChange}/>
+                <DateTimeField datetime={value}
+                               name={name}
+                               onChange={this.props.onChange}
+                               readOnly={this.props.readOnly}
+                />
             </div>
         );
     }
@@ -247,7 +251,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <DateTimeFieldWithLabel label="Date analyse"
                                                 name='date_analyse'
                                                 value={data.date_analyse}
-                                                onChange={this.props.onChange}/>
+                                                readOnly/>
                     </div>
                 </div>
                 <div className="row">
@@ -270,13 +274,14 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Status"
                                      name='status_id'
                                      value={data.test_status_id}
-                                     />
+                                     disabled
+                        />
                     </div>
                     <div className="col-md-2 nopadding padding-right-xs">
                         <TextField label="Fluid Temperature (&#8451;)"
                                    name='temperature'
                                    value={data.temperature}
-                                   />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -286,26 +291,25 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      name='sampling_point_id'
                                      value={data.sampling_point_id}
                                      disabled
-                                     />
+                        />
                     </div>
                     <div className="col-md-3">
                         <SyringeNumberSelectField source="syringe"
                                                   label="Syringe &#8470; / Jar &#8470;"
                                                   name='seringe_num'
-                                                  value={data.seringe_num}
-                                                  />
+                                                  value={data.seringe_num}/>
                     </div>
                     <div className="col-md-3 ">
                         <DateTimeFieldWithLabel label="Lab Analysis Date "
                                                 name='lab_date'
                                                 value={data.lab_date}
-                                                onChange={this.props.onChange}/>
+                                                readOnly/>
                     </div>
                     <div className="col-md-2 nopadding padding-right-xs">
                         <TextField label="Load (MVA)"
                                    value={data.charge}
                                    name="charge"
-                                   />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -334,7 +338,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Lab./On-line analyser"
                                      name='lab_id'
                                      value={data.lab_id}
-                                     />
+                        />
                     </div>
                 </div>
             </div>
@@ -433,13 +437,13 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                                      label="Indicator"
                                      name='performed_by_id'
                                      disabled
-                                     />
+                        />
                     </div>
                     <div className="col-md-5">
                         <StatusSelectField
-                                     label="Equipment Condition"
-                                     name="status"
-                                     />
+                            label="Equipment Condition"
+                            name="status"
+                        />
                     </div>
                 </div>
             </form>
@@ -585,14 +589,14 @@ var EquipmentTestForm = React.createClass({
     _onChange: function (e) {
         var data = (this.state.data != null) ? this.state.data : {};
         if (e.target.type == 'checkbox') {
-                data[e.target.name] = e.target.checked;
-            } else if (e.target.type == 'radio') {
-                data[e.target.name] = e.target.value;
-            } else if (e.target.type == 'select-one') {
-                data[e.target.name] = e.target.value;
-            } else {
-                data[e.target.name] = e.target.value;
-            }
+            data[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'radio') {
+            data[e.target.name] = e.target.value;
+        } else if (e.target.type == 'select-one') {
+            data[e.target.name] = e.target.value;
+        } else {
+            data[e.target.name] = e.target.value;
+        }
         this.setState({data: data});
     },
 
@@ -627,8 +631,8 @@ var EquipmentTestForm = React.createClass({
                     <div className="maxwidth padding-top-lg margin-bottom-xs">
                         <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
                             <li className="active"><a href="#tabs-1" data-toggle="tab"> Identification </a></li>
-                            <li><a href="#tabs-2" data-toggle="tab"> Test values  </a></li>
-                            <li><a href="#tabs-3" data-toggle="tab"> Test repair notes  </a></li>
+                            <li><a href="#tabs-2" data-toggle="tab"> Test values </a></li>
+                            <li><a href="#tabs-3" data-toggle="tab"> Test repair notes </a></li>
                             <li><a href="#tabs-4" data-toggle="tab"> Records diagnostic </a></li>
                             <li><a href="#tabs-5" data-toggle="tab"> Diagnosis and recommendations </a></li>
                         </ul>
