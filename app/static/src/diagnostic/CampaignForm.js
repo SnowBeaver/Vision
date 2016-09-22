@@ -249,8 +249,11 @@ var CampaignForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-			// Join multiple error messages
-			if (res.error instanceof Object){
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
 				for (var field in res.error) {
 					var errorMessage = res.error[field];
 					if (Array.isArray(errorMessage)) {
@@ -337,15 +340,14 @@ var CampaignForm = React.createClass({
     },
 
     onContractCreate: function (response) {
-        this.setState({contract: response.result});
+        this.setState({contract_id: response.result});
         this.refs.contract.setSelected(response);
         NotificationManager.success("Contract added", null, 1000);
     },
 
     onUserCreate: function (response) {
-        this.setState({created_by: response.result});
+        this.setState({created_by_id: response.result});
         this.refs.created_by.setSelected(response);
-        NotificationManager.success("User added");
     },
 
     _getCampaign: function () {

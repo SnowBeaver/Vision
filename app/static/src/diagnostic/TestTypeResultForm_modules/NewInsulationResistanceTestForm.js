@@ -119,22 +119,25 @@ var NewInsulationResistanceTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            // Join multiple error messages
-            if (res.error instanceof Object){
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
-                    }
-                    res.error[field] = errorMessage;
-                }
-                this.setState({
-                    errors: res.error
-                });
-            } else {
-                message = res.error;
-            }
-        }
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
         NotificationManager.error(message);
     },
 

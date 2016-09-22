@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template
+from flask import redirect
 from flask_mail import Mail
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore, \
@@ -91,6 +92,9 @@ def error_500(error):
 def error_403(error):
     return render_template('403.html'), 403
 
+@app.route('/admin/equipment/new/')
+def equipment_new():
+    return redirect('/admin/#/equipment')
 
 # Initialize flask-login
 def init_login():
