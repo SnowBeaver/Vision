@@ -92,7 +92,11 @@ var NewContractForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++) {
 			var key = fields[i];
-			data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({
@@ -111,9 +115,10 @@ var NewContractForm = React.createClass({
 
 	_onSubmit: function (e) {
 		e.preventDefault();
-		if (!this._validate()){
+		if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
-			return;
+            e.stopPropagation();
+			return false;
 		}
 		var xhr = this._create();
 		xhr.done(this._onSuccess)
@@ -145,17 +150,24 @@ var NewContractForm = React.createClass({
 			message = data.responseJSON.message;
 		}
 		if (res.error) {
-			// Join multiple error messages
-			for (var field in res.error){
-				var errorMessage = res.error[field];
-				if (Array.isArray(errorMessage)){
-					 errorMessage = errorMessage.join(". ");
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
 				}
-				res.error[field] = errorMessage;
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
 			}
-			this.setState({
-				errors: res.error
-			});
 		}
 		NotificationManager.error(message);
 	},
@@ -172,19 +184,64 @@ var NewContractForm = React.createClass({
 		}
 		state.changedFields = this.state.changedFields.concat([e.target.name]);
 
-		// Clear existing errors related to the current field as it has been edited
-		state.errors = this.state.errors;
-		delete state.errors[e.target.name];
+		var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
 		this.setState(state);
 	},
 
-	_validate: function () {
-		var response = true;
-		if (Object.keys(this.state.errors).length > 0){
-			response = false;
-		}
-		return response;
-	},
+	_validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
+        return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
 
 	_formGroupClass: function (field) {
 		var className = "form-group ";
@@ -222,11 +279,11 @@ var NewContractForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup controlId="contract_status"
 										   validationState={this.state.errors.contract_status_id ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.contract_status_id}</HelpBlock>
 									<ContractStatusSelectField
 										source="/api/v1.0/contract_status"
 										handleChange={this.handleChange}
 										required/>
+									<HelpBlock className="warning">{this.state.errors.contract_status_id}</HelpBlock>
 								</FormGroup>
 							</div>
 						</div>
@@ -234,24 +291,28 @@ var NewContractForm = React.createClass({
 						<div className="maxwidth">
 							<FormGroup controlId="name"
 									   validationState={this.state.errors.name ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Name *"
 											 name="name"
 											 required
+											 data-len="50"
 								/>
+								<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 
 						<div className="maxwidth">
 							<FormGroup controlId="name"
 									   validationState={this.state.errors.code ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Code *"
 											 name="code"
 											 required
+											 data-len="50"
 								/>
+								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 

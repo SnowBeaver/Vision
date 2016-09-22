@@ -115,7 +115,6 @@ var EquipmentTypeSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.equipment_type_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -185,11 +184,10 @@ var EquipmentSelectField = React.createClass({
                         name="equipment_id"
                         onChange={this.handleChange}
                         value={this.props.value}>
-                        <option value="select">Choose equipment in upstream</option>
+                        <option value="">Choose equipment in upstream</option>
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.equipment_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -250,11 +248,10 @@ var ManufacturerSelectField = React.createClass({
                         placeholder="Manufacturer"
                         onChange={this.handleChange}
                         value={this.props.value}>
-                        <option value="select">Choose manufacturer</option>
+                        <option value="">Choose manufacturer</option>
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufacturer_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -322,7 +319,6 @@ var LocationSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.location_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -389,7 +385,6 @@ var VisualInspBySelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.visual_inspection_by_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -456,7 +451,6 @@ var AssignedToSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.assigned_to_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -523,7 +517,6 @@ var NormSelectField = React.createClass({
                         {menuItems}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.norm_id}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -547,7 +540,8 @@ var FrequencySelectField = React.createClass({
             showNewEquipmentTypeForm: false,
             showNewManufacturerForm: false,
             showNewLocationForm: false,
-            showCreatedByForm: false,
+            showVisualInspectionForm: false,
+            showAssignToForm: false,
             showNewNormForm: false
         };
     },
@@ -576,11 +570,10 @@ var FrequencySelectField = React.createClass({
                                  placeholder="Select frequency"
                                  onChange={this.handleChange}
                                  value={this.props.value}>
-                        <option value="select">Choose Frequency</option>
+                        <option value="">Choose Frequency</option>
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.frequency}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -620,7 +613,6 @@ var ManufacturedSelectField = React.createClass({
 
         return (
             <div>
-
                 <FormGroup controlId="formControlsSelect8"
                            validationState={this.props.errors.manufactured ? 'error' : null}>
                     <FormControl componentClass="select"
@@ -629,11 +621,10 @@ var ManufacturedSelectField = React.createClass({
                                  onChange={this.handleChange}
                                  value={this.props.value}>
 
-                        <option value="select">Year manufactured</option>
+                        <option value="">Year manufactured</option>
                         {options}
                     </FormControl>
                     <HelpBlock className="warning">{this.props.errors.manufactured}</HelpBlock>
-                    <FormControl.Feedback />
                 </FormGroup>
             </div>
         );
@@ -694,16 +685,16 @@ var EqAdditionalParams = React.createClass({
                 return (<TransformerParams errors={this.props.data.errors} edited={this.props.edited}/>);
                 break;
             case 'Tank':
-                return (<TankParams />);
+                return (<TankParams errors={this.props.data.errors}/>);
                 break;
             case 'Switch':
-                return (<SwitchParams />);
+                return (<SwitchParams errors={this.props.data.errors}/>);
                 break;
             case 'Inductance':
-                return (<InductanceParams />);
+                return (<InductanceParams errors={this.props.data.errors}/>);
                 break;
             case 'Gas sensor':
-                return (<GasSensorParams />);
+                return (<GasSensorParams errors={this.props.data.errors}/>);
                 break;
 
             default:
@@ -746,7 +737,9 @@ const EquipmentForm = React.createClass({
                 'prev_equipment_number',
                 'manufactured'
             ],
-            changedFields: []
+            changedFields: [],
+            option_text: {},
+            equipmentId: null   // Is set when main form is saved
         };
 
         for (var i = 0; i < response.fields.length; i++) {
@@ -765,41 +758,61 @@ const EquipmentForm = React.createClass({
 
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            var value = this.state[key];
+            if (value == "") {
+                value = null;
+            }
+            data[key] = value;
         }
 
-        var that = this;
-        return $.ajax({
-            url: '/api/v1.0/equipment/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data) {
-                if (Object.keys(subform).length != 0) {
-                    subform['equipment_id'] = data['result'];
-                    $.ajax({
-                        url: '/api/v1.0/' + path + '/',
-                        type: 'POST',
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify(subform),
-                        success: function () {
-                            that.setState({option_text: {}});
-                            that._onSuccess();
-                        },
-                        error: that._onError,
-                        always: that.hideLoading
-                    });
-                } else {
-                    that._onSuccess();
-                }
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
+        var that = this
+            , xhr;
 
+        // If the main form haven't been saved yet
+        if (!this.state.equipmentId) {
+            xhr = $.ajax({
+                url: '/api/v1.0/equipment/',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (data) {
+                    that.setState({equipmentId: data['result']});
+                    that._saveSubform(subform, data['result'], path);
+                },
+                beforeSend: function () {
+                    this.setState({loading: true});
+                }.bind(this)
+            })
+        } else {
+            // Save only subform (for instance, when saving subform for the first time, API returned errors)
+            xhr = this._saveSubform(subform, this.state.equipmentId, path);
+        }
+        return xhr;
+    },
+
+    _saveSubform(subform, equipmentId, path){
+        var that = this;
+        if (Object.keys(subform).length != 0) {
+            subform['equipment_id'] = equipmentId;
+            for (var field in subform) {
+                if (subform[field] == "") {
+                    subform[field] = null;
+                }
+            }
+            return $.ajax({
+                url: '/api/v1.0/' + path + '/',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(subform),
+                success: that._onSuccess,
+                error: that._onError,
+                always: that.hideLoading
+            });
+        } else {
+            this._onSuccess();
+        }
     },
 
     _onSubmit: function (e) {
@@ -810,8 +823,10 @@ const EquipmentForm = React.createClass({
         }
         this._clearErrors();
         var xhr = this._save();
-        xhr.fail(this._onError)
-            .always(this.hideLoading)
+        if (xhr) {
+            xhr.fail(this._onError)
+                .always(this.hideLoading)
+        }
     },
 
     hideLoading: function () {
@@ -831,8 +846,11 @@ const EquipmentForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            // Join multiple error messages
-            if (res.error instanceof Object) {
+            // We get list of errors
+            if (data.status >= 500) {
+                message = res.error.join(". ");
+            } else if (res.error instanceof Object) {
+                // We get object of errors with field names as key
                 for (var field in res.error) {
                     var errorMessage = res.error[field];
                     if (Array.isArray(errorMessage)) {
@@ -906,7 +924,6 @@ const EquipmentForm = React.createClass({
         if (e.target.name != "upstream1" && this.state.fields.indexOf(e.target.name) > -1) {
             form.changedFields = this.state.changedFields.concat([e.target.name]);
         }
-        console.log(e.target.name, "  ", e.target.value)
         var errors = this._validate(e);
         form = this._updateFieldErrors(e.target.name, form, errors);
         this.setState(form);
@@ -1005,9 +1022,15 @@ const EquipmentForm = React.createClass({
         })
     },
 
-    closeCreatedByForm: function () {
+    closeVisualInspectionForm: function () {
         this.setState({
-            showCreatedByForm: false
+            showVisualInspectionForm: false,
+        })
+    },
+
+    closeAssignToForm: function () {
+        this.setState({
+            showAssignToForm: false,
         })
     },
 
@@ -1030,7 +1053,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: true,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1039,7 +1063,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: true,
                 showNewLocationForm: false,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1048,7 +1073,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: true,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1057,7 +1083,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: true,
+                showVisualInspectionForm: true,
+                showAssignToForm: false,
                 showNewNormForm: false
             })
         }
@@ -1066,7 +1093,8 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: true,
+                showVisualInspectionForm: false,
+                showAssignToForm: true,
                 showNewNormForm: false
             })
         }
@@ -1075,16 +1103,26 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showCreatedByForm: false,
+                showVisualInspectionForm: false,
+                showAssignToForm: false,
                 showNewNormForm: true
             })
         }
     },
 
+
     ConnectionsButtonClick: function () {
         this.setState({
             showEqConnectionsManager: true
         });
+    },
+    onCreate: function (response, fieldName) {
+        var state = {};
+        state[fieldName] = response.result;
+        state.changedFields = this.state.changedFields.concat([fieldName]);
+        this.setState(state);
+        this.refs[fieldName].componentDidMount();
+
     },
 
     render: function () {
@@ -1099,6 +1137,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/equipment_type"
                                         value={this.state.equipment_type_id}
                                         errors={this.state.errors}
+                                        ref="equipment_type_id"
                                         required
                                     />
                                 </div>
@@ -1123,6 +1162,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/manufacturer"
                                         value={this.state.manufacturer_id}
                                         errors={this.state.errors}
+                                        ref="manufacturer_id"
                                     />
                                 </div>
                                 <div className="col-md-1">
@@ -1140,6 +1180,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/location"
                                         value={this.state.location_id}
                                         errors={this.state.errors}
+                                        ref="location_id"
                                         required/>
                                 </div>
                                 <div className="col-md-1">
@@ -1157,6 +1198,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/visual_inspection_by"
                                         value={this.state.visual_inspection_by_id}
                                         errors={this.state.errors}
+                                        ref="visual_inspection_by_id"
                                         required/>
                                 </div>
                                 <div className="col-md-1">
@@ -1174,6 +1216,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/assigned_to"
                                         value={this.state.assigned_to_id}
                                         errors={this.state.errors}
+                                        ref="assigned_to_id"
                                         required
                                     />
                                 </div>
@@ -1192,6 +1235,7 @@ const EquipmentForm = React.createClass({
                                         source="/api/v1.0/norm"
                                         value={this.state.norm_id}
                                         errors={this.state.errors}
+                                        ref="norm_id"
                                         required
                                     />
                                 </div>
@@ -1398,13 +1442,13 @@ const EquipmentForm = React.createClass({
                             </div>
 
                             <div className="row">
-                                    <div className="col-md-5">
-                                        <a className="btn btn-primary"
-                                           onClick={this.ConnectionsButtonClick}
-                                        >Upstreams / Downstreams</a>
-                                    </div>
+                                <div className="col-md-5">
+                                    <a className="btn btn-primary"
+                                       onClick={this.ConnectionsButtonClick}
+                                    >Upstreams / Downstreams</a>
+                                </div>
                             </div>
-                            
+
                             <div className="row">
                                 <div className="col-lg-12">
                                     <FormGroup controlId="prevSerialNumInput"
@@ -1459,7 +1503,10 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Equipment Type</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewEquipmentTypeForm data={this.props.data} handleClose={this.closeNewEquipmentTypeForm}/>
+                        <NewEquipmentTypeForm data={this.props.data}
+                                              handleClose={this.closeNewEquipmentTypeForm}
+                                              onCreate={this.onCreate}
+                                              fieldName="equipment_type_id"/>
                     </Modal.Body>
                 </Modal>
 
@@ -1468,7 +1515,10 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Manufacturer</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewManufacturerForm data={this.props.data} handleClose={this.closeNewManufacturerForm}/>
+                        <NewManufacturerForm data={this.props.data}
+                                             handleClose={this.closeNewManufacturerForm}
+                                             onCreate={this.onCreate}
+                                             fieldName="manufacturer_id"/>
                     </Modal.Body>
                 </Modal>
 
@@ -1477,16 +1527,34 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Location</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewLocationForm data={this.props.data} handleClose={this.closeNewLocationForm}/>
+                        <NewLocationForm data={this.props.data}
+                                         handleClose={this.closeNewLocationForm}
+                                         onCreate={this.onCreate}
+                                         fieldName="location_id"/>
                     </Modal.Body>
                 </Modal>
 
-                <Modal show={this.state.showCreatedByForm}>
+                <Modal show={this.state.showVisualInspectionForm}>
                     <Modal.Header>
                         <Modal.Title>New User Profile</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <CreatedByForm data={this.props.data} handleClose={this.closeCreatedByForm}/>
+                        <CreatedByForm data={this.props.data}
+                                       handleClose={this.closeVisualInspectionForm}
+                                       onCreate={this.onCreate}
+                                       fieldName="visual_inspection_by_id"/>
+                    </Modal.Body>
+                </Modal>
+
+                <Modal show={this.state.showAssignToForm}>
+                    <Modal.Header>
+                        <Modal.Title>New User Profile</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <CreatedByForm data={this.props.data}
+                                       handleClose={this.closeAssignToForm}
+                                       onCreate={this.onCreate}
+                                       fieldName="assigned_to_id"/>
                     </Modal.Body>
                 </Modal>
 
@@ -1495,7 +1563,10 @@ const EquipmentForm = React.createClass({
                         <Modal.Title>New Norm</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <NewNormForm data={this.props.data} handleClose={this.closeNewNormForm}/>
+                        <NewNormForm data={this.props.data}
+                                     handleClose={this.closeNewNormForm}
+                                     onCreate={this.onCreate}
+                                     fieldName="norm_id"/>
                     </Modal.Body>
                 </Modal>
 

@@ -102,6 +102,8 @@ var WaterTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
+        // Do not propagate the submit event of the main form
+        e.stopPropagation();
         if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
             e.stopPropagation();
@@ -119,6 +121,7 @@ var WaterTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
+        NotificationManager.success('Test values have been saved successfully.');
     },
 
     _onError: function (data) {
@@ -129,8 +132,11 @@ var WaterTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-			// Join multiple error messages
-			if (res.error instanceof Object){
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
 				for (var field in res.error) {
 					var errorMessage = res.error[field];
 					if (Array.isArray(errorMessage)) {

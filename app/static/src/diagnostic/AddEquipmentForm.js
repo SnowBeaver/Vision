@@ -52,10 +52,12 @@ var EquipmentSelectField = React.createClass({
 
     render: function () {
         var menuItems = [];
+        var previousValues = (this.props.previousValues) ? this.props.previousValues : [];
         for (var key in this.state.items) {
             menuItems.push(
                 <option key={this.state.items[key].id}
-                        value={this.state.items[key].id}>
+                        value={this.state.items[key].id}
+                        disabled={previousValues.indexOf(this.state.items[key].id) > -1 ? true : false}>
                     {`${this.state.items[key].name} ${this.state.items[key].serial}`}
                 </option>
             );
@@ -78,7 +80,7 @@ var EquipmentSelectField = React.createClass({
                                 onChange={this.handleChange}
                                 value={this.props.value}
                             >
-                                <option key="0" value="select">Select equipment {this.props.index + 1}</option>
+                                <option key="0" value="">Select equipment {this.props.index + 1}</option>
                                 {menuItems}
                             </FormControl>
                         </FormGroup>
@@ -131,13 +133,16 @@ var AddEquipmentForm = React.createClass({
     _onSubmit: function (e) {
         e.preventDefault();
 
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (this.state.equipment.length == 0 || this.state.equipment.every(elem => isNaN(elem))){
+            NotificationManager.info('Please add at least one equipment');
+            return false;
         }
+
+        if (!this.is_valid()){
+			NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+			return false;
+		}
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -162,30 +167,49 @@ var AddEquipmentForm = React.createClass({
         if (res.message) {
             message = data.responseJSON.message;
         }
-
         if (res.error) {
-            // Join multiple error messages
-            for (var field in res.error){
-                var errorMessage = res.error[field];
-                if (Array.isArray(errorMessage)){
-                     errorMessage = errorMessage.join(". ");
-                }
-                res.error[field] = errorMessage;
-            }
-            this.setState({
-                errors: res.error
-            });
-        }
-        NotificationManager.error(message);
+            var errorMessage;
+			// Join multiple error messages
+			if (res.error instanceof Object){
+				for (var field in res.error) {
+                    if (Array.isArray(res.error[field])){
+                        // Array of objects
+                        for (var i = 0; i < res.error[field].length; i++){
+                            var errorMessages = res.error[field][i];
+                            if (errorMessages instanceof Object){
+                                // Finally get the errors
+                                for (var id in errorMessages){
+                                    errorMessage = errorMessages[id];
+                                    if (Array.isArray(errorMessage)) {
+                                        errorMessage = errorMessages[id].join(". ");
+                                    }
+                                    res.error[field] = errorMessage;
+                                }
+                            }
+                        }
+                    } else {
+                        errorMessage = res.error[field];
+                        if (Array.isArray(errorMessage)) {
+                            errorMessage = errorMessage.join(". ");
+                        }
+                        res.error[field] = errorMessage;
+                    }
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
+		NotificationManager.error(message);
     },
     _validate: function () {
-        var errors = {};
-        // if(this.state.campaign_id == "") {
-        //   errors.username = "Campaign should be started first";
-        // }
-        return errors;
+        return  {};
     },
-
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
     _formGroupClass: function (field) {
         var className = "form-group ";
         if (field) {
@@ -204,8 +228,12 @@ var AddEquipmentForm = React.createClass({
         var state = {};
         var eq = this.state.equipment;
         eq[e.target.id] = parseInt(e.target.value);
-        state[e.target.name] = e.target.value;
         state['equipment'] = Array.from(new Set(eq));
+        state[e.target.name] = e.target.value;
+
+        // Clear the errors
+        state.errors = this.state.errors;
+        delete state.errors[e.target.name];
         this.setState(state);
     },
 
@@ -233,10 +261,12 @@ var AddEquipmentForm = React.createClass({
     getItems: function () {
 
         var items = [];
+        var previousValues = [];
         var numberOfSelects = this.state.numberOfSelects;
 
         for (var i = 0; i < numberOfSelects; i++) {
             var value = null || this.state.equipment[i];
+            previousValues.push(value);
             items.push(
                 <EquipmentSelectField
                     key={i}
@@ -244,9 +274,12 @@ var AddEquipmentForm = React.createClass({
                     source="/api/v1.0/equipment"
                     removeSelect={this.removeSelect}
                     value={value}
+                    previousValues={previousValues}
+                    errors={(this.state.errors && this.state.errors["equipment_id"]) ? this.state.errors["equipment_id"][i] : null}
                 />
             );
         }
+
         return items;
     },
 
@@ -256,8 +289,10 @@ var AddEquipmentForm = React.createClass({
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Add equipment">
-                        <HelpBlock className="warning">{this.state.errors.equipment_id}</HelpBlock>
-                        {this.getItems()}
+                        <FormGroup validationState={(this.state.errors.equipment_id) ? 'error' : null}>
+                            <HelpBlock className="warning">{this.state.errors.equipment_id}</HelpBlock>
+                            {this.getItems()}
+                        </FormGroup>
                         <div className="row">
                             <div className="col-md-10">
                                 <a href="javascript:void(0)"

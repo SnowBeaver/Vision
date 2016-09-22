@@ -108,6 +108,8 @@ var NewDissolvedGasTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
+        // Do not propagate the submit event of the main form
+        e.stopPropagation();
         if (!this._validate()){
             NotificationManager.error('Please correct the errors');
             e.stopPropagation();
@@ -125,7 +127,7 @@ var NewDissolvedGasTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
-
+        NotificationManager.success('Test values have been saved successfully.');
     },
 
     _onError: function (data) {
@@ -136,22 +138,25 @@ var NewDissolvedGasTestForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-            // Join multiple error messages
-            if (res.error instanceof Object){
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
-                    }
-                    res.error[field] = errorMessage;
-                }
-                this.setState({
-                    errors: res.error
-                });
-            } else {
-                message = res.error;
-            }
-        }
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
+			}
+		}
         NotificationManager.error(message);
     },
 
@@ -336,7 +341,6 @@ var NewDissolvedGasTestForm = React.createClass({
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
                                     className="pull-right"
-                                    onClick={this.props.handleClose}
                                     type="submit">Save</Button>
                             &nbsp;
                             <Button bsStyle="danger"

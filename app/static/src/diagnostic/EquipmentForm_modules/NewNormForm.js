@@ -35,7 +35,11 @@ var NewNormForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++) {
 			var key = fields[i];
-			data[key] = this.state[key];
+			var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({
@@ -52,9 +56,9 @@ var NewNormForm = React.createClass({
 
 	_onSubmit: function (e) {
 		e.preventDefault();
-		if (!this._validate()){
+		if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
-			return;
+			return false;
 		}
 		var xhr = this._create();
 		if (xhr){
@@ -70,6 +74,8 @@ var NewNormForm = React.createClass({
 
 	_onSuccess: function (data) {
 		// this.setState(this.getInitialState());
+		this.props.handleClose();
+		this.props.onCreate(data, this.props.fieldName);
 		NotificationManager.success("Norm added.");
 	},
 
@@ -81,8 +87,11 @@ var NewNormForm = React.createClass({
 			message = data.responseJSON.message;
 		}
 		if (res.error) {
-			// Join multiple error messages
-			if (res.error instanceof Object){
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
 				for (var field in res.error) {
 					var errorMessage = res.error[field];
 					if (Array.isArray(errorMessage)) {
@@ -110,18 +119,45 @@ var NewNormForm = React.createClass({
 			state[e.target.name] = e.target.value;
 		}
 		state.changedFields = this.state.changedFields.concat([e.target.name]);
-		state.errors = this.state.errors;
-		delete state.errors[e.target.name];
+		var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
 		this.setState(state);
 	},
 
-	_validate: function () {
-		var response = true;
-		if (Object.keys(this.state.errors).length > 0){
-			response = false;
-		}
-		return response;
-	},
+	_validate: function (e) {
+        var errors = [];
+        var error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
+        return errors;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
+
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
 
 	_formGroupClass: function (field) {
 		var className = "form-group ";
@@ -139,22 +175,26 @@ var NewNormForm = React.createClass({
 						<div className="row">
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.name ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 									<FormControl type="text"
 												 placeholder="Name"
 												 name="name"
+												 data-len="50"
 									/>
+									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>
 						<div className="row">
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.table_name ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.table_name}</HelpBlock>
 									<FormControl type="text"
 												 placeholder="Table Name"
 												 name="table_name"
+												 data-len="50"
 									/>
+									<HelpBlock className="warning">{this.state.errors.table_name}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>
@@ -162,7 +202,6 @@ var NewNormForm = React.createClass({
 						<div className="col-md-12 ">
 							<Button bsStyle="success"
 									className="pull-right"
-									onClick={this.props.handleClose}
 									type="submit">Save</Button>
 							&nbsp;
 							<Button bsStyle="danger"

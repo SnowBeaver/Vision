@@ -66,7 +66,6 @@ class MyValidator(Validator):
         if quantity != value:
             self._error(field, "Wrong quantity, must be {}".format(quantity))
 
-
     def _validate_fluid_tests_qty_jar(self, fluid_tests_qty, field, value):
         quantity_ml_jar = 0
         # POTS. Jar
@@ -117,21 +116,55 @@ class MyValidator(Validator):
     #     self.document.get('corr')):
     #     testcheckedtemp = 1
 
+
 def dict_copy_union(dict1, *kargs):
     dict3 = dict1.copy()
     for dict_item in kargs:
         dict3.update(dict_item)
     return dict3
 
+
+def coerce_to_bool(value):
+    if value is None:
+        return None
+    return bool(value)
+
+
+def coerce_to_int(value):
+    try:
+        return int(value)
+    except TypeError:
+        return None
+
+
+def coerce_to_float(value):
+    try:
+        return int(value)
+    except TypeError:
+        return None
+
+
+def coerce_to_str(value):
+    if value is None:
+        return None
+    return str(value)
+
+
+def coerce_to_date_str(value):
+    if value is None:
+        return None
+    return value
+
+
+# Schemas for creation
 readonly_dict = {'readonly': True}
-required_dict = {'required': True}
-type_string_dict = {'type': 'string'}
-type_datetime_dict = {'type': 'string'}
-type_boolean_coerce_dict = {'type': 'boolean', 'coerce': bool}
-type_float_coerce_dict = {'type': 'float', 'coerce': float}
-type_integer_dict = {'type': 'integer'}
+required_dict = {'required': True, 'nullable': False}
+type_string_dict = {'type': 'string', 'coerce': coerce_to_str}
+type_datetime_dict = {'type': 'string', 'coerce': coerce_to_date_str}
+type_boolean_coerce_dict = {'type': 'boolean', 'coerce': coerce_to_bool}
+type_float_coerce_dict = {'type': 'float', 'coerce': coerce_to_float}
 type_datetime_required_dict = dict_copy_union(type_datetime_dict, required_dict)
-type_integer_coerce_dict = dict_copy_union(type_integer_dict, {'coerce': int})
+type_integer_coerce_dict = {'type': 'integer', 'coerce': coerce_to_int}
 type_integer_coerce_4_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 9999})
 type_integer_coerce_6_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 999999})
 type_integer_coerce_8_digits_dict = dict_copy_union(type_integer_coerce_dict, {'max': 99999999})
@@ -262,12 +295,13 @@ user_schema = {
     'description': type_string_dict,
     'active': type_boolean_coerce_dict,
     'confirmed': type_boolean_coerce_dict,
-    'confirmed_at': type_datetime_dict,
+    # 'confirmed_at': type_datetime_dict,
     'created': type_datetime_dict,
     'updated': type_datetime_dict,
 }
 electrical_profile_schema = {
     'id': readonly_dict,
+    'user_id': type_integer_coerce_dict,
     'name': type_string_maxlength_256_dict,
     'description': type_string_maxlength_1024_dict,
     'shared': type_boolean_coerce_dict,
@@ -287,6 +321,7 @@ country_schema = {
 }
 fluid_profile_schema = {
     'id': readonly_dict,
+    'user_id': type_integer_coerce_dict,
     'name': type_string_maxlength_256_dict,
     'description': type_string_maxlength_1024_dict,
     'shared': type_boolean_coerce_dict,
@@ -434,7 +469,7 @@ gas_sensor_schema = {
 }
 transformer_schema = {
     'id': readonly_dict,
-    'fluid_type_id': type_integer_coerce_required_dict,
+    # 'fluid_type_id': type_integer_coerce_required_dict,
     'gassensor_id': type_integer_coerce_required_dict,
     'equipment_id': type_integer_coerce_required_dict,
     'fluid_volume': type_float_coerce_dict,
@@ -444,7 +479,7 @@ transformer_schema = {
     'cooling_rating': type_integer_coerce_dict,
     'autotransformer': type_boolean_coerce_dict,
     'threephase': type_boolean_coerce_dict,
-    'fluid_level_id': type_integer_coerce_dict,
+    # 'fluid_level_id': type_integer_coerce_dict,
     'phase_number': dict_copy_union(type_string_dict, {'allowed': ['1', '3', '6']}),
     'frequency': type_string_frequency_dict,
     'primary_tension': type_float_coerce_dict,
@@ -1222,7 +1257,7 @@ tree_translation_schema = {
 model_dict = {
     'equipment': {
         'model': Equipment,
-        'schema': equipment_schema
+        'schema': equipment_schema,
     },
     'equipment_type': {
         'model': EquipmentType,
@@ -1230,11 +1265,11 @@ model_dict = {
     },
     'campaign': {
         'model': Campaign,
-        'schema': campaign_schema
+        'schema': campaign_schema,
     },
     'contract': {
         'model': Contract,
-        'schema': contract_schema
+        'schema': contract_schema,
     },
     'norm': {
         'model': Norm,
@@ -1246,11 +1281,11 @@ model_dict = {
     },
     'manufacturer': {
         'model': Manufacturer,
-        'schema': manufacturer_schema
+        'schema': manufacturer_schema,
     },
     'user': {
         'model': User,
-        'schema': user_schema
+        'schema': user_schema,
     },
     'assigned_to': {
         'model': User,
@@ -1270,7 +1305,7 @@ model_dict = {
     },
     'test_result': {
         'model': TestResult,
-        'schema': test_result_schema
+        'schema': test_result_schema,
     },
     'test_result_equipment': {
         'model': TestResult,
@@ -1302,15 +1337,15 @@ model_dict = {
     },
     'gas_sensor': {
         'model': GasSensor,
-        'schema': gas_sensor_schema
+        'schema': gas_sensor_schema,
     },
     'transformer': {
         'model': Transformer,
-        'schema': transformer_schema
+        'schema': transformer_schema,
     },
     'breaker': {
         'model': Breaker,
-        'schema': breaker_schema
+        'schema': breaker_schema,
     },
     'tap_changer': {
         'model': LoadTapChanger,
@@ -1318,7 +1353,7 @@ model_dict = {
     },
     'bushing': {
         'model': Bushing,
-        'schema': bushing_schema
+        'schema': bushing_schema,
     },
     'equipment_connection': {
         'model': EquipmentConnection,
@@ -1326,55 +1361,55 @@ model_dict = {
     },
     'resistance': {
         'model': NeutralResistance,
-        'schema': resistance_schema
+        'schema': resistance_schema,
     },
     'air_breaker': {
         'model': AirCircuitBreaker,
-        'schema': air_breaker_schema
+        'schema': air_breaker_schema,
     },
     'capacitor': {
         'model': Capacitor,
-        'schema': capacitor_schema
+        'schema': capacitor_schema,
     },
     'powersource': {
         'model': PowerSource,
-        'schema': powersource_schema
+        'schema': powersource_schema,
     },
     'switchgear': {
         'model': SwitchGear,
-        'schema': switchgear_schema
+        'schema': switchgear_schema,
     },
     'induction_machine': {
         'model': InductionMachine,
-        'schema': induction_machine_schema
+        'schema': induction_machine_schema,
     },
     'synchronous_machine': {
         'model': SynchronousMachine,
-        'schema': synchronous_machine_schema
+        'schema': synchronous_machine_schema,
     },
     'rectifier': {
         'model': Rectifier,
-        'schema': rectifier_schema
+        'schema': rectifier_schema,
     },
     'inductance': {
         'model': Inductance,
-        'schema': inductance_schema
+        'schema': inductance_schema,
     },
     'tank': {
         'model': Tank,
-        'schema': tank_schema
+        'schema': tank_schema,
     },
     'switch': {
         'model': Switch,
-        'schema': switch_schema
+        'schema': switch_schema,
     },
     'cable': {
         'model': Cable,
-        'schema': cable_schema
+        'schema': cable_schema,
     },
     'recommendation': {
         'model': Recommendation,
-        'schema': recommendation_schema
+        'schema': recommendation_schema,
     },
     'test_recommendation': {
         'model': TestRecommendation,
@@ -1398,7 +1433,7 @@ model_dict = {
     },
     'syringe': {
         'model': Syringe,
-        'schema': syringe_schema
+        'schema': syringe_schema,
     },
     'test_reason': {
         'model': TestReason,
@@ -1414,11 +1449,11 @@ model_dict = {
     },
     'schedule': {
         'model': TestSchedule,
-        'schema': schedule_schema
+        'schema': schedule_schema,
     },
     'test_type': {
         'model': TestType,
-        'schema': test_type_schema
+        'schema': test_type_schema,
     },
     'gasket_condition': {
         'model': GasketCondition,
@@ -1498,11 +1533,11 @@ model_dict = {
     },
     'transformer_turn_ratio_test': {
         'model': TransformerTurnRatioTest,
-        'schema': transformer_turn_ratio_test_schema
+        'schema': transformer_turn_ratio_test_schema,
     },
     'winding_resistance_test': {
         'model': WindingResistanceTest,
-        'schema': winding_resistance_test_schema
+        'schema': winding_resistance_test_schema,
     },
     'dissolved_gas_test': {
         'model': DissolvedGasTest,
@@ -1542,7 +1577,7 @@ model_dict = {
     },
     'norm_physic': {
         'model': NormPhysic,
-        'schema': norm_physic_schema
+        'schema': norm_physic_schema,
     },
     'norm_gas': {
         'model': NormGas,
@@ -1570,7 +1605,7 @@ model_dict = {
     },
     'tree': {
         'model': Tree,
-        'schema': tree_schema
+        'schema': tree_schema,
     },
     'tree_translation': {
         'model': TreeTranslation,

@@ -208,7 +208,7 @@ def deploy(branch='master'):
     restart_services()
 
 
-def local_update():
+def update_local():
     with cd(env.directory):
         with source_virtualenv():
             run(env.pip + ' install -r requirements.txt')

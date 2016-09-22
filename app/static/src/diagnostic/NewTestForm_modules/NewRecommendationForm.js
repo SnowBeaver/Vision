@@ -160,7 +160,11 @@ var NewRecommendationForm = React.createClass({
 		var data = {};
 		for (var i = 0; i < fields.length; i++){
 			var key= fields[i];
-			data[key] = this.state[key];
+			var value = this.state[key];
+            if (value == ""){
+                value = null;
+            }
+            data[key] = value;
 		}
 
 		return $.ajax({
@@ -178,7 +182,7 @@ var NewRecommendationForm = React.createClass({
 	},
 	_onSubmit: function (e) {
 		e.preventDefault();
-		if (!this._validate()){
+		if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
 			return false;
 		}
@@ -204,8 +208,11 @@ var NewRecommendationForm = React.createClass({
 			message = data.responseJSON.message;
 		}
 		if (res.error) {
-			// Join multiple error messages
-			if (res.error instanceof Object){
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
 				for (var field in res.error) {
 					var errorMessage = res.error[field];
 					if (Array.isArray(errorMessage)) {
@@ -233,44 +240,65 @@ var NewRecommendationForm = React.createClass({
 		}
 
 		state.changedFields = this.state.changedFields.concat([e.target.name]);
-		var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
-		state = this._updateFieldErrors(e.target.name, state, errors);
+		var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
 		this.setState(state);
 	},
 
-	 _validateFieldType: function (value, type){
-		var errors = {};
-		if (type != undefined && value){
-			var typePatterns = {
-				"email": /\S+@\S+\.\S+/,
-				"url": /^\S+\.\S+$/
-			};
-			if (!typePatterns[type].test(value)){
-				errors = "Invalid " + type;
-			}
-		}
-		return errors;
-	},
+	 _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
+        return errors;
+    },
 
-	_updateFieldErrors: function (fieldName, state, errors){
-		// Clear existing errors related to the current field as it has been edited
-		state.errors = this.state.errors;
-		delete state.errors[fieldName];
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
 
-		// Update errors with new ones, if present
-		if (Object.keys(errors).length){
-			state.errors[fieldName] = errors
-		}
-		return state;
-	},
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
 
-	_validate: function () {
-		var response = true;
-		if (Object.keys(this.state.errors).length > 0){
-			response = false;
-		}
-		return response;
-	},
+    _updateFieldErrors: function (fieldName, state, errors){
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
+
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
+
 	_formGroupClass: function (field) {
 		var className = "form-group ";
 		if (field) {
@@ -294,11 +322,11 @@ var NewRecommendationForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup controlId="contract_status"
 										   validationState={this.state.errors.test_type_id ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 									<TestTypeSelectField
 										source="/api/v1.0/test_type"
 										handleChange={this.handleChange}
 										required/>
+									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 								</FormGroup>
 							</div>
 						</div>
@@ -308,22 +336,24 @@ var NewRecommendationForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup controlId="contract_status"
 										   validationState={this.state.errors.name ? 'error' : null}>
-									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 									<NameSelectField
 										source="/api/v1.0/user"
 										handleChange={this.handleChange}
 										required/>
+									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 								</FormGroup>
 							</div>
 						</div>
 
 						<div className="maxwidth">
 							<FormGroup validationState={this.state.errors.code ? 'error' : null}>
-								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
 								<FormControl type="text"
 											 placeholder="Code"
 											 name="code"
+											 data-len="50"
 								/>
+								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 
@@ -331,10 +361,11 @@ var NewRecommendationForm = React.createClass({
 							<div className="col-md-12">
 								<FormGroup validationState={this.state.errors.description ? 'error' : null}>
 									<ControlLabel>Recommendations</ControlLabel>
-									<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
 									<FormControl componentClass="textarea"
 												 placeholder="Repair description"
 												 name="description"/>
+									<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+									<FormControl.Feedback />
 								</FormGroup>
 							</div>
 						</div>

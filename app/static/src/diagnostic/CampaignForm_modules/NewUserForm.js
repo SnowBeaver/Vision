@@ -50,6 +50,7 @@ var RoleSelectField = React.createClass({
 	},
 
 	render: function () {
+		var required = this.props.required;
 		var menuItems = [];
 		for (var key in this.state.items) {
 			menuItems.push(<option key={this.state.items[key].id}
@@ -60,16 +61,17 @@ var RoleSelectField = React.createClass({
 		return (
 			<div>
 				<FormGroup validationState={this.props.errors.roles ? 'error' : null}>
-					<ControlLabel>Roles</ControlLabel>
-					<HelpBlock className="warning">{this.props.errors.roles}</HelpBlock>
+					<ControlLabel>Roles</ControlLabel><span className="text-danger"> *</span>
 					<FormControl
 						componentClass="select"
 						placeholder="select"
 						onChange={this.handleChange}
-						name="roles">
-						<option key="0" value="select">Roles</option>
+						name="roles"
+						required={required}>
+						<option key="0" value="">Roles</option>
 						{menuItems}
 					</FormControl>
+					<HelpBlock className="warning">{this.props.errors.roles}</HelpBlock>
 				</FormGroup>
 			</div>
 		);
@@ -116,15 +118,15 @@ var CountrySelectField = React.createClass({
 			<div>
 				<FormGroup validationState={this.props.errors.country ? 'error' : null}>
 					<ControlLabel>Country</ControlLabel>
-					<HelpBlock className="warning">{this.props.errors.country}</HelpBlock>
 					<FormControl
 						componentClass="select"
 						placeholder="select"
 						onChange={this.handleChange}
 						name="country_id">
-						<option key="0" value="select">Country</option>
+						<option key="0" value="">Country</option>
 						{menuItems}
 					</FormControl>
+					<HelpBlock className="warning">{this.props.errors.country}</HelpBlock>
 				</FormGroup>
 			</div>
 		);
@@ -162,9 +164,10 @@ var NewUserForm = React.createClass({
 	},
 	_onSubmit: function (e) {
 		e.preventDefault();
-		if (!this._validate()){
+		if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
-			return;
+            e.stopPropagation();
+			return false;
 		}
 		var xhr = this._create();
 		xhr.done(this._onSuccess)
@@ -179,7 +182,8 @@ var NewUserForm = React.createClass({
 	_onSuccess: function (data) {
 		this.setState(this.getInitialState());
 		this.props.handleClose();
-		this.props.onCreate(data);
+		this.props.onCreate(data, this.props.fieldName);
+		NotificationManager.success("User added.");
 	},
 
 	_onError: function (data) {
@@ -189,17 +193,24 @@ var NewUserForm = React.createClass({
 			message = data.responseJSON.message;
 		}
 		if (res.error) {
-			// Join multiple error messages
-			for (var field in res.error){
-				var errorMessage = res.error[field];
-				if (Array.isArray(errorMessage)){
-					 errorMessage = errorMessage.join(". ");
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
 				}
-				res.error[field] = errorMessage;
+				this.setState({
+					errors: res.error
+				});
+			} else {
+				message = res.error;
 			}
-			this.setState({
-				errors: res.error
-			});
 		}
 		NotificationManager.error(message);
 	},
@@ -214,44 +225,66 @@ var NewUserForm = React.createClass({
 			state[e.target.name] = e.target.value;
 		}
 
-		var errors = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+		var errors = this._validate(e);
 		state = this._updateFieldErrors(e.target.name, state, errors);
 		this.setState(state);
 	},
 
-	_validateFieldType: function (value, type){
-		var errors = {};
-		if (type != undefined && value){
-			var typePatterns = {
+	_validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error){
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
+        return errors;
+    },
+
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/,
 				"email": /\S+@\S+\.\S+/,
 				"url": /^\S+\.\S+$/
-			};
-			if (!typePatterns[type].test(value)){
-				errors = "Invalid " + type;
-			}
-		}
-		return errors;
-	},
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
+    },
 
 	_updateFieldErrors: function (fieldName, state, errors){
-		// Clear existing errors related to the current field as it has been edited
-		state.errors = this.state.errors;
-		delete state.errors[fieldName];
+        // Clear existing errors related to the current field as it has been edited
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
 
-		// Update errors with new ones, if present
-		if (Object.keys(errors).length){
-			state.errors[fieldName] = errors
-		}
-		return state;
-	},
+        // Update errors with new ones, if present
+        if (Object.keys(errors).length){
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
 
-	_validate: function () {
-		var response = true;
-		if (Object.keys(this.state.errors).length > 0){
-			response = false;
-		}
-		return response;
-	},
+    is_valid: function () {
+        return (Object.keys(this.state.errors).length <= 0);
+    },
 
 	_formGroupClass: function (field) {
 		var className = "form-group ";
@@ -284,87 +317,102 @@ var NewUserForm = React.createClass({
 								source="/api/v1.0/role"
 								handleChange={this.handleChange}
 								errors={this.state.errors}
+								required
 							/>
 						</div>
 					</div>
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.name ? 'error' : null}>
 							<ControlLabel>Name</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Full Name"
 										 name="name"
+										 data-len="50"
 							/>
+							<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.alias ? 'error' : null}>
 							<ControlLabel>Username</ControlLabel><span className="text-danger"> *</span>
-							<HelpBlock className="warning">{this.state.errors.alias}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Username"
 										 name="alias"
 										 required
+										 data-len="50"
 							/>
+							<HelpBlock className="warning">{this.state.errors.alias}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.password ? 'error' : null}>
 							<ControlLabel>Password</ControlLabel><span className="text-danger"> *</span>
-							<HelpBlock className="warning">{this.state.errors.password}</HelpBlock>
 							<FormControl type="password"
 										 placeholder="Password"
 										 name="password"
 										 required
+										 data-len="50"
 							/>
+							<HelpBlock className="warning">{this.state.errors.password}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.email ? 'error' : null}>
 							<ControlLabel>E-mail</ControlLabel><span className="text-danger"> *</span>
-							<HelpBlock className="warning">{this.state.errors.email}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="E-mail"
 										 name="email"
 										 data-type="email"
+										 data-len="120"
 										 required/>
+							<HelpBlock className="warning">{this.state.errors.email}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.address ? 'error' : null}>
 							<ControlLabel>Address</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.address}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Address"
 										 name="address"
+										 data-len="255"
 							/>
+							<HelpBlock className="warning">{this.state.errors.address}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.mobile ? 'error' : null}>
 							<ControlLabel>Mobile</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.mobile}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Mobile"
 										 name="mobile"
+										 data-len="50"
 							/>
+							<HelpBlock className="warning">{this.state.errors.mobile}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
 					<div className="maxwidth">
 						<FormGroup validationState={this.state.errors.website ? 'error' : null}>
 							<ControlLabel>Website</ControlLabel>
-							<HelpBlock className="warning">{this.state.errors.website}</HelpBlock>
 							<FormControl type="text"
 										 placeholder="Website"
 										 name="website"
 										 data-type="url"
+										 data-len="255"
 							/>
+							<HelpBlock className="warning">{this.state.errors.website}</HelpBlock>
+							<FormControl.Feedback />
 						</FormGroup>
 					</div>
 
@@ -381,11 +429,12 @@ var NewUserForm = React.createClass({
 						<div className="col-md-12">
 							<FormGroup validationState={this.state.errors.description ? 'error' : null}>
 								<ControlLabel>Description</ControlLabel>
-								<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
 								<FormControl
 									componentClass="textarea"
 									placeholder="Description"
 									name="description"/>
+								<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+								<FormControl.Feedback />
 							</FormGroup>
 						</div>
 					</div>
@@ -395,14 +444,6 @@ var NewUserForm = React.createClass({
 							<FormGroup validationState={this.state.errors.active ? 'error' : null}>
 								<HelpBlock className="warning">{this.state.errors.active}</HelpBlock>
 								<Checkbox name="active">Active</Checkbox>
-							</FormGroup>
-						</div>
-						<div className="maxwidth">
-							<FormGroup>
-								<FormControl type="password"
-											 placeholder="Password"
-											 name="password"
-								/>
 							</FormGroup>
 						</div>
 					</div>

@@ -321,14 +321,13 @@ const FluidProfileForm = React.createClass({
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            $.ajax({
+            return $.ajax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(this.state.data),
+                data: JSON.stringify(data),
                 success: function (data, textStatus) {
-                    NotificationManager.success('Profile saved successfully');
                 },
                 beforeSend: function () {
                     this.setState({loading: true});
@@ -356,6 +355,7 @@ const FluidProfileForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
+        e.stopPropagation();
         if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
             return;
@@ -371,7 +371,7 @@ const FluidProfileForm = React.createClass({
     },
 
     _onSuccess: function (data) {
-        NotificationManager.success('Test updated successfully');
+        NotificationManager.success('Profile saved successfully');
         this.props.handleClose();
         this.hideLoading();
     },
@@ -383,8 +383,11 @@ const FluidProfileForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-			// Join multiple error messages
-			if (res.error instanceof Object){
+			// We get list of errors
+			if (data.status >= 500) {
+				message = res.error.join(". ");
+			} else if (res.error instanceof Object){
+				// We get object of errors with field names as key
 				for (var field in res.error) {
 					var errorMessage = res.error[field];
 					if (Array.isArray(errorMessage)) {
@@ -407,7 +410,7 @@ const FluidProfileForm = React.createClass({
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         } else if (e.target.type == 'radio') {
-            state[e.target.name] = e.target.value;
+            state[e.target.name] = (e.target.value == "1");
         } else if (e.target.type == 'select-one') {
             state[e.target.name] = e.target.value;
         } else {
@@ -421,11 +424,25 @@ const FluidProfileForm = React.createClass({
     _validate: function (e) {
         var errors = [];
         var error;
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error){
+            errors.push(error);
+        }
         error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
         if (error){
             errors.push(error);
         }
         return errors;
+    },
+
+    _validateFieldLength: function (value, length){
+        var error = "";
+        if (value && length){
+            if (value.length > length){
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
     },
 
     _validateFieldType: function (value, type){
@@ -474,8 +491,7 @@ const FluidProfileForm = React.createClass({
                     <div className="maxwidth">
                         <Panel header="Fluid profile">
                             <div className="row">
-                                <div className="col-md-9">
-                                </div>
+                                <div className="col-md-9"></div>
                                 <div className="col-md-3">
                                     <FormGroup>
                                         <TestProfileSelectField fillUpForm={this.fillUpForm}
@@ -538,6 +554,7 @@ const FluidProfileForm = React.createClass({
                                                                  value={this.state.data.qty}
                                                                  data-type="float"/>
                                                     <HelpBlock className="warning">{this.state.errors.qty}</HelpBlock>
+								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-10 nopadding">
@@ -716,6 +733,7 @@ const FluidProfileForm = React.createClass({
                                                                      value={this.state.data.qty_jar}
                                                                      data-type="float"/>
                                                         <HelpBlock className="warning">{this.state.errors.qty_jar}</HelpBlock>
+								                        <FormControl.Feedback />
                                                     </FormGroup>
                                                 </div>
                                                 <div className="col-md-10 nopadding">
@@ -758,6 +776,7 @@ const FluidProfileForm = React.createClass({
                                                                  value={this.state.data.qty_vial}
                                                                  data-type="float"/>
                                                     <HelpBlock className="warning">{this.state.errors.qty_vial}</HelpBlock>
+								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-10 nopadding">
@@ -774,10 +793,14 @@ const FluidProfileForm = React.createClass({
                                     </div>
                                     <div className="col-md-2">
                                         <div className="row">
-                                            <FormGroup>
+                                            <FormGroup validationState={this.state.errors.name ? 'error' : null}>
                                                 <FormControl type="text"
                                                              placeholder="Fluid profile name"
-                                                             name="name"/>
+                                                             name="name"
+                                                             data-len="256"
+                                                             value={this.state.name}/>
+                                                <HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
+                                                <FormControl.Feedback />
                                             </FormGroup>
                                         </div>
                                         <div className="row">
@@ -790,13 +813,18 @@ const FluidProfileForm = React.createClass({
                                         </div>
                                     </div>
                                     <div className="col-md-4">
-                                        <FormGroup controlId="descTextarea">
+                                        <FormGroup controlId="descTextarea"
+                                                   validationState={this.state.errors.description ? 'error' : null}>
                                             <FormControl
                                                 componentClass="textarea"
                                                 placeholder="Description"
                                                 ref="description"
                                                 name="description"
+                                                data-len="1024"
+                                                value={this.state.description}
                                             />
+                                            <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
+                                            <FormControl.Feedback />
                                         </FormGroup>
                                     </div>
 

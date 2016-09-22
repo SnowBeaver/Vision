@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, MetaData
 from flask.ext.blogging import SQLAStorage
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
+from flask.ext import login
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -23,14 +24,57 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(api, user_datastore)
 
 
+# Accessory functions
+def return_json(items_name, items_list):
+    return jsonify({items_name: items_list})
+
+
+def set_attrs_to_item(item, attr_dict):
+    for k, v in attr_dict.items():
+        try:
+            setattr(item, k, v)
+        except AttributeError:
+            abort(500, "can't set attribute - {}: {}".format(k, v))
+
+
+def get_model_by_path(path):
+    return model_dict[path].get('model') or abort(500, 'Model missing')
+
+
+def get_schema_by_path(path):
+    return model_dict[path].get('schema') or abort(500, 'Validation schema missing')
+
+
+# Returns dict with data for Tree model based on item information
+def prepare_data_for_tree(equipment):
+    short_name = eq_type_dict.get(equipment.equipment_type_id, '')
+    return {
+        'equipment_id': equipment.id,
+        'parent_id': 32,
+        'icon': '../app/static/img/icons/{0}_b.ico'.format(short_name),
+        'type': '{0}'.format(short_name)
+    }
+
+
+def prepare_data_for_tree_translation(tree_item_id, equipment_name):
+    return {
+        'id': tree_item_id,
+        'locale': 'en',
+        'text': equipment_name,
+        'tooltip': equipment_name
+        # 'text': param_dict['name'],
+        # 'tooltip': param_dict['name']
+    }
+
+
 # Verifications
-def abort_if_not_validates(path, req=None):
-    if not req:
-        req = request.json
-    validation_schema = model_dict[path]['schema']
-    v = Validator()
-    if not v.validate(req, validation_schema):
+def validate_or_abort(path, data_to_validate=None, update=False, context=None):
+    if not data_to_validate:
+        data_to_validate = request.json
+    v = Validator(ignore_none_values=True)
+    if not v.validate(data_to_validate, get_schema_by_path(path), update, context):
         abort(400, v.errors)
+    return v.document
 
 
 def abort_if_json_missing():
@@ -48,58 +92,30 @@ def abort_if_wrong_id(item_id):
         abort(404)
 
 
-# Accessory functions
-def return_json(items_name, items_list):
-    return jsonify({items_name: items_list})
-
-
-def set_attrs_to_item(item, attr_dict):
-    for k, v in attr_dict.items():
-        try:
-            setattr(item, k, v)
-        except AttributeError:
-            abort(500, "can't set attribute - {}: {}".format(k, v))
-
-
-def new_instance(path, param_dict):
-    # item = items_model(**param_dict)
-    items_model = model_dict[path]['model']
-    item = items_model()
-    set_attrs_to_item(item, param_dict)
-
-    if items_model == User:
-        role = db.session.query(Role).filter(Role.id == param_dict["roles"]).first()
-        item.roles = [role] if role else abort(400, {"roles": "invalid value"})
-        item.password = encrypt_password(param_dict["password"])
-
-        country_id = param_dict.get("country_id")
-        if country_id:
-            country_exists = db.session.query(db.exists().where(Country.id == country_id)).scalar()
-            if not country_exists:
-                abort(400, {"country_id": "invalid value"})
-
-    db.session.add(item)
-    db.session.commit()
-    return item
-
-
 # Standard CRUD functions
 # Create
-def add_item(path, param_dict):
-    abort_if_not_validates(path, param_dict)
-    item = new_instance(path, param_dict)
-    return item.id
+def add_item(path, data):
+    items_model = get_model_by_path(path)
+    item = items_model()
+    set_attrs_to_item(item, data)
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
+    return item
 
 
 # Read
 def get_item(path, item_id):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     item = db.session.query(items_model).get(item_id) or abort(404)
     return item.serialize()
 
 
 def get_items(path, args):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     if args:
         kwargs = {
             k: v for k,v in args.items() if hasattr(items_model, k)
@@ -114,17 +130,20 @@ def get_items(path, args):
 
 
 # Update
-def update_item(path, item_id):
-    items_model = model_dict[path]['model']
-    item = db.session.query(items_model).get(item_id)
-    set_attrs_to_item(item, request.json)
-    db.session.commit()
-    return item.serialize()
+def update_item(path, item_id, data):
+    item = db.session.query(get_model_by_path(path)).get(item_id)
+    set_attrs_to_item(item, data)
+    try:
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
+    return item
 
 
 # Delete
 def delete_item(path, item_id):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     try:
         rows = db.session.query(items_model).filter(items_model.id == item_id).delete(synchronize_session=False)
     except:
@@ -136,42 +155,46 @@ def delete_item(path, item_id):
 
 # Custom CRUD functions
 # Add equipment and add related objects automaticaly
-def add_equipment():
-    path = 'equipment'
-    abort_if_not_validates(path)
-    # item = new_instance(path, param_dict)
-    extra_fields_dict = request.json.pop('extra_fields', {})
-    item = new_instance(path, request.json)
-    short_name = eq_type_dict.get(item.equipment_type_id, '')
-    param_tree_dict = {
-        'equipment_id': item.id,
-        'parent_id': 32,
-        'icon': '../app/static/img/icons/{0}_b.ico'.format(short_name),
-        'type': '{0}'.format(short_name)
-    }
-    item_tree = new_instance('tree', param_tree_dict)
+def add_equipment(path, data):
+    extra_fields_dict = data.pop('extra_fields', {})
+    item = add_item(path, data)
 
-    param_tree_trans_dict = {
-        'id': item_tree.id,
-        'locale': 'en',
-        'text': item.name,
-        'tooltip': item.name
-        # 'text': param_dict['name'],
-        # 'tooltip': param_dict['name']
-    }
-    new_instance('tree_translation', param_tree_trans_dict)
+    tree_data = prepare_data_for_tree(item)
+    # validate_or_abort('tree', tree_data)
+    item_tree = add_item('tree', tree_data)
 
-    extra_table_name = item.equipment_type and item.equipment_type.table_name
+    tree_trans_data = prepare_data_for_tree_translation(item_tree.id, item.name)
+    # validate_or_abort('tree_translation', tree_trans_data)
+    add_item('tree_translation', tree_trans_data)
+
     if extra_fields_dict:
+        extra_table_name = item.equipment_type and item.equipment_type.table_name
         extra_fields_dict['equipment_id'] = item.id
-        new_instance(extra_table_name, extra_fields_dict)
-    return item.id
+        # validate_or_abort(extra_table_name, extra_fields_dict)
+        add_item(extra_table_name, extra_fields_dict)
+    return item
+
+
+def add_fluid_profile(path, data):
+    if data.get("shared") is False:
+        # Save id of the current user
+        data["user_id"] = login.current_user.id if login.current_user else None
+    item = add_item(path, data)
+    return item
+
+
+def add_electrical_profile(path, data):
+    if data.get("shared") is False:
+        # Save id of the current user
+        data["user_id"] = login.current_user.id if login.current_user else None
+    item = add_item(path, data)
+    return item
 
 
 # Get equipment upstreams and downstreams
 def get_up_down_stream_of_equipment(item_id):
     path = 'equipment_connection'
-    model = model_dict[path]['model']
+    model = get_model_by_path(path)
     kwargs = {'equipment_id': item_id}
     upstream = [item.parent_id for item in db.session.query(model).filter_by(**kwargs)]
     kwargs = {'parent_id': item_id}
@@ -179,13 +202,13 @@ def get_up_down_stream_of_equipment(item_id):
     return {'upstream': upstream, 'downstream': downstream}
 
 
-def add_up_down_stream_to_equipment(item_id):
+def add_up_down_stream_to_equipment(item_id, data):
     path = 'equipment_connection'
-    upstream_list = request.json.get('upstream', [])
+    upstream_list = data.get('upstream', [])
     for upstream_id in upstream_list:
         add_item(path, {'equipment_id': item_id, 'parent_id': upstream_id})
 
-    downstream_list = request.json.get('downstream', [])
+    downstream_list = data.get('downstream', [])
     for downstream_id in downstream_list:
         add_item(path, {'equipment_id': downstream_id, 'parent_id': item_id})
 
@@ -195,7 +218,7 @@ def add_up_down_stream_to_equipment(item_id):
 # Remove connection between equipment and its upstreams and downstreams
 def delete_up_down_stream_of_equipment(item_id):
     path = 'equipment_connection'
-    model = model_dict[path]['model']
+    model = get_model_by_path(path)
     upstream = request.json.get('upstream', [])
     downstream = request.json.get('downstream', [])
     try:
@@ -213,11 +236,9 @@ def delete_up_down_stream_of_equipment(item_id):
 
 
 # Add a lot of test results
-def add_items():
-    path = 'test_result_equipment'
-    abort_if_not_validates(path)
-    items_model = model_dict[path]['model']
-    campaign_id = request.json.get('campaign_id')
+def add_items(path, data):
+    items_model = get_model_by_path(path)
+    campaign_id = data.get('campaign_id')
     # TODO - deleting of all related test results IMHO isn't the best way
     # because of related to test results objects like tests
     try:
@@ -227,27 +248,57 @@ def add_items():
     else:
         db.session.commit()
 
-    equipment_ids = request.json.get('equipment_id')
+    equipment_ids = data.get('equipment_id')
     if not isinstance(equipment_ids, Iterable):
         equipment_ids = [equipment_ids]
-    return [new_instance(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
+    return [add_item(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
 
 
 def add_or_update_tests(path):
-    items_model = model_dict[path]['model']
+    items_model = get_model_by_path(path)
     items = []
     for test in request.json:
         if 'id' in test:
             item = db.session.query(items_model).get(test['id'])
         else:
-            abort_if_not_validates(path, test)
-            item = new_instance(path, test)
+            validated_data = validate_or_abort(path, test)
+            item = add_item(path, validated_data)
 
         items.append(item)
         set_attrs_to_item(item, test)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
     return [item.serialize() for item in items]
+
+
+# Create user
+def add_user(path, data):
+    items_model = get_model_by_path(path)
+    item = items_model()
+    role_id = data.pop("roles", None)
+    if role_id:
+        role = db.session.query(Role).filter(Role.id == role_id).first()
+        item.roles = [role] if role else abort(400, {"roles": "invalid value"})
+
+    item.password = encrypt_password(data["password"])
+    country_id = data.get("country_id")
+    if country_id:
+        country_exists = db.session.query(db.exists().where(Country.id == country_id)).scalar()
+        if not country_exists:
+            abort(400, {"country_id": "invalid value"})
+
+    set_attrs_to_item(item, data)
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+
+    return item
 
 
 # Get fields from corresponding table of specified equipment type
@@ -277,7 +328,9 @@ def internal_server_error(error):
 def create_item_handler(path):
     abort_if_wrong_path(path)
     abort_if_json_missing()
-    return return_json('result', add_item(path, request.json))
+    validated_data = validate_or_abort(path)
+    new_item = add_item(path, validated_data)
+    return return_json('result', new_item.id)
 
 
 # Read
@@ -300,7 +353,9 @@ def update_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_json_missing()
-    return return_json('result', update_item(path, item_id))
+    validated_data = validate_or_abort(path, update=True)
+    updated_item = update_item(path, item_id, validated_data)
+    return return_json('result', updated_item.serialize())
 
 
 # Delete
@@ -330,15 +385,19 @@ def get_test_profile():
 # Create equipment
 @api_blueprint.route('/equipment/', methods=['POST'])
 def create_equipment_handler():
+    path = 'equipment'
     abort_if_json_missing()
-    return return_json('result', add_equipment())
+    validated_data = validate_or_abort(path)
+    new_item = add_equipment(path, validated_data)
+    return return_json('result', new_item.id)
 
 
 # Create equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['POST'])
 def create_equipment_up_down_stream_handler(item_id):
     abort_if_json_missing()
-    return return_json('result', add_up_down_stream_to_equipment(item_id))
+    # validated_data = validate_or_abort('equipment_up_down_stream')
+    return return_json('result', add_up_down_stream_to_equipment(item_id, request.json))
 
 
 # Get equipment upstreams and downstreams
@@ -357,8 +416,10 @@ def delete_equipment_up_down_stream_handler(item_id):
 # Create a lot of test_results with equipment using one query
 @api_blueprint.route('/test_result/equipment', methods=['POST'])
 def handler_items():
+    path = 'test_result_equipment'
     abort_if_json_missing()
-    return return_json('result', add_items())
+    validated_data = validate_or_abort(path)
+    return return_json('result', add_items(path, validated_data))
 
 
 # Create or update a lot of tests
@@ -370,6 +431,36 @@ def handler_tests(path):
         abort(404)
     abort_if_json_missing()
     return return_json('result', add_or_update_tests(path))
+
+
+# Create user
+@api_blueprint.route('/user/', methods=['POST'])
+def create_user_handler():
+    path = 'user'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_user = add_user(path, validated_data)
+    return return_json('result', new_user.id)
+
+
+# Create fluid_profile
+@api_blueprint.route('/fluid_profile/', methods=['POST'])
+def create_fluid_profile_handler():
+    path = 'fluid_profile'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_item = add_fluid_profile(path, validated_data)
+    return return_json('result', new_item.id)
+
+
+# Create fluid_profile
+@api_blueprint.route('/electrical_profile/', methods=['POST'])
+def create_electrical_profile_handler():
+    path = 'electrical_profile'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_item = add_electrical_profile(path, validated_data)
+    return return_json('result', new_item.id)
 
 
 api.register_blueprint(api_blueprint)

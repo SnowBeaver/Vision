@@ -10,6 +10,7 @@ import PanelGroup from 'react-bootstrap/lib/PanelGroup';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var options = [];
 var test_result_id;
@@ -287,6 +288,8 @@ var NewTransformerTestForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
+        // Do not propagate the submit event of the main form
+        e.stopPropagation();
         var errors = this._validate();
         if (Object.keys(errors).length != 0) {
             this.setState({
@@ -306,7 +309,7 @@ var NewTransformerTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
-
+        NotificationManager.success('Test values have been saved successfully.');
     },
 
     _onError: function (data) {
@@ -434,7 +437,6 @@ var NewTransformerTestForm = React.createClass({
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
                                     className="pull-right"
-                                    onClick={this.props.handleClose}
                                     type="submit">Save</Button>
                             &nbsp;
                             <Button bsStyle="danger"
