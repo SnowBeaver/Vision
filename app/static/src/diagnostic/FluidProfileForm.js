@@ -266,66 +266,6 @@ var TestProfileSelectField = React.createClass({
     }
 });
 
-var UserSelectField = React.createClass({
-
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value,
-        })
-    },
-
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-
-    render: function () {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <FormGroup controlId="UserSelectField">
-                <FormControl componentClass="select"
-                             placeholder="User"
-                             name="user_id"
-                             onChange={this.handleChange}
-                             value={this.props.value}
-                >
-                    <option key="0" value="">Select user</option>
-                    {menuItems}
-                </FormControl>
-            </FormGroup>
-        );
-    }
-});
-
 
 const FluidProfileForm = React.createClass({
 
@@ -345,7 +285,7 @@ const FluidProfileForm = React.createClass({
                 'visual', 'pcb_vial', 'antioxidant',
                 'sampling', 'sampling_jar', 'sampling_vial',
                 'qty', 'qty_jar', 'qty_vial', 'sampling',
-                'shared', 'name', 'description', 'user_id'
+                'shared', 'name', 'description'
             ]
         }
     },
@@ -548,13 +488,7 @@ const FluidProfileForm = React.createClass({
                     <div className="maxwidth">
                         <Panel header="Fluid profile">
                             <div className="row">
-                                <div className="col-md-6"></div>
-                                <div className="col-md-3">
-                                    <FormGroup>
-                                        <UserSelectField source="/api/v1.0/user"
-                                                         value={this.state.data.user_id}/>
-                                    </FormGroup>
-                                </div>
+                                <div className="col-md-9"></div>
                                 <div className="col-md-3">
                                     <FormGroup>
                                         <TestProfileSelectField fillUpForm={this.fillUpForm}
