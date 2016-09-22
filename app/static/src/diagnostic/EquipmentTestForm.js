@@ -524,7 +524,7 @@ var EquipmentTestForm = React.createClass({
 
     _save: function () {
         var fields = this.state.fields;
-        var data = {test_result_id: this.props.selectedRowId};
+        var data = {};
         var url = '/api/v1.0/test_result/';
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
@@ -534,6 +534,8 @@ var EquipmentTestForm = React.createClass({
         if ('id' in this.state.data) {
             url += this.state.data['id'];
         }
+        console.log("DATA", data);
+
         return $.ajax({
             url: url,
             type: type,
