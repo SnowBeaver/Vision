@@ -278,7 +278,7 @@ const FluidProfileForm = React.createClass({
                 'gas', 'furans', 'pcb', 'water',
                 'inhibitor', 'dielec', 'dielec_2',
                 'dielec_d', 'acidity', 'color',
-                'ift', 'density', 'pf_25', 'pf_100',
+                'ift', 'density', 'pf', 'pf_100',
                 'pcb_jar', 'particles', 'furans_f',
                 'inhibitor_jar', 'metals', 'water_w',
                 'point', 'viscosity', 'corr', 'dielec_i',
@@ -404,7 +404,85 @@ const FluidProfileForm = React.createClass({
 		}
 		NotificationManager.error(message);
     },
+    calculate_qty: function () {
+        var quantity_ml_syringe = 0;
 
+        // Syringe
+        if ( this.state['gas'] ) { quantity_ml_syringe += 15 }
+        if ( this.state['water'] ) { quantity_ml_syringe += 10 }
+        if ( this.state['pcb'] ) { quantity_ml_syringe += 5 }
+        if ( this.state['furans'] ) { quantity_ml_syringe += 20 }
+        console.log('calculate_qty gas', this.state['gas']);
+        console.log('calculate_qty', quantity_ml_syringe);
+        console.log('calculate_qty/30', quantity_ml_syringe/30.0);
+
+        var quantity = Math.ceil(quantity_ml_syringe / 30.0);
+        console.log('calculate_qty/30 ceil', quantity);
+
+        if ( !quantity_ml_syringe && this.state['inhibitor'] ) {
+            quantity = 1;
+        }
+        // if quantity != value:
+        //     self._error(field, "Wrong quantity, must be {}".format(quantity))
+        return quantity;
+    },
+    calculate_qty_jar: function () {
+        var quantity_ml_jar = 0;
+        // POTS. Jar
+        if ( this.state['dielec'] ) { quantity_ml_jar += 500 }
+        if ( this.state['dielec_2'] ) { quantity_ml_jar += 500 }
+        if ( this.state['dielec_d'] ) { quantity_ml_jar += 450 }
+        if ( this.state['dielec_i'] ) { quantity_ml_jar += 500 }
+        if ( this.state['ift'] ) { quantity_ml_jar += 25 }
+        if ( this.state['pf'] ) { quantity_ml_jar += 100 }
+        if ( this.state['pf_100'] ) { quantity_ml_jar += 100 }
+        if ( this.state['point'] ) { quantity_ml_jar += 50 }
+        if ( this.state['viscosity'] ) { quantity_ml_jar += 50 }
+        if ( this.state['corr'] ) { quantity_ml_jar += 200 }
+        if ( this.state['pcb_jar'] ) { quantity_ml_jar += 5 }
+        if ( this.state['particles'] ) { quantity_ml_jar += 500 }
+        if ( this.state['metals'] ) { quantity_ml_jar += 50 }
+        if ( this.state['water_w'] ) { quantity_ml_jar += 10 }
+        if ( this.state['furans_f'] ) { quantity_ml_jar += 20 }
+
+        var quantity = Math.ceil(quantity_ml_jar / 750.0)
+
+        if (( !quantity_ml_jar ) &&
+           ( this.state['acidity'] ||
+             this.state['color'] ||
+             this.state['density'] ||
+             this.state['visual'] ||
+             this.state['inhibitor_jar']))
+        {
+            quantity = 1;
+        }
+
+        // if quantity != value:
+        //     self._error(field, "Wrong quantity, must be {}".format(quantity))
+
+        return quantity;
+    },
+    calculate_qty_vial: function () {
+        var quantity_ml_vial = 0;
+        if ( this.state['pcb_vial'] ) {
+            quantity_ml_vial += 5;
+        }
+        var quantity = Math.ceil(quantity_ml_vial / 5.0)
+        if ( ! quantity_ml_vial && this.state['antioxidant'] ) {
+            quantity = 1;
+        }
+        // if quantity != value:
+        //     self._error(field, "Wrong quantity, must be {}".format(quantity))
+        return quantity;
+    },
+    calculate_quantities: function () {
+        var state = {};
+        state['qty'] = this.calculate_qty();
+        state['qty_jar'] = this.calculate_qty_jar();
+        state['qty_vial'] = this.calculate_qty_vial();
+        this.setState(state);
+        console.log('calculate_quantities', state)
+    },
     _onChange: function (e) {
         var state = {};
         if (e.target.type == 'checkbox') {
@@ -419,6 +497,9 @@ const FluidProfileForm = React.createClass({
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);
+        this.calculate_quantities();
+        console.log('OnChange', state)
+        console.log('OnChange state', this.state)
     },
 
     _validate: function (e) {
@@ -627,8 +708,8 @@ const FluidProfileForm = React.createClass({
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
                                                     <Checkbox
-                                                        name="pf_25"
-                                                        checked={this.state.data.pf_25 ? 'checked': null}
+                                                        name="pf"
+                                                        checked={this.state.data.pf ? 'checked': null}
                                                         value="1"
                                                     >PF25C(D924)</Checkbox>
                                                 </div>
