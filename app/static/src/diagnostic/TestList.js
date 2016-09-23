@@ -40,7 +40,8 @@ var TestItem = React.createClass({
         [
             'id', 'analysis_number', 'equipment', 'lab', 'lab_contract',
             'material', 'performed_by', 'test_reason', 'test_recommendations',
-            'test_sampling_cards', 'test_status', 'test_type', 'tests'
+            'test_sampling_cards', 'test_status', 'test_type', 'tests', 'fluid_type',
+            'campaign', 'sampling_point', 'fluid_profile', 'electrical_profile'
         ].forEach(e => delete data[e]);
 
         var url = '/api/v1.0/test_result/';
