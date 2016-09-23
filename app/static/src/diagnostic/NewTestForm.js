@@ -19,6 +19,7 @@ import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
 var items = [];
 
@@ -640,10 +641,12 @@ var NewTestForm = React.createClass({
                 form[key] = (data[key] !== null) ? data[key] : "";
             }
             form['id'] = id;
-            form['date_analyse'] = form['date_analyse'] ? form['date_analyse'] : new Date().toISOString();
-            form.changedFields = this.state.changedFields.concat(['date_analyse']);
+            if (!form['date_analyse']) {
+                form['date_analyse'] = new Date().toISOString();
+                form.changedFields = this.state.changedFields.concat(['date_analyse']);
+            }
+            form.errors = {};
             this.setState(form);
-
         }.bind(this), 'json');
     },
 
@@ -659,8 +662,8 @@ var NewTestForm = React.createClass({
         form['campaign_id'] = this.props.data['campaign_id'];
         form['equipment_id'] = this.props.data['equipment_id'];
         form['date_analyse'] = new Date().toISOString();
-
-
+        form.changedFields = this.state.changedFields.concat(['date_analyse']);
+        form.errors = {};
         this.setState(form);
     },
 
@@ -1028,12 +1031,11 @@ var NewTestForm = React.createClass({
 
     render: function () {
         var title = (this.state.id) ? "Edit test" : 'New test';
-        var ISODateFormat = "YYYY-MM-DDTHH:mm:ss.SSSSSS[Z]";
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var dateRepair = this.state.repair_date;
-        dateRepair = (dateRepair) ? {dateTime: dateRepair, format: ISODateFormat} : {defaultText: "Please select a date", dateTime: ""};
+        dateRepair = (dateRepair) ? {dateTime: dateRepair, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
         var dateAnalyse = this.state.date_analyse;
-        dateAnalyse = (dateAnalyse) ? {dateTime: dateAnalyse, format: ISODateFormat} : {defaultText: "Please select a date", dateTime: ""};
+        dateAnalyse = (dateAnalyse) ? {dateTime: dateAnalyse, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
 
         return (
             this.props.show ?

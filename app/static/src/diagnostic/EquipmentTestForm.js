@@ -21,6 +21,7 @@ import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
 var SelectField = React.createClass({
     getInitialState: function () {
@@ -168,12 +169,11 @@ const DateTimeFieldWithLabel = React.createClass({
         this.props.onDateTimeFieldChange(timestamp, this.props.name);
     },
     render: function () {
-        var ISODateFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var dateValue = this.props.value;
-        dateValue = (dateValue) ? {dateTime: dateValue, format: ISODateFormat} : {defaultText: "Please select a date"};
+        dateValue = (dateValue) ? {dateTime: dateValue, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
 
         return (
             <div className="datetimepicker input-group date">
@@ -301,7 +301,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                                   value={data.seringe_num}
                                                   />
                     </div>
-                    <div className="col-md-3 ">
+                    <div className="col-md-3" key={data.date_analyse}>
                         <DateTimeFieldWithLabel label="Lab Analysis Date"
                                                 name='date_analyse'
                                                 value={data.date_analyse}
@@ -366,7 +366,7 @@ var EquipmentTestRepairForm = React.createClass({
                     <div className="col-lg-6 nopadding padding-right-xs">Sample
                         <FormControl type="text" value=""/>
                     </div>
-                    <div className="col-lg-6 nopadding">
+                    <div className="col-lg-6 nopadding" key={data.repair_date}>
                         <DateTimeFieldWithLabel label="Repair date"
                                                 name='repair_date'
                                                 value={data.repair_date}

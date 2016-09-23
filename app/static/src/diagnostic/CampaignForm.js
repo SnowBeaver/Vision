@@ -12,6 +12,7 @@ import NewContractForm from './CampaignForm_modules/NewContractForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import { hashHistory } from 'react-router';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
 
 var items = [];
@@ -380,10 +381,9 @@ var CampaignForm = React.createClass({
     },
 
     render: function () {
-        var ISODateFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var dateSampling = this.state.date_sampling;
-        dateSampling = (dateSampling) ? {dateTime: dateSampling, format: ISODateFormat} : {defaultText: "Please select a date"};
+        dateSampling = (dateSampling) ? {dateTime: dateSampling, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
         return (
             <div className="form-container">
                 <Panel header="New Campaign">
@@ -411,12 +411,13 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-3">
                                 <div className="datetimepicker input-group date">
-                                    <FormGroup validationState={this.state.errors.date_created ? 'error' : null}>
+                                    <FormGroup validationState={this.state.errors.date_created ? 'error' : null}
+                                               key={this.state.date_created}>
                                         <ControlLabel>Date Created *</ControlLabel>
                                         <DateTimeField name="date_created"
                                                        inputProps={{required: true}}
                                                        dateTime={this.state.date_created}
-                                                       format = {ISODateFormat}
+                                                       format = {DATETIMEPICKER_FORMAT}
                                                        onChange={this.setDateCreated}/>
                                         <HelpBlock className="warning">{this.state.errors.date_created}</HelpBlock>
                                     </FormGroup>
@@ -453,7 +454,8 @@ var CampaignForm = React.createClass({
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="datetimepicker input-group date col-md-3">
-                                    <FormGroup validationState={this.state.errors.date_sampling ? 'error' : null}>
+                                    <FormGroup validationState={this.state.errors.date_sampling ? 'error' : null}
+                                               key={this.state.date_sampling}>
                                         <ControlLabel>Lab measurement</ControlLabel>
                                         <DateTimeField name="date_sampling"
                                                        onChange={this.setDateSampling}

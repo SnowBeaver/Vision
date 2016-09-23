@@ -16,6 +16,7 @@ import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
 import AirBreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/AirBreakerParams';
 import BushingParams  from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
@@ -1133,10 +1134,9 @@ const EquipmentForm = React.createClass({
     },
 
     render: function () {
-        var ISODateFormat = "YYYY-MM-DDTHH:mm:ss.SSS[Z]";
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var visualDate = this.state.visual_date;
-        visualDate = (visualDate) ? {dateTime: visualDate, format: ISODateFormat} : {defaultText: "Please select a date"};
+        visualDate = (visualDate) ? {dateTime: visualDate, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -1359,7 +1359,8 @@ const EquipmentForm = React.createClass({
                             <div className="row">
                                 <div className="col-lg-5">
                                     <FormGroup controlId="DateTimeField"
-                                               validationState={this.state.errors.visual_date ? 'error' : null}>
+                                               validationState={this.state.errors.visual_date ? 'error' : null}
+                                               key={this.state.visual_date}>
                                         <ControlLabel>Visual Date</ControlLabel>
                                         <DateTimeField name="visual_date"
                                                        ref="visual_date"
