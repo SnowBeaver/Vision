@@ -33,7 +33,6 @@ import TankParams from './EquipmentForm_modules/AditionalEqupmentParameters_modu
 import SwitchParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/SwitchParams';
 import InductanceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductanceParams';
 import GasSensorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/GasSensorParams';
-import EqConnectionsManager from './EqConnectionsManager';
 
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
@@ -1040,13 +1039,6 @@ const EquipmentForm = React.createClass({
         })
     },
 
-    closeConnectionManager: function () {
-        this.setState({
-            showEqConnectionsManager: false
-        })
-    },
-
-
     onNewButtonClick: function (e) {
         if (e.target.id === 'eq_type') {
             this.setState({
@@ -1110,12 +1102,6 @@ const EquipmentForm = React.createClass({
         }
     },
 
-
-    ConnectionsButtonClick: function () {
-        this.setState({
-            showEqConnectionsManager: true
-        });
-    },
     onCreate: function (response, fieldName) {
         var state = {};
         state[fieldName] = response.result;
@@ -1442,14 +1428,6 @@ const EquipmentForm = React.createClass({
                             </div>
 
                             <div className="row">
-                                <div className="col-md-5">
-                                    <a className="btn btn-primary"
-                                       onClick={this.ConnectionsButtonClick}
-                                    >Upstreams / Downstreams</a>
-                                </div>
-                            </div>
-
-                            <div className="row">
                                 <div className="col-lg-12">
                                     <FormGroup controlId="prevSerialNumInput"
                                                validationState={this.state.errors.prev_serial_number ? 'error' : null}>
@@ -1567,15 +1545,6 @@ const EquipmentForm = React.createClass({
                                      handleClose={this.closeNewNormForm}
                                      onCreate={this.onCreate}
                                      fieldName="norm_id"/>
-                    </Modal.Body>
-                </Modal>
-
-                <Modal show={this.state.showEqConnectionsManager}>
-                    <Modal.Header>
-                        <Modal.Title>New equipment's upstreams/downstreams</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <EqConnectionsManager data={this.props.data} handleClose={this.closeConnectionManager}/>
                     </Modal.Body>
                 </Modal>
             </div>
