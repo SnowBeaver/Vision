@@ -11,7 +11,8 @@ from flask.ext.blogging import SQLAStorage
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
 from flask.ext import login
-
+from sqlalchemy.orm.session import make_transient
+from sqlalchemy.orm import joinedload
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -74,6 +75,7 @@ def validate_or_abort(path, data_to_validate=None, update=False, context=None):
     v = Validator(ignore_none_values=True)
     if not v.validate(data_to_validate, get_schema_by_path(path), update, context):
         abort(400, v.errors)
+
     return v.document
 
 
@@ -301,6 +303,66 @@ def add_user(path, data):
     return item
 
 
+# Duplicate test result and related fluid or electrical profile
+def duplicate_test_result(test_result_id):
+    # path = 'test_result'
+    user = login.current_user
+    test_result_model = get_model_by_path('test_result')
+    electrical_profile_model = get_model_by_path('electrical_profile')
+    fluid_profile_model = get_model_by_path('fluid_profile')
+    # user_model = get_model_by_path('user')
+    print(test_result_model)
+    print(electrical_profile_model)
+    print(fluid_profile_model)
+
+    test_result = db.session\
+        .query(test_result_model)\
+        .get(test_result_id)
+    # test_result = db.session\
+    #     .query(test_result_model)\
+    #     .filter(
+    #         test_result_model.id == test_result_id,
+    #         or_(electrical_profile_model.user_model.id == user.id, fluid_profile_model.user_model.id == user.id)
+    #     )\
+    #     .first()
+    response = False
+
+    print(user.id)
+    print(test_result.id)
+    print(test_result.electrical_profile.user_id if test_result.electrical_profile else "no el prod")
+    print(test_result.fluid_profile.user_id if test_result.fluid_profile else "no fluid prod")
+    print(test_result.electrical_profile.id if test_result.electrical_profile else "no el prod")
+    print(test_result.fluid_profile.id if test_result.fluid_profile else "no fluid prod")
+
+    if test_result:
+        # if test_result.electrical_profile and test_result.electrical_profile.user_id == current_user.id:
+        if test_result.electrical_profile:
+            # Electrical profile belongs to the current user
+            electrical_profile = duplicate_instance(test_result.electrical_profile)
+            test_result.electrical_profile = electrical_profile
+        # elif test_result.fluid_profile and test_result.fluid_profile.user_id == current_user.id:
+        elif test_result.fluid_profile:
+            # Fluid profile belongs to the current user
+            fluid_profile = duplicate_instance(test_result.fluid_profile)
+            test_result.fluid_profile = fluid_profile
+        # Test result
+        duplicate_instance(test_result)
+        response = True
+    return response
+
+
+def duplicate_instance(item):
+    db.session.expunge(item)
+    make_transient(item)
+    item.id = None
+    db.session.add(item)
+    try:
+        db.session.commit()
+    except Exception as e:
+        abort(500, e.args)
+    return item
+
+
 # Get fields from corresponding table of specified equipment type
 def get_equipment_type_fields(item_id):
     item = db.session.query(EquipmentType).get(item_id) or abort(404)
@@ -433,6 +495,12 @@ def handler_tests(path):
     return return_json('result', add_or_update_tests(path))
 
 
+# Duplicate test result and related electrical or fluid profile
+@api_blueprint.route('/test_result/<int:test_result_id>/duplicate', methods=['POST'])
+def duplicate_test_result_handler(test_result_id):
+    return return_json('result', duplicate_test_result(test_result_id))
+
+
 # Create user
 @api_blueprint.route('/user/', methods=['POST'])
 def create_user_handler():
@@ -453,7 +521,7 @@ def create_fluid_profile_handler():
     return return_json('result', new_item.id)
 
 
-# Create fluid_profile
+# Create electrical_profile
 @api_blueprint.route('/electrical_profile/', methods=['POST'])
 def create_electrical_profile_handler():
     path = 'electrical_profile'
