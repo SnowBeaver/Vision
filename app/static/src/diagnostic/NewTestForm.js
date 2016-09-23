@@ -1200,7 +1200,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup validationState={this.state.errors.repair_date ? 'error' : null}>
+                                            <FormGroup validationState={this.state.errors.repair_date ? 'error' : null}
+                                                       key={this.state.repair_date}>
                                                 <ControlLabel>Repair Date</ControlLabel>
                                                 <DateTimeField name="repair_date"
                                                                onChange={this.setRepairDate}
@@ -1229,7 +1230,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}>
+                                            <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}
+                                                       key={this.state.date_analyse}>
                                                 <ControlLabel>Date Applied *</ControlLabel>
                                                 <DateTimeField name="date_analyse"
                                                                onChange={this.setDateAnalyse}
