@@ -19,6 +19,7 @@ import NewFluidForm from './NewTestForm_modules/NewFluidForm';
 import NewSyringeForm from './NewTestForm_modules/NewSyringeForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
 var items = [];
 
@@ -608,7 +609,6 @@ var NewTestForm = React.createClass({
             showNewLabForm: false,
             showNewSyringeForm: false,
             date_analyse: new Date().toISOString(),
-            repair_date: new Date().toISOString(),
             fields: [
                 'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'material_id', 'fluid_type_id',
@@ -641,8 +641,12 @@ var NewTestForm = React.createClass({
                 form[key] = (data[key] !== null) ? data[key] : "";
             }
             form['id'] = id;
+            if (!form['date_analyse']) {
+                form['date_analyse'] = new Date().toISOString();
+                form.changedFields = this.state.changedFields.concat(['date_analyse']);
+            }
+            form.errors = {};
             this.setState(form);
-
         }.bind(this), 'json');
     },
 
@@ -657,8 +661,9 @@ var NewTestForm = React.createClass({
 
         form['campaign_id'] = this.props.data['campaign_id'];
         form['equipment_id'] = this.props.data['equipment_id'];
-
-
+        form['date_analyse'] = new Date().toISOString();
+        form.changedFields = this.state.changedFields.concat(['date_analyse']);
+        form.errors = {};
         this.setState(form);
     },
 
@@ -849,13 +854,14 @@ var NewTestForm = React.createClass({
         if (timestamp == "Invalid date"){
             timestamp = null;
         } else if (timestamp){
-            // Can be UNIX timestamp in milliseconds
+            // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
+            // Format date here instead of specifying format in DateTimeField,
+            // because error is raised when format is specified, but date is null/undefined/empty string.
             if (/^\d+$/.test(timestamp)){
                 timestamp = parseInt(timestamp);
+                timestamp = moment(timestamp).toISOString();
             }
-            // Format date here instead of specifying format in DateTimeField,
-            // because error is raised when format is specified, but date is empty.
-            state[fieldName] = moment(timestamp).format("YYYY-MM-DD HH:mm:ss");
+            state[fieldName] = timestamp;    // Already formatted to ISO string
         }
         state.changedFields = this.state.changedFields.concat([fieldName]);
         this.setState(state);
@@ -1024,12 +1030,12 @@ var NewTestForm = React.createClass({
     },
 
     render: function () {
-
         var title = (this.state.id) ? "Edit test" : 'New test';
-        var dateRepair = (this.state.repair_date instanceof Array) ? this.state.repair_date.join(" ") : (this.state.repair_date) ? this.state.repair_date : null;
-        var dateAnalyse = (this.state.date_analyse instanceof Array) ? this.state.date_analyse.join(" ") : (this.state.date_analyse) ? this.state.date_analyse : null;
-        dateRepair = (dateRepair) ? {"dateTime": dateRepair, "format": "YYYY-MM-DD HH:mm:ss"} : {"defaultText": ""};
-        dateAnalyse = (dateAnalyse) ? {"dateTime": dateAnalyse, "format": "YYYY-MM-DD HH:mm:ss"} : {};
+        // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
+        var dateRepair = this.state.repair_date;
+        dateRepair = (dateRepair) ? {dateTime: dateRepair, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
+        var dateAnalyse = this.state.date_analyse;
+        dateAnalyse = (dateAnalyse) ? {dateTime: dateAnalyse, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
 
         return (
             this.props.show ?
@@ -1196,7 +1202,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup validationState={this.state.errors.repair_date ? 'error' : null}>
+                                            <FormGroup validationState={this.state.errors.repair_date ? 'error' : null}
+                                                       key={this.state.repair_date}>
                                                 <ControlLabel>Repair Date</ControlLabel>
                                                 <DateTimeField name="repair_date"
                                                                onChange={this.setRepairDate}
@@ -1225,7 +1232,8 @@ var NewTestForm = React.createClass({
 
                                     <div className="maxwidth">
                                         <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}>
+                                            <FormGroup validationState={this.state.errors.date_analyse ? 'error' : null}
+                                                       key={this.state.date_analyse}>
                                                 <ControlLabel>Date Applied *</ControlLabel>
                                                 <DateTimeField name="date_analyse"
                                                                onChange={this.setDateAnalyse}
