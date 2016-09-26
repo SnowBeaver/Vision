@@ -7,6 +7,7 @@ import TreeComponent from '../TreeComponent';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import {Link} from 'react-router'
 
 var Home = React.createClass({
 
@@ -25,8 +26,6 @@ var Home = React.createClass({
     },
 
     onTreeNodeClick: function (treeItem) {
-
-        // console.log('got equipment id from tree click', typeof treeItem.equipment_id);
         // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
         var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0; 
         var src = '/api/v1.0/test_result/?equipment_id=' + id;
@@ -39,6 +38,12 @@ var Home = React.createClass({
     render: function () {
         return (
             <div>
+                <div className="row">
+                    <div className="col-md-3 equal_col">
+                        <Link to='/campaign' className="btn btn-success btn-large">New Campaign</Link>
+                    </div>
+                </div>
+                <br/>
                 <div className="col-md-3 equal_col">
                     <div className="maxwidth">
                         <FormGroup>

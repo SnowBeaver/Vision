@@ -104,9 +104,6 @@ const App = React.createClass({
 						<li><Link to='/up_down_streams'>Stream manager</Link></li>
 					</ul> 
 				</div>
-				<div className="row">
-					<Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
-				</div>
 				<div className='app-container'>
 					<hr/>
 					{this.props.children}
