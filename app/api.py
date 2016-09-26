@@ -6,12 +6,12 @@ from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProf
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, or_, and_
 from flask.ext.blogging import SQLAStorage
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
 from flask.ext import login
-
+from sqlalchemy.orm.session import make_transient
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -301,6 +301,65 @@ def add_user(path, data):
     return item
 
 
+# Duplicate test result and related fluid or electrical profile
+def duplicate_test_result(test_result_id):
+    user = login.current_user
+    test_result_model = get_model_by_path('test_result')
+    electrical_profile_model = get_model_by_path('electrical_profile')
+    fluid_profile_model = get_model_by_path('fluid_profile')
+    test_result = db.session\
+        .query(test_result_model)\
+        .outerjoin(test_result_model.electrical_profile)\
+        .outerjoin(test_result_model.fluid_profile)\
+        .filter(
+            and_(
+                # get only profiles with user_id NULL or the ones which belong to the current user
+                or_(electrical_profile_model.user_id == None, electrical_profile_model.user_id == user.id),
+                or_(fluid_profile_model.user_id == None, fluid_profile_model.user_id == user.id)
+            ),
+            test_result_model.id == test_result_id
+        ).first()
+    if test_result:
+        test_result = handle_profile_and_test_result_duplication(test_result, user.id)
+    return test_result.id if test_result else None
+
+
+def handle_profile_and_test_result_duplication(test_result, user_id):
+    profile = None
+    profile_type = None
+    if test_result.electrical_profile and test_result.electrical_profile.user_id == user_id:
+        # Electrical profile belongs to the current user
+        profile = duplicate_instance(test_result.electrical_profile)
+        profile_type = "electrical"
+    elif test_result.fluid_profile and test_result.fluid_profile.user_id == user_id:
+        # Fluid profile belongs to the current user
+        profile = duplicate_instance(test_result.fluid_profile)
+        profile_type = "fluid"
+
+    try:
+        if profile:
+            db.session.flush()
+            if profile_type == "electrical":
+                test_result.electrical_profile_id = profile.id
+            elif profile_type == "fluid":
+                test_result.fluid_profile_id = profile.id
+        # Test result
+        duplicate_instance(test_result)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        abort(500, e.args)
+    return test_result
+
+
+def duplicate_instance(item):
+    db.session.expunge(item)
+    make_transient(item)
+    item.id = None
+    db.session.add(item)
+    return item
+
+
 # Get fields from corresponding table of specified equipment type
 def get_equipment_type_fields(item_id):
     item = db.session.query(EquipmentType).get(item_id) or abort(404)
@@ -433,6 +492,12 @@ def handler_tests(path):
     return return_json('result', add_or_update_tests(path))
 
 
+# Duplicate test result and related electrical or fluid profile
+@api_blueprint.route('/test_result/<int:test_result_id>/duplicate', methods=['POST'])
+def duplicate_test_result_handler(test_result_id):
+    return return_json('result', duplicate_test_result(test_result_id))
+
+
 # Create user
 @api_blueprint.route('/user/', methods=['POST'])
 def create_user_handler():
@@ -453,7 +518,7 @@ def create_fluid_profile_handler():
     return return_json('result', new_item.id)
 
 
-# Create fluid_profile
+# Create electrical_profile
 @api_blueprint.route('/electrical_profile/', methods=['POST'])
 def create_electrical_profile_handler():
     path = 'electrical_profile'
