@@ -6,13 +6,12 @@ from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProf
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, or_, and_
 from flask.ext.blogging import SQLAStorage
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
 from flask.ext import login
 from sqlalchemy.orm.session import make_transient
-from sqlalchemy.orm import joinedload
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -75,7 +74,6 @@ def validate_or_abort(path, data_to_validate=None, update=False, context=None):
     v = Validator(ignore_none_values=True)
     if not v.validate(data_to_validate, get_schema_by_path(path), update, context):
         abort(400, v.errors)
-
     return v.document
 
 
@@ -305,50 +303,53 @@ def add_user(path, data):
 
 # Duplicate test result and related fluid or electrical profile
 def duplicate_test_result(test_result_id):
-    # path = 'test_result'
     user = login.current_user
     test_result_model = get_model_by_path('test_result')
     electrical_profile_model = get_model_by_path('electrical_profile')
     fluid_profile_model = get_model_by_path('fluid_profile')
-    # user_model = get_model_by_path('user')
-    print(test_result_model)
-    print(electrical_profile_model)
-    print(fluid_profile_model)
-
     test_result = db.session\
         .query(test_result_model)\
-        .get(test_result_id)
-    # test_result = db.session\
-    #     .query(test_result_model)\
-    #     .filter(
-    #         test_result_model.id == test_result_id,
-    #         or_(electrical_profile_model.user_model.id == user.id, fluid_profile_model.user_model.id == user.id)
-    #     )\
-    #     .first()
-    response = False
-
-    print(user.id)
-    print(test_result.id)
-    print(test_result.electrical_profile.user_id if test_result.electrical_profile else "no el prod")
-    print(test_result.fluid_profile.user_id if test_result.fluid_profile else "no fluid prod")
-    print(test_result.electrical_profile.id if test_result.electrical_profile else "no el prod")
-    print(test_result.fluid_profile.id if test_result.fluid_profile else "no fluid prod")
-
+        .outerjoin(test_result_model.electrical_profile)\
+        .outerjoin(test_result_model.fluid_profile)\
+        .filter(
+            and_(
+                # get only profiles with user_id NULL or the ones which belong to the current user
+                or_(electrical_profile_model.user_id == None, electrical_profile_model.user_id == user.id),
+                or_(fluid_profile_model.user_id == None, fluid_profile_model.user_id == user.id)
+            ),
+            test_result_model.id == test_result_id
+        ).first()
     if test_result:
-        # if test_result.electrical_profile and test_result.electrical_profile.user_id == current_user.id:
-        if test_result.electrical_profile:
-            # Electrical profile belongs to the current user
-            electrical_profile = duplicate_instance(test_result.electrical_profile)
-            test_result.electrical_profile = electrical_profile
-        # elif test_result.fluid_profile and test_result.fluid_profile.user_id == current_user.id:
-        elif test_result.fluid_profile:
-            # Fluid profile belongs to the current user
-            fluid_profile = duplicate_instance(test_result.fluid_profile)
-            test_result.fluid_profile = fluid_profile
+        test_result = handle_profile_and_test_result_duplication(test_result, user.id)
+    return test_result.id if test_result else None
+
+
+def handle_profile_and_test_result_duplication(test_result, user_id):
+    profile = None
+    profile_type = None
+    if test_result.electrical_profile and test_result.electrical_profile.user_id == user_id:
+        # Electrical profile belongs to the current user
+        profile = duplicate_instance(test_result.electrical_profile)
+        profile_type = "electrical"
+    elif test_result.fluid_profile and test_result.fluid_profile.user_id == user_id:
+        # Fluid profile belongs to the current user
+        profile = duplicate_instance(test_result.fluid_profile)
+        profile_type = "fluid"
+
+    try:
+        if profile:
+            db.session.flush()
+            if profile_type == "electrical":
+                test_result.electrical_profile_id = profile.id
+            elif profile_type == "fluid":
+                test_result.fluid_profile_id = profile.id
         # Test result
         duplicate_instance(test_result)
-        response = True
-    return response
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        abort(500, e.args)
+    return test_result
 
 
 def duplicate_instance(item):
@@ -356,10 +357,6 @@ def duplicate_instance(item):
     make_transient(item)
     item.id = None
     db.session.add(item)
-    try:
-        db.session.commit()
-    except Exception as e:
-        abort(500, e.args)
     return item
 
 
