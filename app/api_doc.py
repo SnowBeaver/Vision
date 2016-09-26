@@ -1324,6 +1324,19 @@ doc = ApiDoc(app=api)
 @apiUse Error400
 """
 """
+Duplicate test result and related electrical or fluid profile, if they belong
+to the currently logged in user or are private. 
+@api {post} /test_result/:id/duplicate
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_result
+@apiExample {curl} Example usage:
+    curl -X POST http://localhost:8001/api/v1.0/test_result/3/duplicate
+
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
 @api {put} /test_result/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
