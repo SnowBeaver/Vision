@@ -9,7 +9,6 @@ import Button from 'react-bootstrap/lib/Button';
 import Table from 'react-bootstrap/lib/Table';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
-
 var TestItem = React.createClass({
 
     handleChange: function (event, index, value) {
@@ -142,6 +141,13 @@ var TestItemList = React.createClass({
         })
     },
 
+    startCampaign: function () {
+        NotificationManager.success('Campaign has been successfully started');
+        browserHistory.push('/admin');
+        this.context.router.push('/dashboard');
+        console.log(this.props.id)
+    },
+
     closeTestForm: function () {
         this.setState({
             showTestForm: false
@@ -203,7 +209,6 @@ var TestItemList = React.createClass({
 
         return (
             <div>
-
                 <div className="row">
                     <div className="col-md-12">
                     <Table responsive hover id="test_prof">
@@ -225,9 +230,15 @@ var TestItemList = React.createClass({
                 </div>
                 {showAddTestButton ?
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-3">
                         <FormGroup>
                             <Button onClick={this.showTestForm} className="success">Add new test</Button>
+                        </FormGroup>
+                    </div>
+                    <div className="col-md-3"></div>
+                    <div className="col-md-3">
+                        <FormGroup>
+                            <Link to="/" className="btn btn-success">Start Campaign</Link>
                         </FormGroup>
                     </div>
                 </div>
