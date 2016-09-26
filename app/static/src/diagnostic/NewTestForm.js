@@ -1340,7 +1340,11 @@ var NewTestForm = React.createClass({
                     </Modal>
 
                     <Modal show={this.state.showFluidProfileForm}>
-                        <FluidProfileForm data={this.state} handleClose={this.closeFluidProfileForm}/>
+                        <FluidProfileForm testResultId={this.state.id}
+                                          equipmentId={this.state.equipment_id}
+                                          campaignId={this.state.campaign_id}
+                                          fluidProfileId={this.state.fluid_profile_id}
+                                          handleClose={this.closeFluidProfileForm}/>
                     </Modal>
 
                     <Modal show={this.state.showNewLabForm}>
@@ -1356,6 +1360,7 @@ var NewTestForm = React.createClass({
 
                     <Modal show={this.state.showNewContractForm}>
                         <Modal.Header>
+                            
                             <Modal.Title>New Contract</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>

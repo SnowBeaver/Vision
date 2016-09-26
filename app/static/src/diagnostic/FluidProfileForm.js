@@ -278,7 +278,7 @@ const FluidProfileForm = React.createClass({
                 'gas', 'furans', 'pcb', 'water',
                 'inhibitor', 'dielec', 'dielec_2',
                 'dielec_d', 'acidity', 'color',
-                'ift', 'density', 'pf_25', 'pf_100',
+                'ift', 'density', 'pf', 'pf_100',
                 'pcb_jar', 'particles', 'furans_f',
                 'inhibitor_jar', 'metals', 'water_w',
                 'point', 'viscosity', 'corr', 'dielec_i',
@@ -308,15 +308,16 @@ const FluidProfileForm = React.createClass({
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            data[key] = this.state.data[key];
         }
 
         // show success message
         // if update a profile
-        if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
+        var name = this.state.data['name'];
+        if (name != '' && (typeof name != 'undefined')) {
             var url = '/api/v1.0/fluid_profile/';
-            if (this.props.data.fluid_profile_id) {
-                url = url + this.props.data.fluid_profile_id;
+            if (this.props.fluidProfileId) {
+                url = url + this.props.fluidProfileId;
             }
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
@@ -338,11 +339,11 @@ const FluidProfileForm = React.createClass({
             delete data['shared'];
         }
         
-        data['campaign_id'] = this.props.data.campaign_id;
-        data['equipment_id'] = this.props.data.equipment_id;
+        data['campaign_id'] = this.props.campaignId;
+        data['equipment_id'] = this.props.equipmentId;
 
         return $.ajax({
-            url: '/api/v1.0/test_result/' + this.props.data.id,
+            url: '/api/v1.0/test_result/' + this.props.testResultId,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -404,20 +405,90 @@ const FluidProfileForm = React.createClass({
 		}
 		NotificationManager.error(message);
     },
+    calculate_qty: function (data) {
+        var quantity_ml_syringe = 0;
 
+        // Syringe
+        if ( data['gas'] ) { quantity_ml_syringe += 15 }
+        if ( data['water'] ) { quantity_ml_syringe += 10 }
+        if ( data['pcb'] ) { quantity_ml_syringe += 5 }
+        if ( data['furans'] ) { quantity_ml_syringe += 20 }
+
+        var quantity = Math.ceil(quantity_ml_syringe / 30.0);
+
+        if ( !quantity_ml_syringe && data['inhibitor'] ) {
+            quantity = 1;
+        }
+        // if quantity != value:
+        //     self._error(field, "Wrong quantity, must be {}".format(quantity))
+        return quantity;
+    },
+    calculate_qty_jar: function (data) {
+        var quantity_ml_jar = 0;
+        // POTS. Jar
+        if ( data['dielec'] ) { quantity_ml_jar += 500 }
+        if ( data['dielec_2'] ) { quantity_ml_jar += 500 }
+        if ( data['dielec_d'] ) { quantity_ml_jar += 450 }
+        if ( data['dielec_i'] ) { quantity_ml_jar += 500 }
+        if ( data['ift'] ) { quantity_ml_jar += 25 }
+        if ( data['pf'] ) { quantity_ml_jar += 100 }
+        if ( data['pf_100'] ) { quantity_ml_jar += 100 }
+        if ( data['point'] ) { quantity_ml_jar += 50 }
+        if ( data['viscosity'] ) { quantity_ml_jar += 50 }
+        if ( data['corr'] ) { quantity_ml_jar += 200 }
+        if ( data['pcb_jar'] ) { quantity_ml_jar += 5 }
+        if ( data['particles'] ) { quantity_ml_jar += 500 }
+        if ( data['metals'] ) { quantity_ml_jar += 50 }
+        if ( data['water_w'] ) { quantity_ml_jar += 10 }
+        if ( data['furans_f'] ) { quantity_ml_jar += 20 }
+
+        var quantity = Math.ceil(quantity_ml_jar / 750.0)
+
+        if (( !quantity_ml_jar ) &&
+           ( data['acidity'] ||
+             data['color'] ||
+             data['density'] ||
+             data['visual'] ||
+             data['inhibitor_jar']))
+        {
+            quantity = 1;
+        }
+
+        // if quantity != value:
+        //     self._error(field, "Wrong quantity, must be {}".format(quantity))
+
+        return quantity;
+    },
+    calculate_qty_vial: function (data) {
+        var quantity_ml_vial = 0;
+        if ( data['pcb_vial'] ) {
+            quantity_ml_vial += 5;
+        }
+        var quantity = Math.ceil(quantity_ml_vial / 5.0)
+        if ( ! quantity_ml_vial && data['antioxidant'] ) {
+            quantity = 1;
+        }
+        // if quantity != value:
+        //     self._error(field, "Wrong quantity, must be {}".format(quantity))
+        return quantity;
+    },
     _onChange: function (e) {
         var state = {};
+        state['data'] = this.state.data;
         if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
+            state['data'][e.target.name] = e.target.checked;
         } else if (e.target.type == 'radio') {
-            state[e.target.name] = (e.target.value == "1");
+            state['data'][e.target.name] = (e.target.value == "1");
         } else if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
+            state['data'][e.target.name] = e.target.value;
         } else {
-            state[e.target.name] = e.target.value;
+            state['data'][e.target.name] = e.target.value;
         }
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
+        state['data']['qty'] = this.calculate_qty(state['data']);
+        state['data']['qty_jar'] = this.calculate_qty_jar(state['data']);
+        state['data']['qty_vial'] = this.calculate_qty_vial(state['data']);
         this.setState(state);
     },
 
@@ -484,7 +555,6 @@ const FluidProfileForm = React.createClass({
     },
 
     render: function () {
-
         return (
             <div className="form-container">
                 <form ref="fluid_profile" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -627,8 +697,8 @@ const FluidProfileForm = React.createClass({
                                                 </div>
                                                 <div className="col-md-4 nopadding padding-right-xs">
                                                     <Checkbox
-                                                        name="pf_25"
-                                                        checked={this.state.data.pf_25 ? 'checked': null}
+                                                        name="pf"
+                                                        checked={this.state.data.pf ? 'checked': null}
                                                         value="1"
                                                     >PF25C(D924)</Checkbox>
                                                 </div>
