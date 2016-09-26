@@ -32,6 +32,31 @@ var TestItem = React.createClass({
     },
 
     onRemove: function () {
+        var data = this.props.data;
+        // Deleted id id in edited at the moment
+        if (this.props.editedId == data.id) {
+            NotificationManager.info('Cannot remove because this test is edited at the moment.');
+            return false;
+        }
+
+        var url = '/api/v1.0/test_result/' + data.id;
+        var that = this;
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'json',
+            contentType: 'application/json',
+            beforeSend: function () {},
+            success: function () {
+                that.props.reloadList();
+                NotificationManager.success('Test has been deleted successfully');
+            },
+            error: function () {
+                NotificationManager.error('Sorry an error occurred');
+            },
+            complete: function () {}
+        });
+
     },
 
     onDuplicate: function () {
@@ -57,7 +82,7 @@ var TestItem = React.createClass({
                 NotificationManager.success('Test has been duplicated successfully');
             },
             error: function () {
-                NotificationManager.error('Sorry an error occured');
+                NotificationManager.error('Sorry an error occurred');
             },
             complete: function () {}
         });
@@ -117,7 +142,8 @@ var TestItemList = React.createClass({
             items: [],
             isVisible: true,
             showTestForm: false,
-            showAddTestButton: true
+            showAddTestButton: true,
+            editedId: null
         };
     },
 
@@ -155,7 +181,8 @@ var TestItemList = React.createClass({
 
         this.refs.new_test_form._edit(id);
         this.setState({
-            showTestForm: true
+            showTestForm: true,
+            editedId: id
         })
     },
 
@@ -188,7 +215,11 @@ var TestItemList = React.createClass({
                     continue;
                 }
 
-                tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm} reloadList={this.props.reloadList}/>)
+                tests.push(<TestItem key={item.id}
+                                     data={item}
+                                     editTestForm={this.editTestForm}
+                                     reloadList={this.props.reloadList}
+                                     editedId={this.state.editedId}/>)
             }
         }
 
