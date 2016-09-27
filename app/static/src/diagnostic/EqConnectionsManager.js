@@ -32,7 +32,7 @@ var UpstreamSelectFields = React.createClass({
     },
 
     remove: function (e) {
-        var url = '/equipment/' + this.props.value + '/upstream/' + e;
+        var url = '/api/v1.0/equipment/' + this.props.value + '/upstream/' + e;
         this.props.upstream.splice(this.props.upstream.indexOf(e), 1);
         var upstreams = this.props.upstream;
         this.setState({upstreams});
@@ -129,7 +129,7 @@ var DownstreamSelectFields = React.createClass({
     },
 
     remove: function (e) {
-        var url = '/equipment/' + this.props.value + '/downstream/' + e;
+        var url = '/api/v1.0/equipment/' + this.props.value + '/downstream/' + e;
         this.props.downstream.splice(this.props.downstream.indexOf(e), 1);
         var downstreams = this.props.downstream;
         this.setState({downstreams});
@@ -256,7 +256,9 @@ var EqConnectionsManager = React.createClass({
         }
     },
     _save: function () {
-        var data = this.state;
+
+        var data = {"upstream":this.state.items.upstream, "downstream": this.state.items.downstream};
+        console.log("data:", data);
         var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
         return $.ajax({
             url: url,
@@ -279,6 +281,8 @@ var EqConnectionsManager = React.createClass({
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
+
+        console.log("submit log", this.state);
     },
     hideLoading: function () {
         this.setState({loading: false});
@@ -289,36 +293,11 @@ var EqConnectionsManager = React.createClass({
         NotificationManager.success('Upstreams & downstreams were succesfully set');
     },
     _onError: function (data) {
-        var message = "Failed to create";
-        var res = data.responseJSON;
-        if (res.message) {
-            message = data.responseJSON.message;
-        }
-        if (res.error) {
-            // We get list of errors
-            if (data.status >= 500) {
-                message = res.error.join(". ");
-            } else if (res.error instanceof Object) {
-                // We get object of errors with field names as key
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
-                    }
-                    res.error[field] = errorMessage;
-                }
-                this.setState({
-                    errors: res.error
-                });
-            } else {
-                message = res.error;
-            }
-        }
-        NotificationManager.error(message);
+
     },
 
     _clearErrors: function () {
-        this.setState({errors: {}});
+        
     },
 
     componentDidMount: function () {
