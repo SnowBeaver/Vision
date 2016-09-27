@@ -54,7 +54,6 @@ var TestResultForm = React.createClass({
     },
 
     updateSource: function (source) {
-        console.log(source);
         this.serverRequest = $.get(source, function (result) {
             var arr = (result['result']);
             var data = [];
@@ -122,7 +121,8 @@ var TestResultForm = React.createClass({
                 </BootstrapTable>
                 <Modal show={this.state.showEquipmentTestForm}>
                     <EquipmentTestForm handleClose={this.closeEquipmentTestForm}
-                                       selectedRowId={this.state.selectedRowId}/>
+                                       selectedRowId={this.state.selectedRowId}
+                                       updateSource={this.updateSource}/>
                 </Modal>
             </div>
         );

@@ -572,6 +572,7 @@ var EquipmentTestForm = React.createClass({
         // this.setState(this.getInitialState());
         this.props.handleClose();
         NotificationManager.success('Saved');
+        this.props.updateSource('/api/v1.0/test_result/?equipment_id=' + this.state.data.equipment_id);
     },
 
     _onError: function (data) {
