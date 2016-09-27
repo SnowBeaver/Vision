@@ -590,13 +590,13 @@ var EquipmentTestForm = React.createClass({
     _onChange: function (e) {
         var data = (this.state.data != null) ? this.state.data : {};
         if (e.target.type == 'checkbox') {
-            data[e.target.name] = e.target.checked;
+            data[e.target.name] = e.target.checked || null;
         } else if (e.target.type == 'radio') {
-            data[e.target.name] = e.target.value;
+            data[e.target.name] = e.target.value || null;
         } else if (e.target.type == 'select-one') {
-            data[e.target.name] = e.target.value;
+            data[e.target.name] = e.target.value || null;
         } else {
-            data[e.target.name] = e.target.value;
+            data[e.target.name] = e.target.value || null;
         }
         this.setState({data: data});
     },
