@@ -12,7 +12,6 @@ var UpstreamSelectFields = React.createClass({
         return {
             equipment: {},
             isVisible: false,
-            upstreams: this.props.upstream,
             eq_id: this.props.equipment_id
         };
     },
@@ -32,20 +31,16 @@ var UpstreamSelectFields = React.createClass({
     },
 
     upstreamAdd: function () {
-        var upstreams = this.state.upstreams;
-        upstreams.push(0);
-        this.setState({
-            upstreams: upstreams
-        });
+        this.props.upstream.push(0);
+        var upstreams = this.props.upstream;
+        this.setState({upstreams});
     },
 
     remove: function (e) {
-        var upstreams = this.state.upstreams;
         var url = '/equipment/' + this.props.value + '/upstream/' + e;
-        upstreams.splice(upstreams.indexOf(e), 1);
-        this.setState({
-            upstreams: upstreams
-        });
+        this.props.upstream.splice(this.props.upstream.indexOf(e), 1);
+        var upstreams = this.props.upstream;
+        this.setState({upstreams});
         $.ajax({
             url: url,
             type: 'DELETE',
@@ -55,6 +50,9 @@ var UpstreamSelectFields = React.createClass({
     },
 
     render: function () {
+        console.log("props upstream:", this.props.upstream);
+
+
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
@@ -70,13 +68,13 @@ var UpstreamSelectFields = React.createClass({
                         value={this.state.equipment[key].id}>{`${this.state.equipment[key].name}`}</option>
             );
         }
-        for (key in this.state.upstreams) {
+        for (key in this.props.upstream) {
             label_num++;
             label = 'Upstream ' + label_num;
             var name = 'upstream' + key;
             upstreams.push(<div className="row">
                 <div className="col-md-10">
-                    <FormGroup controlId={key} >
+                    <FormGroup controlId={key}>
                         <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props._onChange}
@@ -121,7 +119,6 @@ var DownstreamSelectFields = React.createClass({
         return {
             equipment: {},
             isVisible: false,
-            downstreams: this.props.downstream
         };
     },
     isVisible: function () {
@@ -139,20 +136,16 @@ var DownstreamSelectFields = React.createClass({
     },
 
     downstreamAdd: function () {
-        var downstreams = this.state.downstreams;
-        downstreams.push(0);
-        this.setState({
-            downstreams: downstreams
-        });
+        this.props.downstream.push(0);
+        var upstreams = this.props.downstream;
+        this.setState({upstreams});
     },
 
     remove: function (e) {
-        var downstreams = this.state.downstreams;
-        var url = '/equipment/' + this.props.value + '/downstream/' + e;
-        downstreams.splice(downstreams.indexOf(e), 1);
-        this.setState({
-            downstreams: downstreams
-        });
+        var url = '/equipment/' + this.props.value + '/upstream/' + e;
+        this.props.downstream.splice(this.props.downstream.indexOf(e), 1);
+        var downstreams = this.props.downstream;
+        this.setState({downstreams});
         $.ajax({
             url: url,
             type: 'DELETE',
@@ -162,7 +155,7 @@ var DownstreamSelectFields = React.createClass({
     },
 
     render: function () {
-
+        console.log("props dstream:", this.props.downstream);
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
@@ -180,14 +173,14 @@ var DownstreamSelectFields = React.createClass({
             );
         }
 
-        for (key in this.state.downstreams) {
+        for (key in this.props.downstream) {
             label_num++;
             label = 'Downstream ' + label_num;
             var name = 'downstream' + key;
             var id = this.props.downstream[key];
             downstreams.push(<div className="row">
                 <div className="col-md-10">
-                    <FormGroup controlId={key} >
+                    <FormGroup controlId={key}>
                         <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props.onChange}
@@ -281,7 +274,6 @@ var EqConnectionsManager = React.createClass({
     getInitialState: function () {
         return {
             items: {},
-            data: {"upstream": [], "downstream": []},
             loading: false,
             errors: {},
             equipment_id: 2
@@ -292,7 +284,6 @@ var EqConnectionsManager = React.createClass({
     _save: function () {
 
         var data = this.state;
-        var deldata = this.state.deldata;
         var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
 
 
@@ -313,6 +304,7 @@ var EqConnectionsManager = React.createClass({
     },
 
     _onSubmit: function (e) {
+        console.log("submit state:", this.state);
         e.preventDefault();
         this._clearErrors();
         var xhr = this._save();
@@ -372,21 +364,15 @@ var EqConnectionsManager = React.createClass({
     },
 
     _onChange: function (e) {
-        var index
-        var state = {
-            upstream: [],
-            downstream: [],
-            items: {"upstream": [], "downstream": []}
-        };
+        var index;
+        var state = this.state;
 
         if (e.target.name.indexOf('upstream') == 0) {
-            state['upstream'][e.target.name] = e.target.value;
-            index = e.target.id;
-            state.items.upstream[index] = e.target.value;
+            index = parseInt(e.target.id);
+            state.items.upstream[index] = parseInt(e.target.value);
         } else if (e.target.name.indexOf('downstream') == 0) {
-            state['downstream'][e.target.name] = e.target.value;
-            index = e.target.id;
-            state.items.downstream[index] = e.target.value;
+            index = parseInt(e.target.id);
+            state.items.downstream[index] = parseInt(e.target.value);
         }
 
         if (e.target.name === 'equipment_id') {
@@ -400,7 +386,9 @@ var EqConnectionsManager = React.createClass({
                 });
             }.bind(this), 'json');
         }
+
         this.setState(state);
+
     },
 
     render: function () {
@@ -408,9 +396,6 @@ var EqConnectionsManager = React.createClass({
         if (items == 0) {
             return (<div></div>);
         }
-
-        console.log("eqID:", this.props.data);
-        console.log("THIS STATE:",this.state);
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
