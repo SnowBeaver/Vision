@@ -274,9 +274,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                     <div className="col-md-3 col-md-offset-2">
                         <SelectField source="test_status"
                                      label="Status"
-                                     name='status_id'
+                                     name='test_status_id'
                                      value={data.test_status_id}
-                                     disabled
                         />
                     </div>
                     <div className="col-md-2 nopadding padding-right-xs">
@@ -516,7 +515,7 @@ var EquipmentTestForm = React.createClass({
                 'status_id', 'temperature', 'lab_contract_id',
                 'sampling_point_id', 'equipment_id', 'lab_id',
                 'remark', 'repair_description', 'fluid_type_id',
-                'date_analyse', 'repair_date'],
+                'date_analyse', 'repair_date', 'test_status_id'],
             errors: {},
             data: null
         }
