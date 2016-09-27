@@ -235,6 +235,26 @@ def delete_up_down_stream_of_equipment(item_id):
         return True
 
 
+# Remove connection between equipment and its upstream
+def delete_upstream_of_equipment(item_id, upstream_id):
+    path = 'equipment_connection'
+    model = get_model_by_path(path)
+    try:
+        db.session.query(model)\
+            .filter(model.parent_id == upstream_id, model.equipment_id == item_id)\
+            .delete(synchronize_session=False)
+    except:
+        return False
+    else:
+        db.session.commit()
+        return True
+
+
+# Remove connection between equipment and its downstream
+def delete_downstream_of_equipment(item_id, downstream_id):
+    return delete_upstream_of_equipment(downstream_id, item_id)
+
+
 # Add a lot of test results
 def add_items(path, data):
     items_model = get_model_by_path(path)
@@ -470,6 +490,18 @@ def read_equipment_up_down_stream_handler(item_id):
 def delete_equipment_up_down_stream_handler(item_id):
     abort_if_json_missing()
     return return_json('result', delete_up_down_stream_of_equipment(item_id))
+
+
+# Remove connection between equipment and its upstream
+@api_blueprint.route('/equipment/<int:item_id>/upstream/<int:upstream_id>', methods=['DELETE'])
+def delete_equipment_upstream_handler(item_id, upstream_id):
+    return return_json('result', delete_upstream_of_equipment(item_id, upstream_id))
+
+
+# Remove connection between equipment and its downstream
+@api_blueprint.route('/equipment/<int:item_id>/downstream/<int:downstream_id>', methods=['DELETE'])
+def delete_equipment_downstream_handler(item_id, downstream_id):
+    return return_json('result', delete_downstream_of_equipment(item_id, downstream_id))
 
 
 # Create a lot of test_results with equipment using one query
