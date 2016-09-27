@@ -1642,7 +1642,7 @@ class TestRecommendation(db.Model):
     date_created = db.Column(db.DateTime)
     date_updated = db.Column(db.DateTime)
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
-    test_result = db.relationship('TestResult', backref='test_recommendation')
+    test_result = db.relationship('TestResult', backref='TestRecommendation.test_recommendation')
 
     def __repr__(self):
         return "{} {} by {}".format(self.id, self.recommendation, self.user)
