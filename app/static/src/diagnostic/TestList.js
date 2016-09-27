@@ -8,6 +8,7 @@ import NewTestForm from './NewTestForm';
 import Button from 'react-bootstrap/lib/Button';
 import Table from 'react-bootstrap/lib/Table';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import ReactDOM from 'react-dom';
 
 var TestItem = React.createClass({
 
@@ -105,6 +106,10 @@ var TestItem = React.createClass({
 
 var TestItemList = React.createClass({
 
+    contextTypes: {
+        router: React.PropTypes.func.isRequired
+    },
+
     handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
@@ -141,11 +146,10 @@ var TestItemList = React.createClass({
         })
     },
 
-    startCampaign: function () {
+    startCampaign: function (e) {
+        e.preventDefault();
         NotificationManager.success('Campaign has been successfully started');
-        browserHistory.push('/admin');
-        this.context.router.push('/dashboard');
-        console.log(this.props.id)
+        this.context.router.push(this.refs.startCampaign.props.to);
     },
 
     closeTestForm: function () {
@@ -238,7 +242,10 @@ var TestItemList = React.createClass({
                     <div className="col-md-3"></div>
                     <div className="col-md-3">
                         <FormGroup>
-                            <Link to="/" className="btn btn-success">Start Campaign</Link>
+                            <Link to={"/" + equipment_id}
+                                  className="btn btn-success"
+                                  onClick={this.startCampaign}
+                                ref="startCampaign">Start Campaign</Link>
                         </FormGroup>
                     </div>
                 </div>

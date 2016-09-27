@@ -18,6 +18,13 @@ var Home = React.createClass({
         }
     },
 
+    componentDidMount: function (){
+        var equipmentId = this.props.params.equipmentId;
+        if (/^\d+$/.test(equipmentId)) {
+            this.loadEquipment(equipmentId);
+        }
+    },
+
     onTreeSearch: function (e) {
         this.setState({
             searchValue: e.target.value
@@ -27,12 +34,16 @@ var Home = React.createClass({
 
     onTreeNodeClick: function (treeItem) {
         // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
-        var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0; 
+        var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
+        this.loadEquipment(id);
+    },
+
+    loadEquipment: function (id) {
         var src = '/api/v1.0/test_result/?equipment_id=' + id;
         this.setState({
             source: src
         });
-        this.refs.testResultList.updateSource(this.state.source);
+        this.refs.testResultList.updateSource(src);
     },
 
     render: function () {

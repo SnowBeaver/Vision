@@ -115,7 +115,7 @@ const App = React.createClass({
 
 render((
     <Router history={hashHistory}>
-        <Route path="/" component={App}>
+        <Route path="/" component={App} >
             <IndexRoute component={Home}/>
             <Route path="campaign" component={Campaign}/>
             <Route path="equipment" component={Equipment}/>
@@ -153,7 +153,9 @@ render((
             <Route path="water_test" component={WaterTestForm}/>
             <Route path="winding2_test" component={WindingTestForm}/>
 			<Route path="up_down_streams" component={EqConnectionsManager}/>
-
+			
+			{/*This route should be the last, otherwise it will match all subsequent routes*/}
+			<Route path=":equipmentId" component={Home}/>
         </Route>
     </Router>
 ), document.getElementById('app'));
