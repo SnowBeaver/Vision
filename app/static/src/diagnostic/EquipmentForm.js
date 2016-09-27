@@ -6,7 +6,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
-import DateTimePicker from 'react-bootstrap-datetimepicker';
+import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField'
 import Panel from 'react-bootstrap/lib/Panel';
 import Modal from 'react-bootstrap/lib/Modal';
 import NewManufacturerForm from './EquipmentForm_modules/NewManufacturerForm';
@@ -16,6 +16,7 @@ import NewEquipmentTypeForm from './EquipmentForm_modules/NewEquipmentTypeForm';
 import CreatedByForm from './CampaignForm_modules/NewUserForm';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
 import AirBreakerParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/AirBreakerParams';
 import BushingParams  from './EquipmentForm_modules/AditionalEqupmentParameters_modules/BushingParams';
@@ -710,7 +711,6 @@ const EquipmentForm = React.createClass({
         var response = {
             loading: false,
             errors: {},
-            visual_date: new Date().toISOString(),
             subform: {},
             fields: [
                 'equipment_type_id',
@@ -734,7 +734,8 @@ const EquipmentForm = React.createClass({
                 'invalidation',
                 'prev_serial_number',
                 'prev_equipment_number',
-                'manufactured'
+                'manufactured',
+                'visual_date'
             ],
             changedFields: [],
             option_text: {},
@@ -744,7 +745,6 @@ const EquipmentForm = React.createClass({
         for (var i = 0; i < response.fields.length; i++) {
             response[response.fields[i]] = "";
         }
-        response["visual_date"] = new Date().toISOString();
         return response;
     },
 
@@ -758,7 +758,7 @@ const EquipmentForm = React.createClass({
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             var value = this.state[key];
-            if (value == ""){
+            if (value == "") {
                 value = null;
             }
             data[key] = value;
@@ -768,7 +768,7 @@ const EquipmentForm = React.createClass({
             , xhr;
 
         // If the main form haven't been saved yet
-        if (!this.state.equipmentId){
+        if (!this.state.equipmentId) {
             xhr = $.ajax({
                 url: '/api/v1.0/equipment/',
                 type: 'POST',
@@ -794,8 +794,8 @@ const EquipmentForm = React.createClass({
         var that = this;
         if (Object.keys(subform).length != 0) {
             subform['equipment_id'] = equipmentId;
-            for (var field in subform){
-                if (subform[field] == ""){
+            for (var field in subform) {
+                if (subform[field] == "") {
                     subform[field] = null;
                 }
             }
@@ -822,7 +822,7 @@ const EquipmentForm = React.createClass({
         }
         this._clearErrors();
         var xhr = this._save();
-        if (xhr){
+        if (xhr) {
             xhr.fail(this._onError)
                 .always(this.hideLoading)
         }
@@ -845,26 +845,26 @@ const EquipmentForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-			// We get list of errors
-			if (data.status >= 500) {
-				message = res.error.join(". ");
-			} else if (res.error instanceof Object){
-				// We get object of errors with field names as key
-				for (var field in res.error) {
-					var errorMessage = res.error[field];
-					if (Array.isArray(errorMessage)) {
-						errorMessage = errorMessage.join(". ");
-					}
-					res.error[field] = errorMessage;
-				}
-				this.setState({
-					errors: res.error
-				});
-			} else {
-				message = res.error;
-			}
-		}
-		NotificationManager.error(message);
+            // We get list of errors
+            if (data.status >= 500) {
+                message = res.error.join(". ");
+            } else if (res.error instanceof Object) {
+                // We get object of errors with field names as key
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
+        }
+        NotificationManager.error(message);
     },
 
     _clearErrors: function () {
@@ -932,60 +932,60 @@ const EquipmentForm = React.createClass({
         var errors = [];
         var error;
         error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         error = this._validateFieldChoice(e.target.value, e.target.getAttribute("data-choice"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         return errors;
     },
 
-    _validateFieldType: function (value, type){
+    _validateFieldType: function (value, type) {
         var error = "";
-        if (type != undefined && value){
+        if (type != undefined && value) {
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/
             };
-            if (!typePatterns[type].test(value)){
+            if (!typePatterns[type].test(value)) {
                 error = "Invalid " + type + " value";
             }
         }
         return error;
     },
 
-    _validateFieldLength: function (value, length){
+    _validateFieldLength: function (value, length) {
         var error = "";
-        if (value && length){
-            if (value.length > length){
+        if (value && length) {
+            if (value.length > length) {
                 error = "Value should be maximum " + length + " characters long"
             }
         }
         return error;
     },
 
-    _validateFieldChoice: function (value, validChoice){
+    _validateFieldChoice: function (value, validChoice) {
         var error = "";
         validChoice = (typeof validChoice == "string") ? validChoice.split(",") : null;
-        if (Array.isArray(validChoice) && validChoice.indexOf(value) == -1){
+        if (Array.isArray(validChoice) && validChoice.indexOf(value) == -1) {
             error = "Not a valid choice. Value should be one of the following: " + validChoice.join(", ");
         }
         return error;
     },
 
-    _updateFieldErrors: function (fieldName, state, errors){
+    _updateFieldErrors: function (fieldName, state, errors) {
         // Clear existing errors related to the current field as it has been edited
         state.errors = this.state.errors;
         delete state.errors[fieldName];
 
         // Update errors with new ones, if present
-        if (Object.keys(errors).length){
+        if (Object.keys(errors).length) {
             state.errors[fieldName] = errors.join(". ");
         }
         return state;
@@ -1108,9 +1108,36 @@ const EquipmentForm = React.createClass({
         state.changedFields = this.state.changedFields.concat([fieldName]);
         this.setState(state);
         this.refs[fieldName].componentDidMount();
+
+    },
+
+    setVisualDate: function (timestamp){
+        this._setDateTimeFieldDate(timestamp, "visual_date");
+    },
+
+    _setDateTimeFieldDate(timestamp, fieldName){
+        var state = {};
+        // If date is not valid (for example, date is deleted) string "Invalid date" is received
+        if (timestamp == "Invalid date"){
+            timestamp = null;
+        } else if (timestamp){
+            // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
+            // Format date here instead of specifying format in DateTimeField,
+            // because error is raised when format is specified, but date is null/undefined/empty string.
+            if (/^\d+$/.test(timestamp)){
+                timestamp = parseInt(timestamp);
+                timestamp = moment(timestamp).toISOString();
+            }
+            state[fieldName] = timestamp;    // Already formatted to ISO string
+        }
+        state.changedFields = this.state.changedFields.concat(["visual_date"]);
+        this.setState(state);
     },
 
     render: function () {
+        // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
+        var visualDate = this.state.visual_date;
+        visualDate = (visualDate) ? {dateTime: visualDate, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -1328,24 +1355,21 @@ const EquipmentForm = React.createClass({
                                     </FormGroup>
                                 </div>
                             </div>
-
-
                             <div className="row">
                                 <div className="col-lg-5">
-                                    <FormGroup controlId="DateTimePicker"
-                                               validationState={this.state.errors.visual_date ? 'error' : null}>
+                                    <FormGroup controlId="DateTimeField"
+                                               validationState={this.state.errors.visual_date ? 'error' : null}
+                                               key={this.state.visual_date}>
                                         <ControlLabel>Visual Date</ControlLabel>
-                                        <DateTimePicker name="visual_date"
-                                                        defaultText="Please select a date"
-                                                        datetime={this.state.visual_date}
-                                                        ref="visual_date"
-                                        />
+                                        <DateTimeField name="visual_date"
+                                                       ref="visual_date"
+                                                       onChange={this.setVisualDate}
+                                                       {...visualDate}/>
                                         <HelpBlock className="warning">{this.state.errors.visual_date}</HelpBlock>
                                         <FormControl.Feedback />
                                     </FormGroup>
                                 </div>
                             </div>
-
                             <div className="row">
                                 <div className="col-lg-12">
                                     <FormGroup controlId="visualInspectionCommentsTextarea"

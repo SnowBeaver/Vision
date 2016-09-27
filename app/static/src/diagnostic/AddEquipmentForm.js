@@ -3,10 +3,12 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
+import Modal from 'react-bootstrap/lib/Modal';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {Link} from 'react-router';
 import {hashHistory} from 'react-router';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import EqConnectionsManager from './EqConnectionsManager';
 
 var EquipmentSelectField = React.createClass({
 
@@ -98,6 +100,50 @@ var EquipmentSelectField = React.createClass({
     }
 });
 
+var ConnectionsManager = React.createClass({
+
+    getInitialState: function () {
+        return {
+            showEqConnectionsManager: false
+        };
+    },
+
+    componentDidMount: function () {
+    },
+
+    componentWillUnmount: function () {
+    },
+
+    closeConnectionManager: function () {
+        this.setState({
+            showEqConnectionsManager: false
+        })
+    },
+
+    ConnectionsButtonClick: function () {
+        this.setState({
+            showEqConnectionsManager: true
+        });
+    },
+
+    render: function () {
+        return (
+            <div>
+                <a className="btn btn-primary"
+                   onClick={this.ConnectionsButtonClick}
+                >Upstreams / Downstreams</a>
+                <Modal show={this.state.showEqConnectionsManager}>
+                    <Modal.Header>
+                        <Modal.Title>New equipment's upstreams/downstreams</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <EqConnectionsManager data=" " handleClose={this.closeConnectionManager}/>
+                    </Modal.Body>
+                </Modal>
+            </div>
+        );
+    }
+});
 
 var AddEquipmentForm = React.createClass({
 
@@ -133,16 +179,16 @@ var AddEquipmentForm = React.createClass({
     _onSubmit: function (e) {
         e.preventDefault();
 
-        if (this.state.equipment.length == 0 || this.state.equipment.every(elem => isNaN(elem))){
+        if (this.state.equipment.length == 0 || this.state.equipment.every(elem => isNaN(elem))) {
             NotificationManager.info('Please add at least one equipment');
             return false;
         }
 
-        if (!this.is_valid()){
-			NotificationManager.error('Please correct the errors');
+        if (!this.is_valid()) {
+            NotificationManager.error('Please correct the errors');
             e.stopPropagation();
-			return false;
-		}
+            return false;
+        }
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -158,7 +204,9 @@ var AddEquipmentForm = React.createClass({
         NotificationManager.success('Campaign equipment successfully saved.', null, 3000);
 
         var campaign = this.props.params['campaign'];
-        setTimeout(function(){ hashHistory.push('/campaign/' + campaign); }, 3000);
+        setTimeout(function () {
+            hashHistory.push('/campaign/' + campaign);
+        }, 3000);
     },
 
     _onError: function (data) {
@@ -169,16 +217,16 @@ var AddEquipmentForm = React.createClass({
         }
         if (res.error) {
             var errorMessage;
-			// Join multiple error messages
-			if (res.error instanceof Object){
-				for (var field in res.error) {
-                    if (Array.isArray(res.error[field])){
+            // Join multiple error messages
+            if (res.error instanceof Object) {
+                for (var field in res.error) {
+                    if (Array.isArray(res.error[field])) {
                         // Array of objects
-                        for (var i = 0; i < res.error[field].length; i++){
+                        for (var i = 0; i < res.error[field].length; i++) {
                             var errorMessages = res.error[field][i];
-                            if (errorMessages instanceof Object){
+                            if (errorMessages instanceof Object) {
                                 // Finally get the errors
-                                for (var id in errorMessages){
+                                for (var id in errorMessages) {
                                     errorMessage = errorMessages[id];
                                     if (Array.isArray(errorMessage)) {
                                         errorMessage = errorMessages[id].join(". ");
@@ -194,18 +242,18 @@ var AddEquipmentForm = React.createClass({
                         }
                         res.error[field] = errorMessage;
                     }
-				}
-				this.setState({
-					errors: res.error
-				});
-			} else {
-				message = res.error;
-			}
-		}
-		NotificationManager.error(message);
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
+        }
+        NotificationManager.error(message);
     },
     _validate: function () {
-        return  {};
+        return {};
     },
     is_valid: function () {
         return (Object.keys(this.state.errors).length <= 0);
@@ -284,17 +332,27 @@ var AddEquipmentForm = React.createClass({
     },
 
     render: function () {
-
+        console.log("STATE:", this.state);
+        console.log("STATE:", this.state.equipment_id);
         return (
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <Panel header="Add equipment">
-                        <FormGroup validationState={(this.state.errors.equipment_id) ? 'error' : null}>
-                            <HelpBlock className="warning">{this.state.errors.equipment_id}</HelpBlock>
-                            {this.getItems()}
-                        </FormGroup>
                         <div className="row">
-                            <div className="col-md-10">
+                            <div className="col-md-6">
+                                <FormGroup validationState={(this.state.errors.equipment_id) ? 'error' : null}>
+                                    <HelpBlock className="warning">{this.state.errors.equipment_id}</HelpBlock>
+                                    {this.getItems()}
+                                </FormGroup>
+                            </div>
+                            <div className="col-md-6">
+                                {typeof this.state.equipment_id =='undefined' ? null : <ConnectionsManager
+                                    data={this.state.equipment_id}
+                                />}
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-6">
                                 <a href="javascript:void(0)"
                                    className="glyphicon glyphicon-plus"
                                    onClick={this.onClickSelectAdd}

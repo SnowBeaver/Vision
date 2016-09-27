@@ -1,0 +1,1 @@
+export const DATETIMEPICKER_FORMAT = "YYYY-MM-DDTHH:mm:ss.SSSSSS[Z]";   // ISO date format
