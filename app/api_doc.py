@@ -3444,6 +3444,8 @@ to the currently logged in user or are private.
 @apiSuccess {Dict}          user                see: user->get an item
 @apiSuccess {String}        date_created
 @apiSuccess {String}        date_updated
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Integer}       test_result_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3461,6 +3463,7 @@ to the currently logged in user or are private.
 @apiParam   {Integer}       user_id
 @apiParam   {String}        date_created     format "2016-07-29 17:52:19"
 @apiParam   {String}        date_updated     format "2016-07-29 17:52:19"
+@apiParam   {Integer}       test_type_id
 @apiParam   {Integer}       test_result_id
 @apiUse PostItemSuccess
 @apiUse Error400
@@ -3750,11 +3753,12 @@ to the currently logged in user or are private.
         }
     }
 
-@apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {Integer}       group_id
-@apiSuccess {Boolean}       is_group
-@apiSuccess {String(100)}   test_table_name
+@apiSuccess {Integer}  id
+@apiSuccess {String}   name
+@apiSuccess {Integer}  group_id
+@apiSuccess {Boolean}  is_group
+@apiSuccess {String}   test_table_name
+@apiSuccess {String}   checkbox_name
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3771,6 +3775,7 @@ to the currently logged in user or are private.
 @apiParam   {Integer}     group_id
 @apiParam   {Boolean}     is_group          required
 @apiParam   {String(100)} test_table_name
+@apiParam   {String(100)} checkbox_name
 @apiUse PostItemSuccess
 @apiUse Error400
 """
