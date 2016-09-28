@@ -173,12 +173,19 @@ const DateTimeFieldWithLabel = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var dateValue = this.props.value;
-        dateValue = (dateValue) ? {dateTime: dateValue, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
+        dateValue = (dateValue) ? {
+            dateTime: dateValue,
+            format: DATETIMEPICKER_FORMAT
+        } : {defaultText: "Please select a date"};
 
         return (
-            <div className="datetimepicker input-group date ">
+            <div className="datetimepicker input-group date">
                 <ControlLabel>{label}</ControlLabel>
-                <DateTimeField name={name} onChange={this._onChange} {...dateValue}/>
+                <DateTimeField name={name}
+                               onChange={this._onChange}
+                                {...dateValue}
+                               inputProps={{disabled: this.props.readOnly}}
+                               daysOfWeekDisabled={this.props.daysOfWeekDisabled}/>
             </div>
         );
     }
@@ -253,7 +260,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <TextField label="Fluid Temperature (&#8451;)"
                                    name='temperature'
                                    value={data.temperature}
-                                   />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -283,7 +290,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <TextField label="Load (MVA)"
                                    value={data.charge}
                                    name="charge"
-                                   />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -306,14 +313,17 @@ var EquipmentTestIdentificationForm = React.createClass({
                                                 name='date_analyse'
                                                 value={data.date_analyse}
                                                 onChange={this.props.onChange}
-                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
+                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}
+                                                daysOfWeekDisabled={[0,1,2,3,4,5,6,7]}
+                                                readOnly
+                        />
                     </div>
                     <div className="col-md-3 nopadding padding-right-xs">
                         <SelectField source="lab"
                                      label="Lab./On-line analyser"
                                      name='lab_id'
                                      value={data.lab_id}
-                                     />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -626,13 +636,13 @@ var EquipmentTestForm = React.createClass({
     _onDateTimeFieldChange: function (timestamp, fieldName) {
         var stateData = this.state.data;
         // If date is not valid (for example, date is deleted) string "Invalid date" is received
-        if (timestamp == "Invalid date"){
+        if (timestamp == "Invalid date") {
             timestamp = null;
-        } else if (timestamp){
+        } else if (timestamp) {
             // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
             // Format date here instead of specifying format in DateTimeField,
             // because error is raised when format is specified, but date is null/undefined/empty string.
-            if (/^\d+$/.test(timestamp)){
+            if (/^\d+$/.test(timestamp)) {
                 timestamp = parseInt(timestamp);
                 timestamp = moment(timestamp).toISOString();
             }
