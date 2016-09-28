@@ -1,11 +1,14 @@
-from app import db
 from app.users import constants as USER
+from app import db, app
 from hashlib import md5
 from sqlalchemy import event
 from sqlalchemy.sql import text
 from sqlalchemy.orm import class_mapper, ColumnProperty
 import datetime
 from flask.ext.security import RoleMixin, UserMixin
+from flask.ext.security.utils import verify_password
+from itsdangerous import (TimedJSONWebSignatureSerializer
+as Serializer, BadSignature, SignatureExpired)
 
 # Define models
 users_roles = db.Table(
@@ -133,6 +136,25 @@ class User(db.Model, UserMixin):
     def avatar(self, size):
         return 'http://www.gravatar.com/avatar/' + \
                md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
+
+    # API authentication
+    def verify_password(self, password):
+        verify_password(password, self.password)
+
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None  # valid token, but expired
+        except BadSignature:
+            return None  # invalid token
+        return User.query.get(data['id'])
 
     def serialize(self):
         """Return object data in easily serializeable format"""

@@ -1,4 +1,5 @@
-from flask import Flask, Blueprint, jsonify, abort, make_response, request
+from functools import wraps
+from flask import Flask, Blueprint, jsonify, abort, make_response, request, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict
@@ -22,6 +23,31 @@ meta = MetaData()
 sql_storage = SQLAStorage(engine, metadata=meta)
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(api, user_datastore)
+
+
+# Authentication functions
+def verify_password(username_or_token, password):
+    # first try to authenticate by token
+    user = User.verify_auth_token(username_or_token)
+    if not user:
+        # try to authenticate with username/password
+        user = User.query.filter_by(name=username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth = request.authorization
+        if not auth:
+            abort(401)
+        if not verify_password(auth['username'], unicode(auth['password'], "utf-8")):
+            abort(401)
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # Accessory functions
@@ -371,6 +397,11 @@ def not_found(error):
     return make_response(return_json('error', 'Not found'), 404)
 
 
+@api.errorhandler(401)
+def unauthorized(error):
+    return make_response(return_json('error', error.description), 401)
+
+
 @api.errorhandler(400)
 def bad_request(error):
     return make_response(return_json('error', error.description), 400)
@@ -394,6 +425,7 @@ def create_item_handler(path):
 
 # Read
 @api_blueprint.route('/<path>/', methods=['GET'])
+@login_required
 def read_items_handler(path):
     abort_if_wrong_path(path)
     return return_json('result', get_items(path, request.args))
@@ -426,6 +458,14 @@ def delete_item_handler(path, item_id):
 
 
 # Custom routes
+# Get token
+@api_blueprint.route('/token')
+@login_required
+def get_auth_token():
+    token = g.user.generate_auth_token(600)
+    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+
+
 # Get fields from corresponding table of specified equipment type
 @api_blueprint.route('/equipment_type/<int:item_id>/fields', methods=['GET'])
 def handler_equipment_type_fields(item_id):
