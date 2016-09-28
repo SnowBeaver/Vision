@@ -10,13 +10,8 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 var UpstreamSelectFields = React.createClass({
     getInitialState: function () {
         return {
-            equipment: {},
-            isVisible: false,
-            eq_id: this.props.equipment_id
+            equipment: {}
         };
-    },
-    isVisible: function () {
-        return this.state.isVisible;
     },
     componentDidMount: function () {
         this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
@@ -37,7 +32,7 @@ var UpstreamSelectFields = React.createClass({
     },
 
     remove: function (e) {
-        var url = '/equipment/' + this.props.value + '/upstream/' + e;
+        var url = '/api/v1.0/equipment/' + this.props.value + '/upstream/' + e;
         this.props.upstream.splice(this.props.upstream.indexOf(e), 1);
         var upstreams = this.props.upstream;
         this.setState({upstreams});
@@ -50,9 +45,6 @@ var UpstreamSelectFields = React.createClass({
     },
 
     render: function () {
-        console.log("props upstream:", this.props.upstream);
-
-
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
@@ -77,9 +69,8 @@ var UpstreamSelectFields = React.createClass({
                     <FormGroup controlId={key}>
                         <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
-                                     onChange={this.props._onChange}
+                                     onChange={this.props.onChange}
                                      name={name}
-
                                      value={(this.props.upstream[key]!='undefined') ? this.props.upstream[key] : null}
 
                         >
@@ -117,12 +108,8 @@ var UpstreamSelectFields = React.createClass({
 var DownstreamSelectFields = React.createClass({
     getInitialState: function () {
         return {
-            equipment: {},
-            isVisible: false,
+            equipment: {}
         };
-    },
-    isVisible: function () {
-        return this.state.isVisible;
     },
     componentDidMount: function () {
         this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
@@ -142,7 +129,7 @@ var DownstreamSelectFields = React.createClass({
     },
 
     remove: function (e) {
-        var url = '/equipment/' + this.props.value + '/upstream/' + e;
+        var url = '/api/v1.0/equipment/' + this.props.value + '/downstream/' + e;
         this.props.downstream.splice(this.props.downstream.indexOf(e), 1);
         var downstreams = this.props.downstream;
         this.setState({downstreams});
@@ -155,7 +142,6 @@ var DownstreamSelectFields = React.createClass({
     },
 
     render: function () {
-        console.log("props dstream:", this.props.downstream);
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
@@ -172,7 +158,6 @@ var DownstreamSelectFields = React.createClass({
                         value={this.state.equipment[key].id}>{`${this.state.equipment[key].name}`}</option>
             );
         }
-
         for (key in this.props.downstream) {
             label_num++;
             label = 'Downstream ' + label_num;
@@ -224,11 +209,7 @@ var SelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
         };
-    },
-    isVisible: function () {
-        return this.state.isVisible;
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
@@ -239,9 +220,6 @@ var SelectField = React.createClass({
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
     render: function () {
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
@@ -250,14 +228,12 @@ var SelectField = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
-
-
         return (
             <FormGroup>
                 <FormControl componentClass="select"
-                             onChange={this.props.onChange}
                              name={name}
                              value={value}
+                             disabled={this.props.disabled}
                 >
                     <option key={null} value={null}>Choose Equipment</option>
                     {menuItems}
@@ -276,17 +252,14 @@ var EqConnectionsManager = React.createClass({
             items: {},
             loading: false,
             errors: {},
-            equipment_id: 2
+            equipment_id: this.props.equip_id
         }
-
     },
-
     _save: function () {
 
-        var data = this.state;
+        var data = {"upstream":this.state.items.upstream, "downstream": this.state.items.downstream};
+        console.log("data:", data);
         var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
-
-
         return $.ajax({
             url: url,
             type: 'POST',
@@ -294,7 +267,6 @@ var EqConnectionsManager = React.createClass({
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function (data) {
-
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -302,58 +274,30 @@ var EqConnectionsManager = React.createClass({
         })
 
     },
-
     _onSubmit: function (e) {
-        console.log("submit state:", this.state);
         e.preventDefault();
         this._clearErrors();
         var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
-    },
 
+        console.log("submit log", this.state);
+    },
     hideLoading: function () {
         this.setState({loading: false});
     },
-
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
-        NotificationManager.success('Equipment has been successfully saved');
+        NotificationManager.success('Upstreams & downstreams were succesfully set');
     },
-
     _onError: function (data) {
-        var message = "Failed to create";
-        var res = data.responseJSON;
-        if (res.message) {
-            message = data.responseJSON.message;
-        }
-        if (res.error) {
-            // We get list of errors
-            if (data.status >= 500) {
-                message = res.error.join(". ");
-            } else if (res.error instanceof Object) {
-                // We get object of errors with field names as key
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
-                    }
-                    res.error[field] = errorMessage;
-                }
-                this.setState({
-                    errors: res.error
-                });
-            } else {
-                message = res.error;
-            }
-        }
-        NotificationManager.error(message);
+
     },
 
     _clearErrors: function () {
-        this.setState({errors: {}});
+        
     },
 
     componentDidMount: function () {
@@ -375,18 +319,6 @@ var EqConnectionsManager = React.createClass({
             state.items.downstream[index] = parseInt(e.target.value);
         }
 
-        if (e.target.name === 'equipment_id') {
-            state['equipment_id'] = e.target.value;
-            var id = e.target.value;
-            var source = '/api/v1.0/equipment/' + id + '/up_down_stream/';
-            this.serverRequest = $.get(source, function (result) {
-                this.setState({
-                    items: result['result'],
-                    equipment_id: id
-                });
-            }.bind(this), 'json');
-        }
-
         this.setState(state);
 
     },
@@ -396,14 +328,15 @@ var EqConnectionsManager = React.createClass({
         if (items == 0) {
             return (<div></div>);
         }
+
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-4">
-                            <UpstreamSelectFields
-                                upstream={this.state.items.upstream}
-                                value={this.state.equipment_id}
+                            <UpstreamSelectFields onChange={this._onChange}
+                                                  upstream={this.state.items.upstream}
+                                                  value={this.state.equipment_id}
                             />
                         </div>
                         <div className="col-md-4 ">
@@ -412,13 +345,13 @@ var EqConnectionsManager = React.createClass({
                             <SelectField source="equipment"
                                          name='equipment_id'
                                          value={this.state.equipment_id}
+                                         disabled
                             />
                         </div>
                         <div className="col-md-4">
-                            <DownstreamSelectFields
-                                onChange={this._onChange}
-                                downstream={this.state.items.downstream}
-                                value={this.state.parent_id}
+                            <DownstreamSelectFields onChange={this._onChange}
+                                                    downstream={this.state.items.downstream}
+                                                    value={this.state.equipment_id}
                             />
                         </div>
                     </div>

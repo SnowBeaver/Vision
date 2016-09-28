@@ -67,6 +67,8 @@ var EquipmentSelectField = React.createClass({
         var index = this.props.index.toString();
         var id = 'index-' + index;
 
+        console.log("state:", this.state);
+        console.log("props:", this.props);
         return (
             <div className="row" id={id}>
                 <div className="col-md-1">
@@ -94,6 +96,11 @@ var EquipmentSelectField = React.createClass({
                        onClick={this.removeSelect}
                        aria-hidden="true">
                     </a>
+                </div>
+                <div className="col-md-4">
+                    {typeof this.state.value == 'undefined' ? null : <ConnectionsManager
+                        equip_id={this.state.value}
+                    />}
                 </div>
             </div>
         );
@@ -137,7 +144,8 @@ var ConnectionsManager = React.createClass({
                         <Modal.Title>New equipment's upstreams/downstreams</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <EqConnectionsManager data=" " handleClose={this.closeConnectionManager}/>
+                        <EqConnectionsManager handleClose={this.closeConnectionManager}
+                                              equip_id={this.props.equip_id}/>
                     </Modal.Body>
                 </Modal>
             </div>
@@ -332,8 +340,6 @@ var AddEquipmentForm = React.createClass({
     },
 
     render: function () {
-        console.log("STATE:", this.state);
-        console.log("STATE:", this.state.equipment_id);
         return (
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -344,11 +350,6 @@ var AddEquipmentForm = React.createClass({
                                     <HelpBlock className="warning">{this.state.errors.equipment_id}</HelpBlock>
                                     {this.getItems()}
                                 </FormGroup>
-                            </div>
-                            <div className="col-md-6">
-                                {typeof this.state.equipment_id =='undefined' ? null : <ConnectionsManager
-                                    data={this.state.equipment_id}
-                                />}
                             </div>
                         </div>
                         <div className="row">
