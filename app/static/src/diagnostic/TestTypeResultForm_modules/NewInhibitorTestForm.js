@@ -224,8 +224,16 @@ var NewInhibitorTestForm = React.createClass({
             state[e.target.name] = e.target.value;
         }
         else {
-            state[e.target.name] = $.trim(e.target.value);
+            var value = e.target.value;
+            if (e.target.type != 'textarea'){
+                value = $.trim(e.target.value);
+
+            } else {
+                value = e.target.value;
+            }
+            state[e.target.name] = value;
         }
+
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
         this.setState(state);

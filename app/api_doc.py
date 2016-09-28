@@ -3461,6 +3461,7 @@ to the currently logged in user or are private.
 @apiParam   {Integer}       user_id
 @apiParam   {String}        date_created     format "2016-07-29 17:52:19"
 @apiParam   {String}        date_updated     format "2016-07-29 17:52:19"
+@apiParam   {Integer}       test_result_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """

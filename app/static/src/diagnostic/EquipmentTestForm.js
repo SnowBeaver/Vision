@@ -274,9 +274,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                     <div className="col-md-3 col-md-offset-2">
                         <SelectField source="test_status"
                                      label="Status"
-                                     name='status_id'
+                                     name='test_status_id'
                                      value={data.test_status_id}
-                                     disabled
                         />
                     </div>
                     <div className="col-md-2 nopadding padding-right-xs">
@@ -385,26 +384,34 @@ var EquipmentTestDiagnosisForm = React.createClass({
             loading: false
         }
     },
+
+    componentDidMount: function () {
+
+        this.serverRequest = $.get(this.props.source, function (result) {
+
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
     render: function () {
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-6 nopadding padding-right-xs">Diagnosis
-                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
-                        </div>
-                        <div className="col-lg-6 nopadding ">Recommendations
-                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
-                        </div>
-                    </div>
                     <div className="col-lg-12 nopadding">Predefined diag
                         <FormControl type="text" value=""/>
                     </div>
-                    <div className="col-lg-12 nopadding">Predefined rec
-                        <FormControl type="text" value=""/>
+                    <div className="col-lg-12 nopadding">
+                        <SelectField source="recommendation"
+                                     label="Predefined rec"
+                                     name='recommendation_id'
+                                     value={this.props.data.recommendation_id}
+                        />
                     </div>
                     <div className="col-lg-12 nopadding">
-                        <div className="col-lg-9 nopadding padding-right-xs">Date
+                        <div className="col-lg-9 nopadding adding-right-xs">Date
                             <div className="datepicker input-group date">
                                 <DateTimeField datetime=""/>
                             </div>
@@ -430,6 +437,14 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
+                    <div className="col-md-12 nopadding">
+                        <div className="col-lg-6 nopadding padding-right-xs">Diagnosis
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
+                        </div>
+                        <div className="col-lg-6 nopadding ">Recommendations
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
+                        </div>
+                    </div>
                     <div className="col-md-12">
                         <SelectField source="user"
                                      label="Indicator"
@@ -516,7 +531,7 @@ var EquipmentTestForm = React.createClass({
                 'status_id', 'temperature', 'lab_contract_id',
                 'sampling_point_id', 'equipment_id', 'lab_id',
                 'remark', 'repair_description', 'fluid_type_id',
-                'date_analyse', 'repair_date'],
+                'date_analyse', 'repair_date', 'test_status_id'],
             errors: {},
             data: null
         }
@@ -525,16 +540,37 @@ var EquipmentTestForm = React.createClass({
     _save: function () {
         var fields = this.state.fields;
         var data = {};
+        var recommendationData = {};
         var url = '/api/v1.0/test_result/';
+        var recommendationUrl = '/api/v1.0/test_recommendation/';
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state.data[key];
+            // TODO: rewrite and refactor this!!!!!
+            if (key === 'recommendation_id') {
+                recommendationData[key] = this.state.data[key];
+            } else {
+                data[key] = this.state.data[key];
+            }
+
         }
         if ('id' in this.state.data) {
             url += this.state.data['id'];
+            recommendationData.test_result_id = this.state.data['id'];
         }
-        console.log("DATA", data);
+
+        $.ajax({
+            url: recommendationUrl,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(recommendationData),
+            beforeSend: function () {
+            },
+            success: function () {
+                NotificationManager.success('Saved recommendation');
+            }.bind(this)
+        });
 
         return $.ajax({
             url: url,
