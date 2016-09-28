@@ -163,7 +163,6 @@ var NewRecommendationForm = React.createClass({
             }
             data[key] = value;
 		}
-		data.test_result_id = this.props.testResultId;
 
 		return $.ajax({
 			url: '/api/v1.0/recommendation/',
@@ -180,6 +179,7 @@ var NewRecommendationForm = React.createClass({
 	},
 	_onSubmit: function (e) {
 		e.preventDefault();
+		e.stopPropagation();
 		if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
 			return false;
@@ -314,8 +314,6 @@ var NewRecommendationForm = React.createClass({
 		return (
 			<div className="form-container">
 				<form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-					<Panel header="New Recommendation">
-
 						<div className="row">
 							<div className="col-md-4">
 								<FormGroup controlId="contract_status"
@@ -369,7 +367,6 @@ var NewRecommendationForm = React.createClass({
 								>Cancel</Button>
 							</div>
 						</div>
-					</Panel>
 				</form>
 			</div>
 		);

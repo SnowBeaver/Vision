@@ -402,26 +402,12 @@ var EquipmentTestDiagnosisForm = React.createClass({
             <form className="" method="post" action="#">
                 <div className="tab_row">
                     <NewRecommendationForm testResultId={this.props.data.id}/>
-                    <div className="col-lg-12 nopadding">Predefined diag
-                        <FormControl type="text" value=""/>
-                    </div>
                     <div className="col-lg-12 nopadding">
                         <SelectField source="recommendation"
                                      label="Predefined rec"
                                      name='recommendation_id'
                                      value={this.props.data.recommendation_id}
                         />
-                    </div>
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-9 nopadding adding-right-xs">Date
-                            <div className="datepicker input-group date">
-                                <DateTimeField datetime=""/>
-                            </div>
-                        </div>
-                        <div className="col-lg-3 nopadding">
-                            <label> </label>
-                            <button type="button" className="btn btn-default">Schedule as task</button>
-                        </div>
                     </div>
                 </div>
             </form>
@@ -558,21 +544,24 @@ var EquipmentTestForm = React.createClass({
         }
         if ('id' in this.state.data) {
             url += this.state.data['id'];
-            recommendationData.test_result_id = this.state.data['id'];
         }
 
-        $.ajax({
-            url: recommendationUrl,
-            type: type,
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(recommendationData),
-            beforeSend: function () {
-            },
-            success: function () {
-                NotificationManager.success('Saved recommendation');
-            }.bind(this)
-        });
+        if (Object.keys(recommendationData).length){
+            recommendationData.test_result_id = this.state.data['id'];
+            $.ajax({
+                url: recommendationUrl,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(recommendationData),
+                beforeSend: function () {
+                    console.log("from here")
+                },
+                success: function () {
+                    NotificationManager.success('Saved recommendation');
+                }.bind(this)
+            });
+        }
 
         return $.ajax({
             url: url,

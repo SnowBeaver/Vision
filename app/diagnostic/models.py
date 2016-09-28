@@ -3678,3 +3678,38 @@ class Country(db.Model):
                 'name': self.name,
                 'iso_name': self.iso_name,
                 }
+
+
+class TestRepairNote(db.Model):
+    __tablename__ = 'test_repair_note'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    description = db.Column(db.Text)
+    remark = db.Column(db.Text)
+    sample = db.Column(db.Text)
+    date_created = db.Column(db.DateTime)
+
+    user_id = db.Column(db.ForeignKey("users_user.id"))
+    user = db.relationship('User', foreign_keys='TestRecommendation.user_id')
+
+    test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
+    test_result = db.relationship('TestResult', backref='test_result')
+
+    test_type_id = db.Column(db.Integer, db.ForeignKey("test_type.id"))
+    test_type = db.relationship('TestType', backref='test_result')
+
+    def __repr__(self):
+        return u"{} ({})".format(self.name, self.iso_name)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'description': self.description,
+                'remark': self.remark,
+                'sample': self.sample,
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
+                'date_created': self.date_created,
+                'test_type_id': self.test_type_id,
+                'test_result_id': self.test_result_id,
+                }
