@@ -8,6 +8,7 @@ import NewTestForm from './NewTestForm';
 import Button from 'react-bootstrap/lib/Button';
 import Table from 'react-bootstrap/lib/Table';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import ReactDOM from 'react-dom';
 
 var TestItem = React.createClass({
 
@@ -134,6 +135,10 @@ var TestItem = React.createClass({
 
 var TestItemList = React.createClass({
 
+    contextTypes: {
+        router: React.PropTypes.func.isRequired
+    },
+
     handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
@@ -169,6 +174,12 @@ var TestItemList = React.createClass({
         this.setState({
             showTestForm: true
         })
+    },
+
+    startCampaign: function (e) {
+        e.preventDefault();
+        NotificationManager.success('Campaign has been successfully started');
+        this.context.router.push(this.refs.startCampaign.props.to);
     },
 
     closeTestForm: function () {
@@ -258,14 +269,23 @@ var TestItemList = React.createClass({
                 </div>
 
                 {showAddTestButton ?
-                    <div className="row">
-                        <div className="col-md-6">
-                            <FormGroup>
-                                <Button onClick={this.showTestForm} className="success">Add new test</Button>
-                            </FormGroup>
-                        </div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <FormGroup>
+                            <Button onClick={this.showTestForm} className="success">Add new test</Button>
+                        </FormGroup>
                     </div>
-                    : null}
+                    <div className="col-md-3"></div>
+                    <div className="col-md-3">
+                        <FormGroup>
+                            <Link to={"/" + equipment_id}
+                                  className="btn btn-success"
+                                  onClick={this.startCampaign}
+                                ref="startCampaign">Start Campaign</Link>
+                        </FormGroup>
+                    </div>
+                </div>
+                    :null}
 
                 <NewTestForm ref="new_test_form"
                              show={showTestForm}
