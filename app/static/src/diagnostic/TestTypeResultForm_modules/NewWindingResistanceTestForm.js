@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/lib/Button';
 import Radio from 'react-bootstrap/lib/Radio';
 import Panel from 'react-bootstrap/lib/Panel';
 import PanelGroup from 'react-bootstrap/lib/PanelGroup';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
@@ -19,7 +20,6 @@ const TextField = React.createClass({
         var value = (this.props.value != null) ? this.props.value: "";
         return (
             <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
@@ -46,73 +46,77 @@ var PrimaryWindingTestPanel = React.createClass({
         return(
             <div className="form-container">
                 <div className="row">
-                    <div className="col-md-2">
+                    <div className="col-md-1">
+                        <a href="javascript:void(0)"
+                           className="glyphicon glyphicon-minus"
+                           onClick={this.onClickTapRemove}
+                           >Remove</a>
+                    </div>
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="mesure1"
                                    label="H1-H2"
                                    value={data.mesure1}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="temp1"
-                                   label="Temperature(C)"
+                                   label="Temp(C)"
                                    value={data.temp1}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="corr1"
-                                   label="Corr. 75C"
+                                   label="Corr.75C"
                                    value={data.corr1}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="mesure2"
                                    label="H2-H3"
                                    value={data.mesure2}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="temp2"
-                                   label="Temperature(C)"
+                                   label="Temp(C)"
                                    value={data.temp2}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="corr2"
-                                   label="Corr. 75C"
+                                   label="Corr.75C"
                                    value={data.corr2}/>
                     </div>
-                </div>
 
-                <div className="row">
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="mesure3"
                                    label="H3-H1"
                                    value={data.mesure3}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="temp3"
-                                   label="Temperature"
+                                   label="Temp"
                                    value={data.temp3}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="corr3"
-                                   label="Corr. 75C"
+                                   label="Corr.75C"
                                    value={data.corr3}/>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="winding"
                                    label="Winding"
                                    value={data.winding}/>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-1">
                         <TextField onChange={this._onChange}
                                    name="tap_position"
-                                   label="Tap Position"
+                                   label="Tap pos"
                                    value={data.tap_position}/>
                     </div>
                 </div>
@@ -127,10 +131,10 @@ var SecondaryWindingTestPanel = React.createClass({
         return (
             <div>
                 <div className="row">
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField name="mesure1" label="X1-X2" value={this.state.mesure1}/>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-1">
                         <TextField name="temp1" label="Temperature(C)" value={this.state.temp1}/>
                     </div>
                     <div className="col-md-2">
@@ -408,6 +412,7 @@ var NewWindingResistanceTestForm = React.createClass({
 
     render: function () {
         var windings=[];
+        var test_data=[];
         var numberOfTaps= this.state.numberOfTaps;
         for(var i=1; i<=numberOfTaps; i++){
             var headName = "Primary Winding " + i;
@@ -417,22 +422,38 @@ var NewWindingResistanceTestForm = React.createClass({
                 data: this.state.tests[i.toString()]
             };
             windings.push(
-                <Panel header={headName}
-                       key={"primary_winding_" + i}
-                       eventKey={i}>
-                    <PrimaryWindingTestPanel {...props}/>
-                </Panel>);
+                    <PrimaryWindingTestPanel
+                        key={"primary_winding_" + i}
+                        {...props}/>
+            );
+            test_data.push(this.state.tests[i.toString()]);
         }
 
 
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <div className="row">
-                        <PanelGroup defaultActiveKey={this.state.eventKey=1} accordion>
-                            {windings}
-                        </PanelGroup>
-                    </div>
+                    <BootstrapTable data={test_data}
+                                    striped={true}
+                                    hover={true}
+                                    condensed={true}
+                                    ignoreSinglePage={true}
+                                    insertRow={true}
+                                    deleteRow={true}
+                    >
+                        <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>ID</TableHeaderColumn>
+                        <TableHeaderColumn dataField="mesure1" dataSort={true}>H1-H2</TableHeaderColumn>
+                        <TableHeaderColumn dataField="temp1" >Temp(C)</TableHeaderColumn>
+                        <TableHeaderColumn dataField="corr1" >Corr.75C</TableHeaderColumn>
+                        <TableHeaderColumn dataField="mesure2" >H2-H3</TableHeaderColumn>
+                        <TableHeaderColumn dataField="temp2" >Temp(C)</TableHeaderColumn>
+                        <TableHeaderColumn dataField="corr2" >Corr.75C</TableHeaderColumn>
+                        <TableHeaderColumn dataField="mesure3" >H3-H1</TableHeaderColumn>
+                        <TableHeaderColumn dataField="temp3" >Temp</TableHeaderColumn>
+                        <TableHeaderColumn dataField="corr3" >Corr.75C</TableHeaderColumn>
+                        <TableHeaderColumn dataField="winding" >Winding</TableHeaderColumn>
+                        <TableHeaderColumn dataField="tap_position" >Tap pos</TableHeaderColumn>
+                    </BootstrapTable>
                     <div className="row">
                         <div className="col-md-2">
                             <a href="javascript:void(0)"
