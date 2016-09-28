@@ -183,9 +183,7 @@ const DateTimeFieldWithLabel = React.createClass({
                 <ControlLabel>{label}</ControlLabel>
                 <DateTimeField name={name}
                                onChange={this._onChange}
-                                {...dateValue}
-                               inputProps={{disabled: this.props.readOnly}}
-                               daysOfWeekDisabled={this.props.daysOfWeekDisabled}/>
+                                {...dateValue}/>
             </div>
         );
     }
@@ -314,8 +312,6 @@ var EquipmentTestIdentificationForm = React.createClass({
                                                 value={data.date_analyse}
                                                 onChange={this.props.onChange}
                                                 onDateTimeFieldChange={this.props.onDateTimeFieldChange}
-                                                daysOfWeekDisabled={[0,1,2,3,4,5,6,7]}
-                                                readOnly
                         />
                     </div>
                     <div className="col-md-3 nopadding padding-right-xs">
