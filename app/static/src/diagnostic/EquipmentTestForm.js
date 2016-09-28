@@ -20,6 +20,7 @@ import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
 import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
+import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
@@ -400,6 +401,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
+                    <NewRecommendationForm testResultId={this.props.data.id}/>
                     <div className="col-lg-12 nopadding">Predefined diag
                         <FormControl type="text" value=""/>
                     </div>

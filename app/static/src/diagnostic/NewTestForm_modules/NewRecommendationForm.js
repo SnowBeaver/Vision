@@ -8,6 +8,8 @@ import {findDOMNode} from 'react-dom';
 import Modal from 'react-bootstrap/lib/Modal';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
 
 var items = [];
 
@@ -75,66 +77,61 @@ var TestTypeSelectField = React.createClass({
 });
 
 
-var NameSelectField = React.createClass({
+const TextArea = React.createClass({
+    render: function () {
+        let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
+        var error = this.props.errors[name];
+        return (
+            <OverlayTrigger overlay={tooltip} placement="top">
+                <FormGroup>
+                    <FormControl componentClass="textarea"
+                                 placeholder={label}
+                                 name={name}
+                                 value={value}
+                                 onChange={this.props.onChange}
+								 required={this.props.required}
+                    />
+                    <HelpBlock className="warning">{error}</HelpBlock>
+                    <FormControl.Feedback />
+                </FormGroup>
+            </OverlayTrigger>
+        );
+    }
+});
 
-	handleChange: function (event, index, value) {
-		this.setState({
-			value: event.target.value
-		});
-	},
+const TextField = React.createClass({
+    _onChange: function (e) {
+        this.props.onChange(e);
+    },
 
-	getInitialState: function () {
-		return {
-			items: [],
-			isVisible: false
-		};
-	},
-
-	isVisible: function () {
-		return this.state.isVisible;
-	},
-
-	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
-
-			items = (result['result']);
-			this.setState({
-				items: items
-			});
-		}.bind(this), 'json');
-	},
-
-	componentWillUnmount: function () {
-		this.serverRequest.abort();
-	},
-
-	setVisible: function () {
-		this.state.isVisible = true;
-	},
-
-	render: function () {
-		var menuItems = [];
-		for (var key in this.state.items) {
-			menuItems.push(<option key={this.state.items[key].id}
-								   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-		}
-
-		return (
-			<div>
-				<FormGroup>
-					<FormControl
-						componentClass="select"
-						placeholder="select"
-						onChange={this.handleChange}
-						name="name"
-						required={this.props.required}>
-						<option key="0" value="">Name{this.props.required ? " *" : ""}</option>
-						{menuItems}
-					</FormControl>
-				</FormGroup>
-			</div>
-		);
-	}
+    render: function () {
+        let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
+        return (
+            <OverlayTrigger overlay={tooltip} placement="top">
+                <FormGroup validationState={validationState}>
+                    <FormControl type="text"
+                                 placeholder={label}
+                                 name={name}
+                                 data-type={type}
+                                 data-len={len}
+                                 onChange={this._onChange}
+								 required={this.props.required}
+                    />
+                    <HelpBlock className="warning">{error}</HelpBlock>
+                    <FormControl.Feedback />
+                </FormGroup>
+            </OverlayTrigger>
+        );
+    }
 });
 
 
@@ -166,6 +163,7 @@ var NewRecommendationForm = React.createClass({
             }
             data[key] = value;
 		}
+		data.test_result_id = this.props.testResultId;
 
 		return $.ajax({
 			url: '/api/v1.0/recommendation/',
@@ -319,7 +317,7 @@ var NewRecommendationForm = React.createClass({
 					<Panel header="New Recommendation">
 
 						<div className="row">
-							<div className="col-md-12">
+							<div className="col-md-4">
 								<FormGroup controlId="contract_status"
 										   validationState={this.state.errors.test_type_id ? 'error' : null}>
 									<TestTypeSelectField
@@ -329,47 +327,34 @@ var NewRecommendationForm = React.createClass({
 									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 								</FormGroup>
 							</div>
-						</div>
-
-
-						<div className="row">
-							<div className="col-md-12">
-								<FormGroup controlId="contract_status"
-										   validationState={this.state.errors.name ? 'error' : null}>
-									<NameSelectField
-										source="/api/v1.0/user"
-										handleChange={this.handleChange}
-										required/>
-									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
-								</FormGroup>
+							<div className="col-md-4">
+								 <TextField onChange={this._onChange}
+                                           label="Name *"
+                                           name="name"
+                                           value={this.state.name}
+                                           errors={this.state.errors}
+                                           data-len="50"
+									 	   required/>
 							</div>
-						</div>
-
-						<div className="maxwidth">
-							<FormGroup validationState={this.state.errors.code ? 'error' : null}>
-								<FormControl type="text"
-											 placeholder="Code"
-											 name="code"
-											 data-len="50"
-								/>
-								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
-								<FormControl.Feedback />
-							</FormGroup>
+							<div className="col-md-4">
+								<TextField onChange={this._onChange}
+                                           label="Code"
+                                           name="code"
+                                           value={this.state.code}
+                                           errors={this.state.errors}
+                                           data-len="50"/>
+							</div>
 						</div>
 
 						<div className="row">
 							<div className="col-md-12">
-								<FormGroup validationState={this.state.errors.description ? 'error' : null}>
-									<ControlLabel>Recommendations</ControlLabel>
-									<FormControl componentClass="textarea"
-												 placeholder="Repair description"
-												 name="description"/>
-									<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
-									<FormControl.Feedback />
-								</FormGroup>
+								<TextArea label="Recommendations"
+                                          name='description'
+                                          value={this.state.description}
+                                          onChange={this._onChange}
+                                          errors={this.state.errors}/>
 							</div>
 						</div>
-
 						<div className="row">
 							<div className="col-md-12 ">
 								<Button bsStyle="success"
