@@ -42,6 +42,7 @@ import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
 import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
 import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import EqConnectionsManager from './EqConnectionsManager';
+import NewTaskForm from './NewTaskForm'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
@@ -101,8 +102,11 @@ const App = React.createClass({
 						<li><Link to='/visual_test'>visual test</Link></li>
 						<li><Link to='/water_test'>water test</Link></li>
 						<li><Link to='/winding2_test'>winding test2</Link></li>
+					</ul>
+					<ul className="pull-left">
 						<li><Link to='/up_down_streams'>Stream manager</Link></li>
-					</ul> 
+						<li><Link to='/schedule_task'>Schedule a task</Link></li>
+					</ul>
 				</div>
 				<div className="row">
 					<Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
@@ -156,6 +160,7 @@ render((
             <Route path="water_test" component={WaterTestForm}/>
             <Route path="winding2_test" component={WindingTestForm}/>
 			<Route path="up_down_streams" component={EqConnectionsManager}/>
+			<Route path="schedule_task" component={NewTaskForm}/>
 
         </Route>
     </Router>
