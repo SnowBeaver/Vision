@@ -1643,6 +1643,8 @@ class TestRecommendation(db.Model):
     date_updated = db.Column(db.DateTime)
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
     test_result = db.relationship('TestResult', backref='test_recommendation')
+    test_type_id = db.Column(db.Integer, db.ForeignKey("test_type.id"))
+    test_type = db.relationship('TestType', backref='test_recommendation')
 
     def __repr__(self):
         return "{} {} by {}".format(self.id, self.recommendation, self.user)
@@ -1657,6 +1659,8 @@ class TestRecommendation(db.Model):
                 'user': self.user and self.user.serialize(),
                 'date_created': self.date_created,
                 'date_updated': self.date_updated,
+                'test_type_id': self.test_type_id,
+                'test_result_id': self.test_result_id,
                 }
 
 
@@ -1869,6 +1873,7 @@ class TestType(db.Model):
     is_group = db.Column(db.Boolean, nullable=False, default=False)
     # test_type_result_table = db.relationship("TestTypeResultTable", back_populates="test_type")
     test_table_name = db.Column(db.String(100), nullable=False, default='')
+    checkbox_name = db.Column(db.String(100), default='')
 
     def __repr__(self):
         return self.name
@@ -1880,6 +1885,7 @@ class TestType(db.Model):
                 'group_id': self.group_id,
                 'is_group': self.is_group,
                 'test_table_name': self.test_table_name,
+                'checkbox_name': self.checkbox_name,
                 }
 
 
