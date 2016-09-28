@@ -352,6 +352,7 @@ var EquipmentTestRepairForm = React.createClass({
                         <TextArea label="Repair description"
                                   name='repair_description'
                                   value={data.repair_description}
+                                  name='repair_description'
                                   onChange={this.props.onChange}/>
                     </div>
                     <div className="col-lg-6 nopadding ">
