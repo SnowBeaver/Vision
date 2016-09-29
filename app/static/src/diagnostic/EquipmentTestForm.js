@@ -22,6 +22,7 @@ import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestFor
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import TestRecommendationList from './TestRecommendationList';
+import RepairNotesList from './RepairNotesList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
@@ -184,7 +185,7 @@ const DateTimeFieldWithLabel = React.createClass({
                 <ControlLabel>{label}</ControlLabel>
                 <DateTimeField name={name}
                                onChange={this._onChange}
-                                {...dateValue}/>
+                    {...dateValue}/>
             </div>
         );
     }
@@ -353,31 +354,38 @@ var EquipmentTestRepairForm = React.createClass({
     render: function () {
         var data = (this.props.data != null) ? this.props.data : {};
         return (
-            <div className="tab_row">
-                <div className="col-lg-12 nopadding">
-                    <div className="col-lg-6 nopadding padding-right-xs">
+            <div>
+                <div className="tab_row">
+                    <div className="col-md-12 ">
+                        <RepairNotesList />
+                    </div>
+                </div>
+                <div className="tab_row">
+                    <div className="col-lg-12 nopadding">
+                        <div className="col-lg-6 nopadding padding-right-xs">
                         <TextArea label="Repair description"
                                   name='repair_description'
                                   value={data.repair_description}
                                   onChange={this.props.onChange}/>
-                    </div>
-                    <div className="col-lg-6 nopadding ">
+                        </div>
+                        <div className="col-lg-6 nopadding ">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
                                   onChange={this.props.onChange}/>
+                        </div>
                     </div>
-                </div>
-                <div className="col-lg-12 nopadding">
-                    <div className="col-lg-6 nopadding padding-right-xs">Sample
-                        <FormControl type="text" value=""/>
-                    </div>
-                    <div className="col-lg-6 nopadding" key={data.repair_date}>
-                        <DateTimeFieldWithLabel label="Repair date"
-                                                name='repair_date'
-                                                value={data.repair_date}
-                                                onChange={this.props.onChange}
-                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
+                    <div className="col-lg-12 nopadding">
+                        <div className="col-lg-6 nopadding padding-right-xs">Sample
+                            <FormControl type="text" value=""/>
+                        </div>
+                        <div className="col-lg-6 nopadding" key={data.repair_date}>
+                            <DateTimeFieldWithLabel label="Repair date"
+                                                    name='repair_date'
+                                                    value={data.repair_date}
+                                                    onChange={this.props.onChange}
+                                                    onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -417,7 +425,8 @@ var EquipmentTestDiagnosisForm = React.createClass({
             <form className="" method="post" action="#">
                 <div className="tab_row">
                     <div className="col-lg-12">
-                        <TestRecommendationList testResultId={this.props.data.id} testTypeId={this.props.data.test_type_id}/>
+                        <TestRecommendationList testResultId={this.props.data.id}
+                                                testTypeId={this.props.data.test_type_id}/>
                     </div>
 
                     <div className="col-lg-10 nopadding">
@@ -436,7 +445,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
                             <NewRecommendationForm testResultId={this.props.data.id}
                                                    handleClose={this.closeNewRecommendationForm}/>
                         </div>
-                     : null
+                        : null
                     }
 
                 </div>
@@ -576,7 +585,7 @@ var EquipmentTestForm = React.createClass({
             url += this.state.data['id'];
         }
 
-        if (Object.keys(recommendationData).length){
+        if (Object.keys(recommendationData).length) {
             recommendationData.test_result_id = this.state.data['id'];
             $.ajax({
                 url: recommendationUrl,
