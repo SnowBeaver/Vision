@@ -358,7 +358,7 @@ var NewRecommendationForm = React.createClass({
 								<Button bsStyle="success"
 										className="btn btn-success pull-right"
 										type="submit"
-								>Save</Button>
+								>Add Recommendation</Button>
 								&nbsp;
 								<Button bsStyle="danger"
 										className="pull-right"

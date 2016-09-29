@@ -57,14 +57,13 @@ var SelectField = React.createClass({
         }
         return (
             <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.props.onChange}
                              name={name}
                              value={value}
                              disabled={this.props.disabled}
                 >
-                    <option key={null} value={null}></option>
+                    <option>{label}</option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -382,7 +381,8 @@ var EquipmentTestRepairForm = React.createClass({
 var EquipmentTestDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
-            loading: false
+            loading: false,
+            showNewRecommendationForm: false
         }
     },
 
@@ -397,18 +397,38 @@ var EquipmentTestDiagnosisForm = React.createClass({
         }.bind(this), 'json');
     },
 
+    openNewRecommendationForm: function () {
+        this.setState({showNewRecommendationForm: true});
+        this.props.data.recommendation_id = null;
+    },
+
+    closeNewRecommendationForm: function () {
+        this.setState({showNewRecommendationForm: false})
+    },
+
     render: function () {
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
-                    <NewRecommendationForm testResultId={this.props.data.id}/>
-                    <div className="col-lg-12 nopadding">
+                    <div className="col-lg-10 nopadding">
                         <SelectField source="recommendation"
-                                     label="Predefined rec"
+                                     label="Predefined recommedation"
                                      name='recommendation_id'
                                      value={this.props.data.recommendation_id}
+                                     disabled={this.state.showNewRecommendationForm}
                         />
                     </div>
+                    <div className="col-lg-1">
+                        <Button bsStyle="primary" onClick={this.openNewRecommendationForm}>New</Button>
+                    </div>
+                    {this.state.showNewRecommendationForm ?
+                        <div className="col-lg-12 nopadding">
+                            <NewRecommendationForm testResultId={this.props.data.id}
+                                                   handleClose={this.closeNewRecommendationForm}/>
+                        </div>
+                     : null
+                    }
+
                 </div>
             </form>
         )
@@ -680,8 +700,8 @@ var EquipmentTestForm = React.createClass({
                             <li className="active"><a href="#tabs-1" data-toggle="tab"> Identification </a></li>
                             <li><a href="#tabs-2" data-toggle="tab"> Test values </a></li>
                             <li><a href="#tabs-3" data-toggle="tab"> Test repair notes </a></li>
-                            <li><a href="#tabs-4" data-toggle="tab"> Records diagnostic </a></li>
-                            <li><a href="#tabs-5" data-toggle="tab"> Diagnosis and recommendations </a></li>
+                            <li><a href="#tabs-4" data-toggle="tab"> Recommendation notes </a></li>
+                            <li><a href="#tabs-5" data-toggle="tab"> Diagnosis </a></li>
                         </ul>
                         <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                             <div id="tabs-1" role="tabpanel" className="tab-pane active ">
