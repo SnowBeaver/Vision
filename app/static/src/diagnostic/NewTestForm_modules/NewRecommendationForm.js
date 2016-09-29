@@ -10,6 +10,7 @@ import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
 
 var items = [];
 
@@ -163,7 +164,7 @@ var NewRecommendationForm = React.createClass({
             }
             data[key] = value;
 		}
-
+		var that = this;
 		return $.ajax({
 			url: '/api/v1.0/recommendation/',
 			type: 'POST',
@@ -171,6 +172,7 @@ var NewRecommendationForm = React.createClass({
 			contentType: 'application/json',
 			data: JSON.stringify(data),
 			success: function (data, textStatus) {
+				that.props.onSuccess(data.result);
 			},
 			beforeSend: function () {
 				this.setState({loading: true});
@@ -325,7 +327,11 @@ var NewRecommendationForm = React.createClass({
 									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 								</FormGroup>
 							</div>
-							<div className="col-md-4">
+							<div className="col-md-1">
+								<Checkbox checked={this.state.public} name="public">Public</Checkbox>
+							</div>
+							{this.state.public ?
+								<div className="col-md-4">
 								 <TextField onChange={this._onChange}
                                            label="Name *"
                                            name="name"
@@ -333,15 +339,21 @@ var NewRecommendationForm = React.createClass({
                                            errors={this.state.errors}
                                            data-len="50"
 									 	   required/>
-							</div>
-							<div className="col-md-4">
-								<TextField onChange={this._onChange}
-                                           label="Code"
-                                           name="code"
-                                           value={this.state.code}
-                                           errors={this.state.errors}
-                                           data-len="50"/>
-							</div>
+								</div>
+								: null
+							}
+							{this.state.public ?
+								<div className="col-md-3">
+									<TextField onChange={this._onChange}
+											   label="Code"
+											   name="code"
+											   value={this.state.code}
+											   errors={this.state.errors}
+											   data-len="50"/>
+								</div>
+								: null
+							}
+
 						</div>
 
 						<div className="row">
