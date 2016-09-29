@@ -3690,13 +3690,13 @@ class TestRepairNote(db.Model):
     date_created = db.Column(db.DateTime)
 
     user_id = db.Column(db.ForeignKey("users_user.id"))
-    user = db.relationship('User', foreign_keys='TestRecommendation.user_id')
+    user = db.relationship('User', foreign_keys='TestRepairNote.user_id')
 
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
-    test_result = db.relationship('TestResult', backref='test_result')
+    test_result = db.relationship('TestResult', backref='test_repair_note')
 
     test_type_id = db.Column(db.Integer, db.ForeignKey("test_type.id"))
-    test_type = db.relationship('TestType', backref='test_result')
+    test_type = db.relationship('TestType', backref='test_repair_note')
 
     def __repr__(self):
         return u"{} ({})".format(self.name, self.iso_name)
