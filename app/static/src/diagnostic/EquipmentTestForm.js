@@ -21,6 +21,7 @@ import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+import TestRecommendationList from './TestRecommendationList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
@@ -389,7 +390,6 @@ var EquipmentTestDiagnosisForm = React.createClass({
     componentDidMount: function () {
 
         this.serverRequest = $.get(this.props.source, function (result) {
-
             var items = (result['result']);
             this.setState({
                 items: items
@@ -410,6 +410,10 @@ var EquipmentTestDiagnosisForm = React.createClass({
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
+                    <div className="col-lg-12">
+                        <TestRecommendationList testResultId={this.props.data.id} testTypeId={this.props.data.test_type_id}/>
+                    </div>
+
                     <div className="col-lg-10 nopadding">
                         <SelectField source="recommendation"
                                      label="Predefined recommedation"
@@ -575,7 +579,6 @@ var EquipmentTestForm = React.createClass({
                 contentType: 'application/json',
                 data: JSON.stringify(recommendationData),
                 beforeSend: function () {
-                    console.log("from here")
                 },
                 success: function () {
                     NotificationManager.success('Saved recommendation');
