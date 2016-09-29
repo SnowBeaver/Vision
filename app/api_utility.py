@@ -704,6 +704,7 @@ test_recommendation_schema = {
     'user_id': type_integer_coerce_dict,
     'date_created': type_integer_coerce_dict,
     'date_updated': type_integer_coerce_dict,
+    'test_result_id': type_integer_coerce_dict,
 }
 syringe_schema = {
     'id': readonly_dict,

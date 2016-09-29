@@ -20,6 +20,8 @@ import NewPcbTestForm from './TestTypeResultForm_modules/NewPcbTestForm';
 import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
+import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+import TestRecommendationList from './TestRecommendationList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
@@ -56,14 +58,13 @@ var SelectField = React.createClass({
         }
         return (
             <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.props.onChange}
                              name={name}
                              value={value}
                              disabled={this.props.disabled}
                 >
-                    <option key={null} value={null}></option>
+                    <option>{label}</option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -279,9 +280,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                     <div className="col-md-3 col-md-offset-2">
                         <SelectField source="test_status"
                                      label="Status"
-                                     name='status_id'
+                                     name='test_status_id'
                                      value={data.test_status_id}
-                                     disabled
                         />
                     </div>
                     <div className="col-md-2 nopadding padding-right-xs">
@@ -388,38 +388,57 @@ var EquipmentTestRepairForm = React.createClass({
 var EquipmentTestDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
-            loading: false
+            loading: false,
+            showNewRecommendationForm: false
         }
     },
+
+    componentDidMount: function () {
+
+        this.serverRequest = $.get(this.props.source, function (result) {
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    openNewRecommendationForm: function () {
+        this.setState({showNewRecommendationForm: true});
+        this.props.data.recommendation_id = null;
+    },
+
+    closeNewRecommendationForm: function () {
+        this.setState({showNewRecommendationForm: false})
+    },
+
     render: function () {
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-6 nopadding padding-right-xs">Diagnosis
-                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
-                        </div>
-                        <div className="col-lg-6 nopadding ">Recommendations
-                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
-                        </div>
+                    <div className="col-lg-12">
+                        <TestRecommendationList testResultId={this.props.data.id} testTypeId={this.props.data.test_type_id}/>
                     </div>
-                    <div className="col-lg-12 nopadding">Predefined diag
-                        <FormControl type="text" value=""/>
+
+                    <div className="col-lg-10 nopadding">
+                        <SelectField source="recommendation"
+                                     label="Predefined recommedation"
+                                     name='recommendation_id'
+                                     value={this.props.data.recommendation_id}
+                                     disabled={this.state.showNewRecommendationForm}
+                        />
                     </div>
-                    <div className="col-lg-12 nopadding">Predefined rec
-                        <FormControl type="text" value=""/>
+                    <div className="col-lg-1">
+                        <Button bsStyle="primary" onClick={this.openNewRecommendationForm}>New</Button>
                     </div>
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-9 nopadding padding-right-xs">Date
-                            <div className="datepicker input-group date">
-                                <DateTimeField datetime=""/>
-                            </div>
+                    {this.state.showNewRecommendationForm ?
+                        <div className="col-lg-12 nopadding">
+                            <NewRecommendationForm testResultId={this.props.data.id}
+                                                   handleClose={this.closeNewRecommendationForm}/>
                         </div>
-                        <div className="col-lg-3 nopadding">
-                            <label> </label>
-                            <button type="button" className="btn btn-default">Schedule as task</button>
-                        </div>
-                    </div>
+                     : null
+                    }
+
                 </div>
             </form>
         )
@@ -436,6 +455,14 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
+                    <div className="col-md-12 nopadding">
+                        <div className="col-lg-6 nopadding padding-right-xs">Diagnosis
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
+                        </div>
+                        <div className="col-lg-6 nopadding ">Recommendations
+                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
+                        </div>
+                    </div>
                     <div className="col-md-12">
                         <SelectField source="user"
                                      label="Indicator"
@@ -522,7 +549,7 @@ var EquipmentTestForm = React.createClass({
                 'status_id', 'temperature', 'lab_contract_id',
                 'sampling_point_id', 'equipment_id', 'lab_id',
                 'remark', 'repair_description', 'fluid_type_id',
-                'date_analyse', 'repair_date'],
+                'date_analyse', 'repair_date', 'test_status_id'],
             errors: {},
             data: null
         }
@@ -531,16 +558,39 @@ var EquipmentTestForm = React.createClass({
     _save: function () {
         var fields = this.state.fields;
         var data = {};
+        var recommendationData = {};
         var url = '/api/v1.0/test_result/';
+        var recommendationUrl = '/api/v1.0/test_recommendation/';
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state.data[key];
+            // TODO: rewrite and refactor this!!!!!
+            if (key === 'recommendation_id') {
+                recommendationData[key] = this.state.data[key];
+            } else {
+                data[key] = this.state.data[key];
+            }
+
         }
         if ('id' in this.state.data) {
             url += this.state.data['id'];
         }
-        console.log("DATA", data);
+
+        if (Object.keys(recommendationData).length){
+            recommendationData.test_result_id = this.state.data['id'];
+            $.ajax({
+                url: recommendationUrl,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(recommendationData),
+                beforeSend: function () {
+                },
+                success: function () {
+                    NotificationManager.success('Saved recommendation');
+                }.bind(this)
+            });
+        }
 
         return $.ajax({
             url: url,
@@ -578,6 +628,7 @@ var EquipmentTestForm = React.createClass({
         // this.setState(this.getInitialState());
         this.props.handleClose();
         NotificationManager.success('Saved');
+        this.props.updateSource('/api/v1.0/test_result/?equipment_id=' + this.state.data.equipment_id);
     },
 
     _onError: function (data) {
@@ -658,8 +709,8 @@ var EquipmentTestForm = React.createClass({
                             <li className="active"><a href="#tabs-1" data-toggle="tab"> Identification </a></li>
                             <li><a href="#tabs-2" data-toggle="tab"> Test values </a></li>
                             <li><a href="#tabs-3" data-toggle="tab"> Test repair notes </a></li>
-                            <li><a href="#tabs-4" data-toggle="tab"> Records diagnostic </a></li>
-                            <li><a href="#tabs-5" data-toggle="tab"> Diagnosis and recommendations </a></li>
+                            <li><a href="#tabs-4" data-toggle="tab"> Recommendation notes </a></li>
+                            <li><a href="#tabs-5" data-toggle="tab"> Diagnosis </a></li>
                         </ul>
                         <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                             <div id="tabs-1" role="tabpanel" className="tab-pane active ">
