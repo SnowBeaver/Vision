@@ -415,6 +415,7 @@ def internal_server_error(error):
 # Standard routes
 # Create
 @api_blueprint.route('/<path>/', methods=['POST'])
+@login_required
 def create_item_handler(path):
     abort_if_wrong_path(path)
     abort_if_json_missing()
@@ -432,6 +433,7 @@ def read_items_handler(path):
 
 
 @api_blueprint.route('/<path>/<int:item_id>', methods=['GET'])
+@login_required
 def read_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
@@ -440,6 +442,7 @@ def read_item_handler(path, item_id):
 
 # Update
 @api_blueprint.route('/<path>/<int:item_id>', methods=['PUT', 'POST'])
+@login_required
 def update_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
@@ -451,6 +454,7 @@ def update_item_handler(path, item_id):
 
 # Delete
 @api_blueprint.route('/<path>/<int:item_id>', methods=['DELETE'])
+@login_required
 def delete_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
@@ -468,6 +472,7 @@ def get_auth_token():
 
 # Get fields from corresponding table of specified equipment type
 @api_blueprint.route('/equipment_type/<int:item_id>/fields', methods=['GET'])
+@login_required
 def handler_equipment_type_fields(item_id):
     abort_if_wrong_id(item_id)
     return return_json('result', get_equipment_type_fields(item_id))
@@ -475,6 +480,7 @@ def handler_equipment_type_fields(item_id):
 
 # Get fluid and electrical profiles in one responce
 @api_blueprint.route('/test_profile/', methods=['GET'])
+@login_required
 def get_test_profile():
     rows_fluid = db.session.query(FluidProfile).all()
     rows_electrical = db.session.query(ElectricalProfile).all()
@@ -483,6 +489,7 @@ def get_test_profile():
 
 # Create equipment
 @api_blueprint.route('/equipment/', methods=['POST'])
+@login_required
 def create_equipment_handler():
     path = 'equipment'
     abort_if_json_missing()
@@ -493,6 +500,7 @@ def create_equipment_handler():
 
 # Create equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['POST'])
+@login_required
 def create_equipment_up_down_stream_handler(item_id):
     abort_if_json_missing()
     # validated_data = validate_or_abort('equipment_up_down_stream')
@@ -501,12 +509,14 @@ def create_equipment_up_down_stream_handler(item_id):
 
 # Get equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['GET'])
+@login_required
 def read_equipment_up_down_stream_handler(item_id):
     return return_json('result', get_up_down_stream_of_equipment(item_id))
 
 
 # Remove connection between equipment and its upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['DELETE'])
+@login_required
 def delete_equipment_up_down_stream_handler(item_id):
     abort_if_json_missing()
     return return_json('result', delete_up_down_stream_of_equipment(item_id))
@@ -514,6 +524,7 @@ def delete_equipment_up_down_stream_handler(item_id):
 
 # Create a lot of test_results with equipment using one query
 @api_blueprint.route('/test_result/equipment', methods=['POST'])
+@login_required
 def handler_items():
     path = 'test_result_equipment'
     abort_if_json_missing()
@@ -523,6 +534,7 @@ def handler_items():
 
 # Create or update a lot of tests
 @api_blueprint.route('/test_result/multi/<path>', methods=['POST'])
+@login_required
 def handler_tests(path):
     if path not in ('transformer_turn_ratio_test',
                     'winding_resistance_test',
@@ -534,12 +546,14 @@ def handler_tests(path):
 
 # Duplicate test result and related electrical or fluid profile
 @api_blueprint.route('/test_result/<int:test_result_id>/duplicate', methods=['POST'])
+@login_required
 def duplicate_test_result_handler(test_result_id):
     return return_json('result', duplicate_test_result(test_result_id))
 
 
 # Create user
 @api_blueprint.route('/user/', methods=['POST'])
+@login_required
 def create_user_handler():
     path = 'user'
     abort_if_json_missing()
@@ -550,6 +564,7 @@ def create_user_handler():
 
 # Create fluid_profile
 @api_blueprint.route('/fluid_profile/', methods=['POST'])
+@login_required
 def create_fluid_profile_handler():
     path = 'fluid_profile'
     abort_if_json_missing()
@@ -560,6 +575,7 @@ def create_fluid_profile_handler():
 
 # Create electrical_profile
 @api_blueprint.route('/electrical_profile/', methods=['POST'])
+@login_required
 def create_electrical_profile_handler():
     path = 'electrical_profile'
     abort_if_json_missing()

@@ -139,7 +139,7 @@ class User(db.Model, UserMixin):
 
     # API authentication
     def verify_password(self, password):
-        verify_password(password, self.password)
+        return verify_password(password, self.password)
 
     def generate_auth_token(self, expiration=600):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
