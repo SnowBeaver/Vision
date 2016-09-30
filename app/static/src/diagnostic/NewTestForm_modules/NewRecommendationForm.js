@@ -165,29 +165,11 @@ var NewRecommendationForm = React.createClass({
             }
             data[key] = value;
 		}
-		delete data["public_recommendation"];
-		var that = this;
+		delete data["public_recommendation"];	// For showing/hiding fields only
 		if (!this.state.public_recommendation) {
-			// Create test recommendation, do not save to all predefined recommendations
-			delete data["code"];
-			delete data["name"];
-			data["recommendation_notes"] = data["description"];
-			data["test_result_id"] = this.props.testResultId;
-			delete data["description"];
-			return $.ajax({
-				url: '/api/v1.0/test_recommendation/',
-				type: 'POST',
-				dataType: 'json',
-				contentType: 'application/json',
-				data: JSON.stringify(data),
-				success: function (data, textStatus) {
-					that.props.onSuccess(data.result, "test");
-				},
-				beforeSend: function () {
-					this.setState({loading: true});
-				}.bind(this)
-			})
+			this._createTestRecommendation(data, this);
 		} else {
+			var that = this;
 			return $.ajax({
 				url: '/api/v1.0/recommendation/',
 				type: 'POST',
@@ -202,8 +184,26 @@ var NewRecommendationForm = React.createClass({
 				}.bind(this)
 			})
 		}
+	},
 
-
+	_createTestRecommendation: function (data, that) {
+		// Create test recommendation, do not save to all predefined recommendations
+		data["recommendation_notes"] = data["description"];
+		data["test_result_id"] = this.props.testResultId;
+		["code", "name", "description"].forEach(e => delete data[e]);
+		return $.ajax({
+			url: '/api/v1.0/test_recommendation/',
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			success: function (data, textStatus) {
+				that.props.onSuccess(data.result, "test");
+			},
+			beforeSend: function () {
+				this.setState({loading: true});
+			}.bind(this)
+		})
 	},
 
 	_onSubmit: function (e) {
