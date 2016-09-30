@@ -404,12 +404,11 @@ var EquipmentTestDiagnosisForm = React.createClass({
         return {
             loading: false,
             showNewRecommendationForm: false,
-            recommendationId: null
+            recommendation_id: null
         }
     },
 
     componentDidMount: function () {
-
         this.serverRequest = $.get(this.props.source, function (result) {
             var items = (result['result']);
             this.setState({
@@ -427,8 +426,26 @@ var EquipmentTestDiagnosisForm = React.createClass({
         this.setState({showNewRecommendationForm: false})
     },
 
-    updatePredefinedRecommendations: function (id) {
-        this.setState({showNewRecommendationForm: false, recommendationId: id});
+    updatePredefinedRecommendations: function (id, recommendationType) {
+        this.setState({showNewRecommendationForm: false, recommendation_id: id});
+
+        if (recommendationType == "predefined") {
+            // Reload select field with predefined recommendations and
+            // change the value in the global state
+            // TODO: There should be a nicer way to set proper value to recommendation_id select
+            this.props.onChange({target: {type: "select", name: "recommendation_id", "value": id}});
+        } else if (recommendationType == "test") {
+            // Reload Recommendation list
+            this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
+        }
+
+    },
+
+    _onChange: function (e) {
+        // Change value in this form's state to be able to select
+        this.setState({recommendation_id: e.target.value});
+        // Change the value in the global state to save it from there
+        this.props.onChange(e);
     },
 
     render: function () {
@@ -437,16 +454,19 @@ var EquipmentTestDiagnosisForm = React.createClass({
                 <div className="tab_row">
                     <div className="col-lg-12">
                         <TestRecommendationList testResultId={this.props.data.id}
-                                                testTypeId={this.props.data.test_type_id}/>
+                                                testTypeId={this.props.data.test_type_id}
+                                                ref="testRecommendationList"/>
                     </div>
 
                     <div className="col-lg-10 nopadding">
                         <SelectField source="recommendation"
                                      label="Predefined recommendation"
                                      name='recommendation_id'
-                                     value={this.state.recommendationId}
+                                     value={this.state.recommendation_id}
                                      disabled={this.state.showNewRecommendationForm}
-                                     key={this.state.recommendationId}
+                                     key={this.state.recommendation_id}
+                                     onChange={this._onChange}
+                                     ref="recommendation"
                         />
                     </div>
                     <div className="col-lg-1">
@@ -572,46 +592,25 @@ var EquipmentTestForm = React.createClass({
                 'sampling_point_id', 'equipment_id', 'lab_id',
                 'remark', 'repair_description', 'fluid_type_id',
                 'date_analyse', 'repair_date', 'test_status_id'],
+            testRecommendationFields: ['recommendation_id'],
             errors: {},
             data: null
         }
     },
 
     _save: function () {
+        this._saveTestRecommendation();
+
         var fields = this.state.fields;
         var data = {};
-        var recommendationData = {};
         var url = '/api/v1.0/test_result/';
-        var recommendationUrl = '/api/v1.0/test_recommendation/';
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            // TODO: rewrite and refactor this!!!!!
-            if (key === 'recommendation_id') {
-                recommendationData[key] = this.state.data[key];
-            } else {
-                data[key] = this.state.data[key];
-            }
-
+            data[key] = this.state.data[key];
         }
         if ('id' in this.state.data) {
             url += this.state.data['id'];
-        }
-
-        if (Object.keys(recommendationData).length) {
-            recommendationData.test_result_id = this.state.data['id'];
-            $.ajax({
-                url: recommendationUrl,
-                type: type,
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(recommendationData),
-                beforeSend: function () {
-                },
-                success: function () {
-                    NotificationManager.success('Saved recommendation');
-                }.bind(this)
-            });
         }
 
         return $.ajax({
@@ -624,6 +623,69 @@ var EquipmentTestForm = React.createClass({
                 this.setState({loading: true});
             }.bind(this)
         })
+    },
+
+    _saveTestRecommendation: function () {
+        var fields = this.state.testRecommendationFields;
+        var data = {};
+        var url = '/api/v1.0/test_recommendation/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state.data[key];
+
+        }
+
+        if (Object.keys(data).length){
+            data.test_result_id = this.state.data['id'];
+            data.test_type_id = this.state.data['test_type_id'];
+            $.ajax({
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {},
+                success: function () {
+                    NotificationManager.success('Test recommendation has been saved successfully');
+                },
+                error: function (xhr, status, response) {
+                    NotificationManager.error(response.error);
+                }.bind(this)
+            });
+        }
+    },
+
+    _saveRepairNote: function () {
+      var fields = this.state.testRecommendationFields;
+        var data = {};
+        var url = '/api/v1.0/test_repair_note/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state.data[key];
+
+        }
+
+        if (Object.keys(data).length){
+            data.test_result_id = this.state.data['id'];
+            data.test_type_id = this.state.data['test_type_id'];
+            $.ajax({
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {},
+                success: function () {
+                },
+                error: function (xhr, status, response) {
+                    NotificationManager.error(response.error);
+                }.bind(this)
+            });
+        }
+
+
     },
 
     _onSubmit: function (e) {
