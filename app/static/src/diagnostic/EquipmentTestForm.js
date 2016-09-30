@@ -220,7 +220,7 @@ const TextArea = React.createClass({
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
-                <FormControl type="textarea" placeholder={label} name={name}
+                <FormControl componentClass="textarea" placeholder={label} name={name}
                              value={value} onChange={this.props.onChange}
                 />
                 <FormControl.Feedback />
@@ -357,35 +357,41 @@ var EquipmentTestRepairForm = React.createClass({
             <div>
                 <div className="tab_row">
                     <div className="col-md-12 ">
-                        <RepairNotesList />
+                        <RepairNotesList testResultId={this.props.data.id}
+                                         testTypeId={this.props.data.test_type_id}/>
                     </div>
                 </div>
-                <div className="tab_row">
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-6 nopadding padding-right-xs">
+                <div className="tab_row nopadding">
+                    <div className="col-md-12">
                         <TextArea label="Repair description"
                                   name='repair_description'
                                   value={data.repair_description}
                                   onChange={this.props.onChange}/>
-                        </div>
-                        <div className="col-lg-6 nopadding ">
+                    </div>
+                </div>
+                <div className="tab_row nopadding">
+                    <div className="col-md-12">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
                                   onChange={this.props.onChange}/>
-                        </div>
                     </div>
-                    <div className="col-lg-12 nopadding">
-                        <div className="col-lg-6 nopadding padding-right-xs">Sample
-                            <FormControl type="text" value=""/>
-                        </div>
-                        <div className="col-lg-6 nopadding" key={data.repair_date}>
-                            <DateTimeFieldWithLabel label="Repair date"
-                                                    name='repair_date'
-                                                    value={data.repair_date}
-                                                    onChange={this.props.onChange}
-                                                    onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
-                        </div>
+                </div>
+                <div className="tab_row nopadding">
+                    <div className="col-md-12">
+                        <TextArea label="Sample"
+                                  name='sample'
+                                  value={data.sample}
+                                  onChange={this.props.onChange}/>
+                    </div>
+                </div>
+                <div className="tab_row nopadding">
+                    <div className="col-md-6" key={data.repair_date}>
+                        <DateTimeFieldWithLabel label="Repair date"
+                                                name='repair_date'
+                                                value={data.repair_date}
+                                                onChange={this.props.onChange}
+                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
                     </div>
                 </div>
             </div>
