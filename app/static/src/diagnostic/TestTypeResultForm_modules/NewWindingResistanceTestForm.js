@@ -235,7 +235,7 @@ var NewWindingResistanceTestForm = React.createClass({
             showPrimaryWindingTestPanel: true,
             showSecondaryWindingTestPanel: false,
             showTertiaryWindingTestPanel: false,
-            tests: {'1': {}},
+            tests: [],
             errors: {},
             fields: [
                 'temp1', 'corr1', 'mesure1', 'temp2', 'corr2', 'mesure2',
@@ -251,17 +251,17 @@ var NewWindingResistanceTestForm = React.createClass({
             var res = (result['result']);
             var fields = this.state.fields;
             fields.push('id');
-            var tests = {};
-            for (var i = 1; i <= res.length; i++) {
-                var test = {};
-                var data = res[i-1];
+            var tests = [];
+            for (var i = 0; i < res.length; i++) {
+                var test = {position: i+1};
+                var data = res[i];
                 for (var j = 0; j < fields.length; j++) {
                     var key = fields[j];
                     if (data.hasOwnProperty(key)) {
                         test[key] = data[key];
                     }
                 }
-                tests[i.toString()] = test;
+                tests[i] = test;
             }
             this.setState({numberOfTaps: res.length, tests: tests});
         }.bind(this), 'json');
@@ -274,7 +274,7 @@ var NewWindingResistanceTestForm = React.createClass({
         var data = [];
         for (var i = 1; i <= numberOfTaps; i++) {
             var test = {test_result_id: this.props.testResultId};
-            var tap = tests[i.toString()];
+            var tap = tests[i];
             for (var j = 0; j < fields.length; j++) {
                 var key = fields[j];
                 test[key] = tap[key];
@@ -387,62 +387,73 @@ var NewWindingResistanceTestForm = React.createClass({
         return className;
     },
 
-    handleFieldChange: function(testId, name, value) {
-        var tests = this.state.tests;
-        var fieldNameValue = this.state.tests[testId] || {};
-        fieldNameValue[name] = value;
-        tests[testId] = fieldNameValue;
-        this.setState({tests: tests});
-        // this.setState({
-        //     tests: update(this.state.tests, {testId: {name: {$set: value}}})
-        // })
+    // handleFieldChange: function(testId, name, value) {
+    //     var tests = this.state.tests;
+    //     var fieldNameValue = this.state.tests[testId] || {};
+    //     fieldNameValue[name] = value;
+    //     tests[testId] = fieldNameValue;
+    //     this.setState({tests: tests});
+    //     // this.setState({
+    //     //     tests: update(this.state.tests, {testId: {name: {$set: value}}})
+    //     // })
+    // },
+    //
+    // onClickTapAdd: function () {
+    //     this.setState({
+    //         numberOfTaps: this.state.numberOfTaps + 1
+    //     });
+    // },
+    //
+    // onClickTapRemove: function () {
+    //     this.setState({
+    //         numberOfTaps: this.state.numberOfTaps - 1
+    //     });
+    // },
+    afterSaveCell: function () {
+        console.log('afterSaveCell')
     },
-
-    onClickTapAdd: function () {
-        this.setState({
-            numberOfTaps: this.state.numberOfTaps + 1
-        });
-    },
-
-    onClickTapRemove: function () {
-        this.setState({
-            numberOfTaps: this.state.numberOfTaps - 1
-        });
+    beforeSaveCell: function () {
+        console.log('beforeSaveCell')
     },
 
     render: function () {
-        var windings=[];
-        var test_data=[];
+        // var windings=[];
+        // var test_data = this.state.tests;
+        console.log('render');
         var numberOfTaps= this.state.numberOfTaps;
-        for(var i=1; i<=numberOfTaps; i++){
-            var headName = "Primary Winding " + i;
-            var props = {
-                testId: i.toString(),
-                onChange: this.handleFieldChange,
-                data: this.state.tests[i.toString()]
-            };
-            windings.push(
-                    <PrimaryWindingTestPanel
-                        key={"primary_winding_" + i}
-                        {...props}/>
-            );
-            test_data.push(this.state.tests[i.toString()]);
-        }
+        // for(var i=1; i<=numberOfTaps; i++){
+            // var headName = "Primary Winding " + i;
+            // var props = {
+            //     testId: i.toString(),
+            //     onChange: this.handleFieldChange,
+            //     data: this.state.tests[i.toString()]
+            // };
+            // windings.push(
+            //         <PrimaryWindingTestPanel
+            //             key={"primary_winding_" + i}
+            //             {...props}/>
+            // );
+        //     test_data.push(this.state.tests[i.toString()]);
+        // }
 
 
         return (
             <div className="form-container">
-                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-                    <BootstrapTable data={test_data}
+                <form method="post" action="#" onSubmit={this._onSubmit} >
+                    <BootstrapTable data={this.state.tests}
                                     striped={true}
                                     hover={true}
                                     condensed={true}
                                     ignoreSinglePage={true}
                                     insertRow={true}
                                     deleteRow={true}
+                                    selectRow={{mode: "checkbox", clickToSelect: true,
+                                        bgColor: "rgb(238, 193, 213)",}}
+                                    cellEdit={{mode: "click", beforeSaveCell: this.beforeSaveCell, afterSaveCell: this.afterSaveCell}}
                     >
-                        <TableHeaderColumn dataField="id" isKey={true} dataAlign="center" dataSort={true}>ID</TableHeaderColumn>
-                        <TableHeaderColumn dataField="mesure1" dataSort={true}>H1-H2</TableHeaderColumn>
+                        <TableHeaderColumn dataField="id" hidden={true} hiddenOnInsert={true}>ID</TableHeaderColumn>
+                        <TableHeaderColumn dataField="position" isKey={true}>N</TableHeaderColumn>
+                        <TableHeaderColumn dataField="mesure1" editable={true} dataSort={true}>H1-H2</TableHeaderColumn>
                         <TableHeaderColumn dataField="temp1" >Temp(C)</TableHeaderColumn>
                         <TableHeaderColumn dataField="corr1" >Corr.75C</TableHeaderColumn>
                         <TableHeaderColumn dataField="mesure2" >H2-H3</TableHeaderColumn>
