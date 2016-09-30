@@ -30,21 +30,27 @@ var TestRecommendation = React.createClass({
 
     render: function () {
         var item = this.props.data;
+        var recommendation = item.recommendation;
         return (
             <tr>
                 <td>{item.date_created}</td>
-                <td>{item.recommendation.code}</td>
+                <td>{recommendation ? recommendation.code : ""}</td>
                 <td>
-                    <span title={item.recommendation.name}>
-                        {item.recommendation.name ? item.recommendation.name.substring(0, 100) : ""}
+                    <span title={recommendation && recommendation.name ? recommendation : ""}>
+                        {recommendation && recommendation.name ? recommendation.name.substring(0, 100) : ""}
                     </span>
                 </td>
                 <td>
-                    <span title={item.recommendation.description}>
-                        {item.recommendation.description ? item.recommendation.description.substring(0, 100) : ""}
+                    <span title={recommendation ? recommendation.description : ""}>
+                        {recommendation && recommendation.description ? recommendation.description.substring(0, 100) : ""}
                     </span>
                 </td>
-                <td>{item.user.name}</td>
+                <td>
+                    <span title={item.recommendation_notes}>
+                        {item.recommendation_notes ? item.recommendation_notes.substring(0, 100) : ""}
+                    </span>
+                </td>
+                <td>{item.user ? item.user.name: ""}</td>
                 <td>
                     <a href="javascript:void(0)"
                        className="glyphicon glyphicon-edit text-success"
@@ -82,24 +88,37 @@ var TestRecommendationList = React.createClass({
         if (testResultId && testTypeId &&
             testResultId != this.props.testResultId && testTypeId != this.props.testTypeId
         ) {
-            var urlParams = 'test_result_id=' + testResultId + '&test_type_id=' + testTypeId;
-            var url = '/api/v1.0/test_recommendation/?' + urlParams;
-            this.serverRequest = $.get(url,
-                function (result) {
-                    this.setState({
-                        recommendations: result['result']
-                    });
-
-                }.bind(this), 'json');
+            this._updateList(testResultId, testTypeId);
+            //var urlParams = 'test_result_id=' + testResultId + '&test_type_id=' + testTypeId;
+            //var url = '/api/v1.0/test_recommendation/?' + urlParams;
+            //this.serverRequest = $.get(url,
+            //    function (result) {
+            //        this.setState({
+            //            recommendations: result['result']
+            //        });
+            //
+            //    }.bind(this), 'json');
         }
+    },
+
+    _updateList: function (testResultId, testTypeId) {
+        var urlParams = 'test_result_id=' + testResultId + '&test_type_id=' + testTypeId;
+        var url = '/api/v1.0/test_recommendation/?' + urlParams;
+        this.serverRequest = $.get(url,
+            function (result) {
+                this.setState({
+                    recommendations: result['result']
+                });
+
+            }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
 
-    reloadList: function () {
-        this.componentDidMount();
+    reloadList: function (testResultId, testTypeId) {
+        this._updateList(testResultId, testTypeId);
     },
 
     render: function () {
@@ -120,10 +139,11 @@ var TestRecommendationList = React.createClass({
                                 <Table responsive hover id="test_prof">
                                     <thead>
                                     <tr>
-                                        <th className="col-md-3">Date</th>
+                                        <th className="col-md-2">Date</th>
                                         <th className="col-md-1">Code</th>
                                         <th className="col-md-2">Name</th>
-                                        <th className="col-md-3">Description</th>
+                                        <th className="col-md-2">Recommendation Description</th>
+                                        <th className="col-md-2">Test Recommendation Description</th>
                                         <th className="col-md-2">Created by</th>
                                         <th className="col-md-1">Actions</th>
                                     </tr>

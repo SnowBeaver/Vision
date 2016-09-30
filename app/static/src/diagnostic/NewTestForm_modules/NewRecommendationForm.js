@@ -149,7 +149,8 @@ var NewRecommendationForm = React.createClass({
 				'code',
 				'description'
 			],
-			changedFields: []
+			changedFields: [],
+			public_recommendation: false
 		}
 	},
 
@@ -164,21 +165,47 @@ var NewRecommendationForm = React.createClass({
             }
             data[key] = value;
 		}
+		delete data["public_recommendation"];
 		var that = this;
-		return $.ajax({
-			url: '/api/v1.0/recommendation/',
-			type: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify(data),
-			success: function (data, textStatus) {
-				that.props.onSuccess(data.result);
-			},
-			beforeSend: function () {
-				this.setState({loading: true});
-			}.bind(this)
-		})
+		if (!this.state.public_recommendation) {
+			// Create test recommendation, do not save to all predefined recommendations
+			delete data["code"];
+			delete data["name"];
+			data["recommendation_notes"] = data["description"];
+			data["test_result_id"] = this.props.testResultId;
+			delete data["description"];
+			return $.ajax({
+				url: '/api/v1.0/test_recommendation/',
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				success: function (data, textStatus) {
+					that.props.onSuccess(data.result, "test");
+				},
+				beforeSend: function () {
+					this.setState({loading: true});
+				}.bind(this)
+			})
+		} else {
+			return $.ajax({
+				url: '/api/v1.0/recommendation/',
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				success: function (data, textStatus) {
+					that.props.onSuccess(data.result, "predefined");
+				},
+				beforeSend: function () {
+					this.setState({loading: true});
+				}.bind(this)
+			})
+		}
+
+
 	},
+
 	_onSubmit: function (e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -199,7 +226,11 @@ var NewRecommendationForm = React.createClass({
 	_onSuccess: function (data) {
 		//this.refs.eqtype_form.getDOMNode().reset();
 		//this.setState(this.getInitialState());
-		NotificationManager.success("Recommendation added.");
+		var recommendationType = "Test";
+		if (this.state.public_recommendation){
+			recommendationType = "Predefined";
+		}
+		NotificationManager.success(recommendationType + " recommendation has been successfully added");
 	},
 	_onError: function (data) {
 		var message = "Failed to create";
@@ -230,6 +261,9 @@ var NewRecommendationForm = React.createClass({
 		NotificationManager.error(message);
 	},
 	_onChange: function (e) {
+		// Do not propagate changes to the parent form
+		// as they are local for this form's state
+		e.stopPropagation();
 		var state = {};
 		if (e.target.type == 'checkbox') {
 			state[e.target.name] = e.target.checked;
@@ -328,9 +362,9 @@ var NewRecommendationForm = React.createClass({
 								</FormGroup>
 							</div>
 							<div className="col-md-1">
-								<Checkbox checked={this.state.public} name="public">Public</Checkbox>
+								<Checkbox checked={this.state.public_recommendation} name="public_recommendation">Public</Checkbox>
 							</div>
-							{this.state.public ?
+							{this.state.public_recommendation ?
 								<div className="col-md-4">
 								 <TextField onChange={this._onChange}
                                            label="Name *"
@@ -342,7 +376,7 @@ var NewRecommendationForm = React.createClass({
 								</div>
 								: null
 							}
-							{this.state.public ?
+							{this.state.public_recommendation ?
 								<div className="col-md-3">
 									<TextField onChange={this._onChange}
 											   label="Code"
@@ -370,7 +404,7 @@ var NewRecommendationForm = React.createClass({
 								<Button bsStyle="success"
 										className="btn btn-success pull-right"
 										type="submit"
-								>Add Recommendation</Button>
+								>Add {this.state.public_recommendation ? "Predefined" : "Test"} Recommendation</Button>
 								&nbsp;
 								<Button bsStyle="danger"
 										className="pull-right"
