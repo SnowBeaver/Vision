@@ -8,12 +8,6 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var TestRepairNote = React.createClass({
 
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value
-        })
-    },
-
     getInitialState: function () {
         return {
             items: [],
@@ -21,35 +15,31 @@ var TestRepairNote = React.createClass({
         };
     },
 
-    edit: function () {
-        this.props.editTestForm(this.props.data.id);
-    },
-
     render: function () {
         var item = this.props.data;
-        
+
         return (
             <tr>
                 <td>{item.date_created}</td>
-                 <td>
-                    <span title={item.recommendation.description}>
-                        {item.recommendation.description ? item.recommendation.description.substring(0, 100) : ""}
+                <td>
+                    <span title={item.description}>
+                        {item.description ? item.description.substring(0, 100) : ""}
                     </span>
                 </td>
                 <td>
-                    <span title={item.recommendation.remark}>
-                        {item.recommendation.remark ? item.recommendation.remark.substring(0, 100) : ""}
+                    <span title={item.remark}>
+                        {item.remark ? item.remark.substring(0, 100) : ""}
                     </span>
                 </td>
-
                 <td>
                     <a href="javascript:void(0)"
-                       className="glyphicon glyphicon-edit text-success"
-                       aria-hidden="true">
+                       className="btn btn-primary btn-xs">
+                        <span className="glyphicon glyphicon-pencil"> </span>
                     </a>
+                    &nbsp;
                     <a href="javascript:void(0)"
-                       className="glyphicon glyphicon-remove text-danger"
-                       aria-hidden="true">
+                       className="btn btn-danger btn-xs">
+                        <span className="glyphicon glyphicon-trash"> </span>
                     </a>
                 </td>
             </tr>
@@ -62,7 +52,7 @@ var RepairNotesList = React.createClass({
 
     getInitialState: function () {
         return {
-            notes: [],
+            repair_notes: [],
             isVisible: true
         }
     },
@@ -75,17 +65,14 @@ var RepairNotesList = React.createClass({
         ) {
             var urlParams = 'test_type_id=' + testTypeId + '&test_result_id=' + testResultId;
             var url = '/api/v1.0/test_repair_note/?' + urlParams;
-
             this.serverRequest = $.get(url,
                 function (result) {
                     this.setState({
-                        notes: result['result']
+                        repair_notes: result['result']
                     });
-
                 }.bind(this), 'json');
         }
     },
-    
 
     componentWillUnmount: function () {
         this.serverRequest.abort();
@@ -97,29 +84,31 @@ var RepairNotesList = React.createClass({
 
     render: function () {
 
-        console.log("data state:", this.props.data);
+        var repair_notes = [];
+
+        for (var i = 0; i < this.state.repair_notes.length; i++) {
+            var item = this.state.repair_notes[i];
+            repair_notes.push(<TestRepairNote key={item.id}
+                                       data={item}/>)
+        }
 
         return (
             <div>
                 <div className="row">
                     <Accordion>
-                        <Panel header="Test repair notes">
+                        <Panel header="Test repair notes" key="repair_notes" eventKey="repair_notes">
                             <Table responsive hover id="test_repair">
                                 <thead>
                                 <tr>
                                     <th className="col-md-3">Date</th>
-                                    <th className="col-md-3">Description</th>
-                                    <th className="col-md-3">Remark</th>
-                                    <th className="col-md-3">Actions</th>
+                                    <th className="col-md-4">Description</th>
+                                    <th className="col-md-4">Remark</th>
+                                    <th className="col-md-1">Actions</th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
-
-                                <button className="btn btn-primary btn-xs"><span
-                                    className="glyphicon glyphicon-pencil"></span></button>
-                                &nbsp;
-                                <button className="btn btn-danger btn-xs"><span
-                                    className="glyphicon glyphicon-trash"></span></button>
+                                {repair_notes}
                                 </tbody>
                             </Table>
                         </Panel>

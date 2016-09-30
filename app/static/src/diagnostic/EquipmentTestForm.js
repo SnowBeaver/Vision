@@ -157,7 +157,7 @@ var SyringeNumberSelectField = React.createClass({
                              value={value}
                              disabled={this.props.disabled}
                 >
-                    <option key={null} value={null}></option>
+                    <option key={null} value={null}> </option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -185,7 +185,9 @@ const DateTimeFieldWithLabel = React.createClass({
                 <ControlLabel>{label}</ControlLabel>
                 <DateTimeField name={name}
                                onChange={this._onChange}
-                    {...dateValue}/>
+                    {...dateValue}
+                                inputProps={{disabled: this.props.readOnly}}
+                />
             </div>
         );
     }
@@ -351,6 +353,13 @@ var EquipmentTestIdentificationForm = React.createClass({
 });
 
 var EquipmentTestRepairForm = React.createClass({
+    getInitialState: function () {
+        return {
+            loading: false
+        }
+    },
+    
+
     render: function () {
         var data = (this.props.data != null) ? this.props.data : {};
         return (
@@ -362,15 +371,15 @@ var EquipmentTestRepairForm = React.createClass({
                     </div>
                 </div>
                 <div className="tab_row nopadding">
-                    <div className="col-md-12">
+                    <div className="col-lg-12">
                         <TextArea label="Repair description"
-                                  name='repair_description'
-                                  value={data.repair_description}
+                                  name='description'
+                                  value={data.description}
                                   onChange={this.props.onChange}/>
                     </div>
                 </div>
                 <div className="tab_row nopadding">
-                    <div className="col-md-12">
+                    <div className="col-lg-12">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
@@ -386,12 +395,14 @@ var EquipmentTestRepairForm = React.createClass({
                     </div>
                 </div>
                 <div className="tab_row nopadding">
-                    <div className="col-md-6" key={data.repair_date}>
+                    <div className="col-md-6" key={data.date_created}>
                         <DateTimeFieldWithLabel label="Repair date"
-                                                name='repair_date'
-                                                value={data.repair_date}
+                                                name='date_created'
+                                                value={data.date_created}
                                                 onChange={this.props.onChange}
-                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
+                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}
+                                                readOnly
+                        />
                     </div>
                 </div>
             </div>
@@ -590,9 +601,9 @@ var EquipmentTestForm = React.createClass({
             fields: ['test_type_id', 'test_reason_id',
                 'status_id', 'temperature', 'lab_contract_id',
                 'sampling_point_id', 'equipment_id', 'lab_id',
-                'remark', 'repair_description', 'fluid_type_id',
-                'date_analyse', 'repair_date', 'test_status_id'],
+                'fluid_type_id', 'date_analyse', 'test_status_id'],
             testRecommendationFields: ['recommendation_id'],
+            testRepairNotesFields: ['description', 'remark', 'sample', 'date_created'],
             errors: {},
             data: null
         }
@@ -600,7 +611,7 @@ var EquipmentTestForm = React.createClass({
 
     _save: function () {
         this._saveTestRecommendation();
-
+        this._saveRepairNote();
         var fields = this.state.fields;
         var data = {};
         var url = '/api/v1.0/test_result/';
@@ -657,7 +668,7 @@ var EquipmentTestForm = React.createClass({
     },
 
     _saveRepairNote: function () {
-      var fields = this.state.testRecommendationFields;
+      var fields = this.state.testRepairNotesFields;
         var data = {};
         var url = '/api/v1.0/test_repair_note/';
         var type = 'POST';
