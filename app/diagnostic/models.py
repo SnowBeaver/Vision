@@ -1875,6 +1875,7 @@ class TestType(db.Model):
     # test_type_result_table = db.relationship("TestTypeResultTable", back_populates="test_type")
     test_table_name = db.Column(db.String(100), nullable=False, default='')
     checkbox_name = db.Column(db.String(100), default='')
+    type_category_id = db.Column(db.Integer(), db.ForeignKey("test_type.id"), nullable=True)
 
     def __repr__(self):
         return self.name
@@ -1887,6 +1888,7 @@ class TestType(db.Model):
                 'is_group': self.is_group,
                 'test_table_name': self.test_table_name,
                 'checkbox_name': self.checkbox_name,
+                'type_category_id': self.type_category_id,
                 }
 
 
