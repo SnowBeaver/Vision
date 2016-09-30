@@ -35,13 +35,20 @@ var TestTypeSelectField = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
+		if (this.props.typeCategoryId) {
+			var url = this.props.source + "?type_category_id=" + this.props.typeCategoryId;
+			this.serverRequest = $.get(url, function (result) {
 
-			items = (result['result']);
-			this.setState({
-				items: items
-			});
-		}.bind(this), 'json');
+				items = (result['result']);
+				this.setState({
+					items: items
+				});
+			}.bind(this), 'json');
+		} else {
+			NotificationManager.info("Test types cannot be loaded because this test result has test_type_id of one " +
+				"of the groups: Electrical, Fluid, Jar, 4 - ml vial or Syringe", null, 5000)
+		}
+
 	},
 
 	componentWillUnmount: function () {
@@ -356,6 +363,7 @@ var NewRecommendationForm = React.createClass({
 										   validationState={this.state.errors.test_type_id ? 'error' : null}>
 									<TestTypeSelectField
 										source="/api/v1.0/test_type"
+										typeCategoryId={this.props.typeCategoryId}
 										handleChange={this.handleChange}
 										required/>
 									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
