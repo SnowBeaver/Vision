@@ -39,5 +39,6 @@ def upgrade():
 def downgrade():
     sql = """
         DROP TABLE IF EXISTS public.test_diagnosis;
+        ALTER TABLE IF EXISTS public.test_repair_note ALTER COLUMN date_created DROP DEFAULT;
     """
     op.execute(sql=sql)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sqlalchemy as sqla
+from datetime import datetime
 from app import db
 from sqlalchemy.orm import relationship, relation
 from sqlalchemy.sql.expression import cast
@@ -1639,7 +1640,7 @@ class TestRecommendation(db.Model):
     recommendation_notes = db.Column(db.Text)
     user_id = db.Column(db.ForeignKey("users_user.id"))
     user = db.relationship('User', foreign_keys='TestRecommendation.user_id')
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_updated = db.Column(db.DateTime)
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
     test_result = db.relationship('TestResult', backref='test_recommendation')
@@ -3687,7 +3688,7 @@ class TestRepairNote(db.Model):
     description = db.Column(db.Text)
     remark = db.Column(db.Text)
     sample = db.Column(db.Text)
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     user_id = db.Column(db.ForeignKey("users_user.id"))
     user = db.relationship('User', foreign_keys='TestRepairNote.user_id')
