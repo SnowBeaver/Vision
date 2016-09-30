@@ -1265,6 +1265,13 @@ test_repair_note_schema = {
     'test_result_id': type_integer_coerce_dict,
     'test_type_id': type_integer_coerce_dict
 }
+diagnosis_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_50_dict,
+    'code': type_string_maxlength_50_dict,
+    'description': type_string_dict,
+    'test_type_id': type_integer_coerce_dict
+}
 model_dict = {
     'equipment': {
         'model': Equipment,
@@ -1625,6 +1632,10 @@ model_dict = {
     'test_repair_note': {
         'model': TestRepairNote,
         'schema': test_repair_note_schema
+    },
+    'diagnosis': {
+        'model': Diagnosis,
+        'schema': diagnosis_schema
     },
     # 'test_result_winding_test': {
     #     'model': WindingTest,
