@@ -3748,7 +3748,7 @@ class TestDiagnosis(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     diagnosis_notes = db.Column(db.Text)
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_updated = db.Column(db.DateTime)
 
     diagnosis_id = db.Column(db.ForeignKey("diagnosis.id"))
