@@ -397,7 +397,8 @@ var EquipmentTestDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
-            showNewRecommendationForm: false
+            showNewRecommendationForm: false,
+            recommendationId: null
         }
     },
 
@@ -420,6 +421,10 @@ var EquipmentTestDiagnosisForm = React.createClass({
         this.setState({showNewRecommendationForm: false})
     },
 
+    updatePredefinedRecommendations: function (id) {
+        this.setState({showNewRecommendationForm: false, recommendationId: id});
+    },
+
     render: function () {
         return (
             <form className="" method="post" action="#">
@@ -431,10 +436,11 @@ var EquipmentTestDiagnosisForm = React.createClass({
 
                     <div className="col-lg-10 nopadding">
                         <SelectField source="recommendation"
-                                     label="Predefined recommedation"
+                                     label="Predefined recommendation"
                                      name='recommendation_id'
-                                     value={this.props.data.recommendation_id}
+                                     value={this.state.recommendationId}
                                      disabled={this.state.showNewRecommendationForm}
+                                     key={this.state.recommendationId}
                         />
                     </div>
                     <div className="col-lg-1">
@@ -443,7 +449,8 @@ var EquipmentTestDiagnosisForm = React.createClass({
                     {this.state.showNewRecommendationForm ?
                         <div className="col-lg-12 nopadding">
                             <NewRecommendationForm testResultId={this.props.data.id}
-                                                   handleClose={this.closeNewRecommendationForm}/>
+                                                   handleClose={this.closeNewRecommendationForm}
+                                                   onSuccess={this.updatePredefinedRecommendations}/>
                         </div>
                         : null
                     }
