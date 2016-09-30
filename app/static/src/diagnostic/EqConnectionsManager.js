@@ -288,8 +288,7 @@ var EqConnectionsManager = React.createClass({
         this.setState({loading: false});
     },
     _onSuccess: function (data) {
-        // Clean the form
-        this.setState(this.getInitialState());
+        this.props.handleClose();
         NotificationManager.success('Upstreams & downstreams were succesfully set');
     },
     _onError: function (data) {
