@@ -3702,7 +3702,7 @@ class TestRepairNote(db.Model):
     test_type = db.relationship('TestType', backref='test_repair_note')
 
     def __repr__(self):
-        return u"{} ({})".format(self.name, self.iso_name)
+        return u"{} ({})".format(self.id, self.description)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -3766,7 +3766,7 @@ class TestDiagnosis(db.Model):
     test_type = db.relationship('TestType', backref='test_diagnosis')
 
     def __repr__(self):
-        return "{} {} by {}".format(self.id, self.recommendation, self.user)
+        return "{} {} by {}".format(self.id, self.diagnosis_notes, self.user)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -3782,4 +3782,20 @@ class TestDiagnosis(db.Model):
                 'test_type': self.test_type and self.test_type.serialize(),
                 'test_result_id': self.test_result_id,
                 'test_result': self.test_result and self.test_result.serialize(),
+                }
+
+
+class TaskStatus(db.Model):
+    __tablename__ = u'task_status'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(20), index=True)
+
+    def __repr__(self):
+        return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name
                 }

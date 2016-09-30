@@ -1283,6 +1283,10 @@ test_diagnosis_schema = {
     'test_result_id': type_integer_coerce_dict,
     'test_type_id': type_integer_coerce_dict
 }
+task_status_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_20_dict
+}
 model_dict = {
     'equipment': {
         'model': Equipment,
@@ -1651,6 +1655,10 @@ model_dict = {
     'test_diagnosis': {
         'model': TestDiagnosis,
         'schema': test_diagnosis_schema
+    },
+    'task_status': {
+        'model': TaskStatus,
+        'schema': task_status_schema
     },
     # 'test_result_winding_test': {
     #     'model': WindingTest,

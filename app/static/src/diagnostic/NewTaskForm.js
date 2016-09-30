@@ -46,7 +46,9 @@ var TestRecommendationSelectField = React.createClass({
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].recommendation.name}`}</option>);
+                                   value={this.state.items[key].id}>
+                            {`${this.state.items[key].recommendation ? this.state.items[key].recommendation.name : this.state.items[key].recommendation_notes}`}
+                            </option>);
         }
         return (
             <FormGroup>
@@ -392,7 +394,7 @@ var NewTaskForm = React.createClass({
                                                                value={this.state.test_recommendation_id}/>
                             </div>
                             <div className="col-md-2">
-                                <SelectField source="status"
+                                <SelectField source="task_status"
                                              label="Status"
                                              name='status_id'
                                              value={this.state.status_id}/>
