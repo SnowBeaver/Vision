@@ -3678,3 +3678,105 @@ class Country(db.Model):
                 'name': self.name,
                 'iso_name': self.iso_name,
                 }
+
+
+class TestRepairNote(db.Model):
+    __tablename__ = 'test_repair_note'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    description = db.Column(db.Text)
+    remark = db.Column(db.Text)
+    sample = db.Column(db.Text)
+    date_created = db.Column(db.DateTime)
+
+    user_id = db.Column(db.ForeignKey("users_user.id"))
+    user = db.relationship('User', foreign_keys='TestRepairNote.user_id')
+
+    test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
+    test_result = db.relationship('TestResult', backref='test_repair_note')
+
+    test_type_id = db.Column(db.Integer, db.ForeignKey("test_type.id"))
+    test_type = db.relationship('TestType', backref='test_repair_note')
+
+    def __repr__(self):
+        return u"{} ({})".format(self.name, self.iso_name)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'description': self.description,
+                'remark': self.remark,
+                'sample': self.sample,
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
+                'date_created': self.date_created,
+                'test_type_id': self.test_type_id,
+                'test_type': self.test_type and self.test_type.serialize(),
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result and self.test_result.serialize(),
+                }
+
+
+class Diagnosis(db.Model):
+    __tablename__ = u'diagnosis'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(50), index=True)
+    code = db.Column(db.String(50), index=True)
+    description = db.Column(db.UnicodeText())
+
+    test_type_id = db.Column(db.Integer, db.ForeignKey('test_type.id'))
+    test_type = relationship('TestType', foreign_keys='Diagnosis.test_type_id')
+
+    def __repr__(self):
+        return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'code': self.code,
+                'description': self.description,
+                'test_type_id': self.test_type_id,
+                'test_type': self.test_type and self.test_type.serialize(),
+                }
+
+
+class TestDiagnosis(db.Model):
+    __tablename__ = u'test_diagnosis'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    diagnosis_notes = db.Column(db.Text)
+    date_created = db.Column(db.DateTime)
+    date_updated = db.Column(db.DateTime)
+
+    diagnosis_id = db.Column(db.ForeignKey("diagnosis.id"))
+    diagnosis = db.relationship('Diagnosis', backref='test_diagnosis')
+
+    user_id = db.Column(db.ForeignKey("users_user.id"))
+    user = db.relationship('User', foreign_keys='TestDiagnosis.user_id')
+
+    test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
+    test_result = db.relationship('TestResult', backref='test_diagnosis')
+
+    test_type_id = db.Column(db.Integer, db.ForeignKey("test_type.id"))
+    test_type = db.relationship('TestType', backref='test_diagnosis')
+
+    def __repr__(self):
+        return "{} {} by {}".format(self.id, self.recommendation, self.user)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'diagnosis_id': self.diagnosis_id,
+                'diagnosis': self.diagnosis and self.diagnosis.serialize(),
+                'diagnosis_notes': self.diagnosis_notes,
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
+                'date_created': self.date_created,
+                'date_updated': self.date_updated,
+                'test_type_id': self.test_type_id,
+                'test_type': self.test_type and self.test_type.serialize(),
+                'test_result_id': self.test_result_id,
+                'test_result': self.test_result and self.test_result.serialize(),
+                }

@@ -1255,6 +1255,16 @@ tree_translation_schema = {
     'text': type_string_maxlength_250_dict,
     'tooltip': type_string_maxlength_250_dict,
 }
+test_repair_note_schema = {
+    'id': readonly_dict,
+    'description': type_string_dict,
+    'remark': type_string_dict,
+    'sample': type_string_dict,
+    'date_created': type_datetime_required_dict,
+    'user_id': type_integer_coerce_dict,
+    'test_result_id': type_integer_coerce_dict,
+    'test_type_id': type_integer_coerce_dict
+}
 model_dict = {
     'equipment': {
         'model': Equipment,
@@ -1611,6 +1621,10 @@ model_dict = {
     'tree_translation': {
         'model': TreeTranslation,
         'schema': tree_translation_schema
+    },
+    'test_repair_note': {
+        'model': TestRepairNote,
+        'schema': test_repair_note_schema
     },
     # 'test_result_winding_test': {
     #     'model': WindingTest,
