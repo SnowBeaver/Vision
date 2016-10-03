@@ -802,7 +802,7 @@ class TestScheduleView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = ('equipment', 'start_date', 'assigned_to', 'description')
-    column_searchable_list = ('equipment_id', 'start_date', 'assigned_to_id', 'description')
+    column_searchable_list = ('date_start', 'assigned_to_id', 'description')
 
     def __init__(self, dbsession):
         super(TestScheduleView, self).__init__(
