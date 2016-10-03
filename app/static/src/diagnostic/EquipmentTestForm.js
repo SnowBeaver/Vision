@@ -22,6 +22,7 @@ import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestFor
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import TestRecommendationList from './TestRecommendationList';
+import RepairNotesList from './RepairNotesList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
@@ -156,7 +157,7 @@ var SyringeNumberSelectField = React.createClass({
                              value={value}
                              disabled={this.props.disabled}
                 >
-                    <option key={null} value={null}></option>
+                    <option key={null} value={null}> </option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -174,12 +175,19 @@ const DateTimeFieldWithLabel = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var dateValue = this.props.value;
-        dateValue = (dateValue) ? {dateTime: dateValue, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
+        dateValue = (dateValue) ? {
+            dateTime: dateValue,
+            format: DATETIMEPICKER_FORMAT
+        } : {defaultText: "Please select a date"};
 
         return (
-            <div className="datetimepicker input-group date ">
+            <div className="datetimepicker input-group date">
                 <ControlLabel>{label}</ControlLabel>
-                <DateTimeField name={name} onChange={this._onChange} {...dateValue}/>
+                <DateTimeField name={name}
+                               onChange={this._onChange}
+                    {...dateValue}
+                                inputProps={{disabled: this.props.readOnly}}
+                />
             </div>
         );
     }
@@ -214,7 +222,7 @@ const TextArea = React.createClass({
         return (
             <FormGroup>
                 <ControlLabel>{label}</ControlLabel>
-                <FormControl type="textarea" placeholder={label} name={name}
+                <FormControl componentClass="textarea" placeholder={label} name={name}
                              value={value} onChange={this.props.onChange}
                 />
                 <FormControl.Feedback />
@@ -254,7 +262,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <TextField label="Fluid Temperature (&#8451;)"
                                    name='temperature'
                                    value={data.temperature}
-                                   />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -283,7 +291,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <TextField label="Load (MVA)"
                                    value={data.charge}
                                    name="charge"
-                                   />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -306,14 +314,15 @@ var EquipmentTestIdentificationForm = React.createClass({
                                                 name='date_analyse'
                                                 value={data.date_analyse}
                                                 onChange={this.props.onChange}
-                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
+                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}
+                        />
                     </div>
                     <div className="col-md-3 nopadding padding-right-xs">
                         <SelectField source="lab"
                                      label="Lab./On-line analyser"
                                      name='lab_id'
                                      value={data.lab_id}
-                                     />
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -344,34 +353,56 @@ var EquipmentTestIdentificationForm = React.createClass({
 });
 
 var EquipmentTestRepairForm = React.createClass({
+    getInitialState: function () {
+        return {
+            loading: false
+        }
+    },
+    
+
     render: function () {
         var data = (this.props.data != null) ? this.props.data : {};
         return (
-            <div className="tab_row">
-                <div className="col-lg-12 nopadding">
-                    <div className="col-lg-6 nopadding padding-right-xs">
+            <div>
+                <div className="tab_row">
+                    <div className="col-md-12 ">
+                        <RepairNotesList testResultId={this.props.data.id}
+                                         testTypeId={this.props.data.test_type_id}/>
+                    </div>
+                </div>
+                <div className="tab_row nopadding">
+                    <div className="col-lg-12">
                         <TextArea label="Repair description"
-                                  name='repair_description'
-                                  value={data.repair_description}
+                                  name='description'
+                                  value={data.description}
                                   onChange={this.props.onChange}/>
                     </div>
-                    <div className="col-lg-6 nopadding ">
+                </div>
+                <div className="tab_row nopadding">
+                    <div className="col-lg-12">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
                                   onChange={this.props.onChange}/>
                     </div>
                 </div>
-                <div className="col-lg-12 nopadding">
-                    <div className="col-lg-6 nopadding padding-right-xs">Sample
-                        <FormControl type="text" value=""/>
+                <div className="tab_row nopadding">
+                    <div className="col-md-12">
+                        <TextArea label="Sample"
+                                  name='sample'
+                                  value={data.sample}
+                                  onChange={this.props.onChange}/>
                     </div>
-                    <div className="col-lg-6 nopadding" key={data.repair_date}>
+                </div>
+                <div className="tab_row nopadding">
+                    <div className="col-md-6" key={data.date_created}>
                         <DateTimeFieldWithLabel label="Repair date"
-                                                name='repair_date'
-                                                value={data.repair_date}
+                                                name='date_created'
+                                                value={data.date_created}
                                                 onChange={this.props.onChange}
-                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}/>
+                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}
+                                                readOnly
+                        />
                     </div>
                 </div>
             </div>
@@ -459,7 +490,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
                                                    onSuccess={this.updatePredefinedRecommendations}
                                                    typeCategoryId={this.props.data.test_type ? this.props.data.test_type.type_category_id : null}/>
                         </div>
-                     : null
+                        : null
                     }
 
                 </div>
@@ -571,9 +602,9 @@ var EquipmentTestForm = React.createClass({
             fields: ['test_type_id', 'test_reason_id',
                 'status_id', 'temperature', 'lab_contract_id',
                 'sampling_point_id', 'equipment_id', 'lab_id',
-                'remark', 'repair_description', 'fluid_type_id',
-                'date_analyse', 'repair_date', 'test_status_id'],
+                'fluid_type_id', 'date_analyse', 'test_status_id'],
             testRecommendationFields: ['recommendation_id'],
+            testRepairNotesFields: ['description', 'remark', 'sample', 'date_created'],
             errors: {},
             data: null
         }
@@ -581,7 +612,7 @@ var EquipmentTestForm = React.createClass({
 
     _save: function () {
         this._saveTestRecommendation();
-
+        this._saveRepairNote();
         var fields = this.state.fields;
         var data = {};
         var url = '/api/v1.0/test_result/';
@@ -635,6 +666,38 @@ var EquipmentTestForm = React.createClass({
                 }.bind(this)
             });
         }
+    },
+
+    _saveRepairNote: function () {
+      var fields = this.state.testRepairNotesFields;
+        var data = {};
+        var url = '/api/v1.0/test_repair_note/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state.data[key];
+
+        }
+
+        if (Object.keys(data).length){
+            data.test_result_id = this.state.data['id'];
+            data.test_type_id = this.state.data['test_type_id'];
+            $.ajax({
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {},
+                success: function () {
+                },
+                error: function (xhr, status, response) {
+                    NotificationManager.error(response.error);
+                }.bind(this)
+            });
+        }
+
+
     },
 
     _onSubmit: function (e) {
@@ -716,13 +779,13 @@ var EquipmentTestForm = React.createClass({
     _onDateTimeFieldChange: function (timestamp, fieldName) {
         var stateData = this.state.data;
         // If date is not valid (for example, date is deleted) string "Invalid date" is received
-        if (timestamp == "Invalid date"){
+        if (timestamp == "Invalid date") {
             timestamp = null;
-        } else if (timestamp){
+        } else if (timestamp) {
             // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
             // Format date here instead of specifying format in DateTimeField,
             // because error is raised when format is specified, but date is null/undefined/empty string.
-            if (/^\d+$/.test(timestamp)){
+            if (/^\d+$/.test(timestamp)) {
                 timestamp = parseInt(timestamp);
                 timestamp = moment(timestamp).toISOString();
             }
