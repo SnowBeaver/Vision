@@ -487,7 +487,8 @@ var EquipmentTestDiagnosisForm = React.createClass({
                         <div className="col-lg-12 nopadding">
                             <NewRecommendationForm testResultId={this.props.data.id}
                                                    handleClose={this.closeNewRecommendationForm}
-                                                   onSuccess={this.updatePredefinedRecommendations}/>
+                                                   onSuccess={this.updatePredefinedRecommendations}
+                                                   typeCategoryId={this.props.data.test_type ? this.props.data.test_type.type_category_id : null}/>
                         </div>
                         : null
                     }
@@ -660,8 +661,8 @@ var EquipmentTestForm = React.createClass({
                 success: function () {
                     NotificationManager.success('Test recommendation has been saved successfully');
                 },
-                error: function (xhr, status, response) {
-                    NotificationManager.error(response.error);
+                error: function () {
+                    NotificationManager.error("Sorry an error occurred while saving test recommendation");
                 }.bind(this)
             });
         }

@@ -36,7 +36,7 @@ var TestRecommendation = React.createClass({
                 <td>{item.date_created}</td>
                 <td>{recommendation ? recommendation.code : ""}</td>
                 <td>
-                    <span title={recommendation && recommendation.name ? recommendation : ""}>
+                    <span title={recommendation ? recommendation.name : ""}>
                         {recommendation && recommendation.name ? recommendation.name.substring(0, 100) : ""}
                     </span>
                 </td>

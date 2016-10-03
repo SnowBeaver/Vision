@@ -705,6 +705,7 @@ test_recommendation_schema = {
     'date_created': type_integer_coerce_dict,
     'date_updated': type_integer_coerce_dict,
     'test_result_id': type_integer_coerce_dict,
+    'test_type_id': type_integer_coerce_dict,
 }
 syringe_schema = {
     'id': readonly_dict,
@@ -1260,10 +1261,31 @@ test_repair_note_schema = {
     'description': type_string_dict,
     'remark': type_string_dict,
     'sample': type_string_dict,
-    'date_created': type_datetime_required_dict,
+    'date_created': type_datetime_dict,
     'user_id': type_integer_coerce_dict,
     'test_result_id': type_integer_coerce_dict,
     'test_type_id': type_integer_coerce_dict
+}
+diagnosis_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_50_dict,
+    'code': type_string_maxlength_50_dict,
+    'description': type_string_dict,
+    'test_type_id': type_integer_coerce_dict
+}
+test_diagnosis_schema = {
+    'id': readonly_dict,
+    'diagnosis_notes': type_string_dict,
+    'date_created': type_datetime_dict,
+    'date_updated': type_datetime_dict,
+    'diagnosis_id': type_integer_coerce_dict,
+    'user_id': type_integer_coerce_dict,
+    'test_result_id': type_integer_coerce_dict,
+    'test_type_id': type_integer_coerce_dict
+}
+task_status_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_20_dict
 }
 model_dict = {
     'equipment': {
@@ -1625,6 +1647,18 @@ model_dict = {
     'test_repair_note': {
         'model': TestRepairNote,
         'schema': test_repair_note_schema
+    },
+    'diagnosis': {
+        'model': Diagnosis,
+        'schema': diagnosis_schema
+    },
+    'test_diagnosis': {
+        'model': TestDiagnosis,
+        'schema': test_diagnosis_schema
+    },
+    'task_status': {
+        'model': TaskStatus,
+        'schema': task_status_schema
     },
     # 'test_result_winding_test': {
     #     'model': WindingTest,

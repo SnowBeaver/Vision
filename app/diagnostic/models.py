@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sqlalchemy as sqla
+from datetime import datetime
 from app import db
 from sqlalchemy.orm import relationship, relation
 from sqlalchemy.sql.expression import cast
@@ -1639,7 +1640,7 @@ class TestRecommendation(db.Model):
     recommendation_notes = db.Column(db.Text)
     user_id = db.Column(db.ForeignKey("users_user.id"))
     user = db.relationship('User', foreign_keys='TestRecommendation.user_id')
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_updated = db.Column(db.DateTime)
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
     test_result = db.relationship('TestResult', backref='test_recommendation')
@@ -1874,6 +1875,7 @@ class TestType(db.Model):
     # test_type_result_table = db.relationship("TestTypeResultTable", back_populates="test_type")
     test_table_name = db.Column(db.String(100), nullable=False, default='')
     checkbox_name = db.Column(db.String(100), default='')
+    type_category_id = db.Column(db.Integer(), db.ForeignKey("test_type.id"), nullable=True)
 
     def __repr__(self):
         return self.name
@@ -1886,6 +1888,7 @@ class TestType(db.Model):
                 'is_group': self.is_group,
                 'test_table_name': self.test_table_name,
                 'checkbox_name': self.checkbox_name,
+                'type_category_id': self.type_category_id,
                 }
 
 
@@ -3687,7 +3690,7 @@ class TestRepairNote(db.Model):
     description = db.Column(db.Text)
     remark = db.Column(db.Text)
     sample = db.Column(db.Text)
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     user_id = db.Column(db.ForeignKey("users_user.id"))
     user = db.relationship('User', foreign_keys='TestRepairNote.user_id')
@@ -3699,7 +3702,7 @@ class TestRepairNote(db.Model):
     test_type = db.relationship('TestType', backref='test_repair_note')
 
     def __repr__(self):
-        return u"{} ({})".format(self.name, self.iso_name)
+        return u"{} ({})".format(self.id, self.description)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -3747,7 +3750,7 @@ class TestDiagnosis(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     diagnosis_notes = db.Column(db.Text)
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_updated = db.Column(db.DateTime)
 
     diagnosis_id = db.Column(db.ForeignKey("diagnosis.id"))
@@ -3763,7 +3766,7 @@ class TestDiagnosis(db.Model):
     test_type = db.relationship('TestType', backref='test_diagnosis')
 
     def __repr__(self):
-        return "{} {} by {}".format(self.id, self.recommendation, self.user)
+        return "{} {} by {}".format(self.id, self.diagnosis_notes, self.user)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -3779,4 +3782,20 @@ class TestDiagnosis(db.Model):
                 'test_type': self.test_type and self.test_type.serialize(),
                 'test_result_id': self.test_result_id,
                 'test_result': self.test_result and self.test_result.serialize(),
+                }
+
+
+class TaskStatus(db.Model):
+    __tablename__ = u'task_status'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(20), index=True)
+
+    def __repr__(self):
+        return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name
                 }
