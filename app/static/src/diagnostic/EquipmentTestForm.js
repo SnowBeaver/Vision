@@ -25,6 +25,9 @@ import TestRecommendationList from './TestRecommendationList';
 import RepairNotesList from './RepairNotesList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 var SelectField = React.createClass({
     getInitialState: function () {
@@ -171,22 +174,21 @@ const DateTimeFieldWithLabel = React.createClass({
         this.props.onDateTimeFieldChange(timestamp, this.props.name);
     },
     render: function () {
-        var label = (this.props.label != null) ? this.props.label : "";
+        var label = (this.props.label != null) ? this.props.label : "Please select a date";
         var name = (this.props.name != null) ? this.props.name : "";
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var dateValue = this.props.value;
         dateValue = (dateValue) ? {
             dateTime: dateValue,
             format: DATETIMEPICKER_FORMAT
-        } : {defaultText: "Please select a date"};
+        } : {defaultText: label};
 
         return (
             <div className="datetimepicker input-group date">
-                <ControlLabel>{label}</ControlLabel>
                 <DateTimeField name={name}
                                onChange={this._onChange}
-                    {...dateValue}
-                                inputProps={{disabled: this.props.readOnly}}
+                               {...dateValue}
+                               inputProps={{disabled: this.props.readOnly}}
                 />
             </div>
         );
@@ -216,17 +218,25 @@ const TextField = React.createClass({
 
 const TextArea = React.createClass({
     render: function () {
+        let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var error = this.props.errors[name];
         return (
-            <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
-                <FormControl componentClass="textarea" placeholder={label} name={name}
-                             value={value} onChange={this.props.onChange}
-                />
-                <FormControl.Feedback />
-            </FormGroup>
+            <OverlayTrigger overlay={tooltip} placement="top">
+                <FormGroup>
+                    <FormControl componentClass="textarea"
+                                 placeholder={label}
+                                 name={name}
+                                 value={value}
+                                 onChange={this.props.onChange}
+								 required={this.props.required}
+                    />
+                    <HelpBlock className="warning">{error}</HelpBlock>
+                    <FormControl.Feedback />
+                </FormGroup>
+            </OverlayTrigger>
         );
     }
 });
@@ -355,7 +365,8 @@ var EquipmentTestIdentificationForm = React.createClass({
 var EquipmentTestRepairForm = React.createClass({
     getInitialState: function () {
         return {
-            loading: false
+            loading: false,
+            errors: {}
         }
     },
     
@@ -375,7 +386,8 @@ var EquipmentTestRepairForm = React.createClass({
                         <TextArea label="Repair description"
                                   name='description'
                                   value={data.description}
-                                  onChange={this.props.onChange}/>
+                                  onChange={this.props.onChange}
+                                  errors={this.state.errors}/>
                     </div>
                 </div>
                 <div className="tab_row nopadding">
@@ -383,7 +395,8 @@ var EquipmentTestRepairForm = React.createClass({
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
-                                  onChange={this.props.onChange}/>
+                                  onChange={this.props.onChange}
+                                  errors={this.state.errors}/>
                     </div>
                 </div>
                 <div className="tab_row nopadding">
@@ -391,12 +404,13 @@ var EquipmentTestRepairForm = React.createClass({
                         <TextArea label="Sample"
                                   name='sample'
                                   value={data.sample}
-                                  onChange={this.props.onChange}/>
+                                  onChange={this.props.onChange}
+                                  errors={this.state.errors}/>
                     </div>
                 </div>
                 <div className="tab_row nopadding">
                     <div className="col-md-6" key={data.date_created}>
-                        <DateTimeFieldWithLabel label="Repair date"
+                        <DateTimeFieldWithLabel label="Please select repair date"
                                                 name='date_created'
                                                 value={data.date_created}
                                                 onChange={this.props.onChange}
