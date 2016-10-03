@@ -20,8 +20,6 @@ def upgrade():
         ALTER TABLE public.schedule ALTER COLUMN "order" DROP DEFAULT;
         DROP SEQUENCE IF EXISTS schedule_order_seq;
 
-        ALTER TABLE public.schedule DROP CONSTRAINT schedule_pkey;
-        ALTER TABLE public.schedule DROP COLUMN id;
         ALTER TABLE public.schedule ADD COLUMN id SERIAL PRIMARY KEY NOT NULL;
 
         ALTER TABLE public.schedule RENAME COLUMN "order" TO priority;
@@ -66,5 +64,6 @@ def downgrade():
         ALTER TABLE public.schedule DROP COLUMN status_id;
         ALTER TABLE public.schedule DROP COLUMN date_updated;
         ALTER TABLE public.schedule DROP COLUMN date_created;
+        ALTER TABLE public.schedule DROP COLUMN id;
     """
     op.execute(sql=sql)
