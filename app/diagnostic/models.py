@@ -1809,11 +1809,8 @@ class TestSchedule(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     # NoEquipement = Column(db.String(50), primary_key=True,
     #                       nullable=False)
-
-    equipment_id = db.Column('equipment_id', sqla.ForeignKey("equipment.id"), nullable=False)
-    equipment = db.relationship('Equipment', foreign_keys='TestSchedule.equipment_id')
-
-    start_date = db.Column(db.DateTime, primary_key=True, nullable=False)  # StartDate. Starting date of periodic task
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    date_start = db.Column(db.DateTime, nullable=False)  # StartDate. Starting date of periodic task
     period_years = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of year between tasks
     period_months = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of month between tasks
     period_days = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of days between tasks
@@ -1836,30 +1833,38 @@ class TestSchedule(db.Model):
     # prof_elec = Column(db.String(25))  # Prof_Elec.  Which electrical tests profile should be used
     # prof_mec = Column(db.String(25))  # Prof_Mec.  Which mechanical tests profile should be used
 
-    tests_to_perform = db.Column(db.Integer, db.ForeignKey('test_type.id'))
-    tests = relationship("TestType")
+    test_recommendation_id = db.Column(db.Integer, db.ForeignKey("test_recommendation.id"), nullable=False)
+    test_recommendation = db.relationship('TestRecommendation', backref='test_schedule')
 
-    order = db.Column(db.Integer, primary_key=True, nullable=False)  # WorkOrderNum
+    status_id = db.Column(db.Integer, db.ForeignKey("task_status.id"))
+    status = db.relationship('TaskStatus', backref='test_schedule')
+
+    priority = db.Column(db.Integer, nullable=False)  # WorkOrderNum
+    date_updated = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return "{} {}".format(self.equipment, self.start_date)
+        return "{} {}".format(self.test_recommendation, self.date_start)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'equipment_id': self.equipment_id,
-                'equipment': self.equipment and self.equipment.serialize(),
-                'start_date': dump_datetime(self.start_date),
+        return {'id': self.id,
+                'date_start': dump_datetime(self.date_start),
+                'date_created': dump_datetime(self.date_created),
+                'date_updated': dump_datetime(self.date_updated),
                 'period_years': self.period_years,
                 'period_months': self.period_months,
                 'period_days': self.period_days,
                 'assigned_to_id': self.assigned_to_id,
                 'assigned_to': self.assigned_to and self.assigned_to.serialize(),
+                'test_recommendation_id': self.test_recommendation_id,
+                'test_recommendation': self.test_recommendation and self.test_recommendation.serialize(),
+                'status_id': self.status_id,
+                'status': self.status and self.status.serialize(),
                 'recurring': self.recurring,
                 'notify_before_in_days': self.notify_before_in_days,
                 'description': self.description,
-                'tests_to_perform': self.tests_to_perform,
-                'tests': self.tests and self.tests.serialize(),
-                'order': self.order,
+                'priority': self.priority,
                 }
 
 

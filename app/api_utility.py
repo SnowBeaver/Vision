@@ -718,8 +718,7 @@ test_status_schema = campaign_status_schema = {
     'name': type_string_maxlength_50_dict,
 }
 schedule_schema = {
-    'equipment_id': type_integer_coerce_required_dict,
-    'start_date': type_datetime_required_dict,
+    'date_start': type_datetime_required_dict,
     'period_years': type_integer_coerce_dict,
     'period_months': type_integer_coerce_dict,
     'period_days': type_integer_coerce_dict,
@@ -727,8 +726,11 @@ schedule_schema = {
     'recurring': type_boolean_coerce_dict,
     'notify_before_in_days': type_integer_coerce_dict,
     'description': type_string_dict,
-    'tests_to_perform': type_integer_coerce_dict,
-    'order': type_integer_coerce_required_dict,
+    'test_recommendation_id': type_integer_coerce_required_dict,
+    'priority': type_integer_coerce_required_dict,
+    'date_updated': type_datetime_dict,
+    'date_created': type_datetime_dict,
+    'status_id': type_integer_coerce_dict,
 }
 test_type_schema = {
     'id': readonly_dict,
