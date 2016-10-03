@@ -27,7 +27,6 @@ def upgrade():
         ALTER TABLE public.schedule RENAME COLUMN start_date TO date_start;
         ALTER TABLE public.schedule RENAME COLUMN tests_to_perform TO test_recommendation_id;
         ALTER TABLE public.schedule ALTER COLUMN test_recommendation_id SET NOT NULL;
-        ALTER TABLE public.schedule DROP CONSTRAINT schedule_tests_to_perform_fkey;
 
         ALTER TABLE public.schedule ADD COLUMN date_updated TIMESTAMP;
         ALTER TABLE public.schedule ADD COLUMN date_created TIMESTAMP DEFAULT (now() at time zone 'utc');
@@ -57,8 +56,6 @@ def downgrade():
         ALTER TABLE public.schedule RENAME COLUMN test_recommendation_id TO tests_to_perform;
         ALTER TABLE public.schedule ALTER COLUMN tests_to_perform DROP NOT NULL;
         ALTER TABLE public.schedule DROP CONSTRAINT schedule_test_recommendation_id_fkey;
-        ALTER TABLE public.schedule ADD CONSTRAINT schedule_tests_to_perform_fkey
-        FOREIGN KEY(tests_to_perform) REFERENCES test_type (id) ON UPDATE SET NULL ON DELETE SET NULL;
 
         ALTER TABLE public.schedule DROP CONSTRAINT schedule_task_status_id_fkey;
 
