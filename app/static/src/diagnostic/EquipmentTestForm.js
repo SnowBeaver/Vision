@@ -23,6 +23,7 @@ import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestFor
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import TestRecommendationList from './TestRecommendationList';
 import RepairNotesList from './RepairNotesList';
+import TestDiagnosisForm from './TestDiagnosisForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
@@ -157,7 +158,7 @@ var SyringeNumberSelectField = React.createClass({
                              value={value}
                              disabled={this.props.disabled}
                 >
-                    <option key={null} value={null}> </option>
+                    <option key={null} value={null}></option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -186,7 +187,7 @@ const DateTimeFieldWithLabel = React.createClass({
                 <DateTimeField name={name}
                                onChange={this._onChange}
                     {...dateValue}
-                                inputProps={{disabled: this.props.readOnly}}
+                               inputProps={{disabled: this.props.readOnly}}
                 />
             </div>
         );
@@ -358,10 +359,10 @@ var EquipmentTestRepairForm = React.createClass({
             loading: false
         }
     },
-    
+
 
     render: function () {
-        var data = (this.props.data != null) ? this.props.data : {};
+        var data = (this.props.data != null) ? this.props.data : {}
         return (
             <div>
                 <div className="tab_row">
@@ -425,6 +426,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
             this.setState({
                 items: items
             });
+
         }.bind(this), 'json');
     },
 
@@ -503,32 +505,51 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
+            diagnosis_id: null
         }
     },
+
+    componentDidMount: function () {
+        this.serverRequest = $.get(this.props.source, function (result) {
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+
+    openNewDiagnosisForm: function () {
+        this.setState({showNewDiagnosisForm: true});
+        this.props.data.diagnosis_id = null;
+    },
+
+    _onChange: function (e) {
+        this.setState({diagnosis_id: e.target.value});
+        this.props.onChange(e);
+    },
+
     render: function () {
+        var data = (this.props.data != null) ? this.props.data : {};
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
-                    <div className="col-md-12 nopadding">
-                        <div className="col-lg-6 nopadding padding-right-xs">Diagnosis
-                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
+                    <div className="col-md-12 ">
+                        <TestDiagnosisForm testResultId={this.props.data.id}
+                                           testTypeId={this.props.data.test_type_id}/>
+
+                        <div className="col-md-10 nopadding padding-right-xs">
+                            <SelectField source="diagnosis"
+                                         label="Predefined diagnosis"
+                                         name='diagnosis_id'
+                                         value={this.state.diagnosis_id}
+                                         onChange={this._onChange}
+                                         key={this.state.diagnosis_id}
+                            />
                         </div>
-                        <div className="col-lg-6 nopadding ">Recommendations
-                            <FormControl componentClass="textarea" placeholder="textarea" value=""/>
+                        <div className="col-md-2">
+                            <Button bsStyle="primary" onClick={this.openNewDiagnosisForm}>New</Button>
                         </div>
-                    </div>
-                    <div className="col-md-12">
-                        <SelectField source="user"
-                                     label="Indicator"
-                                     name='performed_by_id'
-                                     disabled
-                        />
-                    </div>
-                    <div className="col-md-5">
-                        <StatusSelectField
-                            label="Equipment Condition"
-                            name="status"
-                        />
                     </div>
                 </div>
             </form>
@@ -605,6 +626,7 @@ var EquipmentTestForm = React.createClass({
                 'fluid_type_id', 'date_analyse', 'test_status_id'],
             testRecommendationFields: ['recommendation_id'],
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created'],
+            testDiagnosisFields: ['code', 'name', 'description'],
             errors: {},
             data: null
         }
@@ -613,6 +635,7 @@ var EquipmentTestForm = React.createClass({
     _save: function () {
         this._saveTestRecommendation();
         this._saveRepairNote();
+        this._saveDiagnosis();
         var fields = this.state.fields;
         var data = {};
         var url = '/api/v1.0/test_result/';
@@ -648,7 +671,7 @@ var EquipmentTestForm = React.createClass({
 
         }
 
-        if (Object.keys(data).length){
+        if (Object.keys(data).length) {
             data.test_result_id = this.state.data['id'];
             data.test_type_id = this.state.data['test_type_id'];
             $.ajax({
@@ -657,7 +680,8 @@ var EquipmentTestForm = React.createClass({
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                beforeSend: function () {},
+                beforeSend: function () {
+                },
                 success: function () {
                     NotificationManager.success('Test recommendation has been saved successfully');
                 },
@@ -669,7 +693,7 @@ var EquipmentTestForm = React.createClass({
     },
 
     _saveRepairNote: function () {
-      var fields = this.state.testRepairNotesFields;
+        var fields = this.state.testRepairNotesFields;
         var data = {};
         var url = '/api/v1.0/test_repair_note/';
         var type = 'POST';
@@ -679,7 +703,7 @@ var EquipmentTestForm = React.createClass({
 
         }
 
-        if (Object.keys(data).length){
+        if (Object.keys(data).length) {
             data.test_result_id = this.state.data['id'];
             data.test_type_id = this.state.data['test_type_id'];
             $.ajax({
@@ -688,7 +712,8 @@ var EquipmentTestForm = React.createClass({
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                beforeSend: function () {},
+                beforeSend: function () {
+                },
                 success: function () {
                 },
                 error: function (xhr, status, response) {
@@ -696,8 +721,37 @@ var EquipmentTestForm = React.createClass({
                 }.bind(this)
             });
         }
+    },
 
+    _saveDiagnosis: function () {
+        var fields = this.state.testDiagnosisFields;
+        var data = {};
+        var url = '/api/v1.0/test/';
+        var type = 'POST';
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            data[key] = this.state.data[key];
 
+        }
+
+        if (Object.keys(data).length) {
+            data.test_result_id = this.state.data['id'];
+            data.test_type_id = this.state.data['test_type_id'];
+            $.ajax({
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {
+                },
+                success: function () {
+                },
+                error: function (xhr, status, response) {
+                    NotificationManager.error(response.error);
+                }.bind(this)
+            });
+        }
     },
 
     _onSubmit: function (e) {
