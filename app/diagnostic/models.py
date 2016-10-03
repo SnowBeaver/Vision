@@ -1662,8 +1662,7 @@ class TestRecommendation(db.Model):
                 'date_updated': self.date_updated,
                 'test_type_id': self.test_type_id,
                 'test_type': self.test_type and self.test_type.serialize(),
-                'test_result_id': self.test_result_id,
-                'test_result': self.test_result and self.test_result.serialize(),
+                'test_result_id': self.test_result_id
                 }
 
 
