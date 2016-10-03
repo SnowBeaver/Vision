@@ -141,11 +141,8 @@ var TestRecommendationList = React.createClass({
 
     componentWillReceiveProps: function (nextProps) {
         var testResultId = nextProps.testResultId;
-        var testTypeId = nextProps.testTypeId;
-        if (testResultId &&
-            testResultId != this.props.testResultId
-        ) {
-            this._updateList(testResultId, testTypeId);
+        if (testResultId && testResultId != this.props.testResultId) {
+            this._updateList(testResultId);
         }
     },
 
@@ -162,7 +159,9 @@ var TestRecommendationList = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        if (this.serverRequest) {
+            this.serverRequest.abort();
+        }
     },
 
     reloadList: function (testResultId) {

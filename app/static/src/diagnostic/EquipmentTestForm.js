@@ -500,9 +500,11 @@ var EquipmentTestDiagnosisForm = React.createClass({
                     {this.state.showNewRecommendationForm ?
                         <div className="col-lg-12 nopadding">
                             <NewRecommendationForm testResultId={this.props.data.id}
+                                                   testTypeIsGroup={this.props.data.test_type ? this.props.data.test_type.is_group : null}
+                                                   testTypeId={this.props.data.test_type ? this.props.data.test_type.id : null}
                                                    handleClose={this.closeNewRecommendationForm}
                                                    onSuccess={this.updatePredefinedRecommendations}
-                                                   typeCategoryId={this.props.data.test_type ? this.props.data.test_type.type_category_id : null}/>
+                                                   typeCategoryId={this.props.data.test_type? this.props.data.test_type.type_category_id : null}/>
                         </div>
                         : null
                     }

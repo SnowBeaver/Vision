@@ -49,6 +49,8 @@ var TestTypeSelectField = React.createClass({
 				"of the groups: Electrical, Fluid, Jar, 4 - ml vial or Syringe", null, 5000)
 		}
 
+
+
 	},
 
 	componentWillUnmount: function () {
@@ -74,7 +76,9 @@ var TestTypeSelectField = React.createClass({
 						placeholder="select"
 						onChange={this.handleChange}
 						name="test_type_id"
-						required={this.props.required}>
+						required={this.props.required}
+						disabled={this.props.disabled}
+						value={this.props.testTypeId}>
 						<option key="0" value="">Test Type{this.props.required ? " *" : ""}</option>
 						{menuItems}
 					</FormControl>
@@ -364,7 +368,10 @@ var NewRecommendationForm = React.createClass({
 									<TestTypeSelectField
 										source="/api/v1.0/test_type"
 										typeCategoryId={this.props.typeCategoryId}
+										testTypeIsGroup={this.props.testTypeIsGroup}
+										testTypeId={this.props.testTypeId}
 										handleChange={this.handleChange}
+										disabled={!this.props.testTypeIsGroup}
 										required/>
 									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 								</FormGroup>
