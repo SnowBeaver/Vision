@@ -17,7 +17,6 @@ var TestRepairNote = React.createClass({
 
     render: function () {
         var item = this.props.data;
-
         return (
             <tr>
                 <td>{item.date_created}</td>
