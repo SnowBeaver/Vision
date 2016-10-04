@@ -21,6 +21,7 @@ import NewFluidTestForm from './TestTypeResultForm_modules/NewFluidTestForm';
 import NewParticleTestForm from './TestTypeResultForm_modules/NewParticleTestForm';
 import MetalsInOilTestForm from './TestTypeResultForm_modules/MetalsInOilTestForm';
 import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
+import TestTypeSelectField from './NewTestForm_modules/TestTypeSelectField';
 import TestRecommendationList from './TestRecommendationList';
 import RepairNotesList from './RepairNotesList';
 import TestDiagnosisForm from './TestDiagnosisForm';
@@ -430,7 +431,9 @@ var EquipmentTestDiagnosisForm = React.createClass({
         return {
             loading: false,
             showNewRecommendationForm: false,
-            recommendation_id: null
+            recommendationPreselected: false,
+            recommendation_id: null,
+            errors: {}
         }
     },
 
@@ -455,19 +458,17 @@ var EquipmentTestDiagnosisForm = React.createClass({
 
     updatePredefinedRecommendations: function (id, recommendationType) {
         var state = {showNewRecommendationForm: false};
-        //this.setState({showNewRecommendationForm: false});
 
         if (recommendationType == "predefined") {
             // Reload select field with predefined recommendations and
             // change the value in the global state
             // TODO: There should be a nicer way to set proper value to recommendation_id select
             this.props.onChange({target: {type: "select", name: "recommendation_id", "value": id}});
-            //this.setState({recommendation_id: id});
             state.recommendation_id = id;
+            state.recommendationPreselected = true;
         } else if (recommendationType == "test") {
             // Reload Recommendation list
             this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
-            //this.setState({recommendation_id: ""});
             state.recommendation_id = "";
         }
         this.setState(state);
@@ -499,7 +500,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
                                                 ref="testRecommendationList"/>
                     </div>
 
-                    <div className="col-lg-10 nopadding">
+                    <div className="col-lg-8 nopadding">
                         <SelectField source="recommendation"
                                      label="Predefined recommendation"
                                      name='recommendation_id'
@@ -516,6 +517,18 @@ var EquipmentTestDiagnosisForm = React.createClass({
                                                    testType={this.props.data.test_type}
                                                    handleClose={this.closeNewRecommendationForm}
                                                    onSuccess={this.updatePredefinedRecommendations}/>
+                        </div>
+                        : null
+                    }
+                    {!this.state.showNewRecommendationForm && !this.state.recommendationPreselected ?
+                        <div className="col-lg-4">
+                                <TestTypeSelectField key={this.props.data.selected_subtests}
+                                                     selectedSubtests={this.props.data.selected_subtests}
+                                                     testType={this.props.data.test_type}
+                                                     handleChange={this.props.onChange}
+                                                     name="recommendation_test_type_id"
+                                                     errors={this.state.errors}
+                                                     required/>
                         </div>
                         : null
                     }
@@ -649,7 +662,7 @@ var EquipmentTestForm = React.createClass({
                 'status_id', 'temperature', 'lab_contract_id',
                 'sampling_point_id', 'equipment_id', 'lab_id',
                 'fluid_type_id', 'date_analyse', 'test_status_id'],
-            testRecommendationFields: ['recommendation_id'],
+            testRecommendationFields: ['recommendation_id', 'recommendation_test_type_id'],
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created'],
             testDiagnosisFields: ['code', 'name', 'description'],
             errors: {},
@@ -693,12 +706,13 @@ var EquipmentTestForm = React.createClass({
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
             data[key] = this.state.data[key];
-
         }
 
         if (Object.keys(data).length) {
+            // There are two fields with the name test_type_id - differ them somehow
+            data.test_type_id = data.recommendation_test_type_id;
+            delete data.recommendation_test_type_id;
             data.test_result_id = this.state.data['id'];
-            data.test_type_id = this.state.data['test_type_id'];
             $.ajax({
                 url: url,
                 type: type,
@@ -751,7 +765,7 @@ var EquipmentTestForm = React.createClass({
     _saveDiagnosis: function () {
         var fields = this.state.testDiagnosisFields;
         var data = {};
-        var url = '/api/v1.0/test/';
+        var url = '/api/v1.0/diagnosis/';
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
