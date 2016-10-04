@@ -2014,7 +2014,6 @@ class TestResult(db.Model):
     qty_vial = db.Column(db.Integer)
     sampling_vial = db.Column(db.Integer)
 
-
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
 
@@ -2027,6 +2026,17 @@ class TestResult(db.Model):
     def analysis_number(self):
         if self.campaign:
             return "{}{}".format(self.id, self.campaign.created_by.initials)
+
+    @property
+    def selected_subtests(self):
+        items = []
+        for field in self.__dict__:
+            if getattr(self, field) is True:
+                items.append(field)
+        test_type_model = get_class_by_tablename('test_type')
+        items = db.session.query(test_type_model).filter(test_type_model.checkbox_name.in_(items))
+        items = [test_type.serialize() for test_type in items]
+        return items
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -2123,7 +2133,8 @@ class TestResult(db.Model):
             'test_recommendations': [
                 item.serialize() for item in db.session.query(TestRecommendation)
                     .filter_by(test_result_id=self.id)
-            ]
+            ],
+            'selected_subtests': self.selected_subtests,
         }
 
 
