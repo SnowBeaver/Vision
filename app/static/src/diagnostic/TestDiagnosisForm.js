@@ -81,7 +81,9 @@ var TestDiagnosisForm = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        if (this.serveRequest) {
+            this.serverRequest.abort();
+        }
     },
 
     render: function () {
