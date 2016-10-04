@@ -188,6 +188,7 @@ var NewRecommendationForm = React.createClass({
 				contentType: 'application/json',
 				data: JSON.stringify(data),
 				success: function (data, textStatus) {
+					NotificationManager.success("Predefined recommendation has been successfully added");
 					that.props.onSuccess(data.result, "predefined");
 				},
 				beforeSend: function () {
@@ -209,6 +210,7 @@ var NewRecommendationForm = React.createClass({
 			contentType: 'application/json',
 			data: JSON.stringify(data),
 			success: function (data, textStatus) {
+				NotificationManager.success("Test recommendation has been successfully added");
 				that.props.onSuccess(data.result, "test");
 			},
 			beforeSend: function () {
@@ -237,11 +239,6 @@ var NewRecommendationForm = React.createClass({
 	_onSuccess: function (data) {
 		//this.refs.eqtype_form.getDOMNode().reset();
 		//this.setState(this.getInitialState());
-		var recommendationType = "Test";
-		if (this.state.public_recommendation){
-			recommendationType = "Predefined";
-		}
-		NotificationManager.success(recommendationType + " recommendation has been successfully added");
 	},
 	_onError: function (data) {
 		var message = "Failed to create";

@@ -454,18 +454,23 @@ var EquipmentTestDiagnosisForm = React.createClass({
     },
 
     updatePredefinedRecommendations: function (id, recommendationType) {
-        this.setState({showNewRecommendationForm: false, recommendation_id: id});
+        var state = {showNewRecommendationForm: false};
+        //this.setState({showNewRecommendationForm: false});
 
         if (recommendationType == "predefined") {
             // Reload select field with predefined recommendations and
             // change the value in the global state
             // TODO: There should be a nicer way to set proper value to recommendation_id select
             this.props.onChange({target: {type: "select", name: "recommendation_id", "value": id}});
+            //this.setState({recommendation_id: id});
+            state.recommendation_id = id;
         } else if (recommendationType == "test") {
             // Reload Recommendation list
             this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
+            //this.setState({recommendation_id: ""});
+            state.recommendation_id = "";
         }
-
+        this.setState(state);
     },
 
     _onChange: function (e) {
@@ -473,6 +478,15 @@ var EquipmentTestDiagnosisForm = React.createClass({
         this.setState({recommendation_id: e.target.value});
         // Change the value in the global state to save it from there
         this.props.onChange(e);
+
+        // Open new recommendation form, if needed
+        if (e.target.name == "recommendation_id") {
+            if (e.target.selectedOptions.length && e.target.selectedOptions[0].text == "Other recommendations (specify)"){
+                this.openNewRecommendationForm();
+            } else {
+                this.closeNewRecommendationForm();
+            }
+        }
     },
 
     render: function () {
@@ -490,14 +504,10 @@ var EquipmentTestDiagnosisForm = React.createClass({
                                      label="Predefined recommendation"
                                      name='recommendation_id'
                                      value={this.state.recommendation_id}
-                                     disabled={this.state.showNewRecommendationForm}
                                      key={this.state.recommendation_id}
                                      onChange={this._onChange}
                                      ref="recommendation"
                         />
-                    </div>
-                    <div className="col-lg-1">
-                        <Button bsStyle="primary" onClick={this.openNewRecommendationForm}>New</Button>
                     </div>
                     {this.state.showNewRecommendationForm ?
                         <div className="col-lg-12 nopadding">
