@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sqlalchemy as sqla
+from datetime import datetime
 from app import db
 from sqlalchemy.orm import relationship, relation
 from sqlalchemy.sql.expression import cast
@@ -1639,7 +1640,7 @@ class TestRecommendation(db.Model):
     recommendation_notes = db.Column(db.Text)
     user_id = db.Column(db.ForeignKey("users_user.id"))
     user = db.relationship('User', foreign_keys='TestRecommendation.user_id')
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_updated = db.Column(db.DateTime)
     test_result_id = db.Column(db.Integer, db.ForeignKey("test_result.id"))
     test_result = db.relationship('TestResult', backref='test_recommendation')
@@ -1660,7 +1661,8 @@ class TestRecommendation(db.Model):
                 'date_created': self.date_created,
                 'date_updated': self.date_updated,
                 'test_type_id': self.test_type_id,
-                'test_result_id': self.test_result_id,
+                'test_type': self.test_type and self.test_type.serialize(),
+                'test_result_id': self.test_result_id
                 }
 
 
@@ -1808,11 +1810,8 @@ class TestSchedule(db.Model):
     # Index key, along with Equipment number to uniquely identify equipment
     # NoEquipement = Column(db.String(50), primary_key=True,
     #                       nullable=False)
-
-    equipment_id = db.Column('equipment_id', sqla.ForeignKey("equipment.id"), nullable=False)
-    equipment = db.relationship('Equipment', foreign_keys='TestSchedule.equipment_id')
-
-    start_date = db.Column(db.DateTime, primary_key=True, nullable=False)  # StartDate. Starting date of periodic task
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    date_start = db.Column(db.DateTime, nullable=False)  # StartDate. Starting date of periodic task
     period_years = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of year between tasks
     period_months = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of month between tasks
     period_days = db.Column(db.Integer, server_default=db.text("0"))  # AnnualPeriod. Number of days between tasks
@@ -1835,30 +1834,38 @@ class TestSchedule(db.Model):
     # prof_elec = Column(db.String(25))  # Prof_Elec.  Which electrical tests profile should be used
     # prof_mec = Column(db.String(25))  # Prof_Mec.  Which mechanical tests profile should be used
 
-    tests_to_perform = db.Column(db.Integer, db.ForeignKey('test_type.id'))
-    tests = relationship("TestType")
+    test_recommendation_id = db.Column(db.Integer, db.ForeignKey("test_recommendation.id"), nullable=False)
+    test_recommendation = db.relationship('TestRecommendation', backref='test_schedule')
 
-    order = db.Column(db.Integer, primary_key=True, nullable=False)  # WorkOrderNum
+    status_id = db.Column(db.Integer, db.ForeignKey("task_status.id"))
+    status = db.relationship('TaskStatus', backref='test_schedule')
+
+    priority = db.Column(db.Integer, nullable=False)  # WorkOrderNum
+    date_updated = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return "{} {}".format(self.equipment, self.start_date)
+        return "{} {}".format(self.test_recommendation, self.date_start)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'equipment_id': self.equipment_id,
-                'equipment': self.equipment and self.equipment.serialize(),
-                'start_date': dump_datetime(self.start_date),
+        return {'id': self.id,
+                'date_start': dump_datetime(self.date_start),
+                'date_created': dump_datetime(self.date_created),
+                'date_updated': dump_datetime(self.date_updated),
                 'period_years': self.period_years,
                 'period_months': self.period_months,
                 'period_days': self.period_days,
                 'assigned_to_id': self.assigned_to_id,
                 'assigned_to': self.assigned_to and self.assigned_to.serialize(),
+                'test_recommendation_id': self.test_recommendation_id,
+                'test_recommendation': self.test_recommendation and self.test_recommendation.serialize(),
+                'status_id': self.status_id,
+                'status': self.status and self.status.serialize(),
                 'recurring': self.recurring,
                 'notify_before_in_days': self.notify_before_in_days,
                 'description': self.description,
-                'tests_to_perform': self.tests_to_perform,
-                'tests': self.tests and self.tests.serialize(),
-                'order': self.order,
+                'priority': self.priority,
                 }
 
 
@@ -1874,6 +1881,7 @@ class TestType(db.Model):
     # test_type_result_table = db.relationship("TestTypeResultTable", back_populates="test_type")
     test_table_name = db.Column(db.String(100), nullable=False, default='')
     checkbox_name = db.Column(db.String(100), default='')
+    type_category_id = db.Column(db.Integer(), db.ForeignKey("test_type.id"), nullable=True)
 
     def __repr__(self):
         return self.name
@@ -1886,6 +1894,7 @@ class TestType(db.Model):
                 'is_group': self.is_group,
                 'test_table_name': self.test_table_name,
                 'checkbox_name': self.checkbox_name,
+                'type_category_id': self.type_category_id,
                 }
 
 
@@ -2005,7 +2014,6 @@ class TestResult(db.Model):
     qty_vial = db.Column(db.Integer)
     sampling_vial = db.Column(db.Integer)
 
-
     def __repr__(self):
         return "{} - {}".format(self.campaign, self.test_type)
 
@@ -2018,6 +2026,17 @@ class TestResult(db.Model):
     def analysis_number(self):
         if self.campaign:
             return "{}{}".format(self.id, self.campaign.created_by.initials)
+
+    @property
+    def selected_subtests(self):
+        items = []
+        for field in self.__dict__:
+            if getattr(self, field) is True:
+                items.append(field)
+        test_type_model = get_class_by_tablename('test_type')
+        items = db.session.query(test_type_model).filter(test_type_model.checkbox_name.in_(items))
+        items = [test_type.serialize() for test_type in items]
+        return items
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -2114,7 +2133,8 @@ class TestResult(db.Model):
             'test_recommendations': [
                 item.serialize() for item in db.session.query(TestRecommendation)
                     .filter_by(test_result_id=self.id)
-            ]
+            ],
+            'selected_subtests': self.selected_subtests,
         }
 
 
@@ -3687,7 +3707,7 @@ class TestRepairNote(db.Model):
     description = db.Column(db.Text)
     remark = db.Column(db.Text)
     sample = db.Column(db.Text)
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     user_id = db.Column(db.ForeignKey("users_user.id"))
     user = db.relationship('User', foreign_keys='TestRepairNote.user_id')
@@ -3699,7 +3719,7 @@ class TestRepairNote(db.Model):
     test_type = db.relationship('TestType', backref='test_repair_note')
 
     def __repr__(self):
-        return u"{} ({})".format(self.name, self.iso_name)
+        return u"{} ({})".format(self.id, self.description)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -3747,7 +3767,7 @@ class TestDiagnosis(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     diagnosis_notes = db.Column(db.Text)
-    date_created = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     date_updated = db.Column(db.DateTime)
 
     diagnosis_id = db.Column(db.ForeignKey("diagnosis.id"))
@@ -3763,7 +3783,7 @@ class TestDiagnosis(db.Model):
     test_type = db.relationship('TestType', backref='test_diagnosis')
 
     def __repr__(self):
-        return "{} {} by {}".format(self.id, self.recommendation, self.user)
+        return "{} {} by {}".format(self.id, self.diagnosis_notes, self.user)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -3779,4 +3799,20 @@ class TestDiagnosis(db.Model):
                 'test_type': self.test_type and self.test_type.serialize(),
                 'test_result_id': self.test_result_id,
                 'test_result': self.test_result and self.test_result.serialize(),
+                }
+
+
+class TaskStatus(db.Model):
+    __tablename__ = u'task_status'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(20), index=True)
+
+    def __repr__(self):
+        return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name
                 }

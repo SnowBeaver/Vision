@@ -92,6 +92,13 @@ def abort_if_wrong_id(item_id):
         abort(404)
 
 
+def add_user_id_and_save_item(path, data):
+    # Save id of the current user
+    data["user_id"] = login.current_user.id if login.current_user else None
+    item = add_item(path, data)
+    return item
+
+
 # Standard CRUD functions
 # Create
 def add_item(path, data):
@@ -557,6 +564,26 @@ def create_electrical_profile_handler():
     abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_electrical_profile(path, validated_data)
+    return return_json('result', new_item.id)
+
+
+# Create test recommendation
+@api_blueprint.route('/test_recommendation/', methods=['POST'])
+def create_test_recommendation_handler():
+    path = 'test_recommendation'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_item = add_user_id_and_save_item(path, validated_data)
+    return return_json('result', new_item.id)
+
+
+# Create test diagnosis
+@api_blueprint.route('/test_diagnosis/', methods=['POST'])
+def create_test_diagnosis_handler():
+    path = 'test_diagnosis'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_item = add_user_id_and_save_item(path, validated_data)
     return return_json('result', new_item.id)
 
 

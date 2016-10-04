@@ -17,7 +17,6 @@ var TestRepairNote = React.createClass({
 
     render: function () {
         var item = this.props.data;
-
         return (
             <tr>
                 <td>{item.date_created}</td>
@@ -75,7 +74,9 @@ var RepairNotesList = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        if (this.serverRequest) {
+            this.serverRequest.abort();
+        }
     },
 
     reloadList: function () {
