@@ -300,7 +300,7 @@ var NewTransformerTestForm = React.createClass({
     _onSubmit: function (e) {
         e.preventDefault();
         // Do not propagate the submit event of the main form
-                e.stopPropagation();
+        e.stopPropagation();
         if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
             e.stopPropagation();
@@ -310,7 +310,7 @@ var NewTransformerTestForm = React.createClass({
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
-            .always(this.hideLoading)
+            .always(this.hideLoading);
 
         for (var i = 0; i < this.state.deleteOnSubmit.length; i++) {
             var xhr_del = this._delete(this.state.deleteOnSubmit[i]);
@@ -388,7 +388,6 @@ var NewTransformerTestForm = React.createClass({
         return rowIdx + 1;
     },
     _validateDict: {
-        mesure1: {data_type: "float", label: "H1-H2"},
         measured_current1: {data_type: "float", label: "H1-H2/X0-X2"},
         calculated_current1: {data_type: "float", label: "Exc.Curr."},
         error1: {data_type: "float", label: "Err.(%)"},
@@ -419,7 +418,7 @@ var NewTransformerTestForm = React.createClass({
         if (Object.keys(this.state.errors).length > 0) {
             return false;
         }
-        var fields = this.state.fields;
+        var fields = this.state.fields.slice();
         var index = fields.indexOf("id");
         if (index >= 0) {
             fields.splice( index, 1 );
@@ -476,7 +475,6 @@ var NewTransformerTestForm = React.createClass({
                         <TableHeaderColumn dataField="uniqueKey" isKey hidden>Key</TableHeaderColumn>
                         <TableHeaderColumn dataField="position"
                                            dataFormat={this.dataFormatPosition}>N</TableHeaderColumn>
-                        <TableHeaderColumn dataField="mesure1">H1-H2</TableHeaderColumn>
                         <TableHeaderColumn dataField="measured_current1">H1-H2/X0-X2</TableHeaderColumn>
                         <TableHeaderColumn dataField="calculated_current1">Exc.Curr.</TableHeaderColumn>
                         <TableHeaderColumn dataField="error1">Err.(%)</TableHeaderColumn>

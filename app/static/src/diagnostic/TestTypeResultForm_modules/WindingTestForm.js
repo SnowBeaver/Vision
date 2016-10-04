@@ -354,7 +354,7 @@ var WindingTestForm = React.createClass({
         if (Object.keys(this.state.errors).length > 0) {
             return false;
         }
-        var fields = this.state.fields;
+        var fields = this.state.fields.slice();
         var index = fields.indexOf("id");
         if (index >= 0) {
             fields.splice( index, 1 );
