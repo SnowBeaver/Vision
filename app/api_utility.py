@@ -700,7 +700,7 @@ recommendation_schema = {
 test_recommendation_schema = {
     'id': readonly_dict,
     'recommendation_id': type_integer_coerce_dict,
-    'recommendationNotes': type_string_dict,
+    'recommendation_notes': type_string_dict,
     'user_id': type_integer_coerce_dict,
     'date_created': type_integer_coerce_dict,
     'date_updated': type_integer_coerce_dict,

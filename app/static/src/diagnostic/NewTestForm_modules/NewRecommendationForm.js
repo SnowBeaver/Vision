@@ -35,24 +35,26 @@ var TestTypeSelectField = React.createClass({
 	},
 
 	componentDidMount: function () {
-		if (this.props.typeCategoryId) {
-			var url = this.props.source + "?type_category_id=" + this.props.typeCategoryId;
-			this.serverRequest = $.get(url, function (result) {
-
-				items = (result['result']);
-				this.setState({
-					items: items
-				});
-			}.bind(this), 'json');
+		var items = [];
+		if (this.props.selectedSubtests && this.props.selectedSubtests.length) {
+			items = this.props.selectedSubtests;
 		} else {
-			NotificationManager.info("Test types cannot be loaded because this test result has test_type_id of one " +
-				"of the groups: Electrical, Fluid, Jar, 4 - ml vial or Syringe", null, 5000)
+			if (this.props.testType && Object.keys(this.props.testType).length) {
+				items.push(this.props.testType);
+				if (!this.props.value) {
+					this.props.setTestTypeIdSelected(this.props.testType.id);
+				}
+			}
 		}
-
+		this.setState({
+			items: items
+		});
 	},
 
 	componentWillUnmount: function () {
-		this.serverRequest.abort();
+		if (this.serverRequest) {
+			this.serverRequest.abort();
+		}
 	},
 
 	setVisible: function () {
@@ -72,9 +74,11 @@ var TestTypeSelectField = React.createClass({
 					<FormControl
 						componentClass="select"
 						placeholder="select"
-						onChange={this.handleChange}
+						onChange={this.props.handleChange}
 						name="test_type_id"
-						required={this.props.required}>
+						required={this.props.required}
+						disabled={this.props.disabled}
+						value={this.props.value}>
 						<option key="0" value="">Test Type{this.props.required ? " *" : ""}</option>
 						{menuItems}
 					</FormControl>
@@ -352,8 +356,14 @@ var NewRecommendationForm = React.createClass({
 		document.getElementById('test_prof').remove();
 	},
 
-	render: function () {
+	setTestTypeIdSelected: function(id) {
+		var state = {};
+		state.changedFields = this.state.changedFields.concat(["test_type_id"]);
+		state.test_type_id = id;
+		this.setState(state);
+	},
 
+	render: function () {
 		return (
 			<div className="form-container">
 				<form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -363,8 +373,12 @@ var NewRecommendationForm = React.createClass({
 										   validationState={this.state.errors.test_type_id ? 'error' : null}>
 									<TestTypeSelectField
 										source="/api/v1.0/test_type"
-										typeCategoryId={this.props.typeCategoryId}
-										handleChange={this.handleChange}
+										selectedSubtests={this.props.selectedSubtests}
+										testType={this.props.testType}
+										value={this.state.test_type_id}
+										handleChange={this._onChange}
+										setTestTypeIdSelected={this.setTestTypeIdSelected}
+										disabled={this.props.selectedSubtests && this.props.selectedSubtests.length == 0}
 										required/>
 									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
 								</FormGroup>

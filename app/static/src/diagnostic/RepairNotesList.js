@@ -74,7 +74,9 @@ var RepairNotesList = React.createClass({
     },
 
     componentWillUnmount: function () {
-        this.serverRequest.abort();
+        if (this.serverRequest) {
+            this.serverRequest.abort();
+        }
     },
 
     reloadList: function () {
