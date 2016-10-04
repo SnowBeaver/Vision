@@ -110,7 +110,7 @@ var NewDiagnosisForm = React.createClass({
             loading: false,
             errors: {},
             predefinedDiagnosisFields: ['name', 'code', 'description', 'test_type_id'],
-            testDiagnosisFields: ['test_type_id','test_result_id', 'diagnosis_notes'],
+            testDiagnosisFields: ['test_type_id', 'test_result_id', 'diagnosis_notes'],
             public_diagnosis: false
         }
     },
@@ -144,10 +144,10 @@ var NewDiagnosisForm = React.createClass({
     },
 
     _create: function () {
-        if(this.state.public_diagnosis){
+        if (this.state.public_diagnosis) {
             this._createPredefinedDiagnoses();
         }
-        else{
+        else {
             this._createTestDiagnoses();
         }
     },
@@ -234,10 +234,11 @@ var NewDiagnosisForm = React.createClass({
                         {this.state.public_diagnosis ?
                             <div>
                                 <div className="col-md-3">
-                                    <TextField label="Name"
+                                    <TextField label="Name*"
                                                name='name'
                                                value={this.state.name}
-                                               errors={this.state.errors}/>
+                                               errors={this.state.errors}
+                                               required/>
                                 </div>
                                 <div className="col-md-3">
                                     <TextField label="Code"
@@ -251,9 +252,9 @@ var NewDiagnosisForm = React.createClass({
                     </div>
                     <div className="tab_row">
                         <div className="col-md-12">
-                        <TextArea label= {this.state.public_diagnosis ? "Description": "Diagnosis Notes"}
-                                  name= {this.state.public_diagnosis ? "description": "diagnosis_notes"}
-                                  value= {this.state.public_diagnosis ? this.state.description: this.state.diagnosis_notes}
+                        <TextArea label={this.state.public_diagnosis ? "Description": "Diagnosis Notes"}
+                                  name={this.state.public_diagnosis ? "description": "diagnosis_notes"}
+                                  value={this.state.public_diagnosis ? this.state.description: this.state.diagnosis_notes}
                                   errors={this.state.errors}/>
                         </div>
                         <div className="col-md-12 ">

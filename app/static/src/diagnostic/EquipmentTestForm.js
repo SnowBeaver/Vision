@@ -521,6 +521,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
+            diagnosis_id: null
         }
     },
 
