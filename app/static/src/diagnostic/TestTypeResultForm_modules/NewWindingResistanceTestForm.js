@@ -112,12 +112,10 @@ var NewWindingResistanceTestForm = React.createClass({
         e.preventDefault();
         // Do not propagate the submit event of the main form
         e.stopPropagation();
-        var errors = this._validate();
-        if (Object.keys(errors).length != 0) {
-            this.setState({
-                errors: errors
-            });
-            return;
+        if (!this.is_valid()){
+            NotificationManager.error('Please correct the errors');
+            e.stopPropagation();
+            return false;
         }
         this.state.tests = this.refs.table.state.data;
         var xhr = this._create();
@@ -156,6 +154,7 @@ var NewWindingResistanceTestForm = React.createClass({
                 errors: res.error
             });
         }
+        NotificationManager.error(message);
     },
     _onFilterChange: function (e) {
         var state = {
@@ -173,17 +172,6 @@ var NewWindingResistanceTestForm = React.createClass({
             state['showTertiaryWindingTestPanel'] = true;
         }
         this.setState(state);
-    },
-
-    _validate: function () {
-        var errors = {};
-        // if(this.state.created_by_id == "") {
-        //   errors.created_by_id = "Create by field is required";
-        // }
-        // if(this.state.performed_by_id == "") {
-        //     errors.performed_by_id = "Performed by field is required";
-        // }
-        return errors;
     },
 
     _formGroupClass: function (field) {
@@ -217,53 +205,76 @@ var NewWindingResistanceTestForm = React.createClass({
     dataFormatPosition: function(cell, row, formatExtraData, rowIdx){
         return rowIdx + 1;
     },
-    // floatValidator: function(value, columnName) {
-    //     const nan = isNaN(parseFloat(value));
-    //     if (nan) {
-    //         return '' + columnName + ' must be float type!';
-    //     }
-    //     return true;
-    // },
-    // intValidator: function(value, columnName) {
-    //     const nan = isNaN(parseInt(value, 10));
-    //     if (nan) {
-    //         return '' + columnName + ' must be integer!';
-    //     }
-    //     return true;
-    // },
-    // windingValidator: function(value) {
-    //     return this.intValidator(value, 'Winding')
-    // },
-    // tap_positionValidator: function(value) {
-    //     return this.intValidator(value, 'Tap position')
-    // },
-    // mesure1Validator: function(value) {
-    //     return this.floatValidator(value, 'H1-H2')
-    // },
-    // temp1Validator: function(value) {
-    //     return this.floatValidator(value, 'Temp(3d column)')
-    // },
-    // corr1Validator: function(value) {
-    //     return this.floatValidator(value, 'Corr(4th column)')
-    // },
-    // mesure2Validator: function(value) {
-    //     return this.floatValidator(value, 'H2-H3')
-    // },
-    // temp2Validator: function(value) {
-    //     return this.floatValidator(value, 'Temp(6th column)')
-    // },
-    // corr2Validator: function(value) {
-    //     return this.floatValidator(value, 'Corr(7th column)')
-    // },
-    // mesure3Validator: function(value) {
-    //     return this.floatValidator(value, 'H3-H1')
-    // },
-    // temp3Validator: function(value) {
-    //     return this.floatValidator(value, 'Temp(9th column)')
-    // },
-    // corr3Validator: function(value) {
-    //     return this.floatValidator(value, 'Corr(10th column)')
-    // },
+    _validateDict: {
+        mesure1: {data_type: "float", label: "H1-H2"},
+        temp1: {data_type: "float", label: "Temp(3d column)"},
+        corr1: {data_type: "float", label: "Corr (4th column)"},
+        mesure2: {data_type: "float", label: "H2-H3"},
+        temp2: {data_type: "float", label: "Temp(6th column)"},
+        corr2: {data_type: "float", label: "Corr(7th column)"},
+        mesure3: {data_type: "float", label: "H3-H1"},
+        temp3: {data_type: "float", label: "Temp(9th column)"},
+        corr3: {data_type: "float", label: "Corr(10th column)"},
+        winding: {data_type: "int", label: "Winding"},
+        tap_position: {data_type: "int", label: "Tap position"},
+    },
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/,
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+    is_valid: function () {
+        if (Object.keys(this.state.errors).length > 0) {
+            return false;
+        }
+        var fields = this.state.fields;
+        var index = fields.indexOf("id");
+        if (index >= 0) {
+            fields.splice( index, 1 );
+        }
+        var tests = this.state.tests;
+        var is_valid = true;
+        var msg = '';
+        console.log(tests);
+        for (var i = 0; i < tests.length; i++) {
+            var tap = tests[i];
+            for (var j = 0; j < fields.length; j++) {
+                var field_name = fields[j];
+                if (tap.hasOwnProperty(field_name)) {
+                    var value = tap[field_name];
+                    if (value) {
+                        var data_type = this._validateDict[field_name]['data_type'];
+                        var label = this._validateDict[field_name]['label'];
+                        var error = this._validateFieldType(value, data_type);
+                        msg = 'Value of (' + label + ') in row N' + ( i + 1 )
+                             + ' must be of type ' + data_type + '      \n\n';
+                        if (error) {
+                            is_valid = false;
+                            NotificationManager.error(msg, 'Validation error', 20000);
+                        }
+                    }
+                }
+            }
+        }
+        return is_valid;
+    },
+    beforeSaveCell: function(row, name, value) {
+        var data_type = this._validateDict[name]['data_type'];
+        var label = this._validateDict[name]['label'];
+        var error = this._validateFieldType(value, data_type);
+        if (error) {
+            NotificationManager.error('Value of (' + label + ') must by of type ' + data_type);
+        }
+        return true;
+    },
 
     render: function () {
         return (
@@ -275,7 +286,7 @@ var NewWindingResistanceTestForm = React.createClass({
                                     condensed={true}
                                     ignoreSinglePage={true}
                                     selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)",}}
-                                    cellEdit={{mode: "click"}}
+                                    cellEdit={{mode: "click", blurToSave:true, beforeSaveCell:this.beforeSaveCell}}
                                     ref="table"
                     >
                         <TableHeaderColumn dataField="id" hidden>ID</TableHeaderColumn>

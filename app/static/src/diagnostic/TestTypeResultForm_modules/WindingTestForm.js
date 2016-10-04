@@ -1,11 +1,8 @@
 import React from 'react';
-import PanelGroup from 'react-bootstrap/lib/PanelGroup';
-import Panel from 'react-bootstrap/lib/Panel';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
@@ -281,22 +278,6 @@ var WindingTestForm = React.createClass({
 		}
 		NotificationManager.error(message);
     },
-
-    // _onChange: function (e) {
-    //     var state = {};
-    //     if (e.target.type == 'checkbox') {
-    //         state[e.target.name] = e.target.checked;
-    //     } else if (e.target.type == 'select-one') {
-    //         state[e.target.name] = e.target.value;
-    //     } else {
-    //         state[e.target.name] = e.target.value;
-    //     }
-    //
-    //     var errors = this._validate(e);
-    //     state = this._updateFieldErrors(e.target.name, state, errors);
-    //     this.setState(state);
-    // },
-
     _validate: function (e) {
         var errors = [];
         var error;
@@ -306,21 +287,6 @@ var WindingTestForm = React.createClass({
         }
         return errors;
     },
-
-    _validateFieldType: function (value, type){
-        var error = "";
-        if (type != undefined && value){
-            var typePatterns = {
-                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
-                "int": /^(-|\+)?(0|[1-9]\d*)$/
-            };
-            if (!typePatterns[type].test(value)){
-                error = "Invalid " + type + " value";
-            }
-        }
-        return error;
-    },
-
     _updateFieldErrors: function (fieldName, state, errors){
         // Clear existing errors related to the current field as it has been edited
         state.errors = this.state.errors;
@@ -331,10 +297,6 @@ var WindingTestForm = React.createClass({
             state.errors[fieldName] = errors.join(". ");
         }
         return state;
-    },
-
-    is_valid: function () {
-        return (Object.keys(this.state.errors).length <= 0);
     },
 
     _formGroupClass: function (field) {
@@ -368,42 +330,71 @@ var WindingTestForm = React.createClass({
     dataFormatPosition: function(cell, row, formatExtraData, rowIdx){
         return rowIdx + 1;
     },
-    // handleFieldChange: function(testId, name, value, type) {
-    //     var tests = this.state.tests;
-    //     var fieldNameValue = this.state.tests[testId] || {};
-    //     fieldNameValue[name] = value;
-    //     tests[testId] = fieldNameValue;
-    //     this.setState({tests: tests});
-    // },
-    //
-    // onClickTapAdd: function () {
-    //     this.setState({
-    //         numberOfTaps: this.state.numberOfTaps + 1
-    //     });
-    // },
-    //
-    // onClickTapRemove: function () {
-    //     this.setState({
-    //         numberOfTaps: this.state.numberOfTaps - 1
-    //     });
-    // },
+    _validateDict: {
+        test_kv1: {data_type: "float", label: "Test KV"},
+        m_meter1: {data_type: "float", label: "Reading (3d column)"},
+        m_multiplier1: {data_type: "float", label: "Mult.(4th column)"},
+        w_meter1: {data_type: "float", label: "Reading(6th column)"},
+        w_multiplier1: {data_type: "float", label: "Mult.(7th column)"},
+    },
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/,
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+    is_valid: function () {
+        if (Object.keys(this.state.errors).length > 0) {
+            return false;
+        }
+        var fields = this.state.fields;
+        var index = fields.indexOf("id");
+        if (index >= 0) {
+            fields.splice( index, 1 );
+        }
+        var tests = this.state.tests;
+        var is_valid = true;
+        var msg = '';
+        console.log(tests);
+        for (var i = 0; i < tests.length; i++) {
+            var tap = tests[i];
+            for (var j = 0; j < fields.length; j++) {
+                var field_name = fields[j];
+                if (tap.hasOwnProperty(field_name)) {
+                    var value = tap[field_name];
+                    if (value) {
+                        var data_type = this._validateDict[field_name]['data_type'];
+                        var label = this._validateDict[field_name]['label'];
+                        var error = this._validateFieldType(value, data_type);
+                        msg = 'Value of (' + label + ') in row N' + ( i + 1 )
+                             + ' must be of type ' + data_type + '      \n\n';
+                        if (error) {
+                            is_valid = false;
+                            NotificationManager.error(msg, 'Validation error', 20000);
+                        }
+                    }
+                }
+            }
+        }
+        return is_valid;
+    },
+    beforeSaveCell: function(row, name, value) {
+        var data_type = this._validateDict[name]['data_type'];
+        var label = this._validateDict[name]['label'];
+        var error = this._validateFieldType(value, data_type);
+        if (error) {
+            NotificationManager.error('Value of (' + label + ') must by of type ' + data_type);
+        }
+        return true;
+    },
     render: function () {
-        // var taps = [];
-        // var numberOfTaps = this.state.numberOfTaps;
-        // for (var i = 1; i <= numberOfTaps; i++) {
-        //     var headName = "Tap Number " + i;
-        //     var props = {
-        //         testId: i.toString(),
-        //         onChange: this.handleFieldChange,
-        //         data: this.state.tests[i.toString()],
-        //         errors: this.state.errors
-        //     };
-        //     taps.push(
-        //         <Panel header={headName} eventKey={i} id={i} key={'tap' + i}>
-        //             <TapTestPanel {...props}/>
-        //         </Panel>
-        //     );
-        // }
         return (
             <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit}>
@@ -413,7 +404,7 @@ var WindingTestForm = React.createClass({
                                     condensed={true}
                                     ignoreSinglePage={true}
                                     selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)",}}
-                                    cellEdit={{mode: "click"}}
+                                    cellEdit={{mode: "click", blurToSave:true, beforeSaveCell:this.beforeSaveCell}}
                                     ref="table"
                     >
                         <TableHeaderColumn dataField="id" hidden>ID</TableHeaderColumn>
