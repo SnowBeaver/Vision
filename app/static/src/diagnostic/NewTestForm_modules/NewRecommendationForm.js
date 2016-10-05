@@ -11,82 +11,9 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import TestTypeSelectField from './TestTypeSelectField';
 
 var items = [];
-
-
-var TestTypeSelectField = React.createClass({
-
-	handleChange: function (event, index, value) {
-		this.setState({
-			value: event.target.value
-		});
-	},
-
-	getInitialState: function () {
-		return {
-			items: [],
-			isVisible: false
-		};
-	},
-
-	isVisible: function () {
-		return this.state.isVisible;
-	},
-
-	componentDidMount: function () {
-		var items = [];
-		if (this.props.selectedSubtests && this.props.selectedSubtests.length) {
-			items = this.props.selectedSubtests;
-		} else {
-			if (this.props.testType && Object.keys(this.props.testType).length) {
-				items.push(this.props.testType);
-				if (!this.props.value) {
-					this.props.setTestTypeIdSelected(this.props.testType.id);
-				}
-			}
-		}
-		this.setState({
-			items: items
-		});
-	},
-
-	componentWillUnmount: function () {
-		if (this.serverRequest) {
-			this.serverRequest.abort();
-		}
-	},
-
-	setVisible: function () {
-		this.state.isVisible = true;
-	},
-
-	render: function () {
-		var menuItems = [];
-		for (var key in this.state.items) {
-			menuItems.push(<option key={this.state.items[key].id}
-								   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-		}
-
-		return (
-			<div>
-				<FormGroup>
-					<FormControl
-						componentClass="select"
-						placeholder="select"
-						onChange={this.props.handleChange}
-						name="test_type_id"
-						required={this.props.required}
-						disabled={this.props.disabled}
-						value={this.props.value}>
-						<option key="0" value="">Test Type{this.props.required ? " *" : ""}</option>
-						{menuItems}
-					</FormControl>
-				</FormGroup>
-			</div>
-		);
-	}
-});
 
 
 const TextArea = React.createClass({
@@ -187,8 +114,9 @@ var NewRecommendationForm = React.createClass({
 				dataType: 'json',
 				contentType: 'application/json',
 				data: JSON.stringify(data),
-				success: function (data, textStatus) {
-					that.props.onSuccess(data.result, "predefined");
+				success: function (response, textStatus) {
+					NotificationManager.success("Test recommendation has been successfully added");
+					that.props.onSuccess(response.result, data.test_type_id, "predefined");
 				},
 				beforeSend: function () {
 					this.setState({loading: true});
@@ -208,8 +136,9 @@ var NewRecommendationForm = React.createClass({
 			dataType: 'json',
 			contentType: 'application/json',
 			data: JSON.stringify(data),
-			success: function (data, textStatus) {
-				that.props.onSuccess(data.result, "test");
+			success: function (response, textStatus) {
+				NotificationManager.success("Test recommendation has been successfully added");
+				that.props.onSuccess(response.result, data.test_type_id, "test");
 			},
 			beforeSend: function () {
 				this.setState({loading: true});
@@ -237,11 +166,6 @@ var NewRecommendationForm = React.createClass({
 	_onSuccess: function (data) {
 		//this.refs.eqtype_form.getDOMNode().reset();
 		//this.setState(this.getInitialState());
-		var recommendationType = "Test";
-		if (this.state.public_recommendation){
-			recommendationType = "Predefined";
-		}
-		NotificationManager.success(recommendationType + " recommendation has been successfully added");
 	},
 	_onError: function (data) {
 		var message = "Failed to create";
@@ -356,32 +280,20 @@ var NewRecommendationForm = React.createClass({
 		document.getElementById('test_prof').remove();
 	},
 
-	setTestTypeIdSelected: function(id) {
-		var state = {};
-		state.changedFields = this.state.changedFields.concat(["test_type_id"]);
-		state.test_type_id = id;
-		this.setState(state);
-	},
-
 	render: function () {
 		return (
 			<div className="form-container">
 				<form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
 						<div className="row">
 							<div className="col-md-4">
-								<FormGroup controlId="contract_status"
-										   validationState={this.state.errors.test_type_id ? 'error' : null}>
-									<TestTypeSelectField
-										source="/api/v1.0/test_type"
-										selectedSubtests={this.props.selectedSubtests}
-										testType={this.props.testType}
-										value={this.state.test_type_id}
-										handleChange={this._onChange}
-										setTestTypeIdSelected={this.setTestTypeIdSelected}
-										disabled={this.props.selectedSubtests && this.props.selectedSubtests.length == 0}
-										required/>
-									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
-								</FormGroup>
+								<TestTypeSelectField
+									selectedSubtests={this.props.selectedSubtests}
+									testType={this.props.testType}
+									value={this.state.test_type_id}
+									name="test_type_id"
+									handleChange={this._onChange}
+									errors={this.state.errors}
+									required/>
 							</div>
 							<div className="col-md-1">
 								<Checkbox checked={this.state.public_recommendation} name="public_recommendation">Public</Checkbox>
@@ -411,7 +323,6 @@ var NewRecommendationForm = React.createClass({
 							}
 
 						</div>
-
 						<div className="row">
 							<div className="col-md-12">
 								<TextArea label="Recommendations"
