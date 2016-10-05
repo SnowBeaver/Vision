@@ -587,4 +587,14 @@ def create_test_diagnosis_handler():
     return return_json('result', new_item.id)
 
 
+# Create test repair note
+@api_blueprint.route('/test_repair_note/', methods=['POST'])
+def create_test_repair_note_handler():
+    path = 'test_repair_note'
+    abort_if_json_missing()
+    validated_data = validate_or_abort(path)
+    new_item = add_user_id_and_save_item(path, validated_data)
+    return return_json('result', new_item.id)
+
+
 api.register_blueprint(api_blueprint)

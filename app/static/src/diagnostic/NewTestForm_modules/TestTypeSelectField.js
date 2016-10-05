@@ -33,9 +33,6 @@ var TestTypeSelectField = React.createClass({
 		} else {
 			if (this.props.testType && Object.keys(this.props.testType).length) {
 				items.push(this.props.testType);
-				if (!this.props.value) {
-					this.props.setTestTypeIdSelected(this.props.testType.id);
-				}
 			}
 		}
 		this.setState({
@@ -62,7 +59,7 @@ var TestTypeSelectField = React.createClass({
 
 		return (
 			<div>
-				<FormGroup controlId="contract_status"
+				<FormGroup controlId={this.props.name}
 						   validationState={this.props.errors[name] ? 'error' : null}>
 					<FormControl
 						componentClass="select"

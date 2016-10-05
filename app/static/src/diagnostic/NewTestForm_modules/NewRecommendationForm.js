@@ -16,80 +16,6 @@ import TestTypeSelectField from './TestTypeSelectField';
 var items = [];
 
 
-//var TestTypeSelectField = React.createClass({
-//
-//	handleChange: function (event, index, value) {
-//		this.setState({
-//			value: event.target.value
-//		});
-//	},
-//
-//	getInitialState: function () {
-//		return {
-//			items: [],
-//			isVisible: false
-//		};
-//	},
-//
-//	isVisible: function () {
-//		return this.state.isVisible;
-//	},
-//
-//	componentDidMount: function () {
-//		var items = [];
-//		if (this.props.selectedSubtests && this.props.selectedSubtests.length) {
-//			items = this.props.selectedSubtests;
-//		} else {
-//			if (this.props.testType && Object.keys(this.props.testType).length) {
-//				items.push(this.props.testType);
-//				if (!this.props.value) {
-//					this.props.setTestTypeIdSelected(this.props.testType.id);
-//				}
-//			}
-//		}
-//		this.setState({
-//			items: items
-//		});
-//	},
-//
-//	componentWillUnmount: function () {
-//		if (this.serverRequest) {
-//			this.serverRequest.abort();
-//		}
-//	},
-//
-//	setVisible: function () {
-//		this.state.isVisible = true;
-//	},
-//
-//	render: function () {
-//		var menuItems = [];
-//		for (var key in this.state.items) {
-//			menuItems.push(<option key={this.state.items[key].id}
-//								   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-//		}
-//
-//		return (
-//			<div>
-//				<FormGroup>
-//					<FormControl
-//						componentClass="select"
-//						placeholder="select"
-//						onChange={this.props.handleChange}
-//						name="test_type_id"
-//						required={this.props.required}
-//						disabled={this.props.disabled}
-//						value={this.props.value}>
-//						<option key="0" value="">Test Type{this.props.required ? " *" : ""}</option>
-//						{menuItems}
-//					</FormControl>
-//				</FormGroup>
-//			</div>
-//		);
-//	}
-//});
-
-
 const TextArea = React.createClass({
     render: function () {
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
@@ -188,9 +114,9 @@ var NewRecommendationForm = React.createClass({
 				dataType: 'json',
 				contentType: 'application/json',
 				data: JSON.stringify(data),
-				success: function (data, textStatus) {
+				success: function (response, textStatus) {
 					NotificationManager.success("Test recommendation has been successfully added");
-					that.props.onSuccess(data.result, "predefined");
+					that.props.onSuccess(response.result, data.test_type_id, "predefined");
 				},
 				beforeSend: function () {
 					this.setState({loading: true});
@@ -210,9 +136,9 @@ var NewRecommendationForm = React.createClass({
 			dataType: 'json',
 			contentType: 'application/json',
 			data: JSON.stringify(data),
-			success: function (data, textStatus) {
+			success: function (response, textStatus) {
 				NotificationManager.success("Test recommendation has been successfully added");
-				that.props.onSuccess(data.result, "test");
+				that.props.onSuccess(response.result, data.test_type_id, "test");
 			},
 			beforeSend: function () {
 				this.setState({loading: true});
@@ -240,11 +166,6 @@ var NewRecommendationForm = React.createClass({
 	_onSuccess: function (data) {
 		//this.refs.eqtype_form.getDOMNode().reset();
 		//this.setState(this.getInitialState());
-		var recommendationType = "Test";
-		if (this.state.public_recommendation){
-			recommendationType = "Predefined";
-		}
-		NotificationManager.success(recommendationType + " recommendation has been successfully added");
 	},
 	_onError: function (data) {
 		var message = "Failed to create";
@@ -359,13 +280,6 @@ var NewRecommendationForm = React.createClass({
 		document.getElementById('test_prof').remove();
 	},
 
-	setTestTypeIdSelected: function(id) {
-		var state = {};
-		state.changedFields = this.state.changedFields.concat(["test_type_id"]);
-		state.test_type_id = id;
-		this.setState(state);
-	},
-
 	render: function () {
 		return (
 			<div className="form-container">
@@ -378,8 +292,6 @@ var NewRecommendationForm = React.createClass({
 									value={this.state.test_type_id}
 									name="test_type_id"
 									handleChange={this._onChange}
-									setTestTypeIdSelected={this.setTestTypeIdSelected}
-									disabled={this.props.selectedSubtests && this.props.selectedSubtests.length == 0}
 									errors={this.state.errors}
 									required/>
 							</div>
@@ -411,7 +323,6 @@ var NewRecommendationForm = React.createClass({
 							}
 
 						</div>
-
 						<div className="row">
 							<div className="col-md-12">
 								<TextArea label="Recommendations"
