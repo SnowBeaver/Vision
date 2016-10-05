@@ -456,15 +456,17 @@ var EquipmentTestDiagnosisForm = React.createClass({
         this.setState({showNewRecommendationForm: false})
     },
 
-    updatePredefinedRecommendations: function (id, recommendationType) {
+    updatePredefinedRecommendations: function (recommendationId, testTypeId, recommendationType) {
         var state = {showNewRecommendationForm: false};
 
         if (recommendationType == "predefined") {
             // Reload select field with predefined recommendations and
             // change the value in the global state
-            // TODO: There should be a nicer way to set proper value to recommendation_id select
-            this.props.onChange({target: {type: "select", name: "recommendation_id", "value": id}});
-            state.recommendation_id = id;
+            this.props._setStateData({
+                recommendation_id: recommendationId,
+                recommendation_test_type_id: testTypeId
+            });
+            state.recommendation_id = recommendationId;
             state.recommendationPreselected = true;
         } else if (recommendationType == "test") {
             // Reload Recommendation list
@@ -847,6 +849,15 @@ var EquipmentTestForm = React.createClass({
         this.setState({data: data});
     },
 
+    _setStateData: function (state) {
+        // immutability-helper package might be used instead
+        var newData = this.state.data;
+        for (var field in state) {
+            newData[field] = state[field];
+        }
+        this.setState({data: newData});
+    },
+
     _validate: function () {
         var errors = {};
         // if(this.state.username == "") {
@@ -919,7 +930,8 @@ var EquipmentTestForm = React.createClass({
                             </div>
                             <div id="tabs-4" role="tabpanel" className="tab-pane">
                                 <EquipmentTestDiagnosisForm data={data}
-                                                            onChange={this._onChange}/>
+                                                            onChange={this._onChange}
+                                                            _setStateData={this._setStateData}/>
                             </div>
                             <div id="tabs-5" role="tabpanel" className="tab-pane">
                                 <EquipmentTestEqDiagnosisForm data={data}
