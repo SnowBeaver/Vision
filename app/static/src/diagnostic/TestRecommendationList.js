@@ -68,7 +68,7 @@ var TestRecommendation = React.createClass({
 });
 
 
-var OneTestRecommendationList = React.createClass({
+var GroupedRecommendationsList = React.createClass({
 
     handleChange: function (event, index, value) {
         this.setState({
@@ -101,10 +101,10 @@ var OneTestRecommendationList = React.createClass({
                 <Panel header={this.props.header}
                        key={"recommendations" + testTypeId}
                        eventKey={"recommendations" + testTypeId}>
-                    <Table responsive hover id="test_prof">
+                    <Table responsive hover id="testRecommendation">
                         <thead>
                         <tr>
-                            <th className="col-md-2">Date</th>
+                            <th className="col-md-2">Created on</th>
                             <th className="col-md-1">Code</th>
                             <th className="col-md-2">Name</th>
                             <th className="col-md-2">Recommendation Description</th>
@@ -174,18 +174,20 @@ var TestRecommendationList = React.createClass({
 
         for (var i = 0; i < this.state.recommendations.length; i++) {
             var item = this.state.recommendations[i];
-            if (!recommendationGroups[item.test_type_id]) {
-                recommendationGroups[item.test_type_id] = [];
+            if (item.test_type_id) {
+                if (!recommendationGroups[item.test_type_id]) {
+                    recommendationGroups[item.test_type_id] = [];
+                }
+                recommendationGroups[item.test_type_id].push(item);
             }
-            recommendationGroups[item.test_type_id].push(item);
         }
 
         for (var i in recommendationGroups) {
-            recommendations.push(<OneTestRecommendationList key={i}
-                                                            testTypeId={i}
-                                                            data={recommendationGroups[i]}
-                                                            reloadList={this.props.reloadList}
-                                                           /** header={recommendationGroups[i][0].test_type.name}*//>)
+            recommendations.push(<GroupedRecommendationsList key={i}
+                                                             testTypeId={i}
+                                                             data={recommendationGroups[i]}
+                                                             reloadList={this.props.reloadList}
+                                                             header={recommendationGroups[i][0].test_type.name}/>)
         }
 
         return (
