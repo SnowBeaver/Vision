@@ -369,8 +369,14 @@ var EquipmentTestRepairForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
-            errors: {}
+            errors: {},
+            formEdited: false
         }
+    },
+
+    _onChange: function (e) {
+        this.setState({formEdited: true});
+        this.props.onChange(e);
     },
 
     render: function () {
@@ -388,14 +394,14 @@ var EquipmentTestRepairForm = React.createClass({
                         <TextArea label="Repair description"
                                   name='description'
                                   value={data.description}
-                                  onChange={this.props.onChange}
+                                  onChange={this._onChange}
                                   errors={this.state.errors}/>
                     </div>
                     <div className="col-md-6">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
-                                  onChange={this.props.onChange}
+                                  onChange={this._onChange}
                                   errors={this.state.errors}/>
                     </div>
                 </div>
@@ -404,7 +410,7 @@ var EquipmentTestRepairForm = React.createClass({
                         <TextArea label="Sample"
                                   name='sample'
                                   value={data.sample}
-                                  onChange={this.props.onChange}
+                                  onChange={this._onChange}
                                   errors={this.state.errors}/>
                     </div>
                 </div>
@@ -413,16 +419,16 @@ var EquipmentTestRepairForm = React.createClass({
                         <TestTypeSelectField key={this.props.data.selected_subtests}
                                              selectedSubtests={this.props.data.selected_subtests}
                                              testType={this.props.data.test_type}
-                                             handleChange={this.props.onChange}
+                                             handleChange={this._onChange}
                                              name="repair_test_type_id"
                                              errors={this.state.errors}
-                                             required/>
+                                             required={this.state.formEdited}/>
                     </div>
                     <div className="col-md-4" key={data.date_created}>
                         <DateTimeFieldWithLabel label="Please select repair date"
                                                 name='date_created'
                                                 value={data.date_created}
-                                                onChange={this.props.onChange}
+                                                onChange={this._onChange}
                                                 onDateTimeFieldChange={this.props.onDateTimeFieldChange}
                                                 readOnly
                         />
@@ -440,6 +446,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
             showNewRecommendationForm: false,
             recommendationPreselected: false,
             recommendation_id: null,
+            formEdited: false,
             errors: {}
         }
     },
@@ -452,11 +459,6 @@ var EquipmentTestDiagnosisForm = React.createClass({
             });
 
         }.bind(this), 'json');
-    },
-
-    openNewRecommendationForm: function () {
-        this.setState({showNewRecommendationForm: true});
-        this.props.data.recommendation_id = null;
     },
 
     closeNewRecommendationForm: function () {
@@ -484,24 +486,32 @@ var EquipmentTestDiagnosisForm = React.createClass({
     },
 
     _onChange: function (e) {
-        // Change value in this form's state to be able to select
-        this.setState({recommendation_id: e.target.value});
-        // Change the value in the global state to save it from there
-        this.props.onChange(e);
+        var OTHER_RECOMENDATION_ID = 80;
 
         // Open new recommendation form, if needed
         if (e.target.name == "recommendation_id") {
-            if (e.target.selectedOptions.length && e.target.selectedOptions[0].text == "Other recommendations (specify)"){
-                this.openNewRecommendationForm();
+            var state = {};
+            // Change value in this form's state to be able to select
+            state.recommendation_id = e.target.value;
+            // Change the value in the global state to save it from there
+            this.props.onChange(e);
+
+            if (e.target.selectedOptions.length && e.target.value == OTHER_RECOMENDATION_ID){
+                state.formEdited = false;
+                // No special method for opening NewRecommendationForm in order not to set state twice
+                state.showNewRecommendationForm = true;
+                this.props.data.recommendation_id = null;
             } else {
+                state.formEdited = true;
                 this.closeNewRecommendationForm();
             }
+            this.setState(state);
         }
     },
 
     render: function () {
         return (
-            <form className="" method="post" action="#">
+
                 <div className="tab_row">
                     <div className="col-lg-12">
                         <TestRecommendationList testResultId={this.props.data.id}
@@ -537,12 +547,11 @@ var EquipmentTestDiagnosisForm = React.createClass({
                                                      handleChange={this.props.onChange}
                                                      name="recommendation_test_type_id"
                                                      errors={this.state.errors}
-                                                     required/>
+                                                     required={this.state.formEdited}/>
                         </div>
                         : null
                     }
                 </div>
-            </form>
         )
     }
 });
@@ -703,7 +712,9 @@ var EquipmentTestForm = React.createClass({
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state.data[key];
+            if (this.state.data[key]) {
+                data[key] = this.state.data[key];
+            }
         }
 
         if (Object.keys(data).length) {
@@ -736,8 +747,9 @@ var EquipmentTestForm = React.createClass({
         var type = 'POST';
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state.data[key];
-
+            if (this.state.data[key]) {
+                data[key] = this.state.data[key];
+            }
         }
 
         if (Object.keys(data).length) {

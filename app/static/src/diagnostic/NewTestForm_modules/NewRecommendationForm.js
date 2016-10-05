@@ -279,7 +279,7 @@ var NewRecommendationForm = React.createClass({
 	handleClick: function() {
 		document.getElementById('test_prof').remove();
 	},
-	
+
 	render: function () {
 		return (
 			<div className="form-container">
@@ -323,7 +323,6 @@ var NewRecommendationForm = React.createClass({
 							}
 
 						</div>
-
 						<div className="row">
 							<div className="col-md-12">
 								<TextArea label="Recommendations"
