@@ -70,21 +70,26 @@ var TestRecommendation = React.createClass({
 
 var GroupedRecommendationsList = React.createClass({
 
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: true,
+            accordionOpen: false
+        };
+    },
+
     handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
         })
     },
 
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: true
-        };
-    },
-
     edit: function () {
         this.props.editTestForm(this.props.data.id);
+    },
+
+    _changeAccordionState: function (state) {
+        this.setState({accordionOpen: state});
     },
 
     render: function () {
@@ -96,11 +101,18 @@ var GroupedRecommendationsList = React.createClass({
                                                      data={item}
                                                      reloadList={this.props.reloadList}/>)
         }
+        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
+        if (this.state.accordionOpen) {
+            panelClass = "pull-right glyphicon glyphicon-chevron-up";
+        }
         return (
             <Accordion>
-                <Panel header={this.props.header}
+                <Panel header={<h3>{this.props.header}<span className={panelClass}></span></h3>}
                        key={"recommendations" + testTypeId}
-                       eventKey={"recommendations" + testTypeId}>
+                       eventKey={"recommendations" + testTypeId}
+                       onEnter={() => this._changeAccordionState(true)}
+                       onExit={() => this._changeAccordionState(false)}
+                       >
                     <Table responsive hover id="testRecommendation">
                         <thead>
                         <tr>
@@ -135,7 +147,8 @@ var TestRecommendationList = React.createClass({
     getInitialState: function () {
         return {
             recommendations: [],
-            isVisible: true
+            isVisible: true,
+            accordionOpen: false
         };
     },
 
@@ -168,6 +181,10 @@ var TestRecommendationList = React.createClass({
         this._updateList(testResultId);
     },
 
+    _changeAccordionState: function (state) {
+        this.setState({accordionOpen: state});
+    },
+
     render: function () {
         var recommendations = [];
         var recommendationGroups = {};
@@ -190,13 +207,20 @@ var TestRecommendationList = React.createClass({
                                                              header={recommendationGroups[i][0].test_type.name}/>)
         }
 
+
+        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
+        if (this.state.accordionOpen) {
+            panelClass = "pull-right glyphicon glyphicon-chevron-up";
+        }
         return (
                 <div>
                     <div className="row">
                         <Accordion>
-                            <Panel header="Recommendations"
+                            <Panel header={<h3>Recommendations<span className={panelClass}></span></h3>}
                                    key="recommendationsBlock"
-                                   eventKey="recommendationsBlock">
+                                   eventKey="recommendationsBlock"
+                                   onEnter={() => this._changeAccordionState(true)}
+                                   onExit={() => this._changeAccordionState(false)}>
                                 {recommendations}
                             </Panel>
                         </Accordion>
