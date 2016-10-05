@@ -46,6 +46,7 @@ var SelectField = React.createClass({
                              name={name}
                              value={value}
                              disabled={this.props.disabled}
+                             required={this.props.required}
                 >
                     <option>{label}</option>
                     {menuItems}
@@ -57,21 +58,30 @@ var SelectField = React.createClass({
 });
 
 const TextField = React.createClass({
+    _onChange: function (e) {
+        this.props.onChange(e);
+    },
+
     render: function () {
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"] : undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"] : undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
-                <FormGroup>
+                <FormGroup validationState={validationState}>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
-                                 value={value}
-                                 onChange={this.props.onChange}
-                                 disabled={this.props.disabled}
+                                 data-type={type}
+                                 data-len={len}
+                                 onChange={this._onChange}
+								 required={this.props.required}
                     />
+                    <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
                 </FormGroup>
             </OverlayTrigger>
@@ -95,6 +105,7 @@ const TextArea = React.createClass({
                                  value={value}
                                  onChange={this.props.onChange}
                                  required={this.props.required}
+                                 disabled={this.props.disabled}
                     />
                     <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
@@ -110,24 +121,85 @@ var NewDiagnosisForm = React.createClass({
             loading: false,
             errors: {},
             predefinedDiagnosisFields: ['name', 'code', 'description', 'test_type_id'],
-            testDiagnosisFields: ['test_type_id', 'test_result_id', 'diagnosis_notes'],
-            public_diagnosis: false
+            testDiagnosisFields: ['diagnosis_id', 'test_type_id', 'test_result_id', 'diagnosis_notes'],
+            public_diagnosis: false,
+            current_select_value: null
         }
     },
 
-    _onChange: function (e) {
-        e.stopPropagation();
-        var state = this.state.predefinedDiagnosisFields;
-
-        if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
-        } else if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
-        } else {
-            state[e.target.name] = e.target.value;
+    _create: function () {
+        if (this.state.public_diagnosis) {
+            this._createPredefinedDiagnoses();
         }
+        else {
+            this._createTestDiagnoses();
+        }
+    },
 
-        this.setState(state);
+    _createTestDiagnoses: function () {
+        var fields = this.state.testDiagnosisFields;
+        var data = {};
+        var that = this;
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            var value = this.state[key];
+            if (value == "") {
+                value = null;
+            }
+            data[key] = value;
+        }
+        data.test_result_id = this.props.testResultId;
+        data.diagnosis_id = this.props.diagnosisId;
+        return $.ajax({
+            url: '/api/v1.0/test_diagnosis/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data) {
+                that.props.onSuccess(data.result, "test");
+            },
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+
+    _createPredefinedDiagnoses: function () {
+        var fields = this.state.predefinedDiagnosisFields;
+        var data = {};
+        var that = this;
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            var value = this.state[key];
+            if (value == "") {
+                value = null;
+            }
+            data[key] = value;
+        }
+        return $.ajax({
+            url: '/api/v1.0/diagnosis/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data) {
+                that.props.onSuccess(data.result, "predefined");
+            },
+            beforeSend: function () {
+                this.setState({loading: true});
+            }.bind(this)
+        })
+    },
+
+    _onSuccess: function (data, status, xhr) {
+        console.log("hello i'm a ver successfull function!");
+        var diagnosisType = "Test";
+        if (this.state.public_diagnosis) {
+            diagnosisType = "Predefined";
+        }
+        NotificationManager.success(diagnosisType + " diagnosis has been successfully added");
+        this.props.handleClose();
     },
 
     _onSubmit: function (e) {
@@ -143,134 +215,158 @@ var NewDiagnosisForm = React.createClass({
         this.setState({loading: false});
     },
 
-    _create: function () {
-        if (this.state.public_diagnosis) {
-            this._createPredefinedDiagnoses();
+    _onError: function (data) {
+        var message = "Failed to create";
+        var res = data.responseJSON;
+        if (res.message) {
+            message = data.responseJSON.message;
         }
-        else {
-            this._createTestDiagnoses();
-        }
-    },
-
-    _createTestDiagnoses: function () {
-        var fields = this.state.testDiagnosisFields;
-        var data = {};
-        for (var i = 0; i < fields.length; i++) {
-            var key = fields[i];
-            var value = this.state[key];
-            if (value == "") {
-                value = null;
+        if (res.error) {
+            // We get list of errors
+            if (data.status >= 500) {
+                message = res.error.join(". ");
+            } else if (res.error instanceof Object) {
+                // We get object of errors with field names as key
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
             }
-            data[key] = value;
         }
-        console.log("save data", data);
-        return $.ajax({
-            url: '/api/v1.0/test_diagnosis/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data) {
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
-
+        NotificationManager.error(message);
     },
 
-    _createPredefinedDiagnoses: function () {
-        var fields = this.state.predefinedDiagnosisFields;
-        var data = {};
-        for (var i = 0; i < fields.length; i++) {
-            var key = fields[i];
-            var value = this.state[key];
-            if (value == "") {
-                value = null;
+    _onChange: function (e) {
+        e.stopPropagation();
+        var state = this.state.predefinedDiagnosisFields;
+
+        if (e.target.type == 'checkbox') {
+            state[e.target.name] = e.target.checked;
+        } else if (e.target.type == 'select-one') {
+            state[e.target.name] = e.target.value;
+        } else {
+            state[e.target.name] = e.target.value;
+        }
+
+        var errors = this._validate(e);
+        state = this._updateFieldErrors(e.target.name, state, errors);
+        this.setState(state);
+    },
+
+    _validate: function (e) {
+        var errors = [];
+        var error;
+        error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
+        if (error) {
+            errors.push(error);
+        }
+        error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
+        if (error) {
+            errors.push(error);
+        }
+        return errors;
+    },
+
+    _validateFieldType: function (value, type) {
+        var error = "";
+        if (type != undefined && value) {
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/
+            };
+            if (!typePatterns[type].test(value)) {
+                error = "Invalid " + type + " value";
             }
-            data[key] = value;
         }
-        console.log("save data", data);
-        return $.ajax({
-            url: '/api/v1.0/diagnosis/',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data) {
-            },
-            beforeSend: function () {
-                this.setState({loading: true});
-            }.bind(this)
-        })
+        return error;
     },
 
-    _onSuccess: function () {
-        NotificationManager.success("New diagnosis has been successfully added");
+    _validateFieldLength: function (value, length) {
+        var error = "";
+        if (value && length) {
+            if (value.length > length) {
+                error = "Value should be maximum " + length + " characters long"
+            }
+        }
+        return error;
     },
 
+    _updateFieldErrors: function (fieldName, state, errors) {
+        state.errors = this.state.errors;
+        delete state.errors[fieldName];
+
+        if (Object.keys(errors).length) {
+            state.errors[fieldName] = errors.join(". ");
+        }
+        return state;
+    },
 
     render: function () {
-        console.log("props", this.props);
-        console.log("state", this.state);
         return (
-            <div className="form-container">
-                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-
-
-                    <div className="tab_row">
-                        <div className="col-md-5 ">
-                            <SelectField source="test_type"
-                                         label="Test type"
-                                         name='test_type_id'
-                                         value={this.state.test_type_id}
-                                         key={this.state.test_type_id}
-                            />
-                        </div>
-                        <div className="col-md-1">
-                            <Checkbox checked={this.state.public_diagnosis}
-                                      name="public_diagnosis">Public</Checkbox>
-                        </div>
-                        {this.state.public_diagnosis ?
-                            <div>
-                                <div className="col-md-3">
-                                    <TextField label="Name*"
-                                               name='name'
-                                               value={this.state.name}
-                                               errors={this.state.errors}
-                                               required/>
-                                </div>
-                                <div className="col-md-3">
-                                    <TextField label="Code"
-                                               name='code'
-                                               value={this.state.code}
-                                               errors={this.state.errors}/>
-                                </div>
-                            </div>
-                            : null
-                        }
+            <div className="form-container" onChange={this._onChange}>
+                <div className="tab_row">
+                    <div className="col-md-5 ">
+                        <SelectField source="test_type"
+                                     label="Test type"
+                                     name='test_type_id'
+                                     value={this.state.test_type_id}
+                                     key={this.state.test_type_id}
+                        />
                     </div>
-                    <div className="tab_row">
-                        <div className="col-md-12">
+                    <div className="col-md-1">
+                        <Checkbox checked={this.state.public_diagnosis}
+                                  name="public_diagnosis"
+                        >Public</Checkbox>
+                    </div>
+                    {this.state.public_diagnosis ?
+                        <div>
+                            <div className="col-md-3">
+                                <TextField label="Name*"
+                                           name='name'
+                                           value={this.state.name}
+                                           errors={this.state.errors}
+                                           data-len="50"
+                                           required/>
+                            </div>
+                            <div className="col-md-3">
+                                <TextField label="Code"
+                                           name='code'
+                                           value={this.state.code}
+                                           errors={this.state.errors}
+                                           data-len="50"/>
+                            </div>
+                        </div>
+                        : null
+                    }
+                </div>
+                <div className="tab_row">
+                    <div className="col-md-12">
                         <TextArea label={this.state.public_diagnosis ? "Description": "Diagnosis Notes"}
                                   name={this.state.public_diagnosis ? "description": "diagnosis_notes"}
                                   value={this.state.public_diagnosis ? this.state.description: this.state.diagnosis_notes}
-                                  errors={this.state.errors}/>
-                        </div>
-                        <div className="col-md-12 ">
-                            <Button bsStyle="success"
-                                    className="btn btn-success pull-right"
-                                    type="submit"
-                            >Add {this.state.public_diagnosis ? "Predefined" : "Test"} Diagnosis</Button>
-                            &nbsp;
-                            <Button bsStyle="danger"
-                                    className="pull-right"
-                                    onClick={this.props.handleClose}
-                                    className="pull-right margin-right-xs"
-                            >Cancel</Button>
-                        </div>
+                                  errors={this.state.errors}
+                        />
                     </div>
-                </form>
+                    <div className="col-md-12 ">
+                        <Button bsStyle="success"
+                                className="btn btn-success pull-right"
+                                onClick={this._onSubmit}
+                        >Add {this.state.public_diagnosis ? "Predefined" : "Test"} Diagnosis</Button>
+                        &nbsp;
+                        <Button bsStyle="danger"
+                                onClick={this.props.handleClose}
+                                className="pull-right margin-right-xs"
+                        >Cancel</Button>
+                    </div>
+                </div>
             </div>
         );
     }
