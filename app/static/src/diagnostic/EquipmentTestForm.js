@@ -373,9 +373,8 @@ var EquipmentTestRepairForm = React.createClass({
         }
     },
 
-
     render: function () {
-        var data = (this.props.data != null) ? this.props.data : {}
+        var data = (this.props.data != null) ? this.props.data : {};
         return (
             <div>
                 <div className="tab_row">
@@ -385,14 +384,14 @@ var EquipmentTestRepairForm = React.createClass({
                     </div>
                 </div>
                 <div className="tab_row nopadding">
-                    <div className="col-lg-6">
+                    <div className="col-md-6">
                         <TextArea label="Repair description"
                                   name='description'
                                   value={data.description}
                                   onChange={this.props.onChange}
                                   errors={this.state.errors}/>
                     </div>
-                    <div className="col-lg-6">
+                    <div className="col-md-6">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
@@ -410,7 +409,16 @@ var EquipmentTestRepairForm = React.createClass({
                     </div>
                 </div>
                 <div className="tab_row nopadding">
-                    <div className="col-md-6" key={data.date_created}>
+                    <div className="col-md-4">
+                        <TestTypeSelectField key={this.props.data.selected_subtests}
+                                             selectedSubtests={this.props.data.selected_subtests}
+                                             testType={this.props.data.test_type}
+                                             handleChange={this.props.onChange}
+                                             name="repair_test_type_id"
+                                             errors={this.state.errors}
+                                             required/>
+                    </div>
+                    <div className="col-md-4" key={data.date_created}>
                         <DateTimeFieldWithLabel label="Please select repair date"
                                                 name='date_created'
                                                 value={data.date_created}
@@ -461,7 +469,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
         if (recommendationType == "predefined") {
             // Reload select field with predefined recommendations and
             // change the value in the global state
-            this.props._setStateData({
+            this.props.setStateData({
                 recommendation_id: recommendationId,
                 recommendation_test_type_id: testTypeId
             });
@@ -654,7 +662,7 @@ var EquipmentTestForm = React.createClass({
                 'sampling_point_id', 'equipment_id', 'lab_id',
                 'fluid_type_id', 'date_analyse', 'test_status_id'],
             testRecommendationFields: ['recommendation_id', 'recommendation_test_type_id'],
-            testRepairNotesFields: ['description', 'remark', 'sample', 'date_created'],
+            testRepairNotesFields: ['description', 'remark', 'sample', 'date_created', 'repair_test_type_id'],
             errors: {},
             data: null
         }
@@ -699,7 +707,7 @@ var EquipmentTestForm = React.createClass({
         }
 
         if (Object.keys(data).length) {
-            // There are two fields with the name test_type_id - differ them somehow
+            // There are several fields with the name test_type_id - differ them somehow
             data.test_type_id = data.recommendation_test_type_id;
             delete data.recommendation_test_type_id;
             data.test_result_id = this.state.data['id'];
@@ -733,8 +741,10 @@ var EquipmentTestForm = React.createClass({
         }
 
         if (Object.keys(data).length) {
+            // There are several fields with the name test_type_id - differ them somehow
+            data.test_type_id = data.repair_test_type_id;
+            delete data.repair_test_type_id;
             data.test_result_id = this.state.data['id'];
-            data.test_type_id = this.state.data['test_type_id'];
             $.ajax({
                 url: url,
                 type: type,
@@ -907,12 +917,13 @@ var EquipmentTestForm = React.createClass({
                             <div id="tabs-3" role="tabpanel" className="tab-pane">
                                 <EquipmentTestRepairForm data={data}
                                                          onChange={this._onChange}
-                                                         onDateTimeFieldChange={this._onDateTimeFieldChange}/>
+                                                         onDateTimeFieldChange={this._onDateTimeFieldChange}
+                                                         setStateData={this._setStateData}/>
                             </div>
                             <div id="tabs-4" role="tabpanel" className="tab-pane">
                                 <EquipmentTestDiagnosisForm data={data}
                                                             onChange={this._onChange}
-                                                            _setStateData={this._setStateData}/>
+                                                            setStateData={this._setStateData}/>
                             </div>
                             <div id="tabs-5" role="tabpanel" className="tab-pane">
                                 <EquipmentTestEqDiagnosisForm data={data}
