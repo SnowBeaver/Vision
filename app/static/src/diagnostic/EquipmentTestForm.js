@@ -385,16 +385,14 @@ var EquipmentTestRepairForm = React.createClass({
                     </div>
                 </div>
                 <div className="tab_row nopadding">
-                    <div className="col-lg-12">
+                    <div className="col-lg-6">
                         <TextArea label="Repair description"
                                   name='description'
                                   value={data.description}
                                   onChange={this.props.onChange}
                                   errors={this.state.errors}/>
                     </div>
-                </div>
-                <div className="tab_row nopadding">
-                    <div className="col-lg-12">
+                    <div className="col-lg-6">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}

@@ -169,31 +169,6 @@ var RepairNotesList = React.createClass({
                     </div>
                 </div>
         );
-
-        //return (
-        //    <div>
-        //        <div className="row">
-        //            <Accordion>
-        //                <Panel header="Test repair notes" key="repair_notes" eventKey="repair_notes">
-        //                    <Table responsive hover id="test_repair">
-        //                        <thead>
-        //                        <tr>
-        //                            <th className="col-md-3">Date</th>
-        //                            <th className="col-md-4">Description</th>
-        //                            <th className="col-md-4">Remark</th>
-        //                            <th className="col-md-1">Actions</th>
-        //
-        //                        </tr>
-        //                        </thead>
-        //                        <tbody>
-        //                        {repair_notes}
-        //                        </tbody>
-        //                    </Table>
-        //                </Panel>
-        //            </Accordion>
-        //        </div>
-        //    </div>
-        //);
     }
 });
 

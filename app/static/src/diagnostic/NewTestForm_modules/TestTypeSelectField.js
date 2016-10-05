@@ -33,7 +33,7 @@ var TestTypeSelectField = React.createClass({
 		} else {
 			if (this.props.testType && Object.keys(this.props.testType).length) {
 				items.push(this.props.testType);
-				if (!this.props.value) {
+				if (!this.props.value && this.props.setTestTypeIdSelected) {
 					this.props.setTestTypeIdSelected(this.props.testType.id);
 				}
 			}
