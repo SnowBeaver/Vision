@@ -30,6 +30,7 @@ var TestRepairNote = React.createClass({
                         {item.remark ? item.remark.substring(0, 100) : ""}
                     </span>
                 </td>
+                <td>{item.user ? item.user.name: ""}</td>
                 <td>
                     <a href="javascript:void(0)"
                        className="btn btn-primary btn-xs">
@@ -84,10 +85,10 @@ var GoupedRepairNotesList = React.createClass({
                         <thead>
                         <tr>
                             <th className="col-md-3">Created on</th>
-                            <th className="col-md-4">Description</th>
-                            <th className="col-md-4">Remark</th>
+                            <th className="col-md-3">Description</th>
+                            <th className="col-md-3">Remark</th>
+                            <th className="col-md-2">Created by</th>
                             <th className="col-md-1">Actions</th>
-
                         </tr>
                         </thead>
                         <tbody>
