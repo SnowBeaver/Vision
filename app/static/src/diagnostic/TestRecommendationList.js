@@ -111,8 +111,7 @@ var GroupedRecommendationsList = React.createClass({
                        key={"recommendations" + testTypeId}
                        eventKey={"recommendations" + testTypeId}
                        onEnter={() => this._changeAccordionState(true)}
-                       onExit={() => this._changeAccordionState(false)}
-                       >
+                       onExit={() => this._changeAccordionState(false)}>
                     <Table responsive hover id="testRecommendation">
                         <thead>
                         <tr>

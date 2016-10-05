@@ -48,7 +48,15 @@ var TestRepairNote = React.createClass({
 });
 
 
-var GoupedRepairNotesList = React.createClass({
+var GroupedRepairNotesList = React.createClass({
+
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: true,
+            accordionOpen: false
+        };
+    },
 
     handleChange: function (event, index, value) {
         this.setState({
@@ -56,15 +64,12 @@ var GoupedRepairNotesList = React.createClass({
         })
     },
 
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: true
-        };
-    },
-
     edit: function () {
         this.props.editTestForm(this.props.data.id);
+    },
+
+    _changeAccordionState: function (state) {
+        this.setState({accordionOpen: state});
     },
 
     render: function () {
@@ -76,11 +81,17 @@ var GoupedRepairNotesList = React.createClass({
                                                      data={item}
                                                      reloadList={this.props.reloadList}/>)
         }
+        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
+        if (this.state.accordionOpen) {
+            panelClass = "pull-right glyphicon glyphicon-chevron-up";
+        }
         return (
             <Accordion>
-                <Panel header={this.props.header}
+                <Panel header={<h3>{this.props.header}<span className={panelClass}></span></h3>}
                        key={"repairNotes" + testTypeId}
-                       eventKey={"repairNotes" + testTypeId}>
+                       eventKey={"repairNotes" + testTypeId}
+                       onEnter={() => this._changeAccordionState(true)}
+                       onExit={() => this._changeAccordionState(false)}>
                     <Table responsive hover id="test_repair">
                         <thead>
                         <tr>
@@ -107,7 +118,8 @@ var RepairNotesList = React.createClass({
     getInitialState: function () {
         return {
             repair_notes: [],
-            isVisible: true
+            isVisible: true,
+            accordionOpen: false
         }
     },
 
@@ -135,6 +147,10 @@ var RepairNotesList = React.createClass({
         this.componentDidMount();
     },
 
+    _changeAccordionState: function (state) {
+        this.setState({accordionOpen: state});
+    },
+
     render: function () {
         var repairNotes = [];
         var repairNotesGroups = [];
@@ -150,20 +166,26 @@ var RepairNotesList = React.createClass({
         }
 
         for (var i in repairNotesGroups) {
-            repairNotes.push(<GoupedRepairNotesList key={i}
-                                                    testTypeId={i}
-                                                    data={repairNotesGroups[i]}
-                                                    reloadList={this.props.reloadList}
-                                                    header={repairNotesGroups[i][0].test_type.name}/>)
+            repairNotes.push(<GroupedRepairNotesList key={i}
+                                                     testTypeId={i}
+                                                     data={repairNotesGroups[i]}
+                                                     reloadList={this.props.reloadList}
+                                                     header={repairNotesGroups[i][0].test_type.name}/>)
+        }
+        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
+        if (this.state.accordionOpen) {
+            panelClass = "pull-right glyphicon glyphicon-chevron-up";
         }
 
         return (
                 <div>
                     <div className="row">
                         <Accordion>
-                            <Panel header="Test repair notes"
+                            <Panel header={<h3>Test repair notes<span className={panelClass}></span></h3>}
                                    key="repairNotesBlock"
-                                   eventKey="repairNotesBlock">
+                                   eventKey="repairNotesBlock"
+                                   onEnter={() => this._changeAccordionState(true)}
+                                   onExit={() => this._changeAccordionState(false)}>
                                 {repairNotes}
                             </Panel>
                         </Accordion>
