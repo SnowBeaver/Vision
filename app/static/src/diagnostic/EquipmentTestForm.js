@@ -25,6 +25,7 @@ import TestTypeSelectField from './NewTestForm_modules/TestTypeSelectField';
 import TestRecommendationList from './TestRecommendationList';
 import RepairNotesList from './RepairNotesList';
 import TestDiagnosisForm from './TestDiagnosisForm';
+import NewDiagnosisForm from './NewDiagnosisForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
@@ -534,7 +535,6 @@ var EquipmentTestDiagnosisForm = React.createClass({
                         </div>
                         : null
                     }
-
                 </div>
             </form>
         )
@@ -558,19 +558,12 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         }.bind(this), 'json');
     },
 
-
-    openNewDiagnosisForm: function () {
-        this.setState({showNewDiagnosisForm: true});
-        this.props.data.diagnosis_id = null;
-    },
-
     _onChange: function (e) {
         this.setState({diagnosis_id: e.target.value});
         this.props.onChange(e);
     },
 
     render: function () {
-        var data = (this.props.data != null) ? this.props.data : {};
         return (
             <form className="" method="post" action="#">
                 <div className="tab_row">
@@ -578,18 +571,16 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                         <TestDiagnosisForm testResultId={this.props.data.id}
                                            testTypeId={this.props.data.test_type_id}/>
 
-                        <div className="col-md-10 nopadding padding-right-xs">
+                        <div className="col-md-12 nopadding padding-right-xs">
                             <SelectField source="diagnosis"
                                          label="Predefined diagnosis"
                                          name='diagnosis_id'
-                                         value={this.state.diagnosis_id}
                                          onChange={this._onChange}
+                                         value={this.state.diagnosis_id}
                                          key={this.state.diagnosis_id}
                             />
                         </div>
-                        <div className="col-md-2">
-                            <Button bsStyle="primary" onClick={this.openNewDiagnosisForm}>New</Button>
-                        </div>
+                        { parseInt(this.props.data.diagnosis_id) === 3 ? <NewDiagnosisForm/> : null }
                     </div>
                 </div>
             </form>
@@ -666,7 +657,6 @@ var EquipmentTestForm = React.createClass({
                 'fluid_type_id', 'date_analyse', 'test_status_id'],
             testRecommendationFields: ['recommendation_id', 'recommendation_test_type_id'],
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created'],
-            testDiagnosisFields: ['code', 'name', 'description'],
             errors: {},
             data: null
         }
@@ -765,34 +755,27 @@ var EquipmentTestForm = React.createClass({
     },
 
     _saveDiagnosis: function () {
-        var fields = this.state.testDiagnosisFields;
         var data = {};
-        var url = '/api/v1.0/diagnosis/';
+        var url = '/api/v1.0/test_diagnosis/';
         var type = 'POST';
-        for (var i = 0; i < fields.length; i++) {
-            var key = fields[i];
-            data[key] = this.state.data[key];
-
-        }
-
-        if (Object.keys(data).length) {
-            data.test_result_id = this.state.data['id'];
-            data.test_type_id = this.state.data['test_type_id'];
-            $.ajax({
-                url: url,
-                type: type,
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                beforeSend: function () {
-                },
-                success: function () {
-                },
-                error: function (xhr, status, response) {
-                    NotificationManager.error(response.error);
-                }.bind(this)
-            });
-        }
+        data.diagnosis_id = this.state.data['diagnosis_id'];
+        data.test_result_id = this.state.data['id'];
+        data.test_type_id = this.state.data['test_type_id'];
+        $.ajax({
+            url: url,
+            type: type,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () {
+            },
+            success: function () {
+                NotificationManager.success('Test diagnosis has been saved successfully');
+            },
+            error: function (xhr, status, response) {
+                NotificationManager.error(response.error);
+            }.bind(this)
+        });
     },
 
     _onSubmit: function (e) {

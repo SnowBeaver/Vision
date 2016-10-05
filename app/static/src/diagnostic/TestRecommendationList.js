@@ -185,7 +185,7 @@ var TestRecommendationList = React.createClass({
                                                             testTypeId={i}
                                                             data={recommendationGroups[i]}
                                                             reloadList={this.props.reloadList}
-                                                            header={recommendationGroups[i][0].test_type.name}/>)
+                                                           /** header={recommendationGroups[i][0].test_type.name}*//>)
         }
 
         return (
