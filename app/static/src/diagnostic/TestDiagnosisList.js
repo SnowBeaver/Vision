@@ -13,8 +13,7 @@ var TestDiagnosis = React.createClass({
             isVisible: true
         };
     },
-
-
+    
     render: function () {
         var diagnosis = this.props.data;
         return (
@@ -47,7 +46,15 @@ var TestDiagnosis = React.createClass({
 });
 
 
-var TestDiagnosisList = React.createClass({
+var GroupedDiagnosisList = React.createClass({
+
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: true,
+            accordionOpen: false
+        };
+    },
 
     handleChange: function (event, index, value) {
         this.setState({
@@ -55,16 +62,71 @@ var TestDiagnosisList = React.createClass({
         })
     },
 
+    edit: function () {
+        this.props.editTestForm(this.props.data.id);
+    },
+
+    _changeAccordionState: function (state) {
+        this.setState({accordionOpen: state});
+    },
+
+    render: function () {
+        var diagnosis = [];
+        var testTypeId = this.props.testTypeId;
+        var panelClass = "pull-right glyphicon glyphicon-chevron-" + (this.state.accordionOpen ? "up" : "down");
+
+        for (var i = 0; i < this.props.data.length; i++) {
+            var item = this.props.data[i];
+            diagnosis.push(<TestDiagnosis key={item.id}
+                                          data={item}
+                                          reloadList={this.props.reloadList}/>)
+        }
+
+        return (
+            <Accordion>
+                <Panel header={<h3>{this.props.header}<span className={panelClass}></span></h3>}
+                       key={"diagnosis" + testTypeId}
+                       eventKey={"diagnosis" + testTypeId}
+                       onEnter={() => this._changeAccordionState(true)}
+                       onExit={() => this._changeAccordionState(false)}>
+                    <Table responsive hover id="testDiagnosis">
+                        <thead>
+                        <tr>
+                            <th className="col-md-5">Notes</th>
+                            <th className="col-md-3">Date Created</th>
+                            <th className="col-md-3">Date Updated</th>
+                            <th className="col-md-1">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {diagnosis}
+                        </tbody>
+                    </Table>
+                </Panel>
+            </Accordion>
+        );
+    }
+});
+
+
+var TestDiagnosisList = React.createClass({
+
     getInitialState: function () {
         return {
             diagnosis: [],
-            isVisible: true
+            isVisible: true,
+            accordionOpen: false
         };
+    },
+
+    handleChange: function (event, index, value) {
+        this.setState({
+            value: event.target.value
+        })
     },
 
     componentWillReceiveProps: function (nextProps) {
         var testResultId = nextProps.testResultId;
-        var testTypeId = nextProps.testTypeId;
         if (testResultId && testResultId != this.props.testResultId) {
             this._updateList(testResultId);
         }
@@ -92,31 +154,43 @@ var TestDiagnosisList = React.createClass({
         this._updateList(testResultId);
     },
 
+    _changeAccordionState: function (state) {
+        this.setState({accordionOpen: state});
+    },
+
     render: function () {
+        var diagnosisGroups = [];
         var diagnosis = [];
+        var panelClass = "pull-right glyphicon glyphicon-chevron-" + (this.state.accordionOpen ? "up" : "down");
+
         for (var i = 0; i < this.state.diagnosis.length; i++) {
             var item = this.state.diagnosis[i];
-            diagnosis.push(<TestDiagnosis key={item.id}
-                                           data={item}/>)
+            if (item.test_type_id) {
+                if (!diagnosisGroups[item.test_type_id]) {
+                    diagnosisGroups[item.test_type_id] = [];
+                }
+                diagnosisGroups[item.test_type_id].push(item);
+            }
         }
+
+        for (var i in diagnosisGroups) {
+            diagnosis.push(<GroupedDiagnosisList key={i}
+                                                 testTypeId={i}
+                                                 data={diagnosisGroups[i]}
+                                                 reloadList={this.props.reloadList}
+                                                 header={diagnosisGroups[i][0].test_type.name}/>)
+        }
+
         return (
                 <div>
                     <div className="row">
                         <Accordion>
-                            <Panel header="Diagnosis" key="diagnosis" eventKey="diagnosis">
-                                <Table responsive hover id="test_prof">
-                                    <thead>
-                                    <tr>
-                                        <th className="col-md-5">Notes</th>
-                                        <th className="col-md-3">Date Created</th>
-                                        <th className="col-md-3">Date Updated</th>
-                                        <th className="col-md-1">Actions</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {diagnosis}
-                                    </tbody>
-                                </Table>
+                            <Panel header={<h3>Diagnosis<span className={panelClass}></span></h3>}
+                                   key="diagnosisBlock"
+                                   eventKey="diagnosisBlock"
+                                   onEnter={() => this._changeAccordionState(true)}
+                                   onExit={() => this._changeAccordionState(false)}>
+                                {diagnosis}
                             </Panel>
                         </Accordion>
                     </div>
