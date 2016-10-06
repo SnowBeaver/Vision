@@ -7,55 +7,8 @@ import Tooltip from 'react-bootstrap/lib/Tooltip';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
+import TestTypeSelectField from './NewTestForm_modules/TestTypeSelectField';
 
-var SelectField = React.createClass({
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false,
-        };
-    },
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-    componentDidMount: function () {
-        var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
-            this.setState({items: (result['result'])});
-        }.bind(this), 'json');
-    },
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-    render: function () {
-        var label = (this.props.label != null) ? this.props.label : "";
-        var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-        return (
-            <FormGroup>
-                <FormControl componentClass="select"
-                             onChange={this.props.onChange}
-                             name={name}
-                             value={value}
-                             disabled={this.props.disabled}
-                             required={this.props.required}
-                >
-                    <option>{label}</option>
-                    {menuItems}
-                    <FormControl.Feedback />
-                </FormControl>
-            </FormGroup>
-        );
-    }
-});
 
 const TextField = React.createClass({
     _onChange: function (e) {
@@ -193,7 +146,6 @@ var NewDiagnosisForm = React.createClass({
     },
 
     _onSuccess: function (data, status, xhr) {
-        console.log("hello i'm a ver successfull function!");
         var diagnosisType = "Test";
         if (this.state.public_diagnosis) {
             diagnosisType = "Predefined";
@@ -312,14 +264,16 @@ var NewDiagnosisForm = React.createClass({
     render: function () {
         return (
             <div className="form-container" onChange={this._onChange}>
-                <div className="tab_row">
-                    <div className="col-md-5 ">
-                        <SelectField source="test_type"
-                                     label="Test type"
-                                     name='test_type_id'
-                                     value={this.state.test_type_id}
-                                     key={this.state.test_type_id}
-                        />
+                <div className="row">
+                    <div className="col-md-5">
+                        <TestTypeSelectField
+									selectedSubtests={this.props.selectedSubtests}
+									testType={this.props.testType}
+									value={this.state.test_type_id}
+									name="test_type_id"
+									handleChange={this._onChange}
+									errors={this.state.errors}
+									required/>
                     </div>
                     <div className="col-md-1">
                         <Checkbox checked={this.state.public_diagnosis}
@@ -347,7 +301,7 @@ var NewDiagnosisForm = React.createClass({
                         : null
                     }
                 </div>
-                <div className="tab_row">
+                <div className="row">
                     <div className="col-md-12">
                         <TextArea label={this.state.public_diagnosis ? "Description": "Diagnosis Notes"}
                                   name={this.state.public_diagnosis ? "description": "diagnosis_notes"}
