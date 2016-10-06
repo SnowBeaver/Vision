@@ -620,8 +620,9 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                         </div>
                         {parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
                             <div className="col-md-12 nopadding">
-                                <NewDiagnosisForm testResultId={this.props.data.id}
-                                                  diagnosisId={this.state.diagnosis_id}
+                                <NewDiagnosisForm diagnosisId={this.state.diagnosis_id}
+                                                  selectedSubtests={this.props.data.selected_subtests}
+                                                  testType={this.props.data.test_type}
                                                   handleClose={this._closeNewDiagnosisForm}
                                                   onSuccess={this.updatePredefinedDiagnosis}
                                 />
