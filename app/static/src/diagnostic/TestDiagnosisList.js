@@ -15,20 +15,28 @@ var TestDiagnosis = React.createClass({
     },
 
     render: function () {
-        var diagnosis = this.props.data;
+        var item = this.props.data;
+        var diagnosis = item.diagnosis;
         return (
             <tr>
-                <td>{diagnosis ? diagnosis.diagnosis_notes : ""}</td>
+                <td>{item.date_created}</td>
+                <td>{diagnosis ? diagnosis.code : ""}</td>
                 <td>
-                    <span title={diagnosis ? diagnosis.date_created : ""}>
-                        {diagnosis && diagnosis.date_created ? diagnosis.date_created.substring(0, 100) : ""}
+                    <span title={diagnosis ? diagnosis.name : ""}>
+                        {diagnosis && diagnosis.name ? diagnosis.name.substring(0, 100) : ""}
                     </span>
                 </td>
                 <td>
-                    <span title={diagnosis ? diagnosis.date_updated : ""}>
-                        {diagnosis && diagnosis.date_updated ? diagnosis.date_updated.substring(0, 100) : ""}
+                    <span title={diagnosis ? diagnosis.description : ""}>
+                        {diagnosis && diagnosis.description ? diagnosis.description.substring(0, 100) : ""}
                     </span>
                 </td>
+                <td>
+                    <span title={item.diagnosis_notes}>
+                        {item.diagnosis_notes ? item.diagnosis_notes.substring(0, 100) : ""}
+                    </span>
+                </td>
+                <td>{item.user ? item.user.name: ""}</td>
                 <td>
                     <a href="javascript:void(0)"
                        className="btn btn-primary btn-xs">
@@ -92,9 +100,12 @@ var GroupedDiagnosisList = React.createClass({
                     <Table responsive hover id="testDiagnosis">
                         <thead>
                         <tr>
-                            <th className="col-md-5">Notes</th>
-                            <th className="col-md-3">Date Created</th>
-                            <th className="col-md-3">Date Updated</th>
+                            <th className="col-md-2">Created on</th>
+                            <th className="col-md-1">Code</th>
+                            <th className="col-md-2">Name</th>
+                            <th className="col-md-2">Diagnosis Description</th>
+                            <th className="col-md-2">Test Diagnosis Description</th>
+                            <th className="col-md-2">Created by</th>
                             <th className="col-md-1">Actions</th>
                         </tr>
                         </thead>
