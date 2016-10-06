@@ -42,7 +42,8 @@ import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
 import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
 import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import EqConnectionsManager from './EqConnectionsManager';
-import NewTaskForm from './NewTaskForm'
+import NewTaskForm from './NewTaskForm';
+import TaskList from './TaskList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
@@ -106,6 +107,7 @@ const App = React.createClass({
 					<ul className="pull-left">
 						<li><Link to='/up_down_streams'>Stream manager</Link></li>
 						<li><Link to='/schedule_task'>Schedule a task</Link></li>
+						<li><Link to='/tasks'>Tasks</Link></li>
 					</ul>
 				</div>
 				<div className='app-container'>
@@ -160,6 +162,7 @@ render((
 			<Route path="schedule_task" component={NewTaskForm}/>
 			{/*This route should be the last, otherwise it will match all subsequent routes*/}
 			<Route path=":equipmentId" component={Home}/>
+			<Route path="tasks" component={TaskList}/>
         </Route>
     </Router>
 ), document.getElementById('app'));
