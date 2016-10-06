@@ -595,6 +595,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
     },
 
     render: function () {
+        var OTHER_DIAGNOSIS_ID = 3;
 
         return (
             <div method="post" action="#" onChange={this._onChange}>
@@ -614,7 +615,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                                          onChange={this._onChange}
                             />
                         </div>
-                        { parseInt(this.state.diagnosis_id) === 3 ?
+                        { parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
                             <NewDiagnosisForm testResultId={this.props.data.id}
                                               diagnosisId={this.state.diagnosis_id}
                                               handleClose={this._closeNewDiagnosisForm}
