@@ -605,6 +605,7 @@ def handler_tests(path):
 @api_blueprint.route('/test_result/<int:test_result_id>/duplicate', methods=['POST'])
 @login_required
 def duplicate_test_result_handler(test_result_id):
+    abort_if_wrong_id(test_result_id)
     return return_json('result', duplicate_test_result(test_result_id))
 
 

@@ -62,14 +62,6 @@ var TestItem = React.createClass({
     onDuplicate: function () {
         var data = this.props.data;
         var testResultId = data.id;
-        // Remove extra fields which has not be sent by POST request
-        [
-            'id', 'analysis_number', 'equipment', 'lab', 'lab_contract',
-            'material', 'performed_by', 'test_reason', 'test_recommendations',
-            'test_sampling_cards', 'test_status', 'test_type', 'tests', 'fluid_type',
-            'campaign', 'sampling_point', 'fluid_profile', 'electrical_profile'
-        ].forEach(e => delete data[e]);
-
         var url = '/api/v1.0/test_result/' + testResultId + '/duplicate';
         var that = this;
         $.ajax({
@@ -77,12 +69,15 @@ var TestItem = React.createClass({
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify(data),
             beforeSend: function () {
             },
-            success: function () {
+            success: function (data) {
                 that.props.reloadList();
-                NotificationManager.success('Test has been duplicated successfully');
+                if (data.result === null) {
+                    NotificationManager.info('This test cannot be copied as it is private and doesn\'t belong to you');
+                } else {
+                    NotificationManager.success('Test has been duplicated successfully');
+                }
             },
             error: function () {
                 NotificationManager.error('Sorry an error occurred');
