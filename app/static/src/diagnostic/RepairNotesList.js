@@ -75,16 +75,14 @@ var GroupedRepairNotesList = React.createClass({
     render: function () {
         var recommendations = [];
         var testTypeId = this.props.testTypeId;
+        var panelClass = "pull-right glyphicon glyphicon-chevron-" + (this.state.accordionOpen ? "up" : "down");
         for (var i = 0; i < this.props.data.length; i++) {
             var item = this.props.data[i];
             recommendations.push(<TestRepairNote key={item.id}
                                                      data={item}
                                                      reloadList={this.props.reloadList}/>)
         }
-        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
-        if (this.state.accordionOpen) {
-            panelClass = "pull-right glyphicon glyphicon-chevron-up";
-        }
+
         return (
             <Accordion>
                 <Panel header={<h3>{this.props.header}<span className={panelClass}></span></h3>}
@@ -154,6 +152,7 @@ var RepairNotesList = React.createClass({
     render: function () {
         var repairNotes = [];
         var repairNotesGroups = [];
+        var panelClass = "pull-right glyphicon glyphicon-chevron-" + (this.state.accordionOpen ? "up" : "down");
 
         for (var i = 0; i < this.state.repair_notes.length; i++) {
             var item = this.state.repair_notes[i];
@@ -171,10 +170,6 @@ var RepairNotesList = React.createClass({
                                                      data={repairNotesGroups[i]}
                                                      reloadList={this.props.reloadList}
                                                      header={repairNotesGroups[i][0].test_type.name}/>)
-        }
-        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
-        if (this.state.accordionOpen) {
-            panelClass = "pull-right glyphicon glyphicon-chevron-up";
         }
 
         return (

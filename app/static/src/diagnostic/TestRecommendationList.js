@@ -95,16 +95,14 @@ var GroupedRecommendationsList = React.createClass({
     render: function () {
         var recommendations = [];
         var testTypeId = this.props.testTypeId;
+        var panelClass = "pull-right glyphicon glyphicon-chevron-" + (this.state.accordionOpen ? "up" : "down");
         for (var i = 0; i < this.props.data.length; i++) {
             var item = this.props.data[i];
             recommendations.push(<TestRecommendation key={item.id}
                                                      data={item}
                                                      reloadList={this.props.reloadList}/>)
         }
-        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
-        if (this.state.accordionOpen) {
-            panelClass = "pull-right glyphicon glyphicon-chevron-up";
-        }
+
         return (
             <Accordion>
                 <Panel header={<h3>{this.props.header}<span className={panelClass}></span></h3>}
@@ -187,6 +185,7 @@ var TestRecommendationList = React.createClass({
     render: function () {
         var recommendations = [];
         var recommendationGroups = {};
+        var panelClass = "pull-right glyphicon glyphicon-chevron-" + (this.state.accordionOpen ? "up" : "down");
 
         for (var i = 0; i < this.state.recommendations.length; i++) {
             var item = this.state.recommendations[i];
@@ -206,11 +205,6 @@ var TestRecommendationList = React.createClass({
                                                              header={recommendationGroups[i][0].test_type.name}/>)
         }
 
-
-        var panelClass = "pull-right glyphicon glyphicon-chevron-down";
-        if (this.state.accordionOpen) {
-            panelClass = "pull-right glyphicon glyphicon-chevron-up";
-        }
         return (
                 <div>
                     <div className="row">

@@ -13,7 +13,7 @@ var TestDiagnosis = React.createClass({
             isVisible: true
         };
     },
-    
+
     render: function () {
         var diagnosis = this.props.data;
         return (
