@@ -573,32 +573,56 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         }.bind(this), 'json');
     },
 
+    _closeNewDiagnosisForm: function () {
+        this.setState({
+            diagnosis_id: null
+        })
+    },
+
+    updatePredefinedDiagnosis: function (id, diagnosisType) {
+        this.props.onChange({target: {type: "select", name: "recommendation_id", value: id}});
+        if (diagnosisType == "test") {
+            this.refs.diagnosisList.reloadList(this.props.data.id, this.props.data.test_type_id);
+        }
+        var state = {};
+            state.diagnosis_id = id;
+            this.setState(state);
+    },
+
     _onChange: function (e) {
         this.setState({diagnosis_id: e.target.value});
         this.props.onChange(e);
     },
 
     render: function () {
+
         return (
-            <form className="" method="post" action="#">
+            <div method="post" action="#" onChange={this._onChange}>
                 <div className="tab_row">
                     <div className="col-md-12 ">
                         <TestDiagnosisForm testResultId={this.props.data.id}
-                                           testTypeId={this.props.data.test_type_id}/>
+                                           testTypeId={this.props.data.test_type_id}
+                                           ref="diagnosisList"/>
 
                         <div className="col-md-12 nopadding padding-right-xs">
                             <SelectField source="diagnosis"
                                          label="Predefined diagnosis"
                                          name='diagnosis_id'
-                                         onChange={this._onChange}
+                                         ref="diagnosis"
                                          value={this.state.diagnosis_id}
                                          key={this.state.diagnosis_id}
+                                         onChange={this._onChange}
                             />
                         </div>
-                        { parseInt(this.props.data.diagnosis_id) === 3 ? <NewDiagnosisForm/> : null }
+                        { parseInt(this.state.diagnosis_id) === 3 ?
+                            <NewDiagnosisForm testResultId={this.props.data.id}
+                                              diagnosisId={this.state.diagnosis_id}
+                                              handleClose={this._closeNewDiagnosisForm}
+                                              onSuccess={this.updatePredefinedDiagnosis}
+                            /> : null }
                     </div>
                 </div>
-            </form>
+            </div>
         );
     }
 });

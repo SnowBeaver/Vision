@@ -65,10 +65,13 @@ var TestDiagnosisForm = React.createClass({
     componentWillReceiveProps: function (nextProps) {
         var testResultId = nextProps.testResultId;
         var testTypeId = nextProps.testTypeId;
-        if (testResultId && testTypeId &&
-            testResultId != this.props.testResultId && testTypeId != this.props.testTypeId
-        ) {
-            var urlParams = 'test_type_id=' + testTypeId + '&test_result_id=' + testResultId;
+        if (testResultId && testResultId != this.props.testResultId) {
+            this._updateList(testResultId);
+        }
+    },
+
+    _updateList: function (testResultId) {
+        var urlParams = 'test_result_id=' + testResultId;
         var url = '/api/v1.0/test_diagnosis/?' + urlParams;
         this.serverRequest = $.get(url,
             function (result) {
@@ -77,13 +80,16 @@ var TestDiagnosisForm = React.createClass({
                 });
 
             }.bind(this), 'json');
-        }
     },
 
     componentWillUnmount: function () {
-        if (this.serveRequest) {
+        if (this.serverRequest) {
             this.serverRequest.abort();
         }
+    },
+
+    reloadList: function (testResultId) {
+        this._updateList(testResultId);
     },
 
     render: function () {
