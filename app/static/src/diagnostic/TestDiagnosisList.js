@@ -47,7 +47,7 @@ var TestDiagnosis = React.createClass({
 });
 
 
-var TestDiagnosisForm = React.createClass({
+var TestDiagnosisList = React.createClass({
 
     handleChange: function (event, index, value) {
         this.setState({
@@ -125,4 +125,4 @@ var TestDiagnosisForm = React.createClass({
     }
 });
 
-export default TestDiagnosisForm;
+export default TestDiagnosisList;
