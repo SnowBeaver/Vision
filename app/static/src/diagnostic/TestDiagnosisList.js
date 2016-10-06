@@ -84,7 +84,7 @@ var GroupedDiagnosisList = React.createClass({
 
         return (
             <Accordion>
-                <Panel header={<h3>{this.props.header}<span className={panelClass}></span></h3>}
+                <Panel header={<h3>{this.props.header}<span className={panelClass}> </span></h3>}
                        key={"diagnosis" + testTypeId}
                        eventKey={"diagnosis" + testTypeId}
                        onEnter={() => this._changeAccordionState(true)}
@@ -180,21 +180,20 @@ var TestDiagnosisList = React.createClass({
                                                  reloadList={this.props.reloadList}
                                                  header={diagnosisGroups[i][0].test_type.name}/>)
         }
-
         return (
-                <div>
-                    <div className="row">
-                        <Accordion>
-                            <Panel header={<h3>Diagnosis<span className={panelClass}></span></h3>}
-                                   key="diagnosisBlock"
-                                   eventKey="diagnosisBlock"
-                                   onEnter={() => this._changeAccordionState(true)}
-                                   onExit={() => this._changeAccordionState(false)}>
-                                {diagnosis}
-                            </Panel>
-                        </Accordion>
-                    </div>
+            <div>
+                <div className="row">
+                    <Accordion >
+                        <Panel header={<h3>Diagnosis<span className={panelClass}> </span></h3>}
+                               key="diagnosisBlock"
+                               eventKey="diagnosisBlock"
+                               onEnter={() => this._changeAccordionState(true)}
+                               onExit={() => this._changeAccordionState(false)}>
+                            {diagnosis}
+                        </Panel>
+                    </Accordion>
                 </div>
+            </div>
         );
     }
 });
