@@ -15,21 +15,26 @@ var SelectField = React.createClass({
             isVisible: false,
         };
     },
+
     isVisible: function () {
         return this.state.isVisible;
     },
+
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
         this.serverRequest = $.get(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
+
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
+
     setVisible: function () {
         this.state.isVisible = true;
     },
+
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
@@ -312,7 +317,7 @@ var NewDiagnosisForm = React.createClass({
     render: function () {
         return (
             <div className="form-container" onChange={this._onChange}>
-                <div className="tab_row">
+                <div className="row">
                     <div className="col-md-5 ">
                         <SelectField source="test_type"
                                      label="Test type"
@@ -347,7 +352,7 @@ var NewDiagnosisForm = React.createClass({
                         : null
                     }
                 </div>
-                <div className="tab_row">
+                <div className="row">
                     <div className="col-md-12">
                         <TextArea label={this.state.public_diagnosis ? "Description": "Diagnosis Notes"}
                                   name={this.state.public_diagnosis ? "description": "diagnosis_notes"}

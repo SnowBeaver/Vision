@@ -560,7 +560,9 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
-            diagnosis_id: null
+            diagnosis_id: null,
+            diagnosisPreselected: false,
+            errors: {}
         }
     },
 
@@ -604,8 +606,9 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                         <TestDiagnosisList testResultId={this.props.data.id}
                                            testTypeId={this.props.data.test_type_id}
                                            ref="diagnosisList"/>
+                    </div>
 
-                        <div className="col-md-12 nopadding padding-right-xs">
+                        <div className="col-md-8 nopadding padding-right-xs">
                             <SelectField source="diagnosis"
                                          label="Predefined diagnosis"
                                          name='diagnosis_id'
@@ -615,13 +618,28 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                                          onChange={this._onChange}
                             />
                         </div>
-                        { parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
-                            <NewDiagnosisForm testResultId={this.props.data.id}
-                                              diagnosisId={this.state.diagnosis_id}
-                                              handleClose={this._closeNewDiagnosisForm}
-                                              onSuccess={this.updatePredefinedDiagnosis}
-                            /> : null }
-                    </div>
+                        {parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
+                            <div className="col-md-12 nopadding">
+                                <NewDiagnosisForm testResultId={this.props.data.id}
+                                                  diagnosisId={this.state.diagnosis_id}
+                                                  handleClose={this._closeNewDiagnosisForm}
+                                                  onSuccess={this.updatePredefinedDiagnosis}
+                                />
+                            </div>
+                            : null
+                        }
+                        {parseInt(this.state.diagnosis_id) !== OTHER_DIAGNOSIS_ID && !this.state.diagnosisPreselected ?
+                            <div className="col-md-4">
+                                    <TestTypeSelectField key={this.props.data.selected_subtests}
+                                                         selectedSubtests={this.props.data.selected_subtests}
+                                                         testType={this.props.data.test_type}
+                                                         handleChange={this.props.onChange}
+                                                         name="diagnosis_test_type_id"
+                                                         errors={this.state.errors}
+                                                         required={this.state.formEdited}/>
+                            </div>
+                            : null
+                        }
                 </div>
             </div>
         );
