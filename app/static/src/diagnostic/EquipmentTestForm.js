@@ -611,6 +611,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                     <div className="col-md-12 ">
                         <TestDiagnosisList testResultId={this.props.data.id}
                                            testTypeId={this.props.data.test_type_id}
+                                           diagnosisId={this.state.diagnosis_id}
                                            ref="diagnosisList"/>
                     </div>
 
