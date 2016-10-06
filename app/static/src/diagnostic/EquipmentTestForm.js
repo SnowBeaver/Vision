@@ -24,7 +24,7 @@ import NewRecommendationForm from './NewTestForm_modules/NewRecommendationForm';
 import TestTypeSelectField from './NewTestForm_modules/TestTypeSelectField';
 import TestRecommendationList from './TestRecommendationList';
 import RepairNotesList from './RepairNotesList';
-import TestDiagnosisForm from './TestDiagnosisForm';
+import TestDiagnosisList from './TestDiagnosisList';
 import NewDiagnosisForm from './NewDiagnosisForm';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
@@ -606,7 +606,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
             <div method="post" action="#" onChange={this._onChange}>
                 <div className="tab_row">
                     <div className="col-md-12 ">
-                        <TestDiagnosisForm testResultId={this.props.data.id}
+                        <TestDiagnosisList testResultId={this.props.data.id}
                                            testTypeId={this.props.data.test_type_id}
                                            ref="diagnosisList"/>
 
