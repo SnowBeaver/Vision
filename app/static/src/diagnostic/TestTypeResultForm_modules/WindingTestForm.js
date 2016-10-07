@@ -1,11 +1,8 @@
 import React from 'react';
-import PanelGroup from 'react-bootstrap/lib/PanelGroup';
-import Panel from 'react-bootstrap/lib/Panel';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
@@ -148,46 +145,51 @@ var WindingTestForm = React.createClass({
     getInitialState: function () {
         return {
             loading: false,
-            numberOfTaps: 1,
             errors: {},
-            tests: {'1': {}},
+            tests: [],
+            maxRowId: 0,
+            deleteOnSubmit: [],
             keys: 1,
             testData: {'test_result_id': 1, 'taps': []},
             fields: [
-                'type_doble', 'humidity', 'test_kv1',
+                'id', 'type_doble', 'humidity', 'test_kv1',
                 'w_multiplier1', 'w_meter1', 'm_multiplier1', 'm_meter1'
             ]
         }
     },
+    getUniqueKey: function() {
+        var maxRowId = this.state.maxRowId + 1;
+        this.state.maxRowId += 1;
+        return "key-" + maxRowId;
+    },
+    addResultToState: function (result) {
+        var res = (result['result']);
+        var fields = this.state.fields;
+        var tests = [];
+        for ( var i = 0; i < res.length; i++ ) {
+            var test = { uniqueKey: this.getUniqueKey() };
+            var data = res[i];
+            for (var j = 0; j < fields.length; j++) {
+                var key = fields[j];
+                if (data.hasOwnProperty(key)) {
+                    test[key] = data[key];
+                }
+            }
+            tests[i] = test;
+        }
+        this.setState({tests: tests});
+    },
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
-            var res = (result['result']);
-            var fields = this.state.fields;
-            fields.push('id');
-            var tests = {};
-            for (var i = 1; i <= res.length; i++) {
-                var test = {};
-                var data = res[i-1];
-                for (var j = 0; j < fields.length; j++) {
-                    var key = fields[j];
-                    if (data.hasOwnProperty(key)) {
-                        test[key] = data[key];
-                    }
-                }
-                tests[i.toString()] = test;
-            }
-            this.setState({numberOfTaps: res.length, tests: tests});
-        }.bind(this), 'json');
+        this.serverRequest = $.get(source, this.addResultToState, 'json');
     },
 
     _create: function () {
         var fields = this.state.fields;
-        var numberOfTaps = this.state.numberOfTaps;
         var tests = this.state.tests;
         var data = [];
-        for (var i = 1; i <= numberOfTaps; i++) {
+        for (var i = 0; i < tests.length; i++) {
             var test = {test_result_id: this.props.testResultId};
             var tap = tests[i.toString()];
             for (var j = 0; j < fields.length; j++) {
@@ -207,7 +209,12 @@ var WindingTestForm = React.createClass({
             }.bind(this)
         })
     },
-
+    _delete: function (id) {
+        return $.ajax({
+            url: '/api/v1.0/' + this.props.tableName + '/' + id,
+            type: 'DELETE',
+        })
+    },
     _onSubmit: function (e) {
         e.preventDefault();
         // Do not propagate the submit event of the main form
@@ -217,10 +224,18 @@ var WindingTestForm = React.createClass({
             e.stopPropagation();
 			return false;
 		}
+        this.state.tests = this.refs.table.state.data;
         var xhr = this._create();
         xhr.done(this._onSuccess)
             .fail(this._onError)
-            .always(this.hideLoading)
+            .always(this.hideLoading);
+
+        for (var i = 0; i < this.state.deleteOnSubmit.length; i++) {
+            var xhr_del = this._delete(this.state.deleteOnSubmit[i]);
+            xhr_del.done(this._onDeleteSuccess)
+                   .fail(this._onError)
+        }
+        this.state.deleteOnSubmit = [];
     },
 
     hideLoading: function () {
@@ -229,9 +244,12 @@ var WindingTestForm = React.createClass({
 
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
+        this.addResultToState(data);
         NotificationManager.success('Test values have been saved successfully.');
     },
-
+    _onDeleteSuccess: function (data) {
+        NotificationManager.success('Test values have been deleted successfully.');
+    },
     _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
@@ -260,22 +278,6 @@ var WindingTestForm = React.createClass({
 		}
 		NotificationManager.error(message);
     },
-
-    _onChange: function (e) {
-        var state = {};
-        if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
-        } else if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
-        } else {
-            state[e.target.name] = e.target.value;
-        }
-
-        var errors = this._validate(e);
-        state = this._updateFieldErrors(e.target.name, state, errors);
-        this.setState(state);
-    },
-
     _validate: function (e) {
         var errors = [];
         var error;
@@ -285,21 +287,6 @@ var WindingTestForm = React.createClass({
         }
         return errors;
     },
-
-    _validateFieldType: function (value, type){
-        var error = "";
-        if (type != undefined && value){
-            var typePatterns = {
-                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
-                "int": /^(-|\+)?(0|[1-9]\d*)$/
-            };
-            if (!typePatterns[type].test(value)){
-                error = "Invalid " + type + " value";
-            }
-        }
-        return error;
-    },
-
     _updateFieldErrors: function (fieldName, state, errors){
         // Clear existing errors related to the current field as it has been edited
         state.errors = this.state.errors;
@@ -312,10 +299,6 @@ var WindingTestForm = React.createClass({
         return state;
     },
 
-    is_valid: function () {
-        return (Object.keys(this.state.errors).length <= 0);
-    },
-
     _formGroupClass: function (field) {
         var className = "form-group ";
         if (field) {
@@ -323,64 +306,138 @@ var WindingTestForm = React.createClass({
         }
         return className;
     },
-
-    handleFieldChange: function(testId, name, value, type) {
+    addToDeleteOnSubmit: function(el) {
+        if (el.hasOwnProperty('id')) {
+            this.state.deleteOnSubmit.push(el.id);
+        }
+    },
+    addNewStringToTable: function() {
+        var newRow = { uniqueKey: this.getUniqueKey() };
+        this.refs.table.handleAddRow(newRow);
+    },
+    deleteStringsFromTable: function() {
+        var selectedRowKeys = this.refs.table.state.selectedRowKeys;
+        var table = this.refs.table.state.data;
+        var selectedRows = table.filter(function(el){
+            return selectedRowKeys.indexOf(el.uniqueKey) !== -1;
+        });
+        selectedRows.map(this.addToDeleteOnSubmit);
+        var result = this.refs.table.handleDropRow(selectedRowKeys);
+        if( result ) {
+            console.log(result); // error logging
+        }
+    },
+    dataFormatPosition: function(cell, row, formatExtraData, rowIdx){
+        return rowIdx + 1;
+    },
+    _validateDict: {
+        test_kv1: {data_type: "float", label: "Test KV"},
+        m_meter1: {data_type: "float", label: "Reading (3d column)"},
+        m_multiplier1: {data_type: "float", label: "Mult.(4th column)"},
+        w_meter1: {data_type: "float", label: "Reading(6th column)"},
+        w_multiplier1: {data_type: "float", label: "Mult.(7th column)"},
+    },
+    _validateFieldType: function (value, type){
+        var error = "";
+        if (type != undefined && value){
+            var typePatterns = {
+                "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
+                "int": /^(-|\+)?(0|[1-9]\d*)$/,
+            };
+            if (!typePatterns[type].test(value)){
+                error = "Invalid " + type + " value";
+            }
+        }
+        return error;
+    },
+    is_valid: function () {
+        if (Object.keys(this.state.errors).length > 0) {
+            return false;
+        }
+        var fields = this.state.fields.slice();
+        var index = fields.indexOf("id");
+        if (index >= 0) {
+            fields.splice( index, 1 );
+        }
         var tests = this.state.tests;
-        var fieldNameValue = this.state.tests[testId] || {};
-        fieldNameValue[name] = value;
-        tests[testId] = fieldNameValue;
-        this.setState({tests: tests});
+        var is_valid = true;
+        var msg = '';
+        console.log(tests);
+        for (var i = 0; i < tests.length; i++) {
+            var tap = tests[i];
+            for (var j = 0; j < fields.length; j++) {
+                var field_name = fields[j];
+                if (tap.hasOwnProperty(field_name)) {
+                    var value = tap[field_name];
+                    if (value) {
+                        var data_type = this._validateDict[field_name]['data_type'];
+                        var label = this._validateDict[field_name]['label'];
+                        var error = this._validateFieldType(value, data_type);
+                        msg = 'Value of (' + label + ') in row N' + ( i + 1 )
+                             + ' must be of type ' + data_type + '      \n\n';
+                        if (error) {
+                            is_valid = false;
+                            NotificationManager.error(msg, 'Validation error', 20000);
+                        }
+                    }
+                }
+            }
+        }
+        return is_valid;
     },
-
-    onClickTapAdd: function () {
-        this.setState({
-            numberOfTaps: this.state.numberOfTaps + 1
-        });
-    },
-
-    onClickTapRemove: function () {
-        this.setState({
-            numberOfTaps: this.state.numberOfTaps - 1
-        });
+    beforeSaveCell: function(row, name, value) {
+        var data_type = this._validateDict[name]['data_type'];
+        var label = this._validateDict[name]['label'];
+        var error = this._validateFieldType(value, data_type);
+        if (error) {
+            NotificationManager.error('Value of (' + label + ') must by of type ' + data_type);
+        }
+        return true;
     },
     render: function () {
-        var taps = [];
-        var numberOfTaps = this.state.numberOfTaps;
-        for (var i = 1; i <= numberOfTaps; i++) {
-            var headName = "Tap Number " + i;
-            var props = {
-                testId: i.toString(),
-                onChange: this.handleFieldChange,
-                data: this.state.tests[i.toString()],
-                errors: this.state.errors
-            };
-            taps.push(
-                <Panel header={headName} eventKey={i} id={i} key={'tap' + i}>
-                    <TapTestPanel {...props}/>
-                </Panel>
-            );
-        }
         return (
             <div className="form-container">
-                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                <form method="post" action="#" onSubmit={this._onSubmit}>
+                    <BootstrapTable data={this.state.tests}
+                                    striped={true}
+                                    hover={true}
+                                    condensed={true}
+                                    ignoreSinglePage={true}
+                                    selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)",}}
+                                    cellEdit={{mode: "click", blurToSave:true, beforeSaveCell:this.beforeSaveCell}}
+                                    ref="table"
+                    >
+                        <TableHeaderColumn dataField="id" hidden>ID</TableHeaderColumn>
+                        <TableHeaderColumn dataField="uniqueKey" isKey hidden>Key</TableHeaderColumn>
+                        <TableHeaderColumn dataField="position"
+                                           dataFormat={this.dataFormatPosition}
+                        >N</TableHeaderColumn>
+                        <TableHeaderColumn dataField="test_kv1">Test KV</TableHeaderColumn>
+                        <TableHeaderColumn dataField="m_meter1">Reading</TableHeaderColumn>
+                        <TableHeaderColumn dataField="m_multiplier1">Mult.</TableHeaderColumn>
+                        <TableHeaderColumn editable={false}>Milliamperes</TableHeaderColumn>
+                        <TableHeaderColumn dataField="w_meter1">Reading</TableHeaderColumn>
+                        <TableHeaderColumn dataField="w_multiplier1">Mult.</TableHeaderColumn>
+                        <TableHeaderColumn editable={false}>Watts</TableHeaderColumn>
+                        <TableHeaderColumn editable={false}>PF</TableHeaderColumn>
+                        <TableHeaderColumn editable={false}>Corr 20C</TableHeaderColumn>
+
+                    </BootstrapTable>
                     <div className="row">
-                        <PanelGroup defaultActiveKey={this.state.eventKey=1} accordion>
-                            {taps}
-                        </PanelGroup>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-1">
+                        <div className="col-md-2">
                             <a href="javascript:void(0)"
                                className="glyphicon glyphicon-plus"
-                               onClick={this.onClickTapAdd}
-                               aria-hidden="true">&nbsp;</a>
+                               onClick={this.addNewStringToTable}
+                               aria-hidden="true"
+                            >Add new</a>
                         </div>
                         <div className="row">
-                            <div className="col-md-1">
+                            <div className="col-md-2">
                                 <a href="javascript:void(0)"
                                    className="glyphicon glyphicon-minus"
-                                   onClick={this.onClickTapRemove}
-                                   aria-hidden="true">&nbsp;</a>
+                                   onClick={this.deleteStringsFromTable}
+                                   aria-hidden="true"
+                                >Delete selected</a>
                             </div>
                         </div>
                     </div>

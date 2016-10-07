@@ -3,4 +3,4 @@
 
 from app.api import api as app
 
-app.run(host='dev.vision.local', port=8001, debug=True)
+app.run(host='0.0.0.0', port=8001, debug=True)
