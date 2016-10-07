@@ -13,7 +13,6 @@ var TaskList = React.createClass({
         return {
             loading: false,
             maxRowId: 0,
-            deleteOnSubmit: [],
             errors: {},
             tasks: [],
             keys: 1,
@@ -71,12 +70,17 @@ var TaskList = React.createClass({
             var tap = tasks[i.toString()];
             for (var j = 0; j < fields.length; j++) {
                 var key = fields[j];
-                task[key] = tap[key];
+                if (key == "assigned_to") {
+                    task.assigned_to_id = this.state.userIdMapping[tap[key]];
+                    delete task.assigned_to;
+                } else {
+                    task[key] = tap[key];
+                }
             }
             data.push(task)
         }
         return $.ajax({
-            url: '/api/v1.0/test_result/multi/' + this.props.tableName,
+            url: '/api/v1.0/schedule/multi/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -84,13 +88,6 @@ var TaskList = React.createClass({
             beforeSend: function () {
                 this.setState({loading: true});
             }.bind(this)
-        })
-    },
-
-    _delete: function (id) {
-        return $.ajax({
-            url: '/api/v1.0/' + this.props.tableName + '/' + id,
-            type: 'DELETE'
         })
     },
 
@@ -108,13 +105,6 @@ var TaskList = React.createClass({
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading);
-
-        for (var i = 0; i < this.state.deleteOnSubmit.length; i++) {
-            var xhr_del = this._delete(this.state.deleteOnSubmit[i]);
-            xhr_del.done(this._onDeleteSuccess)
-                   .fail(this._onError)
-        }
-        this.state.deleteOnSubmit = [];
     },
 
     hideLoading: function () {
@@ -122,15 +112,11 @@ var TaskList = React.createClass({
     },
 
     _onSuccess: function (data) {
-        // this.setState(this.getInitialState());
         this.addResultToState(data);
-        NotificationManager.success('Task values have been saved successfully.');
+        NotificationManager.success('Tasks have been saved successfully.');
     },
-    _onDeleteSuccess: function (data) {
-        NotificationManager.success('Task values have been deleted successfully.');
-    },
-    _onError: function (data) {
 
+    _onError: function (data) {
         var message = "Failed to create";
         var res = data.responseJSON;
         if (res.message) {
@@ -143,27 +129,9 @@ var TaskList = React.createClass({
         }
     },
 
-    addToDeleteOnSubmit: function(el) {
-        if (el.hasOwnProperty('id')) {
-            this.state.deleteOnSubmit.push(el.id);
-        }
-    },
-
     addNewStringToTable: function() {
         var newRow = { uniqueKey: this.getUniqueKey() };
         this.refs.table.handleAddRow(newRow);
-    },
-
-    deleteStringsFromTable: function() {
-        var selectedRowKeys = this.refs.table.state.selectedRowKeys;
-        var table = this.refs.table.state.data;
-        var selectedRows = table.filter(function(el){
-            return selectedRowKeys.indexOf(el.uniqueKey) !== -1;
-        });
-        selectedRows.map(this.addToDeleteOnSubmit);
-        var result = this.refs.table.handleDropRow(selectedRowKeys);
-        if( result ) {
-        }
     },
 
     dataFormatPosition: function(cell, row, formatExtraData, rowIdx){
@@ -171,7 +139,7 @@ var TaskList = React.createClass({
     },
 
     _validateDict: {
-        assigned_to: {data_type: "int", label: "Assigned To"}
+        assigned_to: {data_type: "chars", label: "Assigned To"}
     },
 
     _validateFieldType: function (value, type){
@@ -179,7 +147,8 @@ var TaskList = React.createClass({
         if (type != undefined && value){
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
-                "int": /^(-|\+)?(0|[1-9]\d*)$/
+                "int": /^(-|\+)?(0|[1-9]\d*)$/,
+                "chars": /^[a-zA-Z\s0-9]*$/
             };
             if (!typePatterns[type].test(value)){
                 error = "Invalid " + type + " value";
@@ -206,7 +175,7 @@ var TaskList = React.createClass({
                 var field_name = fields[j];
                 if (tap.hasOwnProperty(field_name)) {
                     var value = tap[field_name];
-                    if (value) {
+                    if (value && this._validateDict[field_name]) {
                         var data_type = this._validateDict[field_name]['data_type'];
                         var label = this._validateDict[field_name]['label'];
                         var error = this._validateFieldType(value, data_type);
@@ -224,9 +193,6 @@ var TaskList = React.createClass({
     },
 
     beforeSaveCell: function(row, name, value) {
-        if (name == "assigned_to") {
-            this.setState({"assigned_to": this.state.userIdMapping[value]});
-        }
         var data_type = this._validateDict[name]['data_type'];
         var label = this._validateDict[name]['label'];
         var error = this._validateFieldType(value, data_type);
@@ -278,59 +244,70 @@ var TaskList = React.createClass({
                         <TableHeaderColumn dataField="id"
                                            width="70"
                                            dataSort={true}
-                                           editable={false}>ID
+                                           editable={false}
+                                           ref="id">ID
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="test_result_id"
                                            width="80"
                                            dataSort={true}
-                                           editable={false}>Test Result
+                                           editable={false}
+                                           ref="test_result_id">Test Result
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="test_type"
                                            width="150"
                                            dataSort={true}
-                                           editable={false}>Test Type
+                                           editable={false}
+                                           ref="test_type">Test Type
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="date_start"
                                            width="130"
                                            dataFormat={this._formatDateTime}
                                            dataSort={true}
-                                           editable={false}>Start on
+                                           editable={false}
+                                           ref="date_start">Start on
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="date_created"
                                            width="130"
                                            dataFormat={this._formatDateTime}
                                            dataSort={true}
-                                           editable={false}>Created on
+                                           editable={false}
+                                           ref="date_created">Created on
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="date_updated"
                                            width="130"
                                            dataFormat={this._formatDateTime}
                                            dataSort={true}
-                                           editable={false}>Updated on
+                                           editable={false}
+                                           ref="date_updated">Updated on
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="description"
                                            dataSort={true}
-                                           editable={false}>Description
+                                           editable={false}
+                                           ref="description">Description
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="priority"
                                            width="90"
                                            dataSort={true}
-                                           editable={false}>Priority
+                                           editable={false}
+                                           ref="priority">Priority
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="recurring"
                                            width="100"
                                            dataSort={true}
-                                           editable={false}>Recurring
+                                           editable={false}
+                                           ref="recurring">Recurring
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="notify_before_in_days"
                                            width="80"
                                            dataSort={true}
-                                           editable={false}>Notify before (days)
+                                           editable={false}
+                                           ref="notify_before_in_days">Notify before (days)
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="assigned_to"
                                            width="130"
                                            dataSort={true}
-                                           editable={{type: 'select', options: {values: this.state.usersList}}}>Assigned To
+                                           editable={{type: 'select', options: {values: this.state.usersList}}}
+                                           ref="assigned_to">Assigned To
                         </TableHeaderColumn>
                     </BootstrapTable>
                     <div className="row">
