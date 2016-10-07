@@ -492,7 +492,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var OTHER_RECOMENDATION_ID = 80;
+        var OTHER_RECOMENDATION_TEXT = "Other recommendations (specify)";
 
         // Open new recommendation form, if needed
         if (e.target.name == "recommendation_id") {
@@ -502,7 +502,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
             // Change the value in the global state to save it from there
             this.props.onChange(e);
 
-            if (e.target.selectedOptions.length && e.target.value == OTHER_RECOMENDATION_ID){
+            if (e.target.selectedOptions.length && e.target.selectedOptions[0].text == OTHER_RECOMENDATION_TEXT){
                 state.formEdited = false;
                 // No special method for opening NewRecommendationForm in order not to set state twice
                 state.showNewRecommendationForm = true;
@@ -616,7 +616,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                     </div>
 
                         <div className="col-md-8 nopadding padding-right-xs">
-                            <SelectField source="diagnosis"
+                            <SelectField source="diagnosisd"
                                          label="Predefined diagnosis"
                                          name='diagnosis_id'
                                          ref="diagnosis"
