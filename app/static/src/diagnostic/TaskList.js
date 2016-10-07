@@ -18,9 +18,9 @@ var TaskList = React.createClass({
             keys: 1,
             testData: {'test_result_id': 1, 'taps': []},
             fields: [
-                'date_start', 'description', 'priority', 'id', 'date_created',
+                'date_start', 'description', 'priority', 'id', 'date_created', 'date_updated',
                 'description', 'recurring', 'notify_before_in_days', 'test_recommendation',
-                'assigned_to'
+                'assigned_to', 'test_recommendation_id'
             ]
         }
     },
@@ -44,6 +44,8 @@ var TaskList = React.createClass({
                     if (key == 'test_recommendation') {
                         task.test_type = (data[key].test_type ? data[key].test_type.name : "");
                         task.test_result_id = (data[key].test_result_id ? data[key].test_result_id : "");
+                    } else if (key == 'status') {
+                        task.status = (data[key] ? data[key].name : "");
                     } else if (key == 'assigned_to') {
                         task.assigned_to = (data[key] ? data[key].name : "");
                     } else {
@@ -59,6 +61,7 @@ var TaskList = React.createClass({
     componentDidMount: function () {
         this.serverRequest = $.get('/api/v1.0/schedule', this.addResultToState, 'json');
         this._getUsers();
+        this._getTestRecommendations();
     },
 
     _create: function () {
@@ -113,10 +116,11 @@ var TaskList = React.createClass({
 
     _onSuccess: function (data) {
         this.addResultToState(data);
-        NotificationManager.success('Tasks have been saved successfully.');
+        NotificationManager.success('Task have been saved successfully.');
     },
 
     _onError: function (data) {
+
         var message = "Failed to create";
         var res = data.responseJSON;
         if (res.message) {
@@ -129,17 +133,16 @@ var TaskList = React.createClass({
         }
     },
 
-    addNewStringToTable: function() {
-        var newRow = { uniqueKey: this.getUniqueKey() };
-        this.refs.table.handleAddRow(newRow);
-    },
-
     dataFormatPosition: function(cell, row, formatExtraData, rowIdx){
         return rowIdx + 1;
     },
 
     _validateDict: {
-        assigned_to: {data_type: "chars", label: "Assigned To"}
+        assigned_to: {data_type: "chars", label: "Assigned To"},
+        test_recommendation_id: {data_type: "int", label: "Test Recommendation"},
+        date_start: {data_type: "date", label: "Date"},
+        priority: {data_type: "int", label: "Priority"},
+        recurring: {data_type: "bool", label: "Recurring"}
     },
 
     _validateFieldType: function (value, type){
@@ -148,7 +151,9 @@ var TaskList = React.createClass({
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/,
-                "chars": /^[a-zA-Z\s0-9]*$/
+                "chars": /^[a-zA-Z\s0-9]*$/,
+                "date": /^[a-zA-Z\s0-9:\+\-\.]*$/,
+                "bool": /^(true|false)$/
             };
             if (!typePatterns[type].test(value)){
                 error = "Invalid " + type + " value";
@@ -199,6 +204,7 @@ var TaskList = React.createClass({
         if (error) {
             NotificationManager.error('Value of (' + label + ') must by of type ' + data_type);
         }
+        row.date_updated = moment().utc().toISOString();
         return true;
     },
 
@@ -216,47 +222,95 @@ var TaskList = React.createClass({
 
     addUsersToState: function (result) {
         var res = (result['result']);
-        var usersList = [];
+        var userList = [];
         var users = {};
 
         for (var i = 0; i < res.length; i++) {
-            usersList.push(res[i].name);
+            userList.push(res[i].name);
             users[res[i].name] = res[i].id;
         }
-        this.setState({usersList: usersList, userIdMapping: users});
+        this.setState({userList: userList, userIdMapping: users});
+    },
+
+    _getTestRecommendations: function () {
+        $.get('/api/v1.0/test_recommendation', this.addTestRecommendationsToState, 'json');
+    },
+
+    addTestRecommendationsToState: function (result) {
+        var res = (result['result']);
+        var recommendationList = [];
+        var recommendationIdMapping = {};
+
+        for (var i = 0; i < res.length; i++) {
+            recommendationList.push(res[i].id);
+            recommendationIdMapping[res[i].name] = res[i].id;
+        }
+        this.setState({recommendationList: recommendationList, recommendationIdMapping: recommendationIdMapping});
+    },
+
+    cleanSelected: function () {
+        this.refs.table.cleanSelected();
+    },
+
+    onAddRow: function (row) {
+        ["id", "date_created", "date_updated"].forEach(e => delete row[e]);
+        if (row.date_start == "") {
+            delete row.date_start;
+        }
+        row.uniqueKey = this.getUniqueKey();
+        row.notify_before_in_days = parseInt(row.notify_before_in_days);
+        row.priority = parseInt(row.priority);
+        row.test_recommendation_id = parseInt(row.test_recommendation_id);
+        row.recurring = row.recurring === 'true' ? true: false;
     },
 
     render: function () {
         return (
             <div className="form-container">
-                <form method="post" action="#" onSubmit={this._onSubmit} >
                     <BootstrapTable data={this.state.tasks}
                                     striped={true}
                                     hover={true}
                                     condensed={true}
                                     search={true}
                                     ignoreSinglePage={true}
+                                    insertRow={true}
                                     selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)"}}
-                                    cellEdit={{mode: "click", blurToSave:true, beforeSaveCell:this.beforeSaveCell}}
+                                    cellEdit={{mode: "click", blurToSave: true, beforeSaveCell: this.beforeSaveCell}}
+                                    options={{ignoreEditable: true, onAddRow: this.onAddRow}}
                                     ref="table"
                     >
-                        <TableHeaderColumn dataField="uniqueKey" isKey hidden>Key</TableHeaderColumn>
+                        <TableHeaderColumn dataField="uniqueKey" isKey hidden hiddenOnInsert={true}>Key</TableHeaderColumn>
                         <TableHeaderColumn dataField="id"
                                            width="70"
                                            dataSort={true}
                                            editable={false}
+                                           hiddenOnInsert={true}
                                            ref="id">ID
+                        </TableHeaderColumn>
+                        <TableHeaderColumn dataField="assigned_to"
+                                           width="130"
+                                           dataSort={true}
+                                           editable={{type: 'select', options: {values: this.state.userList}}}
+                                           ref="assigned_to">Assigned To
+                        </TableHeaderColumn>
+                        <TableHeaderColumn dataField="test_recommendation_id"
+                                           width="80"
+                                           dataSort={true}
+                                           editable={{type: 'select', options: {values: this.state.recommendationList}}}
+                                           ref="test_recommendation_id">Test Rec
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="test_result_id"
                                            width="80"
                                            dataSort={true}
                                            editable={false}
+                                           hiddenOnInsert={true}
                                            ref="test_result_id">Test Result
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="test_type"
                                            width="150"
                                            dataSort={true}
                                            editable={false}
+                                           hiddenOnInsert={true}
                                            ref="test_type">Test Type
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="date_start"
@@ -271,6 +325,7 @@ var TaskList = React.createClass({
                                            dataFormat={this._formatDateTime}
                                            dataSort={true}
                                            editable={false}
+                                           hiddenOnInsert={true}
                                            ref="date_created">Created on
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="date_updated"
@@ -278,6 +333,7 @@ var TaskList = React.createClass({
                                            dataFormat={this._formatDateTime}
                                            dataSort={true}
                                            editable={false}
+                                           hiddenOnInsert={true}
                                            ref="date_updated">Updated on
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="description"
@@ -294,7 +350,7 @@ var TaskList = React.createClass({
                         <TableHeaderColumn dataField="recurring"
                                            width="100"
                                            dataSort={true}
-                                           editable={false}
+                                           editable={{type: 'checkbox', options: {values: "true:false"}}}
                                            ref="recurring">Recurring
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="notify_before_in_days"
@@ -303,35 +359,20 @@ var TaskList = React.createClass({
                                            editable={false}
                                            ref="notify_before_in_days">Notify before (days)
                         </TableHeaderColumn>
-                        <TableHeaderColumn dataField="assigned_to"
-                                           width="130"
-                                           dataSort={true}
-                                           editable={{type: 'select', options: {values: this.state.usersList}}}
-                                           ref="assigned_to">Assigned To
-                        </TableHeaderColumn>
                     </BootstrapTable>
-                    <div className="row">
-                        <div className="col-md-2">
-                            <a href="javascript:void(0)"
-                               className="glyphicon glyphicon-plus"
-                               onClick={this.addNewStringToTable}
-                               aria-hidden="true"
-                            >Add new</a>
-                        </div>
-                    </div>
                     <div className="row">
                         <div className="col-md-12 ">
                             <Button bsStyle="success"
                                     className="pull-right"
-                                    type="submit">Save</Button>
+                                    onClick={this._onSubmit}
+                            >Save</Button>
                             &nbsp;
                             <Button bsStyle="danger"
                                     className="pull-right margin-right-xs"
-                                    onClick={this.props.handleClose}
+                                    onClick={this.cleanSelected}
                             >Cancel</Button>
                         </div>
                     </div>
-                </form>
             </div>
         );
     }
