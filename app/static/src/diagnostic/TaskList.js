@@ -253,14 +253,27 @@ var TaskList = React.createClass({
     },
 
     onAddRow: function (row) {
+        var error = false;
+        ["assigned_to", "date_start", "test_recommendation_id", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(fld + ' is required.'); error=true;}})
+        if (error) {
+            return;
+        }
+
+        // TODO: optimize
+        for (var fld in row) {
+            if (row[fld] == "") {
+                delete row[fld];
+            }
+        }
+
         ["id", "date_created", "date_updated"].forEach(e => delete row[e]);
         if (row.date_start == "") {
             delete row.date_start;
+        } else {
+            // TODO: fix
+            row.date_start = row.date_start + ":00.000000Z";
         }
         row.uniqueKey = this.getUniqueKey();
-        row.notify_before_in_days = parseInt(row.notify_before_in_days);
-        row.priority = parseInt(row.priority);
-        row.test_recommendation_id = parseInt(row.test_recommendation_id);
         row.recurring = row.recurring === 'true' ? true: false;
     },
 
@@ -318,6 +331,7 @@ var TaskList = React.createClass({
                                            dataFormat={this._formatDateTime}
                                            dataSort={true}
                                            editable={false}
+                                           editable={{type: 'datetime'}}
                                            ref="date_start">Start on
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="date_created"
