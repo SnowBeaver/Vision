@@ -644,9 +644,10 @@ def create_electrical_profile_handler():
 
 # Create test recommendation
 @api_blueprint.route('/test_recommendation/', methods=['POST'])
+@login_required
+@json_required
 def create_test_recommendation_handler():
     path = 'test_recommendation'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_user_id_and_save_item(path, validated_data)
     return return_json('result', new_item.id)
@@ -654,9 +655,10 @@ def create_test_recommendation_handler():
 
 # Create test diagnosis
 @api_blueprint.route('/test_diagnosis/', methods=['POST'])
+@login_required
+@json_required
 def create_test_diagnosis_handler():
     path = 'test_diagnosis'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_user_id_and_save_item(path, validated_data)
     return return_json('result', new_item.id)
@@ -664,9 +666,10 @@ def create_test_diagnosis_handler():
 
 # Create test repair note
 @api_blueprint.route('/test_repair_note/', methods=['POST'])
+@login_required
+@json_required
 def create_test_repair_note_handler():
     path = 'test_repair_note'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_user_id_and_save_item(path, validated_data)
     return return_json('result', new_item.id)
