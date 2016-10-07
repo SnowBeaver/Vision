@@ -9,7 +9,8 @@ import DateTimeField from 'react-bootstrap-datetimepicker/lib/DateTimeField';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
-import { hashHistory } from 'react-router';
+import Radio from 'react-bootstrap/lib/Radio';
+import {hashHistory} from 'react-router';
 import {findDOMNode} from 'react-dom';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
@@ -47,8 +48,8 @@ var TestRecommendationSelectField = React.createClass({
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>
-                            {`${this.state.items[key].recommendation ? this.state.items[key].recommendation.name : this.state.items[key].recommendation_notes}`}
-                            </option>);
+                {`${this.state.items[key].recommendation ? this.state.items[key].recommendation.name : this.state.items[key].recommendation_notes}`}
+            </option>);
         }
         return (
             <FormGroup>
@@ -58,7 +59,7 @@ var TestRecommendationSelectField = React.createClass({
                              value={value}
                              disabled={this.props.disabled}
                 >
-                     <option>{label}</option>
+                    <option>{label}</option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -167,8 +168,8 @@ const TextField = React.createClass({
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
-        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var type = (this.props["data-type"] != null) ? this.props["data-type"] : undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"] : undefined;
         var validationState = (this.props.errors[name]) ? 'error' : null;
         var error = this.props.errors[name];
         return (
@@ -202,7 +203,7 @@ var NewTaskForm = React.createClass({
             showNewLabForm: false,
             fields: [
                 'test_recommendation_id', 'status_id', 'assigned_to_id', 'date_started',
-                'notify_before_in_days', 'description', 'recurring'
+                'notify_before_in_days', 'description', 'recurring', 'period_years', 'period_month', 'period_days'
             ]
         }
     },
@@ -230,11 +231,11 @@ var NewTaskForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this.is_valid()){
-			NotificationManager.error('Please correct the errors');
+        if (!this.is_valid()) {
+            NotificationManager.error('Please correct the errors');
             e.stopPropagation();
-			return false;
-		}
+            return false;
+        }
         this._clearErrors();
         var xhr = this._create();
         xhr.done(this._onSuccess)
@@ -261,26 +262,26 @@ var NewTaskForm = React.createClass({
             message = data.responseJSON.message;
         }
         if (res.error) {
-			// We get list of errors
-			if (data.status >= 500) {
-				message = res.error.join(". ");
-			} else if (res.error instanceof Object){
-				// We get object of errors with field names as key
-				for (var field in res.error) {
-					var errorMessage = res.error[field];
-					if (Array.isArray(errorMessage)) {
-						errorMessage = errorMessage.join(". ");
-					}
-					res.error[field] = errorMessage;
-				}
-				this.setState({
-					errors: res.error
-				});
-			} else {
-				message = res.error;
-			}
-		}
-		NotificationManager.error(message);
+            // We get list of errors
+            if (data.status >= 500) {
+                message = res.error.join(". ");
+            } else if (res.error instanceof Object) {
+                // We get object of errors with field names as key
+                for (var field in res.error) {
+                    var errorMessage = res.error[field];
+                    if (Array.isArray(errorMessage)) {
+                        errorMessage = errorMessage.join(". ");
+                    }
+                    res.error[field] = errorMessage;
+                }
+                this.setState({
+                    errors: res.error
+                });
+            } else {
+                message = res.error;
+            }
+        }
+        NotificationManager.error(message);
     },
 
     _onChange: function (e) {
@@ -302,47 +303,47 @@ var NewTaskForm = React.createClass({
         var errors = [];
         var error;
         error = this._validateFieldType(e.target.value, e.target.getAttribute("data-type"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         error = this._validateFieldLength(e.target.value, e.target.getAttribute("data-len"));
-        if (error){
+        if (error) {
             errors.push(error);
         }
         return errors;
     },
 
-    _validateFieldType: function (value, type){
+    _validateFieldType: function (value, type) {
         var error = "";
-        if (type != undefined && value){
+        if (type != undefined && value) {
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/
             };
-            if (!typePatterns[type].test(value)){
+            if (!typePatterns[type].test(value)) {
                 error = "Invalid " + type + " value";
             }
         }
         return error;
     },
 
-    _validateFieldLength: function (value, length){
+    _validateFieldLength: function (value, length) {
         var error = "";
-        if (value && length){
-            if (value.length > length){
+        if (value && length) {
+            if (value.length > length) {
                 error = "Value should be maximum " + length + " characters long"
             }
         }
         return error;
     },
 
-    _updateFieldErrors: function (fieldName, state, errors){
+    _updateFieldErrors: function (fieldName, state, errors) {
         // Clear existing errors related to the current field as it has been edited
         state.errors = this.state.errors;
         delete state.errors[fieldName];
 
         // Update errors with new ones, if present
-        if (Object.keys(errors).length){
+        if (Object.keys(errors).length) {
             state.errors[fieldName] = errors.join(". ");
         }
         return state;
@@ -356,20 +357,20 @@ var NewTaskForm = React.createClass({
         return (Object.keys(this.state.errors).length <= 0);
     },
 
-    setStartDate: function (timestamp, name){
+    setStartDate: function (timestamp, name) {
         this._setDateTimeFieldDate(timestamp, name);
     },
 
     _setDateTimeFieldDate(timestamp, fieldName){
         var state = {};
         // If date is not valid (for example, date is deleted) string "Invalid date" is received
-        if (timestamp == "Invalid date"){
+        if (timestamp == "Invalid date") {
             timestamp = null;
-        } else if (timestamp){
+        } else if (timestamp) {
             // It is UNIX timestamp in milliseconds if dateTimeField was empty on load
             // Format date here instead of specifying format in DateTimeField,
             // because error is raised when format is specified, but date is null/undefined/empty string.
-            if (/^\d+$/.test(timestamp)){
+            if (/^\d+$/.test(timestamp)) {
                 timestamp = parseInt(timestamp);
                 timestamp = moment(timestamp).toISOString();
             }
@@ -381,11 +382,14 @@ var NewTaskForm = React.createClass({
     render: function () {
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         var dateStarted = this.state.date_started;
-        dateStarted = (dateStarted) ? {dateTime: dateStarted, format: DATETIMEPICKER_FORMAT} : {defaultText: "Start date"};
+        dateStarted = (dateStarted) ? {
+            dateTime: dateStarted,
+            format: DATETIMEPICKER_FORMAT
+        } : {defaultText: "Start date"};
         return (
             <div className="form-container">
                 <Panel header="New Task">
-                    <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                    <form  method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                         <div className="row">
                             <div className="col-md-4">
                                 <TestRecommendationSelectField source="test_recommendation"
@@ -408,7 +412,7 @@ var NewTaskForm = React.createClass({
                             <div className="col-md-3" key={this.state.date_started}>
                                 <DateTimeFieldWithLabel label="Start date"
                                                         name='date_started'
-                                                        {...dateStarted}
+                                    {...dateStarted}
                                                         onChange={this._onChange}
                                                         onDateTimeFieldChange={this.setStartDate}/>
                             </div>
@@ -435,6 +439,64 @@ var NewTaskForm = React.createClass({
                                           value="1">Recurring</Checkbox>
                             </div>
                         </div>
+                        {this.state.recurring ?
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <div className="col-md-2 nopadding">
+                                        <Radio name="shared" value="1">
+                                            <b>Each</b>
+                                        </Radio>
+                                    </div>
+                                    <div className="col-md-6 nopadding">
+                                        <TextField label="Each year"
+                                                   onChange={this._onChange}
+                                                   name="period_years"
+                                                   value={this.state.period_years}
+                                                   errors={this.state.errors}
+                                                   data-type="int"/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <b>year</b>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="col-md-2 nopadding">
+                                        <Radio name="shared" value="0">
+                                            <b>Each</b>
+                                        </Radio>
+                                    </div>
+                                    <div className="col-md-6 nopadding">
+                                        <TextField label="Each month"
+                                                   onChange={this._onChange}
+                                                   name="period_months"
+                                                   value={this.state.period_months}
+                                                   errors={this.state.errors}
+                                                   data-type="int"/>
+                                    </div>
+                                    <div className="col-md-2">
+                                        <b>month</b>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="col-md-2 nopadding">
+                                        <Radio name="shared" value="0">
+                                            <b>Each</b>
+                                        </Radio>
+                                    </div>
+                                    <div className="col-md-6 nopadding">
+                                        <TextField label="Each day"
+                                                   onChange={this._onChange}
+                                                   name="period_days"
+                                                   value={this.state.period_days}
+                                                   errors={this.state.errors}
+                                                   data-type="int"/>
+                                    </div>
+                                    <div className="col-md-2 ">
+                                        <b>day</b>
+                                    </div>
+                                </div>
+                            </div> : null}
+
                         <div className="row">
                             <div className="col-md-1 pull-right nopadding padding-right-xs">
                                 <FormGroup>

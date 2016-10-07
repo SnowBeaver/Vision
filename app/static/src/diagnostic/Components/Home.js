@@ -30,6 +30,7 @@ var Home = React.createClass({
         // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
         var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0; 
         var src = '/api/v1.0/test_result/?equipment_id=' + id;
+
         this.setState({
             source: src
         });
@@ -37,6 +38,8 @@ var Home = React.createClass({
     },
 
     render: function () {
+        console.log("SOURCE",this.state.source);
+        console.log("HOME STATE", this.state);
         return (
             <div>
                 <div className="col-md-3 equal_col">
@@ -63,7 +66,9 @@ var Home = React.createClass({
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <TestResultForm ref="testResultList" source={this.state.source}/>
+                    <TestResultForm ref="testResultList"
+                                    source={this.state.source}
+                                    />
                 </div>
             </div>
         )
