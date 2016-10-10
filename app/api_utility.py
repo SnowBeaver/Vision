@@ -1643,6 +1643,10 @@ model_dict = {
         'model': NormFuran,
         'schema': norm_furan_schema
     },
+    'sampling_card': {
+        'model': SamplingCard,
+        'schema': sampling_card_schema,
+    },
     'test_sampling_card': {
         'model': TestSamplingCard,
         'schema': test_sampling_card_schema
