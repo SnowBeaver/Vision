@@ -222,7 +222,7 @@ var TaskList = React.createClass({
 
     addUsersToState: function (result) {
         var res = (result['result']);
-        var userList = [];
+        var userList = [""];
         var users = {};
 
         for (var i = 0; i < res.length; i++) {
@@ -238,7 +238,7 @@ var TaskList = React.createClass({
 
     addTestRecommendationsToState: function (result) {
         var res = (result['result']);
-        var recommendationList = [];
+        var recommendationList = [""];
         var recommendationIdMapping = {};
 
         for (var i = 0; i < res.length; i++) {
@@ -254,7 +254,7 @@ var TaskList = React.createClass({
 
     onAddRow: function (row) {
         var error = false;
-        ["assigned_to", "date_start", "test_recommendation_id", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(fld + ' is required.'); error=true;}})
+        ["assigned_to", "date_start", "test_recommendation_id", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
         if (error) {
             return;
         }
@@ -352,7 +352,7 @@ var TaskList = React.createClass({
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="description"
                                            dataSort={true}
-                                           editable={false}
+                                           editable={{type: 'textarea'}}
                                            ref="description">Description
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="priority"
