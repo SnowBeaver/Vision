@@ -505,7 +505,10 @@ var EquipmentTestDiagnosisForm = React.createClass({
         var OTHER_RECOMENDATION_TEXT = "Other recommendations (specify)";
 
         // Open new recommendation form, if needed
-        if (e.target.name == "recommendation_id") {
+        if (e.target.name == "recommendation_id") { 
+            var state = {};
+            // Change value in this form's state to be able to select
+            state.recommendation_id = e.target.value;
             // Change the value in the global state to save it from there
             this.props.onChange(e);
 
