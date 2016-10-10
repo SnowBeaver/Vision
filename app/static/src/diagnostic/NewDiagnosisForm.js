@@ -109,8 +109,8 @@ var NewDiagnosisForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data) {
-                that.props.onSuccess(data.result, "test");
+            success: function (response) {
+                that.props.onSuccess(response.result, data.test_type_id, "test");
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -136,8 +136,8 @@ var NewDiagnosisForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data) {
-                that.props.onSuccess(data.result, "predefined");
+            success: function (response) {
+                that.props.onSuccess(response.result, data.test_type_id, "predefined");
             },
             beforeSend: function () {
                 this.setState({loading: true});

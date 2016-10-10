@@ -589,33 +589,21 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         })
     },
 
-    updatePredefinedDiagnosis: function (id, diagnosisType) {
-        this.props.onChange({target: {type: "select", name: "diagnosis_id", value: id}});
+    updatePredefinedDiagnosis: function (id, testTypeId, diagnosisType) {
+        //this.props.onChange({target: {type: "select", name: "diagnosis_id", value: id}});
+        this.props.setStateData({
+            diagnosis_id: id,
+            diagnosis_test_type_id: testTypeId
+        });
         if (diagnosisType == "test") {
             this.refs.diagnosisList.reloadList(this.props.data.id, this.props.data.test_type_id);
         }
         this.setState({diagnosis_id: id, diagnosisPreselected: true});
-        //var state = {showNewRecommendationForm: false};
-        //
-        //if (recommendationType == "predefined") {
-        //    // Reload select field with predefined recommendations and
-        //    // change the value in the global state
-        //    this.props.setStateData({
-        //        recommendation_id: recommendationId,
-        //        recommendation_test_type_id: testTypeId
-        //    });
-        //    state.recommendation_id = recommendationId;
-        //    state.recommendationPreselected = true;
-        //} else if (recommendationType == "test") {
-        //    // Reload Recommendation list
-        //    this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
-        //    state.recommendation_id = "";
-        //}
-        //this.setState(state);
     },
 
     _onChange: function (e) {
         this.setState({diagnosis_id: e.target.value, diagnosisPreselected: false});
+        // Change the value in the global state to save it from there
         this.props.onChange(e);
     },
 
@@ -741,6 +729,7 @@ var EquipmentTestForm = React.createClass({
                 'fluid_type_id', 'date_analyse', 'test_status_id'],
             testRecommendationFields: ['recommendation_id', 'recommendation_test_type_id'],
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created', 'repair_test_type_id'],
+            testDiagnosisFields: ['diagnosis_notes', 'diagnosis_id', 'diagnosis_test_type_id'],
             errors: {},
             data: null
         }
@@ -844,27 +833,37 @@ var EquipmentTestForm = React.createClass({
     },
 
     _saveDiagnosis: function () {
+        var fields = this.state.testDiagnosisFields;
         var data = {};
         var url = '/api/v1.0/test_diagnosis/';
         var type = 'POST';
-        data.diagnosis_id = this.state.data['diagnosis_id'];
-        data.test_result_id = this.state.data['id'];
-        data.test_type_id = this.state.data['test_type_id'];
-        $.ajax({
-            url: url,
-            type: type,
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            beforeSend: function () {
-            },
-            success: function () {
-                NotificationManager.success('Test diagnosis has been saved successfully');
-            },
-            error: function (xhr, status, response) {
-                NotificationManager.error(response.error);
-            }.bind(this)
-        });
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            if (this.state.data[key]) {
+                data[key] = this.state.data[key];
+            }
+        }
+        if (Object.keys(data).length) {
+            // There are several fields with the name test_type_id - differ them somehow
+            data.test_type_id = data.diagnosis_test_type_id;
+            delete data.diagnosis_test_type_id;
+            data.test_result_id = this.state.data['id'];
+            $.ajax({
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {
+                },
+                success: function () {
+                    NotificationManager.success('Test diagnosis has been saved successfully');
+                },
+                error: function (xhr, status, response) {
+                    NotificationManager.error(response.error);
+                }.bind(this)
+            });
+        }
     },
 
     _onSubmit: function (e) {
@@ -1008,7 +1007,8 @@ var EquipmentTestForm = React.createClass({
                             </div>
                             <div id="tabs-5" role="tabpanel" className="tab-pane">
                                 <EquipmentTestEqDiagnosisForm data={data}
-                                                              onChange={this._onChange}/>
+                                                              onChange={this._onChange}
+                                                              setStateData={this._setStateData}/>
                             </div>
                         </div>
                     </div>
