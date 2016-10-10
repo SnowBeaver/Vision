@@ -511,6 +511,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
                 state.formEdited = true;
                 this.closeNewRecommendationForm();
             }
+            state.recommendationPreselected = false;
             this.setState(state);
         }
     },
@@ -593,13 +594,28 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         if (diagnosisType == "test") {
             this.refs.diagnosisList.reloadList(this.props.data.id, this.props.data.test_type_id);
         }
-        var state = {};
-            state.diagnosis_id = id;
-            this.setState(state);
+        this.setState({diagnosis_id: id, diagnosisPreselected: true});
+        //var state = {showNewRecommendationForm: false};
+        //
+        //if (recommendationType == "predefined") {
+        //    // Reload select field with predefined recommendations and
+        //    // change the value in the global state
+        //    this.props.setStateData({
+        //        recommendation_id: recommendationId,
+        //        recommendation_test_type_id: testTypeId
+        //    });
+        //    state.recommendation_id = recommendationId;
+        //    state.recommendationPreselected = true;
+        //} else if (recommendationType == "test") {
+        //    // Reload Recommendation list
+        //    this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
+        //    state.recommendation_id = "";
+        //}
+        //this.setState(state);
     },
 
     _onChange: function (e) {
-        this.setState({diagnosis_id: e.target.value});
+        this.setState({diagnosis_id: e.target.value, diagnosisPreselected: false});
         this.props.onChange(e);
     },
 

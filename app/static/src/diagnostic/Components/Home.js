@@ -48,8 +48,6 @@ var Home = React.createClass({
     },
 
     render: function () {
-        console.log("SOURCE",this.state.source);
-        console.log("HOME STATE", this.state);
         return (
             <div>
                 <div className="row">
