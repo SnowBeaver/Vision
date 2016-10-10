@@ -111,6 +111,7 @@ var NewDiagnosisForm = React.createClass({
             data: JSON.stringify(data),
             success: function (response) {
                 that.props.onSuccess(response.result, data.test_type_id, "test");
+                NotificationManager.success("Test diagnosis has been successfully added");
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -138,6 +139,7 @@ var NewDiagnosisForm = React.createClass({
             data: JSON.stringify(data),
             success: function (response) {
                 that.props.onSuccess(response.result, data.test_type_id, "predefined");
+                NotificationManager.success("Predefined diagnosis has been successfully added");
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -145,16 +147,11 @@ var NewDiagnosisForm = React.createClass({
         })
     },
 
-    _onSuccess: function (data, status, xhr) {
-        var diagnosisType = "Test";
-        if (this.state.public_diagnosis) {
-            diagnosisType = "Predefined";
-        }
-        NotificationManager.success(diagnosisType + " diagnosis has been successfully added");
-        this.props.handleClose();
-    },
+    _onSuccess: function (data, status, xhr) {},
 
     _onSubmit: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
         var xhr = this._create();
         if (xhr) {
             xhr.done(this._onSuccess)
@@ -263,7 +260,7 @@ var NewDiagnosisForm = React.createClass({
 
     render: function () {
         return (
-            <div className="form-container" onChange={this._onChange}>
+            <div className="form-container">
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-5">

@@ -381,9 +381,8 @@ var EquipmentTestRepairForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
+        var state = {formEdited: true};
         state[e.target.name] = e.target.value;
-        state.formEdited = true;
         this.setState(state);
         this.props.onChange(e);
     },
@@ -509,7 +508,6 @@ var EquipmentTestDiagnosisForm = React.createClass({
 
         // Open new recommendation form, if needed
         if (e.target.name == "recommendation_id") {
-            var state = {};
             // Change the value in the global state to save it from there
             this.props.onChange(e);
 
@@ -523,8 +521,13 @@ var EquipmentTestDiagnosisForm = React.createClass({
                 this.closeNewRecommendationForm();
             }
             state.recommendationPreselected = false;
-            this.setState(state);
         }
+        this.setState(state);
+    },
+
+    handleTestTypeChange: function (e) {
+        this.setState({recommendation_test_type_id: e.target.value});
+        this.props.onChange(e);
     },
 
     is_valid: function () {
@@ -570,7 +573,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
                             <TestTypeSelectField key={this.props.data.selected_subtests}
                                                  selectedSubtests={this.props.data.selected_subtests}
                                                  testType={this.props.data.test_type}
-                                                 handleChange={this.props.onChange}
+                                                 handleChange={this.handleTestTypeChange}
                                                  name="recommendation_test_type_id"
                                                  errors={this.state.errors}
                                                  required={this.state.formEdited}/>
@@ -610,19 +613,24 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
 
     updatePredefinedDiagnosis: function (id, testTypeId, diagnosisType) {
         this.props.setStateData({diagnosis_id: id, diagnosis_test_type_id: testTypeId});
+        var state = {diagnosis_id: id, diagnosisPreselected: true};
         if (diagnosisType == "test") {
             this.refs.diagnosisList.reloadList(this.props.data.id, this.props.data.test_type_id);
+            state.diagnosis_id = "";
+            state.diagnosisPreselected = false;
         }
-        this.setState({diagnosis_id: id, diagnosisPreselected: true});
+        this.setState(state);
     },
 
     _onChange: function (e) {
         var OTHER_DIAGNOSIS_ID = 3;
         var formEdited = true;
-        if (e.target.selectedOptions.length && e.target.value == OTHER_DIAGNOSIS_ID) {
-            formEdited = false;
-        }
         var state = {};
+        if (e.target.value == OTHER_DIAGNOSIS_ID) {
+            formEdited = false;
+            this.props.data.diagnosis_id = null;
+        }
+
         state[e.target.name] = e.target.value;
         if (e.target.name == 'diagnosis_id') {
             state.diagnosisPreselected = false;
