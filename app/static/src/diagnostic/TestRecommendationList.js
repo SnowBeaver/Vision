@@ -8,6 +8,8 @@ import NewTestForm from './NewTestForm';
 import Button from 'react-bootstrap/lib/Button';
 import Table from 'react-bootstrap/lib/Table';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {DATETIME_FORMAT} from './appConstants.js';
+
 
 var TestRecommendation = React.createClass({
 
@@ -33,7 +35,7 @@ var TestRecommendation = React.createClass({
         var recommendation = item.recommendation;
         return (
             <tr>
-                <td>{item.date_created}</td>
+                <td>{item.date_created ? moment(item.date_created).utcOffset(0).format(DATETIME_FORMAT) : ""}</td>
                 <td>{recommendation ? recommendation.code : ""}</td>
                 <td>
                     <span title={recommendation ? recommendation.name : ""}>

@@ -115,7 +115,7 @@ var NewRecommendationForm = React.createClass({
 				contentType: 'application/json',
 				data: JSON.stringify(data),
 				success: function (response, textStatus) {
-					NotificationManager.success("Test recommendation has been successfully added");
+					NotificationManager.success("Predefined recommendation has been successfully added");
 					that.props.onSuccess(response.result, data.test_type_id, "predefined");
 				},
 				beforeSend: function () {
@@ -127,8 +127,9 @@ var NewRecommendationForm = React.createClass({
 
 	_createTestRecommendation: function (data, that) {
 		// Create test recommendation, do not save to all predefined recommendations
-		data["recommendation_notes"] = data["description"];
-		data["test_result_id"] = this.props.testResultId;
+		data.recommendation_notes = data["description"];
+		data.test_result_id = this.props.testResultId;
+		data.recommendation_id = this.props.recommendationId;
 		["code", "name", "description"].forEach(e => delete data[e]);
 		return $.ajax({
 			url: '/api/v1.0/test_recommendation/',

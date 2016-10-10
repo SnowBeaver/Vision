@@ -4,6 +4,7 @@ import Accordion from 'react-bootstrap/lib/Accordion';
 import {Link} from 'react-router';
 import Table from 'react-bootstrap/lib/Table';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {DATETIME_FORMAT} from './appConstants.js';
 
 
 var TestRepairNote = React.createClass({
@@ -19,7 +20,7 @@ var TestRepairNote = React.createClass({
         var item = this.props.data;
         return (
             <tr>
-                <td>{item.date_created}</td>
+                <td>{item.date_created ? moment(item.date_created).utcOffset(0).format(DATETIME_FORMAT) : ""}</td>
                 <td>
                     <span title={item.description}>
                         {item.description ? item.description.substring(0, 100) : ""}

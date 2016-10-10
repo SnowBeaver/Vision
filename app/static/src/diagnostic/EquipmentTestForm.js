@@ -381,8 +381,18 @@ var EquipmentTestRepairForm = React.createClass({
     },
 
     _onChange: function (e) {
-        this.setState({formEdited: true});
+        var state = {formEdited: true};
+        state[e.target.name] = e.target.value;
+        this.setState(state);
         this.props.onChange(e);
+    },
+
+    is_valid: function () {
+        var errors = [];
+        if (this.state.formEdited && !this.state.repair_test_type_id) {
+             errors.push("Test Repair notes Tab: Test type is required.");
+        }
+        return errors;
     },
 
     render: function () {
@@ -496,9 +506,6 @@ var EquipmentTestDiagnosisForm = React.createClass({
 
         // Open new recommendation form, if needed
         if (e.target.name == "recommendation_id") {
-            var state = {};
-            // Change value in this form's state to be able to select
-            state.recommendation_id = e.target.value;
             // Change the value in the global state to save it from there
             this.props.onChange(e);
 
@@ -511,13 +518,26 @@ var EquipmentTestDiagnosisForm = React.createClass({
                 state.formEdited = true;
                 this.closeNewRecommendationForm();
             }
-            this.setState(state);
+            state.recommendationPreselected = false;
         }
+        this.setState(state);
+    },
+
+    handleTestTypeChange: function (e) {
+        this.setState({recommendation_test_type_id: e.target.value});
+        this.props.onChange(e);
+    },
+
+    is_valid: function () {
+        var errors = [];
+        if (this.state.formEdited && !this.state.recommendation_test_type_id) {
+             errors.push("Recommendation notes Tab: Test type is required.");
+        }
+        return errors;
     },
 
     render: function () {
         return (
-
                 <div className="tab_row">
                     <div className="col-lg-12">
                         <TestRecommendationList testResultId={this.props.data.id}
@@ -538,6 +558,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
                     {this.state.showNewRecommendationForm ?
                         <div className="col-lg-12 nopadding">
                             <NewRecommendationForm testResultId={this.props.data.id}
+                                                   recommendationId={this.state.recommendation_id}
                                                    selectedSubtests={this.props.data.selected_subtests}
                                                    testType={this.props.data.test_type}
                                                    handleClose={this.closeNewRecommendationForm}
@@ -547,13 +568,13 @@ var EquipmentTestDiagnosisForm = React.createClass({
                     }
                     {!this.state.showNewRecommendationForm && !this.state.recommendationPreselected ?
                         <div className="col-lg-4">
-                                <TestTypeSelectField key={this.props.data.selected_subtests}
-                                                     selectedSubtests={this.props.data.selected_subtests}
-                                                     testType={this.props.data.test_type}
-                                                     handleChange={this.props.onChange}
-                                                     name="recommendation_test_type_id"
-                                                     errors={this.state.errors}
-                                                     required={this.state.formEdited}/>
+                            <TestTypeSelectField key={this.props.data.selected_subtests}
+                                                 selectedSubtests={this.props.data.selected_subtests}
+                                                 testType={this.props.data.test_type}
+                                                 handleChange={this.handleTestTypeChange}
+                                                 name="recommendation_test_type_id"
+                                                 errors={this.state.errors}
+                                                 required={this.state.formEdited}/>
                         </div>
                         : null
                     }
@@ -568,6 +589,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
             loading: false,
             diagnosis_id: null,
             diagnosisPreselected: false,
+            formEdited: false,
             errors: {}
         }
     },
@@ -587,19 +609,42 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
         })
     },
 
-    updatePredefinedDiagnosis: function (id, diagnosisType) {
-        this.props.onChange({target: {type: "select", name: "recommendation_id", value: id}});
+    updatePredefinedDiagnosis: function (id, testTypeId, diagnosisType) {
+        this.props.setStateData({diagnosis_id: id, diagnosis_test_type_id: testTypeId});
+        var state = {diagnosis_id: id, diagnosisPreselected: true};
         if (diagnosisType == "test") {
             this.refs.diagnosisList.reloadList(this.props.data.id, this.props.data.test_type_id);
+            state.diagnosis_id = "";
+            state.diagnosisPreselected = false;
         }
-        var state = {};
-            state.diagnosis_id = id;
-            this.setState(state);
+        this.setState(state);
     },
 
     _onChange: function (e) {
-        this.setState({diagnosis_id: e.target.value});
-        this.props.onChange(e);
+        var OTHER_DIAGNOSIS_ID = 3;
+        var formEdited = true;
+        var state = {};
+        if (e.target.value == OTHER_DIAGNOSIS_ID) {
+            formEdited = false;
+            this.props.data.diagnosis_id = null;
+        }
+
+        state[e.target.name] = e.target.value;
+        if (e.target.name == 'diagnosis_id') {
+            state.diagnosisPreselected = false;
+            state.formEdited = formEdited;
+            // Change the value in the global state to save it from there
+            this.props.onChange(e);
+        }
+        this.setState(state);
+    },
+
+    is_valid: function () {
+        var errors = [];
+        if (this.state.formEdited && !this.state.diagnosis_test_type_id) {
+             errors.push("Diagnosis Tab: Test type is required.");
+        }
+        return errors;
     },
 
     render: function () {
@@ -624,30 +669,31 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                                          key={this.state.diagnosis_id}
                                          onChange={this._onChange}
                             />
-                        </div>
-                        {parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
-                            <div className="col-md-12 nopadding">
-                                <NewDiagnosisForm diagnosisId={this.state.diagnosis_id}
-                                                  selectedSubtests={this.props.data.selected_subtests}
-                                                  testType={this.props.data.test_type}
-                                                  handleClose={this._closeNewDiagnosisForm}
-                                                  onSuccess={this.updatePredefinedDiagnosis}
+                    </div>
+                    {parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
+                        <div className="col-md-12 nopadding">
+                            <NewDiagnosisForm testResultId={this.props.data.id}
+                                              diagnosisId={this.state.diagnosis_id}
+                                              selectedSubtests={this.props.data.selected_subtests}
+                                              testType={this.props.data.test_type}
+                                              handleClose={this._closeNewDiagnosisForm}
+                                              onSuccess={this.updatePredefinedDiagnosis}
                                 />
-                            </div>
-                            : null
-                        }
-                        {parseInt(this.state.diagnosis_id) !== OTHER_DIAGNOSIS_ID && !this.state.diagnosisPreselected ?
-                            <div className="col-md-4">
-                                    <TestTypeSelectField key={this.props.data.selected_subtests}
-                                                         selectedSubtests={this.props.data.selected_subtests}
-                                                         testType={this.props.data.test_type}
-                                                         handleChange={this.props.onChange}
-                                                         name="diagnosis_test_type_id"
-                                                         errors={this.state.errors}
-                                                         required={this.state.formEdited}/>
-                            </div>
-                            : null
-                        }
+                        </div>
+                        : null
+                    }
+                    {parseInt(this.state.diagnosis_id) !== OTHER_DIAGNOSIS_ID && !this.state.diagnosisPreselected ?
+                        <div className="col-md-4">
+                            <TestTypeSelectField key={this.props.data.selected_subtests}
+                                                 selectedSubtests={this.props.data.selected_subtests}
+                                                 testType={this.props.data.test_type}
+                                                 handleChange={this.props.onChange}
+                                                 name="diagnosis_test_type_id"
+                                                 errors={this.state.errors}
+                                                 required={this.state.formEdited}/>
+                        </div>
+                        : null
+                    }
                 </div>
             </div>
         );
@@ -723,12 +769,22 @@ var EquipmentTestForm = React.createClass({
                 'fluid_type_id', 'date_analyse', 'test_status_id'],
             testRecommendationFields: ['recommendation_id', 'recommendation_test_type_id'],
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created', 'repair_test_type_id'],
+            testDiagnosisFields: ['diagnosis_notes', 'diagnosis_id', 'diagnosis_test_type_id'],
             errors: {},
             data: null
         }
     },
 
     _save: function () {
+        var errors = this._validateSubforms();
+        if (errors.length) {
+            for (var i = 0; i < errors.length; i++) {
+                // Use setTimeout, otherwise only last notification is shown
+                setTimeout(function(error){NotificationManager.error(error, null, 5000, null, true)}, 100, errors[i]);
+            }
+            return false;
+        }
+
         this._saveTestRecommendation();
         this._saveRepairNote();
         this._saveDiagnosis();
@@ -754,6 +810,14 @@ var EquipmentTestForm = React.createClass({
                 this.setState({loading: true});
             }.bind(this)
         })
+    },
+
+    _validateSubforms: function () {
+        var errors = [];
+        errors.push(...this.refs.diagnosisForm.is_valid());
+        errors.push(...this.refs.recommedationForm.is_valid());
+        errors.push(...this.refs.repairNotesForm.is_valid());
+        return errors;
     },
 
     _saveTestRecommendation: function () {
@@ -826,27 +890,37 @@ var EquipmentTestForm = React.createClass({
     },
 
     _saveDiagnosis: function () {
+        var fields = this.state.testDiagnosisFields;
         var data = {};
         var url = '/api/v1.0/test_diagnosis/';
         var type = 'POST';
-        data.diagnosis_id = this.state.data['diagnosis_id'];
-        data.test_result_id = this.state.data['id'];
-        data.test_type_id = this.state.data['test_type_id'];
-        $.ajax({
-            url: url,
-            type: type,
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            beforeSend: function () {
-            },
-            success: function () {
-                NotificationManager.success('Test diagnosis has been saved successfully');
-            },
-            error: function (xhr, status, response) {
-                NotificationManager.error(response.error);
-            }.bind(this)
-        });
+        for (var i = 0; i < fields.length; i++) {
+            var key = fields[i];
+            if (this.state.data[key]) {
+                data[key] = this.state.data[key];
+            }
+        }
+        if (Object.keys(data).length) {
+            // There are several fields with the name test_type_id - differ them somehow
+            data.test_type_id = data.diagnosis_test_type_id;
+            delete data.diagnosis_test_type_id;
+            data.test_result_id = this.state.data['id'];
+            $.ajax({
+                url: url,
+                type: type,
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function () {
+                },
+                success: function () {
+                    NotificationManager.success('Test diagnosis has been saved successfully');
+                },
+                error: function (xhr, status, response) {
+                    NotificationManager.error(response.error);
+                }.bind(this)
+            });
+        }
     },
 
     _onSubmit: function (e) {
@@ -859,9 +933,11 @@ var EquipmentTestForm = React.createClass({
             return;
         }
         var xhr = this._save();
-        xhr.done(this._onSuccess)
-            .fail(this._onError)
-            .always(this.hideLoading)
+        if (xhr) {
+            xhr.done(this._onSuccess)
+                .fail(this._onError)
+                .always(this.hideLoading)
+        }
     },
 
     hideLoading: function () {
@@ -956,7 +1032,6 @@ var EquipmentTestForm = React.createClass({
         var data = (this.state.data != null) ? this.state.data : {};
         return (
             <div>
-
                     <input type="hidden" value={this.state.csrf_token}/>
                     <div className="maxwidth padding-top-lg margin-bottom-xs">
                         <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
@@ -981,16 +1056,20 @@ var EquipmentTestForm = React.createClass({
                                 <EquipmentTestRepairForm data={data}
                                                          onChange={this._onChange}
                                                          onDateTimeFieldChange={this._onDateTimeFieldChange}
-                                                         setStateData={this._setStateData}/>
+                                                         setStateData={this._setStateData}
+                                                         ref="repairNotesForm"/>
                             </div>
                             <div id="tabs-4" role="tabpanel" className="tab-pane">
                                 <EquipmentTestDiagnosisForm data={data}
                                                             onChange={this._onChange}
-                                                            setStateData={this._setStateData}/>
+                                                            setStateData={this._setStateData}
+                                                            ref="recommedationForm"/>
                             </div>
                             <div id="tabs-5" role="tabpanel" className="tab-pane">
                                 <EquipmentTestEqDiagnosisForm data={data}
-                                                              onChange={this._onChange}/>
+                                                              onChange={this._onChange}
+                                                              setStateData={this._setStateData}
+                                                              ref="diagnosisForm"/>
                             </div>
                         </div>
                     </div>
