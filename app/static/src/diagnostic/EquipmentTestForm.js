@@ -492,7 +492,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var OTHER_RECOMENDATION_ID = 80;
+        var OTHER_RECOMENDATION_ID = 6;
 
         // Open new recommendation form, if needed
         if (e.target.name == "recommendation_id") {
@@ -538,6 +538,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
                     {this.state.showNewRecommendationForm ?
                         <div className="col-lg-12 nopadding">
                             <NewRecommendationForm testResultId={this.props.data.id}
+                                                   recommendationId={this.state.recommendation_id}
                                                    selectedSubtests={this.props.data.selected_subtests}
                                                    testType={this.props.data.test_type}
                                                    handleClose={this.closeNewRecommendationForm}
@@ -588,7 +589,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
     },
 
     updatePredefinedDiagnosis: function (id, diagnosisType) {
-        this.props.onChange({target: {type: "select", name: "recommendation_id", value: id}});
+        this.props.onChange({target: {type: "select", name: "diagnosis_id", value: id}});
         if (diagnosisType == "test") {
             this.refs.diagnosisList.reloadList(this.props.data.id, this.props.data.test_type_id);
         }
@@ -627,7 +628,8 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                         </div>
                         {parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
                             <div className="col-md-12 nopadding">
-                                <NewDiagnosisForm diagnosisId={this.state.diagnosis_id}
+                                <NewDiagnosisForm testResultId={this.props.data.id}
+                                                  diagnosisId={this.state.diagnosis_id}
                                                   selectedSubtests={this.props.data.selected_subtests}
                                                   testType={this.props.data.test_type}
                                                   handleClose={this._closeNewDiagnosisForm}

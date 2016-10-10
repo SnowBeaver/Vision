@@ -286,6 +286,7 @@ var NewDiagnosisForm = React.createClass({
                                 <TextField label="Name*"
                                            name='name'
                                            value={this.state.name}
+                                           onChange={this._onChange}
                                            errors={this.state.errors}
                                            data-len="50"
                                            required/>
@@ -294,6 +295,7 @@ var NewDiagnosisForm = React.createClass({
                                 <TextField label="Code"
                                            name='code'
                                            value={this.state.code}
+                                           onChange={this._onChange}
                                            errors={this.state.errors}
                                            data-len="50"/>
                             </div>
