@@ -40,6 +40,7 @@ var Home = React.createClass({
 
     loadEquipment: function (id) {
         var src = '/api/v1.0/test_result/?equipment_id=' + id;
+
         this.setState({
             source: src
         });
@@ -47,6 +48,8 @@ var Home = React.createClass({
     },
 
     render: function () {
+        console.log("SOURCE",this.state.source);
+        console.log("HOME STATE", this.state);
         return (
             <div>
                 <div className="row">
@@ -79,7 +82,9 @@ var Home = React.createClass({
                     </div>
                 </div>
                 <div className="col-md-9">
-                    <TestResultForm ref="testResultList" source={this.state.source}/>
+                    <TestResultForm ref="testResultList"
+                                    source={this.state.source}
+                                    />
                 </div>
             </div>
         )
