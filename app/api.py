@@ -320,7 +320,7 @@ def add_items(path, data):
     return [add_item(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
 
 
-def add_or_update_tests(path):
+def add_or_update_items(path):
     items_model = get_model_by_path(path)
     items = []
     for test in request.json:
@@ -675,5 +675,12 @@ def create_test_repair_note_handler():
     new_item = add_user_id_and_save_item(path, validated_data)
     return return_json('result', new_item.id)
 
+
+# Create or update a lot of tasks
+@api_blueprint.route('/schedule/multi/', methods=['POST'])
+def handler_tasks():
+    path = 'schedule'
+    abort_if_json_missing()
+    return return_json('result', add_or_update_items(path))
 
 api.register_blueprint(api_blueprint)
