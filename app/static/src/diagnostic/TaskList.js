@@ -30,7 +30,7 @@ var TaskList = React.createClass({
             fields: [
                 'date_start', 'description', 'priority', 'id', 'date_created', 'date_updated',
                 'description', 'recurring', 'notify_before_in_days', 'test_recommendation',
-                'assigned_to'
+                'assigned_to', 'status'
             ]
         }
     },
@@ -51,6 +51,8 @@ var TaskList = React.createClass({
             for (var j = 0; j < fields.length; j++) {
                 var key = fields[j];
                 if (data.hasOwnProperty(key)) {
+
+                    // TODO: make prettier
                     if (key == 'test_recommendation') {
                         task.test_type = (data[key].test_type ? data[key].test_type.name : "");
                         task.test_result_id = (data[key].test_result_id ? data[key].test_result_id : "");
@@ -78,6 +80,7 @@ var TaskList = React.createClass({
         this._getUsers();
         this._getTestRecommendations();
         this._getPriorities();
+        this._getTaskStatuses();
     },
 
     _create: function () {
@@ -89,6 +92,8 @@ var TaskList = React.createClass({
             var tap = tasks[i.toString()];
             for (var j = 0; j < fields.length; j++) {
                 var key = fields[j];
+
+                // TODO: make prettier
                 if (key == "assigned_to") {
                     task.assigned_to_id = this.state.userIdMapping[tap[key]];
                     delete task.assigned_to;
@@ -96,6 +101,9 @@ var TaskList = React.createClass({
                     task.test_recommendation_id = this.state.recommendationIdMapping[this.state.recommendationList.indexOf(tap[key])];
                 } else if (key == "priority") {
                     task.priority = PRIORITY_ID_MAPPING[tap[key]];
+                } else if (key == "status") {
+                    task.status_id = this.state.statusIdMapping[tap[key]];
+                    delete task.status;
                 } else {
                     task[key] = tap[key];
                 }
@@ -115,12 +123,8 @@ var TaskList = React.createClass({
     },
 
     _onSubmit: function (e) {
-        //e.preventDefault();
-        // Do not propagate the submit event of the main form
-        //e.stopPropagation();
         if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
-            //e.stopPropagation();
             return false;
         }
         this.state.tasks = this.refs.table.state.data;
@@ -268,6 +272,24 @@ var TaskList = React.createClass({
         this.setState({prioritiesList: prioritiesList});
     },
 
+    _getTaskStatuses: function () {
+        $.get('/api/v1.0/task_status', this.addTaskStatusesToState, 'json');
+    },
+
+    addTaskStatusesToState: function (result) {
+        var res = (result['result']);
+        var statusList = [""];
+        var statusIdMapping = {};
+
+        for (var i = 0; i < res.length; i++) {
+            statusList.push(res[i].name);
+            // Keep mapping in a list to preserve name/id positions.
+            // Dictionary cannot be used as the names are not unique
+            statusIdMapping[res[i].name] = res[i].id;
+        }
+        this.setState({statusList: statusList, statusIdMapping: statusIdMapping});
+    },
+
     _getTestRecommendations: function () {
         $.get('/api/v1.0/test_recommendation', this.addTestRecommendationsToState, 'json');
     },
@@ -288,7 +310,6 @@ var TaskList = React.createClass({
 
     _composeRecommendationNote: function (record) {
         // Format nice name for recommendation select field
-        //var recommendationNotes = record.recommendation_notes || (record.recommendation ? record.recommendation.description : null);
         var fullName = [record.recommendation_notes, record.recommendation ? record.recommendation.name : null];
         fullName.map(function (name) {
             if (!name) {
@@ -361,6 +382,18 @@ var TaskList = React.createClass({
                                        editable={{type: 'select', options: {values: this.state.userList}}}
                                        ref="assigned_to">Assigned To
                     </TableHeaderColumn>
+                    <TableHeaderColumn dataField="priority"
+                                       width="90"
+                                       dataSort={true}
+                                       editable={{type: 'select', options: {values: this.state.prioritiesList}}}
+                                       ref="priority">Priority
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="status"
+                                       width="90"
+                                       dataSort={true}
+                                       editable={{type: 'select', options: {values: this.state.statusList}}}
+                                       ref="status">Status
+                    </TableHeaderColumn>
                     <TableHeaderColumn dataField="test_recommendation"
                                        width="80"
                                        dataFormat={this._formatRecommendation}
@@ -409,12 +442,6 @@ var TaskList = React.createClass({
                                        dataSort={true}
                                        editable={{type: 'textarea'}}
                                        ref="description">Description
-                    </TableHeaderColumn>
-                    <TableHeaderColumn dataField="priority"
-                                       width="90"
-                                       dataSort={true}
-                                       editable={{type: 'select', options: {values: this.state.prioritiesList}}}
-                                       ref="priority">Priority
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="recurring"
                                        width="100"
