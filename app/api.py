@@ -44,8 +44,10 @@ def login_required(f):
         auth = request.authorization
         # if not auth:
         #     abort(401)
-        # if not verify_password(auth['username'], unicode(auth['password'], "utf-8")):
-        #     abort(401)
+        if auth:
+            if not verify_password(auth['username'], unicode(auth['password'], 'utf-8')):
+                pass
+            #     abort(401)
         return f(*args, **kwargs)
     return decorated_function
 

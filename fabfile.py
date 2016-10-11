@@ -350,6 +350,7 @@ def generate_apidoc():
 def test():
     tests = Path(env.directory, 'tests')
     with cd(tests):
-        run('python -m unittest test_unittest')
-        run('python -m unittest test_unittest.TestStringMethods')
-        run('python -m unittest test_unittest.TestStringMethods.test_upper')
+        # run('python -m unittest test_unittest')
+        # run('python -m unittest test_unittest.TestStringMethods')
+        # run('python -m unittest test_unittest.TestStringMethods.test_upper')
+        run('python test_unittest.py')

@@ -212,11 +212,11 @@ equipment_connection_schema = {
     'equipment_id': type_integer_coerce_dict,
     'parent_id': type_integer_coerce_dict,
 }
-sampling_card_schema = {
-    'id': readonly_dict,
-    'card_gathered': type_integer_coerce_dict,
-    'card_print': type_boolean_coerce_dict,
-}
+# sampling_card_schema = {
+#     'id': readonly_dict,
+#     'card_gathered': type_integer_coerce_dict,
+#     'card_print': type_boolean_coerce_dict,
+# }
 equipment_schema = {
     'id': readonly_dict,
     'name': type_string_maxlength_50_required_dict,
@@ -1643,10 +1643,10 @@ model_dict = {
         'model': NormFuran,
         'schema': norm_furan_schema
     },
-    'sampling_card': {
-        'model': SamplingCard,
-        'schema': sampling_card_schema,
-    },
+    # 'sampling_card': {
+    #     'model': SamplingCard,
+    #     'schema': sampling_card_schema,
+    # },
     'test_sampling_card': {
         'model': TestSamplingCard,
         'schema': test_sampling_card_schema

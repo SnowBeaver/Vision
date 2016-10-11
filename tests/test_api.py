@@ -6,17 +6,39 @@ sys.path.append('..')
 from app.api_utility import model_dict
 
 
+url = 'http://dev.vision.local:8001/api/v1.0/{path}/'
+user = 'test'
+password = 'test-123'
+path_to_get_token = 'token'
+
+
 class TestRESTAPI(unittest.TestCase):
     pass
 
 
-class Test_RESTAPI_deletion(unittest.TestCase):
-    pass
+# # Readonly model
+# class Test_REST_API_country(unittest.TestCase):
+#     path = 'country'
+#     url = url.format(path=path)
+#     def setUp(self):
+#
+#
+#     def tearDown(self):
+#         pass
+#
+#     # country
+#     path = 'country'
+#     schema = model_dict.get(path).get('schema')
+#     item_id = test_create_generator(url, path, token, schema)
+#     test_read_one_generator(url, path, item_id, token)
+#     test_read_all_generator(url, path, token)
+#     test_update_generator(url, path, item_id, token, schema)
+#     test_delete_generator(url, path, item_id, token)
 
 
 def base_test_generator(path, r, result_key='result'):
     def test(self):
-        msg = '{}: {} != 200'.format(path, r.status_code)
+        msg = '{}: {} != 200\n{}'.format(path, r.status_code, r.text)
         self.assertEqual(r.status_code, 200, msg)
         try:
             json_data = json.loads(r.text)
@@ -26,7 +48,6 @@ def base_test_generator(path, r, result_key='result'):
         else:
             msg = '{}: {} not found in {}'.format(path, result_key, json_data)
             self.assertIn(result_key, json_data, msg)
-
     return test
 
 
@@ -78,7 +99,8 @@ def test_create_generator(url, path, token, schema):
     item_id = 0
     try:
         answer = json.loads(r.text)
-        item_id = answer.get('result').get('id')
+        item_id = answer.get('result')
+        item_id = int(item_id)
     except:
         pass
 
@@ -87,7 +109,7 @@ def test_create_generator(url, path, token, schema):
 
 
 def test_read_one_generator(url, path, item_id, token):
-    r = requests.get('{}/{}'.format(url.format(path=path), item_id), auth=(token, ''))
+    r = requests.get('{}{}'.format(url.format(path=path), item_id), auth=(token, ''))
     test = base_test_generator(path, r)
     setattr(TestRESTAPI, 'test_step_2_read_{}_by_id'.format(path), test)
 
@@ -98,31 +120,28 @@ def test_read_all_generator(url, path, token):
     setattr(TestRESTAPI, 'test_step_3_read_all_{}'.format(path), test)
 
 
-def test_update_generator(path, item_id):
-    r = requests.put('{}/{}/{}'.format(url, path, item_id), auth=(token, ''))
+def test_update_generator(url, path, item_id, token, schema):
+    data = prepare_a_test_data(schema)
+    r = requests.put('{}{}'.format(url.format(path=path), item_id), auth=(token, ''), json=data)
     test = base_test_generator(path, r)
     setattr(TestRESTAPI, 'test_step_4_update_{}'.format(path), test)
 
-    r = requests.post('{}/{}/{}'.format(url, path, item_id), auth=(token, ''))
+    r = requests.post('{}{}'.format(url.format(path=path), item_id), auth=(token, ''), json=data)
     test = base_test_generator(path, r)
     setattr(TestRESTAPI, 'test_step_5_update_{}_using_post'.format(path), test)
 
 
 def test_delete_generator(url, path, item_id, token):
-    r = requests.delete('{}/{}/{}'.format(url, path, item_id), auth=(token, ''))
+    r = requests.delete('{}{}'.format(url.format(path=path), item_id), auth=(token, ''))
     test = base_test_generator(path, r)
     setattr(TestRESTAPI, 'test_step_6_delete_{}'.format(path), test)
 
 
 if __name__ == '__main__':
-    url = 'http://dev.vision.local/api/v1.0/{path}/'
-    user = 'test'
-    password = 'test-123'
-    path_to_get_token = 'token'
     # Authentication
     token = test_auth_generator(url, path_to_get_token, user, password)
-    # Testing CRUD
 
+    # Standard CRUD
     # Simple models (without relations) paths
     path_list = [
         'fluid_type',
@@ -148,7 +167,6 @@ if __name__ == '__main__':
         'connection_condition',
         'foundation_condition',
         'heating_condition',
-        'sampling_card',
         'equipment_type',
         'norm',
         'manufacturer',
@@ -161,13 +179,23 @@ if __name__ == '__main__':
         'norm_gas',
         'norm_isolation',
         'norm_furan',
-        'norm_isolation',
-        'task_status',
-        'tree_translation',
         'task_status',
     ]
 
+    for path in path_list:
+        schema = model_dict.get(path).get('schema')
+
+        item_id = test_create_generator(url, path, token, schema)
+        test_read_one_generator(url, path, item_id, token)
+        test_read_all_generator(url, path, token)
+        test_update_generator(url, path, item_id, token, schema)
+        test_delete_generator(url, path, item_id, token)
+
+    test_pack = unittest.TestLoader().loadTestsFromTestCase(TestRESTAPI)
+    unittest.TextTestRunner(verbosity=0).run(test_pack)
+
     # Models with relations paths
+    # tree_translation
     # equipment_connection
     # equipment
     # campaign
@@ -220,49 +248,4 @@ if __name__ == '__main__':
     # metals_in_oil_test
     # fluid_test
 
-
-    # Readonly models paths
-    # country
-
-
-    # test_id_dict = {}
-
-    # for path, params in model_dict.items():
-    for path in path_list:
-        # if path in ('test_result_equipment', 'equipment'):
-        #     continue
-
-        params = model_dict.get(path)
-        schema = params.get('schema')
-        # Standard CRUD
-        # create an item
-        item_id = test_create_generator(url, path, token, schema)
-        # get item by id
-        # test_read_one_generator(url, path, item_id, token)
-        # # update item
-        # # test_update_generator(path, item_id)
-        # # delete item
-        if item_id:
-            test_delete_generator(url, path, item_id, token)
-        # # get all items
-        # test_read_all_generator(url, path, token)
-
-        # Custom CRUD
-
-    test_pack = unittest.TestLoader().loadTestsFromTestCase(TestRESTAPI)
-    unittest.TextTestRunner(verbosity=0).run(test_pack)
-
-# Errors
-# token
-#
-# 500 - because id is not seq
-# breaker_mechanism
-# equipment_type
-# gas_level
-# insulation
-# interrupting_medium
-# role
-# sampling_card
-# test_reason
-# test_type
-# tree_translation
+    # Custom CRUD
