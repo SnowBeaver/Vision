@@ -20,7 +20,7 @@ var TaskList = React.createClass({
             fields: [
                 'date_start', 'description', 'priority', 'id', 'date_created', 'date_updated',
                 'description', 'recurring', 'notify_before_in_days', 'test_recommendation',
-                'assigned_to', 'test_recommendation_id'
+                'assigned_to'
             ]
         }
     },
@@ -44,6 +44,7 @@ var TaskList = React.createClass({
                     if (key == 'test_recommendation') {
                         task.test_type = (data[key].test_type ? data[key].test_type.name : "");
                         task.test_result_id = (data[key].test_result_id ? data[key].test_result_id : "");
+                        task.test_recommendation = this._composeRecommendationNote(data[key]);
                     } else if (key == 'status') {
                         task.status = (data[key] ? data[key].name : "");
                     } else if (key == 'assigned_to') {
@@ -77,7 +78,7 @@ var TaskList = React.createClass({
                     task.assigned_to_id = this.state.userIdMapping[tap[key]];
                     delete task.assigned_to;
                 } else if (key == "test_recommendation") {
-                    task.assigned_to_id = this.state.recommendationIdMapping[this.state.recommendationList.indexOf(tap[key])];
+                    task.test_recommendation_id = this.state.recommendationIdMapping[this.state.recommendationList.indexOf(tap[key])];
                     delete task.assigned_to;
                 } else {
                     task[key] = tap[key];
@@ -141,8 +142,7 @@ var TaskList = React.createClass({
     },
 
     _validateDict: {
-        assigned_to: {data_type: "chars", label: "Assigned To"},
-        test_recommendation_id: {data_type: "int", label: "Test Recommendation"},
+        assigned_to: {data_type: "alnum", label: "Assigned To"},
         date_start: {data_type: "date", label: "Date"},
         priority: {data_type: "int", label: "Priority"},
         recurring: {data_type: "bool", label: "Recurring"}
@@ -154,7 +154,7 @@ var TaskList = React.createClass({
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/,
-                "chars": /^[a-zA-Z\s0-9]*$/,
+                "alnum": /^[a-zA-Z\s0-9]*$/,
                 "date": /^[a-zA-Z\s0-9:\+\-\.]*$/,
                 "bool": /^(true|false)$/
             };
@@ -201,12 +201,15 @@ var TaskList = React.createClass({
     },
 
     beforeSaveCell: function(row, name, value) {
-        var data_type = this._validateDict[name]['data_type'];
-        var label = this._validateDict[name]['label'];
-        var error = this._validateFieldType(value, data_type);
-        if (error) {
-            NotificationManager.error('Value of (' + label + ') must by of type ' + data_type);
+        if (this._validateDict[name]) {
+            var data_type = this._validateDict[name]['data_type'];
+            var label = this._validateDict[name]['label'];
+            var error = this._validateFieldType(value, data_type);
+            if (error) {
+                NotificationManager.error('Value of (' + label + ') must by of type ' + data_type);
+            }
         }
+
         row.date_updated = moment().utc().toISOString();
         return true;
     },
@@ -217,6 +220,10 @@ var TaskList = React.createClass({
             date = moment(date).format(DATETIMEPICKER_FORMAT).replace(/T/g, ' ');
         }
         return date;
+    },
+
+    _formatRecommendation: function(recommendation) {
+        return "<span title='" + recommendation + "'>" + recommendation.substr(0, 15) + "</span>" ;
     },
 
     _getUsers: function () {
@@ -245,10 +252,25 @@ var TaskList = React.createClass({
         var recommendationIdMapping = [""];
 
         for (var i = 0; i < res.length; i++) {
-            recommendationList.push(res[i].recommendation.name);
+            recommendationList.push(this._composeRecommendationNote(res[i]));
+            // Keep mapping in a list to preserve name/id positions.
+            // Dictionary cannot be used as the names are not unique
             recommendationIdMapping.push(res[i].id);
         }
         this.setState({recommendationList: recommendationList, recommendationIdMapping: recommendationIdMapping});
+    },
+
+    _composeRecommendationNote: function (record) {
+        // Format nice name for recommendation select field
+        var recommendationNotes = record.recommendation_notes || (record.recommendation ? record.recommendation.description : null);
+        var fullName = [recommendationNotes, record.recommendation ? record.recommendation.name : null];
+        fullName.map(function (name) {
+            if (!name) {
+                fullName.splice(fullName.indexOf(name), 1)
+            }
+        });
+
+        return fullName.join(" | ");
     },
 
     cleanSelected: function () {
@@ -257,7 +279,7 @@ var TaskList = React.createClass({
 
     onAddRow: function (row) {
         var error = false;
-        ["assigned_to", "date_start", "test_recommendation_id", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
+        ["assigned_to", "date_start", "test_recommendation", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
         if (error) {
             return;
         }
@@ -309,11 +331,12 @@ var TaskList = React.createClass({
                                            editable={{type: 'select', options: {values: this.state.userList}}}
                                            ref="assigned_to">Assigned To
                         </TableHeaderColumn>
-                        <TableHeaderColumn dataField="test_recommendation_id"
+                        <TableHeaderColumn dataField="test_recommendation"
                                            width="80"
+                                           dataFormat={this._formatRecommendation}
                                            dataSort={true}
                                            editable={{type: 'select', options: {values: this.state.recommendationList}}}
-                                           ref="test_recommendation_id">Test Rec
+                                           ref="test_recommendation">Test Rec
                         </TableHeaderColumn>
                         <TableHeaderColumn dataField="test_result_id"
                                            width="80"
