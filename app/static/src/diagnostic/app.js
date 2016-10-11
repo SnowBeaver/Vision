@@ -160,9 +160,10 @@ render((
             <Route path="winding2_test" component={WindingTestForm}/>
 			<Route path="up_down_streams" component={EqConnectionsManager}/>
 			<Route path="schedule_task" component={NewTaskForm}/>
+			<Route path="tasks" component={TaskList}/>
+
 			{/*This route should be the last, otherwise it will match all subsequent routes*/}
 			<Route path=":equipmentId" component={Home}/>
-			<Route path="tasks" component={TaskList}/>
         </Route>
     </Router>
 ), document.getElementById('app'));
