@@ -402,7 +402,8 @@ var EquipmentTestRepairForm = React.createClass({
                 <div className="tab_row">
                     <div className="col-md-12 ">
                         <RepairNotesList testResultId={this.props.data.id}
-                                         testTypeId={this.props.data.test_type_id}/>
+                                         testTypeId={this.props.data.test_type_id}
+                                         ref="testRepairNotesList"/>
                     </div>
                 </div>
                 <div className="tab_row nopadding">
@@ -495,6 +496,8 @@ var EquipmentTestDiagnosisForm = React.createClass({
             state.recommendationPreselected = true;
         } else if (recommendationType == "test") {
             state.recommendation_id = "";
+            // Reload Recommendation list
+            this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
         }
         this.setState(state);
     },
@@ -950,6 +953,37 @@ var EquipmentTestForm = React.createClass({
         // this.setState(this.getInitialState());
         NotificationManager.success('Saved');
         this.props.updateSource('/api/v1.0/test_result/?equipment_id=' + this.state.data.equipment_id);
+
+        this.reloadSubforms();
+        this.cleanSubformsState();
+    },
+
+    reloadSubforms: function () {
+        // Reload Repair Notes list
+        this.refs.repairNotesForm.refs.testRepairNotesList.reloadList(this.refs.repairNotesForm.props.data.id);
+        this.refs.repairNotesForm.setState(this.refs.repairNotesForm.getInitialState());
+
+        // Reload Recommendation list
+        this.refs.recommedationForm.refs.testRecommendationList.reloadList(this.refs.recommedationForm.props.data.id);
+        this.refs.recommedationForm.setState(this.refs.recommedationForm.getInitialState());
+
+        // Reload Diagnosis list
+        this.refs.diagnosisForm.refs.diagnosisList.reloadList(this.refs.diagnosisForm.props.data.id);
+        this.refs.diagnosisForm.setState(this.refs.diagnosisForm.getInitialState());
+    },
+
+    cleanSubformsState: function () {
+        var stateData = this.state.data;
+        for (var i = 0; i < this.state.testDiagnosisFields.length; i++) {
+            stateData[this.state.testDiagnosisFields[i]] = null;
+        }
+        for (var i = 0; i < this.state.testRecommendationFields.length; i++) {
+            stateData[this.state.testRecommendationFields[i]] = null;
+        }
+        for (var i = 0; i < this.state.testRepairNotesFields.length; i++) {
+            stateData[this.state.testRepairNotesFields[i]] = null;
+        }
+        this.setState({data: stateData});
     },
 
     _onError: function (data) {
