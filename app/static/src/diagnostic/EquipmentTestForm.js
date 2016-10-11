@@ -494,8 +494,6 @@ var EquipmentTestDiagnosisForm = React.createClass({
             state.recommendation_id = recommendationId;
             state.recommendationPreselected = true;
         } else if (recommendationType == "test") {
-            // Reload Recommendation list
-            this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
             state.recommendation_id = "";
         }
         this.setState(state);
@@ -950,7 +948,6 @@ var EquipmentTestForm = React.createClass({
     _onSuccess: function (data, status, xhr) {
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
-        this.props.handleClose();
         NotificationManager.success('Saved');
         this.props.updateSource('/api/v1.0/test_result/?equipment_id=' + this.state.data.equipment_id);
     },
@@ -1089,7 +1086,7 @@ var EquipmentTestForm = React.createClass({
                             <FormGroup>
                                 <Button bsStyle="danger"
                                         onClick={this.props.handleClose}
-                                >Cancel</Button>
+                                >Close</Button>
                             </FormGroup>
                         </div>
                     </div>
