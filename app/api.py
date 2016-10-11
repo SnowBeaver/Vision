@@ -598,7 +598,7 @@ def handler_tests(path):
                     'winding_resistance_test',
                     'winding_test'):
         abort(404)
-    return return_json('result', add_or_update_tests(path))
+    return return_json('result', add_or_update_items(path))
 
 
 # Duplicate test result and related electrical or fluid profile
@@ -678,9 +678,10 @@ def create_test_repair_note_handler():
 
 # Create or update a lot of tasks
 @api_blueprint.route('/schedule/multi/', methods=['POST'])
+@login_required
+@json_required
 def handler_tasks():
     path = 'schedule'
-    abort_if_json_missing()
     return return_json('result', add_or_update_items(path))
 
 api.register_blueprint(api_blueprint)
