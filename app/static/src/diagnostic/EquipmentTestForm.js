@@ -664,7 +664,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                     </div>
 
                         <div className="col-md-8 nopadding padding-right-xs">
-                            <SelectField source="diagnosisd"
+                            <SelectField source="diagnosis"
                                          label="Predefined diagnosis"
                                          name='diagnosis_id'
                                          ref="diagnosis"
