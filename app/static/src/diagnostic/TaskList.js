@@ -339,7 +339,11 @@ var TaskList = React.createClass({
                                 ignoreSinglePage={true}
                                 insertRow={true}
                                 selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)"}}
-                                cellEdit={{mode: "click", blurToSave: true, beforeSaveCell: this.beforeSaveCell}}
+                                cellEdit={{mode: "click",
+                                           blurToSave: true,
+                                           beforeSaveCell: this.beforeSaveCell,
+                                           afterSaveCell: this._onSubmit
+                                           }}
                                 options={{ignoreEditable: true, onAddRow: this.onAddRow, afterInsertRow: this._onSubmit}}
                                 ref="table"
                     >
