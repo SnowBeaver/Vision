@@ -502,16 +502,17 @@ var EquipmentTestDiagnosisForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var OTHER_RECOMENDATION_ID = 6;
-        var state = {};
-        state[e.target.name] = e.target.value;
+        var OTHER_RECOMENDATION_TEXT = "Other recommendations (specify)";
 
         // Open new recommendation form, if needed
-        if (e.target.name == "recommendation_id") {
+        if (e.target.name == "recommendation_id") { 
+            var state = {};
+            // Change value in this form's state to be able to select
+            state.recommendation_id = e.target.value;
             // Change the value in the global state to save it from there
             this.props.onChange(e);
 
-            if (e.target.selectedOptions.length && e.target.value == OTHER_RECOMENDATION_ID){
+            if (e.target.selectedOptions.length && e.target.selectedOptions[0].text == OTHER_RECOMENDATION_TEXT){
                 state.formEdited = false;
                 // No special method for opening NewRecommendationForm in order not to set state twice
                 state.showNewRecommendationForm = true;
@@ -661,14 +662,15 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                                            diagnosisId={this.state.diagnosis_id}
                                            ref="diagnosisList"/>
                     </div>
-                    <div className="col-md-8 nopadding padding-right-xs">
-                        <SelectField source="diagnosis"
-                                     label="Predefined diagnosis"
-                                     name='diagnosis_id'
-                                     ref="diagnosis"
-                                     value={this.state.diagnosis_id}
-                                     key={this.state.diagnosis_id}
-                                     onChange={this._onChange}
+
+                        <div className="col-md-8 nopadding padding-right-xs">
+                            <SelectField source="diagnosisd"
+                                         label="Predefined diagnosis"
+                                         name='diagnosis_id'
+                                         ref="diagnosis"
+                                         value={this.state.diagnosis_id}
+                                         key={this.state.diagnosis_id}
+                                         onChange={this._onChange}
                             />
                     </div>
                     {parseInt(this.state.diagnosis_id) === OTHER_DIAGNOSIS_ID ?
