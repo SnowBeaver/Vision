@@ -2,7 +2,7 @@ import React from 'react';
 import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
-import DATETIMEPICKER_FORMAT from './appConstants.js';
+import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
 var options = [];
 var test_result_id;

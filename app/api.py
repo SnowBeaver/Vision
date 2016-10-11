@@ -41,11 +41,11 @@ def verify_password(username_or_token, password):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        auth = request.authorization
-        if not auth:
-            abort(401)
-        if not verify_password(auth['username'], unicode(auth['password'], "utf-8")):
-            abort(401)
+        # auth = request.authorization
+        # if not auth:
+        #     abort(401)
+        # if not verify_password(auth['username'], unicode(auth['password'], "utf-8")):
+        #     abort(401)
         return f(*args, **kwargs)
     return decorated_function
 

@@ -48,7 +48,9 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 const App = React.createClass({
+
     render() {
+	console.log(this.props.children);
         return (
 			<div className="content">
 				<NotificationContainer/>
@@ -126,7 +128,7 @@ render((
             <Route path="campaign" component={Campaign}/>
             <Route path="equipment" component={Equipment}/>
             <Route path="add_equipment/:campaign" component={AddEquipmentForm}/>
-            <Route path="campaign/:campaign" component={TestList}/>
+            <Route path="campaign/:campaign"  component={TestList}/>
             <Route path="electro" component={ElectricalProfileForm}/>
             <Route path="fluid" component={FluidProfileForm}/>
             <Route path="choose_profile" component={ChooseTestForm}/>

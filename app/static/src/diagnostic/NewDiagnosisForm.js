@@ -109,8 +109,9 @@ var NewDiagnosisForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data) {
-                that.props.onSuccess(data.result, "test");
+            success: function (response) {
+                that.props.onSuccess(response.result, data.test_type_id, "test");
+                NotificationManager.success("Test diagnosis has been successfully added");
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -136,8 +137,9 @@ var NewDiagnosisForm = React.createClass({
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function (data) {
-                that.props.onSuccess(data.result, "predefined");
+            success: function (response) {
+                that.props.onSuccess(response.result, data.test_type_id, "predefined");
+                NotificationManager.success("Predefined diagnosis has been successfully added");
             },
             beforeSend: function () {
                 this.setState({loading: true});
@@ -145,16 +147,11 @@ var NewDiagnosisForm = React.createClass({
         })
     },
 
-    _onSuccess: function (data, status, xhr) {
-        var diagnosisType = "Test";
-        if (this.state.public_diagnosis) {
-            diagnosisType = "Predefined";
-        }
-        NotificationManager.success(diagnosisType + " diagnosis has been successfully added");
-        this.props.handleClose();
-    },
+    _onSuccess: function (data, status, xhr) {},
 
     _onSubmit: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
         var xhr = this._create();
         if (xhr) {
             xhr.done(this._onSuccess)
@@ -263,64 +260,67 @@ var NewDiagnosisForm = React.createClass({
 
     render: function () {
         return (
-            <div className="form-container" onChange={this._onChange}>
-                <div className="row">
-                    <div className="col-md-5">
-                        <TestTypeSelectField
-									selectedSubtests={this.props.selectedSubtests}
-									testType={this.props.testType}
-									value={this.state.test_type_id}
-									name="test_type_id"
-									handleChange={this._onChange}
-									errors={this.state.errors}
-									required/>
-                    </div>
-                    <div className="col-md-1">
-                        <Checkbox checked={this.state.public_diagnosis}
-                                  name="public_diagnosis"
-                        >Public</Checkbox>
-                    </div>
-                    {this.state.public_diagnosis ?
-                        <div>
-                            <div className="col-md-3">
-                                <TextField label="Name*"
-                                           name='name'
-                                           value={this.state.name}
-                                           errors={this.state.errors}
-                                           data-len="50"
-                                           required/>
-                            </div>
-                            <div className="col-md-3">
-                                <TextField label="Code"
-                                           name='code'
-                                           value={this.state.code}
-                                           errors={this.state.errors}
-                                           data-len="50"/>
-                            </div>
+            <div className="form-container">
+                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+                    <div className="row">
+                        <div className="col-md-5">
+                            <TestTypeSelectField selectedSubtests={this.props.selectedSubtests}
+                                                 testType={this.props.testType}
+                                                 value={this.state.test_type_id}
+                                                 name="test_type_id"
+                                                 handleChange={this._onChange}
+                                                 errors={this.state.errors}
+                                                 required/>
                         </div>
-                        : null
-                    }
-                </div>
-                <div className="row">
-                    <div className="col-md-12">
-                        <TextArea label={this.state.public_diagnosis ? "Description": "Diagnosis Notes"}
-                                  name={this.state.public_diagnosis ? "description": "diagnosis_notes"}
-                                  value={this.state.public_diagnosis ? this.state.description: this.state.diagnosis_notes}
-                                  errors={this.state.errors}
-                        />
+                        <div className="col-md-1">
+                            <Checkbox checked={this.state.public_diagnosis}
+                                      name="public_diagnosis"
+                            >Public</Checkbox>
+                        </div>
+                        {this.state.public_diagnosis ?
+                            <div>
+                                <div className="col-md-3">
+                                    <TextField label="Name*"
+                                               name='name'
+                                               value={this.state.name}
+                                               onChange={this._onChange}
+                                               errors={this.state.errors}
+                                               data-len="50"
+                                               required/>
+                                </div>
+                                <div className="col-md-3">
+                                    <TextField label="Code"
+                                               name='code'
+                                               value={this.state.code}
+                                               onChange={this._onChange}
+                                               errors={this.state.errors}
+                                               data-len="50"/>
+                                </div>
+                            </div>
+                            : null
+                        }
                     </div>
-                    <div className="col-md-12 ">
-                        <Button bsStyle="success"
-                                className="btn btn-success pull-right"
-                                onClick={this._onSubmit}
-                        >Add {this.state.public_diagnosis ? "Predefined" : "Test"} Diagnosis</Button>
-                        &nbsp;
-                        <Button bsStyle="danger"
-                                onClick={this.props.handleClose}
-                                className="pull-right margin-right-xs"
-                        >Cancel</Button>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <TextArea label={this.state.public_diagnosis ? "Description": "Diagnosis Notes"}
+                                      name={this.state.public_diagnosis ? "description": "diagnosis_notes"}
+                                      value={this.state.public_diagnosis ? this.state.description: this.state.diagnosis_notes}
+                                      errors={this.state.errors}
+                            />
+                        </div>
+                        <div className="col-md-12 ">
+                            <Button bsStyle="success"
+                                    className="btn btn-success pull-right"
+                                    type="submit"
+                            >Add {this.state.public_diagnosis ? "Predefined" : "Test"} Diagnosis</Button>
+                            &nbsp;
+                            <Button bsStyle="danger"
+                                    onClick={this.props.handleClose}
+                                    className="pull-right margin-right-xs"
+                            >Cancel</Button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         );
     }

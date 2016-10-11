@@ -340,6 +340,9 @@ var AddEquipmentForm = React.createClass({
     },
 
     render: function () {
+        console.log("state", this.state);
+        console.log("props", this.props.source);
+
         return (
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>

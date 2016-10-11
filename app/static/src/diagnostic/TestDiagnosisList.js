@@ -4,6 +4,8 @@ import Panel from 'react-bootstrap/lib/Panel';
 import {Link} from 'react-router';
 import Table from 'react-bootstrap/lib/Table';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import {DATETIME_FORMAT} from './appConstants.js';
+
 
 var TestDiagnosis = React.createClass({
 
@@ -19,7 +21,7 @@ var TestDiagnosis = React.createClass({
         var diagnosis = item.diagnosis;
         return (
             <tr>
-                <td>{item.date_created}</td>
+                <td>{item.date_created ? moment(item.date_created).utcOffset(0).format(DATETIME_FORMAT) : ""}</td>
                 <td>{diagnosis ? diagnosis.code : ""}</td>
                 <td>
                     <span title={diagnosis ? diagnosis.name : ""}>
