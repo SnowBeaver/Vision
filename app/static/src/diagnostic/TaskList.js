@@ -4,6 +4,16 @@ import Checkbox from 'react-bootstrap/lib/Checkbox';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 
+
+// TODO: Should be received from API
+const PRIORITY_ID_MAPPING = {
+    "Immediate": 1,
+    "Urgent": 2,
+    "High": 3,
+    "Normal": 4,
+    "Low": 5
+};
+
 var options = [];
 var test_result_id;
 
@@ -49,6 +59,10 @@ var TaskList = React.createClass({
                         task.status = (data[key] ? data[key].name : "");
                     } else if (key == 'assigned_to') {
                         task.assigned_to = (data[key] ? data[key].name : "");
+                    } else if (key == 'priority') {
+                        var value = data[key];
+                        var priorityLabel = Object.keys(PRIORITY_ID_MAPPING).find(key => PRIORITY_ID_MAPPING[key] === value);
+                        task.priority = (priorityLabel ? priorityLabel : "");
                     } else {
                         task[key] = data[key];
                     }
@@ -63,6 +77,7 @@ var TaskList = React.createClass({
         this.serverRequest = $.get('/api/v1.0/schedule', this.addResultToState, 'json');
         this._getUsers();
         this._getTestRecommendations();
+        this._getPriorities();
     },
 
     _create: function () {
@@ -79,7 +94,8 @@ var TaskList = React.createClass({
                     delete task.assigned_to;
                 } else if (key == "test_recommendation") {
                     task.test_recommendation_id = this.state.recommendationIdMapping[this.state.recommendationList.indexOf(tap[key])];
-                    delete task.assigned_to;
+                } else if (key == "priority") {
+                    task.priority = PRIORITY_ID_MAPPING[tap[key]];
                 } else {
                     task[key] = tap[key];
                 }
@@ -99,12 +115,12 @@ var TaskList = React.createClass({
     },
 
     _onSubmit: function (e) {
-        e.preventDefault();
+        //e.preventDefault();
         // Do not propagate the submit event of the main form
-        e.stopPropagation();
+        //e.stopPropagation();
         if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
-            e.stopPropagation();
+            //e.stopPropagation();
             return false;
         }
         this.state.tasks = this.refs.table.state.data;
@@ -120,7 +136,7 @@ var TaskList = React.createClass({
 
     _onSuccess: function (data) {
         this.addResultToState(data);
-        NotificationManager.success('Task have been saved successfully.');
+        NotificationManager.success('Tasks have been saved successfully.');
     },
 
     _onError: function (data) {
@@ -144,7 +160,7 @@ var TaskList = React.createClass({
     _validateDict: {
         assigned_to: {data_type: "alnum", label: "Assigned To"},
         date_start: {data_type: "date", label: "Date"},
-        priority: {data_type: "int", label: "Priority"},
+        priority: {data_type: "alnum", label: "Priority"},
         recurring: {data_type: "bool", label: "Recurring"}
     },
 
@@ -242,6 +258,16 @@ var TaskList = React.createClass({
         this.setState({userList: userList, userIdMapping: users});
     },
 
+    _getPriorities: function () {
+        var res = PRIORITY_ID_MAPPING;
+        var prioritiesList = [""];
+
+        for (var name in res) {
+            prioritiesList.push(name);
+        }
+        this.setState({prioritiesList: prioritiesList});
+    },
+
     _getTestRecommendations: function () {
         $.get('/api/v1.0/test_recommendation', this.addTestRecommendationsToState, 'json');
     },
@@ -262,8 +288,8 @@ var TaskList = React.createClass({
 
     _composeRecommendationNote: function (record) {
         // Format nice name for recommendation select field
-        var recommendationNotes = record.recommendation_notes || (record.recommendation ? record.recommendation.description : null);
-        var fullName = [recommendationNotes, record.recommendation ? record.recommendation.name : null];
+        //var recommendationNotes = record.recommendation_notes || (record.recommendation ? record.recommendation.description : null);
+        var fullName = [record.recommendation_notes, record.recommendation ? record.recommendation.name : null];
         fullName.map(function (name) {
             if (!name) {
                 fullName.splice(fullName.indexOf(name), 1)
@@ -305,113 +331,109 @@ var TaskList = React.createClass({
     render: function () {
         return (
             <div className="form-container">
-                    <BootstrapTable data={this.state.tasks}
-                                    striped={true}
-                                    hover={true}
-                                    condensed={true}
-                                    search={true}
-                                    ignoreSinglePage={true}
-                                    insertRow={true}
-                                    selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)"}}
-                                    cellEdit={{mode: "click", blurToSave: true, beforeSaveCell: this.beforeSaveCell}}
-                                    options={{ignoreEditable: true, onAddRow: this.onAddRow}}
-                                    ref="table"
+                <BootstrapTable data={this.state.tasks}
+                                striped={true}
+                                hover={true}
+                                condensed={true}
+                                search={true}
+                                ignoreSinglePage={true}
+                                insertRow={true}
+                                selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)"}}
+                                cellEdit={{mode: "click", blurToSave: true, beforeSaveCell: this.beforeSaveCell}}
+                                options={{ignoreEditable: true, onAddRow: this.onAddRow, afterInsertRow: this._onSubmit}}
+                                ref="table"
                     >
-                        <TableHeaderColumn dataField="uniqueKey" isKey hidden hiddenOnInsert={true}>Key</TableHeaderColumn>
-                        <TableHeaderColumn dataField="id"
-                                           width="70"
-                                           dataSort={true}
-                                           editable={false}
-                                           hiddenOnInsert={true}
-                                           ref="id">ID
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="assigned_to"
-                                           width="130"
-                                           dataSort={true}
-                                           editable={{type: 'select', options: {values: this.state.userList}}}
-                                           ref="assigned_to">Assigned To
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="test_recommendation"
-                                           width="80"
-                                           dataFormat={this._formatRecommendation}
-                                           dataSort={true}
-                                           editable={{type: 'select', options: {values: this.state.recommendationList}}}
-                                           ref="test_recommendation">Test Rec
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="test_result_id"
-                                           width="80"
-                                           dataSort={true}
-                                           editable={false}
-                                           hiddenOnInsert={true}
-                                           ref="test_result_id">Test Result
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="test_type"
-                                           width="150"
-                                           dataSort={true}
-                                           editable={false}
-                                           hiddenOnInsert={true}
-                                           ref="test_type">Test Type
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="date_start"
-                                           width="130"
-                                           dataFormat={this._formatDateTime}
-                                           dataSort={true}
-                                           editable={{type: 'datetime'}}
-                                           ref="date_start">Start on
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="date_created"
-                                           width="130"
-                                           dataFormat={this._formatDateTime}
-                                           dataSort={true}
-                                           editable={false}
-                                           hiddenOnInsert={true}
-                                           ref="date_created">Created on
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="date_updated"
-                                           width="130"
-                                           dataFormat={this._formatDateTime}
-                                           dataSort={true}
-                                           editable={false}
-                                           hiddenOnInsert={true}
-                                           ref="date_updated">Updated on
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="description"
-                                           dataSort={true}
-                                           editable={{type: 'textarea'}}
-                                           ref="description">Description
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="priority"
-                                           width="90"
-                                           dataSort={true}
-                                           editable={false}
-                                           ref="priority">Priority
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="recurring"
-                                           width="100"
-                                           dataSort={true}
-                                           editable={{type: 'checkbox', options: {values: "true:false"}}}
-                                           ref="recurring">Recurring
-                        </TableHeaderColumn>
-                        <TableHeaderColumn dataField="notify_before_in_days"
-                                           width="80"
-                                           dataSort={true}
-                                           editable={false}
-                                           ref="notify_before_in_days">Notify before (days)
-                        </TableHeaderColumn>
-                    </BootstrapTable>
-                    <div className="row">
-                        <div className="col-md-12 ">
-                            <Button bsStyle="success"
-                                    className="pull-right"
-                                    onClick={this._onSubmit}
-                            >Save</Button>
-                            &nbsp;
-                            <Button bsStyle="danger"
-                                    className="pull-right margin-right-xs"
-                                    onClick={this.cleanSelected}
+                    <TableHeaderColumn dataField="uniqueKey" isKey hidden hiddenOnInsert={true}>Key</TableHeaderColumn>
+                    <TableHeaderColumn dataField="id"
+                                       width="70"
+                                       dataSort={true}
+                                       editable={false}
+                                       hiddenOnInsert={true}
+                                       ref="id">ID
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="assigned_to"
+                                       width="130"
+                                       dataSort={true}
+                                       editable={{type: 'select', options: {values: this.state.userList}}}
+                                       ref="assigned_to">Assigned To
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="test_recommendation"
+                                       width="80"
+                                       dataFormat={this._formatRecommendation}
+                                       dataSort={true}
+                                       editable={{type: 'select', options: {values: this.state.recommendationList}}}
+                                       ref="test_recommendation">Test Rec
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="test_result_id"
+                                       width="80"
+                                       dataSort={true}
+                                       editable={false}
+                                       hiddenOnInsert={true}
+                                       ref="test_result_id">Test Result
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="test_type"
+                                       width="150"
+                                       dataSort={true}
+                                       editable={false}
+                                       hiddenOnInsert={true}
+                                       ref="test_type">Test Type
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="date_start"
+                                       width="130"
+                                       dataFormat={this._formatDateTime}
+                                       dataSort={true}
+                                       editable={{type: 'datetime'}}
+                                       ref="date_start">Start on
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="date_created"
+                                       width="130"
+                                       dataFormat={this._formatDateTime}
+                                       dataSort={true}
+                                       editable={false}
+                                       hiddenOnInsert={true}
+                                       ref="date_created">Created on
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="date_updated"
+                                       width="130"
+                                       dataFormat={this._formatDateTime}
+                                       dataSort={true}
+                                       editable={false}
+                                       hiddenOnInsert={true}
+                                       ref="date_updated">Updated on
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="description"
+                                       dataSort={true}
+                                       editable={{type: 'textarea'}}
+                                       ref="description">Description
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="priority"
+                                       width="90"
+                                       dataSort={true}
+                                       editable={{type: 'select', options: {values: this.state.prioritiesList}}}
+                                       ref="priority">Priority
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="recurring"
+                                       width="100"
+                                       dataSort={true}
+                                       editable={{type: 'checkbox', options: {values: "true:false"}}}
+                                       ref="recurring">Recurring
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="notify_before_in_days"
+                                       width="80"
+                                       dataSort={true}
+                                       editable={false}
+                                       ref="notify_before_in_days">Notify before (days)
+                    </TableHeaderColumn>
+                </BootstrapTable>
+
+                <div className="row">
+                    <div className="col-md-12 ">
+                        <Button bsStyle="danger"
+                                className="pull-right margin-right-xs"
+                                onClick={this.cleanSelected}
                             >Cancel</Button>
-                        </div>
                     </div>
+                </div>
             </div>
         );
     }
