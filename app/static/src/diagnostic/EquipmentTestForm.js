@@ -275,7 +275,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <TextField label="Fluid Temperature (&#8451;)"
                                    name='temperature'
                                    value={data.temperature}
-                        />
+                                   onChange={this.props.onChange}
+                                   />
                     </div>
                 </div>
                 <div className="row">
@@ -284,6 +285,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Insulating Fluid"
                                      name='fluid_type_id'
                                      value={data.fluid_type_id}
+                                     onChange={this.props.onChange}
                         />
                     </div>
                     <div className="col-md-2">
@@ -304,7 +306,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <TextField label="Load (MVA)"
                                    value={data.charge}
                                    name="charge"
-                        />
+                                   onChange={this.props.onChange}
+                                   />
                     </div>
                 </div>
                 <div className="row">
@@ -320,7 +323,9 @@ var EquipmentTestIdentificationForm = React.createClass({
                         <SyringeNumberSelectField source="syringe"
                                                   label="Syringe &#8470; / Jar &#8470;"
                                                   name='seringe_num'
-                                                  value={data.seringe_num}/>
+                                                  value={data.seringe_num}
+                                                  onChange={this.props.onChange}
+                        />
                     </div>
                     <div className="col-md-3" key={data.date_analyse}>
                         <DateTimeFieldWithLabel label="Lab Analysis Date"
@@ -335,7 +340,8 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Lab./On-line analyser"
                                      name='lab_id'
                                      value={data.lab_id}
-                        />
+                                     onChange={this.props.onChange}
+                                     />
                     </div>
                 </div>
                 <div className="row">
@@ -605,6 +611,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                     <div className="col-md-12 ">
                         <TestDiagnosisList testResultId={this.props.data.id}
                                            testTypeId={this.props.data.test_type_id}
+                                           diagnosisId={this.state.diagnosis_id}
                                            ref="diagnosisList"/>
                     </div>
 
@@ -885,13 +892,13 @@ var EquipmentTestForm = React.createClass({
     _onChange: function (e) {
         var data = (this.state.data != null) ? this.state.data : {};
         if (e.target.type == 'checkbox') {
-            data[e.target.name] = e.target.checked;
+            data[e.target.name] = e.target.checked || null;
         } else if (e.target.type == 'radio') {
-            data[e.target.name] = e.target.value;
+            data[e.target.name] = e.target.value || null;
         } else if (e.target.type == 'select-one') {
-            data[e.target.name] = e.target.value;
+            data[e.target.name] = e.target.value || null;
         } else {
-            data[e.target.name] = e.target.value;
+            data[e.target.name] = e.target.value || null;
         }
         this.setState({data: data});
     },
@@ -949,7 +956,7 @@ var EquipmentTestForm = React.createClass({
         var data = (this.state.data != null) ? this.state.data : {};
         return (
             <div>
-                <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
+
                     <input type="hidden" value={this.state.csrf_token}/>
                     <div className="maxwidth padding-top-lg margin-bottom-xs">
                         <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
@@ -991,7 +998,9 @@ var EquipmentTestForm = React.createClass({
                         <div className="col-md-1 pull-right nopadding padding-right-xs">
                             <FormGroup>
                                 <Button bsStyle="success"
-                                        type="submit">Save</Button>
+                                        type="submit"
+                                        onClick={this._onSubmit}
+                                >Save</Button>
                             </FormGroup>
                         </div>
                         <div className="col-md-1 pull-right ">
@@ -1002,7 +1011,7 @@ var EquipmentTestForm = React.createClass({
                             </FormGroup>
                         </div>
                     </div>
-                </form>
+
             </div>
         );
     }

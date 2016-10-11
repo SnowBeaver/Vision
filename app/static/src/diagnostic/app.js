@@ -52,7 +52,7 @@ const App = React.createClass({
         return (
 			<div className="content">
 				<NotificationContainer/>
-				
+
 				<div className="row">
 					<ul className="pull-left">
 						<li><Link to='/home'>Home</Link></li>
@@ -110,9 +110,6 @@ const App = React.createClass({
 						<li><Link to='/tasks'>Tasks</Link></li>
 					</ul>
 				</div>
-				<div className="row">
-					<Link to='/campaign' className="btn btn-success btn-large">Start New Campaign</Link>
-				</div>
 				<div className='app-container'>
 					<hr/>
 					{this.props.children}
@@ -124,7 +121,7 @@ const App = React.createClass({
 
 render((
     <Router history={hashHistory}>
-        <Route path="/" component={App}>
+        <Route path="/" component={App} >
             <IndexRoute component={Home}/>
             <Route path="campaign" component={Campaign}/>
             <Route path="equipment" component={Equipment}/>
@@ -163,8 +160,9 @@ render((
             <Route path="winding2_test" component={WindingTestForm}/>
 			<Route path="up_down_streams" component={EqConnectionsManager}/>
 			<Route path="schedule_task" component={NewTaskForm}/>
+			{/*This route should be the last, otherwise it will match all subsequent routes*/}
+			<Route path=":equipmentId" component={Home}/>
 			<Route path="tasks" component={TaskList}/>
-
         </Route>
     </Router>
 ), document.getElementById('app'));

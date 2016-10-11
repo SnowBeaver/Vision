@@ -39,3 +39,4 @@ raven
 blinker
 flask-apidoc
 cerberus
+requests==2.11.1

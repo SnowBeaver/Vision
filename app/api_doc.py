@@ -1325,7 +1325,7 @@ doc = ApiDoc(app=api)
 """
 """
 Duplicate test result and related electrical or fluid profile, if they belong
-to the currently logged in user or are private. 
+to the currently logged in user or are private.
 @api {post} /test_result/:id/duplicate
 @apiVersion 1.0.0
 @apiName add_item
