@@ -50,7 +50,6 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 const App = React.createClass({
 
     render() {
-	console.log(this.props.children);
         return (
 			<div className="content">
 				<NotificationContainer/>
