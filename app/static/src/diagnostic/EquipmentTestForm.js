@@ -31,6 +31,9 @@ import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {findDOMNode} from 'react-dom';
+import ReactDOM from 'react-dom';
+
 
 var SelectField = React.createClass({
     getInitialState: function () {
@@ -694,7 +697,8 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                                                  handleChange={this.props.onChange}
                                                  name="diagnosis_test_type_id"
                                                  errors={this.state.errors}
-                                                 required={this.state.formEdited}/>
+                                                 required={this.state.formEdited}
+                                                 ref="diagnosisTestTypeId"/>
                         </div>
                         : null
                     }
@@ -955,6 +959,7 @@ var EquipmentTestForm = React.createClass({
         this.props.updateSource('/api/v1.0/test_result/?equipment_id=' + this.state.data.equipment_id);
 
         this.reloadSubforms();
+        this.resetTestTypeSelectFields();
         this.cleanSubformsState();
     },
 
@@ -974,16 +979,21 @@ var EquipmentTestForm = React.createClass({
 
     cleanSubformsState: function () {
         var stateData = this.state.data;
-        for (var i = 0; i < this.state.testDiagnosisFields.length; i++) {
-            stateData[this.state.testDiagnosisFields[i]] = null;
-        }
-        for (var i = 0; i < this.state.testRecommendationFields.length; i++) {
-            stateData[this.state.testRecommendationFields[i]] = null;
-        }
-        for (var i = 0; i < this.state.testRepairNotesFields.length; i++) {
-            stateData[this.state.testRepairNotesFields[i]] = null;
+        var fields = [];
+        fields = fields.concat(this.state.testDiagnosisFields)
+                       .concat(this.state.testRecommendationFields)
+                       .concat(this.state.testRepairNotesFields);
+
+        for (var i = 0; i < fields.length; i++) {
+            stateData[fields[i]] = null;
         }
         this.setState({data: stateData});
+    },
+
+    resetTestTypeSelectFields: function () {
+        document.getElementById('diagnosis_test_type_id').value = "";
+        document.getElementById('recommendation_test_type_id').value = "";
+        document.getElementById('repair_test_type_id').value = "";
     },
 
     _onError: function (data) {
