@@ -31,6 +31,9 @@ import {DATETIMEPICKER_FORMAT} from './appConstants.js';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
+import {findDOMNode} from 'react-dom';
+import ReactDOM from 'react-dom';
+
 
 var SelectField = React.createClass({
     getInitialState: function () {
@@ -402,7 +405,8 @@ var EquipmentTestRepairForm = React.createClass({
                 <div className="tab_row">
                     <div className="col-md-12 ">
                         <RepairNotesList testResultId={this.props.data.id}
-                                         testTypeId={this.props.data.test_type_id}/>
+                                         testTypeId={this.props.data.test_type_id}
+                                         ref="testRepairNotesList"/>
                     </div>
                 </div>
                 <div className="tab_row nopadding">
@@ -494,9 +498,9 @@ var EquipmentTestDiagnosisForm = React.createClass({
             state.recommendation_id = recommendationId;
             state.recommendationPreselected = true;
         } else if (recommendationType == "test") {
+            state.recommendation_id = "";
             // Reload Recommendation list
             this.refs.testRecommendationList.reloadList(this.props.data.id, this.props.data.test_type_id);
-            state.recommendation_id = "";
         }
         this.setState(state);
     },
@@ -693,7 +697,8 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
                                                  handleChange={this.props.onChange}
                                                  name="diagnosis_test_type_id"
                                                  errors={this.state.errors}
-                                                 required={this.state.formEdited}/>
+                                                 required={this.state.formEdited}
+                                                 ref="diagnosisTestTypeId"/>
                         </div>
                         : null
                     }
@@ -950,9 +955,45 @@ var EquipmentTestForm = React.createClass({
     _onSuccess: function (data, status, xhr) {
         // this.refs.eqtype_form.getDOMNode().reset();
         // this.setState(this.getInitialState());
-        this.props.handleClose();
         NotificationManager.success('Saved');
         this.props.updateSource('/api/v1.0/test_result/?equipment_id=' + this.state.data.equipment_id);
+
+        this.reloadSubforms();
+        this.resetTestTypeSelectFields();
+        this.cleanSubformsState();
+    },
+
+    reloadSubforms: function () {
+        // Reload Repair Notes list
+        this.refs.repairNotesForm.refs.testRepairNotesList.reloadList(this.refs.repairNotesForm.props.data.id);
+        this.refs.repairNotesForm.setState(this.refs.repairNotesForm.getInitialState());
+
+        // Reload Recommendation list
+        this.refs.recommedationForm.refs.testRecommendationList.reloadList(this.refs.recommedationForm.props.data.id);
+        this.refs.recommedationForm.setState(this.refs.recommedationForm.getInitialState());
+
+        // Reload Diagnosis list
+        this.refs.diagnosisForm.refs.diagnosisList.reloadList(this.refs.diagnosisForm.props.data.id);
+        this.refs.diagnosisForm.setState(this.refs.diagnosisForm.getInitialState());
+    },
+
+    cleanSubformsState: function () {
+        var stateData = this.state.data;
+        var fields = [];
+        fields = fields.concat(this.state.testDiagnosisFields)
+                       .concat(this.state.testRecommendationFields)
+                       .concat(this.state.testRepairNotesFields);
+
+        for (var i = 0; i < fields.length; i++) {
+            stateData[fields[i]] = null;
+        }
+        this.setState({data: stateData});
+    },
+
+    resetTestTypeSelectFields: function () {
+        document.getElementById('diagnosis_test_type_id').value = "";
+        document.getElementById('recommendation_test_type_id').value = "";
+        document.getElementById('repair_test_type_id').value = "";
     },
 
     _onError: function (data) {
@@ -1089,7 +1130,7 @@ var EquipmentTestForm = React.createClass({
                             <FormGroup>
                                 <Button bsStyle="danger"
                                         onClick={this.props.handleClose}
-                                >Cancel</Button>
+                                >Close</Button>
                             </FormGroup>
                         </div>
                     </div>

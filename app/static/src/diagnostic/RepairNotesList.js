@@ -125,15 +125,19 @@ var RepairNotesList = React.createClass({
     componentWillReceiveProps: function (nextProps) {
         var testResultId = nextProps.testResultId;
         if (testResultId && testResultId != this.props.testResultId) {
-            var urlParams = '&test_result_id=' + testResultId;
-            var url = '/api/v1.0/test_repair_note/?' + urlParams;
-            this.serverRequest = $.get(url,
-                function (result) {
-                    this.setState({
-                        repair_notes: result['result']
-                    });
-                }.bind(this), 'json');
+            this._updateList(testResultId);
         }
+    },
+
+    _updateList: function (testResultId) {
+        var urlParams = '&test_result_id=' + testResultId;
+        var url = '/api/v1.0/test_repair_note/?' + urlParams;
+        this.serverRequest = $.get(url,
+            function (result) {
+                this.setState({
+                    repair_notes: result['result']
+                });
+            }.bind(this), 'json');
     },
 
     componentWillUnmount: function () {
@@ -142,8 +146,8 @@ var RepairNotesList = React.createClass({
         }
     },
 
-    reloadList: function () {
-        this.componentDidMount();
+    reloadList: function (testResultId) {
+        this._updateList(testResultId);
     },
 
     _changeAccordionState: function (state) {
