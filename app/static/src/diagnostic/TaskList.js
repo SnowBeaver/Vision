@@ -76,6 +76,9 @@ var TaskList = React.createClass({
                 if (key == "assigned_to") {
                     task.assigned_to_id = this.state.userIdMapping[tap[key]];
                     delete task.assigned_to;
+                } else if (key == "test_recommendation") {
+                    task.assigned_to_id = this.state.recommendationIdMapping[this.state.recommendationList.indexOf(tap[key])];
+                    delete task.assigned_to;
                 } else {
                     task[key] = tap[key];
                 }
@@ -239,11 +242,11 @@ var TaskList = React.createClass({
     addTestRecommendationsToState: function (result) {
         var res = (result['result']);
         var recommendationList = [""];
-        var recommendationIdMapping = {};
+        var recommendationIdMapping = [""];
 
         for (var i = 0; i < res.length; i++) {
-            recommendationList.push(res[i].id);
-            recommendationIdMapping[res[i].name] = res[i].id;
+            recommendationList.push(res[i].recommendation.name);
+            recommendationIdMapping.push(res[i].id);
         }
         this.setState({recommendationList: recommendationList, recommendationIdMapping: recommendationIdMapping});
     },
@@ -330,7 +333,6 @@ var TaskList = React.createClass({
                                            width="130"
                                            dataFormat={this._formatDateTime}
                                            dataSort={true}
-                                           editable={false}
                                            editable={{type: 'datetime'}}
                                            ref="date_start">Start on
                         </TableHeaderColumn>
