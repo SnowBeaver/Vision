@@ -376,7 +376,11 @@ var TaskList = React.createClass({
                                            beforeSaveCell: this.beforeSaveCell,
                                            afterSaveCell: this._onSubmit
                                            }}
-                                options={{ignoreEditable: true, onAddRow: this.onAddRow, afterInsertRow: this._onSubmit}}
+                                options={{ignoreEditable: true,
+                                          onAddRow: this.onAddRow,
+                                          afterInsertRow: this._onSubmit,
+                                          defaultSortName: 'priority',
+                                          defaultSortOrder: 'desc'}}
                                 ref="table"
                     >
                     <TableHeaderColumn dataField="uniqueKey" isKey hidden hiddenOnInsert={true}>Key</TableHeaderColumn>
