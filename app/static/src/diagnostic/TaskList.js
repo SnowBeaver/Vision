@@ -163,7 +163,8 @@ var TaskList = React.createClass({
 
     _validateDict: {
         assigned_to: {data_type: "alnum", label: "Assigned To"},
-        date_start: {data_type: "date", label: "Date"},
+        date_start: {data_type: "date", label: "Start On"},
+        test_recommendation: {data_type: "any", label: "Test Recommendation"},
         priority: {data_type: "alnum", label: "Priority"},
         recurring: {data_type: "bool", label: "Recurring"}
     },
@@ -175,6 +176,7 @@ var TaskList = React.createClass({
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/,
                 "alnum": /^[a-zA-Z\s0-9]*$/,
+                "any": /(\w|\W)+$/,
                 "date": /^[a-zA-Z\s0-9:\+\-\.]*$/,
                 "bool": /^(true|false)$/
             };
