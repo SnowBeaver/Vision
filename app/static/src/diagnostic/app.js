@@ -47,6 +47,46 @@ import TaskList from './TaskList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
+function getAPIToken () {
+	return btoa(localStorage.getItem("apiToken") + ":");
+}
+
+(function ($) {
+	$.authorizedAjax = function (settings) {
+		var originalBeforeSendFunction = settings.beforeSend;
+		settings.beforeSend = function (xhr) {
+			originalBeforeSendFunction(xhr);
+			xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
+		};
+		settings.statusCode = {
+			401: function () {
+				// Redirect user to login - ?
+				NotificationManager.error("Please re-login");
+			}
+		};
+		return $.ajax(settings);
+	};
+})(jQuery);
+
+(function ($) {
+	$.authorizedGet = function (settings, callback, type) {
+		return $.ajax({
+			type: "GET",
+			url: settings,
+			dataType: type,
+			beforeSend: function (xhr) {
+			   xhr.setRequestHeader ("Authorization", "Basic " + getAPIToken());
+			},
+			success: callback,
+			error: function () {
+				// Redirect user to login - ?
+				NotificationManager.error("Please re-login");
+			}
+		});
+	};
+})(jQuery);
+
+
 const App = React.createClass({
 
     render() {

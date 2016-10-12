@@ -79,7 +79,7 @@ var TaskList = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get('/api/v1.0/schedule', this.addResultToState, 'json');
+        this.serverRequest = $.get2('/api/v1.0/schedule', this.addResultToState, 'json');
         this._getUsers();
         this._getTestRecommendations();
         this._getPriorities();
@@ -113,13 +113,14 @@ var TaskList = React.createClass({
             }
             data.push(task)
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/schedule/multi/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            beforeSend: function () {
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization222", "Basic2222 ssdsdsdsd");
                 this.setState({loading: true});
             }.bind(this)
         })
@@ -261,7 +262,7 @@ var TaskList = React.createClass({
     },
 
     _getUsers: function () {
-        $.get('/api/v1.0/user', this.addUsersToState, 'json');
+        $.authorizedGet('/api/v1.0/user', this.addUsersToState, 'json');
     },
 
     addUsersToState: function (result) {
@@ -287,7 +288,7 @@ var TaskList = React.createClass({
     },
 
     _getTaskStatuses: function () {
-        $.get('/api/v1.0/task_status', this.addTaskStatusesToState, 'json');
+        $.authorizedGet('/api/v1.0/task_status', this.addTaskStatusesToState, 'json');
     },
 
     addTaskStatusesToState: function (result) {
@@ -305,7 +306,7 @@ var TaskList = React.createClass({
     },
 
     _getTestRecommendations: function () {
-        $.get('/api/v1.0/test_recommendation', this.addTestRecommendationsToState, 'json');
+        $.authorizedGet('/api/v1.0/test_recommendation', this.addTestRecommendationsToState, 'json');
     },
 
     addTestRecommendationsToState: function (result) {
