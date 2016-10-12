@@ -65,7 +65,10 @@ var TaskList = React.createClass({
                         var value = data[key];
                         var priorityLabel = Object.keys(PRIORITY_ID_MAPPING).find(key => PRIORITY_ID_MAPPING[key] === value);
                         task.priority = (priorityLabel ? priorityLabel : "");
-                    } else {
+                    } else if (key == 'date_start') {
+                        // TODO: Remove when datetime edit field is fixed
+                        task.date_start = this._formatDateTime(data[key]);
+                    }  else {
                         task[key] = data[key];
                     }
                 }
@@ -76,7 +79,7 @@ var TaskList = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get('/api/v1.0/schedule', this.addResultToState, 'json');
+        this.serverRequest = $.authorizedGet('/api/v1.0/schedule', this.addResultToState, 'json');
         this._getUsers();
         this._getTestRecommendations();
         this._getPriorities();
@@ -110,13 +113,14 @@ var TaskList = React.createClass({
             }
             data.push(task)
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/schedule/multi/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            beforeSend: function () {
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization222", "Basic2222 ssdsdsdsd");
                 this.setState({loading: true});
             }.bind(this)
         })
@@ -163,7 +167,6 @@ var TaskList = React.createClass({
 
     _validateDict: {
         assigned_to: {data_type: "alnum", label: "Assigned To"},
-        date_start: {data_type: "date", label: "Start On"},
         test_recommendation: {data_type: "any", label: "Test Recommendation"},
         priority: {data_type: "alnum", label: "Priority"},
         recurring: {data_type: "bool", label: "Recurring"}
@@ -177,7 +180,6 @@ var TaskList = React.createClass({
                 "int": /^(-|\+)?(0|[1-9]\d*)$/,
                 "alnum": /^[a-zA-Z\s0-9]*$/,
                 "any": /(\w|\W)+$/,
-                "date": /^[a-zA-Z\s0-9:\+\-\.]*$/,
                 "bool": /^(true|false)$/
             };
             if (!typePatterns[type].test(value)){
@@ -185,6 +187,17 @@ var TaskList = React.createClass({
             }
         }
         return error;
+    },
+
+    _validateDateTime: function (value) {
+        var isValid = moment(value, 'MM/DD/YYYY hh:mm A', true).isValid();
+        if (!isValid) {
+            isValid = moment(value, 'YYYY-MM-DDThh:mm', true).isValid();
+        }
+        if (!isValid) {
+            NotificationManager.error('Start on should of the following format mm/dd/yyyy HH:MM AM', 'Validation Error', 20000);
+        }
+        return isValid;
     },
 
     is_valid: function () {
@@ -236,10 +249,10 @@ var TaskList = React.createClass({
         return true;
     },
 
-    _formatDateTime: function(date) {
+    _formatDateTime: function(date, offset) {
         // TODO: make nicer date formatting
         if (date) {
-            date = moment(date).format(DATETIMEPICKER_FORMAT).replace(/T/g, ' ');
+            date = moment(date).utcOffset(0).format('MM/DD/YYYY hh:mm A');
         }
         return date;
     },
@@ -249,7 +262,7 @@ var TaskList = React.createClass({
     },
 
     _getUsers: function () {
-        $.get('/api/v1.0/user', this.addUsersToState, 'json');
+        $.authorizedGet('/api/v1.0/user', this.addUsersToState, 'json');
     },
 
     addUsersToState: function (result) {
@@ -275,7 +288,7 @@ var TaskList = React.createClass({
     },
 
     _getTaskStatuses: function () {
-        $.get('/api/v1.0/task_status', this.addTaskStatusesToState, 'json');
+        $.authorizedGet('/api/v1.0/task_status', this.addTaskStatusesToState, 'json');
     },
 
     addTaskStatusesToState: function (result) {
@@ -293,7 +306,7 @@ var TaskList = React.createClass({
     },
 
     _getTestRecommendations: function () {
-        $.get('/api/v1.0/test_recommendation', this.addTestRecommendationsToState, 'json');
+        $.authorizedGet('/api/v1.0/test_recommendation', this.addTestRecommendationsToState, 'json');
     },
 
     addTestRecommendationsToState: function (result) {
@@ -343,9 +356,6 @@ var TaskList = React.createClass({
         ["id", "date_created", "date_updated"].forEach(e => delete row[e]);
         if (row.date_start == "") {
             delete row.date_start;
-        } else {
-            // TODO: fix
-            row.date_start = row.date_start + ":00.000000Z";
         }
         row.uniqueKey = this.getUniqueKey();
         row.recurring = row.recurring === 'true' ? true: false;
@@ -367,7 +377,11 @@ var TaskList = React.createClass({
                                            beforeSaveCell: this.beforeSaveCell,
                                            afterSaveCell: this._onSubmit
                                            }}
-                                options={{ignoreEditable: true, onAddRow: this.onAddRow, afterInsertRow: this._onSubmit}}
+                                options={{ignoreEditable: true,
+                                          onAddRow: this.onAddRow,
+                                          afterInsertRow: this._onSubmit,
+                                          defaultSortName: 'priority',
+                                          defaultSortOrder: 'desc'}}
                                 ref="table"
                     >
                     <TableHeaderColumn dataField="uniqueKey" isKey hidden hiddenOnInsert={true}>Key</TableHeaderColumn>
@@ -419,9 +433,8 @@ var TaskList = React.createClass({
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_start"
                                        width="130"
-                                       dataFormat={this._formatDateTime}
                                        dataSort={true}
-                                       editable={{type: 'datetime'}}
+                                       editable={{type: 'datetime', validator: this._validateDateTime}}
                                        ref="date_start">Start on
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_created"
