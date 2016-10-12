@@ -79,7 +79,7 @@ var TaskList = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get2('/api/v1.0/schedule', this.addResultToState, 'json');
+        this.serverRequest = $.authorizedGet('/api/v1.0/schedule', this.addResultToState, 'json');
         this._getUsers();
         this._getTestRecommendations();
         this._getPriorities();
