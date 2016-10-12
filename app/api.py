@@ -26,12 +26,12 @@ security = Security(api, user_datastore)
 
 
 # Authentication functions
-def verify_password(username_or_token, password):
+def verify_password(email_or_token, password):
     # first try to authenticate by token
-    user = User.verify_auth_token(username_or_token)
+    user = User.verify_auth_token(email_or_token)
     if not user:
         # try to authenticate with username/password
-        user = User.query.filter_by(name=username_or_token).first()
+        user = User.query.filter_by(email=email_or_token).first()
         if not user or not user.verify_password(password):
             return False
     g.user = user
