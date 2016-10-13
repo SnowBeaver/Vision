@@ -33,7 +33,7 @@ var SamplPointSelectField1 = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -92,7 +92,7 @@ var SamplPointSelectField2 = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -151,7 +151,7 @@ var SamplPointSelectField3 = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -217,7 +217,7 @@ var TestProfileSelectField = React.createClass({
 
         } else {
 
-            this.serverRequest = $.get('/api/v1.0/fluid_profile/' + event.target.value, function (result) {
+            this.serverRequest = $.authorizedGet('/api/v1.0/fluid_profile/' + event.target.value, function (result) {
                 this.setState({
                     saved_profile: result['result']
                 });
@@ -227,7 +227,7 @@ var TestProfileSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             this.setState({
                 items: result['result']
             });

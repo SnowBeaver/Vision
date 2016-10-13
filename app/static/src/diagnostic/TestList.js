@@ -152,7 +152,7 @@ var TestItemList = React.createClass({
 
     componentDidMount: function () {
         // load test_result and show tests for each equipment
-        // this.serverRequest = $.get(this.props.source, function (result) {
+        // this.serverRequest = $.authorizedGet(this.props.source, function (result) {
         //     items = (result['result']);
         //     this.setState({
         //         items: items
@@ -313,7 +313,7 @@ var TestList = React.createClass({
 
         var campaign_id = this.props.params.campaign;
         var url = '/api/v1.0/test_result/?campaign_id=' + campaign_id;
-        this.serverRequest = $.get(url,
+        this.serverRequest = $.authorizedGet(url,
             function (result) {
 
                 var tests = result['result'];

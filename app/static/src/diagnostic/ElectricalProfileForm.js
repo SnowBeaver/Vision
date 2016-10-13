@@ -38,7 +38,7 @@ var TestProfileSelectField = React.createClass({
 
         } else {
 
-            this.serverRequest = $.get('/api/v1.0/electrical_profile/' + event.target.value, function (result) {
+            this.serverRequest = $.authorizedGet('/api/v1.0/electrical_profile/' + event.target.value, function (result) {
                 this.setState({
                     saved_profile: result['result']
                 });
@@ -48,7 +48,7 @@ var TestProfileSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             this.setState({
                 items: result['result']
             });

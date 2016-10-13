@@ -39,7 +39,7 @@ var TestProfileSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             this.setState({
                 items: result['result']
             });
@@ -100,7 +100,7 @@ var PerformedBySelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             var items = (result['result']);
             this.setState({
@@ -173,7 +173,7 @@ var MaterialSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             var items = (result['result']);
             this.setState({
@@ -246,7 +246,7 @@ var FluidTypeSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             var items = (result['result']);
             this.setState({
@@ -319,7 +319,7 @@ var LabAnalyserSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             var items = (result['result']);
             this.setState({
@@ -392,7 +392,7 @@ var LabContractSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             var items = (result['result']);
             this.setState({
@@ -466,7 +466,7 @@ var SyringeNumberSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             var items = (result['result']);
             this.setState({
@@ -540,7 +540,7 @@ var TestReasonSelectField = React.createClass({
 
     componentDidMount: function () {
 
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             var items = (result['result']);
             this.setState({
@@ -631,7 +631,7 @@ var NewTestForm = React.createClass({
         // fill up form with data
 
         var url = '/api/v1.0/test_result/' + id; // edit
-        this.serverRequest = $.get(url, function (result) {
+        this.serverRequest = $.authorizedGet(url, function (result) {
             var data = (result['result']);
 
             var fields = this.state.fields;

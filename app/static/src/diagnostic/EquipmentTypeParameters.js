@@ -48,7 +48,7 @@ var SelectField = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
@@ -95,7 +95,7 @@ var AirBreakerParams = React.createClass({
 
     componentDidMount: function () {
         // var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        // this.serverRequest = $.get(source, function (result) {
+        // this.serverRequest = $.authorizedGet(source, function (result) {
         //     var res = (result['result']);
         //     if (res.length > 0) {
         //         var fields = this.state.fields;
@@ -242,7 +242,7 @@ var BushingParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -527,7 +527,7 @@ var CapacitorParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -671,7 +671,7 @@ var BreakerParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -841,7 +841,7 @@ var PowerSourceParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -982,7 +982,7 @@ var CableParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -1117,7 +1117,7 @@ var SwitchGearParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -1263,7 +1263,7 @@ var InductionMachineParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -1406,7 +1406,7 @@ var SyncroMachineParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -1547,7 +1547,7 @@ var TapChangerParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -1711,7 +1711,7 @@ var RectifierParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -1877,7 +1877,7 @@ var TransformerParams = React.createClass({
 
     setVisible: function () {
         // var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        // this.serverRequest = $.get(source, function (result) {
+        // this.serverRequest = $.authorizedGet(source, function (result) {
         //     var res = (result['result']);
         //     if (res.length > 0) {
         //         var fields = this.state.fields;
@@ -2351,7 +2351,7 @@ var TankParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -2495,7 +2495,7 @@ var SwitchParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -2639,7 +2639,7 @@ var InductanceParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;
@@ -2798,7 +2798,7 @@ var GasSensorParams = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var fields = this.state.fields;

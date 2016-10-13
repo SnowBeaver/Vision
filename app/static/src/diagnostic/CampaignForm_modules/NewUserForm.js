@@ -32,7 +32,7 @@ var RoleSelectField = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
+		this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
 			items = (result['result']);
 			this.setState({
@@ -94,7 +94,7 @@ var CountrySelectField = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
+		this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
 			items = (result['result']);
 			this.setState({

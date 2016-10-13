@@ -64,7 +64,7 @@ var NewFluidTestForm = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var data = res[0];

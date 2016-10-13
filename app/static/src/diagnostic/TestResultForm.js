@@ -54,7 +54,7 @@ var TestResultForm = React.createClass({
     },
 
     updateSource: function (source) {
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var arr = (result['result']);
             var data = [];
             for (var i = 0; i < arr.length; i++) {

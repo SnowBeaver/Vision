@@ -263,7 +263,7 @@ var NewTransformerTestForm = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, this.addResultToState, 'json');
+        this.serverRequest = $.authorizedGet(source, this.addResultToState, 'json');
     },
 
     _create: function () {

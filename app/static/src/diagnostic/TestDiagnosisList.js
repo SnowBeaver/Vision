@@ -148,7 +148,7 @@ var TestDiagnosisList = React.createClass({
     _updateList: function (testResultId) {
         var urlParams = 'test_result_id=' + testResultId;
         var url = '/api/v1.0/test_diagnosis/?' + urlParams;
-        this.serverRequest = $.get(url,
+        this.serverRequest = $.authorizedGet(url,
             function (result) {
                 this.setState({
                     diagnosis: result['result']

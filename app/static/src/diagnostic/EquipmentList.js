@@ -38,7 +38,7 @@ const EquipmentList = React.createClass({
         }
     },
     componentDidMount: function(){
-        this.serverRequest = $.get(this.state.source, function (result){
+        this.serverRequest = $.authorizedGet(this.state.source, function (result){
 
             var arr = (result['result']);
             var data = [];
@@ -93,7 +93,7 @@ const EquipmentList = React.createClass({
     
     updateSource: function(source){ 
         // console.log('list triggered', source);
-        this.serverRequest = $.get(source, function (result){ 
+        this.serverRequest = $.authorizedGet(source, function (result){
             var arr = (result['result']);
             var data = [];
             for (var i=0;i < arr.length; i++) {

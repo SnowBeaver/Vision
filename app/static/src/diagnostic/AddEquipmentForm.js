@@ -26,7 +26,7 @@ var EquipmentSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             var items = (result['result']);
             this.setState({
                 items: items

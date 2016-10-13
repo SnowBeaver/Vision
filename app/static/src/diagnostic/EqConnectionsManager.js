@@ -14,7 +14,7 @@ var UpstreamSelectFields = React.createClass({
         };
     },
     componentDidMount: function () {
-        this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
+        this.serverRequest = $.authorizedGet("/api/v1.0/equipment/", function (result) {
             this.setState({
                 equipment: result['result']
             });
@@ -112,7 +112,7 @@ var DownstreamSelectFields = React.createClass({
         };
     },
     componentDidMount: function () {
-        this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
+        this.serverRequest = $.authorizedGet("/api/v1.0/equipment/", function (result) {
             this.setState({
                 equipment: result['result']
             });
@@ -213,7 +213,7 @@ var SelectField = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
@@ -301,7 +301,7 @@ var EqConnectionsManager = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
