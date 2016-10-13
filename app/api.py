@@ -511,8 +511,8 @@ def delete_item_handler(path, item_id):
 @api_blueprint.route('/token')
 @login_required
 def get_auth_token():
-    token = g.user.generate_auth_token(600)
-    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+    token = g.user.generate_auth_token()
+    return jsonify({'token': token.decode('ascii')})
 
 
 # Get fields from corresponding table of specified equipment type
