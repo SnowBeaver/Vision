@@ -68,7 +68,8 @@ var TestTypeSelectField = React.createClass({
 						name={this.props.name}
 						required={this.props.required}
 						disabled={this.props.disabled}
-						value={this.props.value}>
+						value={this.props.value}
+						id={this.props.name}>
 						<option key="0" value="">Test Type{this.props.required ? " *" : ""}</option>
 						{menuItems}
 					</FormControl>

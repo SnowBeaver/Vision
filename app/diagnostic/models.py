@@ -192,25 +192,25 @@ class Contract(db.Model):
                 }
 
 
-class SamplingCard(db.Model):
-    __tablename__ = 'sampling_card'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
-    # user 2 has to print small form
-    card_print = db.Column(db.Boolean)
-    # SamplingCardGathered: Used for printing the card in batch
-    card_gathered = db.Column(db.Integer)
-
-    def __repr__(self):
-        return self.id
-
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'card_gathered': self.sampling_card_gathered,
-                'card_print': self.sampling_card_print,
-                }
+# class SamplingCard(db.Model):
+#     __tablename__ = 'sampling_card'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
+#     # user 2 has to print small form
+#     card_print = db.Column(db.Boolean)
+#     # SamplingCardGathered: Used for printing the card in batch
+#     card_gathered = db.Column(db.Integer)
+#
+#     def __repr__(self):
+#         return self.id
+#
+#     def serialize(self):
+#         """Return object data in easily serializeable format"""
+#         return {'id': self.id,
+#                 'card_gathered': self.sampling_card_gathered,
+#                 'card_print': self.sampling_card_print,
+#                 }
 
 
 class Campaign(db.Model):

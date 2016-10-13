@@ -46,6 +46,13 @@ def login_required(f):
         #     abort(401)
         # if not verify_password(auth['username'], unicode(auth['password'], "utf-8")):
         #     abort(401)
+        auth = request.authorization
+        # if not auth:
+        #     abort(401)
+        if auth:
+            if not verify_password(auth['username'], unicode(auth['password'], 'utf-8')):
+                pass
+            #     abort(401)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -508,7 +515,7 @@ def delete_item_handler(path, item_id):
 
 # Custom routes
 # Get token
-@api_blueprint.route('/token')
+@api_blueprint.route('/token/')
 @login_required
 def get_auth_token():
     token = g.user.generate_auth_token()
@@ -580,7 +587,7 @@ def delete_equipment_downstream_handler(item_id, downstream_id):
 
 
 # Create a lot of test_results with equipment using one query
-@api_blueprint.route('/test_result/equipment', methods=['POST'])
+@api_blueprint.route('/test_result/equipment/', methods=['POST'])
 @login_required
 @json_required
 def handler_items():
