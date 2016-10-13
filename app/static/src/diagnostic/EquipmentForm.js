@@ -769,7 +769,7 @@ const EquipmentForm = React.createClass({
 
         // If the main form haven't been saved yet
         if (!this.state.equipmentId) {
-            xhr = $.ajax({
+            xhr = $.authorizedAjax({
                 url: '/api/v1.0/equipment/',
                 type: 'POST',
                 dataType: 'json',
@@ -799,7 +799,7 @@ const EquipmentForm = React.createClass({
                     subform[field] = null;
                 }
             }
-            return $.ajax({
+            return $.authorizedAjax({
                 url: '/api/v1.0/' + path + '/',
                 type: 'POST',
                 dataType: 'json',

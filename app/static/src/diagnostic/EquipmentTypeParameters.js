@@ -126,7 +126,7 @@ var AirBreakerParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -273,7 +273,7 @@ var BushingParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -558,7 +558,7 @@ var CapacitorParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -702,7 +702,7 @@ var BreakerParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -872,7 +872,7 @@ var PowerSourceParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -1013,7 +1013,7 @@ var CableParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -1148,7 +1148,7 @@ var SwitchGearParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -1294,7 +1294,7 @@ var InductionMachineParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -1437,7 +1437,7 @@ var SyncroMachineParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -1578,7 +1578,7 @@ var TapChangerParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -1742,7 +1742,7 @@ var RectifierParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -1912,7 +1912,7 @@ var TransformerParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -2382,7 +2382,7 @@ var TankParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -2526,7 +2526,7 @@ var SwitchParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -2670,7 +2670,7 @@ var InductanceParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -2829,7 +2829,7 @@ var GasSensorParams = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',

@@ -808,7 +808,7 @@ var EquipmentTestForm = React.createClass({
             url += this.state.data['id'];
         }
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -845,7 +845,7 @@ var EquipmentTestForm = React.createClass({
             data.test_type_id = data.recommendation_test_type_id;
             delete data.recommendation_test_type_id;
             data.test_result_id = this.state.data['id'];
-            $.ajax({
+            $.authorizedAjax({
                 url: url,
                 type: type,
                 dataType: 'json',
@@ -880,7 +880,7 @@ var EquipmentTestForm = React.createClass({
             data.test_type_id = data.repair_test_type_id;
             delete data.repair_test_type_id;
             data.test_result_id = this.state.data['id'];
-            $.ajax({
+            $.authorizedAjax({
                 url: url,
                 type: type,
                 dataType: 'json',
@@ -913,7 +913,7 @@ var EquipmentTestForm = React.createClass({
             data.test_type_id = data.diagnosis_test_type_id;
             delete data.diagnosis_test_type_id;
             data.test_result_id = this.state.data['id'];
-            $.ajax({
+            $.authorizedAjax({
                 url: url,
                 type: type,
                 dataType: 'json',

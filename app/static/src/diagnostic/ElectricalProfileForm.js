@@ -142,7 +142,7 @@ const ElectricalProfileForm = React.createClass({
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            return $.ajax({
+            return $.authorizedAjax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
@@ -163,7 +163,7 @@ const ElectricalProfileForm = React.createClass({
         data['equipment_id'] = this.props.data.equipment_id;
 
         // save part to test_result
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/test_result/' + this.props.data.id,
             type: 'POST',
             dataType: 'json',

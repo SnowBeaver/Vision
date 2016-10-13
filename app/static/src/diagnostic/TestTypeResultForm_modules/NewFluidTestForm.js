@@ -92,7 +92,7 @@ var NewFluidTestForm = React.createClass({
             url += this.state['id'];
             type = 'PUT';
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',

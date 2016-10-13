@@ -41,7 +41,7 @@ var NewEquipmentTypeForm = React.createClass({
             data[key] = value;
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/equipment_type/',
 			type: 'POST',
 			dataType: 'json',

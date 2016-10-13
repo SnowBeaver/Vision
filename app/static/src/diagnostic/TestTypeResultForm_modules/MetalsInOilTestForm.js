@@ -94,7 +94,7 @@ var MetalsInOilTestForm = React.createClass({
         if ('id' in this.state) {
             url += this.state['id'];
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',

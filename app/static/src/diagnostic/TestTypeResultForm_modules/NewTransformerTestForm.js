@@ -280,7 +280,7 @@ var NewTransformerTestForm = React.createClass({
             }
             data.push(test)
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/test_result/multi/' + this.props.tableName,
             type: 'POST',
             dataType: 'json',
@@ -292,7 +292,7 @@ var NewTransformerTestForm = React.createClass({
         })
     },
     _delete: function (id) {
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/' + this.props.tableName + '/' + id,
             type: 'DELETE',
         })

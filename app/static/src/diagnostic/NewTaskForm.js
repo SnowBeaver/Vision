@@ -217,7 +217,7 @@ var NewTaskForm = React.createClass({
             data[key] = this.state[key];
         }
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',

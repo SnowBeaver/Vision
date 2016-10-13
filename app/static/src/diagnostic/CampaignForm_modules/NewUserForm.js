@@ -149,7 +149,7 @@ var NewUserForm = React.createClass({
 			data[key] = this.state[key];
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/user/',
 			type: 'POST',
 			dataType: 'json',

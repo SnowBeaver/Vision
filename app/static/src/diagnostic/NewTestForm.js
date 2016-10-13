@@ -684,7 +684,7 @@ var NewTestForm = React.createClass({
         data['campaign_id'] = this.props.data['campaign_id'];
         data['equipment_id'] = this.props.data['equipment_id'];
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',

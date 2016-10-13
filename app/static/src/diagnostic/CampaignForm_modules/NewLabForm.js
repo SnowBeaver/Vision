@@ -103,7 +103,7 @@ var NewLabForm = React.createClass({
             data[key] = value;
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/lab/',
 			type: 'POST',
 			dataType: 'json',

@@ -103,7 +103,7 @@ var NewDiagnosisForm = React.createClass({
         }
         data.test_result_id = this.props.testResultId;
         data.diagnosis_id = this.props.diagnosisId;
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/test_diagnosis/',
             type: 'POST',
             dataType: 'json',
@@ -131,7 +131,7 @@ var NewDiagnosisForm = React.createClass({
             }
             data[key] = value;
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/diagnosis/',
             type: 'POST',
             dataType: 'json',

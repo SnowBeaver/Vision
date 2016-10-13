@@ -142,7 +142,7 @@ const LabCreateForm = React.createClass({
     },
     _create: function () {
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/equipment/',
             type: 'POST',
             dataType: 'json',

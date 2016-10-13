@@ -36,7 +36,7 @@ var UpstreamSelectFields = React.createClass({
         this.props.upstream.splice(this.props.upstream.indexOf(e), 1);
         var upstreams = this.props.upstream;
         this.setState({upstreams});
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'DELETE',
             success: function (data) {
@@ -133,7 +133,7 @@ var DownstreamSelectFields = React.createClass({
         this.props.downstream.splice(this.props.downstream.indexOf(e), 1);
         var downstreams = this.props.downstream;
         this.setState({downstreams});
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'DELETE',
             success: function (data) {
@@ -260,7 +260,7 @@ var EqConnectionsManager = React.createClass({
         var data = {"upstream":this.state.items.upstream, "downstream": this.state.items.downstream};
         console.log("data:", data);
         var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',

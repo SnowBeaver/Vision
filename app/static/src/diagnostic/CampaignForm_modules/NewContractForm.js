@@ -99,7 +99,7 @@ var NewContractForm = React.createClass({
             data[key] = value;
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/contract/',
 			type: 'POST',
 			dataType: 'json',

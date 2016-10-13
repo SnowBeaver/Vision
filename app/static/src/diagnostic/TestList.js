@@ -41,7 +41,7 @@ var TestItem = React.createClass({
 
         var url = '/api/v1.0/test_result/' + data.id;
         var that = this;
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'DELETE',
             dataType: 'json',
@@ -64,7 +64,7 @@ var TestItem = React.createClass({
         var testResultId = data.id;
         var url = '/api/v1.0/test_result/' + testResultId + '/duplicate';
         var that = this;
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',

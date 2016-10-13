@@ -202,7 +202,7 @@ var CampaignForm = React.createClass({
             data[key] = this.state[key];
         }
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/campaign/',
             type: 'POST',
             dataType: 'json',
