@@ -33,7 +33,7 @@ var CampaignSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -93,7 +93,7 @@ var SyringeSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -142,7 +142,7 @@ const LabCreateForm = React.createClass({
     },
     _create: function () {
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/equipment/',
             type: 'POST',
             dataType: 'json',

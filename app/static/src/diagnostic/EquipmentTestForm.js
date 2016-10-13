@@ -47,7 +47,7 @@ var SelectField = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
@@ -136,7 +136,7 @@ var SyringeNumberSelectField = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
@@ -472,7 +472,7 @@ var EquipmentTestDiagnosisForm = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             var items = (result['result']);
             this.setState({
                 items: items
@@ -602,7 +602,7 @@ var EquipmentTestEqDiagnosisForm = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             var items = (result['result']);
             this.setState({
                 items: items
@@ -808,7 +808,7 @@ var EquipmentTestForm = React.createClass({
             url += this.state.data['id'];
         }
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: type,
             dataType: 'json',
@@ -845,7 +845,7 @@ var EquipmentTestForm = React.createClass({
             data.test_type_id = data.recommendation_test_type_id;
             delete data.recommendation_test_type_id;
             data.test_result_id = this.state.data['id'];
-            $.ajax({
+            $.authorizedAjax({
                 url: url,
                 type: type,
                 dataType: 'json',
@@ -880,7 +880,7 @@ var EquipmentTestForm = React.createClass({
             data.test_type_id = data.repair_test_type_id;
             delete data.repair_test_type_id;
             data.test_result_id = this.state.data['id'];
-            $.ajax({
+            $.authorizedAjax({
                 url: url,
                 type: type,
                 dataType: 'json',
@@ -913,7 +913,7 @@ var EquipmentTestForm = React.createClass({
             data.test_type_id = data.diagnosis_test_type_id;
             delete data.diagnosis_test_type_id;
             data.test_result_id = this.state.data['id'];
-            $.ajax({
+            $.authorizedAjax({
                 url: url,
                 type: type,
                 dataType: 'json',
@@ -1049,7 +1049,7 @@ var EquipmentTestForm = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
+        this.serverRequest = $.authorizedGet('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
             this.setState({data: (result['result'])});
         }.bind(this), 'json');
     },

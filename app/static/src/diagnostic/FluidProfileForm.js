@@ -33,7 +33,7 @@ var SamplPointSelectField1 = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -92,7 +92,7 @@ var SamplPointSelectField2 = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -151,7 +151,7 @@ var SamplPointSelectField3 = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -217,7 +217,7 @@ var TestProfileSelectField = React.createClass({
 
         } else {
 
-            this.serverRequest = $.get('/api/v1.0/fluid_profile/' + event.target.value, function (result) {
+            this.serverRequest = $.authorizedGet('/api/v1.0/fluid_profile/' + event.target.value, function (result) {
                 this.setState({
                     saved_profile: result['result']
                 });
@@ -227,7 +227,7 @@ var TestProfileSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             this.setState({
                 items: result['result']
             });
@@ -322,7 +322,7 @@ const FluidProfileForm = React.createClass({
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            return $.ajax({
+            return $.authorizedAjax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
@@ -342,7 +342,7 @@ const FluidProfileForm = React.createClass({
         data['campaign_id'] = this.props.campaignId;
         data['equipment_id'] = this.props.equipmentId;
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/test_result/' + this.props.testResultId,
             type: 'POST',
             dataType: 'json',

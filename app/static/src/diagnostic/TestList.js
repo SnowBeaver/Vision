@@ -41,7 +41,7 @@ var TestItem = React.createClass({
 
         var url = '/api/v1.0/test_result/' + data.id;
         var that = this;
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'DELETE',
             dataType: 'json',
@@ -64,7 +64,7 @@ var TestItem = React.createClass({
         var testResultId = data.id;
         var url = '/api/v1.0/test_result/' + testResultId + '/duplicate';
         var that = this;
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',
@@ -148,7 +148,7 @@ var TestItemList = React.createClass({
 
     componentDidMount: function () {
         // load test_result and show tests for each equipment
-        // this.serverRequest = $.get(this.props.source, function (result) {
+        // this.serverRequest = $.authorizedGet(this.props.source, function (result) {
         //     items = (result['result']);
         //     this.setState({
         //         items: items
@@ -298,7 +298,7 @@ var TestList = React.createClass({
 
         var campaign_id = this.props.params.campaign;
         var url = '/api/v1.0/test_result/?campaign_id=' + campaign_id;
-        this.serverRequest = $.get(url,
+        this.serverRequest = $.authorizedGet(url,
             function (result) {
 
                 var tests = result['result'];

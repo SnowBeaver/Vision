@@ -120,7 +120,6 @@ var TaskList = React.createClass({
             contentType: 'application/json',
             data: JSON.stringify(data),
             beforeSend: function (xhr) {
-                xhr.setRequestHeader ("Authorization222", "Basic2222 ssdsdsdsd");
                 this.setState({loading: true});
             }.bind(this)
         })
@@ -192,7 +191,7 @@ var TaskList = React.createClass({
     _validateDateTime: function (value) {
         var isValid = moment(value, 'MM/DD/YYYY hh:mm A', true).isValid();
         if (!isValid) {
-            isValid = moment(value, 'YYYY-MM-DDThh:mm', true).isValid();
+            isValid = moment(value, 'YYYY-MM-DDTHH:mm', true).isValid();
         }
         if (!isValid) {
             NotificationManager.error('Start on should of the following format mm/dd/yyyy HH:MM AM', 'Validation Error', 20000);

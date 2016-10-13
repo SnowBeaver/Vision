@@ -7,7 +7,7 @@ from sqlalchemy.orm import class_mapper, ColumnProperty
 import datetime
 from flask.ext.security import RoleMixin, UserMixin
 from flask.ext.security.utils import verify_password
-from itsdangerous import (TimedJSONWebSignatureSerializer
+from itsdangerous import (JSONWebSignatureSerializer
 as Serializer, BadSignature, SignatureExpired)
 
 # Define models
@@ -141,8 +141,9 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return verify_password(password, self.password)
 
-    def generate_auth_token(self, expiration=600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+    def generate_auth_token(self):
+        # TODO: Token should expire
+        s = Serializer(app.config['SECRET_KEY'])
         return s.dumps({'id': self.id})
 
     @staticmethod

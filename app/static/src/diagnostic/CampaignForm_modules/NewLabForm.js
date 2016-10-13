@@ -31,7 +31,7 @@ var NameSelectField = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
+		this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
 			items = (result['result']);
 			this.setState({
@@ -103,7 +103,7 @@ var NewLabForm = React.createClass({
             data[key] = value;
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/lab/',
 			type: 'POST',
 			dataType: 'json',

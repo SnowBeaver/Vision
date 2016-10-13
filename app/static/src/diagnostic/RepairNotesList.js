@@ -132,7 +132,7 @@ var RepairNotesList = React.createClass({
     _updateList: function (testResultId) {
         var urlParams = '&test_result_id=' + testResultId;
         var url = '/api/v1.0/test_repair_note/?' + urlParams;
-        this.serverRequest = $.get(url,
+        this.serverRequest = $.authorizedGet(url,
             function (result) {
                 this.setState({
                     repair_notes: result['result']
