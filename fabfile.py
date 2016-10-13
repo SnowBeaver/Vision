@@ -3,8 +3,9 @@ from fabric.api import *
 from unipath import Path
 from contextlib import contextmanager
 from fabric.contrib.files import exists
-from fabric.api import settings
-
+from fabric.api import settings, hosts
+from fabric.operations import local
+from fabric.context_managers import lcd
 
 class FabricException(Exception):
     pass
@@ -348,8 +349,8 @@ def generate_apidoc():
 
 
 def test():
-    tests = Path(env.directory, 'tests')
-    with cd(tests):
-        run('python -m unittest test_unittest')
-        run('python -m unittest test_unittest.TestStringMethods')
-        run('python -m unittest test_unittest.TestStringMethods.test_upper')
+    with lcd('tests'):
+        # run('python -m unittest test_unittest')
+        # run('python -m unittest test_unittest.TestStringMethods')
+        # run('python -m unittest test_unittest.TestStringMethods.test_upper')
+        local('python test_api.py')

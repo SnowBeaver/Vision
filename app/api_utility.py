@@ -21,22 +21,23 @@ class Tree(db.Model):
     view = db.Column(db.String(126))
     status = db.Column(db.SMALLINT)
 
-    #
-    # def __repr__(self):
-    #     return "{}".format(self.id)
-    #
-    # def serialize(self):
-    #     """Return object data in easily serializeable format"""
-    #     return {'id': self.id,
-    #             'parent_id': self.parent_id,
-    #             'icon': self.icon,
-    #             'opened': self.opened,
-    #             'disabled': self.disabled,
-    #             'selected': self.selected,
-    #             'type': self.type,
-    #             'view': self.view,
-    #             'status': self.status,
-    #             }
+    def __repr__(self):
+        return "{}".format(self.id)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'parent_id': self.parent_id,
+            'equipment_id': self.equipment_id,
+            'icon': self.icon,
+            'opened': self.opened,
+            'disabled': self.disabled,
+            'selected': self.selected,
+            'type': self.type,
+            'view': self.view,
+            'status': self.status,
+        }
 
 
 class TreeTranslation(db.Model):
@@ -46,6 +47,18 @@ class TreeTranslation(db.Model):
     locale = db.Column(db.String(10))
     text = db.Column(db.String(250))
     tooltip = db.Column(db.String(250))
+
+    def __repr__(self):
+        return "{}".format(self.id)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'locale': self.locale,
+            'text': self.text,
+            'tooltip': self.tooltip,
+        }
 
 
 class MyValidator(Validator):
@@ -199,11 +212,11 @@ equipment_connection_schema = {
     'equipment_id': type_integer_coerce_dict,
     'parent_id': type_integer_coerce_dict,
 }
-sampling_card_schema = {
-    'id': readonly_dict,
-    'card_gathered': type_integer_coerce_dict,
-    'card_print': type_boolean_coerce_dict,
-}
+# sampling_card_schema = {
+#     'id': readonly_dict,
+#     'card_gathered': type_integer_coerce_dict,
+#     'card_print': type_boolean_coerce_dict,
+# }
 equipment_schema = {
     'id': readonly_dict,
     'name': type_string_maxlength_50_required_dict,
@@ -1630,6 +1643,10 @@ model_dict = {
         'model': NormFuran,
         'schema': norm_furan_schema
     },
+    # 'sampling_card': {
+    #     'model': SamplingCard,
+    #     'schema': sampling_card_schema,
+    # },
     'test_sampling_card': {
         'model': TestSamplingCard,
         'schema': test_sampling_card_schema

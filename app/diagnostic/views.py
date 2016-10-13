@@ -892,18 +892,18 @@ class EquipmentConnectionView(MySimpleView):
         )
 
 
-class SamplingCardView(MySimpleView):
-    """
-    SamplingCard management view
-    """
-    # List of columns that can be sorted.
-    column_sortable_list = ()
-    column_searchable_list = ()
-
-    def __init__(self, dbsession):
-        super(SamplingCardView, self).__init__(
-            SamplingCard, dbsession, category="Campaign", name="Sampling card"
-        )
+# class SamplingCardView(MySimpleView):
+#     """
+#     SamplingCard management view
+#     """
+#     # List of columns that can be sorted.
+#     column_sortable_list = ()
+#     column_searchable_list = ()
+#
+#     def __init__(self, dbsession):
+#         super(SamplingCardView, self).__init__(
+#             SamplingCard, dbsession, category="Campaign", name="Sampling card"
+#         )
 
 
 class TestRecommendationView(MySimpleView):
@@ -1326,7 +1326,8 @@ simple_views = [
     FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
     OverallConditionView, GasketConditionView, ValveConditionView,
     PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
-    FluidLevelView, SamplingCardView, TestRecommendationView, TestSamplingCardView
+    FluidLevelView, TestRecommendationView, TestSamplingCardView,
+    # SamplingCardView,
 ]
 test_views = [
     BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,
