@@ -32,34 +32,58 @@ var TestItem = React.createClass({
     },
 
     onRemove: function () {
+        var data = this.props.data;
+        // Deleted id id in edited at the moment
+        if (this.props.editedId == data.id) {
+            NotificationManager.info('Cannot remove because this test is edited at the moment.');
+            return false;
+        }
+
+        var url = '/api/v1.0/test_result/' + data.id;
+        var that = this;
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'json',
+            contentType: 'application/json',
+            beforeSend: function () {},
+            success: function () {
+                that.props.reloadList();
+                NotificationManager.success('Test has been deleted successfully');
+            },
+            error: function () {
+                NotificationManager.error('Sorry an error occurred');
+            },
+            complete: function () {}
+        });
+
     },
 
     onDuplicate: function () {
         var data = this.props.data;
-        // Remove extra fields which has not be sent by POST request
-        [
-            'id', 'analysis_number', 'equipment', 'lab', 'lab_contract',
-            'material', 'performed_by', 'test_reason', 'test_recommendations',
-            'test_sampling_cards', 'test_status', 'test_type', 'tests'
-        ].forEach(e => delete data[e]);
-
-        var url = '/api/v1.0/test_result/';
+        var testResultId = data.id;
+        var url = '/api/v1.0/test_result/' + testResultId + '/duplicate';
         var that = this;
         $.ajax({
             url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify(data),
-            beforeSend: function () {},
-            success: function () {
+            beforeSend: function () {
+            },
+            success: function (data) {
                 that.props.reloadList();
-                NotificationManager.success('Test has been duplicated successfully');
+                if (data.result === null) {
+                    NotificationManager.info('This test cannot be copied as it is private and doesn\'t belong to you');
+                } else {
+                    NotificationManager.success('Test has been duplicated successfully');
+                }
             },
             error: function () {
-                NotificationManager.error('Sorry an error occured');
+                NotificationManager.error('Sorry an error occurred');
             },
-            complete: function () {}
+            complete: function () {
+            }
         });
     },
 
@@ -71,11 +95,11 @@ var TestItem = React.createClass({
 
         if (!this.state.isVisible) {
             return (<div></div>);
-        } 
+        }
         var test = this.props.data;
         var test_status = test.test_status;
-        var test_type_name = (test.test_type_id == 1) ? 'Fluid': 'Electrical';
-        var performed_by_name = (test.performed_by != null) ? test.performed_by.name: 'undetermined';
+        var test_type_name = (test.test_type_id == 1) ? 'Fluid' : 'Electrical';
+        var performed_by_name = (test.performed_by != null) ? test.performed_by.name : 'undetermined';
 
         return (
             <tr>
@@ -121,7 +145,8 @@ var TestItemList = React.createClass({
             items: [],
             isVisible: true,
             showTestForm: false,
-            showAddTestButton: true
+            showAddTestButton: true,
+            editedId: null
         };
     },
 
@@ -165,7 +190,8 @@ var TestItemList = React.createClass({
 
         this.refs.new_test_form._edit(id);
         this.setState({
-            showTestForm: true
+            showTestForm: true,
+            editedId: id
         })
     },
 
@@ -189,7 +215,7 @@ var TestItemList = React.createClass({
 
             if (item.equipment.id == equipment_id) {
 
-                if (item.performed_by_id === null && item.reason_id === null){
+                if (item.performed_by_id === null && item.reason_id === null) {
                     data = item;
                     showTestForm = true;
                     showAddTestButton = false;
@@ -198,7 +224,11 @@ var TestItemList = React.createClass({
                     continue;
                 }
 
-                tests.push(<TestItem key={item.id} data={item} editTestForm={this.editTestForm} reloadList={this.props.reloadList}/>)
+                tests.push(<TestItem key={item.id}
+                                     data={item}
+                                     editTestForm={this.editTestForm}
+                                     reloadList={this.props.reloadList}
+                                     editedId={this.state.editedId}/>)
             }
         }
 
@@ -215,23 +245,24 @@ var TestItemList = React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-12">
-                    <Table responsive hover id="test_prof">
-                        <thead>
-                        <tr>
-                            <th className="col-md-2">Test name</th>
-                            <th className="col-md-1">Analisys number</th>
-                            <th className="col-md-1">Status</th>
-                            <th className="col-md-2">Performed by</th>
-                            <th className="col-md-1">Delete</th>
-                            <th className="col-md-1">Duplicate</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {tests}
-                        </tbody>
-                    </Table>
-                        </div>
+                        <Table responsive hover id="test_prof">
+                            <thead>
+                            <tr>
+                                <th className="col-md-2">Test name</th>
+                                <th className="col-md-1">Analisys number</th>
+                                <th className="col-md-1">Status</th>
+                                <th className="col-md-2">Performed by</th>
+                                <th className="col-md-1">Delete</th>
+                                <th className="col-md-1">Duplicate</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {tests}
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
+
                 {showAddTestButton ?
                 <div className="row">
                     <div className="col-md-3">
@@ -279,7 +310,7 @@ var TestList = React.createClass({
     },
 
     componentDidMount: function () {
-        
+
         var campaign_id = this.props.params.campaign;
         var url = '/api/v1.0/test_result/?campaign_id=' + campaign_id;
         this.serverRequest = $.get(url,
@@ -319,7 +350,7 @@ var TestList = React.createClass({
                     eventKey={this.state.equipment[key].id}
                     header={this.state.equipment[key].name}
                 >
-                    <TestItemList data={this.state.tests} 
+                    <TestItemList data={this.state.tests}
                                   id={this.state.equipment[key].id}
                                   campaign_id={this.state.campaign_id}
                                   reloadList={this.reloadList}

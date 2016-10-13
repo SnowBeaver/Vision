@@ -21,22 +21,23 @@ class Tree(db.Model):
     view = db.Column(db.String(126))
     status = db.Column(db.SMALLINT)
 
-    #
-    # def __repr__(self):
-    #     return "{}".format(self.id)
-    #
-    # def serialize(self):
-    #     """Return object data in easily serializeable format"""
-    #     return {'id': self.id,
-    #             'parent_id': self.parent_id,
-    #             'icon': self.icon,
-    #             'opened': self.opened,
-    #             'disabled': self.disabled,
-    #             'selected': self.selected,
-    #             'type': self.type,
-    #             'view': self.view,
-    #             'status': self.status,
-    #             }
+    def __repr__(self):
+        return "{}".format(self.id)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'parent_id': self.parent_id,
+            'equipment_id': self.equipment_id,
+            'icon': self.icon,
+            'opened': self.opened,
+            'disabled': self.disabled,
+            'selected': self.selected,
+            'type': self.type,
+            'view': self.view,
+            'status': self.status,
+        }
 
 
 class TreeTranslation(db.Model):
@@ -46,6 +47,18 @@ class TreeTranslation(db.Model):
     locale = db.Column(db.String(10))
     text = db.Column(db.String(250))
     tooltip = db.Column(db.String(250))
+
+    def __repr__(self):
+        return "{}".format(self.id)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'id': self.id,
+            'locale': self.locale,
+            'text': self.text,
+            'tooltip': self.tooltip,
+        }
 
 
 class MyValidator(Validator):
@@ -199,11 +212,11 @@ equipment_connection_schema = {
     'equipment_id': type_integer_coerce_dict,
     'parent_id': type_integer_coerce_dict,
 }
-sampling_card_schema = {
-    'id': readonly_dict,
-    'card_gathered': type_integer_coerce_dict,
-    'card_print': type_boolean_coerce_dict,
-}
+# sampling_card_schema = {
+#     'id': readonly_dict,
+#     'card_gathered': type_integer_coerce_dict,
+#     'card_print': type_boolean_coerce_dict,
+# }
 equipment_schema = {
     'id': readonly_dict,
     'name': type_string_maxlength_50_required_dict,
@@ -700,10 +713,12 @@ recommendation_schema = {
 test_recommendation_schema = {
     'id': readonly_dict,
     'recommendation_id': type_integer_coerce_dict,
-    'recommendationNotes': type_string_dict,
+    'recommendation_notes': type_string_dict,
     'user_id': type_integer_coerce_dict,
     'date_created': type_integer_coerce_dict,
     'date_updated': type_integer_coerce_dict,
+    'test_result_id': type_integer_coerce_dict,
+    'test_type_id': type_integer_coerce_dict,
 }
 syringe_schema = {
     'id': readonly_dict,
@@ -716,8 +731,7 @@ test_status_schema = campaign_status_schema = {
     'name': type_string_maxlength_50_dict,
 }
 schedule_schema = {
-    'equipment_id': type_integer_coerce_required_dict,
-    'start_date': type_datetime_required_dict,
+    'date_start': type_datetime_required_dict,
     'period_years': type_integer_coerce_dict,
     'period_months': type_integer_coerce_dict,
     'period_days': type_integer_coerce_dict,
@@ -725,8 +739,11 @@ schedule_schema = {
     'recurring': type_boolean_coerce_dict,
     'notify_before_in_days': type_integer_coerce_dict,
     'description': type_string_dict,
-    'tests_to_perform': type_integer_coerce_dict,
-    'order': type_integer_coerce_required_dict,
+    'test_recommendation_id': type_integer_coerce_required_dict,
+    'priority': type_integer_coerce_required_dict,
+    'date_updated': type_datetime_dict,
+    'date_created': type_datetime_dict,
+    'status_id': type_integer_coerce_dict,
 }
 test_type_schema = {
     'id': readonly_dict,
@@ -1254,6 +1271,37 @@ tree_translation_schema = {
     'text': type_string_maxlength_250_dict,
     'tooltip': type_string_maxlength_250_dict,
 }
+test_repair_note_schema = {
+    'id': readonly_dict,
+    'description': type_string_dict,
+    'remark': type_string_dict,
+    'sample': type_string_dict,
+    'date_created': type_datetime_dict,
+    'user_id': type_integer_coerce_dict,
+    'test_result_id': type_integer_coerce_dict,
+    'test_type_id': type_integer_coerce_dict
+}
+diagnosis_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_50_dict,
+    'code': type_string_maxlength_50_dict,
+    'description': type_string_dict,
+    'test_type_id': type_integer_coerce_dict
+}
+test_diagnosis_schema = {
+    'id': readonly_dict,
+    'diagnosis_notes': type_string_dict,
+    'date_created': type_datetime_dict,
+    'date_updated': type_datetime_dict,
+    'diagnosis_id': type_integer_coerce_dict,
+    'user_id': type_integer_coerce_dict,
+    'test_result_id': type_integer_coerce_dict,
+    'test_type_id': type_integer_coerce_dict
+}
+task_status_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_20_dict
+}
 model_dict = {
     'equipment': {
         'model': Equipment,
@@ -1595,6 +1643,10 @@ model_dict = {
         'model': NormFuran,
         'schema': norm_furan_schema
     },
+    # 'sampling_card': {
+    #     'model': SamplingCard,
+    #     'schema': sampling_card_schema,
+    # },
     'test_sampling_card': {
         'model': TestSamplingCard,
         'schema': test_sampling_card_schema
@@ -1610,6 +1662,22 @@ model_dict = {
     'tree_translation': {
         'model': TreeTranslation,
         'schema': tree_translation_schema
+    },
+    'test_repair_note': {
+        'model': TestRepairNote,
+        'schema': test_repair_note_schema
+    },
+    'diagnosis': {
+        'model': Diagnosis,
+        'schema': diagnosis_schema
+    },
+    'test_diagnosis': {
+        'model': TestDiagnosis,
+        'schema': test_diagnosis_schema
+    },
+    'task_status': {
+        'model': TaskStatus,
+        'schema': task_status_schema
     },
     # 'test_result_winding_test': {
     #     'model': WindingTest,

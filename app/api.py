@@ -1,4 +1,5 @@
-from flask import Flask, Blueprint, jsonify, abort, make_response, request
+from functools import wraps
+from flask import Flask, Blueprint, jsonify, abort, make_response, request, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict
@@ -6,12 +7,12 @@ from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProf
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, or_, and_
 from flask.ext.blogging import SQLAStorage
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
 from flask.ext import login
-
+from sqlalchemy.orm.session import make_transient
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -22,6 +23,42 @@ meta = MetaData()
 sql_storage = SQLAStorage(engine, metadata=meta)
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(api, user_datastore)
+
+
+# Authentication functions
+def verify_password(email_or_token, password):
+    # first try to authenticate by token
+    user = User.verify_auth_token(email_or_token)
+    if not user:
+        # try to authenticate with username/password
+        user = User.query.filter_by(email=email_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth = request.authorization
+        # if not auth:
+        #     abort(401)
+        if auth:
+            if not verify_password(auth['username'], unicode(auth['password'], 'utf-8')):
+                pass
+            #     abort(401)
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def admin_role_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not g.user.has_role(Role.query.get(1)):
+            abort(403, 'Admin role needed!')
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # Accessory functions
@@ -77,9 +114,13 @@ def validate_or_abort(path, data_to_validate=None, update=False, context=None):
     return v.document
 
 
-def abort_if_json_missing():
-    if not request.json:
-        abort(400, 'JSON not found')
+def json_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not request.json:
+            abort(400, 'JSON not found')
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def abort_if_wrong_path(path):
@@ -90,6 +131,13 @@ def abort_if_wrong_path(path):
 def abort_if_wrong_id(item_id):
     if not item_id:
         abort(404)
+
+
+def add_user_id_and_save_item(path, data):
+    # Save id of the current user
+    data["user_id"] = login.current_user.id if login.current_user else None
+    item = add_item(path, data)
+    return item
 
 
 # Standard CRUD functions
@@ -235,6 +283,26 @@ def delete_up_down_stream_of_equipment(item_id):
         return True
 
 
+# Remove connection between equipment and its upstream
+def delete_upstream_of_equipment(item_id, upstream_id):
+    path = 'equipment_connection'
+    model = get_model_by_path(path)
+    try:
+        db.session.query(model)\
+            .filter(model.parent_id == upstream_id, model.equipment_id == item_id)\
+            .delete(synchronize_session=False)
+    except:
+        return False
+    else:
+        db.session.commit()
+        return True
+
+
+# Remove connection between equipment and its downstream
+def delete_downstream_of_equipment(item_id, downstream_id):
+    return delete_upstream_of_equipment(downstream_id, item_id)
+
+
 # Add a lot of test results
 def add_items(path, data):
     items_model = get_model_by_path(path)
@@ -254,7 +322,7 @@ def add_items(path, data):
     return [add_item(path, {'campaign_id':campaign_id, 'equipment_id':id}).id for id in equipment_ids]
 
 
-def add_or_update_tests(path):
+def add_or_update_items(path):
     items_model = get_model_by_path(path)
     items = []
     for test in request.json:
@@ -301,6 +369,65 @@ def add_user(path, data):
     return item
 
 
+# Duplicate test result and related fluid or electrical profile
+def duplicate_test_result(test_result_id):
+    user = login.current_user
+    test_result_model = get_model_by_path('test_result')
+    electrical_profile_model = get_model_by_path('electrical_profile')
+    fluid_profile_model = get_model_by_path('fluid_profile')
+    test_result = db.session\
+        .query(test_result_model)\
+        .outerjoin(test_result_model.electrical_profile)\
+        .outerjoin(test_result_model.fluid_profile)\
+        .filter(
+            and_(
+                # get only profiles with user_id NULL or the ones which belong to the current user
+                or_(electrical_profile_model.user_id == None, electrical_profile_model.user_id == user.id),
+                or_(fluid_profile_model.user_id == None, fluid_profile_model.user_id == user.id)
+            ),
+            test_result_model.id == test_result_id
+        ).first()
+    if test_result:
+        test_result = handle_profile_and_test_result_duplication(test_result, user.id)
+    return test_result.id if test_result else None
+
+
+def handle_profile_and_test_result_duplication(test_result, user_id):
+    profile = None
+    profile_type = None
+    if test_result.electrical_profile and test_result.electrical_profile.user_id == user_id:
+        # Electrical profile belongs to the current user
+        profile = duplicate_instance(test_result.electrical_profile)
+        profile_type = "electrical"
+    elif test_result.fluid_profile and test_result.fluid_profile.user_id == user_id:
+        # Fluid profile belongs to the current user
+        profile = duplicate_instance(test_result.fluid_profile)
+        profile_type = "fluid"
+
+    try:
+        if profile:
+            db.session.flush()
+            if profile_type == "electrical":
+                test_result.electrical_profile_id = profile.id
+            elif profile_type == "fluid":
+                test_result.fluid_profile_id = profile.id
+        # Test result
+        duplicate_instance(test_result)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        abort(500, e.args)
+    return test_result
+
+
+def duplicate_instance(item):
+    db.session.expunge(item)
+    make_transient(item)
+    item.id = None
+    db.session.add(item)
+    return item
+
+
 # Get fields from corresponding table of specified equipment type
 def get_equipment_type_fields(item_id):
     item = db.session.query(EquipmentType).get(item_id) or abort(404)
@@ -310,6 +437,16 @@ def get_equipment_type_fields(item_id):
 @api.errorhandler(404)
 def not_found(error):
     return make_response(return_json('error', 'Not found'), 404)
+
+
+@api.errorhandler(403)
+def forbidden(error):
+    return make_response(return_json('error', error.description), 403)
+
+
+@api.errorhandler(401)
+def unauthorized(error):
+    return make_response(return_json('error', error.description), 401)
 
 
 @api.errorhandler(400)
@@ -325,9 +462,10 @@ def internal_server_error(error):
 # Standard routes
 # Create
 @api_blueprint.route('/<path>/', methods=['POST'])
+@login_required
+@json_required
 def create_item_handler(path):
     abort_if_wrong_path(path)
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_item(path, validated_data)
     return return_json('result', new_item.id)
@@ -335,12 +473,14 @@ def create_item_handler(path):
 
 # Read
 @api_blueprint.route('/<path>/', methods=['GET'])
+@login_required
 def read_items_handler(path):
     abort_if_wrong_path(path)
     return return_json('result', get_items(path, request.args))
 
 
 @api_blueprint.route('/<path>/<int:item_id>', methods=['GET'])
+@login_required
 def read_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
@@ -349,10 +489,11 @@ def read_item_handler(path, item_id):
 
 # Update
 @api_blueprint.route('/<path>/<int:item_id>', methods=['PUT', 'POST'])
+@login_required
+@json_required
 def update_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
-    abort_if_json_missing()
     validated_data = validate_or_abort(path, update=True)
     updated_item = update_item(path, item_id, validated_data)
     return return_json('result', updated_item.serialize())
@@ -360,6 +501,7 @@ def update_item_handler(path, item_id):
 
 # Delete
 @api_blueprint.route('/<path>/<int:item_id>', methods=['DELETE'])
+@login_required
 def delete_item_handler(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
@@ -367,8 +509,17 @@ def delete_item_handler(path, item_id):
 
 
 # Custom routes
+# Get token
+@api_blueprint.route('/token/')
+@login_required
+def get_auth_token():
+    token = g.user.generate_auth_token(600)
+    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+
+
 # Get fields from corresponding table of specified equipment type
 @api_blueprint.route('/equipment_type/<int:item_id>/fields', methods=['GET'])
+@login_required
 def handler_equipment_type_fields(item_id):
     abort_if_wrong_id(item_id)
     return return_json('result', get_equipment_type_fields(item_id))
@@ -376,6 +527,7 @@ def handler_equipment_type_fields(item_id):
 
 # Get fluid and electrical profiles in one responce
 @api_blueprint.route('/test_profile/', methods=['GET'])
+@login_required
 def get_test_profile():
     rows_fluid = db.session.query(FluidProfile).all()
     rows_electrical = db.session.query(ElectricalProfile).all()
@@ -384,9 +536,10 @@ def get_test_profile():
 
 # Create equipment
 @api_blueprint.route('/equipment/', methods=['POST'])
+@login_required
+@json_required
 def create_equipment_handler():
     path = 'equipment'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_equipment(path, validated_data)
     return return_json('result', new_item.id)
@@ -394,50 +547,77 @@ def create_equipment_handler():
 
 # Create equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['POST'])
+@login_required
+@json_required
 def create_equipment_up_down_stream_handler(item_id):
-    abort_if_json_missing()
     # validated_data = validate_or_abort('equipment_up_down_stream')
     return return_json('result', add_up_down_stream_to_equipment(item_id, request.json))
 
 
 # Get equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['GET'])
+@login_required
 def read_equipment_up_down_stream_handler(item_id):
     return return_json('result', get_up_down_stream_of_equipment(item_id))
 
 
 # Remove connection between equipment and its upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['DELETE'])
+@login_required
+@json_required
 def delete_equipment_up_down_stream_handler(item_id):
-    abort_if_json_missing()
     return return_json('result', delete_up_down_stream_of_equipment(item_id))
 
 
+# Remove connection between equipment and its upstream
+@api_blueprint.route('/equipment/<int:item_id>/upstream/<int:upstream_id>', methods=['DELETE'])
+def delete_equipment_upstream_handler(item_id, upstream_id):
+    return return_json('result', delete_upstream_of_equipment(item_id, upstream_id))
+
+
+# Remove connection between equipment and its downstream
+@api_blueprint.route('/equipment/<int:item_id>/downstream/<int:downstream_id>', methods=['DELETE'])
+def delete_equipment_downstream_handler(item_id, downstream_id):
+    return return_json('result', delete_downstream_of_equipment(item_id, downstream_id))
+
+
 # Create a lot of test_results with equipment using one query
-@api_blueprint.route('/test_result/equipment', methods=['POST'])
+@api_blueprint.route('/test_result/equipment/', methods=['POST'])
+@login_required
+@json_required
 def handler_items():
     path = 'test_result_equipment'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     return return_json('result', add_items(path, validated_data))
 
 
 # Create or update a lot of tests
 @api_blueprint.route('/test_result/multi/<path>', methods=['POST'])
+@login_required
+@json_required
 def handler_tests(path):
     if path not in ('transformer_turn_ratio_test',
                     'winding_resistance_test',
                     'winding_test'):
         abort(404)
-    abort_if_json_missing()
-    return return_json('result', add_or_update_tests(path))
+    return return_json('result', add_or_update_items(path))
+
+
+# Duplicate test result and related electrical or fluid profile
+@api_blueprint.route('/test_result/<int:test_result_id>/duplicate', methods=['POST'])
+@login_required
+def duplicate_test_result_handler(test_result_id):
+    abort_if_wrong_id(test_result_id)
+    return return_json('result', duplicate_test_result(test_result_id))
 
 
 # Create user
 @api_blueprint.route('/user/', methods=['POST'])
+@login_required
+@admin_role_required
+@json_required
 def create_user_handler():
     path = 'user'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_user = add_user(path, validated_data)
     return return_json('result', new_user.id)
@@ -445,22 +625,65 @@ def create_user_handler():
 
 # Create fluid_profile
 @api_blueprint.route('/fluid_profile/', methods=['POST'])
+@login_required
+@json_required
 def create_fluid_profile_handler():
     path = 'fluid_profile'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_fluid_profile(path, validated_data)
     return return_json('result', new_item.id)
 
 
-# Create fluid_profile
+# Create electrical_profile
 @api_blueprint.route('/electrical_profile/', methods=['POST'])
+@login_required
+@json_required
 def create_electrical_profile_handler():
     path = 'electrical_profile'
-    abort_if_json_missing()
     validated_data = validate_or_abort(path)
     new_item = add_electrical_profile(path, validated_data)
     return return_json('result', new_item.id)
 
+
+# Create test recommendation
+@api_blueprint.route('/test_recommendation/', methods=['POST'])
+@login_required
+@json_required
+def create_test_recommendation_handler():
+    path = 'test_recommendation'
+    validated_data = validate_or_abort(path)
+    new_item = add_user_id_and_save_item(path, validated_data)
+    return return_json('result', new_item.id)
+
+
+# Create test diagnosis
+@api_blueprint.route('/test_diagnosis/', methods=['POST'])
+@login_required
+@json_required
+def create_test_diagnosis_handler():
+    path = 'test_diagnosis'
+    validated_data = validate_or_abort(path)
+    new_item = add_user_id_and_save_item(path, validated_data)
+    return return_json('result', new_item.id)
+
+
+# Create test repair note
+@api_blueprint.route('/test_repair_note/', methods=['POST'])
+@login_required
+@json_required
+def create_test_repair_note_handler():
+    path = 'test_repair_note'
+    validated_data = validate_or_abort(path)
+    new_item = add_user_id_and_save_item(path, validated_data)
+    return return_json('result', new_item.id)
+
+
+# Create or update a lot of tasks
+@api_blueprint.route('/schedule/multi/', methods=['POST'])
+@login_required
+@json_required
+def handler_tasks():
+    path = 'schedule'
+    return return_json('result', add_or_update_items(path))
 
 api.register_blueprint(api_blueprint)

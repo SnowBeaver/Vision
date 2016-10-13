@@ -6,15 +6,12 @@ import Panel from 'react-bootstrap/lib/Panel';
 import Button from 'react-bootstrap/lib/Button';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
-var UpstreamSelectField = React.createClass({
+
+var UpstreamSelectFields = React.createClass({
     getInitialState: function () {
         return {
-            equipment: {},
-            isVisible: false
+            equipment: {}
         };
-    },
-    isVisible: function () {
-        return this.state.isVisible;
     },
     componentDidMount: function () {
         this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
@@ -23,23 +20,35 @@ var UpstreamSelectField = React.createClass({
             });
         }.bind(this), 'json');
     },
+
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-    removeSelect: function () {
-        this.props.removeSelect(this.props.index);
-    },
-    render: function () {
 
-        console.log(this.props.upstream);
+    upstreamAdd: function () {
+        this.props.upstream.push(0);
+        var upstreams = this.props.upstream;
+        this.setState({upstreams});
+    },
+
+    remove: function (e) {
+        var url = '/api/v1.0/equipment/' + this.props.value + '/upstream/' + e;
+        this.props.upstream.splice(this.props.upstream.indexOf(e), 1);
+        var upstreams = this.props.upstream;
+        this.setState({upstreams});
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            success: function (data) {
+            }
+        })
+    },
+
+    render: function () {
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
         }
-        var id;
         var key;
         var label_num = 0;
         var menuItems = [];
@@ -57,25 +66,24 @@ var UpstreamSelectField = React.createClass({
             var name = 'upstream' + key;
             upstreams.push(<div className="row">
                 <div className="col-md-10">
-                    <FormGroup >
+                    <FormGroup controlId={key}>
                         <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props.onChange}
                                      name={name}
-                                     value={this.props.upstream[key]}
+                                     value={(this.props.upstream[key]!='undefined') ? this.props.upstream[key] : null}
+
                         >
-                            <option key={this.state.equipment[this.props.upstream[key]].id}
-                                    value={this.state.equipment[this.props.upstream[key]].id}>
-                                {`${this.state.equipment[this.props.upstream[key]].name}`}</option>
+                            <option value='undefined'>Choose equipment</option>
                             {menuItems}
                             <FormControl.Feedback />
                         </FormControl>
                     </FormGroup>
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-1">
                     <a href="javascript:void(0)"
                        className="glyphicon glyphicon-remove text-danger"
-                       onClick={this.removeSelect}
+                       onClick={this.remove.bind(this,this.props.upstream[key])}
                        aria-hidden="true">
                     </a>
                 </div>
@@ -85,20 +93,23 @@ var UpstreamSelectField = React.createClass({
         return (
             <div>
                 {upstreams}
+                <div className="col-md-1">
+                    <a href="javascript:void(0)"
+                       className="glyphicon glyphicon-plus"
+                       onClick={this.upstreamAdd}
+                       aria-hidden="true">&nbsp;</a>
+                </div>
             </div>
         );
     }
 });
 
-var DownstreamSelectField = React.createClass({
+
+var DownstreamSelectFields = React.createClass({
     getInitialState: function () {
         return {
-            equipment: {},
-            isVisible: false
+            equipment: {}
         };
-    },
-    isVisible: function () {
-        return this.state.isVisible;
     },
     componentDidMount: function () {
         this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
@@ -110,20 +121,32 @@ var DownstreamSelectField = React.createClass({
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-    removeSelect: function () {
-        this.props.removeSelect(this.props.index);
-    },
-    render: function () {
 
-        console.log(this.props.downstream);
+    downstreamAdd: function () {
+        this.props.downstream.push(0);
+        var upstreams = this.props.downstream;
+        this.setState({upstreams});
+    },
+
+    remove: function (e) {
+        var url = '/api/v1.0/equipment/' + this.props.value + '/downstream/' + e;
+        this.props.downstream.splice(this.props.downstream.indexOf(e), 1);
+        var downstreams = this.props.downstream;
+        this.setState({downstreams});
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            success: function (data) {
+            }
+        })
+    },
+
+    render: function () {
         var items = Object.keys(this.state.equipment).length;
         if (items == 0) {
             return (<div></div>);
         }
-        var id;
+
         var key;
         var label_num = 0;
         var menuItems = [];
@@ -137,20 +160,21 @@ var DownstreamSelectField = React.createClass({
         }
         for (key in this.props.downstream) {
             label_num++;
-            label = 'downstream ' + label_num;
+            label = 'Downstream ' + label_num;
             var name = 'downstream' + key;
+            var id = this.props.downstream[key];
             downstreams.push(<div className="row">
                 <div className="col-md-10">
-                    <FormGroup >
+                    <FormGroup controlId={key}>
                         <ControlLabel>{label}</ControlLabel>
                         <FormControl componentClass="select"
                                      onChange={this.props.onChange}
                                      name={name}
-                                     value={this.props.downstream[key]}
+                                     value={(this.props.downstream[key]!='undefined') ? this.props.downstream[key] : null}
                         >
-                            <option key={this.state.equipment[this.props.downstream[key]].id}
-                                    value={this.state.equipment[this.props.downstream[key]].id}>
-                                {`${this.state.equipment[this.props.downstream[key]].name}`}</option>
+                            <option key={this.props.downstream[key]}
+                                    value='undefined'> Choose equipment
+                            </option>
                             {menuItems}
                             <FormControl.Feedback />
                         </FormControl>
@@ -159,7 +183,7 @@ var DownstreamSelectField = React.createClass({
                 <div className="col-md-2">
                     <a href="javascript:void(0)"
                        className="glyphicon glyphicon-remove text-danger"
-                       onClick={this.removeSelect}
+                       onClick={this.remove.bind(this,this.props.downstream[key])}
                        aria-hidden="true">
                     </a>
                 </div>
@@ -169,20 +193,23 @@ var DownstreamSelectField = React.createClass({
         return (
             <div>
                 {downstreams}
+                <div className="col-md-1">
+                    <a href="javascript:void(0)"
+                       className="glyphicon glyphicon-plus"
+                       onClick={this.downstreamAdd}
+                       aria-hidden="true">&nbsp;</a>
+                </div>
             </div>
         );
     }
 });
 
+
 var SelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false,
         };
-    },
-    isVisible: function () {
-        return this.state.isVisible;
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
@@ -193,9 +220,6 @@ var SelectField = React.createClass({
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
     render: function () {
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
@@ -204,14 +228,12 @@ var SelectField = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
-
-
         return (
             <FormGroup>
                 <FormControl componentClass="select"
-                             onChange={this.props.onChange}
                              name={name}
                              value={value}
+                             disabled={this.props.disabled}
                 >
                     <option key={null} value={null}>Choose Equipment</option>
                     {menuItems}
@@ -222,6 +244,7 @@ var SelectField = React.createClass({
     }
 });
 
+
 var EqConnectionsManager = React.createClass({
 
     getInitialState: function () {
@@ -229,14 +252,16 @@ var EqConnectionsManager = React.createClass({
             items: {},
             loading: false,
             errors: {},
-            equipment_id: 2
+            equipment_id: this.props.equip_id
         }
-
     },
-
     _save: function () {
+
+        var data = {"upstream":this.state.items.upstream, "downstream": this.state.items.downstream};
+        console.log("data:", data);
+        var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
         return $.ajax({
-            url: '/api/v1.0/equipment/' + this.props.source,
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -249,61 +274,29 @@ var EqConnectionsManager = React.createClass({
         })
 
     },
-
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this._validate()) {
-            NotificationManager.error('Please correct the errors');
-            return;
-        }
         this._clearErrors();
         var xhr = this._save();
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
-    },
 
+        console.log("submit log", this.state);
+    },
     hideLoading: function () {
         this.setState({loading: false});
     },
-
     _onSuccess: function (data) {
-        // Clean the form
-        this.setState(this.getInitialState());
-        NotificationManager.success('Equipment has been successfully saved');
+        this.props.handleClose();
+        NotificationManager.success('Upstreams & downstreams were succesfully set');
     },
-
     _onError: function (data) {
-        var message = "Failed to create";
-        var res = data.responseJSON;
-        if (res.message) {
-            message = data.responseJSON.message;
-        }
-        if (res.error) {
-			// We get list of errors
-			if (data.status >= 500) {
-				message = res.error.join(". ");
-			} else if (res.error instanceof Object){
-				// We get object of errors with field names as key
-				for (var field in res.error) {
-					var errorMessage = res.error[field];
-					if (Array.isArray(errorMessage)) {
-						errorMessage = errorMessage.join(". ");
-					}
-					res.error[field] = errorMessage;
-				}
-				this.setState({
-					errors: res.error
-				});
-			} else {
-				message = res.error;
-			}
-		}
-        NotificationManager.error(message);
+
     },
 
     _clearErrors: function () {
-        this.setState({errors: {}});
+        
     },
 
     componentDidMount: function () {
@@ -314,30 +307,18 @@ var EqConnectionsManager = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
+        var index;
+        var state = this.state;
 
-        if (e.target.type == 'checkbox') {
-            state[e.target.name] = e.target.checked;
-        } else if (e.target.type == 'radio') {
-            state[e.target.name] = e.target.value;
-        } else if (e.target.type == 'select-one') {
-            state[e.target.name] = e.target.value;
-        } else {
-            state[e.target.name] = e.target.value;
+        if (e.target.name.indexOf('upstream') == 0) {
+            index = parseInt(e.target.id);
+            state.items.upstream[index] = parseInt(e.target.value);
+        } else if (e.target.name.indexOf('downstream') == 0) {
+            index = parseInt(e.target.id);
+            state.items.downstream[index] = parseInt(e.target.value);
         }
 
-        if (e.target.name === 'equipment_id') {
-            var id = e.target.value;
-            var source = '/api/v1.0/equipment/' + id + '/up_down_stream/';
-            this.serverRequest = $.get(source, function (result) {
-                this.setState({
-                    items: result['result'],
-                    equipment_id: id
-                });
-            }.bind(this), 'json');
-
-            this.setState({});
-        }
+        this.setState(state);
 
     },
 
@@ -352,8 +333,9 @@ var EqConnectionsManager = React.createClass({
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="row">
                         <div className="col-md-4">
-                            <UpstreamSelectField upstream={this.state.items.upstream}
-                                                 value={this.state.equipment_id}
+                            <UpstreamSelectFields onChange={this._onChange}
+                                                  upstream={this.state.items.upstream}
+                                                  value={this.state.equipment_id}
                             />
                         </div>
                         <div className="col-md-4 ">
@@ -362,11 +344,13 @@ var EqConnectionsManager = React.createClass({
                             <SelectField source="equipment"
                                          name='equipment_id'
                                          value={this.state.equipment_id}
+                                         disabled
                             />
                         </div>
                         <div className="col-md-4">
-                            <DownstreamSelectField downstream={this.state.items.downstream}
-                                                   value={this.state.parent_id}
+                            <DownstreamSelectFields onChange={this._onChange}
+                                                    downstream={this.state.items.downstream}
+                                                    value={this.state.equipment_id}
                             />
                         </div>
                     </div>
@@ -374,7 +358,7 @@ var EqConnectionsManager = React.createClass({
                         <div className="col-md-12">
                             <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
                             <Button bsStyle="danger"
-                                    onClick={this.handleClose}
+                                    onClick={this.props.handleClose}
                                     className="pull-right margin-right-xs">Cancel</Button>
                         </div>
                     </div>

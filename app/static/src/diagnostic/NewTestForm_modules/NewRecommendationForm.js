@@ -8,133 +8,69 @@ import {findDOMNode} from 'react-dom';
 import Modal from 'react-bootstrap/lib/Modal';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
+import TestTypeSelectField from './TestTypeSelectField';
 
 var items = [];
 
 
-var TestTypeSelectField = React.createClass({
-
-	handleChange: function (event, index, value) {
-		this.setState({
-			value: event.target.value
-		});
-	},
-
-	getInitialState: function () {
-		return {
-			items: [],
-			isVisible: false
-		};
-	},
-
-	isVisible: function () {
-		return this.state.isVisible;
-	},
-
-	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
-
-			items = (result['result']);
-			this.setState({
-				items: items
-			});
-		}.bind(this), 'json');
-	},
-
-	componentWillUnmount: function () {
-		this.serverRequest.abort();
-	},
-
-	setVisible: function () {
-		this.state.isVisible = true;
-	},
-
-	render: function () {
-		var menuItems = [];
-		for (var key in this.state.items) {
-			menuItems.push(<option key={this.state.items[key].id}
-								   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-		}
-
-		return (
-			<div>
-				<FormGroup>
-					<FormControl
-						componentClass="select"
-						placeholder="select"
-						onChange={this.handleChange}
-						name="test_type_id"
-						required={this.props.required}>
-						<option key="0" value="">Test Type{this.props.required ? " *" : ""}</option>
-						{menuItems}
-					</FormControl>
-				</FormGroup>
-			</div>
-		);
-	}
+const TextArea = React.createClass({
+    render: function () {
+        let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
+        var error = this.props.errors[name];
+        return (
+            <OverlayTrigger overlay={tooltip} placement="top">
+                <FormGroup>
+                    <FormControl componentClass="textarea"
+                                 placeholder={label}
+                                 name={name}
+                                 value={value}
+                                 onChange={this.props.onChange}
+								 required={this.props.required}
+                    />
+                    <HelpBlock className="warning">{error}</HelpBlock>
+                    <FormControl.Feedback />
+                </FormGroup>
+            </OverlayTrigger>
+        );
+    }
 });
 
+const TextField = React.createClass({
+    _onChange: function (e) {
+        this.props.onChange(e);
+    },
 
-var NameSelectField = React.createClass({
-
-	handleChange: function (event, index, value) {
-		this.setState({
-			value: event.target.value
-		});
-	},
-
-	getInitialState: function () {
-		return {
-			items: [],
-			isVisible: false
-		};
-	},
-
-	isVisible: function () {
-		return this.state.isVisible;
-	},
-
-	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
-
-			items = (result['result']);
-			this.setState({
-				items: items
-			});
-		}.bind(this), 'json');
-	},
-
-	componentWillUnmount: function () {
-		this.serverRequest.abort();
-	},
-
-	setVisible: function () {
-		this.state.isVisible = true;
-	},
-
-	render: function () {
-		var menuItems = [];
-		for (var key in this.state.items) {
-			menuItems.push(<option key={this.state.items[key].id}
-								   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-		}
-
-		return (
-			<div>
-				<FormGroup>
-					<FormControl
-						componentClass="select"
-						placeholder="select"
-						onChange={this.handleChange}
-						name="name"
-						required={this.props.required}>
-						<option key="0" value="">Name{this.props.required ? " *" : ""}</option>
-						{menuItems}
-					</FormControl>
-				</FormGroup>
-			</div>
-		);
-	}
+    render: function () {
+        let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
+        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
+        return (
+            <OverlayTrigger overlay={tooltip} placement="top">
+                <FormGroup validationState={validationState}>
+                    <FormControl type="text"
+                                 placeholder={label}
+                                 name={name}
+                                 data-type={type}
+                                 data-len={len}
+                                 onChange={this._onChange}
+								 required={this.props.required}
+                    />
+                    <HelpBlock className="warning">{error}</HelpBlock>
+                    <FormControl.Feedback />
+                </FormGroup>
+            </OverlayTrigger>
+        );
+    }
 });
 
 
@@ -151,7 +87,8 @@ var NewRecommendationForm = React.createClass({
 				'code',
 				'description'
 			],
-			changedFields: []
+			changedFields: [],
+			public_recommendation: false
 		}
 	},
 
@@ -166,22 +103,53 @@ var NewRecommendationForm = React.createClass({
             }
             data[key] = value;
 		}
+		delete data["public_recommendation"];	// For showing/hiding fields only
+		if (!this.state.public_recommendation) {
+			this._createTestRecommendation(data, this);
+		} else {
+			var that = this;
+			return $.ajax({
+				url: '/api/v1.0/recommendation/',
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				success: function (response, textStatus) {
+					NotificationManager.success("Predefined recommendation has been successfully added");
+					that.props.onSuccess(response.result, data.test_type_id, "predefined");
+				},
+				beforeSend: function () {
+					this.setState({loading: true});
+				}.bind(this)
+			})
+		}
+	},
 
+	_createTestRecommendation: function (data, that) {
+		// Create test recommendation, do not save to all predefined recommendations
+		data.recommendation_notes = data["description"];
+		data.test_result_id = this.props.testResultId;
+		data.recommendation_id = this.props.recommendationId;
+		["code", "name", "description"].forEach(e => delete data[e]);
 		return $.ajax({
-			url: '/api/v1.0/recommendation/',
+			url: '/api/v1.0/test_recommendation/',
 			type: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
 			data: JSON.stringify(data),
-			success: function (data, textStatus) {
+			success: function (response, textStatus) {
+				NotificationManager.success("Test recommendation has been successfully added");
+				that.props.onSuccess(response.result, data.test_type_id, "test");
 			},
 			beforeSend: function () {
 				this.setState({loading: true});
 			}.bind(this)
 		})
 	},
+
 	_onSubmit: function (e) {
 		e.preventDefault();
+		e.stopPropagation();
 		if (!this.is_valid()){
 			NotificationManager.error('Please correct the errors');
 			return false;
@@ -199,7 +167,6 @@ var NewRecommendationForm = React.createClass({
 	_onSuccess: function (data) {
 		//this.refs.eqtype_form.getDOMNode().reset();
 		//this.setState(this.getInitialState());
-		NotificationManager.success("Recommendation added.");
 	},
 	_onError: function (data) {
 		var message = "Failed to create";
@@ -230,6 +197,9 @@ var NewRecommendationForm = React.createClass({
 		NotificationManager.error(message);
 	},
 	_onChange: function (e) {
+		// Do not propagate changes to the parent form
+		// as they are local for this form's state
+		e.stopPropagation();
 		var state = {};
 		if (e.target.type == 'checkbox') {
 			state[e.target.name] = e.target.checked;
@@ -312,70 +282,63 @@ var NewRecommendationForm = React.createClass({
 	},
 
 	render: function () {
-
 		return (
 			<div className="form-container">
 				<form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
-					<Panel header="New Recommendation">
+						<div className="row">
+							<div className="col-md-4">
+								<TestTypeSelectField
+									selectedSubtests={this.props.selectedSubtests}
+									testType={this.props.testType}
+									value={this.state.test_type_id}
+									name="test_type_id"
+									handleChange={this._onChange}
+									errors={this.state.errors}
+									required/>
+							</div>
+							<div className="col-md-1">
+								<Checkbox checked={this.state.public_recommendation} name="public_recommendation">Public</Checkbox>
+							</div>
+							{this.state.public_recommendation ?
+								<div className="col-md-4">
+								 <TextField onChange={this._onChange}
+                                           label="Name *"
+                                           name="name"
+                                           value={this.state.name}
+                                           errors={this.state.errors}
+                                           data-len="50"
+									 	   required/>
+								</div>
+								: null
+							}
+							{this.state.public_recommendation ?
+								<div className="col-md-3">
+									<TextField onChange={this._onChange}
+											   label="Code"
+											   name="code"
+											   value={this.state.code}
+											   errors={this.state.errors}
+											   data-len="50"/>
+								</div>
+								: null
+							}
 
+						</div>
 						<div className="row">
 							<div className="col-md-12">
-								<FormGroup controlId="contract_status"
-										   validationState={this.state.errors.test_type_id ? 'error' : null}>
-									<TestTypeSelectField
-										source="/api/v1.0/test_type"
-										handleChange={this.handleChange}
-										required/>
-									<HelpBlock className="warning">{this.state.errors.test_type_id}</HelpBlock>
-								</FormGroup>
+								<TextArea label="Recommendations"
+                                          name='description'
+                                          value={this.state.description}
+                                          onChange={this._onChange}
+                                          errors={this.state.errors}/>
 							</div>
 						</div>
-
-
-						<div className="row">
-							<div className="col-md-12">
-								<FormGroup controlId="contract_status"
-										   validationState={this.state.errors.name ? 'error' : null}>
-									<NameSelectField
-										source="/api/v1.0/user"
-										handleChange={this.handleChange}
-										required/>
-									<HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
-								</FormGroup>
-							</div>
-						</div>
-
-						<div className="maxwidth">
-							<FormGroup validationState={this.state.errors.code ? 'error' : null}>
-								<FormControl type="text"
-											 placeholder="Code"
-											 name="code"
-											 data-len="50"
-								/>
-								<HelpBlock className="warning">{this.state.errors.code}</HelpBlock>
-								<FormControl.Feedback />
-							</FormGroup>
-						</div>
-
-						<div className="row">
-							<div className="col-md-12">
-								<FormGroup validationState={this.state.errors.description ? 'error' : null}>
-									<ControlLabel>Recommendations</ControlLabel>
-									<FormControl componentClass="textarea"
-												 placeholder="Repair description"
-												 name="description"/>
-									<HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
-									<FormControl.Feedback />
-								</FormGroup>
-							</div>
-						</div>
-
 						<div className="row">
 							<div className="col-md-12 ">
 								<Button bsStyle="success"
 										className="btn btn-success pull-right"
 										type="submit"
-								>Save</Button>
+								>Add {this.state.public_recommendation ? "Predefined" : "Test"} Recommendation</Button>
 								&nbsp;
 								<Button bsStyle="danger"
 										className="pull-right"
@@ -384,7 +347,6 @@ var NewRecommendationForm = React.createClass({
 								>Cancel</Button>
 							</div>
 						</div>
-					</Panel>
 				</form>
 			</div>
 		);

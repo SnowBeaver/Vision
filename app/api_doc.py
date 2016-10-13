@@ -1324,6 +1324,19 @@ doc = ApiDoc(app=api)
 @apiUse Error400
 """
 """
+Duplicate test result and related electrical or fluid profile, if they belong
+to the currently logged in user or are private.
+@api {post} /test_result/:id/duplicate
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup test_result
+@apiExample {curl} Example usage:
+    curl -X POST http://localhost:8001/api/v1.0/test_result/3/duplicate
+
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
 @api {put} /test_result/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
@@ -3431,6 +3444,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}          user                see: user->get an item
 @apiSuccess {String}        date_created
 @apiSuccess {String}        date_updated
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Integer}       test_result_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3448,6 +3463,8 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}       user_id
 @apiParam   {String}        date_created     format "2016-07-29 17:52:19"
 @apiParam   {String}        date_updated     format "2016-07-29 17:52:19"
+@apiParam   {Integer}       test_type_id
+@apiParam   {Integer}       test_result_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -3736,11 +3753,12 @@ doc = ApiDoc(app=api)
         }
     }
 
-@apiSuccess {Integer}       id
-@apiSuccess {String(50)}    name
-@apiSuccess {Integer}       group_id
-@apiSuccess {Boolean}       is_group
-@apiSuccess {String(100)}   test_table_name
+@apiSuccess {Integer}  id
+@apiSuccess {String}   name
+@apiSuccess {Integer}  group_id
+@apiSuccess {Boolean}  is_group
+@apiSuccess {String}   test_table_name
+@apiSuccess {String}   checkbox_name
 @apiUse GetItemSuccess
 @apiUse Error404
 """
@@ -3757,6 +3775,7 @@ doc = ApiDoc(app=api)
 @apiParam   {Integer}     group_id
 @apiParam   {Boolean}     is_group          required
 @apiParam   {String(100)} test_table_name
+@apiParam   {String(100)} checkbox_name
 @apiUse PostItemSuccess
 @apiUse Error400
 """

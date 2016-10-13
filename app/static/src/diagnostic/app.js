@@ -42,15 +42,58 @@ import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
 import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
 import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import EqConnectionsManager from './EqConnectionsManager';
+import NewTaskForm from './NewTaskForm';
+import TaskList from './TaskList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
+function getAPIToken () {
+	return btoa(localStorage.getItem("apiToken") + ":");
+}
+
+(function ($) {
+	$.authorizedAjax = function (settings) {
+		var originalBeforeSendFunction = settings.beforeSend;
+		settings.beforeSend = function (xhr) {
+			originalBeforeSendFunction(xhr);
+			xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
+		};
+		settings.statusCode = {
+			401: function () {
+				// Redirect user to login - ?
+				NotificationManager.error("Please re-login");
+			}
+		};
+		return $.ajax(settings);
+	};
+})(jQuery);
+
+(function ($) {
+	$.authorizedGet = function (settings, callback, type) {
+		return $.ajax({
+			type: "GET",
+			url: settings,
+			dataType: type,
+			beforeSend: function (xhr) {
+			   xhr.setRequestHeader ("Authorization", "Basic " + getAPIToken());
+			},
+			success: callback,
+			error: function () {
+				// Redirect user to login - ?
+				NotificationManager.error("Please re-login");
+			}
+		});
+	};
+})(jQuery);
+
+
 const App = React.createClass({
+
     render() {
         return (
 			<div className="content">
 				<NotificationContainer/>
-				
+
 				<div className="row">
 					<ul className="pull-left">
 						<li><Link to='/home'>Home</Link></li>
@@ -101,8 +144,12 @@ const App = React.createClass({
 						<li><Link to='/visual_test'>visual test</Link></li>
 						<li><Link to='/water_test'>water test</Link></li>
 						<li><Link to='/winding2_test'>winding test2</Link></li>
+					</ul>
+					<ul className="pull-left">
 						<li><Link to='/up_down_streams'>Stream manager</Link></li>
-					</ul> 
+						<li><Link to='/schedule_task'>Schedule a task</Link></li>
+						<li><Link to='/tasks'>Tasks</Link></li>
+					</ul>
 				</div>
 				<div className='app-container'>
 					<hr/>
@@ -120,7 +167,7 @@ render((
             <Route path="campaign" component={Campaign}/>
             <Route path="equipment" component={Equipment}/>
             <Route path="add_equipment/:campaign" component={AddEquipmentForm}/>
-            <Route path="campaign/:campaign" component={TestList}/>
+            <Route path="campaign/:campaign"  component={TestList}/>
             <Route path="electro" component={ElectricalProfileForm}/>
             <Route path="fluid" component={FluidProfileForm}/>
             <Route path="choose_profile" component={ChooseTestForm}/>
@@ -153,7 +200,9 @@ render((
             <Route path="water_test" component={WaterTestForm}/>
             <Route path="winding2_test" component={WindingTestForm}/>
 			<Route path="up_down_streams" component={EqConnectionsManager}/>
-			
+			<Route path="schedule_task" component={NewTaskForm}/>
+			<Route path="tasks" component={TaskList}/>
+
 			{/*This route should be the last, otherwise it will match all subsequent routes*/}
 			<Route path=":equipmentId" component={Home}/>
         </Route>
