@@ -24,15 +24,20 @@
   </div>
 </div>
 <script>
-    document.getElementById("visionLoginForm").onsubmit = function() {loginAndGetToken()};
-    function loginAndGetToken() {
+    var loginForm = document.getElementById("visionLoginForm");
+    loginForm.onsubmit = function(e) {loginAndGetToken(e)};
+    function loginAndGetToken(e) {
+        e.preventDefault();
         var username = document.getElementById("email").value;
         var password = document.getElementById("password").value;
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                var response = JSON.parse(this.responseText);
-                localStorage.setItem("apiToken", response.token);
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+                    localStorage.setItem("apiToken", response.token);
+                }
+                loginForm.submit();
             }
         };
         xhttp.open("GET", '/api/v1.0/token', true);
