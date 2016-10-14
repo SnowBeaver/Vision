@@ -68,7 +68,11 @@
           s.parentNode.insertBefore(wf, s);
         })();
     </script>
-  <script src="{{ url_for('static', filename='build/app.js') }}"></script>
+  {% if user_is_admin %}
+    <script src="{{ url_for('static', filename='build/app.js') }}"></script>
+  {% else %}
+    <script src="{{ url_for('static', filename='build/performer.js') }}"></script>
+  {% endif %}
 
 {% endblock tail %}
 
