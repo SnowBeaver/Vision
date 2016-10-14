@@ -40,7 +40,7 @@ var NewFluidForm = React.createClass({
             data[key] = value;
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/fluid_type/',
 			type: 'POST',
 			dataType: 'json',

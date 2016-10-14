@@ -30,7 +30,7 @@ var ContractStatusSelectField = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this.serverRequest = $.get(this.props.source, function (result) {
+		this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
 			items = (result['result']);
 			this.setState({
@@ -99,7 +99,7 @@ var NewContractForm = React.createClass({
             data[key] = value;
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/contract/',
 			type: 'POST',
 			dataType: 'json',

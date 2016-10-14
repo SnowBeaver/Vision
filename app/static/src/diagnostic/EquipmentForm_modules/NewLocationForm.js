@@ -41,7 +41,7 @@ var NewLocationForm = React.createClass({
             data[key] = value;
         }
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/location/',
             type: 'POST',
             dataType: 'json',

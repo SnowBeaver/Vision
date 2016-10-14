@@ -42,7 +42,7 @@ var NewNormForm = React.createClass({
             data[key] = value;
 		}
 
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/norm/',
 			type: 'POST',
 			dataType: 'json',

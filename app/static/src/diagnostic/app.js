@@ -69,19 +69,47 @@ function getAPIToken () {
 })(jQuery);
 
 (function ($) {
-	$.authorizedGet = function (settings, callback, type) {
+	$.authorizedGet = function (url, callback, type) {
+		if (type == undefined) {
+			type = 'json';
+		}
 		return $.ajax({
 			type: "GET",
-			url: settings,
+			url: url,
 			dataType: type,
 			beforeSend: function (xhr) {
-			   xhr.setRequestHeader ("Authorization", "Basic " + getAPIToken());
+				xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
 			},
-			success: callback,
-			error: function () {
-				// Redirect user to login - ?
-				NotificationManager.error("Please re-login");
-			}
+			statusCode: {
+				401: function () {
+					// Redirect user to login - ?
+					NotificationManager.error("Please re-login");
+				}
+			},
+			success: callback
+		});
+	};
+})(jQuery);
+
+(function ($) {
+	$.authorizedPost = function (url, callback, type) {
+		if (type == undefined) {
+			type = 'json';
+		}
+		return $.ajax({
+			type: "POST",
+			url: url,
+			dataType: type,
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
+			},
+			statusCode: {
+				401: function () {
+					// Redirect user to login - ?
+					NotificationManager.error("Please re-login");
+				}
+			},
+			success: callback
 		});
 	};
 })(jQuery);

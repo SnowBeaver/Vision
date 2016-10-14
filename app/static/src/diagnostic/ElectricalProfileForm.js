@@ -38,7 +38,7 @@ var TestProfileSelectField = React.createClass({
 
         } else {
 
-            this.serverRequest = $.get('/api/v1.0/electrical_profile/' + event.target.value, function (result) {
+            this.serverRequest = $.authorizedGet('/api/v1.0/electrical_profile/' + event.target.value, function (result) {
                 this.setState({
                     saved_profile: result['result']
                 });
@@ -48,7 +48,7 @@ var TestProfileSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             this.setState({
                 items: result['result']
             });
@@ -142,7 +142,7 @@ const ElectricalProfileForm = React.createClass({
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            return $.ajax({
+            return $.authorizedAjax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
@@ -163,7 +163,7 @@ const ElectricalProfileForm = React.createClass({
         data['equipment_id'] = this.props.data.equipment_id;
 
         // save part to test_result
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/test_result/' + this.props.data.id,
             type: 'POST',
             dataType: 'json',

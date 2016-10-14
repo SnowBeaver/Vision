@@ -42,12 +42,11 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         auth = request.authorization
-        # if not auth:
-        #     abort(401)
+        if not auth:
+            abort(401)
         if auth:
             if not verify_password(auth['username'], unicode(auth['password'], 'utf-8')):
-                pass
-            #     abort(401)
+                abort(401)
         return f(*args, **kwargs)
     return decorated_function
 
@@ -513,8 +512,8 @@ def delete_item_handler(path, item_id):
 @api_blueprint.route('/token/')
 @login_required
 def get_auth_token():
-    token = g.user.generate_auth_token(600)
-    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+    token = g.user.generate_auth_token()
+    return jsonify({'token': token.decode('ascii')})
 
 
 # Get fields from corresponding table of specified equipment type

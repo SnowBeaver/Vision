@@ -161,7 +161,7 @@ var TestRecommendationList = React.createClass({
     _updateList: function (testResultId) {
         var urlParams = 'test_result_id=' + testResultId;
         var url = '/api/v1.0/test_recommendation/?' + urlParams;
-        this.serverRequest = $.get(url,
+        this.serverRequest = $.authorizedGet(url,
             function (result) {
                 this.setState({
                     recommendations: result['result']

@@ -26,7 +26,7 @@ var EquipmentSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             var items = (result['result']);
             this.setState({
                 items: items
@@ -165,7 +165,6 @@ var AddEquipmentForm = React.createClass({
     },
 
     _create: function () {
-
         return $.ajax({
             url: '/api/v1.0/test_result/equipment/',
             type: 'POST',
