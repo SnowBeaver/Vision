@@ -239,7 +239,6 @@ def update_remote(branch='master'):
             run('python manage.py db upgrade')
     update_static()
     restart_services()
-    sudo('service supervisor start')
 
 
 def setup_redis():
