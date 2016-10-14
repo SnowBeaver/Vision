@@ -6,7 +6,7 @@ module.exports = {
     server: {
       // We're serving the src folder as well
       // for sass sourcemap linking
-     baseDir: [dest, src]
+      baseDir: [dest, src]
     },
     files: [
       dest + '/**'
@@ -21,11 +21,18 @@ module.exports = {
     debug: true,
     // A separate bundle will be generated for each
     // bundle config in the list below
-    bundleConfigs: [{
-      entries: src + '/diagnostic/app.js',
-      dest: dest,
-      outputName: 'app.js'
-    }],
-    extensions: ['.js'],
+    bundleConfigs: [
+      {
+        entries: src + '/diagnostic/app.js',
+        dest: dest,
+        outputName: 'app.js'
+      },
+      {
+        entries: src + '/performer/performer.js',
+        dest: dest,
+        outputName: 'performer.js'
+      }
+    ],
+    extensions: ['.js']
   }
 };

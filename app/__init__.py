@@ -48,6 +48,9 @@ blogger_per.description = "Blogger's permissions"
 admin_per = Permission(be_admin)
 admin_per.description = "Admin's permissions"
 
+admin_or_blogger_per = Permission(admin_per).union(blogger_per)
+admin_or_blogger_per.description = "Admin's or Blogger's permissions"
+
 apps_needs = [
     be_admin, be_user, be_guest, be_blogger
 ]
