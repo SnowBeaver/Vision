@@ -93,6 +93,9 @@ function getAPIToken () {
 
 (function ($) {
 	$.authorizedPost = function (url, callback, type) {
+		if (type == undefined) {
+			type = 'json';
+		}
 		return $.ajax({
 			type: "POST",
 			url: url,

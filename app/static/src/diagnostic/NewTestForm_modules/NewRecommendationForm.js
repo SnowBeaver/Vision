@@ -108,7 +108,7 @@ var NewRecommendationForm = React.createClass({
 			this._createTestRecommendation(data, this);
 		} else {
 			var that = this;
-			return $.ajax({
+			return $.authorizedAjax({
 				url: '/api/v1.0/recommendation/',
 				type: 'POST',
 				dataType: 'json',
@@ -131,7 +131,7 @@ var NewRecommendationForm = React.createClass({
 		data.test_result_id = this.props.testResultId;
 		data.recommendation_id = this.props.recommendationId;
 		["code", "name", "description"].forEach(e => delete data[e]);
-		return $.ajax({
+		return $.authorizedAjax({
 			url: '/api/v1.0/test_recommendation/',
 			type: 'POST',
 			dataType: 'json',

@@ -30,7 +30,7 @@ var TestRecommendationSelectField = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
@@ -80,7 +80,7 @@ var SelectField = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
@@ -217,7 +217,7 @@ var NewTaskForm = React.createClass({
             data[key] = this.state[key];
         }
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',

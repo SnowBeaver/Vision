@@ -73,7 +73,7 @@ var EquipmentTypeSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -138,7 +138,7 @@ var EquipmentSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
             var items = (result['result']);
             this.setState({
                 items: items
@@ -215,7 +215,7 @@ var ManufacturerSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -280,7 +280,7 @@ var LocationSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -346,7 +346,7 @@ var VisualInspBySelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -412,7 +412,7 @@ var AssignedToSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -478,7 +478,7 @@ var NormSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -769,7 +769,7 @@ const EquipmentForm = React.createClass({
 
         // If the main form haven't been saved yet
         if (!this.state.equipmentId) {
-            xhr = $.ajax({
+            xhr = $.authorizedAjax({
                 url: '/api/v1.0/equipment/',
                 type: 'POST',
                 dataType: 'json',
@@ -799,7 +799,7 @@ const EquipmentForm = React.createClass({
                     subform[field] = null;
                 }
             }
-            return $.ajax({
+            return $.authorizedAjax({
                 url: '/api/v1.0/' + path + '/',
                 type: 'POST',
                 dataType: 'json',

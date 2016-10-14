@@ -69,7 +69,7 @@ var NewBushingTestForm = React.createClass({
         if ('id' in this.state) {
             url += this.state['id'];
         }
-        return $.ajax({
+        return $.authorizedAjax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
@@ -136,7 +136,7 @@ var NewBushingTestForm = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             var res = (result['result']);
             if (res.length > 0) {
                 var data = res[0];

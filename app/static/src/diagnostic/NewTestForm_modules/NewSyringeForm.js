@@ -30,7 +30,7 @@ var LabAnalyserSelectField = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.get(this.props.source, function (result) {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
 
             items = (result['result']);
             this.setState({
@@ -86,7 +86,7 @@ var NewSyringeForm = React.createClass({
             data[key] = this.state[key];
         }
 
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/syringe/',
             type: 'POST',
             dataType: 'json',
