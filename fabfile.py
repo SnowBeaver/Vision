@@ -229,17 +229,17 @@ def update_flaskbb():
 
 
 def update_remote(branch='master'):
+    sudo('service supervisor stop')
     with cd(env.directory):
         run('git pull origin %s' % branch)
         with source_virtualenv():
             run(env.pip + ' install -r requirements.txt')
             run('find . -name "*.pyc" -exec rm -rf {} \;')
             # run('python -c "from app import db;db.create_all()"')
-            sudo('service supervisor stop')
             run('python manage.py db upgrade')
-            update_static()
-            restart_services()
-            sudo('service supervisor start')
+    update_static()
+    restart_services()
+    sudo('service supervisor start')
 
 
 def setup_redis():
