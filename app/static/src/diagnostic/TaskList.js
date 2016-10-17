@@ -428,8 +428,8 @@ var TaskList = React.createClass({
                                 condensed={true}
                                 search={true}
                                 ignoreSinglePage={true}
+                                pagination={true}
                                 insertRow={true}
-                                selectRow={{mode: "checkbox", clickToSelect: true, bgColor: "rgb(238, 193, 213)"}}
                                 cellEdit={{mode: "click",
                                            blurToSave: true,
                                            beforeSaveCell: this.beforeSaveCell,
@@ -490,26 +490,26 @@ var TaskList = React.createClass({
                                        ref="test_type">Test Type
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_start"
-                                       width="130"
+                                       width="90"
                                        dataSort={true}
                                        editable={{type: 'datetime', validator: this._validateDateTime}}
-                                       ref="date_start">Start on
+                                       ref="date_start">Start
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_created"
-                                       width="130"
+                                       width="90"
                                        dataFormat={this._formatDateTime}
                                        dataSort={true}
                                        editable={false}
                                        hiddenOnInsert={true}
-                                       ref="date_created">Created on
+                                       ref="date_created">Created
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_updated"
-                                       width="130"
+                                       width="90"
                                        dataFormat={this._formatDateTime}
                                        dataSort={true}
                                        editable={false}
                                        hiddenOnInsert={true}
-                                       ref="date_updated">Updated on
+                                       ref="date_updated">Updated
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="description"
                                        dataSort={true}

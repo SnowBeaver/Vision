@@ -537,26 +537,26 @@ var TaskList = React.createClass({
                                        ref="test_type">Test Type
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_start"
-                                       width="130"
+                                       width="80"
                                        dataSort={true}
                                        editable={{type: 'datetime', validator: this._validateDateTime}}
-                                       ref="date_start">Start on
+                                       ref="date_start">Start
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_created"
-                                       width="130"
+                                       width="80"
                                        dataFormat={this._formatDateTime}
                                        dataSort={true}
                                        editable={false}
                                        hiddenOnInsert={true}
-                                       ref="date_created">Created on
+                                       ref="date_created">Created
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_updated"
-                                       width="130"
+                                       width="80"
                                        dataFormat={this._formatDateTime}
                                        dataSort={true}
                                        editable={false}
                                        hiddenOnInsert={true}
-                                       ref="date_updated">Updated on
+                                       ref="date_updated">Updated
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="description"
                                        dataSort={true}
