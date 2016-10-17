@@ -222,6 +222,7 @@ var TaskList = React.createClass({
     },
 
     _validateDict: {
+        parent_id: {data_type: "int", label: "Parent Task"},
         assigned_to: {data_type: "alnum", label: "Assigned To"},
         test_recommendation: {data_type: "any", label: "Test Recommendation"},
         priority: {data_type: "alnum", label: "Priority"},
@@ -459,7 +460,7 @@ var TaskList = React.createClass({
 
     onAddRow: function (row) {
         var error = false;
-        ["assigned_to", "date_start", "test_recommendation", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
+        ["parent_id", "assigned_to", "date_start", "test_recommendation", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
         if (error) {
             return;
         }
