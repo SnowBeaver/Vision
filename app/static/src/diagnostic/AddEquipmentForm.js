@@ -167,7 +167,7 @@ var AddEquipmentForm = React.createClass({
     _create: function () {
 
         return $.authorizedAjax({
-            url: '/api/v1.0/test_result/equipment',
+            url: '/api/v1.0/test_result/equipment/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
