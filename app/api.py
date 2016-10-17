@@ -694,15 +694,6 @@ def create_test_repair_note_handler():
     return return_json('result', new_item.id)
 
 
-# Create or update a lot of tasks
-@api_blueprint.route('/schedule/multi/', methods=['POST'])
-@login_required
-@json_required
-def handler_tasks():
-    path = 'schedule'
-    return return_json('result', add_or_update_items(path))
-
-
 # Read schedules filtered by role
 @api_blueprint.route('/schedule/', methods=['GET'])
 @login_required
