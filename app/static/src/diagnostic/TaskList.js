@@ -136,7 +136,7 @@ var TaskList = React.createClass({
                 task[key] = tasks[key];
             }
         }
-        delete task.uniqueKey;
+        ['uniqueKey', 'test_type', 'test_result_id'].forEach(function(fld){delete task[fld]});
 
         var url = '/api/v1.0/schedule/';
         if (task.id) {
