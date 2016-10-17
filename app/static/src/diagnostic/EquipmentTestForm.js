@@ -206,8 +206,9 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
+        var className = (this.props.className != null) ? this.props.className : "";
         return (
-            <FormGroup>
+            <FormGroup className={className}>
                 <ControlLabel>{label}</ControlLabel>
                 <FormControl type="text"
                              placeholder={label}
@@ -401,58 +402,49 @@ var EquipmentTestRepairForm = React.createClass({
     render: function () {
         var data = (this.props.data != null) ? this.props.data : {};
         return (
-            <div>
-                <div className="tab_row">
-                    <div className="col-md-12 ">
-                        <RepairNotesList testResultId={this.props.data.id}
-                                         testTypeId={this.props.data.test_type_id}
-                                         ref="testRepairNotesList"/>
-                    </div>
+            <div className="tab_row">
+                <div className="col-md-12">
+                    <RepairNotesList testResultId={this.props.data.id}
+                                     testTypeId={this.props.data.test_type_id}
+                                     ref="testRepairNotesList"/>
                 </div>
-                <div className="tab_row nopadding">
-                    <div className="col-md-6">
+                <div className="col-md-6">
                         <TextArea label="Repair description"
                                   name='description'
                                   value={data.description}
                                   onChange={this._onChange}
                                   errors={this.state.errors}/>
-                    </div>
-                    <div className="col-md-6">
+                </div>
+                <div className="col-md-6">
                         <TextArea label="Remark"
                                   name='remark'
                                   value={data.remark}
                                   onChange={this._onChange}
                                   errors={this.state.errors}/>
-                    </div>
                 </div>
-                <div className="tab_row nopadding">
-                    <div className="col-md-12">
+                <div className="col-md-12">
                         <TextArea label="Sample"
                                   name='sample'
                                   value={data.sample}
                                   onChange={this._onChange}
                                   errors={this.state.errors}/>
-                    </div>
                 </div>
-                <div className="tab_row nopadding">
-                    <div className="col-md-4">
-                        <TestTypeSelectField key={this.props.data.selected_subtests}
-                                             selectedSubtests={this.props.data.selected_subtests}
-                                             testType={this.props.data.test_type}
-                                             handleChange={this._onChange}
-                                             name="repair_test_type_id"
-                                             errors={this.state.errors}
-                                             required={this.state.formEdited}/>
-                    </div>
-                    <div className="col-md-4" key={data.date_created}>
-                        <DateTimeFieldWithLabel label="Please select repair date"
-                                                name='date_created'
-                                                value={data.date_created}
-                                                onChange={this._onChange}
-                                                onDateTimeFieldChange={this.props.onDateTimeFieldChange}
-                                                readOnly
-                        />
-                    </div>
+                <div className="col-md-4">
+                    <TestTypeSelectField key={this.props.data.selected_subtests}
+                                         selectedSubtests={this.props.data.selected_subtests}
+                                         testType={this.props.data.test_type}
+                                         handleChange={this._onChange}
+                                         name="repair_test_type_id"
+                                         errors={this.state.errors}
+                                         required={this.state.formEdited}/>
+                </div>
+                <div className="col-md-8" key={data.date_created}>
+                    <DateTimeFieldWithLabel label="Please select repair date"
+                                            name='date_created'
+                                            value={data.date_created}
+                                            onChange={this._onChange}
+                                            onDateTimeFieldChange={this.props.onDateTimeFieldChange}
+                                            readOnly/>
                 </div>
             </div>
         );
@@ -779,7 +771,8 @@ var EquipmentTestForm = React.createClass({
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created', 'repair_test_type_id'],
             testDiagnosisFields: ['diagnosis_notes', 'diagnosis_id', 'diagnosis_test_type_id'],
             errors: {},
-            data: null
+            data: null,
+            campaignIndicator: ""
         }
     },
 
@@ -1049,8 +1042,12 @@ var EquipmentTestForm = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.authorizedGet('/api/v1.0/test_result/' + this.props.selectedRowId, function (result) {
-            this.setState({data: (result['result'])});
+        this.serverRequest = $.authorizedGet('/api/v1.0/test_result/' + this.props.selectedRowId, this._addDataToStateAndGetIndicator, 'json');
+    },
+
+    _addDataToStateAndGetIndicator: function (result) {
+        $.authorizedGet('/api/v1.0/campaign/' + result['result'].campaign_id, function (campaignResult){
+            this.setState({data: (result['result']), campaignIndicator: campaignResult['result'].created_by.name})
         }.bind(this), 'json');
     },
 
@@ -1090,11 +1087,23 @@ var EquipmentTestForm = React.createClass({
                                 <EquipmentTestIdentificationForm data={data}
                                                                  onChange={this._onChange}
                                                                  onDateTimeFieldChange={this._onDateTimeFieldChange}/>
+                                <div className="col-lg-6">
+                                    <TextField label="Indicator"
+                                               value={this.state.campaignIndicator}
+                                               name=""
+                                               disabled/>
+                                </div>
                             </div>
                             <div id="tabs-2" role="tabpanel" className="tab-pane">
                                 <TestValuesForm testResultId={this.props.selectedRowId}
                                                 testType={data.test_type}
                                 />
+                                <div className="col-lg-6">
+                                    <TextField label="Indicator"
+                                               value={this.state.campaignIndicator}
+                                               name=""
+                                               disabled/>
+                                </div>
                             </div>
                             <div id="tabs-3" role="tabpanel" className="tab-pane">
                                 <EquipmentTestRepairForm data={data}
@@ -1102,18 +1111,37 @@ var EquipmentTestForm = React.createClass({
                                                          onDateTimeFieldChange={this._onDateTimeFieldChange}
                                                          setStateData={this._setStateData}
                                                          ref="repairNotesForm"/>
+                                <div className="col-lg-12">
+                                    <TextField label="Indicator"
+                                               value={this.state.campaignIndicator}
+                                               className="col-lg-6"
+                                               name=""
+                                               disabled/>
+                                </div>
                             </div>
                             <div id="tabs-4" role="tabpanel" className="tab-pane">
                                 <EquipmentTestDiagnosisForm data={data}
                                                             onChange={this._onChange}
                                                             setStateData={this._setStateData}
                                                             ref="recommedationForm"/>
+                                <div className="col-lg-6">
+                                    <TextField label="Indicator"
+                                               value={this.state.campaignIndicator}
+                                               name=""
+                                               disabled/>
+                                </div>
                             </div>
                             <div id="tabs-5" role="tabpanel" className="tab-pane">
                                 <EquipmentTestEqDiagnosisForm data={data}
                                                               onChange={this._onChange}
                                                               setStateData={this._setStateData}
                                                               ref="diagnosisForm"/>
+                                <div className="col-lg-6">
+                                    <TextField label="Indicator"
+                                               value={this.state.campaignIndicator}
+                                               name=""
+                                               disabled/>
+                                </div>
                             </div>
                         </div>
                     </div>
