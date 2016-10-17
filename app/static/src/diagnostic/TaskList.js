@@ -83,7 +83,7 @@ var TaskList = React.createClass({
                 task.priority = (priorityLabel ? priorityLabel : "");
                 break;
             case 'date_start':
-                task.date_start = this._formatDateTime(data[key]);
+                task.date_start = this._formatDateTime(data[key], 0);
                 break;
             default:
                 task[key] = data[key];
@@ -295,10 +295,14 @@ var TaskList = React.createClass({
         this._onSubmit(row);
     },
 
-    _formatDateTime: function(date, offset) {
-        // TODO: make nicer date formatting
+    _formatDateTime: function(date, utcOffset) {
+        var dateFormat = 'MM/DD/YYYY hh:mm A';
         if (date) {
-            date = moment(date).utcOffset(0).format('MM/DD/YYYY hh:mm A');
+            date = moment(date);
+            if (!isNaN(parseInt(utcOffset))) {
+                date = date.utcOffset(0);
+            }
+            date = date.format(dateFormat);
         }
         return date;
     },
@@ -408,8 +412,6 @@ var TaskList = React.createClass({
         if (error) {
             return;
         }
-
-        // TODO: optimize
         for (var fld in row) {
             if (row[fld] == "") {
                 delete row[fld];
@@ -498,6 +500,7 @@ var TaskList = React.createClass({
                     <TableHeaderColumn dataField="date_start"
                                        width="90"
                                        dataSort={true}
+                                       dataFormat={this._formatDateTime}
                                        editable={{type: 'datetime', validator: this._validateDateTime}}
                                        ref="date_start">Start
                     </TableHeaderColumn>

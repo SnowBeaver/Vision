@@ -32,7 +32,8 @@ var TaskList = React.createClass({
                 'date_start', 'description', 'priority', 'id', 'date_created', 'date_updated',
                 'recurring', 'notify_before_in_days', 'test_recommendation', 'assigned_to', 'status'
             ],
-            changedTasks: []
+            changedTasks: [],
+            assignedToChanged: false
         }
     },
 
@@ -85,7 +86,7 @@ var TaskList = React.createClass({
                 task.priority = (priorityLabel ? priorityLabel : "");
                 break;
             case 'date_start':
-                task.date_start = this._formatDateTime(data[key]);
+                task.date_start = this._formatDateTime(data[key], 0);
                 break;
             default:
                 task[key] = data[key];
@@ -134,6 +135,8 @@ var TaskList = React.createClass({
             } else if (key == "status") {
                 task.status_id = this.state.statusIdMapping[tasks[key]];
                 delete task.status;
+            } else if (key == "parent_id") {
+                task.parent_id = this.state.taskIdMapping[this.state.taskList.indexOf(tasks[key])];
             } else {
                 task[key] = tasks[key];
             }
@@ -176,11 +179,16 @@ var TaskList = React.createClass({
 
     _onSuccess: function (data) {
         var message = 'Task has been saved successfully.';
-        var taskId = data.result.id || data.result;
+        // 'Assign to' field has been updated or new task for another user has been created
+        var taskId = (data.result.id && this.state.assignedToChanged) || (!isNaN(parseInt(data.result)) ? true : false);
         if (!isNaN(parseInt(data.result))) {
             message = 'Task for another user has been added successfully.';
         }
-        this.deleteTaskFromState(taskId);
+        if (taskId) {
+            taskId = data.result.id || data.result;
+            this.deleteTaskFromState(taskId);
+        }
+        this.setState({assignedToChanged: false});
         NotificationManager.success(message);
     },
 
@@ -288,6 +296,9 @@ var TaskList = React.createClass({
         if (row[name] == value) {
             return false;
         }
+        if (name == "assigned_to") {
+            this.setState({assignedToChanged: true})
+        }
         if (this._validateDict[name]) {
             var data_type = this._validateDict[name]['data_type'];
             var label = this._validateDict[name]['label'];
@@ -309,10 +320,14 @@ var TaskList = React.createClass({
         this._onSubmit(row);
     },
 
-    _formatDateTime: function(date, offset) {
-        // TODO: make nicer date formatting
+    _formatDateTime: function(date, utcOffset) {
+        var dateFormat = 'MM/DD/YYYY hh:mm A';
         if (date) {
-            date = moment(date).utcOffset(0).format('MM/DD/YYYY hh:mm A');
+            date = moment(date);
+            if (!isNaN(parseInt(utcOffset))) {
+                date = date.utcOffset(0);
+            }
+            date = date.format(dateFormat);
         }
         return date;
     },
@@ -448,8 +463,7 @@ var TaskList = React.createClass({
         if (error) {
             return;
         }
-
-        // TODO: optimize
+        // Delete empty values
         for (var fld in row) {
             if (row[fld] == "") {
                 delete row[fld];
@@ -545,6 +559,7 @@ var TaskList = React.createClass({
                     <TableHeaderColumn dataField="date_start"
                                        width="80"
                                        dataSort={true}
+                                       dataFormat={this._formatDateTime}
                                        editable={{type: 'datetime', validator: this._validateDateTime}}
                                        ref="date_start">Start
                     </TableHeaderColumn>
