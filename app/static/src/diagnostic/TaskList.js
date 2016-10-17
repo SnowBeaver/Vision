@@ -311,6 +311,11 @@ var TaskList = React.createClass({
         return response;
     },
 
+    _formatRecurring: function (recurring) {
+        // Can be text or boolean value
+        return JSON.parse(recurring) ? "true" : "false";
+    },
+
     _getUsers: function () {
         $.authorizedGet('/api/v1.0/user', this.addUsersToState, 'json');
     },
@@ -429,6 +434,7 @@ var TaskList = React.createClass({
                                 search={true}
                                 ignoreSinglePage={true}
                                 pagination={true}
+                                paginationShowsTotal={true}
                                 insertRow={true}
                                 cellEdit={{mode: "click",
                                            blurToSave: true,
@@ -520,6 +526,7 @@ var TaskList = React.createClass({
                     <TableHeaderColumn dataField="recurring"
                                        width="100"
                                        dataSort={true}
+                                       dataFormat={this._formatRecurring}
                                        editable={{type: 'checkbox', options: {values: "true:false"}}}
                                        ref="recurring">Recurring
                     </TableHeaderColumn>
