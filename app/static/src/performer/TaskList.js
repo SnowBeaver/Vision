@@ -175,11 +175,24 @@ var TaskList = React.createClass({
     },
 
     _onSuccess: function (data) {
-        // If new task has been created, get data and add it to the state
+        var message = 'Task has been saved successfully.';
+        var taskId = data.result.id || data.result;
         if (!isNaN(parseInt(data.result))) {
-            this.getLatestTask(data.result);
+            message = 'Task for another user has been added successfully.';
         }
-        NotificationManager.success('Tasks have been saved successfully.');
+        this.deleteTaskFromState(taskId);
+        NotificationManager.success(message);
+    },
+
+    deleteTaskFromState: function (taskId) {
+        var tasks = this.state.tasks;
+        for (var i = 0; i < tasks.length; i++) {
+            var obj = tasks[i];
+            if (!obj.hasOwnProperty('id') || obj.id == taskId) {
+                tasks.splice(tasks.indexOf(obj), 1);
+            }
+        }
+        this.setState({tasks: tasks});
     },
 
     _onError: function (data) {
@@ -271,6 +284,10 @@ var TaskList = React.createClass({
     },
 
     beforeSaveCell: function(row, name, value) {
+        // Do not trigger save if value hasn't been changed
+        if (row[name] == value) {
+            return false;
+        }
         if (this._validateDict[name]) {
             var data_type = this._validateDict[name]['data_type'];
             var label = this._validateDict[name]['label'];
