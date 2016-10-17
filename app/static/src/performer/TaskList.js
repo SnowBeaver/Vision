@@ -52,6 +52,7 @@ var TaskList = React.createClass({
             tasks[tasks.length] = task;
         }
         this.setState({tasks: tasks});
+        this.addTasksToState(result);
     },
 
     prepareOneTask: function (data, task) {
@@ -377,6 +378,32 @@ var TaskList = React.createClass({
         return fullName.join(" | ");
     },
 
+    addTasksToState: function (result) {
+        var res = (result['result']);
+        var taskList = [""];
+        var taskIdMapping = [""];
+
+        for (var i = 0; i < res.length; i++) {
+            taskList.push(this._composeTaskDescription(res[i]));
+            // Keep mapping in a list to preserve name/id positions.
+            // Dictionary cannot be used as the names are not unique
+            taskIdMapping.push(res[i].id);
+        }
+        this.setState({taskList: taskList, taskIdMapping: taskIdMapping});
+    },
+
+    _composeTaskDescription: function (record) {
+        // Format nice name for parent task select field
+        var fullName = [record.id, record.description ? record.description.substr(0, 50) : null];
+        fullName.map(function (name) {
+            if (!name) {
+                fullName.splice(fullName.indexOf(name), 1)
+            }
+        });
+
+        return fullName.join(" | ");
+    },
+
     getLatestTask: function (taskId) {
         $.authorizedGet('/api/v1.0/schedule/' + taskId, this._addOneTaskToStateWrapper, 'json');
     },
@@ -441,6 +468,13 @@ var TaskList = React.createClass({
                                        editable={false}
                                        hiddenOnInsert={true}
                                        ref="id">ID
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="parent_id"
+                                       width="80"
+                                       hidden={true}
+                                       hiddenOnInsert={false}
+                                       editable={{type: 'select', options: {values: this.state.taskList}}}
+                                       ref="parent_id">Parent Task
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="assigned_to"
                                        width="130"
