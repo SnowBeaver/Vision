@@ -317,8 +317,12 @@ var TaskList = React.createClass({
         return date;
     },
 
-    _formatRecommendation: function(recommendation) {
-        return "<span title='" + recommendation + "'>" + recommendation.substr(0, 15) + "</span>" ;
+    _formatText: function(text) {
+        var response = "";
+        if (text) {
+            response = "<span title='" + text + "'>" + text.substr(0, 25) + "</span>" ;
+        }
+        return response;
     },
 
     _getUsers: function () {
@@ -513,7 +517,7 @@ var TaskList = React.createClass({
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="test_recommendation"
                                        width="80"
-                                       dataFormat={this._formatRecommendation}
+                                       dataFormat={this._formatText}
                                        dataSort={true}
                                        editable={{type: 'select', options: {values: this.state.recommendationList}}}
                                        ref="test_recommendation">Test Rec
@@ -556,6 +560,7 @@ var TaskList = React.createClass({
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="description"
                                        dataSort={true}
+                                       dataFormat={this._formatText}
                                        editable={{type: 'textarea'}}
                                        ref="description">Description
                     </TableHeaderColumn>
