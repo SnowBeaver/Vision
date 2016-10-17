@@ -29,9 +29,9 @@ var TaskList = React.createClass({
             testData: {'test_result_id': 1, 'taps': []},
             fields: [
                 'date_start', 'description', 'priority', 'id', 'date_created', 'date_updated',
-                'description', 'recurring', 'notify_before_in_days', 'test_recommendation',
-                'assigned_to', 'status'
-            ]
+                'recurring', 'notify_before_in_days', 'test_recommendation', 'assigned_to', 'status'
+            ],
+            changedTasks: []
         }
     },
 
@@ -43,37 +43,67 @@ var TaskList = React.createClass({
 
     addResultToState: function (result) {
         var res = (result['result']);
-        var fields = this.state.fields;
-        var tasks = [];
+        var tasks = this.state.tasks;
         for ( var i = 0; i < res.length; i++ ) {
             var task = { uniqueKey: this.getUniqueKey() };
             var data = res[i];
-            for (var j = 0; j < fields.length; j++) {
-                var key = fields[j];
-                if (data.hasOwnProperty(key)) {
+            task = this.prepareOneTask(data, task);
+            tasks[tasks.length] = task;
+        }
+        this.setState({tasks: tasks});
+    },
 
-                    // TODO: make prettier
-                    if (key == 'test_recommendation') {
-                        task.test_type = (data[key].test_type ? data[key].test_type.name : "");
-                        task.test_result_id = (data[key].test_result_id ? data[key].test_result_id : "");
-                        task.test_recommendation = this._composeRecommendationNote(data[key]);
-                    } else if (key == 'status') {
-                        task.status = (data[key] ? data[key].name : "");
-                    } else if (key == 'assigned_to') {
-                        task.assigned_to = (data[key] ? data[key].name : "");
-                    } else if (key == 'priority') {
-                        var value = data[key];
-                        var priorityLabel = Object.keys(PRIORITY_ID_MAPPING).find(key => PRIORITY_ID_MAPPING[key] === value);
-                        task.priority = (priorityLabel ? priorityLabel : "");
-                    } else if (key == 'date_start') {
-                        // TODO: Remove when datetime edit field is fixed
-                        task.date_start = this._formatDateTime(data[key]);
-                    }  else {
-                        task[key] = data[key];
-                    }
-                }
+    prepareOneTask: function (data, task) {
+        var fields = this.state.fields;
+        for (var j = 0; j < fields.length; j++) {
+            var key = fields[j];
+            if (data.hasOwnProperty(key)) {
+                task = this._setProperties(task, key, data);
             }
-            tasks[i] = task;
+        }
+        return task;
+    },
+
+    _setProperties: function (task, key, data) {
+        switch (key) {
+            case 'test_recommendation':
+                task.test_type = (data[key].test_type ? data[key].test_type.name : "");
+                task.test_result_id = (data[key].test_result_id ? data[key].test_result_id : "");
+                task.test_recommendation = this._composeRecommendationNote(data[key]);
+                break;
+            case 'status':
+                task.status = (data[key] ? data[key].name : "");
+                break;
+            case 'assigned_to':
+                task.assigned_to = (data[key] ? data[key].name : "");
+                break;
+            case 'priority':
+                var value = data[key];
+                var priorityLabel = Object.keys(PRIORITY_ID_MAPPING).find(key => PRIORITY_ID_MAPPING[key] === value);
+                task.priority = (priorityLabel ? priorityLabel : "");
+                break;
+            case 'date_start':
+                task.date_start = this._formatDateTime(data[key]);
+                break;
+            default:
+                task[key] = data[key];
+        }
+        return task;
+    },
+
+    addOneTaskToState: function (data) {
+        // Prepare recently added task
+        var task = {};
+        task = this.prepareOneTask(data, task);
+        var tasks = this.state.tasks;
+        tasks[tasks.length] = task;
+
+        // Delete the same task, but without id from the state
+        for (var i = 0; i < tasks.length; i++) {
+            var obj = tasks[i];
+            if (!obj.hasOwnProperty('id')) {
+                tasks.splice(tasks.indexOf(obj), 1);
+            }
         }
         this.setState({tasks: tasks});
     },
@@ -86,52 +116,53 @@ var TaskList = React.createClass({
         this._getTaskStatuses();
     },
 
-    _create: function () {
-        var fields = this.state.fields;
-        var tasks = this.state.tasks;
-        var data = [];
-        for (var i = 0; i < tasks.length; i++) {
-            var task = {test_result_id: this.props.testResultId};
-            var tap = tasks[i.toString()];
-            for (var j = 0; j < fields.length; j++) {
-                var key = fields[j];
+    _create: function (data) {
+        // Save only one task
+        var tasks = data;
+        var task = {test_result_id: this.props.testResultId};
 
-                // TODO: make prettier
-                if (key == "assigned_to") {
-                    task.assigned_to_id = this.state.userIdMapping[tap[key]];
-                    delete task.assigned_to;
-                } else if (key == "test_recommendation") {
-                    task.test_recommendation_id = this.state.recommendationIdMapping[this.state.recommendationList.indexOf(tap[key])];
-                } else if (key == "priority") {
-                    task.priority = PRIORITY_ID_MAPPING[tap[key]];
-                } else if (key == "status") {
-                    task.status_id = this.state.statusIdMapping[tap[key]];
-                    delete task.status;
-                } else {
-                    task[key] = tap[key];
-                }
+        for (var key in tasks) {
+            if (key == "assigned_to") {
+                task.assigned_to_id = this.state.userIdMapping[tasks[key]];
+                delete task.assigned_to;
+            } else if (key == "test_recommendation") {
+                task.test_recommendation_id = this.state.recommendationIdMapping[this.state.recommendationList.indexOf(tasks[key])];
+            } else if (key == "priority") {
+                task.priority = PRIORITY_ID_MAPPING[tasks[key]];
+            } else if (key == "status") {
+                task.status_id = this.state.statusIdMapping[tasks[key]];
+                delete task.status;
+            } else {
+                task[key] = tasks[key];
             }
-            data.push(task)
+        }
+        delete task.uniqueKey;
+
+        var url = '/api/v1.0/schedule/';
+        if (task.id) {
+            // Url for updating a task
+            url += task.id;
+            delete task.id;
         }
         return $.authorizedAjax({
-            url: '/api/v1.0/schedule/multi/',
+            url: url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify(data),
+            data: JSON.stringify(task),
             beforeSend: function (xhr) {
                 this.setState({loading: true});
             }.bind(this)
         })
     },
 
-    _onSubmit: function (e) {
+    _onSubmit: function (data) {
         if (!this.is_valid()){
             NotificationManager.error('Please correct the errors');
             return false;
         }
         this.state.tasks = this.refs.table.state.data;
-        var xhr = this._create();
+        var xhr = this._create(data);
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading);
@@ -142,7 +173,10 @@ var TaskList = React.createClass({
     },
 
     _onSuccess: function (data) {
-        this.addResultToState(data);
+        // If new task has been created, get data and add it to the state
+        if (!isNaN(parseInt(data.result))) {
+            this.getLatestTask(data.result);
+        }
         NotificationManager.success('Tasks have been saved successfully.');
     },
 
@@ -248,6 +282,14 @@ var TaskList = React.createClass({
         return true;
     },
 
+    afterSaveCell: function (row) {
+        this._onSubmit(row);
+    },
+
+    afterInsertRow: function (row) {
+        this._onSubmit(row);
+    },
+
     _formatDateTime: function(date, offset) {
         // TODO: make nicer date formatting
         if (date) {
@@ -334,6 +376,14 @@ var TaskList = React.createClass({
         return fullName.join(" | ");
     },
 
+    getLatestTask: function (taskId) {
+        $.authorizedGet('/api/v1.0/schedule/' + taskId, this._addOneTaskToStateWrapper, 'json');
+    },
+
+    _addOneTaskToStateWrapper: function (data) {
+        this.addOneTaskToState(data.result);
+    },
+
     cleanSelected: function () {
         this.refs.table.cleanSelected();
     },
@@ -374,11 +424,11 @@ var TaskList = React.createClass({
                                 cellEdit={{mode: "click",
                                            blurToSave: true,
                                            beforeSaveCell: this.beforeSaveCell,
-                                           afterSaveCell: this._onSubmit
+                                           afterSaveCell: this.afterSaveCell
                                            }}
                                 options={{ignoreEditable: true,
                                           onAddRow: this.onAddRow,
-                                          afterInsertRow: this._onSubmit,
+                                          afterInsertRow: this.afterInsertRow,
                                           defaultSortName: 'priority',
                                           defaultSortOrder: 'desc'}}
                                 ref="table"
