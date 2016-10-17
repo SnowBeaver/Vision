@@ -269,6 +269,11 @@ var TaskList = React.createClass({
     },
 
     beforeSaveCell: function(row, name, value) {
+        // Do not trigger save if value hasn't been changed
+        if (row[name] == value) {
+            return false;
+        }
+
         if (this._validateDict[name]) {
             var data_type = this._validateDict[name]['data_type'];
             var label = this._validateDict[name]['label'];
