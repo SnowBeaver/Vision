@@ -14,7 +14,7 @@ from flask.ext import admin, login
 from wtforms import form, fields, validators
 from flask import current_app
 from werkzeug.security import check_password_hash
-from app import admin_per
+from app import admin_per, admin_or_performer_per
 # from app import , user_per, guest_per, blogger_per
 from app.tree.storage import get_tree
 from app.tree.forms import TreeView
@@ -48,7 +48,7 @@ from .forms import *
 
 class MyAdminIndexView(admin.AdminIndexView):
     @expose('/')
-    @admin_per.require(http_exception=403)
+    @admin_or_performer_per.require(http_exception=403)
     def index(self):
         if not login.current_user.is_authenticated():
             return redirect(url_for('.login_view'))
@@ -82,6 +82,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['test_repair'] = TestRepairViewForm()
         self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
         self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
+        self._template_args['user_is_admin'] = g.user.has_role(Role.query.get(1))
         # self._template_args['diagnostic'] = popups
         # self._template_args['batch'] = BatchViewForm()
         # self._template_args['report'] = EquipmentTestReportViewForm()
