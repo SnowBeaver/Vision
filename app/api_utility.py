@@ -246,6 +246,7 @@ equipment_schema = {
     # 'downstream3':   type_string_maxlength_100_dict,
     # 'downstream4':   type_string_maxlength_100_dict,
     # 'downstream5':   type_string_maxlength_100_dict,
+    'tie_status':    type_integer_coerce_dict,
     'status':    type_integer_coerce_dict,
     'phys_position': type_integer_coerce_dict,
     'tension4':  type_float_coerce_dict,

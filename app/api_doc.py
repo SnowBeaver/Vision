@@ -332,6 +332,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
 @apiSuccess {Integer}         norm_id
 @apiSuccess {Dict}            norm                        see: norm->get an item
+@apiSuccess {Integer}         tie_status                  TieAnalysisState.
 @apiSuccess {Integer}         status                      EquipmentState.
 @apiSuccess {Integer}         phys_position
 @apiSuccess {Float}           tension4                    Voltage4
@@ -371,6 +372,7 @@ doc = ApiDoc(app=api)
 @apiParam {String}          visual_date                 Date where was done the last visual inspection.
 @apiParam {String}          visual_inspection_comments  Visual inspection comments,
 @apiParam {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
+@apiParam {Integer}         tie_status                  TieAnalysisState.
 @apiParam {Integer}         status                      EquipmentState.
 @apiParam {Integer}         phys_position
 @apiParam {Float}           tension4                    Voltage4
