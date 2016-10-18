@@ -1492,8 +1492,8 @@ class Equipment(db.Model):
     # downstream4 = db.Column(db.String(100))  # Downstream4. Downstream device name
     # downstream5 = db.Column(db.String(100))  # Downstream5. Downstream device name
 
-    tie_status = db.Column(db.Integer)  # TieAnalysisState.
-    status = db.Column(db.Integer)  # EquipmentState.
+    tie_status = db.Column(db.Integer)  # Tie State (Open or Closed (Breaker, Tap changer)).
+    status = db.Column(db.Integer)  # Equipment health state.
 
     phys_position = db.Column(db.Integer)
 
