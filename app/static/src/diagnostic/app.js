@@ -47,156 +47,173 @@ import TaskList from './TaskList';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
-function getAPIToken () {
-	return btoa(localStorage.getItem("apiToken") + ":");
+function getAPIToken() {
+    return btoa(localStorage.getItem("apiToken") + ":");
 }
 
 (function ($) {
-	$.authorizedAjax = function (settings) {
-		var originalBeforeSendFunction = settings.beforeSend;
-		settings.beforeSend = function (xhr) {
-			if (originalBeforeSendFunction) {
-				originalBeforeSendFunction(xhr);
-			}
-			xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
-		};
-		settings.statusCode = {
-			401: function () {
-				// Redirect user to login - ?
-				NotificationManager.error("Please re-login");
-			}
-		};
-		return $.ajax(settings);
-	};
+    $.authorizedAjax = function (settings) {
+        var originalBeforeSendFunction = settings.beforeSend;
+        settings.beforeSend = function (xhr) {
+            originalBeforeSendFunction(xhr);
+            xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
+        };
+        settings.statusCode = {
+            401: function () {
+                // Redirect user to login - ?
+                NotificationManager.error("Please re-login");
+            }
+        };
+        return $.ajax(settings);
+    };
 })(jQuery);
 
 (function ($) {
-	$.authorizedGet = function (url, callback, type) {
-		if (type == undefined) {
-			type = 'json';
-		}
-		return $.ajax({
-			type: "GET",
-			url: url,
-			dataType: type,
-			beforeSend: function (xhr) {
-				xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
-			},
-			statusCode: {
-				401: function () {
-					// Redirect user to login - ?
-					NotificationManager.error("Please re-login");
-				}
-			},
-			success: callback
-		});
-	};
+    $.authorizedGet = function (url, callback, type) {
+        if (type == undefined) {
+            type = 'json';
+        }
+        return $.ajax({
+            type: "GET",
+            url: url,
+            dataType: type,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
+            },
+            statusCode: {
+                401: function () {
+                    // Redirect user to login - ?
+                    NotificationManager.error("Please re-login");
+                }
+            },
+            success: callback
+        });
+    };
 })(jQuery);
 
 (function ($) {
-	$.authorizedPost = function (url, callback, type) {
-		if (type == undefined) {
-			type = 'json';
-		}
-		return $.ajax({
-			type: "POST",
-			url: url,
-			dataType: type,
-			beforeSend: function (xhr) {
-				xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
-			},
-			statusCode: {
-				401: function () {
-					// Redirect user to login - ?
-					NotificationManager.error("Please re-login");
-				}
-			},
-			success: callback
-		});
-	};
+    $.authorizedPost = function (url, callback, type) {
+        if (type == undefined) {
+            type = 'json';
+        }
+        return $.ajax({
+            type: "POST",
+            url: url,
+            dataType: type,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
+            },
+            statusCode: {
+                401: function () {
+                    // Redirect user to login - ?
+                    NotificationManager.error("Please re-login");
+                }
+            },
+            success: callback
+        });
+    };
 })(jQuery);
+
+
+var LinkList = React.createClass({
+    render() {
+        return (
+            <div className="row">
+                <ul className="pull-left">
+                    <li><Link to='/home'>Home</Link></li>
+                    <li><Link to='/campaign'>New Campaign</Link></li>
+                    <li><Link to='/equipment'>Equipment</Link></li>
+                    <li><Link to='/add_equipment'>Add Equipment</Link></li>
+                    <li><Link to='/campaign/1'>Campaign tests</Link></li>
+
+                </ul>
+                <ul className="pull-left">
+                    <li><Link to='/add_test'>New Test</Link></li>
+                    <li><Link to='/edit_test/1'>Edit Test</Link></li>
+                    <li><Link to='/electro'>Electrical Profile</Link></li>
+                    <li><Link to='/fluid'>Fluid Profile</Link></li>
+                    <li><Link to='/choose_profile'>Choose Test Profile</Link></li>
+                </ul>
+                <ul className="pull-left">
+                    <li><Link to='/add_createdby'>created by</Link></li>
+                    <li><Link to='/add_contract'>contract</Link></li>
+                    <li><Link to='/add_lab'>lab</Link></li>
+                    <li><Link to='/add_material'>material</Link></li>
+                    <li><Link to='/add_fluid'>new fluid</Link></li>
+                </ul>
+                <ul className="pull-left">
+                    <li><Link to='/add_recommend'>recommend</Link></li>
+                    <li><Link to='/eq_type_add'>new eq type</Link></li>
+                    <li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
+                    <li><Link to='/eq_add_location'>new eq location</Link></li>
+                    <li><Link to='/eq_add_norm'>new eq norms</Link></li>
+                </ul>
+                <ul className="pull-left">
+                    <li><Link to='/bushing_test'>bushing test</Link></li>
+                    <li><Link to='/furan_test'>furan test</Link></li>
+                    <li><Link to='/fluid_test'>fluid test</Link></li>
+                    <li><Link to='/dissolved_test'>dissolved gas test</Link></li>
+                    <li><Link to='/inhibit_test'>inhibitor gas test</Link></li>
+                </ul>
+                <ul className="pull-left">
+                    <li><Link to='/insulation_test'>insulation test</Link></li>
+                    <li><Link to='/me_oil__test'>metals on oil test</Link></li>
+                    <li><Link to='/particle_test'>particles test</Link></li>
+                    <li><Link to='/pcb_test'>pcb test</Link></li>
+                    <li><Link to='/polymer_test'>polymer test</Link></li>
+                </ul>
+                <ul className="pull-left">
+                    <li><Link to='/transformer_test'>transformer test</Link></li>
+                    <li><Link to='/winding_test'>winding test</Link></li>
+                    <li><Link to='/visual_test'>visual test</Link></li>
+                    <li><Link to='/water_test'>water test</Link></li>
+                    <li><Link to='/winding2_test'>winding test2</Link></li>
+                </ul>
+                <ul className="pull-left">
+                    <li><Link to='/up_down_streams'>Stream manager</Link></li>
+                    <li><Link to='/schedule_task'>Schedule a task</Link></li>
+                    <li><Link to='/tasks'>Tasks</Link></li>
+                </ul>
+            </div>
+
+        )
+    }
+});
 
 
 const App = React.createClass({
 
     render() {
         return (
-			<div className="content">
-				<NotificationContainer/>
-				// 	<div className="row">
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/home'>Home</Link></li>
-				// 		<li><Link to='/campaign'>New Campaign</Link></li>
-				// 		<li><Link to='/equipment'>Equipment</Link></li>
-				// 		<li><Link to='/add_equipment'>Add Equipment</Link></li>
-				// 		<li><Link to='/campaign/1'>Campaign tests</Link></li>
-                //
-				// 	</ul>
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/add_test'>New Test</Link></li>
-				// 		<li><Link to='/edit_test/1'>Edit Test</Link></li>
-				// 		<li><Link to='/electro'>Electrical Profile</Link></li>
-				// 		<li><Link to='/fluid'>Fluid Profile</Link></li>
-				// 		<li><Link to='/choose_profile'>Choose Test Profile</Link></li>
-				// 	</ul>
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/add_createdby'>created by</Link></li>
-				// 		<li><Link to='/add_contract'>contract</Link></li>
-				// 		<li><Link to='/add_lab'>lab</Link></li>
-				// 		<li><Link to='/add_material'>material</Link></li>
-				// 		<li><Link to='/add_fluid'>new fluid</Link></li>
-				// 	</ul>
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/add_recommend'>recommend</Link></li>
-				// 		<li><Link to='/eq_type_add'>new eq type</Link></li>
-				// 		<li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
-				// 		<li><Link to='/eq_add_location'>new eq location</Link></li>
-				// 		<li><Link to='/eq_add_norm'>new eq norms</Link></li>
-				// 	</ul>
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/bushing_test'>bushing test</Link></li>
-				// 		<li><Link to='/furan_test'>furan test</Link></li>
-				// 		<li><Link to='/fluid_test'>fluid test</Link></li>
-				// 		<li><Link to='/dissolved_test'>dissolved gas test</Link></li>
-				// 		<li><Link to='/inhibit_test'>inhibitor gas test</Link></li>
-				// 	</ul>
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/insulation_test'>insulation test</Link></li>
-				// 		<li><Link to='/me_oil__test'>metals on oil test</Link></li>
-				// 		<li><Link to='/particle_test'>particles test</Link></li>
-				// 		<li><Link to='/pcb_test'>pcb test</Link></li>
-				// 		<li><Link to='/polymer_test'>polymer test</Link></li>
-				// 	</ul>
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/transformer_test'>transformer test</Link></li>
-				// 		<li><Link to='/winding_test'>winding test</Link></li>
-				// 		<li><Link to='/visual_test'>visual test</Link></li>
-				// 		<li><Link to='/water_test'>water test</Link></li>
-				// 		<li><Link to='/winding2_test'>winding test2</Link></li>
-				// 	</ul>
-				// 	<ul className="pull-left">
-				// 		<li><Link to='/up_down_streams'>Stream manager</Link></li>
-				// 		<li><Link to='/schedule_task'>Schedule a task</Link></li>
-				// 		<li><Link to='/tasks'>Tasks</Link></li>
-				// 	</ul>
-				// </div>
-				<div className='app-container'>
-					<hr/>
-					{this.props.children}
-				</div>
-			</div>
+            // <div className="content">
+            //     <NotificationContainer/>
+            //       <LinkList/>
+            //     <div className='app-container'>
+            //         <hr/>
+            //         {this.props.children}
+            //     </div>
+            // </div>
+
+            <div className="content">
+                <NotificationContainer/>
+                <div className='app-container'>
+                    <hr/>
+                    {this.props.children}
+                </div>
+            </div>
+
         )
     }
 });
 
 render((
     <Router history={hashHistory}>
-        <Route path="/" component={App} >
+        <Route path="/" component={App}>
             <IndexRoute component={Home}/>
             <Route path="campaign" component={Campaign}/>
             <Route path="equipment" component={Equipment}/>
             <Route path="add_equipment/:campaign" component={AddEquipmentForm}/>
-            <Route path="campaign/:campaign"  component={TestList}/>
+            <Route path="campaign/:campaign" component={TestList}/>
             <Route path="electro" component={ElectricalProfileForm}/>
             <Route path="fluid" component={FluidProfileForm}/>
             <Route path="choose_profile" component={ChooseTestForm}/>
@@ -228,12 +245,12 @@ render((
             <Route path="visual_test" component={VisualTestForm}/>
             <Route path="water_test" component={WaterTestForm}/>
             <Route path="winding2_test" component={WindingTestForm}/>
-			<Route path="up_down_streams" component={EqConnectionsManager}/>
-			<Route path="schedule_task" component={NewTaskForm}/>
-			<Route path="tasks" component={TaskList}/>
+            <Route path="up_down_streams" component={EqConnectionsManager}/>
+            <Route path="schedule_task" component={NewTaskForm}/>
+            <Route path="tasks" component={TaskList}/>
 
-			{/*This route should be the last, otherwise it will match all subsequent routes*/}
-			<Route path=":equipmentId" component={Home}/>
+            {/*This route should be the last, otherwise it will match all subsequent routes*/}
+            <Route path=":equipmentId" component={Home}/>
         </Route>
     </Router>
 ), document.getElementById('app'));
