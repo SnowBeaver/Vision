@@ -140,10 +140,9 @@ var Home = React.createClass({
                 <div className="col-md-3 equal_col">
                     <div className="maxwidth">
                         <FormGroup>
-                            <ControlLabel>Search equipment</ControlLabel>
                             <FormControl
                                 type="text"
-                                placeholder="Search equipmemt"
+                                placeholder="Search equipment"
                                 ref="search"
                                 id="plugins4_q"
                                 className="input col-md-12"
