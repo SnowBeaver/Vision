@@ -901,7 +901,7 @@ const FluidProfileForm = React.createClass({
                                 </div>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
+                                        <Button bsStyle="success" type="submit" className="pull-right">Apply</Button>
                                         <Button bsStyle="danger"
                                                 onClick={this.props.handleClose}
                                                 className="pull-right margin-right-xs">Close</Button>
