@@ -252,6 +252,29 @@ const TextArea = React.createClass({
     }
 });
 
+
+const AdministratorInfoForm = React.createClass({
+    render: function () {
+        var campaignAdministrator = (this.props.data != null) ? this.props.data : {};
+        return (
+            <div>
+                <div className="col-lg-6 nopadding">
+                    <TextField label="Campaign administrator"
+                               value={campaignAdministrator.name}
+                               name=""
+                               disabled/>
+                </div>
+                <div className="col-lg-6">
+                    <TextField label="Contact phone"
+                               value={campaignAdministrator.mobile}
+                               name=""
+                               disabled/>
+                </div>
+            </div>
+        );
+    }
+});
+
 var EquipmentTestIdentificationForm = React.createClass({
     getInitialState: function () {
         return {
@@ -775,7 +798,7 @@ var EquipmentTestForm = React.createClass({
             testDiagnosisFields: ['diagnosis_notes', 'diagnosis_id', 'diagnosis_test_type_id'],
             errors: {},
             data: null,
-            campaignIndicator: "",
+            campaignAdministrator: {},
             equipmentStatusChanged: false   // Reset this flag not to save same equipment status twice
         }
     },
@@ -1117,7 +1140,7 @@ var EquipmentTestForm = React.createClass({
             data.equipment_status = result['result'].equipment.status;
             this.setState({
                 data: data,
-                campaignIndicator: campaignResult['result'].created_by.name})
+                campaignAdministrator: campaignResult['result'].created_by})
         }.bind(this), 'json');
     },
 
@@ -1154,37 +1177,18 @@ var EquipmentTestForm = React.createClass({
                     </ul>
                     <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                         <div id="tabs-1" role="tabpanel" className="tab-pane active">
-                            <div className="col-lg-12 nopadding">
-                                <TextField label="Campaign administrator"
-                                           value={this.state.campaignIndicator}
-                                           className="col-lg-6 nopadding"
-                                           name=""
-                                           disabled/>
-                            </div>
-                            <br/><br/><br/><br/>
+                            <AdministratorInfoForm data={this.state.campaignAdministrator} />
                             <EquipmentTestIdentificationForm data={data}
                                                              onChange={this._onChange}
                                                              onDateTimeFieldChange={this._onDateTimeFieldChange}/>
                         </div>
                         <div id="tabs-2" role="tabpanel" className="tab-pane">
-                            <div className="col-lg-12 nopadding">
-                                <TextField label="Campaign administrator"
-                                           value={this.state.campaignIndicator}
-                                           className="col-lg-6 nopadding"
-                                           name=""
-                                           disabled/>
-                            </div>
-                            <br/><br/><br/>
+                            <AdministratorInfoForm data={this.state.campaignAdministrator} />
                             <TestValuesForm testResultId={this.props.selectedRowId}
                                             testType={data.test_type}/>
                         </div>
                         <div id="tabs-3" role="tabpanel" className="tab-pane">
-                            <div className="col-lg-6 nopadding">
-                                <TextField label="Campaign administrator"
-                                           value={this.state.campaignIndicator}
-                                           name=""
-                                           disabled/>
-                            </div>
+                            <AdministratorInfoForm data={this.state.campaignAdministrator} />
                             <EquipmentTestRepairForm data={data}
                                                      onChange={this._onChange}
                                                      onDateTimeFieldChange={this._onDateTimeFieldChange}
@@ -1192,24 +1196,14 @@ var EquipmentTestForm = React.createClass({
                                                      ref="repairNotesForm"/>
                         </div>
                         <div id="tabs-4" role="tabpanel" className="tab-pane">
-                            <div className="col-lg-6 nopadding">
-                                <TextField label="Campaign administrator"
-                                           value={this.state.campaignIndicator}
-                                           name=""
-                                           disabled/>
-                            </div>
+                            <AdministratorInfoForm data={this.state.campaignAdministrator} />
                             <EquipmentTestDiagnosisForm data={data}
                                                         onChange={this._onChange}
                                                         setStateData={this._setStateData}
                                                         ref="recommedationForm"/>
                         </div>
                         <div id="tabs-5" role="tabpanel" className="tab-pane">
-                            <div className="col-lg-6 nopadding">
-                                <TextField label="Campaign administrator"
-                                           value={this.state.campaignIndicator}
-                                           name=""
-                                           disabled/>
-                            </div>
+                            <AdministratorInfoForm data={this.state.campaignAdministrator} />
                             <EquipmentTestEqDiagnosisForm data={data}
                                                           onChange={this._onChange}
                                                           setStateData={this._setStateData}
