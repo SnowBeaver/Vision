@@ -115,7 +115,6 @@ class MyAdminIndexView(admin.AdminIndexView):
         return super(MyAdminIndexView, self).index()
 
     @expose('/logout/')
-    @admin_per.require(http_exception=403)
     def logout_view(self):
         login.logout_user()
         return redirect(url_for('home.home'))
