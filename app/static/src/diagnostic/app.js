@@ -55,7 +55,9 @@ function getAPIToken () {
 	$.authorizedAjax = function (settings) {
 		var originalBeforeSendFunction = settings.beforeSend;
 		settings.beforeSend = function (xhr) {
-			originalBeforeSendFunction(xhr);
+			if (originalBeforeSendFunction) {
+				originalBeforeSendFunction(xhr);
+			}
 			xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
 		};
 		settings.statusCode = {
