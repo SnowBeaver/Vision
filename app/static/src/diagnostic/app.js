@@ -55,11 +55,14 @@ function getAPIToken () {
 	$.authorizedAjax = function (settings) {
 		var originalBeforeSendFunction = settings.beforeSend;
 		settings.beforeSend = function (xhr) {
+			
 			if (originalBeforeSendFunction) {
 				originalBeforeSendFunction(xhr);
 			}
+			
 			xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
 		};
+		
 		settings.statusCode = {
 			401: function () {
 				// Redirect user to login - ?
