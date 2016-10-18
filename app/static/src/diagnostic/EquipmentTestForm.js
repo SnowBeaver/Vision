@@ -114,12 +114,11 @@ var StatusSelectField = React.createClass({
 
         return (
             <FormGroup>
-                <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.props.onChange}
                              name={name}
                              value={value}>
-                    <option key={null} value={null}></option>
+                    <option>{label}</option>
                     {menuItems}
                     <FormControl.Feedback />
                 </FormControl>
@@ -407,13 +406,13 @@ var EquipmentTestRepairForm = React.createClass({
     render: function () {
         var data = (this.props.data != null) ? this.props.data : {};
         return (
-            <div className="tab_row">
+            <div>
                 <div className="col-md-12">
                     <RepairNotesList testResultId={this.props.data.id}
                                      testTypeId={this.props.data.test_type_id}
                                      ref="testRepairNotesList"/>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-6 nopadding">
                         <TextArea label="Repair description"
                                   name='description'
                                   value={data.description}
@@ -427,14 +426,14 @@ var EquipmentTestRepairForm = React.createClass({
                                   onChange={this._onChange}
                                   errors={this.state.errors}/>
                 </div>
-                <div className="col-md-12">
+                <div className="col-md-12 nopadding">
                         <TextArea label="Sample"
                                   name='sample'
                                   value={data.sample}
                                   onChange={this._onChange}
                                   errors={this.state.errors}/>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-4 nopadding">
                     <TestTypeSelectField key={this.props.data.selected_subtests}
                                          selectedSubtests={this.props.data.selected_subtests}
                                          testType={this.props.data.test_type}
@@ -1154,71 +1153,69 @@ var EquipmentTestForm = React.createClass({
                         <li><a href="#tabs-5" data-toggle="tab"> Diagnosis </a></li>
                     </ul>
                     <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
-                        <div id="tabs-1" role="tabpanel" className="tab-pane active ">
+                        <div id="tabs-1" role="tabpanel" className="tab-pane active">
+                            <div className="col-lg-12 nopadding">
+                                <TextField label="Campaign administrator"
+                                           value={this.state.campaignIndicator}
+                                           className="col-lg-6 nopadding"
+                                           name=""
+                                           disabled/>
+                            </div>
+                            <br/><br/><br/><br/>
                             <EquipmentTestIdentificationForm data={data}
                                                              onChange={this._onChange}
                                                              onDateTimeFieldChange={this._onDateTimeFieldChange}/>
-
-                            <div className="col-lg-6">
-                                <TextField label="Indicator"
-                                           value={this.state.campaignIndicator}
-                                           name=""
-                                           disabled/>
-                            </div>
                         </div>
                         <div id="tabs-2" role="tabpanel" className="tab-pane">
+                            <div className="col-lg-12 nopadding">
+                                <TextField label="Campaign administrator"
+                                           value={this.state.campaignIndicator}
+                                           className="col-lg-6 nopadding"
+                                           name=""
+                                           disabled/>
+                            </div>
+                            <br/><br/><br/>
                             <TestValuesForm testResultId={this.props.selectedRowId}
                                             testType={data.test_type}/>
-
-                            <div className="col-lg-6">
-                                <TextField label="Indicator"
+                        </div>
+                        <div id="tabs-3" role="tabpanel" className="tab-pane">
+                            <div className="col-lg-6 nopadding">
+                                <TextField label="Campaign administrator"
                                            value={this.state.campaignIndicator}
                                            name=""
                                            disabled/>
                             </div>
-                        </div>
-                        <div id="tabs-3" role="tabpanel" className="tab-pane">
                             <EquipmentTestRepairForm data={data}
                                                      onChange={this._onChange}
                                                      onDateTimeFieldChange={this._onDateTimeFieldChange}
                                                      setStateData={this._setStateData}
                                                      ref="repairNotesForm"/>
-
-                            <div className="col-lg-12">
-                                <TextField label="Indicator"
+                        </div>
+                        <div id="tabs-4" role="tabpanel" className="tab-pane">
+                            <div className="col-lg-6 nopadding">
+                                <TextField label="Campaign administrator"
                                            value={this.state.campaignIndicator}
-                                           className="col-lg-6"
                                            name=""
                                            disabled/>
                             </div>
-                        </div>
-                        <div id="tabs-4" role="tabpanel" className="tab-pane">
                             <EquipmentTestDiagnosisForm data={data}
                                                         onChange={this._onChange}
                                                         setStateData={this._setStateData}
                                                         ref="recommedationForm"/>
-
-                            <div className="col-lg-6">
-                                <TextField label="Indicator"
+                        </div>
+                        <div id="tabs-5" role="tabpanel" className="tab-pane">
+                            <div className="col-lg-6 nopadding">
+                                <TextField label="Campaign administrator"
                                            value={this.state.campaignIndicator}
                                            name=""
                                            disabled/>
                             </div>
-                        </div>
-                        <div id="tabs-5" role="tabpanel" className="tab-pane">
                             <EquipmentTestEqDiagnosisForm data={data}
                                                           onChange={this._onChange}
                                                           setStateData={this._setStateData}
                                                           ref="diagnosisForm"/>
-
-                            <div className="col-lg-6">
-                                <TextField label="Indicator"
-                                           value={this.state.campaignIndicator}
-                                           name=""
-                                           disabled/>
-                            </div>
-                            <div className="col-lg-6">
-                                <StatusSelectField label="Status"
+                            <div className="col-lg-6 nopadding">
+                                <StatusSelectField label="Equipment health state"
                                                    value={data.equipment_status}
                                                    onChange={this._onChange}
                                                    name="equipment_status"/>
