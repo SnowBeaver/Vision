@@ -1833,10 +1833,12 @@ class TestSchedule(db.Model):
     # prof_mec = Column(db.String(25))  # Prof_Mec.  Which mechanical tests profile should be used
 
     test_recommendation_id = db.Column(db.Integer, db.ForeignKey("test_recommendation.id"), nullable=False)
-    test_recommendation = db.relationship('TestRecommendation', backref='test_schedule')
+    test_recommendation = db.relationship('TestRecommendation', backref='schedule')
 
     status_id = db.Column(db.Integer, db.ForeignKey("task_status.id"))
-    status = db.relationship('TaskStatus', backref='test_schedule')
+    status = db.relationship('TaskStatus', backref='schedule')
+
+    parent_id = db.Column(db.Integer, db.ForeignKey("schedule.id"), nullable=True)
 
     priority = db.Column(db.Integer, nullable=False)  # WorkOrderNum
     date_updated = db.Column(db.DateTime)
@@ -1858,6 +1860,7 @@ class TestSchedule(db.Model):
                 'assigned_to': self.assigned_to and self.assigned_to.serialize(),
                 'test_recommendation_id': self.test_recommendation_id,
                 'test_recommendation': self.test_recommendation and self.test_recommendation.serialize(),
+                'parent_id': self.parent_id,
                 'status_id': self.status_id,
                 'status': self.status and self.status.serialize(),
                 'recurring': self.recurring,

@@ -743,6 +743,7 @@ schedule_schema = {
     'date_updated': type_datetime_dict,
     'date_created': type_datetime_dict,
     'status_id': type_integer_coerce_dict,
+    'parent_id': type_integer_coerce_dict,
 }
 test_type_schema = {
     'id': readonly_dict,

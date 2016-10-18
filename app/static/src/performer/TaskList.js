@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/lib/Button';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {DATETIMEPICKER_FORMAT} from './appConstants.js';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
 
 // TODO: Should be received from API
@@ -31,7 +32,8 @@ var TaskList = React.createClass({
                 'date_start', 'description', 'priority', 'id', 'date_created', 'date_updated',
                 'recurring', 'notify_before_in_days', 'test_recommendation', 'assigned_to', 'status'
             ],
-            changedTasks: []
+            changedTasks: [],
+            assignedToChanged: false
         }
     },
 
@@ -51,6 +53,7 @@ var TaskList = React.createClass({
             tasks[tasks.length] = task;
         }
         this.setState({tasks: tasks});
+        this.addTasksToState(result);
     },
 
     prepareOneTask: function (data, task) {
@@ -132,6 +135,8 @@ var TaskList = React.createClass({
             } else if (key == "status") {
                 task.status_id = this.state.statusIdMapping[tasks[key]];
                 delete task.status;
+            } else if (key == "parent_id") {
+                task.parent_id = this.state.taskIdMapping[this.state.taskList.indexOf(tasks[key])];
             } else {
                 task[key] = tasks[key];
             }
@@ -173,11 +178,29 @@ var TaskList = React.createClass({
     },
 
     _onSuccess: function (data) {
-        // If new task has been created, get data and add it to the state
+        var message = 'Task has been saved successfully.';
+        // 'Assign to' field has been updated or new task for another user has been created
+        var taskId = (data.result.id && this.state.assignedToChanged) || (!isNaN(parseInt(data.result)) ? true : false);
         if (!isNaN(parseInt(data.result))) {
-            this.getLatestTask(data.result);
+            message = 'Task for another user has been added successfully.';
         }
-        NotificationManager.success('Tasks have been saved successfully.');
+        if (taskId) {
+            taskId = data.result.id || data.result;
+            this.deleteTaskFromState(taskId);
+        }
+        this.setState({assignedToChanged: false});
+        NotificationManager.success(message);
+    },
+
+    deleteTaskFromState: function (taskId) {
+        var tasks = this.state.tasks;
+        for (var i = 0; i < tasks.length; i++) {
+            var obj = tasks[i];
+            if (!obj.hasOwnProperty('id') || obj.id == taskId) {
+                tasks.splice(tasks.indexOf(obj), 1);
+            }
+        }
+        this.setState({tasks: tasks});
     },
 
     _onError: function (data) {
@@ -199,6 +222,7 @@ var TaskList = React.createClass({
     },
 
     _validateDict: {
+        parent_id: {data_type: "int", label: "Parent Task"},
         assigned_to: {data_type: "alnum", label: "Assigned To"},
         test_recommendation: {data_type: "any", label: "Test Recommendation"},
         priority: {data_type: "alnum", label: "Priority"},
@@ -273,7 +297,9 @@ var TaskList = React.createClass({
         if (row[name] == value) {
             return false;
         }
-
+        if (name == "assigned_to") {
+            this.setState({assignedToChanged: true})
+        }
         if (this._validateDict[name]) {
             var data_type = this._validateDict[name]['data_type'];
             var label = this._validateDict[name]['label'];
@@ -394,6 +420,32 @@ var TaskList = React.createClass({
         return fullName.join(" | ");
     },
 
+    addTasksToState: function (result) {
+        var res = (result['result']);
+        var taskList = [""];
+        var taskIdMapping = [""];
+
+        for (var i = 0; i < res.length; i++) {
+            taskList.push(this._composeTaskDescription(res[i]));
+            // Keep mapping in a list to preserve name/id positions.
+            // Dictionary cannot be used as the names are not unique
+            taskIdMapping.push(res[i].id);
+        }
+        this.setState({taskList: taskList, taskIdMapping: taskIdMapping});
+    },
+
+    _composeTaskDescription: function (record) {
+        // Format nice name for parent task select field
+        var fullName = [record.id, record.description ? record.description.substr(0, 50) : null];
+        fullName.map(function (name) {
+            if (!name) {
+                fullName.splice(fullName.indexOf(name), 1)
+            }
+        });
+
+        return fullName.join(" | ");
+    },
+
     getLatestTask: function (taskId) {
         $.authorizedGet('/api/v1.0/schedule/' + taskId, this._addOneTaskToStateWrapper, 'json');
     },
@@ -408,10 +460,11 @@ var TaskList = React.createClass({
 
     onAddRow: function (row) {
         var error = false;
-        ["assigned_to", "date_start", "test_recommendation", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
+        ["parent_id", "assigned_to", "date_start", "test_recommendation", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
         if (error) {
             return;
         }
+        // Delete empty values
         for (var fld in row) {
             if (row[fld] == "") {
                 delete row[fld];
@@ -458,6 +511,13 @@ var TaskList = React.createClass({
                                        hiddenOnInsert={true}
                                        ref="id">ID
                     </TableHeaderColumn>
+                    <TableHeaderColumn dataField="parent_id"
+                                       width="80"
+                                       hidden={true}
+                                       hiddenOnInsert={false}
+                                       editable={{type: 'select', options: {values: this.state.taskList}}}
+                                       ref="parent_id">Parent Task
+                    </TableHeaderColumn>
                     <TableHeaderColumn dataField="assigned_to"
                                        width="130"
                                        dataSort={true}
@@ -467,8 +527,8 @@ var TaskList = React.createClass({
                     <TableHeaderColumn dataField="priority"
                                        width="90"
                                        dataSort={true}
-                                       editable={{type: 'select', options: {values: this.state.prioritiesList}}}
-                                       ref="priority">Priority
+                                       hidden={true}
+                                       editable={{type: 'select', options: {values: this.state.prioritiesList}}}>Priority
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="status"
                                        width="90"
@@ -498,14 +558,14 @@ var TaskList = React.createClass({
                                        ref="test_type">Test Type
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_start"
-                                       width="90"
+                                       width="80"
                                        dataSort={true}
                                        dataFormat={this._formatDateTime}
                                        editable={{type: 'datetime', validator: this._validateDateTime}}
                                        ref="date_start">Start
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_created"
-                                       width="90"
+                                       width="80"
                                        dataFormat={this._formatDateTime}
                                        dataSort={true}
                                        editable={false}
@@ -513,7 +573,7 @@ var TaskList = React.createClass({
                                        ref="date_created">Created
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="date_updated"
-                                       width="90"
+                                       width="80"
                                        dataFormat={this._formatDateTime}
                                        dataSort={true}
                                        editable={false}
