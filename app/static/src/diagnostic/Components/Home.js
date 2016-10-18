@@ -8,13 +8,83 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {Link} from 'react-router'
+import {DATETIME_FORMAT} from '../appConstants.js';
+
+
+var CampaignSelectField = React.createClass({
+    getInitialState: function () {
+        return {
+            items: [],
+            isVisible: false
+        };
+    },
+
+    isVisible: function () {
+        return this.state.isVisible;
+    },
+
+
+    componentDidMount: function () {
+        var source = '/api/v1.0/' + this.props.source + '/';
+        this.serverRequest = $.authorizedGet(source, function (result) {
+            this.setState({items: (result['result'])});
+        }.bind(this), 'json');
+    },
+
+    componentWillUnmount: function () {
+        this.serverRequest.abort();
+    },
+
+    setVisible: function () {
+        this.state.isVisible = true;
+    },
+
+    formatCampaignName: function (data) {
+        var optionName = [];
+        if (data.date_created) {
+            optionName.push(moment(data.date_created).format(DATETIME_FORMAT));
+        }
+        if (data.description) {
+            optionName.push(data.description.substr(0, 20));
+        }
+        return optionName.join(" | ") || "";
+    },
+
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
+        var className = (this.props.className != null) ? this.props.className : "";
+        var menuItems = [];
+        for (var key in this.state.items) {
+            menuItems.push(<option key={this.state.items[key].id}
+                                   value={this.state.items[key].id}>{`${this.formatCampaignName(this.state.items[key])}`}</option>);
+        }
+        return (
+            <FormGroup className={className}>
+                <FormControl componentClass="select"
+                             onChange={this.props.onChange}
+                             name={name}
+                             value={value}
+                             disabled={this.props.disabled}
+                >
+                    <option value="">{label}</option>
+                    {menuItems}
+                    <FormControl.Feedback />
+                </FormControl>
+            </FormGroup>
+        );
+    }
+});
 
 var Home = React.createClass({
 
     getInitialState: function () {
         return {
             source: '/api/v1.0/campaign/',
-            text: ''
+            text: '',
+            equipmentId: null,
+            campaignId: null
         }
     },
 
@@ -35,16 +105,27 @@ var Home = React.createClass({
     onTreeNodeClick: function (treeItem) {
         // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
         var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
+        this.setState({equipmentId: id, campaignId: null});
         this.loadEquipment(id);
     },
 
-    loadEquipment: function (id) {
-        var src = '/api/v1.0/test_result/?equipment_id=' + id;
+    loadEquipment: function (equipmentId, campaignId) {
+        var src = '/api/v1.0/test_result/?equipment_id=' + equipmentId;
+
+        if (campaignId) {
+            src += '&campaign_id=' + campaignId;
+        }
 
         this.setState({
             source: src
         });
         this.refs.testResultList.updateSource(src);
+    },
+
+    onCampaignFilterChange: function (e) {
+        var value = e.target.value;
+        this.setState({campaignId: value});
+        this.loadEquipment(this.state.equipmentId, value);
     },
 
     render: function () {
@@ -80,9 +161,15 @@ var Home = React.createClass({
                     </div>
                 </div>
                 <div className="col-md-9">
+                    <CampaignSelectField source="campaign"
+                                         label="Filter by campaign"
+                                         name='campaign_id'
+                                         className="col-md-6 nopadding"
+                                         value={this.state.campaignId}
+                                         onChange={this.onCampaignFilterChange}/>
+                    <br/>
                     <TestResultForm ref="testResultList"
-                                    source={this.state.source}
-                                    />
+                                    source={this.state.source}/>
                 </div>
             </div>
         )
