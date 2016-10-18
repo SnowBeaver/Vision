@@ -121,64 +121,63 @@ const App = React.createClass({
         return (
 			<div className="content">
 				<NotificationContainer/>
-
-				<div className="row">
-					<ul className="pull-left">
-						<li><Link to='/home'>Home</Link></li>
-						<li><Link to='/campaign'>New Campaign</Link></li>
-						<li><Link to='/equipment'>Equipment</Link></li>
-						<li><Link to='/add_equipment'>Add Equipment</Link></li>
-						<li><Link to='/campaign/1'>Campaign tests</Link></li>
-
-					</ul>
-					<ul className="pull-left">
-						<li><Link to='/add_test'>New Test</Link></li>
-						<li><Link to='/edit_test/1'>Edit Test</Link></li>
-						<li><Link to='/electro'>Electrical Profile</Link></li>
-						<li><Link to='/fluid'>Fluid Profile</Link></li>
-						<li><Link to='/choose_profile'>Choose Test Profile</Link></li>
-					</ul>
-					<ul className="pull-left">
-						<li><Link to='/add_createdby'>created by</Link></li>
-						<li><Link to='/add_contract'>contract</Link></li>
-						<li><Link to='/add_lab'>lab</Link></li>
-						<li><Link to='/add_material'>material</Link></li>
-						<li><Link to='/add_fluid'>new fluid</Link></li>
-					</ul>
-					<ul className="pull-left">
-						<li><Link to='/add_recommend'>recommend</Link></li>
-						<li><Link to='/eq_type_add'>new eq type</Link></li>
-						<li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
-						<li><Link to='/eq_add_location'>new eq location</Link></li>
-						<li><Link to='/eq_add_norm'>new eq norms</Link></li>
-					</ul>
-					<ul className="pull-left">
-						<li><Link to='/bushing_test'>bushing test</Link></li>
-						<li><Link to='/furan_test'>furan test</Link></li>
-						<li><Link to='/fluid_test'>fluid test</Link></li>
-						<li><Link to='/dissolved_test'>dissolved gas test</Link></li>
-						<li><Link to='/inhibit_test'>inhibitor gas test</Link></li>
-					</ul>
-					<ul className="pull-left">
-						<li><Link to='/insulation_test'>insulation test</Link></li>
-						<li><Link to='/me_oil__test'>metals on oil test</Link></li>
-						<li><Link to='/particle_test'>particles test</Link></li>
-						<li><Link to='/pcb_test'>pcb test</Link></li>
-						<li><Link to='/polymer_test'>polymer test</Link></li>
-					</ul>
-					<ul className="pull-left">
-						<li><Link to='/transformer_test'>transformer test</Link></li>
-						<li><Link to='/winding_test'>winding test</Link></li>
-						<li><Link to='/visual_test'>visual test</Link></li>
-						<li><Link to='/water_test'>water test</Link></li>
-						<li><Link to='/winding2_test'>winding test2</Link></li>
-					</ul>
-					<ul className="pull-left">
-						<li><Link to='/up_down_streams'>Stream manager</Link></li>
-						<li><Link to='/schedule_task'>Schedule a task</Link></li>
-						<li><Link to='/tasks'>Tasks</Link></li>
-					</ul>
-				</div>
+				// 	<div className="row">
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/home'>Home</Link></li>
+				// 		<li><Link to='/campaign'>New Campaign</Link></li>
+				// 		<li><Link to='/equipment'>Equipment</Link></li>
+				// 		<li><Link to='/add_equipment'>Add Equipment</Link></li>
+				// 		<li><Link to='/campaign/1'>Campaign tests</Link></li>
+                //
+				// 	</ul>
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/add_test'>New Test</Link></li>
+				// 		<li><Link to='/edit_test/1'>Edit Test</Link></li>
+				// 		<li><Link to='/electro'>Electrical Profile</Link></li>
+				// 		<li><Link to='/fluid'>Fluid Profile</Link></li>
+				// 		<li><Link to='/choose_profile'>Choose Test Profile</Link></li>
+				// 	</ul>
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/add_createdby'>created by</Link></li>
+				// 		<li><Link to='/add_contract'>contract</Link></li>
+				// 		<li><Link to='/add_lab'>lab</Link></li>
+				// 		<li><Link to='/add_material'>material</Link></li>
+				// 		<li><Link to='/add_fluid'>new fluid</Link></li>
+				// 	</ul>
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/add_recommend'>recommend</Link></li>
+				// 		<li><Link to='/eq_type_add'>new eq type</Link></li>
+				// 		<li><Link to='/eq_add_manufac'>new eq manufac</Link></li>
+				// 		<li><Link to='/eq_add_location'>new eq location</Link></li>
+				// 		<li><Link to='/eq_add_norm'>new eq norms</Link></li>
+				// 	</ul>
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/bushing_test'>bushing test</Link></li>
+				// 		<li><Link to='/furan_test'>furan test</Link></li>
+				// 		<li><Link to='/fluid_test'>fluid test</Link></li>
+				// 		<li><Link to='/dissolved_test'>dissolved gas test</Link></li>
+				// 		<li><Link to='/inhibit_test'>inhibitor gas test</Link></li>
+				// 	</ul>
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/insulation_test'>insulation test</Link></li>
+				// 		<li><Link to='/me_oil__test'>metals on oil test</Link></li>
+				// 		<li><Link to='/particle_test'>particles test</Link></li>
+				// 		<li><Link to='/pcb_test'>pcb test</Link></li>
+				// 		<li><Link to='/polymer_test'>polymer test</Link></li>
+				// 	</ul>
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/transformer_test'>transformer test</Link></li>
+				// 		<li><Link to='/winding_test'>winding test</Link></li>
+				// 		<li><Link to='/visual_test'>visual test</Link></li>
+				// 		<li><Link to='/water_test'>water test</Link></li>
+				// 		<li><Link to='/winding2_test'>winding test2</Link></li>
+				// 	</ul>
+				// 	<ul className="pull-left">
+				// 		<li><Link to='/up_down_streams'>Stream manager</Link></li>
+				// 		<li><Link to='/schedule_task'>Schedule a task</Link></li>
+				// 		<li><Link to='/tasks'>Tasks</Link></li>
+				// 	</ul>
+				// </div>
 				<div className='app-container'>
 					<hr/>
 					{this.props.children}
