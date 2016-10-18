@@ -381,7 +381,7 @@ var NewTransformerTestForm = React.createClass({
         selectedRows.map(this.addToDeleteOnSubmit);
         var result = this.refs.table.handleDropRow(selectedRowKeys);
         if( result ) {
-            console.log(result); // error logging
+            
         }
     },
     dataFormatPosition: function(cell, row, formatExtraData, rowIdx){
@@ -426,7 +426,7 @@ var NewTransformerTestForm = React.createClass({
         var tests = this.state.tests;
         var is_valid = true;
         var msg = '';
-        console.log(tests);
+        
         for (var i = 0; i < tests.length; i++) {
             var tap = tests[i];
             for (var j = 0; j < fields.length; j++) {

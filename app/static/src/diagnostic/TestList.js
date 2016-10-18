@@ -340,7 +340,7 @@ var TestList = React.createClass({
             items.push(
                 <Panel
                     key={this.state.equipment[key].id}
-                    eventKey={this.state.equipment[key].id}
+                    
                     header={this.state.equipment[key].name}
                 >
                     <TestItemList data={this.state.tests}

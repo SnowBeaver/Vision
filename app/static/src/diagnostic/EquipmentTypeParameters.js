@@ -201,7 +201,7 @@ var AirBreakerParams = React.createClass({
     },
 
     render: function () {
-        console.log('render inside air breaker');
+        
         return (
             <div>
                 <div className="row">
@@ -1986,7 +1986,6 @@ var TransformerParams = React.createClass({
 
 
     render: function () {
-        console.log("transformer is invoked");
         if (!this.state.isVisible) {
 
             return null;

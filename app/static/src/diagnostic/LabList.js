@@ -17,14 +17,11 @@ var cellEditProp = {
 
 
 function onRowSelect(row, isSelected){
-    console.log(row);
-    console.log("selected: " + isSelected);
+    
 }
 
 function onAfterSaveCell(row, cellName, cellValue){
-    console.log("Save cell '"+cellName+"' with value '"+cellValue+"'");
-    console.log("Thw whole row :");
-    console.log(row);
+    
 }
 
 const LabList = React.createClass({
@@ -60,7 +57,7 @@ const LabList = React.createClass({
                     equipment_number: item.equipment.equipment_number
                 });
             }
-            console.log(data);
+            
             this.setState({
                 data: data
             });
@@ -68,11 +65,11 @@ const LabList = React.createClass({
     },
     
     onRowClick: function (row) {
-       console.log('row clicked', row);
+      
     },
 
     onCellClick: function (cell) { 
-        console.log('cell clicked', row);
+        
     },
     
     componentWillUnmount: function() {
@@ -84,7 +81,7 @@ const LabList = React.createClass({
     },
     
     updateSource: function(source){ 
-        // console.log('list triggered', source);
+       
         this.serverRequest = $.authorizedGet(source, function (result){
             var arr = (result['result']);
             var data = [];
@@ -106,7 +103,7 @@ const LabList = React.createClass({
                     equipment_number: item.equipment.equipment_number 
                 });
             }
-            // console.log(data);
+            
             this.setState({
                 data: data
             });
@@ -123,7 +120,6 @@ const LabList = React.createClass({
         
         const options = {
             onRowClick: function (row) {
-                console.log( row, 'on row click'); 
             }
         };
         
