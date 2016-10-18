@@ -20,7 +20,7 @@ class EquipmentView(MyModelView):
     # List of columns that can be sorted.
     column_sortable_list = (
         'id', 'equipment_number', 'equipment_type', 'location_id', 'visual_inspection_by_id',
-        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
+        'visual_date', 'norm_id', 'status', 'tie_status'
     )
 
     column_searchable_list = ('equipment_number',)
@@ -32,9 +32,7 @@ class EquipmentView(MyModelView):
         # 'location_id',
         'sibling',
         'modifier',
-        'tie_location',
-        'tie_status',
-        'tie_maintenance_state'
+        'status',
     )
     column_exclude_list = [
         'sibling',

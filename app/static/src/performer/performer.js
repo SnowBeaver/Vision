@@ -3,6 +3,7 @@ import {Router, Route, IndexRoute, Link, hashHistory} from 'react-router'
 import {Component} from 'react'
 import {render} from 'react-dom'
 import TaskList from './TaskList';
+import Home from './Components/Home';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
@@ -14,7 +15,9 @@ function getAPIToken () {
 	$.authorizedAjax = function (settings) {
 		var originalBeforeSendFunction = settings.beforeSend;
 		settings.beforeSend = function (xhr) {
-			originalBeforeSendFunction(xhr);
+			if (originalBeforeSendFunction){
+				originalBeforeSendFunction(xhr);
+			}
 			xhr.setRequestHeader("Authorization", "Basic " + getAPIToken());
 		};
 		settings.statusCode = {
@@ -99,7 +102,7 @@ const App = React.createClass({
 render((
     <Router history={hashHistory}>
         <Route path="/" component={App} >
-            <IndexRoute component={TaskList}/>
+            <IndexRoute component={Home}/>
 			<Route path="tasks" component={TaskList}/>
         </Route>
     </Router>

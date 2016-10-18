@@ -1492,9 +1492,8 @@ class Equipment(db.Model):
     # downstream4 = db.Column(db.String(100))  # Downstream4. Downstream device name
     # downstream5 = db.Column(db.String(100))  # Downstream5. Downstream device name
 
-    tie_location = db.Column(db.Boolean)  # TieLocation. Tie device location
-    tie_maintenance_state = db.Column(db.Integer)  # TieMaintenanceState. Tie is open or closed during maintenance
     tie_status = db.Column(db.Integer)  # TieAnalysisState.
+    status = db.Column(db.Integer)  # EquipmentState.
 
     phys_position = db.Column(db.Integer)
 
@@ -1572,9 +1571,8 @@ class Equipment(db.Model):
                 # 'downstream3': self.downstream3,
                 # 'downstream4': self.downstream4,
                 # 'downstream5': self.downstream5,
-                'tie_location': self.tie_location,
-                'tie_maintenance_state': self.tie_maintenance_state,
                 'tie_status': self.tie_status,
+                'status': self.status,
                 'phys_position': self.phys_position,
                 'tension4': self.tension4,
                 'validated': self.validated,
