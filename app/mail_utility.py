@@ -1,6 +1,8 @@
-from flask_mail import Message
-from app import app, mail
 import pytz
+
+from flask_mail import Message
+from flask import g
+from app import app, mail
 
 
 NOREPLY_EMAIL = app.config['NOREPLY_EMAIL']
@@ -22,9 +24,11 @@ def generate_message(path, item):
 
 
 schedule_tmpl = """
-Task #{id} has been updated by on {date_updated}.
+Task #{id} has been updated by {updated_by}.
+
 \tTask details:
-Test recommendation: #{test_recommendation_id} {test_recommendation_description}
+Test recommendation: #{test_recommendation_id}
+Test recommendation description: {test_recommendation_description}
 Status: {status}
 Description: {description}
 Assigned to: {assigned_to_name} (Email: {assigned_to_email}, Contact Phone: {assigned_to_phone})
@@ -37,9 +41,10 @@ Updated on: {date_updated}
 def schedule_data(item):
     info = {
         'id': item.id,
+        'updated_by': g.user.name,
         'date_updated': '{:%m/%d/%Y %I:%M %p}'.format(item.date_updated.replace(tzinfo=pytz.utc)) if item.date_updated else '',
         'test_recommendation_id': item.test_recommendation_id,
-        'test_recommendation_description': item.test_recommendation.recommendation_notes or '',
+        'test_recommendation_description': item.test_recommendation.recommendation_notes or item.test_recommendation.recommendation.name or '',
         'status': item.status.name if item.status else '',
         'description': item.description or '',
         'assigned_to_name': item.assigned_to.name or '',
