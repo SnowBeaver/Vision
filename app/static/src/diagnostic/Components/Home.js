@@ -23,7 +23,6 @@ var CampaignSelectField = React.createClass({
         return this.state.isVisible;
     },
 
-
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
         this.serverRequest = $.authorizedGet(source, function (result) {
@@ -33,8 +32,17 @@ var CampaignSelectField = React.createClass({
 
     sortItemsByKey: function (array, key){
         return array.sort(function(a, b) {
-            var x = a[key]; var y = b[key];
-            return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+            var a = a[key];
+            var b = b[key];
+            if (a === null) {
+                return 1;
+            } else if (b === null) {
+                return -1;
+            } else if (a === b) {
+                return 0;
+            } else {
+                return a < b ? 1 : -1;
+            }
         });
     },
 
