@@ -569,7 +569,6 @@ def create_equipment_handler():
 @json_required
 def update_equipment_handler(item_id):
     path = 'equipment'
-    abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     validated_data = validate_or_abort(path, update=True)
     updated_item = update_item(path, item_id, validated_data)
