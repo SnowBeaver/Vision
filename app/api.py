@@ -563,6 +563,25 @@ def create_equipment_handler():
     return return_json('result', new_item.id)
 
 
+# Update equipment
+@api_blueprint.route('/equipment/<int:item_id>', methods=['PUT', 'POST'])
+@login_required
+@json_required
+def update_equipment_handler(item_id):
+    path = 'equipment'
+    abort_if_wrong_path(path)
+    abort_if_wrong_id(item_id)
+    validated_data = validate_or_abort(path, update=True)
+    updated_item = update_item(path, item_id, validated_data)
+
+    # Send notifications if only status field is updated
+    if len(validated_data) == 1 and validated_data.get('status'):
+        send_email([updated_item.assigned_to.email, g.user.email],
+                   generate_message(path, updated_item),
+                   'Vision - Equipment health state of {} updated'.format(updated_item.name))
+    return return_json('result', updated_item.serialize())
+
+
 # Create equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['POST'])
 @login_required

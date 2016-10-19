@@ -37,11 +37,15 @@ Start on: {date_start}
 Updated on: {date_updated}
 """
 
+equipment_tmpl = """
+Equipment health state of {name} has been changed to {status}
+"""
+
 
 def schedule_data(item):
     info = {
         'id': item.id,
-        'updated_by': g.user.name,
+        'updated_by': g.user.name,      # TODO: Remake - shouldn't be here?
         'date_updated': '{:%m/%d/%Y %I:%M %p}'.format(item.date_updated.replace(tzinfo=pytz.utc)) if item.date_updated else '',
         'test_recommendation_id': item.test_recommendation_id,
         'test_recommendation_description': item.test_recommendation.recommendation_notes or item.test_recommendation.recommendation.name or '',
@@ -56,9 +60,21 @@ def schedule_data(item):
     return info
 
 
+def equipment_data(item):
+    info = {
+        'name': item.name or '',
+        'status': item.status,  #TODO: Get equipment status name
+    }
+    return info
+
+
 email_dict = {
     'schedule': {
         'tmpl': schedule_tmpl,
         'item': schedule_data
+    },
+    'equipment': {
+        'tmpl': equipment_tmpl,
+        'item': equipment_data
     }
 }
