@@ -9,9 +9,9 @@ NOREPLY_EMAIL = app.config['NOREPLY_EMAIL']
 LOG_EMAIL = app.config.get('LOG_EMAIL', False)
 
 
-def send_email(email, body, subject='News from Vision', sender=NOREPLY_EMAIL):
+def send_email(recipients, body, subject='News from Vision', sender=NOREPLY_EMAIL):
     """Send email"""
-    msg = Message(subject=subject, sender=sender, body=body, recipients=[email])
+    msg = Message(subject=subject, sender=sender, body=body, recipients=recipients)
     if LOG_EMAIL:
         app.logger.debug(msg)
     else:
