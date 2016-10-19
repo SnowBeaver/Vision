@@ -27,8 +27,15 @@ var CampaignSelectField = React.createClass({
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
         this.serverRequest = $.authorizedGet(source, function (result) {
-            this.setState({items: (result['result'])});
+            this.setState({items: (this.sortItemsByKey(result['result'], 'date_created'))});
         }.bind(this), 'json');
+    },
+
+    sortItemsByKey: function (array, key){
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+        });
     },
 
     componentWillUnmount: function () {
