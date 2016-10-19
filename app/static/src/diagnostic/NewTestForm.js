@@ -613,7 +613,7 @@ var NewTestForm = React.createClass({
                 'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'analysis_number', 'mws',
-                'temperature', 'seringe_num', 'transmission', 'charge', 'remark',
+                'temperature', 'seringe_num', 'charge', 'remark',
                 'ambient_air_temperature'
             ],
             test_reason_id: '',
@@ -1181,15 +1181,6 @@ var NewTestForm = React.createClass({
                                                 <HelpBlock className="warning">{this.state.errors.remark}</HelpBlock>
 								                <FormControl.Feedback />
                                             </FormGroup>
-                                        </div>
-                                    </div>
-
-                                    <div className="maxwidth">
-                                        <div className="col-md-4 nopadding padding-right-xs">
-                                            <Checkbox name="transmission"
-                                                      checked={this.state.transmission ? "checked" :null}>
-                                                Sent to Laboratory
-                                            </Checkbox>
                                         </div>
                                     </div>
 
