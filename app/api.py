@@ -13,6 +13,8 @@ from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
 from flask.ext import login
 from sqlalchemy.orm.session import make_transient
+from .mail_utility import send_email, generate_message
+
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -726,6 +728,7 @@ def update_task_handler(item_id):
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
     validated_data = validate_or_abort(path, update=True)
     updated_item = update_item(path, item_id, validated_data)
+    send_email(g.user.get_email(), generate_message(path, updated_item), 'Vision - Task #{}'.format(updated_item.id))
     return return_json('result', updated_item.serialize())
 
 
