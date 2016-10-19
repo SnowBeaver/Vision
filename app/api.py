@@ -716,6 +716,17 @@ def read_task_handler(item_id):
     return return_json('result', get_item(path, item_id))
 
 
+@api_blueprint.route('/schedule/', methods=['POST'])
+@login_required
+@json_required
+def create_task_handler():
+    path = 'schedule'
+    validated_data = validate_or_abort(path)
+    new_item = add_item(path, validated_data)
+    send_email(g.user.get_email(), generate_message(path, new_item), 'Vision - Task Created #{}'.format(new_item.id))
+    return return_json('result', new_item.id)
+
+
 # Anyone can create a schedule
 # Update schedule
 @api_blueprint.route('/schedule/<int:item_id>', methods=['PUT', 'POST'])
@@ -728,7 +739,7 @@ def update_task_handler(item_id):
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
     validated_data = validate_or_abort(path, update=True)
     updated_item = update_item(path, item_id, validated_data)
-    send_email(g.user.get_email(), generate_message(path, updated_item), 'Vision - Task #{}'.format(updated_item.id))
+    send_email(g.user.get_email(), generate_message(path, updated_item), 'Vision - Task Updated #{}'.format(updated_item.id))
     return return_json('result', updated_item.serialize())
 
 
