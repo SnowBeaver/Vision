@@ -17,14 +17,10 @@ var cellEditProp = {
 
 
 function onRowSelect(row, isSelected){
-    console.log(row);
-    console.log("selected: " + isSelected);
+    
 }
 
 function onAfterSaveCell(row, cellName, cellValue){
-    console.log("Save cell '"+cellName+"' with value '"+cellValue+"'");
-    console.log("Thw whole row :");
-    console.log(row);
 }
 
 const EquipmentList = React.createClass({

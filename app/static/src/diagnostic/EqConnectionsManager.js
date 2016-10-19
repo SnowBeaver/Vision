@@ -258,7 +258,6 @@ var EqConnectionsManager = React.createClass({
     _save: function () {
 
         var data = {"upstream":this.state.items.upstream, "downstream": this.state.items.downstream};
-        console.log("data:", data);
         var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
         return $.authorizedAjax({
             url: url,
@@ -281,8 +280,6 @@ var EqConnectionsManager = React.createClass({
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
-
-        console.log("submit log", this.state);
     },
     hideLoading: function () {
         this.setState({loading: false});

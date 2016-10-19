@@ -158,7 +158,7 @@ $(document).ready(function(){
     }).on('ready.jstree', function (e, data){
 
     }).on('refresh.jstree', function (e, data){
-        //console.log("refresh");
+        
     });
 
     var to = false;
@@ -318,7 +318,6 @@ $(document).ready(function(){
                                         }
 
                                     }).fail(function () {
-                                        console.log(fail);
                                         data.instance.refresh();
                                     });
                                 }
@@ -337,7 +336,6 @@ $(document).ready(function(){
                                         }
 
                                     }).fail(function () {
-                                        console.log(fail);
                                         data.instance.refresh();
                                     });
                                 }
@@ -356,7 +354,6 @@ $(document).ready(function(){
                                         }
 
                                     }).fail(function () {
-                                        console.log(fail);
                                         data.instance.refresh();
                                     });
                                 }
@@ -371,10 +368,8 @@ $(document).ready(function(){
                         "action" : function (node){
                             var inst = $.jstree.reference(node.reference),
                             obj = inst.get_node(node.reference);
-
-                            console.log("Join " + obj.id);
+                            
                             ids = [];
-                            console.log(ids.length);
                             $.each( $('#tree').jstree(true).get_selected('full',true) , function( index , value){
                                     if(value.id != obj.id){
                                         ids[ids.length] = value.id;
@@ -391,7 +386,6 @@ $(document).ready(function(){
                                 }
 
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
 
@@ -436,7 +430,6 @@ $(document).ready(function(){
 
 
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -459,7 +452,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -482,7 +474,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -505,7 +496,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -528,7 +518,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -551,7 +540,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -574,7 +562,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -597,7 +584,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -620,7 +606,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -643,7 +628,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -666,7 +650,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -689,7 +672,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -712,7 +694,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -735,7 +716,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -758,7 +738,6 @@ $(document).ready(function(){
                                         inst.edit(new_node); },0);
                                 });
                             }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -793,7 +772,6 @@ $(document).ready(function(){
                                                 inst.edit(new_node); },0);
                                         });
                                 }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -806,7 +784,6 @@ $(document).ready(function(){
                 {
                     $.each(tmp.create.submenu , function(index, value){
                         if( value.label !== 'Main' ){
-                            //console.log(tmp.create.submenu[index]);
                             delete tmp.create.submenu[index];
                             //delete value;
                             //delete this;
@@ -874,7 +851,6 @@ $(document).ready(function(){
                 var title = $(this).attr('title');
                 if(title != 'undefined'){
                     var id = $(this).attr('id');
-                    <!--console.log(title);-->
                     $("#tree #" + id + "_anchor .jstree-icon").attr({ 'title' : title }).tooltip({
                         track: true
                     });
