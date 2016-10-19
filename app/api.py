@@ -723,7 +723,7 @@ def create_task_handler():
     path = 'schedule'
     validated_data = validate_or_abort(path)
     new_item = add_item(path, validated_data)
-    
+
     email_recipients = [new_item.assigned_to.email, g.user.email]
     send_email(email_recipients, generate_message(path, new_item), 'Vision - Task Created #{}'.format(new_item.id))
     return return_json('result', new_item.id)
