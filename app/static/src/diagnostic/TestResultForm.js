@@ -50,7 +50,7 @@ var TestResultForm = React.createClass({
 
     updateSource: function (source) {
         this.serverRequest = $.authorizedGet(source, function (result) {
-            var arr = (result['result']);
+            var arr = this.sortItemsByKey(result['result'], 'date_analyse');
             var data = [];
             for (var i = 0; i < arr.length; i++) {
                 var item = arr[i];
@@ -75,6 +75,23 @@ var TestResultForm = React.createClass({
             source: source
         });
     },
+
+    sortItemsByKey: function (array, key){
+        return array.sort(function(a, b) {
+            var a = a[key];
+            var b = b[key];
+            if (a === null) {
+                return 1;
+            } else if (b === null) {
+                return -1;
+            } else if (a === b) {
+                return 0;
+            } else {
+                return a < b ? 1 : -1;
+            }
+        });
+    },
+
     render: function () {
 
         if (!this.state.data) {
