@@ -135,21 +135,26 @@ var SyringeNumberSelectField = React.createClass({
             isVisible: false,
         };
     },
+
     isVisible: function () {
         return this.state.isVisible;
     },
+
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
         this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
+
     componentWillUnmount: function () {
         this.serverRequest.abort();
     },
+
     setVisible: function () {
         this.state.isVisible = true;
     },
+
     render: function () {
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
@@ -159,7 +164,6 @@ var SyringeNumberSelectField = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].serial}`}</option>);
         }
-
 
         return (
             <FormGroup>
@@ -211,9 +215,10 @@ const TextField = React.createClass({
         var name = (this.props.name != null) ? this.props.name : "";
         var value = (this.props.value != null) ? this.props.value : "";
         var className = (this.props.className != null) ? this.props.className : "";
+        var showLabel = (this.props.showLabel != null) ? this.props.showLabel : true;
         return (
             <FormGroup className={className}>
-                <ControlLabel>{label}</ControlLabel>
+                {showLabel ? <ControlLabel>{label}</ControlLabel> : null}
                 <FormControl type="text"
                              placeholder={label}
                              name={name}
@@ -309,11 +314,12 @@ var EquipmentTestIdentificationForm = React.createClass({
                                    disabled/>
                     </div>
                     <div className="col-md-2 nopadding padding-right-xs">
-                        <TextField label="Load (MVA)"
-                                   value={data.charge}
-                                   name="charge"
-                                   onChange={this.props.onChange}
-                                   />
+                        <SyringeNumberSelectField source="syringe"
+                                                  label="Syringe &#8470; / Jar &#8470;"
+                                                  name='seringe_num'
+                                                  value={data.seringe_num}
+                                                  onChange={this.props.onChange}
+                        />
                     </div>
                 </div>
                 <div className="row">
@@ -381,19 +387,27 @@ var EquipmentTestIdentificationForm = React.createClass({
                 </div>
                 <div className="row">
                     <div className="col-md-3">
-                        <SyringeNumberSelectField source="syringe"
-                                                  label="Syringe &#8470; / Jar &#8470;"
-                                                  name='seringe_num'
-                                                  value={data.seringe_num}
-                                                  onChange={this.props.onChange}
-                        />
+                        <TextField label="Load (MVA)"
+                                   value={data.charge}
+                                   name="charge"
+                                   showLabel={false}
+                                   onChange={this.props.onChange}
+                                   />
                     </div>
                     <div className="col-md-3">
                         <TextField label="Fluid Temperature (&#8451;)"
                                    name='temperature'
                                    value={data.temperature}
+                                   showLabel={false}
                                    onChange={this.props.onChange}
                                    />
+                    </div>
+                    <div className="col-md-4 nopadding padding-right-xs">
+                        <Checkbox name="transmission"
+                                  checked={data.transmission ? data.transmission: false}
+                                  onChange={this.props.onChange}>
+                            Sent to Laboratory
+                        </Checkbox>
                     </div>
                 </div>
             </div>
@@ -788,10 +802,10 @@ var EquipmentTestForm = React.createClass({
         return {
             loading: false,
             csrf_token: 'not set',
-            fields: ['test_type_id', 'test_reason_id',
-                'status_id', 'temperature', 'lab_contract_id',
-                'sampling_point_id', 'equipment_id', 'lab_id',
-                'fluid_type_id', 'date_analyse', 'test_status_id'],
+            fields: ['test_type_id', 'test_reason_id', 'status_id', 'temperature',
+                     'lab_contract_id', 'sampling_point_id', 'equipment_id', 'lab_id',
+                     'fluid_type_id', 'date_analyse', 'test_status_id', 'transmission',
+                     'charge'],
             testRecommendationFields: ['recommendation_id', 'recommendation_test_type_id'],
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created', 'repair_test_type_id'],
             testDiagnosisFields: ['diagnosis_notes', 'diagnosis_id', 'diagnosis_test_type_id'],
@@ -1091,7 +1105,8 @@ var EquipmentTestForm = React.createClass({
     _onChange: function (e) {
         var data = (this.state.data != null) ? this.state.data : {};
         if (e.target.type == 'checkbox') {
-            data[e.target.name] = e.target.checked || null;
+            // Do not ignore false value (it is not the same as null)
+            data[e.target.name] = null || e.target.checked;
         } else if (e.target.type == 'radio') {
             data[e.target.name] = e.target.value || null;
         } else if (e.target.type == 'select-one') {
