@@ -85,6 +85,12 @@ var TaskList = React.createClass({
             case 'date_start':
                 task.date_start = this._formatDateTime(data[key], 0);
                 break;
+            case 'date_created':
+                task.date_created = this._formatDateTime(data[key], 0);
+                break;
+            case 'date_updated':
+                task.date_updated = this._formatDateTime(data[key], 0);
+                break;
             default:
                 task[key] = data[key];
         }
@@ -283,7 +289,7 @@ var TaskList = React.createClass({
             }
         }
 
-        row.date_updated = moment().utc().toISOString();
+        row.date_updated = this._formatDateTime(moment().utc().toISOString(), 0);
         return true;
     },
 
