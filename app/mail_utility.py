@@ -15,7 +15,10 @@ def send_email(recipients, body, subject='News from Vision', sender=NOREPLY_EMAI
     if LOG_EMAIL:
         app.logger.debug(msg)
     else:
-        mail.send(msg)
+        try:
+            mail.send(msg)
+        except Exception as e:
+            app.logger.exception(e)
 
 
 def generate_message(path, item):
@@ -38,11 +41,11 @@ Updated on: {date_updated}
 """
 
 equipment_tmpl = """
-Equipment health state of {name} has been changed to {status}
+Equipment health state of {name} has been changed
 """
 
 
-def schedule_data(item):
+def schedule_placeholders(item):
     info = {
         'id': item.id,
         'updated_by': g.user.name,      # TODO: Remake - shouldn't be here?
@@ -60,10 +63,9 @@ def schedule_data(item):
     return info
 
 
-def equipment_data(item):
+def equipment_placeholders(item):
     info = {
-        'name': item.name or '',
-        'status': item.status,  #TODO: Get equipment status name
+        'name': item.name or ''
     }
     return info
 
@@ -71,10 +73,10 @@ def equipment_data(item):
 email_dict = {
     'schedule': {
         'tmpl': schedule_tmpl,
-        'item': schedule_data
+        'item': schedule_placeholders
     },
     'equipment': {
         'tmpl': equipment_tmpl,
-        'item': equipment_data
+        'item': equipment_placeholders
     }
 }
