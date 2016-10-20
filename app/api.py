@@ -575,7 +575,7 @@ def update_equipment_handler(item_id):
 
     # Send notifications if only status field is updated
     if len(validated_data) == 1 and validated_data.get('status'):
-        send_email([updated_item.assigned_to.email, g.user.email],
+        send_email([updated_item.assigned_to.email, updated_item.visual_inspection_by.email, g.user.email],
                    generate_message(path, updated_item),
                    'Vision - Equipment health state of {} updated'.format(updated_item.name))
     return return_json('result', updated_item.serialize())
