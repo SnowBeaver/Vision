@@ -182,7 +182,7 @@ var WindingTestForm = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.tableName + '/?test_result_id=' + this.props.testResultId;
-        this.serverRequest = $.get(source, this.addResultToState, 'json');
+        this.serverRequest = $.authorizedGet(source, this.addResultToState, 'json');
     },
 
     _create: function () {
@@ -198,7 +198,7 @@ var WindingTestForm = React.createClass({
             }
             data.push(test)
         }
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/test_result/multi/' + this.props.tableName,
             type: 'POST',
             dataType: 'json',
@@ -210,7 +210,7 @@ var WindingTestForm = React.createClass({
         })
     },
     _delete: function (id) {
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/' + this.props.tableName + '/' + id,
             type: 'DELETE',
         })
@@ -324,7 +324,6 @@ var WindingTestForm = React.createClass({
         selectedRows.map(this.addToDeleteOnSubmit);
         var result = this.refs.table.handleDropRow(selectedRowKeys);
         if( result ) {
-            console.log(result); // error logging
         }
     },
     dataFormatPosition: function(cell, row, formatExtraData, rowIdx){
@@ -362,7 +361,7 @@ var WindingTestForm = React.createClass({
         var tests = this.state.tests;
         var is_valid = true;
         var msg = '';
-        console.log(tests);
+        
         for (var i = 0; i < tests.length; i++) {
             var tap = tests[i];
             for (var j = 0; j < fields.length; j++) {

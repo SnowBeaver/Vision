@@ -34,6 +34,7 @@ be_admin = RoleNeed('admin')
 be_user = RoleNeed('user')
 be_guest = RoleNeed('quest')
 be_blogger = RoleNeed('blogger')
+be_performer = RoleNeed('performer')
 
 # Permissions
 guest_per = Permission(be_guest)
@@ -45,15 +46,21 @@ user_per.description = "User's permissions"
 blogger_per = Permission(be_blogger)
 blogger_per.description = "Blogger's permissions"
 
+performer_per = Permission(be_performer)
+performer_per.description = "Performer's permissions"
+
 admin_per = Permission(be_admin)
 admin_per.description = "Admin's permissions"
 
+admin_or_performer_per = Permission(be_admin, be_performer)
+admin_or_performer_per.description = "Admin's or Performer's permissions"
+
 apps_needs = [
-    be_admin, be_user, be_guest, be_blogger
+    be_admin, be_user, be_guest, be_blogger, be_performer
 ]
 
 apps_permissions = [
-    admin_per, user_per, guest_per, blogger_per
+    admin_per, user_per, guest_per, blogger_per, admin_or_performer_per
 ]
 
 Principal(app)

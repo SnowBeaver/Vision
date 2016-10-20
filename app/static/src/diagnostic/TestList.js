@@ -41,7 +41,7 @@ var TestItem = React.createClass({
 
         var url = '/api/v1.0/test_result/' + data.id;
         var that = this;
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'DELETE',
             dataType: 'json',
@@ -64,7 +64,7 @@ var TestItem = React.createClass({
         var testResultId = data.id;
         var url = '/api/v1.0/test_result/' + testResultId + '/duplicate';
         var that = this;
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',
@@ -98,7 +98,10 @@ var TestItem = React.createClass({
         }
         var test = this.props.data;
         var test_status = test.test_status;
-        var test_type_name = (test.test_type_id == 1) ? 'Fluid' : 'Electrical';
+        var test_type_name = 'Undetermined - click to configure';
+        if  (test.test_type_id) {
+            test_type_name = (test.test_type_id == 1) ? 'Electrical':'Fluid';
+        }
         var performed_by_name = (test.performed_by != null) ? test.performed_by.name : 'undetermined';
 
         return (
@@ -130,10 +133,6 @@ var TestItem = React.createClass({
 
 var TestItemList = React.createClass({
 
-    contextTypes: {
-        router: React.PropTypes.func.isRequired
-    },
-
     handleChange: function (event, index, value) {
         this.setState({
             value: event.target.value
@@ -152,7 +151,7 @@ var TestItemList = React.createClass({
 
     componentDidMount: function () {
         // load test_result and show tests for each equipment
-        // this.serverRequest = $.get(this.props.source, function (result) {
+        // this.serverRequest = $.authorizedGet(this.props.source, function (result) {
         //     items = (result['result']);
         //     this.setState({
         //         items: items
@@ -169,12 +168,6 @@ var TestItemList = React.createClass({
         this.setState({
             showTestForm: true
         })
-    },
-
-    startCampaign: function (e) {
-        e.preventDefault();
-        NotificationManager.success('Campaign has been successfully started');
-        this.context.router.push(this.refs.startCampaign.props.to);
     },
 
     closeTestForm: function () {
@@ -270,15 +263,6 @@ var TestItemList = React.createClass({
                             <Button onClick={this.showTestForm} className="success">Add new test</Button>
                         </FormGroup>
                     </div>
-                    <div className="col-md-3"></div>
-                    <div className="col-md-3">
-                        <FormGroup>
-                            <Link to={"/" + equipment_id}
-                                  className="btn btn-success"
-                                  onClick={this.startCampaign}
-                                ref="startCampaign">Start Campaign</Link>
-                        </FormGroup>
-                    </div>
                 </div>
                     :null}
 
@@ -295,6 +279,10 @@ var TestItemList = React.createClass({
 
 
 var TestList = React.createClass({
+
+    contextTypes: {
+        router: React.PropTypes.object
+    },
 
     handleChange: function (event, index, value) {
         this.setState({
@@ -313,7 +301,7 @@ var TestList = React.createClass({
 
         var campaign_id = this.props.params.campaign;
         var url = '/api/v1.0/test_result/?campaign_id=' + campaign_id;
-        this.serverRequest = $.get(url,
+        this.serverRequest = $.authorizedGet(url,
             function (result) {
 
                 var tests = result['result'];
@@ -340,14 +328,22 @@ var TestList = React.createClass({
         this.componentDidMount();
     },
 
+    startCampaign: function (e) {
+        e.preventDefault();
+        NotificationManager.success('Campaign has been successfully started');
+        this.context.router.push(this.refs.startCampaign.props.to);
+    },
+
     render: function () {
 
         var items = [];
+        var equipment_id;
         for (var key in this.state.equipment) {
+            equipment_id = this.state.equipment[key].id;
             items.push(
                 <Panel
                     key={this.state.equipment[key].id}
-                    eventKey={this.state.equipment[key].id}
+                    
                     header={this.state.equipment[key].name}
                 >
                     <TestItemList data={this.state.tests}
@@ -365,6 +361,16 @@ var TestList = React.createClass({
                         <Accordion>
                             {items}
                         </Accordion>
+                            <div className="row">
+                                <div className="col-md-offset-10 col-md-2">
+                                    <FormGroup className="pull-right">
+                                        <Link to={"/" + equipment_id}
+                                              className="btn btn-success"
+                                              onClick={this.startCampaign}
+                                              ref="startCampaign">Finish Setup</Link>
+                                    </FormGroup>
+                                </div>
+                            </div>
                     </div>
                 </div> : null
         );

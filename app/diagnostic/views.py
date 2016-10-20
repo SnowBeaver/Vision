@@ -20,7 +20,7 @@ class EquipmentView(MyModelView):
     # List of columns that can be sorted.
     column_sortable_list = (
         'id', 'equipment_number', 'equipment_type', 'location_id', 'visual_inspection_by_id',
-        'visual_date', 'norm_id', 'tie_location', 'tie_maintenance_state', 'tie_status'
+        'visual_date', 'norm_id', 'status', 'tie_status'
     )
 
     column_searchable_list = ('equipment_number',)
@@ -32,9 +32,7 @@ class EquipmentView(MyModelView):
         # 'location_id',
         'sibling',
         'modifier',
-        'tie_location',
-        'tie_status',
-        'tie_maintenance_state'
+        'status',
     )
     column_exclude_list = [
         'sibling',
@@ -892,18 +890,18 @@ class EquipmentConnectionView(MySimpleView):
         )
 
 
-class SamplingCardView(MySimpleView):
-    """
-    SamplingCard management view
-    """
-    # List of columns that can be sorted.
-    column_sortable_list = ()
-    column_searchable_list = ()
-
-    def __init__(self, dbsession):
-        super(SamplingCardView, self).__init__(
-            SamplingCard, dbsession, category="Campaign", name="Sampling card"
-        )
+# class SamplingCardView(MySimpleView):
+#     """
+#     SamplingCard management view
+#     """
+#     # List of columns that can be sorted.
+#     column_sortable_list = ()
+#     column_searchable_list = ()
+#
+#     def __init__(self, dbsession):
+#         super(SamplingCardView, self).__init__(
+#             SamplingCard, dbsession, category="Campaign", name="Sampling card"
+#         )
 
 
 class TestRecommendationView(MySimpleView):
@@ -1326,7 +1324,8 @@ simple_views = [
     FoundationConditionView, ConnectionConditionView, TapFilterConditionView,
     OverallConditionView, GasketConditionView, ValveConditionView,
     PumpConditionView, ContractStatusView, TapCounterStatusView, GasLevelView,
-    FluidLevelView, SamplingCardView, TestRecommendationView, TestSamplingCardView
+    FluidLevelView, TestRecommendationView, TestSamplingCardView,
+    # SamplingCardView,
 ]
 test_views = [
     BushingTestView, WindingTestView, VisualInspectionTestView, InsulationResistanceTestView,

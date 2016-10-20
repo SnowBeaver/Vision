@@ -17,14 +17,10 @@ var cellEditProp = {
 
 
 function onRowSelect(row, isSelected){
-    console.log(row);
-    console.log("selected: " + isSelected);
+    
 }
 
 function onAfterSaveCell(row, cellName, cellValue){
-    console.log("Save cell '"+cellName+"' with value '"+cellValue+"'");
-    console.log("Thw whole row :");
-    console.log(row);
 }
 
 const EquipmentList = React.createClass({
@@ -38,7 +34,7 @@ const EquipmentList = React.createClass({
         }
     },
     componentDidMount: function(){
-        this.serverRequest = $.get(this.state.source, function (result){
+        this.serverRequest = $.authorizedGet(this.state.source, function (result){
 
             var arr = (result['result']);
             var data = [];
@@ -93,7 +89,7 @@ const EquipmentList = React.createClass({
     
     updateSource: function(source){ 
         // console.log('list triggered', source);
-        this.serverRequest = $.get(source, function (result){ 
+        this.serverRequest = $.authorizedGet(source, function (result){
             var arr = (result['result']);
             var data = [];
             for (var i=0;i < arr.length; i++) {

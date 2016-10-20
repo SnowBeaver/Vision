@@ -3,8 +3,9 @@ from fabric.api import *
 from unipath import Path
 from contextlib import contextmanager
 from fabric.contrib.files import exists
-from fabric.api import settings
-
+from fabric.api import settings, hosts
+from fabric.operations import local
+from fabric.context_managers import lcd
 
 class FabricException(Exception):
     pass
@@ -228,17 +229,16 @@ def update_flaskbb():
 
 
 def update_remote(branch='master'):
+    sudo('service supervisor stop')
     with cd(env.directory):
         run('git pull origin %s' % branch)
         with source_virtualenv():
             run(env.pip + ' install -r requirements.txt')
             run('find . -name "*.pyc" -exec rm -rf {} \;')
             # run('python -c "from app import db;db.create_all()"')
-            sudo('service supervisor stop')
             run('python manage.py db upgrade')
-            update_static()
-            restart_services()
-            sudo('service supervisor start')
+    update_static()
+    restart_services()
 
 
 def setup_redis():
@@ -348,8 +348,8 @@ def generate_apidoc():
 
 
 def test():
-    tests = Path(env.directory, 'tests')
-    with cd(tests):
-        run('python -m unittest test_unittest')
-        run('python -m unittest test_unittest.TestStringMethods')
-        run('python -m unittest test_unittest.TestStringMethods.test_upper')
+    with lcd('tests'):
+        # run('python -m unittest test_unittest')
+        # run('python -m unittest test_unittest.TestStringMethods')
+        # run('python -m unittest test_unittest.TestStringMethods.test_upper')
+        local('python test_api.py')

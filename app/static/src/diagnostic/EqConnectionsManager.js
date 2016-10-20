@@ -14,7 +14,7 @@ var UpstreamSelectFields = React.createClass({
         };
     },
     componentDidMount: function () {
-        this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
+        this.serverRequest = $.authorizedGet("/api/v1.0/equipment/", function (result) {
             this.setState({
                 equipment: result['result']
             });
@@ -36,7 +36,7 @@ var UpstreamSelectFields = React.createClass({
         this.props.upstream.splice(this.props.upstream.indexOf(e), 1);
         var upstreams = this.props.upstream;
         this.setState({upstreams});
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'DELETE',
             success: function (data) {
@@ -112,7 +112,7 @@ var DownstreamSelectFields = React.createClass({
         };
     },
     componentDidMount: function () {
-        this.serverRequest = $.get("/api/v1.0/equipment/", function (result) {
+        this.serverRequest = $.authorizedGet("/api/v1.0/equipment/", function (result) {
             this.setState({
                 equipment: result['result']
             });
@@ -133,7 +133,7 @@ var DownstreamSelectFields = React.createClass({
         this.props.downstream.splice(this.props.downstream.indexOf(e), 1);
         var downstreams = this.props.downstream;
         this.setState({downstreams});
-        $.ajax({
+        $.authorizedAjax({
             url: url,
             type: 'DELETE',
             success: function (data) {
@@ -213,7 +213,7 @@ var SelectField = React.createClass({
     },
     componentDidMount: function () {
         var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },
@@ -258,9 +258,8 @@ var EqConnectionsManager = React.createClass({
     _save: function () {
 
         var data = {"upstream":this.state.items.upstream, "downstream": this.state.items.downstream};
-        console.log("data:", data);
         var url = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
-        return $.ajax({
+        return $.authorizedAjax({
             url: url,
             type: 'POST',
             dataType: 'json',
@@ -281,8 +280,6 @@ var EqConnectionsManager = React.createClass({
         xhr.done(this._onSuccess)
             .fail(this._onError)
             .always(this.hideLoading)
-
-        console.log("submit log", this.state);
     },
     hideLoading: function () {
         this.setState({loading: false});
@@ -301,7 +298,7 @@ var EqConnectionsManager = React.createClass({
 
     componentDidMount: function () {
         var source = '/api/v1.0/equipment/' + this.state.equipment_id + '/up_down_stream/';
-        this.serverRequest = $.get(source, function (result) {
+        this.serverRequest = $.authorizedGet(source, function (result) {
             this.setState({items: (result['result'])});
         }.bind(this), 'json');
     },

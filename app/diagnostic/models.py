@@ -192,25 +192,25 @@ class Contract(db.Model):
                 }
 
 
-class SamplingCard(db.Model):
-    __tablename__ = 'sampling_card'
-
-    id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
-    # user 2 has to print small form
-    card_print = db.Column(db.Boolean)
-    # SamplingCardGathered: Used for printing the card in batch
-    card_gathered = db.Column(db.Integer)
-
-    def __repr__(self):
-        return self.id
-
-    def serialize(self):
-        """Return object data in easily serializeable format"""
-        return {'id': self.id,
-                'card_gathered': self.sampling_card_gathered,
-                'card_print': self.sampling_card_print,
-                }
+# class SamplingCard(db.Model):
+#     __tablename__ = 'sampling_card'
+#
+#     id = db.Column(db.Integer(), primary_key=True, nullable=False)
+#     # SamplingcardPrint: Indicate if the sampling cart need to be printed to fill in the field information
+#     # user 2 has to print small form
+#     card_print = db.Column(db.Boolean)
+#     # SamplingCardGathered: Used for printing the card in batch
+#     card_gathered = db.Column(db.Integer)
+#
+#     def __repr__(self):
+#         return self.id
+#
+#     def serialize(self):
+#         """Return object data in easily serializeable format"""
+#         return {'id': self.id,
+#                 'card_gathered': self.sampling_card_gathered,
+#                 'card_print': self.sampling_card_print,
+#                 }
 
 
 class Campaign(db.Model):
@@ -1492,9 +1492,8 @@ class Equipment(db.Model):
     # downstream4 = db.Column(db.String(100))  # Downstream4. Downstream device name
     # downstream5 = db.Column(db.String(100))  # Downstream5. Downstream device name
 
-    tie_location = db.Column(db.Boolean)  # TieLocation. Tie device location
-    tie_maintenance_state = db.Column(db.Integer)  # TieMaintenanceState. Tie is open or closed during maintenance
-    tie_status = db.Column(db.Integer)  # TieAnalysisState.
+    tie_status = db.Column(db.Integer)  # Tie State (Open or Closed (Breaker, Tap changer)).
+    status = db.Column(db.Integer)  # Equipment health state.
 
     phys_position = db.Column(db.Integer)
 
@@ -1572,9 +1571,8 @@ class Equipment(db.Model):
                 # 'downstream3': self.downstream3,
                 # 'downstream4': self.downstream4,
                 # 'downstream5': self.downstream5,
-                'tie_location': self.tie_location,
-                'tie_maintenance_state': self.tie_maintenance_state,
                 'tie_status': self.tie_status,
+                'status': self.status,
                 'phys_position': self.phys_position,
                 'tension4': self.tension4,
                 'validated': self.validated,
@@ -1835,10 +1833,12 @@ class TestSchedule(db.Model):
     # prof_mec = Column(db.String(25))  # Prof_Mec.  Which mechanical tests profile should be used
 
     test_recommendation_id = db.Column(db.Integer, db.ForeignKey("test_recommendation.id"), nullable=False)
-    test_recommendation = db.relationship('TestRecommendation', backref='test_schedule')
+    test_recommendation = db.relationship('TestRecommendation', backref='schedule')
 
     status_id = db.Column(db.Integer, db.ForeignKey("task_status.id"))
-    status = db.relationship('TaskStatus', backref='test_schedule')
+    status = db.relationship('TaskStatus', backref='schedule')
+
+    parent_id = db.Column(db.Integer, db.ForeignKey("schedule.id"), nullable=True)
 
     priority = db.Column(db.Integer, nullable=False)  # WorkOrderNum
     date_updated = db.Column(db.DateTime)
@@ -1860,6 +1860,7 @@ class TestSchedule(db.Model):
                 'assigned_to': self.assigned_to and self.assigned_to.serialize(),
                 'test_recommendation_id': self.test_recommendation_id,
                 'test_recommendation': self.test_recommendation and self.test_recommendation.serialize(),
+                'parent_id': self.parent_id,
                 'status_id': self.status_id,
                 'status': self.status and self.status.serialize(),
                 'recurring': self.recurring,
