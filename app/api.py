@@ -757,10 +757,12 @@ def update_task_handler(item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
+
+    previous_assigned_to = get_item(path, item_id)['assigned_to']['email']
     validated_data = validate_or_abort(path, update=True)
     updated_item = update_item(path, item_id, validated_data)
 
-    email_recipients = [updated_item.assigned_to.email, g.user.email]
+    email_recipients = [previous_assigned_to, updated_item.assigned_to.email, g.user.email]
     send_email(email_recipients, generate_message(path, updated_item), 'Vision - Task Updated #{}'.format(updated_item.id))
     return return_json('result', updated_item.serialize())
 
