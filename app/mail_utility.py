@@ -7,18 +7,22 @@ from app import app, mail
 
 NOREPLY_EMAIL = app.config['NOREPLY_EMAIL']
 LOG_EMAIL = app.config.get('LOG_EMAIL', False)
+MAIL_SERVER = app.config.get('MAIL_SERVER')
+DEBUG = app.config.get('DEBUG')
 
 
 def send_email(recipients, body, subject='News from Vision', sender=NOREPLY_EMAIL):
     """Send email"""
     msg = Message(subject=subject, sender=sender, body=body, recipients=recipients)
+    try:
+        mail.send(msg)
+    except Exception as e:
+        app.logger.exception(e)
+        if DEBUG:
+            raise
+
     if LOG_EMAIL:
         app.logger.debug(msg)
-    else:
-        try:
-            mail.send(msg)
-        except Exception as e:
-            app.logger.exception(e)
 
 
 def generate_message(path, item):
