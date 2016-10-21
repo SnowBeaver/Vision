@@ -33,14 +33,26 @@ var Home = React.createClass({
     },
 
     onTreeNodeClick: function (treeItem) {
-        // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
-        var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
-        this.loadEquipment(id);
+        if (treeItem.text == 'Vision Diagnostic') {
+            this.loadAssignedTasks(localStorage.getItem('Id'));
+        } else {
+            // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
+            var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
+            this.loadEquipment(id);
+        }
     },
 
     loadEquipment: function (id) {
         var src = '/api/v1.0/test_result/?equipment_id=' + id;
 
+        this.setState({
+            source: src
+        });
+        this.refs.testResultList.updateSource(src);
+    },
+
+    loadAssignedTasks: function (performedById) {
+        var src = '/api/v1.0/test_result/?performed_by_id=' + performedById;
         this.setState({
             source: src
         });
