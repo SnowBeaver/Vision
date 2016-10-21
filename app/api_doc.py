@@ -8373,3 +8373,92 @@ to the currently logged in user or are private.
 @apiUse DelItemSuccess
 @apiUse Error404
 """
+
+# Test repair note
+"""
+@api {get} /test_repair_note/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_repair_note/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_repair_note/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_repair_note/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "description": "description",
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String}        description
+@apiSuccess {String}        remark
+@apiSuccess {String}        sample
+@apiSuccess {Integer}       user_id
+@apiSuccess {Dict}          user                see: user->get an item
+@apiSuccess {String}        date_created
+@apiSuccess {Integer}       test_result_id
+@apiSuccess {Dict}          test_result         see: test_result->get an item
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type           see: test_type->get an item
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_repair_note/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup create_test_repair_note_handler
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"test_result_id":1, "test_type_id": 1}' \
+         http://localhost:8001/api/v1.0/test_repair_note/
+
+@apiParam {Integer}       id
+@apiParam {String}        description
+@apiParam {String}        remark
+@apiParam {String}        sample
+@apiParam {Integer}       user_id
+@apiParam {String}        date_created        format "2016-07-29 17:52:19"
+@apiParam {Integer}       test_result_id
+@apiParam {Integer}       test_type_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_repair_note/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"description": "description updated"}'\
+    http://localhost:8001/api/v1.0/test_repair_note/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_repair_note/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_repair_note/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
