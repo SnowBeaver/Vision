@@ -100,7 +100,7 @@ var TestItem = React.createClass({
         var test_status = test.test_status;
         var test_type_name = 'Undetermined - click to configure';
         if  (test.test_type_id) {
-            test_type_name = (test.test_type_id == 1) ? 'Electrical':'Fluid';
+            test_type_name = (test.test_type_id == 1) ? 'Fluid':'Electrical';
         }
         var performed_by_name = (test.performed_by != null) ? test.performed_by.name : 'undetermined';
 
