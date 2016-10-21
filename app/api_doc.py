@@ -3353,7 +3353,7 @@ to the currently logged in user or are private.
         }
     }
 
-@apiSuccess {Integer}        id
+@apiSuccess {Integer}       id
 @apiSuccess {String(50)}    name
 @apiSuccess {String(50)}    code
 @apiSuccess {String}        description
@@ -3373,8 +3373,8 @@ to the currently logged in user or are private.
 
 @apiParam   {String(50)}    name
 @apiParam   {String(50)}    code
-@apiParam   {String}    description
-@apiParam   {Integer}    test_type_id
+@apiParam   {String}        description
+@apiParam   {Integer}       test_type_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -3436,13 +3436,14 @@ to the currently logged in user or are private.
 
 @apiSuccess {Integer}       id
 @apiSuccess {Integer}       recommendation_id
-@apiSuccess {Dict}          recommendation      see: recommandation->get an item
+@apiSuccess {Dict}          recommendation      see: recommendation->get an item
 @apiSuccess {String}        recommendation_notes
 @apiSuccess {Integer}       user_id
 @apiSuccess {Dict}          user                see: user->get an item
 @apiSuccess {String}        date_created
 @apiSuccess {String}        date_updated
 @apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type           see: test_type->get an item
 @apiSuccess {Integer}       test_result_id
 @apiUse GetItemSuccess
 @apiUse Error404
