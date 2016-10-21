@@ -8422,8 +8422,8 @@ to the currently logged in user or are private.
 """
 @api {post} /test_repair_note/ Add a new item
 @apiVersion 1.0.0
-@apiName add_item
-@apiGroup create_test_repair_note_handler
+@apiName create_test_repair_note_handler
+@apiGroup test_repair_note
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST -d '{"test_result_id":1, "test_type_id": 1}' \
          http://localhost:8001/api/v1.0/test_repair_note/
@@ -8458,6 +8458,79 @@ to the currently logged in user or are private.
 @apiGroup test_repair_note
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/test_repair_note/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+# Task status
+"""
+@api {get} /task_status/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup task_status
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/task_status/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /task_status/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/task_status/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "New"
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String(20)}    name
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /task_status/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name": "Ready for deploy"}' \
+         http://localhost:8001/api/v1.0/task_status/
+
+@apiParam {Integer}       id
+@apiParam {String(50)}    name
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /task_status/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "Ready for testing"}'\
+    http://localhost:8001/api/v1.0/task_status/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /task_status/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/task_status/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
