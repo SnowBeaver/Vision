@@ -8202,3 +8202,96 @@ to the currently logged in user or are private.
 @apiUse DelItemSuccess
 @apiUse Error404
 """
+
+
+# diagnosis
+"""
+@api {get} /diagnosis/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/diagnosis/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /diagnosis/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/diagnosis/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "some name",
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String(50)}    name
+@apiSuccess {String(50)}    code
+@apiSuccess {String}        description
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type       see: test_type->get an item
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /diagnosis/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name"}' \
+         http://localhost:8001/api/v1.0/diagnosis/
+
+@apiParam   {String(50)}    name
+@apiParam   {String(50)}    code
+@apiParam   {String}        description
+@apiParam   {Integer}       test_type_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {post} /diagnosis/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name": "some other name"}'\
+    http://localhost:8001/api/v1.0/diagnosis/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /diagnosis/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    http://localhost:8001/api/v1.0/diagnosis/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /diagnosis/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/diagnosis/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
