@@ -387,9 +387,12 @@ doc = ApiDoc(app=api)
 @apiUse Error400
 """
 """
-@api {put} /equipment/:id Update an item by id
+@api {put}/{post} /equipment/:id Update an item by id. If only status field changed,
+                                 send email notifications to the user who updated the
+                                 equipment, the user who is assigned to the equipment
+                                 and the user who is doing visual inspection
 @apiVersion 1.0.0
-@apiName update_item
+@apiName update_equipment_handler
 @apiGroup equipment
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"location_id":5}' http://localhost:8001/api/v1.0/equipment/
@@ -871,7 +874,7 @@ doc = ApiDoc(app=api)
 """
 @api {post} /electrical_profile Add a new item
 @apiVersion 1.0.0
-@apiName add_item
+@apiName create_electrical_profile_handler
 @apiGroup electrical_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
@@ -996,7 +999,7 @@ doc = ApiDoc(app=api)
 """
 @api {post} /fluid_profile Add a new item
 @apiVersion 1.0.0
-@apiName add_item
+@apiName create_fluid_profile_handler
 @apiGroup fluid_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
@@ -3451,8 +3454,8 @@ to the currently logged in user or are private.
 """
 @api {post} /test_recommendation/ Add a new item
 @apiVersion 1.0.0
-@apiName add_item
-@apiGroup create_test_recommendation_handler
+@apiName create_test_recommendation_handler
+@apiGroup test_recommendation
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST -d '{"recommendation_id":1}' \
          http://localhost:8001/api/v1.0/test_recommendation/
@@ -8202,7 +8205,7 @@ to the currently logged in user or are private.
                                 the user who has been previously assigned to the task and
                                 the user who is assigned to the task after update
 @apiVersion 1.0.0
-@apiName update_item
+@apiName update_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"test_recommendation_id": 3}'\
