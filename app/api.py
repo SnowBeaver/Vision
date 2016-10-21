@@ -184,12 +184,20 @@ def get_items(path, args):
     items_model = get_model_by_path(path)
     if args:
         kwargs = {
-            k: v for k,v in args.items() if hasattr(items_model, k)
+            k: v for k, v in args.items() if hasattr(items_model, k)
+                 or (k == 'campaign__created_by_id' and items_model == TestResult)
                  or abort(400, 'Wrong attribute: {}'.format(k))
         }
         if items_model == Campaign and 'equipment_id' in kwargs:
-            campaing_ids = {item.campaign_id for item in db.session.query(TestResult).filter_by(**kwargs)}
-            return [item.serialize() for item in db.session.query(Campaign).filter(Campaign.id.in_(campaing_ids))]
+            campaign_ids = {item.campaign_id for item in db.session.query(TestResult).filter_by(**kwargs)}
+            return [item.serialize() for item in db.session.query(Campaign).filter(Campaign.id.in_(campaign_ids))]
+
+        if 'campaign__created_by_id' in kwargs:
+            created_by_id = kwargs.pop('campaign__created_by_id')
+            return [item.serialize() for item in db.session.query(items_model)
+                                                           .filter_by(**kwargs)
+                                                           .outerjoin(items_model.campaign)
+                                                           .filter(Campaign.created_by_id == created_by_id)]
 
         return [item.serialize() for item in db.session.query(items_model).filter_by(**kwargs)]
     return [item.serialize() for item in db.session.query(items_model).all()]
@@ -532,7 +540,7 @@ def delete_item_handler(path, item_id):
 @login_required
 def get_auth_token():
     token = g.user.generate_auth_token()
-    return jsonify({'token': token.decode('ascii')})
+    return jsonify({'token': token.decode('ascii'), 'user_id': g.user.get_id()})
 
 
 # Get fields from corresponding table of specified equipment type

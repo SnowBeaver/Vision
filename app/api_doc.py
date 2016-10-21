@@ -1091,6 +1091,9 @@ doc = ApiDoc(app=api)
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/test_result/
 
+Can filter also by:
+@apiParam {Integer}   campaign__created_by_id
+
 @apiUse GetItemsSuccess
 @apiUse Error404
 """
