@@ -124,7 +124,9 @@ var TestResultForm = React.createClass({
                     <TableHeaderColumn dataField="test_status" dataSort={true}>Analysis stage</TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="analysis_number"
-                                       isKey={true}>Analysis Nr</TableHeaderColumn>
+                                       filter={{type: "TextFilter", placeholder: "Analysis number"}}
+                                       isKey={true}>Analysis Nr
+                    </TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="serial"
                                        filter={{type: "TextFilter", placeholder: "Please enter a value"}}
