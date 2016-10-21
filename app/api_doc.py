@@ -3452,7 +3452,7 @@ to the currently logged in user or are private.
 @api {post} /test_recommendation/ Add a new item
 @apiVersion 1.0.0
 @apiName add_item
-@apiGroup test_recommendation
+@apiGroup create_test_recommendation_handler
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST -d '{"recommendation_id":1}' \
          http://localhost:8001/api/v1.0/test_recommendation/
