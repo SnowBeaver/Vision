@@ -157,7 +157,7 @@ var Home = React.createClass({
     onCampaignFilterChange: function (e) {
         var value = e.target.value;
         this.setState({campaignId: value});
-        this.loadEquipment(this.state.equipmentId, value);
+        this.loadEquipment(this.state.equipmentId || 0, value);
     },
 
     render: function () {
