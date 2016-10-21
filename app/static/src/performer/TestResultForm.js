@@ -19,14 +19,9 @@ var cellEditProp = {
 
 
 function onRowSelect(row, isSelected) {
-    console.log(row);
-    console.log("selected: " + isSelected);
 }
 
 function onAfterSaveCell(row, cellName, cellValue) {
-    console.log("Save cell '" + cellName + "' with value '" + cellValue + "'");
-    console.log("Thw whole row :");
-    console.log(row);
 }
 
 
@@ -49,7 +44,6 @@ var TestResultForm = React.createClass({
     },
 
     onRowClick: function (row) {
-        console.log('row clicked', row);
         this.setState({showEquipmentTestForm: true, selectedRowId: row.id});
     },
 
@@ -95,29 +89,48 @@ var TestResultForm = React.createClass({
                 <BootstrapTable data={this.state.data}
                                 cellEdit={cellEditProp}
                                 striped={true}
+                                condensed={true}
                                 hover={true}
                                 selectRow={selectRowProp}
                                 search={true}
                                 updateSource={this.updateSource}
-                                options={options}
-                >
-                    <TableHeaderColumn editable={false} dataField="id" hidden={true}>Id</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="date" dataSort={true}>Acquisition
-                        Date</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="reason" dataSort={true}>Reason</TableHeaderColumn>
+                                options={options}>
+                    <TableHeaderColumn editable={false} dataField="id" hidden={true} width="15">Id</TableHeaderColumn>
+                    <TableHeaderColumn editable={false}
+                                       dataField="date"
+                                       dataSort={true}
+                                       width="95"
+                                       dataFormat={this._formatDateTime}>Acquisition Date
+                    </TableHeaderColumn>
+                    <TableHeaderColumn editable={false}
+                                       dataField="reason"
+                                       dataSort={true}
+                                       width="85">Reason
+                    </TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="type" dataSort={true}>Type</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="contract"
+                    <TableHeaderColumn editable={false}
+                                       dataField="contract"
                                        filter={{type: "TextFilter", placeholder: "Contract number"}}
-                                       dataSort={true}>Contract No.</TableHeaderColumn>
-                    <TableHeaderColumn dataField="test_status" dataSort={true}>Analysis stage</TableHeaderColumn>
+                                       dataSort={true}
+                                       width="85">Contract No.
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="test_status" dataSort={true} width="155">Analysis stage</TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="analysis_number"
-                                       isKey={true}>Analysis Nr</TableHeaderColumn>
+                                       filter={{type: "TextFilter", placeholder: "Analysis number"}}
+                                       isKey={true}
+                                       width="85">Analysis Nr
+                    </TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="serial"
                                        filter={{type: "TextFilter", placeholder: "Please enter a value"}}
-                                       dataSort={true}>Serial No.</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="equipment_number">Equipment No.</TableHeaderColumn>
+                                       dataSort={true}
+                                       width="80">Serial No.
+                    </TableHeaderColumn>
+                    <TableHeaderColumn editable={false}
+                                       dataField="equipment_number"
+                                       width="80">Equipment No.
+                    </TableHeaderColumn>
                 </BootstrapTable>
                 <Modal show={this.state.showEquipmentTestForm}>
                     <EquipmentTestForm handleClose={this.closeEquipmentTestForm}
