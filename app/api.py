@@ -13,6 +13,8 @@ from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
 from flask.ext import login
 from sqlalchemy.orm.session import make_transient
+from .mail_utility import send_email, generate_message
+
 
 api = Flask(__name__, static_url_path='/app/static')
 api.config.from_object('config')
@@ -561,6 +563,27 @@ def create_equipment_handler():
     return return_json('result', new_item.id)
 
 
+# Update equipment
+@api_blueprint.route('/equipment/<int:item_id>', methods=['PUT', 'POST'])
+@login_required
+@json_required
+def update_equipment_handler(item_id):
+    path = 'equipment'
+    abort_if_wrong_id(item_id)
+    validated_data = validate_or_abort(path, update=True)
+    updated_item = update_item(path, item_id, validated_data)
+
+    # Send notifications if only status field is updated
+    if len(validated_data) == 1 and validated_data.get('status'):
+        email_recipients = [updated_item.assigned_to.email,
+                            updated_item.visual_inspection_by.email,
+                            g.user.email]
+        send_email(email_recipients,
+                   generate_message(path, updated_item),
+                   'Vision - Equipment health state of {} updated'.format(updated_item.name))
+    return return_json('result', updated_item.serialize())
+
+
 # Create equipment upstreams and downstreams
 @api_blueprint.route('/equipment/<int:item_id>/up_down_stream/', methods=['POST'])
 @login_required
@@ -714,6 +737,19 @@ def read_task_handler(item_id):
     return return_json('result', get_item(path, item_id))
 
 
+@api_blueprint.route('/schedule/', methods=['POST'])
+@login_required
+@json_required
+def create_task_handler():
+    path = 'schedule'
+    validated_data = validate_or_abort(path)
+    new_item = add_item(path, validated_data)
+
+    email_recipients = [new_item.assigned_to.email, g.user.email]
+    send_email(email_recipients, generate_message(path, new_item), 'Vision - Task Created #{}'.format(new_item.id))
+    return return_json('result', new_item.id)
+
+
 # Anyone can create a schedule
 # Update schedule
 @api_blueprint.route('/schedule/<int:item_id>', methods=['PUT', 'POST'])
@@ -724,8 +760,13 @@ def update_task_handler(item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
+
+    previous_assigned_to = get_item(path, item_id)['assigned_to']['email']
     validated_data = validate_or_abort(path, update=True)
     updated_item = update_item(path, item_id, validated_data)
+
+    email_recipients = [previous_assigned_to, updated_item.assigned_to.email, g.user.email]
+    send_email(email_recipients, generate_message(path, updated_item), 'Vision - Task Updated #{}'.format(updated_item.id))
     return return_json('result', updated_item.serialize())
 
 
