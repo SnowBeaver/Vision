@@ -8261,18 +8261,6 @@ to the currently logged in user or are private.
 @apiUse Error400
 """
 """
-@api {post} /diagnosis/:id Update an item
-@apiVersion 1.0.0
-@apiName update_item
-@apiGroup diagnosis
-@apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X POST -d '{"name": "some other name"}'\
-    http://localhost:8001/api/v1.0/diagnosis/1
-
-@apiUse PutItemSuccess
-@apiUse Error400
-"""
-"""
 @api {put} /diagnosis/:id Update an item
 @apiVersion 1.0.0
 @apiName update_item
@@ -8291,6 +8279,95 @@ to the currently logged in user or are private.
 @apiGroup diagnosis
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/diagnosis/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+# Test diagnosis
+"""
+@api {get} /test_diagnosis/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_diagnosis/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_diagnosis/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_diagnosis/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "diagnosis_id": 1,
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       diagnosis_id
+@apiSuccess {Dict}          diagnosis           see: diagnosis->get an item
+@apiSuccess {String}        diagnosis_notes
+@apiSuccess {Integer}       user_id
+@apiSuccess {Dict}          user                see: user->get an item
+@apiSuccess {String}        date_created
+@apiSuccess {String}        date_updated
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type           see: test_type->get an item
+@apiSuccess {Integer}       test_result_id
+@apiSuccess {Dict}          test_result         see: test_result->get an item
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_diagnosis/ Add a new item
+@apiVersion 1.0.0
+@apiName create_test_diagnosis_handler
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"diagnosis_id":1}' \
+         http://localhost:8001/api/v1.0/test_diagnosis/
+
+@apiParam {Integer}       diagnosis_id
+@apiParam {String}        diagnosis_notes
+@apiParam {Integer}       user_id
+@apiParam {String}        date_created      format "2016-07-29 17:52:19"
+@apiParam {String}        date_updated      format "2016-07-29 17:52:19"
+@apiParam {Integer}       test_type_id
+@apiParam {Integer}       test_result_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_diagnosis/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"diagnosis_id":2}'\
+    http://localhost:8001/api/v1.0/test_diagnosis/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_diagnosis/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_diagnosis/3
 
 @apiUse DelItemSuccess
 @apiUse Error404
