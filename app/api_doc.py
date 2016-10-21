@@ -8107,13 +8107,13 @@ to the currently logged in user or are private.
 """
 
 
-# TODO has no id
 # schedule
 """
 @apiIgnore
-@api {get} /schedule/ Get a list of items
+@api {get} /schedule/ Get a list of items. Return all items if user is admin,
+                      otherwise return the ones which belong to the user
 @apiVersion 1.0.0
-@apiName get_items
+@apiName read_tasks_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/schedule/
@@ -8123,9 +8123,10 @@ to the currently logged in user or are private.
 """
 """
 @apiIgnore
-@api {get} /schedule/:id Get an item by id
+@api {get} /schedule/:id Get an item by id. Return any item if user is admin,
+                         otherwise return the item only if it belongs to the user
 @apiVersion 1.0.0
-@apiName get_item
+@apiName read_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/schedule/1
@@ -8135,57 +8136,76 @@ to the currently logged in user or are private.
     Content-Type: application/json
     {
         "result": {
-            "equipment_id": 1,
+            "id":
+            "parent_id": 1,
             ...
         }
     }
 
-@apiSuccess {Integer}    equipment_id
-@apiSuccess {Datetime}   start_date
+@apiSuccess {Integer}    id
+@apiSuccess {Datetime}   date_start
 @apiSuccess {Integer}    period_years
 @apiSuccess {Integer}    period_months
 @apiSuccess {Integer}    period_days
 @apiSuccess {Integer}    assigned_to_id
+@apiSuccess {Dict}       assigned_to                see: user->get an item
 @apiSuccess {Boolean}    recurring
 @apiSuccess {Integer}    notify_before_in_days
 @apiSuccess {String}     description
-@apiSuccess {Integer}    tests_to_perform
+@apiSuccess {Integer}    test_recommendation_id
+@apiSuccess {Dict}       test_recommendation        see: test_recommendation->get an item
+@apiSuccess {Integer}    priority
 @apiSuccess {Integer}    order
+@apiSuccess {Datetime}   date_updated
+@apiSuccess {Datetime}   date_created
+@apiSuccess {Integer}    status_id
+@apiSuccess {Dict}       status                     see: task_status->get an item
+@apiSuccess {Integer}    parent_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
 """
-@api {post} /schedule/ Add a new item
+@api {post} /schedule/ Add a new item. Allow any user to create a new item.
+                       Send email notifications to the user who created the
+                       new task and to the user who is assigned to the task
 @apiVersion 1.0.0
-@apiName add_item
+@apiName create_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" \
-         -X POST -d '{"equipment_id":2, "start_date":"2016-07-29 17:52:19", "assigned_to_id":3, "order":5}' \
+         -X POST -d '{"test_recommendation_id":2, "start_date":"2016-07-29 17:52:19", "assigned_to_id":3, "priority":5}' \
          http://localhost:8001/api/v1.0/schedule/
 
-@apiParam   {Integer}    equipment_id           required
-@apiParam   {Datetime}   start_date             required    format "2016-07-29 17:52:19"
-@apiParam   {Integer}    period_years
-@apiParam   {Integer}    period_months
-@apiParam   {Integer}    period_days
-@apiParam   {Integer}    assigned_to_id         required
-@apiParam   {Boolean}    recurring
-@apiParam   {Integer}    notify_before_in_days
-@apiParam   {String}     description
-@apiParam   {Integer}    tests_to_perform
-@apiParam   {Integer}    order                  required
+@apiParam {Integer}    id
+@apiParam {Datetime}   date_start                       required        format "2016-07-29 17:52:19"
+@apiParam {Integer}    period_years
+@apiParam {Integer}    period_months
+@apiParam {Integer}    period_days
+@apiParam {Integer}    assigned_to_id                   required
+@apiParam {Boolean}    recurring
+@apiParam {Integer}    notify_before_in_days
+@apiParam {String}     description
+@apiParam {Integer}    test_recommendation_id           required
+@apiParam {Integer}    priority                         required
+@apiParam {Integer}    order
+@apiParam {Datetime}   date_updated                                     format "2016-07-29 17:52:19"
+@apiParam {Datetime}   date_created                                     format "2016-07-29 17:52:19"
+@apiParam {Integer}    status_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
 """
 @apiIgnore
-@api {put} /schedule/:id Update an item
+@api {put}/{post} /schedule/:id Update an item. Allow to update any item if user is admin,
+                                or only if the item belongs to the user.
+                                Send email notifications to the user who updated the task,
+                                the user who has been previously assigned to the task and
+                                the user who is assigned to the task after update
 @apiVersion 1.0.0
 @apiName update_item
 @apiGroup schedule
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"equipment_id": 3}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"test_recommendation_id": 3}'\
     http://localhost:8001/api/v1.0/schedule/1
 
 @apiUse PutItemSuccess
@@ -8193,9 +8213,10 @@ to the currently logged in user or are private.
 """
 """
 @apiIgnore
-@api {delete} /schedule/:id Delete an item
+@api {delete} /schedule/:id Delete an item. Allow to delete any item if user is admin,
+                            or only if the item belongs to the user
 @apiVersion 1.0.0
-@apiName delete_item
+@apiName delete_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/schedule/3
