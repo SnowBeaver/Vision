@@ -9,6 +9,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {Link} from 'react-router'
 import {DATETIME_FORMAT} from '../appConstants.js';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var CampaignSelectField = React.createClass({
@@ -118,10 +119,18 @@ var Home = React.createClass({
     },
 
     onTreeNodeClick: function (treeItem) {
-        // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
-        var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
-        this.setState({equipmentId: id, campaignId: null});
-        this.loadEquipment(id);
+        if (!localStorage.getItem('Id')) {
+            NotificationManager.error('Please re-login to get actual information');
+            return;
+        }
+        if (treeItem.text == 'Vision Diagnostic') {
+            this.loadCreatedTasks(localStorage.getItem('Id'));
+        } else {
+            // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
+            var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
+            this.setState({equipmentId: id, campaignId: null});
+            this.loadEquipment(id);
+        }
     },
 
     loadEquipment: function (equipmentId, campaignId) {
@@ -137,10 +146,18 @@ var Home = React.createClass({
         this.refs.testResultList.updateSource(src);
     },
 
+    loadCreatedTasks: function (createdById) {
+        var src = '/api/v1.0/test_result/?campaign__created_by_id=' + createdById;
+        this.setState({
+            source: src
+        });
+        this.refs.testResultList.updateSource(src);
+    },
+
     onCampaignFilterChange: function (e) {
         var value = e.target.value;
         this.setState({campaignId: value});
-        this.loadEquipment(this.state.equipmentId, value);
+        this.loadEquipment(this.state.equipmentId || 0, value);
     },
 
     render: function () {
