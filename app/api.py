@@ -107,11 +107,11 @@ def prepare_data_for_tree_translation(tree_item_id, equipment_name):
 
 
 # Verifications
-def validate_or_abort(path, data_to_validate=None, update=False, context=None):
+def validate_or_abort(path, data_to_validate=None, update=False):
     if not data_to_validate:
         data_to_validate = request.json
     v = Validator(ignore_none_values=True)
-    if not v.validate(data_to_validate, get_schema_by_path(path), update, context):
+    if not v.validate(data_to_validate, get_schema_by_path(path), update):
         abort(400, v.errors)
     return v.document
 

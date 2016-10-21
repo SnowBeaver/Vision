@@ -38,5 +38,5 @@ markdown
 raven
 blinker
 flask-apidoc
-cerberus
+Cerberus<=1.0.1
 requests==2.11.1
