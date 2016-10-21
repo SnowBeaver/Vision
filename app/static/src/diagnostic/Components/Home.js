@@ -9,6 +9,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {Link} from 'react-router'
 import {DATETIME_FORMAT} from '../appConstants.js';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
 var CampaignSelectField = React.createClass({
@@ -118,6 +119,10 @@ var Home = React.createClass({
     },
 
     onTreeNodeClick: function (treeItem) {
+        if (!localStorage.getItem('Id')) {
+            NotificationManager.error('Please re-login to get actual information');
+            return;
+        }
         if (treeItem.text == 'Vision Diagnostic') {
             this.loadCreatedTasks(localStorage.getItem('Id'));
         } else {

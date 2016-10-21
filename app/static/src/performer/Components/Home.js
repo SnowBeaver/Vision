@@ -7,7 +7,8 @@ import TreeComponent from '../TreeComponent';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import {Link} from 'react-router'
+import {Link} from 'react-router';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 var Home = React.createClass({
 
@@ -33,6 +34,10 @@ var Home = React.createClass({
     },
 
     onTreeNodeClick: function (treeItem) {
+        if (!localStorage.getItem('Id')) {
+            NotificationManager.error('Please re-login to get actual information');
+            return;
+        }
         if (treeItem.text == 'Vision Diagnostic') {
             this.loadAssignedTasks(localStorage.getItem('Id'));
         } else {
