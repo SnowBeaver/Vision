@@ -118,10 +118,14 @@ var Home = React.createClass({
     },
 
     onTreeNodeClick: function (treeItem) {
-        // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
-        var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
-        this.setState({equipmentId: id, campaignId: null});
-        this.loadEquipment(id);
+        if (treeItem.text == 'Vision Diagnostic') {
+            this.loadCreatedTasks(localStorage.getItem('Id'));
+        } else {
+            // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
+            var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
+            this.setState({equipmentId: id, campaignId: null});
+            this.loadEquipment(id);
+        }
     },
 
     loadEquipment: function (equipmentId, campaignId) {
@@ -131,6 +135,14 @@ var Home = React.createClass({
             src += '&campaign_id=' + campaignId;
         }
 
+        this.setState({
+            source: src
+        });
+        this.refs.testResultList.updateSource(src);
+    },
+
+    loadCreatedTasks: function (createdById) {
+        var src = '/api/v1.0/test_result/?campaign__created_by_id=' + createdById;
         this.setState({
             source: src
         });
