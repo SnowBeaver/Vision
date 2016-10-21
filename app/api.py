@@ -722,7 +722,6 @@ def create_test_repair_note_handler():
 @login_required
 def read_tasks_handler():
     path = 'schedule'
-    abort_if_wrong_path(path)
     return return_json('result', get_items_by_role(path, request.args, check_owner_field="assigned_to_id"))
 
 
@@ -731,12 +730,12 @@ def read_tasks_handler():
 @login_required
 def read_task_handler(item_id):
     path = 'schedule'
-    abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
     return return_json('result', get_item(path, item_id))
 
 
+# Anyone can create a schedule
 @api_blueprint.route('/schedule/', methods=['POST'])
 @login_required
 @json_required
@@ -750,14 +749,12 @@ def create_task_handler():
     return return_json('result', new_item.id)
 
 
-# Anyone can create a schedule
 # Update schedule
 @api_blueprint.route('/schedule/<int:item_id>', methods=['PUT', 'POST'])
 @login_required
 @json_required
 def update_task_handler(item_id):
     path = 'schedule'
-    abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
 
@@ -775,7 +772,6 @@ def update_task_handler(item_id):
 @login_required
 def delete_task_handler(item_id):
     path = 'schedule'
-    abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
     return return_json('result', delete_item(path, item_id))
