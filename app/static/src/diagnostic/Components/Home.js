@@ -93,6 +93,29 @@ var CampaignSelectField = React.createClass({
     }
 });
 
+const TextField = React.createClass({
+    render: function () {
+        var label = (this.props.label != null) ? this.props.label : "";
+        var name = (this.props.name != null) ? this.props.name : "";
+        var value = (this.props.value != null) ? this.props.value : "";
+        var className = (this.props.className != null) ? this.props.className : "";
+        var showLabel = (this.props.showLabel != null) ? this.props.showLabel : true;
+        return (
+            <FormGroup className={className}>
+                {showLabel ? <ControlLabel>{label}</ControlLabel> : null}
+                <FormControl type="text"
+                             placeholder={label}
+                             name={name}
+                             value={value}
+                             onChange={this.props.onChange}
+                             disabled={this.props.disabled}
+                />
+                <FormControl.Feedback />
+            </FormGroup>
+        );
+    }
+});
+
 var Home = React.createClass({
 
     getInitialState: function () {
@@ -100,7 +123,8 @@ var Home = React.createClass({
             source: '/api/v1.0/campaign/',
             text: '',
             equipmentId: null,
-            campaignId: null
+            campaignId: null,
+            searchValue: ""
         }
     },
 
@@ -128,7 +152,7 @@ var Home = React.createClass({
         } else {
             // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
             var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
-            this.setState({equipmentId: id, campaignId: null});
+            this.setState({equipmentId: id, campaignId: null, searchValue: ""});
             this.loadEquipment(id);
         }
     },
@@ -158,6 +182,11 @@ var Home = React.createClass({
         var value = e.target.value;
         this.setState({campaignId: value});
         this.loadEquipment(this.state.equipmentId || 0, value);
+    },
+
+    searchTests: function (e) {
+        this.setState({searchValue: e.target.value});
+        this.refs.testResultList.searchTests(e);
     },
 
     render: function () {
@@ -198,6 +227,12 @@ var Home = React.createClass({
                                          className="col-md-6 nopadding"
                                          value={this.state.campaignId}
                                          onChange={this.onCampaignFilterChange}/>
+                    <div className="col-md-6">
+                        <TextField label="Search"
+                                   showLabel={false}
+                                   value={this.state.searchValue}
+                                   onChange={this.searchTests}/>
+                    </div>
                     <br/>
                     <TestResultForm ref="testResultList"
                                     source={this.state.source}/>

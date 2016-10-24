@@ -56,9 +56,9 @@ var TestResultForm = React.createClass({
                 data.push({
                     id: item.id,
                     date: item.date_analyse,
-                    reason: item.reason && item.reason.name,
+                    reason: item.test_reason && item.test_reason.name,
                     type: item.test_type && item.test_type.name,
-                    contract: null,
+                    contract: item.lab_contract && item.lab_contract.code,
                     test_status: item.test_status && item.test_status.name,
                     analysis_number: item.analysis_number,
                     serial: item.equipment && item.equipment.serial,
@@ -74,6 +74,12 @@ var TestResultForm = React.createClass({
             source: source
         });
     },
+
+    searchTests: function (e) {
+        var src = '/api/v1.0/test_result/?search_all=' + e.target.value;
+        this.updateSource(src);
+    },
+
     render: function () {
 
         if (!this.state.data) {
@@ -92,7 +98,7 @@ var TestResultForm = React.createClass({
                                 condensed={true}
                                 hover={true}
                                 selectRow={selectRowProp}
-                                search={true}
+                                search={false}
                                 updateSource={this.updateSource}
                                 options={options}>
                     <TableHeaderColumn editable={false} dataField="id" hidden={true} width="15">Id</TableHeaderColumn>
