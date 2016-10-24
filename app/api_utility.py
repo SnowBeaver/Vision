@@ -212,6 +212,11 @@ equipment_connection_schema = {
     'equipment_id': type_integer_coerce_dict,
     'parent_id': type_integer_coerce_dict,
 }
+sibling_schema = {
+    'id': readonly_dict,
+    'equipment_id': type_integer_coerce_dict,
+    'sibling_id': type_integer_coerce_dict,
+}
 # sampling_card_schema = {
 #     'id': readonly_dict,
 #     'card_gathered': type_integer_coerce_dict,
@@ -1407,6 +1412,10 @@ model_dict = {
     'equipment_connection': {
         'model': EquipmentConnection,
         'schema': equipment_connection_schema
+    },
+    'sibling': {
+        'model': Sibling,
+        'schema': sibling_schema
     },
     'resistance': {
         'model': NeutralResistance,

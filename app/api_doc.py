@@ -6608,6 +6608,82 @@ to the currently logged in user or are private.
 """
 
 
+# sibling
+"""
+@api {get} /sibling/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup sibling
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sibling/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /sibling/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sibling/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "equipment_id": 2,
+            "sibling_id": 3,
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       equipment_id
+@apiSuccess {Integer}       sibling_id
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /sibling/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"equipment_id": 2, "sibling_id": 3}' \
+         http://localhost:8001/api/v1.0/sibling/
+
+@apiParam   {Integer}       equipment_id
+@apiParam   {Integer}       sibling_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /sibling/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"sibling_id": 4}'\
+         http://localhost:8001/api/v1.0/sibling/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /sibling/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/sibling/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
 # sampling_card
 """
 @api {get} /sampling_card/ Get a list of items

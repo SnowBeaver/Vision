@@ -197,6 +197,7 @@ if __name__ == '__main__':
     # Models with relations paths
     # tree_translation
     # equipment_connection
+    # sibling
     # equipment
     # campaign
     # contract

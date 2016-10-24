@@ -1043,6 +1043,25 @@ class EquipmentConnection(db.Model):
                 }
 
 
+class Sibling(db.Model):
+    __tablename__ = u'sibling'
+
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Sibling.equipment_id')
+    sibling_id = db.Column('sibling_id', db.ForeignKey("equipment.id"))
+    sibling = db.relationship('Equipment', foreign_keys='Sibling.sibling_id')
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize(),
+                'sibling_id': self.sibling_id,
+                'sibling': self.sibling and self.sibling.serialize(),
+                }
+
+
 class NeutralResistance(db.Model):
     __tablename__ = u'resistance'
 
