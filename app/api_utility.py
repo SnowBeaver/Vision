@@ -730,6 +730,7 @@ test_status_schema = campaign_status_schema = {
     'name': type_string_maxlength_50_dict,
 }
 schedule_schema = {
+    'id': readonly_dict,
     'date_start': type_datetime_required_dict,
     'period_years': type_integer_coerce_dict,
     'period_months': type_integer_coerce_dict,
