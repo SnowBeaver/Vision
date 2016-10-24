@@ -1096,6 +1096,9 @@ doc = ApiDoc(app=api)
 
 Can filter also by:
 @apiParam {Integer}   campaign__created_by_id
+@apiParam {String}    search_all    ILIKE search by id, date_analyse, analysis_number,
+                                    test_reason.name, test_type.name, test_status.name,
+                                    equipment.serial, equipment.equipment_number
 
 @apiUse GetItemsSuccess
 @apiUse Error404
