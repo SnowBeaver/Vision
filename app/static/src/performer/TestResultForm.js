@@ -74,6 +74,12 @@ var TestResultForm = React.createClass({
             source: source
         });
     },
+
+    searchTests: function (e) {
+        var src = '/api/v1.0/test_result/?search_all=' + e.target.value;
+        this.updateSource(src);
+    },
+
     render: function () {
 
         if (!this.state.data) {
@@ -92,7 +98,7 @@ var TestResultForm = React.createClass({
                                 condensed={true}
                                 hover={true}
                                 selectRow={selectRowProp}
-                                search={true}
+                                search={false}
                                 updateSource={this.updateSource}
                                 options={options}>
                     <TableHeaderColumn editable={false} dataField="id" hidden={true} width="15">Id</TableHeaderColumn>
