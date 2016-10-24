@@ -304,7 +304,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Performed By"
                                      name='performed_by_id'
                                      value={data.performed_by_id}
-                                     disabled/>
+                                     onChange={this.props.onChange}/>
                      </div>
 
                     <div className="col-md-3">
@@ -336,7 +336,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Lab contract &#8470;"
                                      name='lab_contract_id'
                                      value={data.lab_contract_id}
-                                     disabled/>
+                                     onChange={this.props.onChange}/>
                     </div>
                     <div className="col-md-3">
                         <SelectField source="test_status"
@@ -359,8 +359,7 @@ var EquipmentTestIdentificationForm = React.createClass({
                                      label="Sampling point"
                                      name='sampling_point_id'
                                      value={data.sampling_point_id}
-                                     disabled
-                        />
+                                     onChange={this.props.onChange}/>
                     </div>
                     <div className="col-md-3">
                         <SelectField source="equipment"
@@ -805,7 +804,7 @@ var EquipmentTestForm = React.createClass({
             fields: ['test_type_id', 'test_reason_id', 'status_id', 'temperature',
                      'lab_contract_id', 'sampling_point_id', 'equipment_id', 'lab_id',
                      'fluid_type_id', 'date_analyse', 'test_status_id', 'transmission',
-                     'charge'],
+                     'charge', 'performed_by_id'],
             testRecommendationFields: ['recommendation_id', 'recommendation_test_type_id'],
             testRepairNotesFields: ['description', 'remark', 'sample', 'date_created', 'repair_test_type_id'],
             testDiagnosisFields: ['diagnosis_notes', 'diagnosis_id', 'diagnosis_test_type_id'],
