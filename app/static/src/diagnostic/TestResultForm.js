@@ -17,7 +17,6 @@ var cellEditProp = {
     afterSaveCell: onAfterSaveCell
 };
 
-
 function onRowSelect(row, isSelected) {
 }
 
@@ -57,7 +56,7 @@ var TestResultForm = React.createClass({
                 data.push({
                     id: item.id,
                     date: item.date_analyse,
-                    reason: item.reason && item.reason.name,
+                    reason: item.test_reason && item.test_reason.name,
                     type: item.test_type && item.test_type.name,
                     contract: null,
                     test_status: item.test_status && item.test_status.name,
@@ -100,6 +99,11 @@ var TestResultForm = React.createClass({
         return date;
     },
 
+    searchTests: function (e) {
+        var src = '/api/v1.0/test_result/?search_all=' + e.target.value;
+        this.updateSource(src);
+    },
+
     render: function () {
 
         if (!this.state.data) {
@@ -117,10 +121,11 @@ var TestResultForm = React.createClass({
                                 striped={true}
                                 hover={true}
                                 selectRow={selectRowProp}
-                                search={true}
+                                search={false}
                                 condensed={true}
                                 updateSource={this.updateSource}
-                                options={options}>
+                                options={options}
+                                ref="table">
                     <TableHeaderColumn editable={false} dataField="id" hidden={true} width="15">Id</TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="date"

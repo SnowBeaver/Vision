@@ -3,11 +3,15 @@ from flask import Flask, Blueprint, jsonify, abort, make_response, request, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict
-from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProfile, Country
+from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProfile, \
+    Country, TestReason, TestType, TestStatus, Equipment
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
-from sqlalchemy import create_engine, MetaData, or_, and_
+from sqlalchemy import create_engine, MetaData, or_, and_, String
+from sqlalchemy.sql.expression import cast
+from sqlalchemy.sql.functions import concat
+from sqlalchemy import func
 from flask.ext.blogging import SQLAStorage
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password
@@ -186,6 +190,7 @@ def get_items(path, args):
         kwargs = {
             k: v for k, v in args.items() if hasattr(items_model, k)
                  or (k == 'campaign__created_by_id' and items_model == TestResult)
+                 or (k == 'search_all' and items_model == TestResult)
                  or abort(400, 'Wrong attribute: {}'.format(k))
         }
         if items_model == Campaign and 'equipment_id' in kwargs:
@@ -198,9 +203,38 @@ def get_items(path, args):
                                                            .filter_by(**kwargs)
                                                            .outerjoin(items_model.campaign)
                                                            .filter(Campaign.created_by_id == created_by_id)]
+        if 'search_all' in kwargs:
+            search_value = kwargs.pop('search_all')
+            return [item.serialize() for item in build_seach_equipment_query(items_model, search_value)]
 
         return [item.serialize() for item in db.session.query(items_model).filter_by(**kwargs)]
     return [item.serialize() for item in db.session.query(items_model).all()]
+
+
+def build_seach_equipment_query(items_model, search_value):
+    # Probably it is better to make filters like in Django: date_analyse__icontains="value"
+    return db.session\
+        .query(items_model)\
+        .outerjoin(items_model.test_reason)\
+        .outerjoin(items_model.test_type)\
+        .outerjoin(items_model.test_status)\
+        .outerjoin(items_model.equipment)\
+        .outerjoin(items_model.campaign)\
+        .outerjoin(Campaign.created_by)\
+        .filter(or_(
+            cast(TestResult.date_analyse, String).ilike("%{}%".format(search_value)),
+            cast(TestResult.id, String).ilike("%{}%".format(search_value)),
+            concat(cast(TestResult.id, String),
+                   func.substring(User.name, r'^([a-zA-Z]{1})'),
+                   func.substring(User.name, r'\s([a-zA-Z]){1}'))
+                .ilike("%{}%".format(search_value)),
+            TestReason.name.ilike("%{}%".format(search_value)),
+            TestType.name.ilike("%{}%".format(search_value)),
+            TestStatus.name.ilike("%{}%".format(search_value)),
+            Equipment.serial.ilike("%{}%".format(search_value)),
+            Equipment.equipment_number.ilike("%{}%".format(search_value)),
+            ))\
+        .all()
 
 
 # Update
