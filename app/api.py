@@ -265,22 +265,27 @@ def delete_item(path, item_id):
 # Add equipment and add related objects automaticaly
 def add_equipment(path, data):
     extra_fields_dict = data.pop('extra_fields', {})
-    item = add_item(path, data)
+    try:
+        item = add_item(path, data)
 
-    tree_data = prepare_data_for_tree(item)
-    # validate_or_abort('tree', tree_data)
-    item_tree = add_item('tree', tree_data)
+        tree_data = prepare_data_for_tree(item)
+        # validate_or_abort('tree', tree_data)
+        item_tree = add_item('tree', tree_data)
 
-    tree_trans_data = prepare_data_for_tree_translation(item_tree.id, item.name)
-    # validate_or_abort('tree_translation', tree_trans_data)
-    add_item('tree_translation', tree_trans_data)
+        tree_trans_data = prepare_data_for_tree_translation(item_tree.id, item.name)
+        # validate_or_abort('tree_translation', tree_trans_data)
+        add_item('tree_translation', tree_trans_data)
+        if extra_fields_dict:
+            extra_table_name = item.equipment_type and item.equipment_type.table_name
+            extra_fields_dict['equipment_id'] = item.id
+            # validate_or_abort(extra_table_name, extra_fields_dict)
+            add_item(extra_table_name, extra_fields_dict)
+        return item
 
-    if extra_fields_dict:
-        extra_table_name = item.equipment_type and item.equipment_type.table_name
-        extra_fields_dict['equipment_id'] = item.id
-        # validate_or_abort(extra_table_name, extra_fields_dict)
-        add_item(extra_table_name, extra_fields_dict)
-    return item
+    except:
+        return {}
+
+
 
 
 def add_fluid_profile(path, data):
