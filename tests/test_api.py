@@ -7,7 +7,7 @@ from app.api_utility import model_dict
 
 
 url = 'http://localhost:8001/api/v1.0/{path}/'
-user = 'test@example2.com'
+user = 'test@example.com'
 password = 'test-123'
 path_to_get_token = 'token'
 
