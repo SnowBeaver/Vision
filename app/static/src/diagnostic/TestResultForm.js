@@ -17,16 +17,10 @@ var cellEditProp = {
     afterSaveCell: onAfterSaveCell
 };
 
-
 function onRowSelect(row, isSelected) {
-    console.log(row);
-    console.log("selected: " + isSelected);
 }
 
 function onAfterSaveCell(row, cellName, cellValue) {
-    console.log("Save cell '" + cellName + "' with value '" + cellValue + "'");
-    console.log("Thw whole row :");
-    console.log(row);
 }
 
 
@@ -49,22 +43,22 @@ var TestResultForm = React.createClass({
     },
 
     onRowClick: function (row) {
-        console.log('row clicked', row);
+        
         this.setState({showEquipmentTestForm: true, selectedRowId: row.id});
     },
 
     updateSource: function (source) {
         this.serverRequest = $.authorizedGet(source, function (result) {
-            var arr = (result['result']);
+            var arr = this.sortItemsByKey(result['result'], 'date_analyse');
             var data = [];
             for (var i = 0; i < arr.length; i++) {
                 var item = arr[i];
                 data.push({
                     id: item.id,
                     date: item.date_analyse,
-                    reason: item.reason && item.reason.name,
+                    reason: item.test_reason && item.test_reason.name,
                     type: item.test_type && item.test_type.name,
-                    contract: null,
+                    contract: item.lab_contract && item.lab_contract.code,
                     test_status: item.test_status && item.test_status.name,
                     analysis_number: item.analysis_number,
                     serial: item.equipment && item.equipment.serial,
@@ -80,6 +74,36 @@ var TestResultForm = React.createClass({
             source: source
         });
     },
+
+    sortItemsByKey: function (array, key){
+        return array.sort(function(a, b) {
+            var a = a[key];
+            var b = b[key];
+            if (a === null) {
+                return 1;
+            } else if (b === null) {
+                return -1;
+            } else if (a === b) {
+                return 0;
+            } else {
+                return a < b ? 1 : -1;
+            }
+        });
+    },
+
+    _formatDateTime: function(date) {
+        if (date) {
+            var dateFormat = 'MM/DD/YYYY hh:mm A';
+            date = moment(date).utcOffset(0).format(dateFormat);
+        }
+        return date;
+    },
+
+    searchTests: function (e) {
+        var src = '/api/v1.0/test_result/?search_all=' + e.target.value;
+        this.updateSource(src);
+    },
+
     render: function () {
 
         if (!this.state.data) {
@@ -97,27 +121,47 @@ var TestResultForm = React.createClass({
                                 striped={true}
                                 hover={true}
                                 selectRow={selectRowProp}
-                                search={true}
+                                search={false}
+                                condensed={true}
                                 updateSource={this.updateSource}
                                 options={options}
-                >
-                    <TableHeaderColumn editable={false} dataField="id" hidden={true}>Id</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="date" dataSort={true}>Acquisition
-                        Date</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="reason" dataSort={true}>Reason</TableHeaderColumn>
+                                ref="table">
+                    <TableHeaderColumn editable={false} dataField="id" hidden={true} width="15">Id</TableHeaderColumn>
+                    <TableHeaderColumn editable={false}
+                                       dataField="date"
+                                       dataSort={true}
+                                       width="95"
+                                       dataFormat={this._formatDateTime}>Acquisition Date
+                    </TableHeaderColumn>
+                    <TableHeaderColumn editable={false}
+                                       dataField="reason"
+                                       dataSort={true}
+                                       width="85">Reason
+                    </TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="type" dataSort={true}>Type</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="contract"
+                    <TableHeaderColumn editable={false}
+                                       dataField="contract"
                                        filter={{type: "TextFilter", placeholder: "Contract number"}}
-                                       dataSort={true}>Contract No.</TableHeaderColumn>
-                    <TableHeaderColumn dataField="test_status" dataSort={true}>Analysis stage</TableHeaderColumn>
+                                       dataSort={true}
+                                       width="85">Contract No.
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="test_status" dataSort={true} width="155">Analysis stage</TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="analysis_number"
-                                       isKey={true}>Analysis Nr</TableHeaderColumn>
+                                       filter={{type: "TextFilter", placeholder: "Analysis number"}}
+                                       isKey={true}
+                                       width="85">Analysis Nr
+                    </TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="serial"
                                        filter={{type: "TextFilter", placeholder: "Please enter a value"}}
-                                       dataSort={true}>Serial No.</TableHeaderColumn>
-                    <TableHeaderColumn editable={false} dataField="equipment_number">Equipment No.</TableHeaderColumn>
+                                       dataSort={true}
+                                       width="80">Serial No.
+                    </TableHeaderColumn>
+                    <TableHeaderColumn editable={false}
+                                       dataField="equipment_number"
+                                       width="80">Equipment No.
+                    </TableHeaderColumn>
                 </BootstrapTable>
                 <Modal show={this.state.showEquipmentTestForm}>
                     <EquipmentTestForm handleClose={this.closeEquipmentTestForm}

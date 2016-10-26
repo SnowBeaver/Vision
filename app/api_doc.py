@@ -332,9 +332,8 @@ doc = ApiDoc(app=api)
 @apiSuccess {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
 @apiSuccess {Integer}         norm_id
 @apiSuccess {Dict}            norm                        see: norm->get an item
-@apiSuccess {Boolean}         tie_location                Tie device location
-@apiSuccess {Integer}         tie_maintenance_state       Tie is open or closed during maintenance
 @apiSuccess {Integer}         tie_status                  TieAnalysisState.
+@apiSuccess {Integer}         status                      EquipmentState.
 @apiSuccess {Integer}         phys_position
 @apiSuccess {Float}           tension4                    Voltage4
 @apiSuccess {Boolean}         validated
@@ -373,9 +372,8 @@ doc = ApiDoc(app=api)
 @apiParam {String}          visual_date                 Date where was done the last visual inspection.
 @apiParam {String}          visual_inspection_comments  Visual inspection comments,
 @apiParam {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
-@apiParam {Boolean}         tie_location                Tie device location
-@apiParam {Integer}         tie_maintenance_state       Tie is open or closed during maintenance
 @apiParam {Integer}         tie_status                  TieAnalysisState.
+@apiParam {Integer}         status                      EquipmentState.
 @apiParam {Integer}         phys_position
 @apiParam {Float}           tension4                    Voltage4
 @apiParam {Boolean}         validated
@@ -389,9 +387,12 @@ doc = ApiDoc(app=api)
 @apiUse Error400
 """
 """
-@api {put} /equipment/:id Update an item by id
+@api {put}/{post} /equipment/:id Update an item by id. If only status field changed,
+                                 send email notifications to the user who updated the
+                                 equipment, the user who is assigned to the equipment
+                                 and the user who is doing visual inspection
 @apiVersion 1.0.0
-@apiName update_item
+@apiName update_equipment_handler
 @apiGroup equipment
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X PUT -d '{"location_id":5}' http://localhost:8001/api/v1.0/equipment/
@@ -873,7 +874,7 @@ doc = ApiDoc(app=api)
 """
 @api {post} /electrical_profile Add a new item
 @apiVersion 1.0.0
-@apiName add_item
+@apiName create_electrical_profile_handler
 @apiGroup electrical_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
@@ -998,7 +999,7 @@ doc = ApiDoc(app=api)
 """
 @api {post} /fluid_profile Add a new item
 @apiVersion 1.0.0
-@apiName add_item
+@apiName create_fluid_profile_handler
 @apiGroup fluid_profile
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
@@ -1092,6 +1093,12 @@ doc = ApiDoc(app=api)
 @apiGroup test_result
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/test_result/
+
+Can filter also by:
+@apiParam {Integer}   campaign__created_by_id
+@apiParam {String}    search_all    ILIKE search by id, date_analyse, analysis_number,
+                                    test_reason.name, test_type.name, test_status.name,
+                                    equipment.serial, equipment.equipment_number
 
 @apiUse GetItemsSuccess
 @apiUse Error404
@@ -3355,7 +3362,7 @@ to the currently logged in user or are private.
         }
     }
 
-@apiSuccess {Integer}        id
+@apiSuccess {Integer}       id
 @apiSuccess {String(50)}    name
 @apiSuccess {String(50)}    code
 @apiSuccess {String}        description
@@ -3375,8 +3382,8 @@ to the currently logged in user or are private.
 
 @apiParam   {String(50)}    name
 @apiParam   {String(50)}    code
-@apiParam   {String}    description
-@apiParam   {Integer}    test_type_id
+@apiParam   {String}        description
+@apiParam   {Integer}       test_type_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
@@ -3438,13 +3445,14 @@ to the currently logged in user or are private.
 
 @apiSuccess {Integer}       id
 @apiSuccess {Integer}       recommendation_id
-@apiSuccess {Dict}          recommendation      see: recommandation->get an item
+@apiSuccess {Dict}          recommendation      see: recommendation->get an item
 @apiSuccess {String}        recommendation_notes
 @apiSuccess {Integer}       user_id
 @apiSuccess {Dict}          user                see: user->get an item
 @apiSuccess {String}        date_created
 @apiSuccess {String}        date_updated
 @apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type           see: test_type->get an item
 @apiSuccess {Integer}       test_result_id
 @apiUse GetItemSuccess
 @apiUse Error404
@@ -3452,7 +3460,7 @@ to the currently logged in user or are private.
 """
 @api {post} /test_recommendation/ Add a new item
 @apiVersion 1.0.0
-@apiName add_item
+@apiName create_test_recommendation_handler
 @apiGroup test_recommendation
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST -d '{"recommendation_id":1}' \
@@ -6603,6 +6611,82 @@ to the currently logged in user or are private.
 """
 
 
+# sibling
+"""
+@api {get} /sibling/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup sibling
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sibling/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /sibling/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/sibling/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "equipment_id": 2,
+            "sibling_id": 3,
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       equipment_id
+@apiSuccess {Integer}       sibling_id
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /sibling/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"equipment_id": 2, "sibling_id": 3}' \
+         http://localhost:8001/api/v1.0/sibling/
+
+@apiParam   {Integer}       equipment_id
+@apiParam   {Integer}       sibling_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /sibling/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"sibling_id": 4}'\
+         http://localhost:8001/api/v1.0/sibling/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /sibling/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup sibling
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/sibling/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
 # sampling_card
 """
 @api {get} /sampling_card/ Get a list of items
@@ -8108,13 +8192,13 @@ to the currently logged in user or are private.
 """
 
 
-# TODO has no id
 # schedule
 """
 @apiIgnore
-@api {get} /schedule/ Get a list of items
+@api {get} /schedule/ Get a list of items. Return all items if user is admin,
+                      otherwise return the ones which belong to the user
 @apiVersion 1.0.0
-@apiName get_items
+@apiName read_tasks_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/schedule/
@@ -8124,9 +8208,10 @@ to the currently logged in user or are private.
 """
 """
 @apiIgnore
-@api {get} /schedule/:id Get an item by id
+@api {get} /schedule/:id Get an item by id. Return any item if user is admin,
+                         otherwise return the item only if it belongs to the user
 @apiVersion 1.0.0
-@apiName get_item
+@apiName read_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
       curl -i http://localhost:8001/api/v1.0/schedule/1
@@ -8136,57 +8221,76 @@ to the currently logged in user or are private.
     Content-Type: application/json
     {
         "result": {
-            "equipment_id": 1,
+            "id":
+            "parent_id": 1,
             ...
         }
     }
 
-@apiSuccess {Integer}    equipment_id
-@apiSuccess {Datetime}   start_date
+@apiSuccess {Integer}    id
+@apiSuccess {Datetime}   date_start
 @apiSuccess {Integer}    period_years
 @apiSuccess {Integer}    period_months
 @apiSuccess {Integer}    period_days
 @apiSuccess {Integer}    assigned_to_id
+@apiSuccess {Dict}       assigned_to                see: user->get an item
 @apiSuccess {Boolean}    recurring
 @apiSuccess {Integer}    notify_before_in_days
 @apiSuccess {String}     description
-@apiSuccess {Integer}    tests_to_perform
+@apiSuccess {Integer}    test_recommendation_id
+@apiSuccess {Dict}       test_recommendation        see: test_recommendation->get an item
+@apiSuccess {Integer}    priority
 @apiSuccess {Integer}    order
+@apiSuccess {Datetime}   date_updated
+@apiSuccess {Datetime}   date_created
+@apiSuccess {Integer}    status_id
+@apiSuccess {Dict}       status                     see: task_status->get an item
+@apiSuccess {Integer}    parent_id
 @apiUse GetItemSuccess
 @apiUse Error404
 """
 """
-@api {post} /schedule/ Add a new item
+@api {post} /schedule/ Add a new item. Allow any user to create a new item.
+                       Send email notifications to the user who created the
+                       new task and to the user who is assigned to the task
 @apiVersion 1.0.0
-@apiName add_item
+@apiName create_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" \
-         -X POST -d '{"equipment_id":2, "start_date":"2016-07-29 17:52:19", "assigned_to_id":3, "order":5}' \
+         -X POST -d '{"test_recommendation_id":2, "start_date":"2016-07-29 17:52:19", "assigned_to_id":3, "priority":5}' \
          http://localhost:8001/api/v1.0/schedule/
 
-@apiParam   {Integer}    equipment_id           required
-@apiParam   {Datetime}   start_date             required    format "2016-07-29 17:52:19"
-@apiParam   {Integer}    period_years
-@apiParam   {Integer}    period_months
-@apiParam   {Integer}    period_days
-@apiParam   {Integer}    assigned_to_id         required
-@apiParam   {Boolean}    recurring
-@apiParam   {Integer}    notify_before_in_days
-@apiParam   {String}     description
-@apiParam   {Integer}    tests_to_perform
-@apiParam   {Integer}    order                  required
+@apiParam {Integer}    id
+@apiParam {Datetime}   date_start                       required        format "2016-07-29 17:52:19"
+@apiParam {Integer}    period_years
+@apiParam {Integer}    period_months
+@apiParam {Integer}    period_days
+@apiParam {Integer}    assigned_to_id                   required
+@apiParam {Boolean}    recurring
+@apiParam {Integer}    notify_before_in_days
+@apiParam {String}     description
+@apiParam {Integer}    test_recommendation_id           required
+@apiParam {Integer}    priority                         required
+@apiParam {Integer}    order
+@apiParam {Datetime}   date_updated                                     format "2016-07-29 17:52:19"
+@apiParam {Datetime}   date_created                                     format "2016-07-29 17:52:19"
+@apiParam {Integer}    status_id
 @apiUse PostItemSuccess
 @apiUse Error400
 """
 """
 @apiIgnore
-@api {put} /schedule/:id Update an item
+@api {put}/{post} /schedule/:id Update an item. Allow to update any item if user is admin,
+                                or only if the item belongs to the user.
+                                Send email notifications to the user who updated the task,
+                                the user who has been previously assigned to the task and
+                                the user who is assigned to the task after update
 @apiVersion 1.0.0
-@apiName update_item
+@apiName update_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
-    curl -i -H "Content-Type: application/json" -X PUT -d '{"equipment_id": 3}'\
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"test_recommendation_id": 3}'\
     http://localhost:8001/api/v1.0/schedule/1
 
 @apiUse PutItemSuccess
@@ -8194,12 +8298,345 @@ to the currently logged in user or are private.
 """
 """
 @apiIgnore
-@api {delete} /schedule/:id Delete an item
+@api {delete} /schedule/:id Delete an item. Allow to delete any item if user is admin,
+                            or only if the item belongs to the user
 @apiVersion 1.0.0
-@apiName delete_item
+@apiName delete_task_handler
 @apiGroup schedule
 @apiExample {curl} Example usage:
     curl -X DELETE http://localhost:8001/api/v1.0/schedule/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+
+# diagnosis
+"""
+@api {get} /diagnosis/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/diagnosis/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /diagnosis/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/diagnosis/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "some name",
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String(50)}    name
+@apiSuccess {String(50)}    code
+@apiSuccess {String}        description
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type       see: test_type->get an item
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /diagnosis/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name":"some name"}' \
+         http://localhost:8001/api/v1.0/diagnosis/
+
+@apiParam   {String(50)}    name
+@apiParam   {String(50)}    code
+@apiParam   {String}        description
+@apiParam   {Integer}       test_type_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /diagnosis/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "some other name"}'\
+    http://localhost:8001/api/v1.0/diagnosis/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /diagnosis/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup diagnosis
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/diagnosis/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+# Test diagnosis
+"""
+@api {get} /test_diagnosis/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_diagnosis/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_diagnosis/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_diagnosis/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "diagnosis_id": 1,
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {Integer}       diagnosis_id
+@apiSuccess {Dict}          diagnosis           see: diagnosis->get an item
+@apiSuccess {String}        diagnosis_notes
+@apiSuccess {Integer}       user_id
+@apiSuccess {Dict}          user                see: user->get an item
+@apiSuccess {String}        date_created
+@apiSuccess {String}        date_updated
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type           see: test_type->get an item
+@apiSuccess {Integer}       test_result_id
+@apiSuccess {Dict}          test_result         see: test_result->get an item
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_diagnosis/ Add a new item
+@apiVersion 1.0.0
+@apiName create_test_diagnosis_handler
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"diagnosis_id":1}' \
+         http://localhost:8001/api/v1.0/test_diagnosis/
+
+@apiParam {Integer}       diagnosis_id
+@apiParam {String}        diagnosis_notes
+@apiParam {Integer}       user_id
+@apiParam {String}        date_created      format "2016-07-29 17:52:19"
+@apiParam {String}        date_updated      format "2016-07-29 17:52:19"
+@apiParam {Integer}       test_type_id
+@apiParam {Integer}       test_result_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_diagnosis/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"diagnosis_id":2}'\
+    http://localhost:8001/api/v1.0/test_diagnosis/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_diagnosis/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_diagnosis
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_diagnosis/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+# Test repair note
+"""
+@api {get} /test_repair_note/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_repair_note/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /test_repair_note/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/test_repair_note/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "description": "description",
+            ...
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String}        description
+@apiSuccess {String}        remark
+@apiSuccess {String}        sample
+@apiSuccess {Integer}       user_id
+@apiSuccess {Dict}          user                see: user->get an item
+@apiSuccess {String}        date_created
+@apiSuccess {Integer}       test_result_id
+@apiSuccess {Dict}          test_result         see: test_result->get an item
+@apiSuccess {Integer}       test_type_id
+@apiSuccess {Dict}          test_type           see: test_type->get an item
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /test_repair_note/ Add a new item
+@apiVersion 1.0.0
+@apiName create_test_repair_note_handler
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"test_result_id":1, "test_type_id": 1}' \
+         http://localhost:8001/api/v1.0/test_repair_note/
+
+@apiParam {Integer}       id
+@apiParam {String}        description
+@apiParam {String}        remark
+@apiParam {String}        sample
+@apiParam {Integer}       user_id
+@apiParam {String}        date_created        format "2016-07-29 17:52:19"
+@apiParam {Integer}       test_result_id
+@apiParam {Integer}       test_type_id
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /test_repair_note/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"description": "description updated"}'\
+    http://localhost:8001/api/v1.0/test_repair_note/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /test_repair_note/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup test_repair_note
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/test_repair_note/3
+
+@apiUse DelItemSuccess
+@apiUse Error404
+"""
+
+# Task status
+"""
+@api {get} /task_status/ Get a list of items
+@apiVersion 1.0.0
+@apiName get_items
+@apiGroup task_status
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/task_status/
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /task_status/:id Get an item by id
+@apiVersion 1.0.0
+@apiName get_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/task_status/1
+
+@apiSuccessExample Success-Response:
+    HTTP/1.0 200 OK
+    Content-Type: application/json
+    {
+        "result": {
+            "id": 1,
+            "name": "New"
+        }
+    }
+
+@apiSuccess {Integer}       id
+@apiSuccess {String(20)}    name
+@apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {post} /task_status/ Add a new item
+@apiVersion 1.0.0
+@apiName add_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '{"name": "Ready for deploy"}' \
+         http://localhost:8001/api/v1.0/task_status/
+
+@apiParam {Integer}       id
+@apiParam {String(50)}    name
+@apiUse PostItemSuccess
+@apiUse Error400
+"""
+"""
+@api {put} /task_status/:id Update an item
+@apiVersion 1.0.0
+@apiName update_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X PUT -d '{"name": "Ready for testing"}'\
+    http://localhost:8001/api/v1.0/task_status/1
+
+@apiUse PutItemSuccess
+@apiUse Error400
+"""
+"""
+@api {delete} /task_status/:id Delete an item
+@apiVersion 1.0.0
+@apiName delete_item
+@apiGroup task_status
+@apiExample {curl} Example usage:
+    curl -X DELETE http://localhost:8001/api/v1.0/task_status/3
 
 @apiUse DelItemSuccess
 @apiUse Error404

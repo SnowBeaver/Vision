@@ -212,6 +212,11 @@ equipment_connection_schema = {
     'equipment_id': type_integer_coerce_dict,
     'parent_id': type_integer_coerce_dict,
 }
+sibling_schema = {
+    'id': readonly_dict,
+    'equipment_id': type_integer_coerce_dict,
+    'sibling_id': type_integer_coerce_dict,
+}
 # sampling_card_schema = {
 #     'id': readonly_dict,
 #     'card_gathered': type_integer_coerce_dict,
@@ -246,9 +251,8 @@ equipment_schema = {
     # 'downstream3':   type_string_maxlength_100_dict,
     # 'downstream4':   type_string_maxlength_100_dict,
     # 'downstream5':   type_string_maxlength_100_dict,
-    'tie_location':  type_boolean_coerce_dict,
-    'tie_maintenance_state': type_integer_coerce_dict,
     'tie_status':    type_integer_coerce_dict,
+    'status':    type_integer_coerce_dict,
     'phys_position': type_integer_coerce_dict,
     'tension4':  type_float_coerce_dict,
     'validated': type_boolean_coerce_dict,
@@ -731,6 +735,7 @@ test_status_schema = campaign_status_schema = {
     'name': type_string_maxlength_50_dict,
 }
 schedule_schema = {
+    'id': readonly_dict,
     'date_start': type_datetime_required_dict,
     'period_years': type_integer_coerce_dict,
     'period_months': type_integer_coerce_dict,
@@ -744,6 +749,7 @@ schedule_schema = {
     'date_updated': type_datetime_dict,
     'date_created': type_datetime_dict,
     'status_id': type_integer_coerce_dict,
+    'parent_id': type_integer_coerce_dict,
 }
 test_type_schema = {
     'id': readonly_dict,
@@ -1406,6 +1412,10 @@ model_dict = {
     'equipment_connection': {
         'model': EquipmentConnection,
         'schema': equipment_connection_schema
+    },
+    'sibling': {
+        'model': Sibling,
+        'schema': sibling_schema
     },
     'resistance': {
         'model': NeutralResistance,

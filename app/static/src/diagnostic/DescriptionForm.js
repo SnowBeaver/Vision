@@ -123,9 +123,6 @@ const NewLabModalWin = React.createClass({
 var TestReasonSelectField = React.createClass ({
 
     handleChange: function(event){
-        console.log('here 2');
-        console.log(event.target.name);
-        console.log(event.target.value);
         this.setState({
             value: event.target.value
         });
@@ -236,9 +233,6 @@ const DescriptionForm = React.createClass({
     },
 
     handleChange: function(e){
-        console.log('here 1');
-        console.log(e.target.name);
-        console.log(e.target.value);
         this.props.onChange(e);
     },
 

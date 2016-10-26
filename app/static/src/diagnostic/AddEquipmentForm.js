@@ -67,8 +67,6 @@ var EquipmentSelectField = React.createClass({
         var index = this.props.index.toString();
         var id = 'index-' + index;
 
-        console.log("state:", this.state);
-        console.log("props:", this.props);
         return (
             <div className="row" id={id}>
                 <div className="col-md-1">
@@ -165,7 +163,7 @@ var AddEquipmentForm = React.createClass({
     },
 
     _create: function () {
-        return $.ajax({
+        return $.authorizedAjax({
             url: '/api/v1.0/test_result/equipment/',
             type: 'POST',
             dataType: 'json',
@@ -339,9 +337,6 @@ var AddEquipmentForm = React.createClass({
     },
 
     render: function () {
-        console.log("state", this.state);
-        console.log("props", this.props.source);
-
         return (
             <div className="form-container">
                 <form className="" method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>

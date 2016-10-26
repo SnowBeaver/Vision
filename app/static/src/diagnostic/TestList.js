@@ -98,7 +98,10 @@ var TestItem = React.createClass({
         }
         var test = this.props.data;
         var test_status = test.test_status;
-        var test_type_name = (test.test_type_id == 1) ? 'Fluid' : 'Electrical';
+        var test_type_name = 'Undetermined - click to configure';
+        if  (test.test_type_id) {
+            test_type_name = (test.test_type_id == 1) ? 'Fluid':'Electrical';
+        }
         var performed_by_name = (test.performed_by != null) ? test.performed_by.name : 'undetermined';
 
         return (
@@ -340,7 +343,7 @@ var TestList = React.createClass({
             items.push(
                 <Panel
                     key={this.state.equipment[key].id}
-                    eventKey={this.state.equipment[key].id}
+                    
                     header={this.state.equipment[key].name}
                 >
                     <TestItemList data={this.state.tests}

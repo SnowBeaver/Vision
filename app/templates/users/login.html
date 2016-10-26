@@ -36,6 +36,7 @@
                 if (this.status == 200) {
                     var response = JSON.parse(this.responseText);
                     localStorage.setItem("apiToken", response.token);
+                    localStorage.setItem("Id", response.user_id);
                 }
                 loginForm.submit();
             }

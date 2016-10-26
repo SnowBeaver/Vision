@@ -613,7 +613,7 @@ var NewTestForm = React.createClass({
                 'test_reason_id', 'status_id', 'equipment_id', 'date_analyse', 'test_type_id',
                 'test_status_id', 'material_id', 'fluid_type_id',
                 'performed_by_id', 'lab_id', 'lab_contract_id', 'analysis_number', 'mws',
-                'temperature', 'seringe_num', 'transmission', 'charge', 'remark', 'repair_date', 'repair_description',
+                'temperature', 'seringe_num', 'charge', 'remark',
                 'ambient_air_temperature'
             ],
             test_reason_id: '',
@@ -780,7 +780,7 @@ var NewTestForm = React.createClass({
         } else {
             // Ignore this method when user deletes manually date from the DateTime input
             // Let the special method for setting the date be called
-            if (["date_analyse", "repair_date"].indexOf(e.target.name) == -1){
+            if (["date_analyse"].indexOf(e.target.name) == -1){
                 state[e.target.name] = e.target.value;
             }
         }
@@ -838,10 +838,6 @@ var NewTestForm = React.createClass({
             state.errors[fieldName] = errors.join(". ");
         }
         return state;
-    },
-
-    setRepairDate: function (timestamp){
-        this._setDateTimeFieldDate(timestamp, "repair_date");
     },
 
     setDateAnalyse: function (timestamp){
@@ -1032,8 +1028,6 @@ var NewTestForm = React.createClass({
     render: function () {
         var title = (this.state.id) ? "Edit test" : 'New test';
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
-        var dateRepair = this.state.repair_date;
-        dateRepair = (dateRepair) ? {dateTime: dateRepair, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
         var dateAnalyse = this.state.date_analyse;
         dateAnalyse = (dateAnalyse) ? {dateTime: dateAnalyse, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
 
@@ -1180,51 +1174,11 @@ var NewTestForm = React.createClass({
                                             <FormGroup validationState={this.state.errors.remark ? 'error' : null}>
                                                 <ControlLabel>Remark</ControlLabel>
                                                 <FormControl componentClass="textarea"
-                                                             placeholder="remark"
+                                                             placeholder="Remark"
                                                              name="remark"
                                                              value={this.state.remark}
                                                 />
                                                 <HelpBlock className="warning">{this.state.errors.remark}</HelpBlock>
-								                <FormControl.Feedback />
-                                            </FormGroup>
-                                        </div>
-                                    </div>
-
-                                    <div className="maxwidth">
-                                        <div className="col-md-4 nopadding padding-right-xs">
-                                            <Checkbox name="transmission"
-                                                      checked={this.state.transmission ? "checked" :null}>
-                                                Sent to Laboratory
-                                            </Checkbox>
-                                        </div>
-                                    </div>
-
-
-                                    <div className="maxwidth">
-                                        <div className="datetimepicker input-group date col-md-3">
-                                            <FormGroup validationState={this.state.errors.repair_date ? 'error' : null}
-                                                       key={this.state.repair_date}>
-                                                <ControlLabel>Repair Date</ControlLabel>
-                                                <DateTimeField name="repair_date"
-                                                               onChange={this.setRepairDate}
-                                                               inputProps={{"name": "repair_date"}}
-                                                               {...dateRepair}
-                                                    />
-                                                <HelpBlock className="warning">{this.state.errors.repair_date}</HelpBlock>
-                                            </FormGroup>
-                                        </div>
-                                    </div>
-
-                                    <div className="row">
-                                        <div className="col-md-12">
-                                            <FormGroup validationState={this.state.errors.repair_description ? 'error' : null}>
-                                                <ControlLabel>Repair Description</ControlLabel>
-                                                <FormControl componentClass="textarea"
-                                                             placeholder="repair description"
-                                                             name="repair_description"
-                                                             value={this.state.repair_description}
-                                                />
-                                                <HelpBlock className="warning">{this.state.errors.repair_description}</HelpBlock>
 								                <FormControl.Feedback />
                                             </FormGroup>
                                         </div>
