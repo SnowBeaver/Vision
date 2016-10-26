@@ -158,10 +158,12 @@ var Home = React.createClass({
     },
 
     loadEquipment: function (equipmentId, campaignId) {
-        var src = '/api/v1.0/test_result/?equipment_id=' + equipmentId;
+        var src = '/api/v1.0/test_result/?';
 
         if (campaignId) {
-            src += '&campaign_id=' + campaignId;
+            src += 'campaign_id=' + campaignId;
+        } else {
+            src += 'equipment_id=' + equipmentId;
         }
 
         this.setState({
