@@ -638,7 +638,15 @@ var NewTestForm = React.createClass({
             var form = {};
             for (var i = 0; i < fields.length; i++) {
                 var key = fields[i];
-                form[key] = (data[key] !== null) ? data[key] : "";
+                var value = data[key];
+                if (key == 'test_type_id') {
+                    if (parseInt(value) == 10){
+                        value = 1;
+                    } else if (parseInt(value) == 1) {
+                        value = 2;
+                    }
+                }
+                form[key] = (value !== null) ? value : "";
             }
             form['id'] = id;
             if (!form['date_analyse']) {
@@ -675,6 +683,13 @@ var NewTestForm = React.createClass({
             var value = this.state[key];
             if (value == ""){
                 value = null;
+            }
+            if (key == 'test_type_id') {
+                if (parseInt(value) == 1){
+                    value = 10;
+                } else if (parseInt(value) == 2) {
+                    value = 1;
+                }
             }
             data[key] = value;
         }
