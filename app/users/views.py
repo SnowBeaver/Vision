@@ -176,6 +176,8 @@ def login():
                                       identity=Identity(user.id))
 
                 flash(gettext(u'Welcome') + " " + user.name)
+                if not user.is_confirmed():
+                    return redirect(url_for('users.pleaseconfirm', next=url_for('home.home')))
                 return redirect(url_for('home.home'))
         flash(gettext(u'Wrong email or password'), 'error-message')
 
