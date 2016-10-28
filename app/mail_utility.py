@@ -43,9 +43,11 @@ Created on: {date_created}
 Start on: {date_start}
 Updated on: {date_updated}
 """
-
 equipment_tmpl = """
 Equipment health state of {name} has been changed by {updated_by}
+"""
+campaign_tmpl = """
+Setup of campaign {name} created by {created_by} has finished
 """
 
 
@@ -75,6 +77,14 @@ def equipment_placeholders(item):
     return info
 
 
+def campaign_placeholders(item):
+    info = {
+        'name': "{:%m/%d/%Y %I:%M %p}".format(item.date_created),
+        'created_by': item.created_by.name or '' if item.created_by else ''
+    }
+    return info
+
+
 email_dict = {
     'schedule': {
         'tmpl': schedule_tmpl,
@@ -83,5 +93,9 @@ email_dict = {
     'equipment': {
         'tmpl': equipment_tmpl,
         'item': equipment_placeholders
+    },
+    'campaign': {
+        'tmpl': campaign_tmpl,
+        'item': campaign_placeholders
     }
 }
