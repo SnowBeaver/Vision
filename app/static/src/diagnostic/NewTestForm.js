@@ -723,7 +723,9 @@ var NewTestForm = React.createClass({
         }
         xhr.done(this._onSuccess)
             .fail(this._onError)
-            .always(this.hideLoading)
+            .always(this.hideLoading);
+
+        this.props.handleClose();
     },
 
     is_valid: function () {
@@ -1296,6 +1298,7 @@ var NewTestForm = React.createClass({
                                             >Save</Button>
                                             <Button bsStyle="danger"
                                                     className="pull-right margin-right-xs"
+                                                    onClick={this.props.handleClose}
                                             >Cancel</Button>
                                         </div>
                                     </div>
