@@ -823,4 +823,19 @@ def delete_task_handler(item_id):
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
     return return_json('result', delete_item(path, item_id))
 
+
+@api_blueprint.route('/campaign/<int:item_id>/finish/', methods=['GET'])
+@login_required
+def finish_campaign_handler(item_id):
+    path = 'campaign'
+    abort_if_wrong_id(item_id)
+    item = db.session.query(Campaign).get(item_id)
+    test_results = db.session.query(TestResult).filter(Campaign.id == item_id).all()
+    email_recipients = [test_result.performed_by.email for test_result in test_results if test_result.performed_by]
+    email_recipients.extend([item.created_by.email, g.user.email])
+    send_email(email_recipients,
+               generate_message(path, item),
+               'Vision - Campaign setup finished #{:%m/%d/%Y %I:%M %p}'.format(item.date_created))
+    return return_json('result', item.id)
+
 api.register_blueprint(api_blueprint)

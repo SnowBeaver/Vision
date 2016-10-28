@@ -331,7 +331,13 @@ var TestList = React.createClass({
     startCampaign: function (e) {
         e.preventDefault();
         NotificationManager.success('Campaign has been successfully started');
+        this.finishSetup();
         this.context.router.push(this.refs.startCampaign.props.to);
+    },
+
+    finishSetup: function () {
+        var url = '/api/v1.0/campaign/' + this.props.params.campaign + '/finish';
+        $.authorizedGet(url);
     },
 
     render: function () {
