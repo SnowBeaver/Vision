@@ -1,4 +1,6 @@
 from functools import wraps
+
+import os
 from flask import Flask, Blueprint, jsonify, abort, make_response, request, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
@@ -837,5 +839,14 @@ def finish_campaign_handler(item_id):
                generate_message(path, item),
                'Vision - Campaign setup finished #{:%m/%d/%Y %I:%M %p}'.format(item.date_created))
     return return_json('result', item.id)
+
+
+# Get release version
+@api_blueprint.route('/release_version/', methods=['GET'])
+@login_required
+def get_release_version_handler():
+    answer = os.popen('git tag -l "v*"').read()
+    current_version = answer.rstrip().split('\n')[-1:]
+    return return_json('result', current_version)
 
 api.register_blueprint(api_blueprint)
