@@ -184,8 +184,25 @@ var LinkList = React.createClass({
 
 
 const App = React.createClass({
+    getInitialState: function () {
+        return {
+            release_version: '',
+        };
+    },
+    componentDidMount: function() {
+        var url = '/api/v1.0/release_version/';
+        this.serverRequest = $.authorizedGet(url,
+            function (result) {
+
+                var release_version = result['result'];
+                this.setState({
+                    release_version: release_version,
+                });
+            }.bind(this), 'json');
+    },
 
     render() {
+        var version = this.state.release_version;
         return (
             // <div className="content">
             //     <NotificationContainer/>
@@ -197,6 +214,7 @@ const App = React.createClass({
             // </div>
 
             <div className="content">
+                Release version: {version}
                 <NotificationContainer/>
                 <div className='app-container'>
                     <hr/>

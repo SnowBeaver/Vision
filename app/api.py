@@ -1,4 +1,6 @@
 from functools import wraps
+
+import os
 from flask import Flask, Blueprint, jsonify, abort, make_response, request, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
@@ -822,5 +824,14 @@ def delete_task_handler(item_id):
     abort_if_wrong_id(item_id)
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
     return return_json('result', delete_item(path, item_id))
+
+
+# Get release version
+@api_blueprint.route('/release_version/', methods=['GET'])
+@login_required
+def get_release_version_handler():
+    answer = os.popen('git tag -l "v*"').read()
+    current_version = answer.rstrip().split('\n')[-1:]
+    return return_json('result', current_version)
 
 api.register_blueprint(api_blueprint)
