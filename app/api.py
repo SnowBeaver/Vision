@@ -800,12 +800,16 @@ def create_task_handler():
     kwargs = {}
     date_start = datetime.strptime(validated_data.get('date_start'), '%Y-%m-%dT%H:%M')
     notify_before_in_days = validated_data.get('notify_before_in_days')
-    recursive = validated_data.get('recurring')
+    recurring = validated_data.get('recurring')
     if date_start:
-        if recursive:
-            setup_periodic_task(email_recipients,
-                                email_message,
-                                'Vision - Periodic Task Created #{}'.format(new_item.id))
+        if recurring:
+            period_data = prepare_period_data(validated_data)
+            if period_data:
+                setup_periodic_task(email_recipients,
+                                    email_message,
+                                    'Vision - Periodic Task #{} Reminder'.format(new_item.id),
+                                    period_data,
+                                    date_start)
         if notify_before_in_days:
             kwargs['eta'] = date_start - timedelta(days=notify_before_in_days)
             send_email_task.apply_async(args=[email_recipients,
@@ -813,6 +817,17 @@ def create_task_handler():
                                               'Vision - Notification of Created Task #{}'.format(new_item.id)],
                                         **kwargs)
     return return_json('result', new_item.id)
+
+
+def prepare_period_data(validated_data):
+    period_data = {}
+    if validated_data.get('period_days'):
+        period_data = {'period_days': validated_data.get('period_days')}
+    elif validated_data.get('period_months'):
+        period_data = {'period_months': validated_data.get('period_months')}
+    elif validated_data.get('period_years'):
+        period_data = {'period_years': validated_data.get('period_years')}
+    return period_data
 
 
 # Update schedule

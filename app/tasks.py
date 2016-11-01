@@ -1,6 +1,8 @@
 from flask import Flask
 from celery import Celery
 from .mail_utility import send_email
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 def make_celery(app):
@@ -29,5 +31,35 @@ def send_email_task(email_recipients, message, subject):
     send_email(email_recipients, message, subject)
 
 
-def setup_periodic_task(email_recipients, message, subject):
-    celery.add_periodic_task(10.0, send_email_task.s(email_recipients, message, subject), name='add every 10')
+def setup_periodic_task(email_recipients, message, subject, period_data, date_start):
+    # The task is added, but scheduler isn't reloaded.
+    # Tried to use beat_max_loop_interval setting as well
+    # celery.add_periodic_task(10.0,
+    # app.tasks.send_email_task.s(email_recipients, message, subject),
+    # name='add every 10')
+
+    # Calculate next date
+    next_date = calculate_next_date(period_data, date_start)
+    send_email_periodic_task.apply_async(args=[email_recipients, message, subject, period_data, next_date],
+                                         eta=next_date)
+
+
+@celery.task()
+def send_email_periodic_task(email_recipients, message, subject, period_data, last_date):
+    send_email(email_recipients, message, subject)
+    next_date = calculate_next_date(period_data, datetime.strptime(last_date, '%Y-%m-%dT%H:%M:%S'))
+    send_email_periodic_task.apply_async(args=[email_recipients, message, subject, period_data, next_date],
+                                         eta=next_date)
+
+
+def calculate_next_date(data, date_start):
+    if data.get('period_days'):
+        days = data.get('period_days')
+        next_date = date_start + relativedelta(days=+days)
+    elif data.get('period_months'):
+        months = data.get('period_months')
+        next_date = date_start + relativedelta(months=+months)
+    elif data.get('period_years'):
+        years = data.get('period_years')
+        next_date = date_start + relativedelta(years=+years)
+    return next_date
