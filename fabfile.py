@@ -361,3 +361,5 @@ def setup_celery():
     sudo('service supervisor stop')
     put(Path(LOCAL_PROJECT_DIR, 'dep', 'supervisor', 'send_mail_worker.conf'), celery_conf, use_sudo=True)
     restart_services()
+    # TODO: Daemonize
+    run('redis-server')
