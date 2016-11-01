@@ -1,6 +1,6 @@
 from functools import wraps
-
 import os
+from datetime import datetime, timedelta
 from flask import Flask, Blueprint, jsonify, abort, make_response, request, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
@@ -20,6 +20,7 @@ from flask.ext.security.utils import encrypt_password
 from flask.ext import login
 from sqlalchemy.orm.session import make_transient
 from .mail_utility import send_email, generate_message
+from tasks import send_email_task, setup_periodic_task
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -794,8 +795,40 @@ def create_task_handler():
     new_item = add_item(path, validated_data)
 
     email_recipients = [new_item.assigned_to.email, g.user.email]
-    send_email(email_recipients, generate_message(path, new_item), 'Vision - Task Created #{}'.format(new_item.id))
+    email_message = generate_message(path, new_item)
+    send_email(email_recipients, email_message, 'Vision - Task Created #{}'.format(new_item.id))
+
+    kwargs = {}
+    date_start = datetime.strptime(validated_data.get('date_start'), '%Y-%m-%dT%H:%M')
+    notify_before_in_days = validated_data.get('notify_before_in_days')
+    recurring = validated_data.get('recurring')
+    if date_start:
+        if recurring:
+            period_data = prepare_period_data(validated_data)
+            if period_data:
+                setup_periodic_task(email_recipients,
+                                    email_message,
+                                    'Vision - Periodic Task #{} Reminder'.format(new_item.id),
+                                    period_data,
+                                    date_start)
+        if notify_before_in_days:
+            kwargs['eta'] = date_start - timedelta(days=notify_before_in_days)
+            send_email_task.apply_async(args=[email_recipients,
+                                              email_message,
+                                              'Vision - Notification of Created Task #{}'.format(new_item.id)],
+                                        **kwargs)
     return return_json('result', new_item.id)
+
+
+def prepare_period_data(validated_data):
+    period_data = {}
+    if validated_data.get('period_days'):
+        period_data = {'period_days': validated_data.get('period_days')}
+    elif validated_data.get('period_months'):
+        period_data = {'period_months': validated_data.get('period_months')}
+    elif validated_data.get('period_years'):
+        period_data = {'period_years': validated_data.get('period_years')}
+    return period_data
 
 
 # Update schedule

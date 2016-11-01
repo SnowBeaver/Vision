@@ -29,9 +29,11 @@ var TaskList = React.createClass({
             testData: {'test_result_id': 1, 'taps': []},
             fields: [
                 'date_start', 'description', 'priority', 'id', 'date_created', 'date_updated',
-                'recurring', 'notify_before_in_days', 'test_recommendation', 'assigned_to', 'status'
+                'recurring', 'notify_before_in_days', 'test_recommendation', 'assigned_to', 'status',
+                'period_days', 'period_months', 'period_years'
             ],
-            changedTasks: []
+            changedTasks: [],
+            periodNameList: ['', 'days', 'months', 'years']
         }
     },
 
@@ -91,6 +93,18 @@ var TaskList = React.createClass({
             case 'date_updated':
                 task.date_updated = this._formatDateTime(data[key], 0);
                 break;
+            case 'period_days':
+                task.period_nr = data[key];
+                task.period_name = 'days';
+                break;
+            case 'period_months':
+                task.period_nr = data[key];
+                task.period_name = 'months';
+                break;
+            case 'period_years':
+                task.period_nr = data[key];
+                task.period_name = 'years';
+                break;
             default:
                 task[key] = data[key];
         }
@@ -142,7 +156,8 @@ var TaskList = React.createClass({
                 task[key] = tasks[key];
             }
         }
-        ['uniqueKey', 'test_type', 'test_result_id'].forEach(function(fld){delete task[fld]});
+        $.extend(task, this.buildPeriodFieldValue(task.period_nr, task.period_name));
+        ['uniqueKey', 'test_type', 'test_result_id', 'period_nr', 'period_name'].forEach(function(fld){delete task[fld]});
 
         var url = '/api/v1.0/schedule/';
         if (task.id) {
@@ -167,7 +182,7 @@ var TaskList = React.createClass({
             NotificationManager.error('Please correct the errors');
             return false;
         }
-        this.state.tasks = this.refs.table.state.data;
+        this.state.tasks = this.refs.table.store.data;
         var xhr = this._create(data);
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -208,7 +223,8 @@ var TaskList = React.createClass({
         assigned_to: {data_type: "alnum", label: "Assigned To"},
         test_recommendation: {data_type: "any", label: "Test Recommendation"},
         priority: {data_type: "alnum", label: "Priority"},
-        recurring: {data_type: "bool", label: "Recurring"}
+        recurring: {data_type: "bool", label: "Recurring"},
+        period_nr: {data_type: "int", label: "Period nr"}
     },
 
     _validateFieldType: function (value, type){
@@ -428,8 +444,19 @@ var TaskList = React.createClass({
         if (row.date_start == "") {
             delete row.date_start;
         }
+
         row.uniqueKey = this.getUniqueKey();
         row.recurring = row.recurring === 'true' ? true: false;
+    },
+
+    buildPeriodFieldValue: function (periodNr, periodName) {
+        var value = {};
+        if (periodName && periodNr) {
+            periodName = "period_" + periodName;
+            value[periodName] = periodNr;
+            return value;
+        }
+        return value;
     },
 
     render: function () {
@@ -538,6 +565,19 @@ var TaskList = React.createClass({
                                        dataFormat={this._formatRecurring}
                                        editable={{type: 'checkbox', options: {values: "true:false"}}}
                                        ref="recurring">Recurring
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="period_nr"
+                                       hidden={true}
+                                       hiddenOnInsert={false}
+                                       editable={true}
+                                       ref="period_nr">Period nr
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="period_name"
+                                       hidden={true}
+                                       hiddenOnInsert={false}
+                                       editable={true}
+                                       editable={{type: 'select', options: {values: this.state.periodNameList}}}
+                                       ref="period_name">Period name
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="notify_before_in_days"
                                        width="80"

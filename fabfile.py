@@ -72,6 +72,7 @@ def setup_dev():
     setup_dev_app()
     setup_blogging()
     setup_flaskbb()
+    setup_celery()
     restart_services()
     deploy()
 
@@ -353,3 +354,12 @@ def test():
         # run('python -m unittest test_unittest.TestStringMethods')
         # run('python -m unittest test_unittest.TestStringMethods.test_upper')
         local('python test_api.py')
+
+
+def setup_celery():
+    celery_conf = "/etc/supervisor/conf.d/send_mail_worker.conf"
+    sudo('service supervisor stop')
+    put(Path(LOCAL_PROJECT_DIR, 'dep', 'supervisor', 'send_mail_worker.conf'), celery_conf, use_sudo=True)
+    restart_services()
+    # TODO: Daemonize
+    run('redis-server')
