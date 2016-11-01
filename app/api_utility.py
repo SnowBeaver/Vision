@@ -1,9 +1,10 @@
 import math
-
 from app.diagnostic.models import *
 from app.users.models import User, Role
 from datetime import datetime
 from cerberus import Validator
+from sqlalchemy import desc
+
 
 
 class Tree(db.Model):
@@ -128,6 +129,13 @@ class MyValidator(Validator):
     #     self.document.get('viscosity') or
     #     self.document.get('corr')):
     #     testcheckedtemp = 1
+
+    def _validate_norm_gas_fluid_level(self, norm_gas_fluid_level, field, value):
+        last_norm = db.session.query(NormGas).order_by(desc(NormGas.fluid_level)).first()
+
+        if last_norm and last_norm.fluid_level >= value:
+            self._error(field,
+                        "Wrong fluid level, must be more than {}".format(last_norm.fluid_level))
 
 
 def dict_copy_union(dict1, *kargs):
@@ -1221,7 +1229,7 @@ norm_gas_schema = {
     'co': type_float_coerce_dict,
     'co2': type_float_coerce_dict,
     'tdcg': type_float_coerce_dict,
-    'fluid_level': type_integer_coerce_dict,
+    'fluid_level': dict_copy_union(type_integer_coerce_dict, {'norm_gas_fluid_level': True}),
 }
 particles_schema = {
     'id': readonly_dict,
