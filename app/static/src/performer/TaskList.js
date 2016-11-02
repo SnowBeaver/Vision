@@ -33,7 +33,8 @@ var TaskList = React.createClass({
                 'recurring', 'notify_before_in_days', 'test_recommendation', 'assigned_to', 'status'
             ],
             changedTasks: [],
-            assignedToChanged: false
+            assignedToChanged: false,
+            periodNameList: ['days', 'months', 'years']
         }
     },
 
@@ -94,6 +95,18 @@ var TaskList = React.createClass({
             case 'date_updated':
                 task.date_updated = this._formatDateTime(data[key], 0);
                 break;
+            case 'period_days':
+                task.period_nr = data[key];
+                task.period_name = 'days';
+                break;
+            case 'period_months':
+                task.period_nr = data[key];
+                task.period_name = 'months';
+                break;
+            case 'period_years':
+                task.period_nr = data[key];
+                task.period_name = 'years';
+                break;
             default:
                 task[key] = data[key];
         }
@@ -104,6 +117,7 @@ var TaskList = React.createClass({
         // Prepare recently added task
         var task = {};
         task = this.prepareOneTask(data, task);
+        task.uniqueKey = this.getUniqueKey();
         var tasks = this.state.tasks;
         tasks[tasks.length] = task;
 
@@ -147,7 +161,8 @@ var TaskList = React.createClass({
                 task[key] = tasks[key];
             }
         }
-        ['uniqueKey', 'test_type', 'test_result_id'].forEach(function(fld){delete task[fld]});
+        $.extend(task, this.buildPeriodFieldValue(task.period_nr, task.period_name));
+        ['uniqueKey', 'test_type', 'test_result_id', 'period_nr', 'period_name'].forEach(function(fld){delete task[fld]});
 
         var url = '/api/v1.0/schedule/';
         if (task.id) {
@@ -172,7 +187,7 @@ var TaskList = React.createClass({
             NotificationManager.error('Please correct the errors');
             return false;
         }
-        this.state.tasks = this.refs.table.state.data;
+        this.state.tasks = this.refs.table.store.data;
         var xhr = this._create(data);
         xhr.done(this._onSuccess)
             .fail(this._onError)
@@ -232,7 +247,10 @@ var TaskList = React.createClass({
         assigned_to: {data_type: "alnum", label: "Assigned To"},
         test_recommendation: {data_type: "any", label: "Test Recommendation"},
         priority: {data_type: "alnum", label: "Priority"},
-        recurring: {data_type: "bool", label: "Recurring"}
+        recurring: {data_type: "bool", label: "Recurring"},
+        period_nr: {data_type: "int", label: "Repeat every"},
+        notify_before_in_days: {data_type: "int", label: "Notify before (days)"},
+        date_start: {data_type: "any", label: "Start"}
     },
 
     _validateFieldType: function (value, type){
@@ -253,6 +271,12 @@ var TaskList = React.createClass({
     },
 
     _validateDateTime: function (value) {
+        // Hook to hide toast block as we use another component for notifications
+        document.getElementById('toast-container').style.display = 'none';
+        if (moment(value).diff(moment(), 'minutes') <= 0) {
+            NotificationManager.error("Date for 'Start' field should not be less than today");
+            return;
+        }
         var isValid = moment(value, 'MM/DD/YYYY hh:mm A', true).isValid();
         if (!isValid) {
             isValid = moment(value, 'YYYY-MM-DDTHH:mm', true).isValid();
@@ -466,11 +490,42 @@ var TaskList = React.createClass({
 
     onAddRow: function (row) {
         var error = false;
-        ["parent_id", "assigned_to", "date_start", "test_recommendation", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
+        var requiredFields = ["parent_id", "assigned_to", "date_start", "test_recommendation", "priority"];
+        var integerFields = ["notify_before_in_days", "period_nr"];
+        // Use for loops to avoid 'React encountered two children
+        // with the same key' error from NotificationManager
+        for (var i = 0; i < requiredFields.length; i++) {
+            var fld = requiredFields[i];
+            if (!row[fld]) {
+                NotificationManager.error(this._validateDict[fld].label + ' is required.');
+                error = true;
+                break;
+            }
+        }
         if (error) {
             return;
         }
-        // Delete empty values
+        for (var j = 0; j < integerFields.length; j++) {
+            var field = integerFields[j];
+            if (row[field] && isNaN(parseInt(row[field])) && !$.isNumeric(row[field])) {
+                NotificationManager.error(this._validateDict[field].label + ' should be integer.');
+                error = true;
+                break;
+            }
+        }
+        if (error) {
+            return;
+        }
+
+        if (row.recurring == 'true' && !row.period_nr) {
+            NotificationManager.error("Please indicate value for field 'Repeat every'.");
+            return;
+        }
+        if (row.recurring == 'true' && !row.period_name) {
+            NotificationManager.error("Please indicate value for field 'Repeat every'.");
+            return;
+        }
+
         for (var fld in row) {
             if (row[fld] == "") {
                 delete row[fld];
@@ -481,8 +536,27 @@ var TaskList = React.createClass({
         if (row.date_start == "") {
             delete row.date_start;
         }
+
         row.uniqueKey = this.getUniqueKey();
         row.recurring = row.recurring === 'true' ? true: false;
+        if (row.recurring && row.period_nr && !row.period_name) {
+            // Setup default
+            row.period_name = 'days';
+        }
+        if (row.period_nr && row.period_name && !row.recurring) {
+            // Setup default
+            row.recurring = true;
+        }
+    },
+
+    buildPeriodFieldValue: function (periodNr, periodName) {
+        var value = {};
+        if (periodName && periodNr) {
+            periodName = "period_" + periodName;
+            value[periodName] = periodNr;
+            return value;
+        }
+        return value;
     },
 
     render: function () {
@@ -598,6 +672,19 @@ var TaskList = React.createClass({
                                        dataFormat={this._formatRecurring}
                                        editable={{type: 'checkbox', options: {values: "true:false"}}}
                                        ref="recurring">Recurring
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="period_nr"
+                                       hidden={true}
+                                       hiddenOnInsert={false}
+                                       editable={true}
+                                       ref="period_nr">Repeat every (if recurring)
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField="period_name"
+                                       hidden={true}
+                                       hiddenOnInsert={false}
+                                       editable={true}
+                                       editable={{type: 'select', options: {values: this.state.periodNameList}}}
+                                       ref="period_name">
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="notify_before_in_days"
                                        width="80"
