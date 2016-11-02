@@ -224,7 +224,9 @@ var TaskList = React.createClass({
         test_recommendation: {data_type: "any", label: "Test Recommendation"},
         priority: {data_type: "alnum", label: "Priority"},
         recurring: {data_type: "bool", label: "Recurring"},
-        period_nr: {data_type: "int", label: "Period nr"}
+        period_nr: {data_type: "int", label: "Repeat every"},
+        notify_before_in_days: {data_type: "int", label: "Notify before (days)"},
+        date_start: {data_type: "any", label: "Start"}
     },
 
     _validateFieldType: function (value, type){
@@ -245,12 +247,17 @@ var TaskList = React.createClass({
     },
 
     _validateDateTime: function (value) {
+        if (moment(value).diff(moment(), 'minutes') <= 0) {
+            NotificationManager.error("Date for 'Start' field should not be less than today");
+            return;
+        }
+
         var isValid = moment(value, 'MM/DD/YYYY hh:mm A', true).isValid();
         if (!isValid) {
             isValid = moment(value, 'YYYY-MM-DDTHH:mm', true).isValid();
         }
         if (!isValid) {
-            NotificationManager.error('Start on should of the following format mm/dd/yyyy HH:MM AM', 'Validation Error', 20000);
+            NotificationManager.error('Start on should be of the following format mm/dd/yyyy HH:MM AM', 'Validation Error', 20000);
         }
         return isValid;
     },
@@ -430,10 +437,33 @@ var TaskList = React.createClass({
 
     onAddRow: function (row) {
         var error = false;
-        ["assigned_to", "date_start", "test_recommendation", "priority"].forEach(fld => {if (!row[fld]) {NotificationManager.error(this._validateDict[fld].label + ' is required.'); error=true;}})
+        ["assigned_to", "date_start", "test_recommendation", "priority"].forEach(
+                fld => {
+                    if (!row[fld]) {
+                        NotificationManager.error(this._validateDict[fld].label + ' is required.');
+                        error = true;
+                    }
+                });
+        ["notify_before_in_days", "period_nr"].forEach(
+                field => {
+                    if (row[field] && isNaN(parseInt(row[field])) && !$.isNumeric(row[field])) {
+                        NotificationManager.error(this._validateDict[field].label + ' should be integer.');
+                        error = true;
+                    }
+                });
         if (error) {
             return;
         }
+
+        if (row.recurring == 'true' && !row.period_nr) {
+            NotificationManager.error("Please indicate value for field 'Repeat every'.");
+            return;
+        }
+        if (row.recurring == 'true' && !row.period_name) {
+            NotificationManager.error("Please indicate value for field 'Repeat every'.");
+            return;
+        }
+
         for (var fld in row) {
             if (row[fld] == "") {
                 delete row[fld];
@@ -447,6 +477,14 @@ var TaskList = React.createClass({
 
         row.uniqueKey = this.getUniqueKey();
         row.recurring = row.recurring === 'true' ? true: false;
+        if (row.recurring && row.period_nr && !row.period_name) {
+            // Setup default
+            row.period_name = 'days';
+        }
+        if (row.period_nr && row.period_name && !row.recurring) {
+            // Setup default
+            row.recurring = true;
+        }
     },
 
     buildPeriodFieldValue: function (periodNr, periodName) {
@@ -570,8 +608,7 @@ var TaskList = React.createClass({
                                        hidden={true}
                                        hiddenOnInsert={false}
                                        editable={true}
-                                       className="col-md-4 pull-left"
-                                       ref="period_nr">Repeat every
+                                       ref="period_nr">Repeat every (if recurring)
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="period_name"
                                        hidden={true}
