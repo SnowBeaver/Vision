@@ -115,6 +115,7 @@ var TaskList = React.createClass({
         // Prepare recently added task
         var task = {};
         task = this.prepareOneTask(data, task);
+        task.uniqueKey = this.getUniqueKey();
         var tasks = this.state.tasks;
         tasks[tasks.length] = task;
 
