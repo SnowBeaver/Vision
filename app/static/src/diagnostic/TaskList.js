@@ -33,7 +33,7 @@ var TaskList = React.createClass({
                 'period_days', 'period_months', 'period_years'
             ],
             changedTasks: [],
-            periodNameList: ['', 'days', 'months', 'years']
+            periodNameList: ['days', 'months', 'years']
         }
     },
 
@@ -570,14 +570,15 @@ var TaskList = React.createClass({
                                        hidden={true}
                                        hiddenOnInsert={false}
                                        editable={true}
-                                       ref="period_nr">Period nr
+                                       className="col-md-4 pull-left"
+                                       ref="period_nr">Repeat every
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="period_name"
                                        hidden={true}
                                        hiddenOnInsert={false}
                                        editable={true}
                                        editable={{type: 'select', options: {values: this.state.periodNameList}}}
-                                       ref="period_name">Period name
+                                       ref="period_name">
                     </TableHeaderColumn>
                     <TableHeaderColumn dataField="notify_before_in_days"
                                        width="80"
