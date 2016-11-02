@@ -20,7 +20,7 @@ from flask.ext.security.utils import encrypt_password
 from flask.ext import login
 from sqlalchemy.orm.session import make_transient
 from .mail_utility import send_email, generate_message
-from tasks import send_email_task, setup_periodic_task
+from tasks import apply_send_email_task, setup_periodic_email_task
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -797,7 +797,12 @@ def create_task_handler():
     email_recipients = [new_item.assigned_to.email, g.user.email]
     email_message = generate_message(path, new_item)
     send_email(email_recipients, email_message, 'Vision - Task Created #{}'.format(new_item.id))
+    send_task_emails_to_queue(email_recipients, email_message, new_item, validated_data)
 
+    return return_json('result', new_item.id)
+
+
+def send_task_emails_to_queue(email_recipients, email_message, new_item, validated_data):
     kwargs = {}
     date_start = datetime.strptime(validated_data.get('date_start'), '%Y-%m-%dT%H:%M')
     notify_before_in_days = validated_data.get('notify_before_in_days')
@@ -806,28 +811,27 @@ def create_task_handler():
         if recurring:
             period_data = prepare_period_data(validated_data)
             if period_data:
-                setup_periodic_task(email_recipients,
-                                    email_message,
-                                    'Vision - Periodic Task #{} Reminder'.format(new_item.id),
-                                    period_data,
-                                    date_start)
+                setup_periodic_email_task(email_recipients,
+                                          email_message,
+                                          'Vision - Periodic Task #{} Reminder'.format(new_item.id),
+                                          period_data,
+                                          date_start)
         if notify_before_in_days:
             kwargs['eta'] = date_start - timedelta(days=notify_before_in_days)
-            send_email_task.apply_async(args=[email_recipients,
-                                              email_message,
-                                              'Vision - Notification of Created Task #{}'.format(new_item.id)],
-                                        **kwargs)
-    return return_json('result', new_item.id)
+            apply_send_email_task(email_recipients,
+                                  email_message,
+                                  'Vision - Notification of Created Task #{}'.format(new_item.id),
+                                  kwargs)
 
 
-def prepare_period_data(validated_data):
+def prepare_period_data(data):
     period_data = {}
-    if validated_data.get('period_days'):
-        period_data = {'period_days': validated_data.get('period_days')}
-    elif validated_data.get('period_months'):
-        period_data = {'period_months': validated_data.get('period_months')}
-    elif validated_data.get('period_years'):
-        period_data = {'period_years': validated_data.get('period_years')}
+    if data.get('period_days'):
+        period_data = {'period_days': data.get('period_days')}
+    elif data.get('period_months'):
+        period_data = {'period_months': data.get('period_months')}
+    elif data.get('period_years'):
+        period_data = {'period_years': data.get('period_years')}
     return period_data
 
 
