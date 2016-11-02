@@ -1418,6 +1418,18 @@ to the currently logged in user or are private.
 @apiUse Error404
 """
 """
+@api {get} /campaign/:id/finish Finish campaign setup. Send email notifications to performers,
+                                person who created campaign, user who finishes the campaign
+@apiVersion 1.0.0
+@apiName finish_campaign_handler
+@apiGroup campaign
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/campaign/1/finish
+
+@apiUse GetItemsSuccess
+@apiUse Error404
+"""
+"""
 @api {post} /campaign/ Add a new item
 @apiVersion 1.0.0
 @apiName add_item
