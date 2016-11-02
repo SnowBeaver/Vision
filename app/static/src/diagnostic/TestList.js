@@ -100,7 +100,7 @@ var TestItem = React.createClass({
         var test_status = test.test_status;
         var test_type_name = 'Undetermined - click to configure';
         if  (test.test_type_id) {
-            test_type_name = (test.test_type_id == 1) ? 'Electrical':'Fluid';
+            test_type_name = (test.test_type_id == 10) ? 'Fluid':'Electrical';
         }
         var performed_by_name = (test.performed_by != null) ? test.performed_by.name : 'undetermined';
 
@@ -164,10 +164,23 @@ var TestItemList = React.createClass({
     },
 
     showTestForm: function () {
-        this.refs.new_test_form._add();
-        this.setState({
-            showTestForm: true
-        })
+        var data = {
+            campaign_id: this.props.campaign_id,
+            equipment_id: this.props.id
+        };
+
+        this.serverRequest = $.authorizedAjax({
+            url: '/api/v1.0/test_result/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function () { this.setState({loading: true}) }.bind(this),
+            success: function (result) {
+                         var id = result['result'];
+                         this.editTestForm(id)
+                     }.bind(this)
+        });
     },
 
     closeTestForm: function () {
@@ -177,6 +190,7 @@ var TestItemList = React.createClass({
     },
 
     editTestForm: function (id) {
+        console.log('ID', id);
         if (typeof id == 'undefined') {
             return null;
         }
@@ -202,13 +216,11 @@ var TestItemList = React.createClass({
         };
         var showTestForm = this.state.showTestForm;
         var showAddTestButton = this.state.showAddTestButton;
-
         for (var i = 0; i < this.props.data.length; i++) {
             var item = this.props.data[i];
-
             if (item.equipment.id == equipment_id) {
 
-                if (item.performed_by_id === null && item.reason_id === null) {
+                if (item.performed_by_id === null && item.test_reason_id === null) {
                     data = item;
                     showTestForm = true;
                     showAddTestButton = false;
@@ -260,7 +272,7 @@ var TestItemList = React.createClass({
                 <div className="row">
                     <div className="col-md-3">
                         <FormGroup>
-                            <Button onClick={this.showTestForm} className="success">Add new test</Button>
+                            <Button onClick={this.showTestForm} className="success">Add more tests</Button>
                         </FormGroup>
                     </div>
                 </div>
@@ -331,7 +343,13 @@ var TestList = React.createClass({
     startCampaign: function (e) {
         e.preventDefault();
         NotificationManager.success('Campaign has been successfully started');
+        this.finishSetup();
         this.context.router.push(this.refs.startCampaign.props.to);
+    },
+
+    finishSetup: function () {
+        var url = '/api/v1.0/campaign/' + this.props.params.campaign + '/finish';
+        $.authorizedGet(url);
     },
 
     render: function () {

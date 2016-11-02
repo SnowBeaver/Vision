@@ -176,6 +176,8 @@ def login():
                                       identity=Identity(user.id))
 
                 flash(gettext(u'Welcome') + " " + user.name)
+                if not user.is_confirmed():
+                    return redirect(url_for('users.pleaseconfirm', next=url_for('home.home')))
                 return redirect(url_for('home.home'))
         flash(gettext(u'Wrong email or password'), 'error-message')
 
@@ -268,7 +270,8 @@ def register():
         # flash will display a message to the user
         flash(gettext(u'Thanks for registering'))
         # redirect user to the 'home' method of the user module.
-        return redirect(url_for('users.home'))
+        if not user.is_confirmed():
+            return redirect(url_for('users.pleaseconfirm', next=url_for('users.home')))
 
     return render_template('users/register.html', form=form)
 

@@ -48,15 +48,15 @@ def get_tree():
 
     res = []
     # res.insert(0,tree.serialize())
+    if tree:
+        res.append(tree.serialize())
 
-    res.append(tree.serialize())
-
-    if tree.children:
-        res = serialize(tree.children, res)
-        # for item in tree.children:
-        #     res.append(item.serialize())
-        #     if item.children:
-    # print res
+        if tree.children:
+            res = serialize(tree.children, res)
+            # for item in tree.children:
+            #     res.append(item.serialize())
+            #     if item.children:
+        # print res
 
     response = json.dumps(res)
     return response
