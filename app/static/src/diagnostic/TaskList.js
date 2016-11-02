@@ -440,20 +440,29 @@ var TaskList = React.createClass({
 
     onAddRow: function (row) {
         var error = false;
-        ["assigned_to", "date_start", "test_recommendation", "priority"].forEach(
-                fld => {
-                    if (!row[fld]) {
-                        NotificationManager.error(this._validateDict[fld].label + ' is required.');
-                        error = true;
-                    }
-                });
-        ["notify_before_in_days", "period_nr"].forEach(
-                field => {
-                    if (row[field] && isNaN(parseInt(row[field])) && !$.isNumeric(row[field])) {
-                        NotificationManager.error(this._validateDict[field].label + ' should be integer.');
-                        error = true;
-                    }
-                });
+        var requiredFields = ["assigned_to", "date_start", "test_recommendation", "priority"];
+        var integerFields = ["notify_before_in_days", "period_nr"];
+        // Use for loops to avoid 'React encountered two children
+        // with the same key' error from NotificationManager
+        for (var i = 0; i < requiredFields.length; i++) {
+            var fld = requiredFields[i];
+            if (!row[fld]) {
+                NotificationManager.error(this._validateDict[fld].label + ' is required.');
+                error = true;
+                break;
+            }
+        }
+        if (error) {
+            return;
+        }
+        for (var j = 0; j < integerFields.length; j++) {
+            var field = integerFields[j];
+            if (row[field] && isNaN(parseInt(row[field])) && !$.isNumeric(row[field])) {
+                NotificationManager.error(this._validateDict[field].label + ' should be integer.');
+                error = true;
+                break;
+            }
+        }
         if (error) {
             return;
         }
