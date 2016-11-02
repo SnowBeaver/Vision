@@ -47,7 +47,7 @@ def send_email_periodic_task(email_recipients, message, subject, period_data, la
             raise
 
 
-def setup_periodic_task(email_recipients, message, subject, period_data, date_start):
+def setup_periodic_email_task(email_recipients, message, subject, period_data, date_start):
     # The task is added, but scheduler isn't reloaded.
     # Tried to use beat_max_loop_interval setting as well
     # celery.add_periodic_task(10.0,
@@ -75,3 +75,11 @@ def calculate_next_date(data, date_start):
         years = data.get('period_years')
         next_date = date_start + relativedelta(years=+years)
     return next_date
+
+
+def apply_send_email_task(email_recipients, email_message, subject, kwargs):
+    try:
+        send_email_task.apply_async(args=[email_recipients, email_message, subject], **kwargs)
+    except:
+        if DEBUG:
+            raise
