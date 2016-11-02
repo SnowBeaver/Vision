@@ -1,12 +1,15 @@
-from flask import Flask
-from celery import Celery
-from .mail_utility import send_email
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+from flask import Flask
+from celery import Celery
+
+from .mail_utility import send_email
+
 
 def make_celery(app):
-    celery = Celery(app.import_name, backend=app.config['CELERY_BACKEND'],
+    celery = Celery(app.import_name,
+                    backend=app.config['CELERY_BACKEND'],
                     broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task
@@ -24,11 +27,24 @@ def make_celery(app):
 flask_app = Flask(__name__)
 flask_app.config.from_object('config')
 celery = make_celery(flask_app)
+DEBUG = flask_app.config.get('DEBUG')
 
 
 @celery.task()
 def send_email_task(email_recipients, message, subject):
     send_email(email_recipients, message, subject)
+
+
+@celery.task()
+def send_email_periodic_task(email_recipients, message, subject, period_data, last_date):
+    send_email(email_recipients, message, subject)
+    next_date = calculate_next_date(period_data, datetime.strptime(last_date, '%Y-%m-%dT%H:%M:%S'))
+    try:
+        send_email_periodic_task.apply_async(args=[email_recipients, message, subject, period_data, next_date],
+                                             eta=next_date)
+    except:
+        if DEBUG:
+            raise
 
 
 def setup_periodic_task(email_recipients, message, subject, period_data, date_start):
@@ -40,16 +56,12 @@ def setup_periodic_task(email_recipients, message, subject, period_data, date_st
 
     # Calculate next date
     next_date = calculate_next_date(period_data, date_start)
-    send_email_periodic_task.apply_async(args=[email_recipients, message, subject, period_data, next_date],
-                                         eta=next_date)
-
-
-@celery.task()
-def send_email_periodic_task(email_recipients, message, subject, period_data, last_date):
-    send_email(email_recipients, message, subject)
-    next_date = calculate_next_date(period_data, datetime.strptime(last_date, '%Y-%m-%dT%H:%M:%S'))
-    send_email_periodic_task.apply_async(args=[email_recipients, message, subject, period_data, next_date],
-                                         eta=next_date)
+    try:
+        send_email_periodic_task.apply_async(args=[email_recipients, message, subject, period_data, next_date],
+                                             eta=next_date)
+    except:
+        if DEBUG:
+            raise
 
 
 def calculate_next_date(data, date_start):
