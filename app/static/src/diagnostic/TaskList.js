@@ -248,6 +248,8 @@ var TaskList = React.createClass({
     },
 
     _validateDateTime: function (value) {
+        // Hook to hide toast block as we use another component for notifications
+        document.getElementById('toast-container').style.display = 'none';
         if (moment(value).diff(moment(), 'minutes') <= 0) {
             NotificationManager.error("Date for 'Start' field should not be less than today");
             return;
