@@ -247,7 +247,7 @@ def setup_redis():
     sudo("apt-get install -y redis-server")
     put(env.redis_conf, '/etc/redis/redis.conf', use_sudo=True)
     sudo("update-rc.d redis-server defaults")
-    sudo("service redis-server start")
+    sudo("service redis-server start", pty=False)
 
 
 def setup_trans():
