@@ -142,7 +142,7 @@ var Home = React.createClass({
         this.refs.tree.handleTreeSearch(e.target.value);
     },
 
-    onTreeNodeClick: function (treeItem) {
+    onTreeNodeClick: function (treeItem, selected_equipment_ids) {
         if (!localStorage.getItem('Id')) {
             NotificationManager.error('Please re-login to get actual information');
             return;
@@ -152,7 +152,12 @@ var Home = React.createClass({
         } else {
             // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
             var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
-            this.setState({equipmentId: id, campaignId: null, searchValue: ""});
+            this.setState({
+                equipmentId: id,
+                campaignId: null,
+                searchValue: "",
+                selected_equipment_ids: selected_equipment_ids
+            });
             this.loadEquipment(id);
         }
     },
