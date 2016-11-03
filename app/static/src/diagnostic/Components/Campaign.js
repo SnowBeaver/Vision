@@ -6,7 +6,9 @@ export default class Equipment extends Component {
     render() {
         return (
             <div>
-                <CampaignForm />
+                <CampaignForm
+                    equipment_ids={this.props.location.query.equipment_ids}
+                />
             </div>
         )
     }
