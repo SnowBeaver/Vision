@@ -177,8 +177,10 @@ var TreeNode = React.createClass({
         opts += ', \"text\":\"' + this.props.node.text + '\"';
         opts += ', \"status\":\"' + this.props.node.status + '\"}';
 
+        var className = switchIds.indexOf(this.props.node.equipment_type_id) > -1 && this.props.node.tie_status == 0 ? "semitransparent" : "";
+
         return (
-            <li key={this.props.node.id} data-jstree={opts}>
+            <li key={this.props.node.id} data-jstree={opts} className={className}>
                 {this.props.node.text}
                 { cnodes ? <ul>{cnodes}</ul> : null }
             </li>
