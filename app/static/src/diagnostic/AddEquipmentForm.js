@@ -154,11 +154,20 @@ var ConnectionsManager = React.createClass({
 var AddEquipmentForm = React.createClass({
 
     getInitialState: function () {
+        var equipmentIds = this.props.location.query.equipment_ids;
+        var numberOfSelects = 1;
+        var equipment = [];
+        if (Array.isArray(equipmentIds)) {
+            numberOfSelects = equipmentIds.length;
+            equipment = equipmentIds;
+        } else {
+            equipment.push(equipmentIds)
+        }
         return {
             loading: false,
             errors: {},
-            numberOfSelects: 1,
-            equipment: []
+            numberOfSelects: numberOfSelects,
+            equipment: equipment
         }
     },
 

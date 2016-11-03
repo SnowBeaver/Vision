@@ -23,7 +23,15 @@ var TreeComponent = React.createClass({
     },
     handleNodeClick: function (e, data) {
         var item = data.instance.get_node(data.node.id);
-        this.props.onTreeNodeClick(item.state);
+        var selected = data.instance.get_selected(true);
+        var selected_equipment_ids = selected.filter(
+                function(selected_item) {
+                    return selected_item.state.equipment_id != 'null';
+                }).map(function(selected_item) {
+                    return selected_item.state.equipment_id;
+                }
+            );
+        this.props.onTreeNodeClick(item.state, selected_equipment_ids);
     },
 
     handleMoveNode: function (e, data) {
