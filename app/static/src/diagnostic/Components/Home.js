@@ -124,7 +124,8 @@ var Home = React.createClass({
             text: '',
             equipmentId: null,
             campaignId: null,
-            searchValue: ""
+            searchValue: "",
+            selected_equipment_ids: []
         }
     },
 
@@ -142,7 +143,7 @@ var Home = React.createClass({
         this.refs.tree.handleTreeSearch(e.target.value);
     },
 
-    onTreeNodeClick: function (treeItem) {
+    onTreeNodeClick: function (treeItem, selected_equipment_ids) {
         if (!localStorage.getItem('Id')) {
             NotificationManager.error('Please re-login to get actual information');
             return;
@@ -152,7 +153,12 @@ var Home = React.createClass({
         } else {
             // null comes as string in case no equipment assigned to tree item, condition from below should be removed later
             var id = (treeItem.equipment_id != 'null') ? treeItem.equipment_id : 0;
-            this.setState({equipmentId: id, campaignId: null, searchValue: ""});
+            this.setState({
+                equipmentId: id,
+                campaignId: null,
+                searchValue: "",
+                selected_equipment_ids: selected_equipment_ids
+            });
             this.loadEquipment(id);
         }
     },
@@ -196,7 +202,12 @@ var Home = React.createClass({
             <div>
                 <div className="row">
                     <div className="col-md-3 equal_col">
-                        <Link to='/campaign' className="btn btn-success btn-large">New Campaign</Link>
+                        <Link to={{ pathname: '/campaign',
+                                    query: {
+                                        equipment_ids: this.state.selected_equipment_ids } }}
+                              className="btn btn-success btn-large">
+                            New Campaign
+                        </Link>
                     </div>
                 </div>
                 <br/>

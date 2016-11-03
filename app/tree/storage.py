@@ -7,7 +7,7 @@ from app import app
 from sqlalchemy.orm.session import make_transient
 import json
 from flask import jsonify
-
+from app.diagnostic.models import EquipmentType
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -64,6 +64,13 @@ def get_tree():
     # except Exception as e:
     #     import logging
     #     logging.error(e)
+
+
+def get_switch_ids():
+    switch_names = ("Air circuit breaker", "Breaker", "Switch")
+    switches = db.session.query(EquipmentType).filter(EquipmentType.name.in_(switch_names)).values("id")
+    switches = [switch[0] for switch in switches]
+    return json.dumps(switches)
 
 
 def serialize(tree, res):

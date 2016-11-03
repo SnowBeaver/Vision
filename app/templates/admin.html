@@ -24,6 +24,7 @@
             treeGetView: '{{ url_for("tree.getview") }}'
         };
         var treeStruct = {{ _(tree) or '[]' }};
+        var switchIds = {{ _(switchIds) or '[]' }};
 {#</div>#}
     </script>
 

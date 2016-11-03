@@ -238,7 +238,18 @@ var CampaignForm = React.createClass({
             campaign_id: data.result
         });
         NotificationManager.success('Campaign successfully started.', null, 4000);
-        setTimeout(function(){ hashHistory.push('/add_equipment/' + data.result); }, 2000);
+        var equipment_ids = '';
+        if (this.props.equipment_ids) {
+            equipment_ids = '?equipment_ids=';
+            if (Array.isArray(this.props.equipment_ids)) {
+                equipment_ids += this.props.equipment_ids.join('&equipment_ids=');
+            } else {
+                equipment_ids += this.props.equipment_ids;
+            }
+        }
+        setTimeout( function() {
+            hashHistory.push('/add_equipment/' + data.result + equipment_ids);},
+        2000);
     },
 
     _onError: function (data) {
