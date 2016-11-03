@@ -10,6 +10,7 @@ from flask_mail import Message
 from werkzeug import secure_filename
 from app import db
 from app import mail
+from app.mail_utility import send_email
 from app.users.forms import RegisterForm, LoginForm, ProfileForm, ForgotForm
 from app.users.constants import UPLOAD_FOLDER
 from app.users.models import User, Role, users_roles
@@ -266,6 +267,11 @@ def register():
             current_app.logger.exception(e)
 
         db.session.commit()
+        email_recipients = [item.email for item in db.session.query(User).all()
+                            if item.has_role(Role.query.get(1))
+                            ]
+        msg = 'A new user with login {} was created'.format(user.name)
+        send_email(email_recipients, msg)
 
         # flash will display a message to the user
         flash(gettext(u'Thanks for registering'))
