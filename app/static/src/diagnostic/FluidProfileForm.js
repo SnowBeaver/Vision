@@ -617,7 +617,7 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
-                                            <div className="col-md-2 nopadding padding-right-xs">
+                                            <div className="col-md-3 nopadding padding-right-xs">
                                                 <FormGroup validationState={this.state.errors.qty ? 'error' : null}>
                                                     <ControlLabel>Quantity</ControlLabel>
                                                     <FormControl type="text" ref="qty" name="qty"
@@ -627,7 +627,7 @@ const FluidProfileForm = React.createClass({
 								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-10 nopadding">
+                                            <div className="col-md-9 nopadding">
                                                 <SamplPointSelectField1
                                                     source="/api/v1.0/sampling_point"
                                                     value={this.state.data.sampling}
@@ -796,7 +796,7 @@ const FluidProfileForm = React.createClass({
                                                 >Visual(D1524)</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <div className="col-md-2 nopadding padding-right-xs">
+                                                <div className="col-md-3 nopadding padding-right-xs">
                                                     <FormGroup validationState={this.state.errors.qty_jar ? 'error' : null}>
                                                         <ControlLabel>Quantity</ControlLabel>
                                                         <FormControl type="text" name="qty_jar"
@@ -806,7 +806,7 @@ const FluidProfileForm = React.createClass({
 								                        <FormControl.Feedback />
                                                     </FormGroup>
                                                 </div>
-                                                <div className="col-md-10 nopadding">
+                                                <div className="col-md-9 nopadding">
                                                     <SamplPointSelectField2
                                                         source="/api/v1.0/sampling_point"
                                                         value={ this.state.data.sampling_jar}
@@ -839,7 +839,7 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
-                                            <div className="col-md-2 nopadding padding-right-xs">
+                                            <div className="col-md-3 nopadding padding-right-xs">
                                                 <FormGroup validationState={this.state.errors.qty_vial ? 'error' : null}>
                                                     <ControlLabel>Quantity</ControlLabel>
                                                     <FormControl type="text" name="qty_vial"
@@ -849,7 +849,7 @@ const FluidProfileForm = React.createClass({
 								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-10 nopadding">
+                                            <div className="col-md-9 nopadding">
                                                 <SamplPointSelectField3
                                                     source="/api/v1.0/sampling_point"
                                                     value={ this.state.data.sampling_vial}/>
