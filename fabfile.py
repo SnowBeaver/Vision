@@ -361,5 +361,5 @@ def test():
 def setup_celery():
     celery_conf = "/etc/supervisor/conf.d/send_mail_worker.conf"
     sudo('service supervisor stop')
-    put(Path(LOCAL_PROJECT_DIR, 'dep', 'supervisor', 'send_mail_worker.conf'), celery_conf, use_sudo=True)
+    put(Path(env.directory, 'dep', 'supervisor', 'send_mail_worker.conf'), celery_conf, use_sudo=True)
     restart_services()
