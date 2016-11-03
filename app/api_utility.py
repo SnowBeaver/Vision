@@ -134,8 +134,16 @@ class MyValidator(Validator):
         last_norm = db.session.query(NormGas).order_by(desc(NormGas.fluid_level)).first()
 
         if last_norm and last_norm.fluid_level >= value:
-            self._error(field,
-                        "Wrong fluid level, must be more than {}".format(last_norm.fluid_level))
+            msg = "Wrong fluid level, must be more than {}".format(last_norm.fluid_level)
+            self._error(field, msg)
+
+    def _validate_more_then(self, field_compare, field, value):
+        lower_value = self.document.get(field_compare)
+        if lower_value is None:
+            self._error(field, "Value of {} must be indicated".format(field_compare))
+        if lower_value >= value:
+            msg = "Wrong {} value, must be more than {}".format(field, field_compare)
+            self._error(field, msg)
 
 
 def dict_copy_union(dict1, *kargs):
@@ -1188,34 +1196,34 @@ norm_physic_schema = {
     'name': dict_copy_union(type_string_maxlength_20_dict, required_dict),
     'equipment_id': type_integer_coerce_required_dict,
     'acid_min': type_float_coerce_dict,
-    'acid_max': type_float_coerce_dict,
+    'acid_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'acid_min'}),
     'ift_min': type_float_coerce_dict,
-    'ift_max': type_float_coerce_dict,
+    'ift_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'ift_min'}),
     'd1816_min': type_float_coerce_dict,
-    'd1816_max': type_float_coerce_dict,
+    'd1816_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'd1816_min'}),
     'd877_min': type_float_coerce_dict,
-    'd877_max': type_float_coerce_dict,
+    'd877_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'd877_min'}),
     'color_min': type_float_coerce_dict,
-    'color_max': type_float_coerce_dict,
+    'color_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'color_min'}),
     'density_min': type_float_coerce_dict,
-    'density_max': type_float_coerce_dict,
+    'density_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'density_min'}),
     'pf20_min': type_float_coerce_dict,
-    'pf20_max': type_float_coerce_dict,
+    'pf20_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'pf20_min'}),
     'water_min': type_float_coerce_dict,
-    'water_max': type_float_coerce_dict,
+    'water_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'water_min'}),
     'flashpoint_min': type_float_coerce_dict,
-    'flashpoint_max': type_float_coerce_dict,
+    'flashpoint_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'flashpoint_min'}),
     'pourpoint_min': type_float_coerce_dict,
-    'pourpoint_max': type_float_coerce_dict,
+    'pourpoint_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'pourpoint_min'}),
     'viscosity_min': type_float_coerce_dict,
-    'viscosity_max': type_float_coerce_dict,
+    'viscosity_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'viscosity_min'}),
     'd1816_2_min': type_float_coerce_dict,
-    'd1816_2_max': type_float_coerce_dict,
+    'd1816_2_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'd1816_2_min'}),
     'p100_min': type_float_coerce_dict,
-    'p100_max': type_float_coerce_dict,
+    'p100_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'p100_min'}),
     'fluid_type_id': type_integer_coerce_dict,
     'cei156_min': type_integer_coerce_dict,
-    'cei156_max': type_integer_coerce_dict,
+    'cei156_max': dict_copy_union(type_integer_coerce_dict, {'more_then': 'cei156_min'}),
 }
 norm_gas_schema = {
     'id': readonly_dict,
