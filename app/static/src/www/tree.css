@@ -1066,3 +1066,7 @@
     margin-right: 0;
   }
 }
+/*Used for making downstream in the tree semitransparent*/
+.semitransparent {
+    opacity: 0.5
+}

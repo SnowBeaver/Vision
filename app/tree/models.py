@@ -12,6 +12,8 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.ext.declarative import declarative_base
 import json
 
+from app.diagnostic.models import Equipment
+
 
 BaseManager = declarative_base()
 
@@ -37,7 +39,11 @@ class TreeNode(Translatable, BaseManager):
     id = sqla.Column(sqla.Integer, primary_key=True)
     parent_id = sqla.Column(sqla.Integer, sqla.ForeignKey(id))
 
-    equipment_id = sqla.Column(sqla.Integer, nullable=True)
+    # equipment_id is a foreign key only to equipment, not like it was
+    # previously - to equipment and pages
+    # equipment_id = sqla.Column(sqla.Integer, nullable=True)
+    equipment_id = sqla.Column(sqla.ForeignKey(Equipment.id), nullable=True)
+    equipment = relationship(Equipment, backref='tree')
     # equipment_id = sqla.Column(
     #     'equipment_id',
     #     sqla.ForeignKey("equipment.id"),
@@ -98,6 +104,8 @@ class TreeNode(Translatable, BaseManager):
             'type': self.type,
             'status': self.status,
             'equipment_id': self.equipment_id,
+            'equipment_type_id': self.equipment and self.equipment.equipment_type_id,
+            'tie_status': self.equipment and self.equipment.tie_status,
             # # This is an example how to deal with Many2Many relations
             'children': self.serialize_many2many()
         }

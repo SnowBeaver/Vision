@@ -7,6 +7,10 @@ var nodes = null;
 
 var TreeComponent = React.createClass({
 
+    //componentWillMount: function () {
+    //  this.getSwitchers();
+    //},
+
     getInitialState: function () {
         return {
             struct: this.props.struct
@@ -87,7 +91,6 @@ var TreeComponent = React.createClass({
     },
 
     componentDidMount: function () {
-
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
                 "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed']
@@ -131,9 +134,10 @@ var TreeComponent = React.createClass({
     render: function () {
 
         var struct = this.props.struct;
+
         nodes = struct.map(function (n) {
             return <TreeNode node={n} children={n.children} key={n.id}/>
-        });
+        }.bind(this));
 
 
         return (
@@ -177,8 +181,10 @@ var TreeNode = React.createClass({
         opts += ', \"text\":\"' + this.props.node.text + '\"';
         opts += ', \"status\":\"' + this.props.node.status + '\"}';
 
+        var className = switchIds.indexOf(this.props.node.equipment_type_id) > -1 && this.props.node.tie_status == 0 ? "semitransparent" : "";
+
         return (
-            <li key={this.props.node.id} data-jstree={opts}>
+            <li key={this.props.node.id} data-jstree={opts} className={className}>
                 {this.props.node.text}
                 { cnodes ? <ul>{cnodes}</ul> : null }
             </li>

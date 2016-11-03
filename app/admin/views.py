@@ -16,7 +16,7 @@ from flask import current_app
 from werkzeug.security import check_password_hash
 from app import admin_per, admin_or_performer_per
 # from app import , user_per, guest_per, blogger_per
-from app.tree.storage import get_tree
+from app.tree.storage import get_tree, get_switch_ids
 from app.tree.forms import TreeView
 from .models import File, Image
 from jinja2 import Markup
@@ -76,6 +76,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         # }
         #
         self._template_args['tree'] = get_tree()
+        self._template_args['switchIds'] = get_switch_ids()
         self._template_args['tree_view'] = TreeView()
         # front page views
         self._template_args['identification'] = IdentificationViewForm()
