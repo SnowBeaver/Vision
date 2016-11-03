@@ -40,15 +40,10 @@ class TreeNode(Translatable, BaseManager):
     parent_id = sqla.Column(sqla.Integer, sqla.ForeignKey(id))
 
     # equipment_id is a foreign key only to equipment, not like it was
-    # previously - to equipment and pages
-    # equipment_id = sqla.Column(sqla.Integer, nullable=True)
+    # previously it was sqla.Integer field as this table was used for
+    # storing both  equipment and pages
     equipment_id = sqla.Column(sqla.ForeignKey(Equipment.id), nullable=True)
     equipment = relationship(Equipment, backref='tree')
-    # equipment_id = sqla.Column(
-    #     'equipment_id',
-    #     sqla.ForeignKey("equipment.id"),
-    #     nullable=False
-    # )
 
     # costumed column
     icon = sqla.Column(sqla.String(126), default="../app/static/img/file.png")
