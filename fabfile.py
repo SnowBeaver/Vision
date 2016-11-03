@@ -7,6 +7,7 @@ from fabric.api import settings, hosts
 from fabric.operations import local
 from fabric.context_managers import lcd
 
+
 class FabricException(Exception):
     pass
 
@@ -90,7 +91,7 @@ def restart_services():
     sudo("service nginx start")
     sudo("service supervisor force-reload")
     sudo("service supervisor start")
-    sudo('service redis-server start')
+    sudo('service redis-server start', pty=False)
 
 
 def deploy_dev_image():
@@ -246,7 +247,7 @@ def setup_redis():
     sudo("apt-get install -y redis-server")
     put(env.redis_conf, '/etc/redis/redis.conf', use_sudo=True)
     sudo("update-rc.d redis-server defaults")
-    sudo("service redis-server start")
+    sudo("service redis-server start", pty=False)
 
 
 def setup_trans():
@@ -330,6 +331,7 @@ def setup_static():
         run('npm install')
         run('npm start')
 
+
 def update_nodejs():
     sudo('npm cache clean -f')
     sudo('npm install -g n')
@@ -361,5 +363,3 @@ def setup_celery():
     sudo('service supervisor stop')
     put(Path(LOCAL_PROJECT_DIR, 'dep', 'supervisor', 'send_mail_worker.conf'), celery_conf, use_sudo=True)
     restart_services()
-    # TODO: Daemonize
-    run('redis-server')
