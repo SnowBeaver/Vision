@@ -93,6 +93,7 @@ var MetalsInOilTestForm = React.createClass({
         }
         if ('id' in this.state) {
             url += this.state['id'];
+            delete data.id;
         }
         return $.authorizedAjax({
             url: url,

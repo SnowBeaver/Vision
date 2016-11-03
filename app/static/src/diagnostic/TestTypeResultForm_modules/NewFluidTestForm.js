@@ -91,6 +91,7 @@ var NewFluidTestForm = React.createClass({
         if ('id' in this.state) {
             url += this.state['id'];
             type = 'PUT';
+            delete data.id;
         }
         return $.authorizedAjax({
             url: url,
