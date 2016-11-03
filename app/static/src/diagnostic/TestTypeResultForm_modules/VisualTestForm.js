@@ -294,7 +294,7 @@ var VisualTestForm = React.createClass({
 
     render: function() {
         return (
-            <div className="form-container">
+            <div className="col-md-12">
                 <h3>Visual inspection</h3>
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="tab_row text-center">
