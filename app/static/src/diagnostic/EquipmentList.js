@@ -64,7 +64,6 @@ const EquipmentList = React.createClass({
                     equipment_number: eqnumb
                 });
             }
-            console.log(data);
             this.setState({
                 data: data
             });
@@ -72,11 +71,9 @@ const EquipmentList = React.createClass({
     },
     
     onRowClick: function (row) {
-       console.log('row clicked', row);
     },
 
-    onCellClick: function (cell) { 
-        console.log('cell clicked', row);
+    onCellClick: function (cell) {
     },
     
     componentWillUnmount: function() {
@@ -87,8 +84,7 @@ const EquipmentList = React.createClass({
         this.setState({loading: false});
     },
     
-    updateSource: function(source){ 
-        // console.log('list triggered', source);
+    updateSource: function(source){
         this.serverRequest = $.authorizedGet(source, function (result){
             var arr = (result['result']);
             var data = [];
@@ -132,7 +128,6 @@ const EquipmentList = React.createClass({
         
         const options = {
             onRowClick: function (row) {
-                console.log( row, 'on row click'); 
             }
         };
         
