@@ -147,7 +147,7 @@ const ElectricalProfileForm = React.createClass({
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            return $.authorizedAjax({
+            $.authorizedAjax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
@@ -159,11 +159,11 @@ const ElectricalProfileForm = React.createClass({
                     this.setState({loading: true});
                 }.bind(this)
             });
-            
-            delete data['name'];
             delete data['shared'];
         }
 
+        delete data['description'];
+        delete data['name'];
         data['campaign_id'] = this.props.data.campaign_id;
         data['equipment_id'] = this.props.data.equipment_id;
 
