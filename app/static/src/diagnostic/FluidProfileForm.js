@@ -56,6 +56,7 @@ var SamplPointSelectField1 = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+        var value = (this.props.value) || '1';  // By default Undetermined
 
         return (
             <FormGroup controlId="samplingPointSelect1">
@@ -64,6 +65,7 @@ var SamplPointSelectField1 = React.createClass({
                              placeholder="sampling point"
                              onChange={this.handleChange}
                              name="sampling"
+                             value={value}
                 >
                     {menuItems}
                 </FormControl>
@@ -115,6 +117,7 @@ var SamplPointSelectField2 = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+        var value = (this.props.value) || '1';  // By default Undetermined
 
         return (
             <FormGroup controlId="samplingPointSelect2">
@@ -123,6 +126,7 @@ var SamplPointSelectField2 = React.createClass({
                              placeholder="sampling point"
                              onChange={this.handleChange}
                              name="sampling_jar"
+                             value={value}
                 >
                     {menuItems}
                 </FormControl>
@@ -174,6 +178,7 @@ var SamplPointSelectField3 = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+        var value = (this.props.value) || '1';  // By default Undetermined
 
         return (
             <FormGroup controlId="samplingPointSelect3">
@@ -182,6 +187,7 @@ var SamplPointSelectField3 = React.createClass({
                              placeholder="sampling point"
                              name="sampling_vial"
                              onChange={this.handleChange}
+                             value={value}
                 >
                     {menuItems}
                 </FormControl>
@@ -565,7 +571,8 @@ const FluidProfileForm = React.createClass({
                                 <div className="col-md-3">
                                     <FormGroup>
                                         <TestProfileSelectField fillUpForm={this.fillUpForm}
-                                                                source="/api/v1.0/fluid_profile"/>
+                                                                source="/api/v1.0/fluid_profile"
+                                            />
                                     </FormGroup>
                                 </div>
                             </div>
