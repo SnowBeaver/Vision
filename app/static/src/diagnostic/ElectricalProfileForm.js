@@ -113,11 +113,16 @@ const ElectricalProfileForm = React.createClass({
     },
 
     componentDidMount: function () {
-        //test_result_id
+        if (this.props.electricalProfileId) {
+            this.serverRequest = $.authorizedGet('/api/v1.0/electrical_profile/' + this.props.electricalProfileId, function (result) {
+                this.fillUpForm(result['result']);
+            }.bind(this), 'json');
+        } else {
+            this.fillUpForm(this.props.testResultData);
+        }
     },
 
     fillUpForm: function (saved_data) {
-
         if (null == saved_data) {
             this.refs.electrical_profile.reset();
         } else {
@@ -132,7 +137,7 @@ const ElectricalProfileForm = React.createClass({
         var data = {};
         for (var i = 0; i < fields.length; i++) {
             var key = fields[i];
-            data[key] = this.state[key];
+            data[key] = this.state.data[key];
         }
         if (this.state.name != '' && (typeof this.state.name != 'undefined')) {
             var url = '/api/v1.0/electrical_profile/';
@@ -228,7 +233,7 @@ const ElectricalProfileForm = React.createClass({
     },
 
     _onChange: function (e) {
-        var state = {};
+        var state = this.state.data;
         if (e.target.type == 'checkbox') {
             state[e.target.name] = e.target.checked;
         } else if (e.target.type == 'select-one') {
@@ -240,7 +245,7 @@ const ElectricalProfileForm = React.createClass({
         }
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
-        this.setState(state);
+        this.setState({data: state});
     },
 
     _validate: function (e) {
