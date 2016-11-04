@@ -296,10 +296,16 @@ const FluidProfileForm = React.createClass({
         }
     },
     componentDidMount: function () {
+        if (this.props.fluidProfileId) {
+            this.serverRequest = $.authorizedGet('/api/v1.0/fluid_profile/' + this.props.fluidProfileId, function (result) {
+                this.fillUpForm(result['result']);
+            }.bind(this), 'json');
+        } else {
+            this.fillUpForm(this.props.testResultData);
+        }
     },
 
     fillUpForm: function (saved_data) {
-
         if (null == saved_data) {
             this.refs.fluid_profile.reset();
         } else {
@@ -816,7 +822,7 @@ const FluidProfileForm = React.createClass({
                                                 <div className="col-md-9 nopadding">
                                                     <SamplPointSelectField2
                                                         source="/api/v1.0/sampling_point"
-                                                        value={ this.state.data.sampling_jar}
+                                                        value={this.state.data.sampling_jar}
                                                     />
                                                 </div>
                                             </div>
@@ -859,7 +865,7 @@ const FluidProfileForm = React.createClass({
                                             <div className="col-md-9 nopadding">
                                                 <SamplPointSelectField3
                                                     source="/api/v1.0/sampling_point"
-                                                    value={ this.state.data.sampling_vial}/>
+                                                    value={this.state.data.sampling_vial}/>
                                             </div>
                                         </div>
                                     </div>

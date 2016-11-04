@@ -654,6 +654,7 @@ var NewTestForm = React.createClass({
                 form.changedFields = this.state.changedFields.concat(['date_analyse']);
             }
             form.errors = {};
+            form.initialTestResult = result['result'];
             this.setState(form);
         }.bind(this), 'json');
     },
@@ -1316,6 +1317,7 @@ var NewTestForm = React.createClass({
                                           equipmentId={this.state.equipment_id}
                                           campaignId={this.state.campaign_id}
                                           fluidProfileId={this.state.fluid_profile_id}
+                                          testResultData={this.state.initialTestResult}
                                           handleClose={this.closeFluidProfileForm}/>
                     </Modal>
 
