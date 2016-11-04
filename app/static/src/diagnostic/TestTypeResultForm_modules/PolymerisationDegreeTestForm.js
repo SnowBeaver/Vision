@@ -125,6 +125,9 @@ var PolymerisationDegreeTestForm = React.createClass({
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
         NotificationManager.success('Test values have been saved successfully.');
+        if ($.isNumeric(data.result)) {
+            this.setState({id: data.result});
+        }
     },
 
     _onError: function (data) {
