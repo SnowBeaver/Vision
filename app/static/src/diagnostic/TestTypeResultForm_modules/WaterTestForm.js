@@ -167,7 +167,7 @@ var WaterTestForm = React.createClass({
             state[e.target.name] = e.target.value;
         }
         else {
-            state[e.target.name] = $.trim(e.target.value);
+            state[e.target.name] = e.target.value;
         }
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
