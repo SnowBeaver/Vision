@@ -1212,16 +1212,18 @@ var EquipmentTestForm = React.createClass({
                         </div>
                         <div id="tabs-2" role="tabpanel" className="tab-pane">
                             <AdministratorInfoForm data={this.state.campaignAdministrator} />
-                            <div className="col-md-4 nopadding">
-                                <TestTypeSelectField
-                                    key={data.selected_subtests}
-                                    selectedSubtests={data.selected_subtests}
-                                    testType={data.test_type}
-                                    handleChange={this._onChange}
-                                    name="test_values_test_type_id"
-                                    errors={this.state.errors}
-                                    required={this.state.formEdited}
-                                />
+                            <div className="col-md-12 nopadding">
+                                <div className="col-md-4 nopadding">
+                                    <TestTypeSelectField
+                                        key={data.selected_subtests}
+                                        selectedSubtests={data.selected_subtests}
+                                        testType={data.test_type}
+                                        handleChange={this._onChange}
+                                        name="test_values_test_type_id"
+                                        errors={this.state.errors}
+                                        required={this.state.formEdited}
+                                    />
+                                </div>
                             </div>
                             <TestValuesForm testResultId={this.props.selectedRowId}
                                             testType={test_values_test_type}/>
