@@ -1467,24 +1467,12 @@ class Equipment(db.Model):
 
     comments = db.Column(db.Text)  # Comments relation
 
-    # these fields should be related to every components test , it's not a preperty of the device its a test
-    visual_date = db.Column(db.DateTime)  # VisualDate.  Date where was done the last visual inspection.
-    # VisualInspectionBy. Who made the visual inspection. user relation
-    visual_inspection_by_id = db.Column(
-        'visual_inspection_by_id',
-        sqla.ForeignKey("users_user.id"),
-        nullable=False
-    )
-    visual_inspection_by = relationship('User', foreign_keys="Equipment.visual_inspection_by_id")
-
     assigned_to_id = db.Column(
         'assigned_to_id',
         db.ForeignKey("users_user.id"),
         nullable=False
     )
     assigned_to = relationship('User', foreign_keys="Equipment.assigned_to_id")
-
-    visual_inspection_comments = db.Column(db.Text)  # VisualInspectionComments. Visual inspection comments,
 
     # test inspection of tap changer or characteristic ?
     nbr_of_tap_change_ltc = db.Column(db.Integer)  # NbrTapChange.  Number of tap change on LTC
@@ -1500,16 +1488,6 @@ class Equipment(db.Model):
 
     # # its a state of a transformer / breaker /switch /motor / cable  not
     # upstream1 = db.Column(db.String(100))  # Upstream1. Upstream device name
-    # upstream2 = db.Column(db.String(100))  # Upstream2. Upstream device name
-    # upstream3 = db.Column(db.String(100))  # Upstream3. Upstream device name
-    # upstream4 = db.Column(db.String(100))  # Upstream4. Upstream device name
-    # upstream5 = db.Column(db.String(100))  # Upstream5. Upstream device name
-    #
-    # downstream1 = db.Column(db.String(100))  # Downstream1. Downstream device name
-    # downstream2 = db.Column(db.String(100))  # Downstream2. Downstream device name
-    # downstream3 = db.Column(db.String(100))  # Downstream3. Downstream device name
-    # downstream4 = db.Column(db.String(100))  # Downstream4. Downstream device name
-    # downstream5 = db.Column(db.String(100))  # Downstream5. Downstream device name
 
     tie_status = db.Column(db.Integer)  # Tie State (Open or Closed (Breaker, Tap changer)).
     status = db.Column(db.Integer)  # Equipment health state.
@@ -1541,18 +1519,6 @@ class Equipment(db.Model):
     def __repr__(self):
         return "{} {} {}".format(self.name, self.serial, self.equipment_number)
 
-    # def __init__(self, **kwargs):
-    #     self.visual_inspection_by_id = int(kwargs.get('visual_inspection_by_id'))
-    #     self.norm_id = int(kwargs.get('norm_id'))
-    #     self.equipment_type_id = int(kwargs.get('equipment_type_id'))
-    #     self.equipment_number = int(kwargs.get('equipment_number'))
-    #     self.location_id = int(kwargs.get('location_id'))
-    #     self.manufacturer_id = int(kwargs.get('manufacturer_id'))
-    #     self.assigned_to_id = int(kwargs.get('assigned_to_id'))
-    #     self.serial = int(kwargs.get('serial'))
-    #     self.frequency = cast(kwargs.get('frequency'), Enum(name='Frequency'))
-    #     # db.Enum('25', '50', '60', 'DC', name="Frequency")
-
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -1571,25 +1537,11 @@ class Equipment(db.Model):
                 'location': self.location and self.location.serialize(),
                 'modifier': self.modifier,
                 'comments': self.comments,
-                'visual_date': dump_datetime(self.visual_date),
-                'visual_inspection_by_id': self.visual_inspection_by_id,
-                'visual_inspection_by': self.visual_inspection_by and self.visual_inspection_by.serialize(),
                 'assigned_to_id': self.assigned_to_id,
                 'assigned_to': self.assigned_to and self.assigned_to.serialize(),
-                'visual_inspection_comments': self.visual_inspection_comments,
                 'nbr_of_tap_change_ltc': self.nbr_of_tap_change_ltc,
                 'norm_id': self.norm_id,
                 'norm': self.norm and self.norm.serialize(),
-                # 'upstream1': self.upstream1,
-                # 'upstream2': self.upstream2,
-                # 'upstream3': self.upstream3,
-                # 'upstream4': self.upstream4,
-                # 'upstream5': self.upstream5,
-                # 'downstream1': self.downstream1,
-                # 'downstream2': self.downstream2,
-                # 'downstream3': self.downstream3,
-                # 'downstream4': self.downstream4,
-                # 'downstream5': self.downstream5,
                 'tie_status': self.tie_status,
                 'status': self.status,
                 'phys_position': self.phys_position,
