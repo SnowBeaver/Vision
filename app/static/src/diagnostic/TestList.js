@@ -190,7 +190,6 @@ var TestItemList = React.createClass({
     },
 
     editTestForm: function (id) {
-        console.log('ID', id);
         if (typeof id == 'undefined') {
             return null;
         }

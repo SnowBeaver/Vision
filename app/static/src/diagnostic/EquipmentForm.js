@@ -326,71 +326,6 @@ var LocationSelectField = React.createClass({
 });
 
 
-var VisualInspBySelectField = React.createClass({
-
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value
-        })
-    },
-
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-
-    componentDidMount: function () {
-        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
-
-            items = (result['result']);
-            this.setState({
-                items: items
-            });
-        }.bind(this), 'json');
-    },
-
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-
-    render: function () {
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option value={this.state.items[key].id}
-                                   key={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup controlId="formControlsSelect4"
-                           validationState={this.props.errors.visual_inspection_by_id ? 'error' : null}>
-                    <FormControl
-                        name="visual_inspection_by_id"
-                        componentClass="select"
-                        placeholder="Visual inspection by"
-                        onChange={this.handleChange}
-                        required={this.props.required}
-                        value={this.props.value}>
-                        <option value="">Visual inspection by{this.props.required ? " *" : ""}</option>
-                        {menuItems}
-                    </FormControl>
-                    <HelpBlock className="warning">{this.props.errors.visual_inspection_by_id}</HelpBlock>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
 
 var AssignedToSelectField = React.createClass({
 
@@ -540,7 +475,6 @@ var FrequencySelectField = React.createClass({
             showNewEquipmentTypeForm: false,
             showNewManufacturerForm: false,
             showNewLocationForm: false,
-            showVisualInspectionForm: false,
             showAssignToForm: false,
             showNewNormForm: false
         };
@@ -716,7 +650,6 @@ const EquipmentForm = React.createClass({
                 'equipment_type_id',
                 'manufacturer_id',
                 'location_id',
-                'visual_inspection_by_id',
                 'assigned_to_id',
                 'norm_id',
                 'name',
@@ -725,17 +658,11 @@ const EquipmentForm = React.createClass({
                 'frequency',
                 'description',
                 'comments',
-                'visual_inspection_comments',
                 'nbr_of_tap_change_ltc',
                 //'upstream1',  // TODO: Exclude upstream field or let adding multiple upstreams
                 'phys_position',
                 'tension4',
-                'validated',
-                'invalidation',
-                'prev_serial_number',
-                'prev_equipment_number',
                 'manufactured',
-                'visual_date'
             ],
             changedFields: [],
             option_text: {},
@@ -1021,12 +948,6 @@ const EquipmentForm = React.createClass({
         })
     },
 
-    closeVisualInspectionForm: function () {
-        this.setState({
-            showVisualInspectionForm: false,
-        })
-    },
-
     closeAssignToForm: function () {
         this.setState({
             showAssignToForm: false,
@@ -1045,7 +966,6 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: true,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showVisualInspectionForm: false,
                 showAssignToForm: false,
                 showNewNormForm: false
             })
@@ -1055,7 +975,6 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: true,
                 showNewLocationForm: false,
-                showVisualInspectionForm: false,
                 showAssignToForm: false,
                 showNewNormForm: false
             })
@@ -1065,17 +984,6 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: true,
-                showVisualInspectionForm: false,
-                showAssignToForm: false,
-                showNewNormForm: false
-            })
-        }
-        else if (e.target.id === 'vis_insp_by') {
-            this.setState({
-                showNewEquipmentTypeForm: false,
-                showNewManufacturerForm: false,
-                showNewLocationForm: false,
-                showVisualInspectionForm: true,
                 showAssignToForm: false,
                 showNewNormForm: false
             })
@@ -1085,7 +993,6 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showVisualInspectionForm: false,
                 showAssignToForm: true,
                 showNewNormForm: false
             })
@@ -1095,7 +1002,6 @@ const EquipmentForm = React.createClass({
                 showNewEquipmentTypeForm: false,
                 showNewManufacturerForm: false,
                 showNewLocationForm: false,
-                showVisualInspectionForm: false,
                 showAssignToForm: false,
                 showNewNormForm: true
             })
@@ -1109,10 +1015,6 @@ const EquipmentForm = React.createClass({
         this.setState(state);
         this.refs[fieldName].componentDidMount();
 
-    },
-
-    setVisualDate: function (timestamp){
-        this._setDateTimeFieldDate(timestamp, "visual_date");
     },
 
     _setDateTimeFieldDate(timestamp, fieldName){
@@ -1130,14 +1032,12 @@ const EquipmentForm = React.createClass({
             }
             state[fieldName] = timestamp;    // Already formatted to ISO string
         }
-        state.changedFields = this.state.changedFields.concat(["visual_date"]);
+        // state.changedFields = this.state.changedFields.concat(["visual_date"]);
         this.setState(state);
     },
 
     render: function () {
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
-        var visualDate = this.state.visual_date;
-        visualDate = (visualDate) ? {dateTime: visualDate, format: DATETIMEPICKER_FORMAT} : {defaultText: "Please select a date"};
         return (
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
@@ -1170,7 +1070,6 @@ const EquipmentForm = React.createClass({
                             <div className="row">
                                 <div className="col-lg-11">
                                     <ManufacturerSelectField
-                                        ref="mn"
                                         source="/api/v1.0/manufacturer"
                                         value={this.state.manufacturer_id}
                                         errors={this.state.errors}
@@ -1188,7 +1087,6 @@ const EquipmentForm = React.createClass({
                             <div className="row">
                                 <div className="col-lg-11">
                                     <LocationSelectField
-                                        ref="loc"
                                         source="/api/v1.0/location"
                                         value={this.state.location_id}
                                         errors={this.state.errors}
@@ -1205,26 +1103,7 @@ const EquipmentForm = React.createClass({
 
                             <div className="row">
                                 <div className="col-lg-11">
-                                    <VisualInspBySelectField
-                                        ref="vis"
-                                        source="/api/v1.0/visual_inspection_by"
-                                        value={this.state.visual_inspection_by_id}
-                                        errors={this.state.errors}
-                                        ref="visual_inspection_by_id"
-                                        required/>
-                                </div>
-                                <div className="col-md-1">
-                                    <a id="vis_insp_by"
-                                       className="btn btn-primary"
-                                       onClick={this.onNewButtonClick}
-                                    >New</a>
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                <div className="col-lg-11">
                                     <AssignedToSelectField
-                                        ref="ast"
                                         source="/api/v1.0/assigned_to"
                                         value={this.state.assigned_to_id}
                                         errors={this.state.errors}
@@ -1243,7 +1122,6 @@ const EquipmentForm = React.createClass({
                             <div className="row">
                                 <div className="col-lg-11">
                                     <NormSelectField
-                                        ref="norms"
                                         source="/api/v1.0/norm"
                                         value={this.state.norm_id}
                                         errors={this.state.errors}
@@ -1290,10 +1168,10 @@ const EquipmentForm = React.createClass({
 
                             <FormGroup controlId="inputSerialField"
                                        validationState={this.state.errors.serial ? 'error' : null}>
-                                <ControlLabel>Serial</ControlLabel>
+                                <ControlLabel>Serial number</ControlLabel>
                                 <FormControl type="text"
                                              name="serial"
-                                             placeholder="serial"
+                                             placeholder="Serial number"
                                              ref="serial"
                                              data-len="50"
                                              value={this.state.serial}
@@ -1346,43 +1224,11 @@ const EquipmentForm = React.createClass({
                                         <ControlLabel>Comments</ControlLabel>
                                         <FormControl componentClass="textarea"
                                                      name="comments"
-                                                     placeholder="comments"
+                                                     placeholder="Comments"
                                                      ref="comments"
                                                      value={this.state.comments}
                                         />
                                         <HelpBlock className="warning">{this.state.errors.comments}</HelpBlock>
-                                        <FormControl.Feedback />
-                                    </FormGroup>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-lg-5">
-                                    <FormGroup controlId="DateTimeField"
-                                               validationState={this.state.errors.visual_date ? 'error' : null}
-                                               key={this.state.visual_date}>
-                                        <ControlLabel>Visual Date</ControlLabel>
-                                        <DateTimeField name="visual_date"
-                                                       ref="visual_date"
-                                                       onChange={this.setVisualDate}
-                                                       {...visualDate}/>
-                                        <HelpBlock className="warning">{this.state.errors.visual_date}</HelpBlock>
-                                        <FormControl.Feedback />
-                                    </FormGroup>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-lg-12">
-                                    <FormGroup controlId="visualInspectionCommentsTextarea"
-                                               validationState={this.state.errors.visual_inspection_comments ? 'error' : null}>
-                                        <ControlLabel>Visual Inspection Comments</ControlLabel>
-                                        <FormControl componentClass="textarea"
-                                                     name="visual_inspection_comments"
-                                                     placeholder="visComments"
-                                                     ref="vis_comments"
-                                                     value={this.state.visual_inspection_comments}
-                                        />
-                                        <HelpBlock
-                                            className="warning">{this.state.errors.visual_inspection_comments}</HelpBlock>
                                         <FormControl.Feedback />
                                     </FormGroup>
                                 </div>
@@ -1394,7 +1240,7 @@ const EquipmentForm = React.createClass({
                                         <ControlLabel>Nbr of Tap Changes LTC</ControlLabel>
                                         <FormControl type="text"
                                                      name="nbr_of_tap_change_ltc"
-                                                     placeholder="tap changes"
+                                                     placeholder="Tap changes"
                                                      ref="nr_taps"
                                                      value={this.state.nbr_of_tap_change_ltc}
                                                      data-type="int"
@@ -1428,10 +1274,10 @@ const EquipmentForm = React.createClass({
                                 <div className="col-lg-12">
                                     <FormGroup controlId="tensionInput"
                                                validationState={this.state.errors.tension4 ? 'error' : null}>
-                                        <ControlLabel>Tension4</ControlLabel>
+                                        <ControlLabel>Tension</ControlLabel>
                                         <FormControl type="text"
                                                      name="tension4"
-                                                     placeholder="tension4"
+                                                     placeholder="Tension"
                                                      ref="tension4"
                                                      value={this.state.tension4}
                                                      data-type="float"
@@ -1442,54 +1288,6 @@ const EquipmentForm = React.createClass({
                                 </div>
                             </div>
 
-                            <div className="row">
-                                <div className="col-lg-12">
-                                    <Checkbox ref="validated"
-                                              name="validated"
-                                              checked={this.state.validated}>Validated</Checkbox>
-                                    <Checkbox ref="invalidation"
-                                              name="invalidation"
-                                              checked={this.state.invalidation}>Invalidation</Checkbox>
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                <div className="col-lg-12">
-                                    <FormGroup controlId="prevSerialNumInput"
-                                               validationState={this.state.errors.prev_serial_number ? 'error' : null}>
-                                        <ControlLabel>Prev Serial Number</ControlLabel>
-                                        <FormControl type="text"
-                                                     name="prev_serial_number"
-                                                     placeholder="Previous serial number"
-                                                     ref="prev_serial"
-                                                     data-len="50"
-                                                     value={this.state.prev_serial_number}
-                                        />
-                                        <HelpBlock
-                                            className="warning">{this.state.errors.prev_serial_number}</HelpBlock>
-                                        <FormControl.Feedback />
-                                    </FormGroup>
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                <div className="col-lg-12">
-                                    <FormGroup controlId="prevEquipNumInput"
-                                               validationState={this.state.errors.prev_equipment_number ? 'error' : null}>
-                                        <ControlLabel>Prev Equipment Number</ControlLabel>
-                                        <FormControl type="text"
-                                                     name="prev_equipment_number"
-                                                     placeholder="Previous equipment number"
-                                                     ref="prev_eqnumb"
-                                                     data-len="50"
-                                                     value={this.state.prev_equipment_number}
-                                        />
-                                        <HelpBlock
-                                            className="warning">{this.state.errors.prev_equipment_number}</HelpBlock>
-                                        <FormControl.Feedback />
-                                    </FormGroup>
-                                </div>
-                            </div>
                             <div className="row">
                                 <div className="col-md-12">
                                     <Button bsStyle="success" type="submit" className="pull-right">Save</Button>
@@ -1535,18 +1333,6 @@ const EquipmentForm = React.createClass({
                                          handleClose={this.closeNewLocationForm}
                                          onCreate={this.onCreate}
                                          fieldName="location_id"/>
-                    </Modal.Body>
-                </Modal>
-
-                <Modal show={this.state.showVisualInspectionForm}>
-                    <Modal.Header>
-                        <Modal.Title>New User Profile</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <CreatedByForm data={this.props.data}
-                                       handleClose={this.closeVisualInspectionForm}
-                                       onCreate={this.onCreate}
-                                       fieldName="visual_inspection_by_id"/>
                     </Modal.Body>
                 </Modal>
 

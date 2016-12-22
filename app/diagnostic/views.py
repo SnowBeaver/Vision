@@ -14,13 +14,13 @@ class EquipmentView(MyModelView):
     """
     # Visible columns in the list view
     column_list = (
-        'equipment_number', 'equipment_type_id', 'location_id', 'visual_inspection_by_id',
-        'visual_date', 'norm_id',
+        'equipment_number', 'equipment_type_id', 'location_id',
+        'norm_id',
     )
     # List of columns that can be sorted.
     column_sortable_list = (
-        'id', 'equipment_number', 'equipment_type', 'location_id', 'visual_inspection_by_id',
-        'visual_date', 'norm_id', 'status', 'tie_status'
+        'id', 'equipment_number', 'equipment_type', 'location_id',
+        'norm_id', 'status', 'tie_status'
     )
 
     column_searchable_list = ('equipment_number',)
