@@ -1129,12 +1129,6 @@ const EquipmentForm = React.createClass({
                                         required
                                     />
                                 </div>
-                                <div className="col-md-1">
-                                    <a id="norm"
-                                       className="btn btn-primary"
-                                       onClick={this.onNewButtonClick}
-                                    >New</a>
-                                </div>
                             </div>
                             <FormGroup controlId="inputNameField"
                                        validationState={this.state.errors.name ? 'error' : null}>
