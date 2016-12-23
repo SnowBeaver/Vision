@@ -19,9 +19,10 @@ def upgrade():
         ALTER TABLE "public".particles RENAME TO norm_particles;
         UPDATE "public".norm SET table_name = 'norm_particles' WHERE id = 5;
 
-        CREATE TABLE public.norm_furan_data (
-            id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('norm_furan_data_id_seq'::regclass),
-            norm_id INTEGER,
+        CREATE SEQUENCE norm_furan_data_id_seq;
+        CREATE TABLE IF NOT EXISTS public.norm_furan_data (
+            id INT PRIMARY KEY NOT NULL DEFAULT nextval('norm_furan_data_id_seq'::regclass),
+            norm_id INT,
             name CHARACTER VARYING(50),
             c1 DOUBLE PRECISION DEFAULT 0,
             c2 DOUBLE PRECISION DEFAULT 0,
@@ -31,15 +32,15 @@ def upgrade():
             campaign_id INT,
             CONSTRAINT norm_furan_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_furan (id),
             CONSTRAINT norm_furan_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
-            CONSTRAINT norm_furan_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id),
+            CONSTRAINT norm_furan_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id)
         );
 
-
-        CREATE TABLE public.norm_gas_data (
-            id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('norm_gas_data_id_seq'::regclass),
-            norm_id INTEGER,
+        CREATE SEQUENCE norm_gas_data_id_seq;
+        CREATE TABLE IF NOT EXISTS public.norm_gas_data (
+            id INT PRIMARY KEY NOT NULL DEFAULT nextval('norm_gas_data_id_seq'::regclass),
+            norm_id INT,
             name CHARACTER VARYING(50),
-            condition INTEGER DEFAULT 0,
+            condition INT DEFAULT 0,
             h2 DOUBLE PRECISION DEFAULT 0,
             ch4 DOUBLE PRECISION DEFAULT 0,
             c2h2 DOUBLE PRECISION DEFAULT 0,
@@ -48,31 +49,33 @@ def upgrade():
             co DOUBLE PRECISION DEFAULT 0,
             co2 DOUBLE PRECISION DEFAULT 0,
             tdcg DOUBLE PRECISION DEFAULT 0,
-            fluid_level INTEGER DEFAULT 0,
+            fluid_level INT DEFAULT 0,
             equipment_id INT,
             campaign_id INT,
-            CONSTRAINT norm_furan_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_furan (id),
-            CONSTRAINT norm_furan_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
-            CONSTRAINT norm_furan_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id),
+            CONSTRAINT norm_gas_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_gas (id),
+            CONSTRAINT norm_gas_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
+            CONSTRAINT norm_gas_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id)
         );
 
-        CREATE TABLE public.norm_isolation_data (
-            id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('norm_isolation_data_id_seq'::regclass),
-            norm_id INTEGER,
+        CREATE SEQUENCE norm_isolation_data_id_seq;
+        CREATE TABLE IF NOT EXISTS public.norm_isolation_data (
+            id INT PRIMARY KEY NOT NULL DEFAULT nextval('norm_isolation_data_id_seq'::regclass),
+            norm_id INT,
             c DOUBLE PRECISION DEFAULT 0,
             f DOUBLE PRECISION DEFAULT 0,
             notseal DOUBLE PRECISION DEFAULT 0,
             seal DOUBLE PRECISION DEFAULT 0,
             equipment_id INT,
             campaign_id INT,
-            CONSTRAINT norm_furan_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_furan (id),
-            CONSTRAINT norm_furan_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
-            CONSTRAINT norm_furan_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id),
+            CONSTRAINT norm_isolation_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_isolation (id),
+            CONSTRAINT norm_isolation_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
+            CONSTRAINT norm_isolation_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id)
         );
 
-        CREATE TABLE public.norm_physic_data (
-            id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('norm_physic_data_id_seq'::regclass),
-            norm_id INTEGER,
+        CREATE SEQUENCE norm_physic_data_id_seq;
+        CREATE TABLE IF NOT EXISTS public.norm_physic_data (
+            id INT PRIMARY KEY NOT NULL DEFAULT nextval('norm_physic_data_id_seq'::regclass),
+            norm_id INT,
             name CHARACTER VARYING(20) NOT NULL,
             acid_min DOUBLE PRECISION,
             acid_max DOUBLE PRECISION,
@@ -100,19 +103,20 @@ def upgrade():
             d1816_2_max DOUBLE PRECISION DEFAULT 0,
             p100_min DOUBLE PRECISION,
             p100_max DOUBLE PRECISION,
-            fluid_type_id INTEGER DEFAULT 0,
-            cei156_min INTEGER DEFAULT 0,
-            cei156_max INTEGER DEFAULT 0
+            fluid_type_id INT DEFAULT 0,
+            cei156_min INT DEFAULT 0,
+            cei156_max INT DEFAULT 0,
             equipment_id INT,
             campaign_id INT,
-            CONSTRAINT norm_furan_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_furan (id),
-            CONSTRAINT norm_furan_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
-            CONSTRAINT norm_furan_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id),
+            CONSTRAINT norm_physic_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_physic (id),
+            CONSTRAINT norm_physic_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
+            CONSTRAINT norm_physic_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id)
         );
 
-        CREATE TABLE public.norm_particles_data (
-            id INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('norm_particles_data_id_seq'::regclass),
-            norm_id INTEGER,
+        CREATE SEQUENCE norm_particles_data_id_seq;
+        CREATE TABLE IF NOT EXISTS public.norm_particles_data (
+            id INT PRIMARY KEY NOT NULL DEFAULT nextval('norm_particles_data_id_seq'::regclass),
+            norm_id CHARACTER VARYING(50),
             "2um" DOUBLE PRECISION,
             "5um" DOUBLE PRECISION,
             "10um" DOUBLE PRECISION,
@@ -126,9 +130,9 @@ def upgrade():
             nas1638 DOUBLE PRECISION,
             equipment_id INT,
             campaign_id INT,
-            CONSTRAINT norm_furan_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_furan (id),
-            CONSTRAINT norm_furan_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
-            CONSTRAINT norm_furan_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id),
+            CONSTRAINT norm_particles_data_norm_id_fk FOREIGN KEY (norm_id) REFERENCES norm_particles (id),
+            CONSTRAINT norm_particles_data_equipment_id_fk FOREIGN KEY (equipment_id) REFERENCES equipment (id),
+            CONSTRAINT norm_particles_data_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaign (id)
         );
         """
     op.execute(sql=sql)
@@ -136,8 +140,19 @@ def upgrade():
 
 def downgrade():
     sql = """
-        ALTER TABLE "public".norm_particles RENAME TO particles;
-        UPDATE "public".norm SET table_name = 'particles' WHERE id = 5;
+        DROP TABLE norm_particles_data;
+        DROP TABLE norm_physic_data;
+        DROP TABLE norm_isolation_data;
+        DROP TABLE norm_gas_data;
+        DROP TABLE norm_furan_data;
 
+        DROP SEQUENCE norm_particles_data_id_seq;
+        DROP SEQUENCE norm_physic_data_id_seq;
+        DROP SEQUENCE norm_isolation_data_id_seq;
+        DROP SEQUENCE norm_gas_data_id_seq;
+        DROP SEQUENCE norm_furan_data_id_seq;
+
+        UPDATE "public".norm SET table_name = 'particles' WHERE id = 5;
+        ALTER TABLE "public".norm_particles RENAME TO particles;
         """
     op.execute(sql=sql)
