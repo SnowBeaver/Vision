@@ -35,6 +35,12 @@ import SwitchParams from './EquipmentForm_modules/AditionalEqupmentParameters_mo
 import InductanceParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/InductanceParams';
 import GasSensorParams from './EquipmentForm_modules/AditionalEqupmentParameters_modules/GasSensorParams';
 
+import NewNormFuranForm from './Norm_modules/NewNormFuranForm';
+import NewNormGasForm from './Norm_modules/NewNormGasForm';
+import NewNormIsolationForm from './Norm_modules/NewNormIsolationForm';
+import NewNormPhysicForm from './Norm_modules/NewNormPhysicForm';
+import NewNormParticlesForm from './Norm_modules/NewNormParticlesForm';
+
 import {findDOMNode} from 'react-dom';
 injectTapEventPlugin();
 
@@ -638,6 +644,43 @@ var EqAdditionalParams = React.createClass({
 });
 
 
+var NormAdditionalParams = React.createClass({
+
+    getInitialState: function () {
+        return {
+            tableName: ''
+        }
+    },
+    componentDidMount: function () {
+    },
+
+    render: function () {
+
+        if (typeof this.props.data.norm_option_text == 'undefined') {
+            return (<div></div>);
+        }
+        switch (this.props.data.norm_option_text.text) {
+            case 'Norms furan':
+                return (<NewNormFuranForm errors={this.props.data.errors}/>);
+                break;
+            case 'Norms gas':
+                return (<NewNormGasForm errors={this.props.data.errors}/>);
+                break;
+            case 'Norms isolation':
+                return (<NewNormIsolationForm errors={this.props.data.errors}/>);
+                break;
+            case 'Norms physic':
+                return (<NewNormPhysicForm errors={this.props.data.errors}/>);
+                break;
+            case 'Norms particles':
+                return (<NewNormParticlesForm errors={this.props.data.errors}/>);
+                break;
+            default:
+                return null;
+        }
+    }
+});
+
 const EquipmentForm = React.createClass({
 
     getInitialState: function () {
@@ -838,6 +881,14 @@ const EquipmentForm = React.createClass({
 
         if (e.target.name == 'equipment_type_id') {
             form['option_text'] = {
+                name: e.target.name,
+                id: e.target.value,
+                text: e.target[e.target.selectedIndex].text
+            }
+        }
+
+        if (e.target.name == 'norm_id') {
+            form['norm_option_text'] = {
                 name: e.target.name,
                 id: e.target.value,
                 text: e.target[e.target.selectedIndex].text
@@ -1128,6 +1179,12 @@ const EquipmentForm = React.createClass({
                                         ref="norm_id"
                                         required
                                     />
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-11">
+                                    <NormAdditionalParams
+                                        data={this.state} />
                                 </div>
                             </div>
                             <FormGroup controlId="inputNameField"
