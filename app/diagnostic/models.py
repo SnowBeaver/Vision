@@ -3788,3 +3788,128 @@ class TaskStatus(db.Model):
         return {'id': self.id,
                 'name': self.name
                 }
+
+
+class NormGasData(db.Model):
+
+    __tablename__ = 'norm_gas_data'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column('name', db.String(50), index=True)
+    condition = db.Column('condition', db.Integer, server_default=db.text("0"))
+    h2 = db.Column('h2', db.Float(53), server_default=db.text("0"))
+    ch4 = db.Column('ch4', db.Float(53), server_default=db.text("0"))
+    c2h2 = db.Column('c2h2', db.Float(53), server_default=db.text("0"))
+    c2h4 = db.Column('c2h4', db.Float(53), server_default=db.text("0"))
+    c2h6 = db.Column('c2h6', db.Float(53), server_default=db.text("0"))
+    co = db.Column('co', db.Float(53), server_default=db.text("0"))
+    co2 = db.Column('co2', db.Float(53), server_default=db.text("0"))
+    tdcg = db.Column('tdcg', db.Float(53), server_default=db.text("0"))
+    fluid_level = db.Column('fluid_level', db.Integer, server_default=db.text("0"))
+
+    norm_id = db.Column(db.ForeignKey("norm_gas.id"))
+    campaign_id = db.Column(db.ForeignKey("campaign.id"))
+    equipment_id = db.Column(db.ForeignKey("equipment.id"))
+
+    norm = db.relationship('NormGas', foreign_keys='NormGasData.norm_id')
+    campaign = db.relationship('Campaign', foreign_keys='NormGasData.campaign_id')
+    equipment = db.relationship('Equipment', foreign_keys='NormGasData.equipment_id')
+
+    def __repr__(self):
+        return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'condition': self.condition,
+                'h2': self.h2,
+                'ch4': self.ch4,
+                'c2h2': self.c2h2,
+                'c2h4': self.c2h4,
+                'c2h6': self.c2h6,
+                'co': self.co,
+                'co2': self.co2,
+                'tdcg': self.tdcg,
+                'fluid_level': self.fluid_level,
+                'norm_id': self.norm_id,
+                'norm': self.norm and self.norm.serialize(),
+                'campaign_id': self.campaign_id,
+                'campaign': self.campaign and self.campaign.serialize(),
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize(),
+                }
+
+class NormFuranData(db.Model):
+
+    __tablename__ = 'norm_furan_data'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    name = db.Column(db.String(50), index=True)
+    c1 = db.Column(db.Float(53), server_default=db.text("0"))
+    c2 = db.Column(db.Float(53), server_default=db.text("0"))
+    c3 = db.Column(db.Float(53), server_default=db.text("0"))
+    c4 = db.Column(db.Float(53), server_default=db.text("0"))
+
+    norm_id = db.Column(db.ForeignKey("norm_furan.id"))
+    campaign_id = db.Column(db.ForeignKey("campaign.id"))
+    equipment_id = db.Column(db.ForeignKey("equipment.id"))
+
+    norm = db.relationship('NormFuran', foreign_keys='NormFuranData.norm_id')
+    campaign = db.relationship('Campaign', foreign_keys='NormFuranData.campaign_id')
+    equipment = db.relationship('Equipment', foreign_keys='NormFuranData.equipment_id')
+
+    def __repr__(self):
+        return self.name
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'name': self.name,
+                'c1': self.c1,
+                'c2': self.c2,
+                'c3': self.c3,
+                'c4': self.c4,
+                'norm_id': self.norm_id,
+                'norm': self.norm and self.norm.serialize(),
+                'campaign_id': self.campaign_id,
+                'campaign': self.campaign and self.campaign.serialize(),
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize(),
+                }
+
+class NormIsolationData(db.Model):
+
+    __tablename__ = 'norm_isolation_data'
+
+    id = db.Column(db.Integer(), primary_key=True, nullable=False)
+    c = db.Column('c', db.Float(53), server_default=db.text("0"))
+    f = db.Column('f', db.Float(53), server_default=db.text("0"))
+    notseal = db.Column('notseal', db.Float(53), server_default=db.text("0"))
+    seal = db.Column('seal', db.Float(53), server_default=db.text("0"))
+
+    norm_id = db.Column(db.ForeignKey("norm_isolation.id"))
+    campaign_id = db.Column(db.ForeignKey("campaign.id"))
+    equipment_id = db.Column(db.ForeignKey("equipment.id"))
+
+    norm = db.relationship('NormIsolation', foreign_keys='NormIsolationData.norm_id')
+    campaign = db.relationship('Campaign', foreign_keys='NormIsolationData.campaign_id')
+    equipment = db.relationship('Equipment', foreign_keys='NormIsolationData.equipment_id')
+
+    def __repr__(self):
+        return "{} {}".format(self.__tablename__, self.id)
+
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {'id': self.id,
+                'c': self.c,
+                'f': self.f,
+                'notseal': self.notseal,
+                'seal': self.seal,
+                'norm_id': self.norm_id,
+                'norm': self.norm and self.norm.serialize(),
+                'campaign_id': self.campaign_id,
+                'campaign': self.campaign and self.campaign.serialize(),
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize(),
+                }
