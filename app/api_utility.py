@@ -1311,6 +1311,97 @@ task_status_schema = {
     'id': readonly_dict,
     'name': type_string_maxlength_20_dict
 }
+norm_physic_data_schema = {
+    'id': readonly_dict,
+    'name': dict_copy_union(type_string_maxlength_20_dict, required_dict),
+    'acid_min': type_float_coerce_dict,
+    'acid_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'acid_min'}),
+    'ift_min': type_float_coerce_dict,
+    'ift_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'ift_min'}),
+    'd1816_min': type_float_coerce_dict,
+    'd1816_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'd1816_min'}),
+    'd877_min': type_float_coerce_dict,
+    'd877_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'd877_min'}),
+    'color_min': type_float_coerce_dict,
+    'color_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'color_min'}),
+    'density_min': type_float_coerce_dict,
+    'density_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'density_min'}),
+    'pf20_min': type_float_coerce_dict,
+    'pf20_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'pf20_min'}),
+    'water_min': type_float_coerce_dict,
+    'water_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'water_min'}),
+    'flashpoint_min': type_float_coerce_dict,
+    'flashpoint_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'flashpoint_min'}),
+    'pourpoint_min': type_float_coerce_dict,
+    'pourpoint_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'pourpoint_min'}),
+    'viscosity_min': type_float_coerce_dict,
+    'viscosity_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'viscosity_min'}),
+    'd1816_2_min': type_float_coerce_dict,
+    'd1816_2_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'd1816_2_min'}),
+    'p100_min': type_float_coerce_dict,
+    'p100_max': dict_copy_union(type_float_coerce_dict, {'more_then': 'p100_min'}),
+    'fluid_type_id': type_integer_coerce_dict,
+    'cei156_min': type_integer_coerce_dict,
+    'cei156_max': dict_copy_union(type_integer_coerce_dict, {'more_then': 'cei156_min'}),
+    'norm_id': type_integer_coerce_required_dict,
+    'campaign_id': type_integer_coerce_required_dict,
+    'equipment_id': type_integer_coerce_required_dict,
+}
+norm_gas_data_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_50_dict,
+    'condition': type_integer_coerce_dict,
+    'h2': type_float_coerce_dict,
+    'ch4': type_float_coerce_dict,
+    'c2h2': type_float_coerce_dict,
+    'c2h4': type_float_coerce_dict,
+    'c2h6': type_float_coerce_dict,
+    'co': type_float_coerce_dict,
+    'co2': type_float_coerce_dict,
+    'tdcg': type_float_coerce_dict,
+    'fluid_level': dict_copy_union(type_integer_coerce_dict, {'norm_gas_fluid_level': True}),
+    'norm_id': type_integer_coerce_required_dict,
+    'campaign_id': type_integer_coerce_required_dict,
+    'equipment_id': type_integer_coerce_required_dict,
+}
+norm_particles_data_schema = {
+    'id': readonly_dict,
+    '_2um': type_float_coerce_dict,
+    '_5um': type_float_coerce_dict,
+    '_10um': type_float_coerce_dict,
+    '_15um': type_float_coerce_dict,
+    '_25um': type_float_coerce_dict,
+    '_50um': type_float_coerce_dict,
+    '_100um': type_float_coerce_dict,
+    'nas1638': type_float_coerce_dict,
+    'iso4406_1': type_float_coerce_dict,
+    'iso4406_2': type_float_coerce_dict,
+    'iso4406_3': type_float_coerce_dict,
+    'norm_id': type_integer_coerce_required_dict,
+    'campaign_id': type_integer_coerce_required_dict,
+    'equipment_id': type_integer_coerce_required_dict,
+}
+norm_isolation_data_schema = {
+    'id': readonly_dict,
+    'c': type_float_coerce_dict,
+    'f': type_float_coerce_dict,
+    'notseal': type_float_coerce_dict,
+    'seal': type_float_coerce_dict,
+    'norm_id': type_integer_coerce_required_dict,
+    'campaign_id': type_integer_coerce_required_dict,
+    'equipment_id': type_integer_coerce_required_dict,
+}
+norm_furan_data_schema = {
+    'id': readonly_dict,
+    'name': type_string_maxlength_50_dict,
+    'c1': type_float_coerce_dict,
+    'c2': type_float_coerce_dict,
+    'c3': type_float_coerce_dict,
+    'c4': type_float_coerce_dict,
+    'norm_id': type_integer_coerce_required_dict,
+    'campaign_id': type_integer_coerce_required_dict,
+    'equipment_id': type_integer_coerce_required_dict,
+}
 model_dict = {
     'equipment': {
         'model': Equipment,
@@ -1644,7 +1735,7 @@ model_dict = {
         'model': NormGas,
         'schema': norm_gas_schema
     },
-    'particles': {
+    'norm_particles': {
         'model': NormParticles,
         'schema': particles_schema
     },
@@ -1704,6 +1795,26 @@ model_dict = {
     #     'model': WindingResistanceTest,
     #     'schema': test_result_winding_resistance_test_schema
     # },
+    'norm_physic_data': {
+        'model': NormPhysicData,
+        'schema': norm_physic_data_schema,
+    },
+    'norm_gas_data': {
+        'model': NormGasData,
+        'schema': norm_gas_data_schema
+    },
+    'norm_particles_data': {
+        'model': NormParticlesData,
+        'schema': norm_particles_data_schema
+    },
+    'norm_isolation_data': {
+        'model': NormIsolationData,
+        'schema': norm_isolation_data_schema
+    },
+    'norm_furan_data': {
+        'model': NormFuranData,
+        'schema': norm_furan_data_schema
+    },
 }
 
 eq_type_dict = {
