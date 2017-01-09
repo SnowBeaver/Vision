@@ -4023,7 +4023,7 @@ class NormParticlesData(db.Model):
     iso4406_2 = db.Column(db.Float(53))  # ISO4406_2
     iso4406_3 = db.Column(db.Float(53))  # ISO4406_3
 
-    norm_id = db.Column(db.Integer, db.ForeignKey("norm_physic.id"))
+    norm_id = db.Column(db.Integer, db.ForeignKey("norm_particles.id"))
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.id"))
     equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"))
 
