@@ -895,7 +895,8 @@ def norm_data_handler(path):
     if path not in ('norm_gas_data',
                     'norm_furan_data',
                     'norm_isolation_data',
-                    'norm_particles_data'):
+                    'norm_particles_data',
+                    'norm_physic_data'):
         abort(404)
     return return_json('result', add_or_update_items(path))
 

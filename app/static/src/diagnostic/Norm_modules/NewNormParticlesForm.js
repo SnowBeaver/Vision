@@ -184,7 +184,7 @@ var NewNormParticlesForm = React.createClass({
         var norms = this.state.norms;
         var data = [];
         for (var normId in norms) {
-            var normData = {norm_id: normId, equipment_id: equipmentId, campaign_id: 1};
+            var normData = {norm_id: normId, equipment_id: equipmentId};
             for (var key in norms[normId]) {
                 var value = norms[normId][key];
                 if (value == "") {
