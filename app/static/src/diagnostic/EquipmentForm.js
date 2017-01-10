@@ -451,86 +451,8 @@ var NormSelectField = React.createClass({
                     <FormControl
                         name="norm_id"
                         componentClass="select"
-                        placeholder="Select norm type"
-                        onChange={this.handleChange}
-                        required={this.props.required}
-                        value={this.props.value}>
-                        <option value="">Select norm type{this.props.required ? " *" : ""}</option>
-                        {menuItems}
-                    </FormControl>
-                    <HelpBlock className="warning">{this.props.errors.norm_id}</HelpBlock>
-                </FormGroup>
-            </div>
-        );
-    }
-});
-
-var NormAdditionalSelectField = React.createClass({
-
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value
-        })
-    },
-
-    getInitialState: function () {
-        return {
-            items: [],
-            isVisible: false
-        };
-    },
-
-    isVisible: function () {
-        return this.state.isVisible;
-    },
-
-    componentWillReceiveProps: function (nextProps) {
-        if (nextProps.data.norm_option_text && nextProps.data.norm_option_text.name) {
-            this.serverRequest = $.authorizedGet(nextProps.source + nextProps.data.norm_option_text.name, function (result) {
-                items = (result['result']);
-                this.setState({
-                    items: items
-                });
-            }.bind(this), 'json');
-        }
-    },
-
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
-    setVisible: function () {
-        this.state.isVisible = true;
-    },
-
-    render: function () {
-        if (!(this.props.data.norm_option_text && this.props.data.norm_option_text.name)) {
-            return (<div></div>);
-        }
-
-        var field = 'name';
-        if (this.props.data.norm_option_text.name == 'norm_isolation') {
-            field = 'c';
-        } else if (this.props.data.norm_option_text.name == 'particles') {
-            field = 'id';
-        }
-
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key][field]}`}</option>);
-        }
-
-        return (
-            <div>
-                <FormGroup controlId="formControlsSelect7"
-                           validationState={this.props.errors.norm_id ? 'error' : null}>
-                    <FormControl
-                        name="norm_id"
-                        componentClass="select"
                         placeholder="Select norm"
                         onChange={this.handleChange}
-                        ref={this.props.ref}
                         required={this.props.required}
                         value={this.props.value}>
                         <option value="">Select norm{this.props.required ? " *" : ""}</option>
@@ -740,19 +662,20 @@ var NormAdditionalParams = React.createClass({
         }
         switch (this.props.data.norm_option_text.name) {
             case 'norm_furan':
-                return (<NewNormFuranForm ref='newNormFuranForm' errors={this.props.data.errors}/>);
+                return (
+                    <NewNormFuranForm ref='norm_furan' source="/api/v1.0/norm_furan" errors={this.props.data.errors}/>);
                 break;
             case 'norm_gas':
-                return (<NewNormGasForm ref='newNormGasForm' errors={this.props.data.errors}/>);
+                return (<NewNormGasForm ref='norm_gas' source="/api/v1.0/norm_gas" errors={this.props.data.errors}/>);
                 break;
             case 'norm_isolation':
-                return (<NewNormIsolationForm errors={this.props.data.errors}/>);
+                return (<NewNormIsolationForm ref='norm_isolation' source="/api/v1.0/norm_isolation" errors={this.props.data.errors}/>);
                 break;
             case 'norm_physic':
-                return (<NewNormPhysicForm errors={this.props.data.errors}/>);
+                return (<NewNormPhysicForm ref='norm_physic' source="/api/v1.0/norm_physic" errors={this.props.data.errors}/>);
                 break;
             case 'particles':
-                return (<NewNormParticlesForm errors={this.props.data.errors}/>);
+                return (<NewNormParticlesForm ref='particles' source="/api/v1.0/particles" errors={this.props.data.errors}/>);
                 break;
             default:
                 return null;
@@ -827,7 +750,7 @@ const EquipmentForm = React.createClass({
                 success: function (data) {
                     that.setState({equipmentId: data['result']});
                     that._saveSubform(subform, data['result'], path);
-                    that._saveNormAdditionalParams();
+                    that._saveNormAdditionalParams(data['result']);
                 },
                 beforeSend: function () {
                     this.setState({loading: true});
@@ -840,9 +763,9 @@ const EquipmentForm = React.createClass({
         return xhr;
     },
 
-    _saveNormAdditionalParams() {
+    _saveNormAdditionalParams(equipmentId) {
         var formName = this.state.norm_option_text.name;
-        this.refs.normAdditionalParams.refs[formName].submit();
+        this.refs.normAdditionalParams.refs[formName].submit(equipmentId);
     },
 
     _saveSubform(subform, equipmentId, path){
@@ -1268,15 +1191,7 @@ const EquipmentForm = React.createClass({
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-md-11">
-                                    <NormAdditionalSelectField
-                                        source="/api/v1.0/"
-                                        errors={this.state.errors}
-                                        ref="normAdditionalSelectField"
-                                        required
-                                        data={this.state}/>
-                                </div>
-                                <div className="col-md-11">
+                                <div className="col-md-12">
                                     <NormAdditionalParams
                                         ref='normAdditionalParams'
                                         data={this.state}/>

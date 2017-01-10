@@ -886,4 +886,15 @@ def get_release_version_handler():
     current_version = answer.rstrip().split('\n')[-1:]
     return return_json('result', current_version)
 
+
+# Create or update a lot of norm data records
+@api_blueprint.route('/norm_data/multi/<path>', methods=['POST'])
+@login_required
+@json_required
+def norm_data_handler(path):
+    if path not in ('norm_gas_data',
+                    'norm_furan_data', ):
+        abort(404)
+    return return_json('result', add_or_update_items(path))
+
 api.register_blueprint(api_blueprint)

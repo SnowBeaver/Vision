@@ -30,7 +30,7 @@ const TextField = React.createClass({
                                  onChange={this._onChange}
                     />
                     <HelpBlock className="warning">{error}</HelpBlock>
-                    <FormControl.Feedback />
+                    {/*<FormControl.Feedback />*/}
                 </FormGroup>
             </OverlayTrigger>
         );
