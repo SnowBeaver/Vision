@@ -1377,7 +1377,7 @@ norm_particles_data_schema = {
     'iso4406_1': type_float_coerce_dict,
     'iso4406_2': type_float_coerce_dict,
     'iso4406_3': type_float_coerce_dict,
-    'norm_id': type_integer_coerce_required_dict,
+    'norm_id': type_string_maxlength_50_dict,
     'campaign_id': type_integer_coerce_required_dict,
     'equipment_id': type_integer_coerce_required_dict,
 }

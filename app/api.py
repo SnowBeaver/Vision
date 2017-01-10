@@ -893,7 +893,9 @@ def get_release_version_handler():
 @json_required
 def norm_data_handler(path):
     if path not in ('norm_gas_data',
-                    'norm_furan_data', ):
+                    'norm_furan_data',
+                    'norm_isolation_data',
+                    'norm_particles_data'):
         abort(404)
     return return_json('result', add_or_update_items(path))
 
