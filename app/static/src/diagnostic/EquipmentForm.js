@@ -441,7 +441,7 @@ var NormSelectField = React.createClass({
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}
-                                   data-name={this.state.items[key].table_name}>{`${this.state.items[key].name}`}</option>);
+                                   data-name={this.state.items[key].table_name != 'norm_particles' ? this.state.items[key].table_name : 'particles'}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -511,7 +511,7 @@ var NormAdditionalSelectField = React.createClass({
         var field = 'name';
         if (this.props.data.norm_option_text.name == 'norm_isolation') {
             field = 'c';
-        } else if (this.props.data.norm_option_text.name == 'norm_particles') {
+        } else if (this.props.data.norm_option_text.name == 'particles') {
             field = 'id';
         }
 
@@ -751,7 +751,7 @@ var NormAdditionalParams = React.createClass({
             case 'norm_physic':
                 return (<NewNormPhysicForm errors={this.props.data.errors}/>);
                 break;
-            case 'norm_particles':
+            case 'particles':
                 return (<NewNormParticlesForm errors={this.props.data.errors}/>);
                 break;
             default:

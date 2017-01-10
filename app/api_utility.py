@@ -1735,7 +1735,7 @@ model_dict = {
         'model': NormGas,
         'schema': norm_gas_schema
     },
-    'norm_particles': {
+    'particles': {
         'model': NormParticles,
         'schema': particles_schema
     },
