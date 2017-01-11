@@ -491,7 +491,7 @@ var NewNormPhysicForm = React.createClass({
         this.setState({errors: errors});
 
         // Check errors only if there are norms
-        if (Object.keys(this.state.norms) > 0) {
+        if (Object.keys(this.state.norms).length > 0) {
             return Object.keys(this.state.errors).length == 0;
         } else {
             return true;
