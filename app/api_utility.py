@@ -168,7 +168,7 @@ def coerce_to_int(value):
 
 def coerce_to_float(value):
     try:
-        return int(value)
+        return float(value)
     except TypeError:
         return None
 
