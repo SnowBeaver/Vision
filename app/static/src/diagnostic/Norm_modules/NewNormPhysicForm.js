@@ -122,16 +122,6 @@ var NewNormPhysicRow = React.createClass({
                     <div className="col-md-2" style={wrapCellStyle}>
                         <TextField
                             onChange={this.handleChange}
-                            label="Ift min"
-                            name="ift_min"
-                            value={data.ift_min}
-                            data-normId={this.props.normId}
-                            errors={errors}
-                        />
-                    </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
-                        <TextField
-                            onChange={this.handleChange}
                             label="Color min"
                             name="color_min"
                             value={data.color_min}
@@ -142,29 +132,9 @@ var NewNormPhysicRow = React.createClass({
                     <div className="col-md-2" style={wrapCellStyle}>
                         <TextField
                             onChange={this.handleChange}
-                            label="Ift min"
-                            name="ift_min"
-                            value={data.ift_min}
-                            data-normId={this.props.normId}
-                            errors={errors}
-                        />
-                    </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
-                        <TextField
-                            onChange={this.handleChange}
                             label="Color max"
                             name="color_max"
                             value={data.color_max}
-                            data-normId={this.props.normId}
-                            errors={errors}
-                        />
-                    </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
-                        <TextField
-                            onChange={this.handleChange}
-                            label="Ift min"
-                            name="ift_min"
-                            value={data.ift_min}
                             data-normId={this.props.normId}
                             errors={errors}
                         />
@@ -192,29 +162,9 @@ var NewNormPhysicRow = React.createClass({
                     <div className="col-md-2" style={wrapCellStyle}>
                         <TextField
                             onChange={this.handleChange}
-                            label="Ift min"
-                            name="ift_min"
-                            value={data.ift_min}
-                            data-normId={this.props.normId}
-                            errors={errors}
-                        />
-                    </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
-                        <TextField
-                            onChange={this.handleChange}
                             label="pf20 min"
                             name="pf20_min"
                             value={data.pf20_min}
-                            data-normId={this.props.normId}
-                            errors={errors}
-                        />
-                    </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
-                        <TextField
-                            onChange={this.handleChange}
-                            label="Ift min"
-                            name="ift_min"
-                            value={data.ift_min}
                             data-normId={this.props.normId}
                             errors={errors}
                         />
@@ -325,16 +275,6 @@ var NewNormPhysicRow = React.createClass({
                             label="d1816_2 max"
                             name="d1816_2_max"
                             value={data.d1816_2_max}
-                            data-normId={this.props.normId}
-                            errors={errors}
-                        />
-                    </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
-                        <TextField
-                            onChange={this.handleChange}
-                            label="Water min"
-                            name="water_min"
-                            value={data.water_min}
                             data-normId={this.props.normId}
                             errors={errors}
                         />
