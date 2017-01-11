@@ -4,6 +4,9 @@ import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 
 import TextField from './TextField';
 import {validate, updateFieldErrors} from '../helpers';
@@ -19,6 +22,60 @@ const wrapCellStyle = {
     float: 'none',
     'whiteSpace': 'initial'
 };
+
+
+var FluidTypeSelectField = React.createClass({
+    getInitialState: function () {
+        return {
+            items: []
+        };
+    },
+
+    componentDidMount: function () {
+        this.serverRequest = $.authorizedGet(this.props.source, function (result) {
+            var items = (result['result']);
+            this.setState({
+                items: items
+            });
+        }.bind(this), 'json');
+    },
+
+    _onChange: function (e) {
+        this.props.onChange(e);
+    },
+
+    render: function () {
+        var options = [];
+        var normId = (this.props["data-normId"] != null) ? this.props["data-normId"]: undefined;
+        var name = (this.props.name != null) ? this.props.name : "";
+        var errorName = name + '_' + normId;
+        var validationState = (this.props.errors[errorName]) ? 'error' : null;
+        var error = this.props.errors[errorName];
+
+        for (var key in this.state.items) {
+            options.push(<option key={this.state.items[key].id}
+                                 value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+        }
+
+        return (
+            <div>
+                <FormGroup controlId="formControlsSelect"
+                           validationState={validationState}>
+                    <FormControl componentClass="select"
+                                 name="fluid_type_id"
+                                 placeholder="Select fluid type"
+                                 data-normId={normId}
+                                 onChange={this._onChange}
+                                 value={this.props.value}>
+                        <option value="">Select fluid type</option>
+                        {options}
+                    </FormControl>
+                    <HelpBlock className="warning">{error}</HelpBlock>
+                </FormGroup>
+            </div>
+        );
+    }
+});
 
 var NewNormPhysicRow = React.createClass({
     handleChange: function (e) {
@@ -300,14 +357,15 @@ var NewNormPhysicRow = React.createClass({
                         />
                     </div>
                     <div className="col-md-2" style={wrapCellStyle}>
-                        <TextField
+                        <FluidTypeSelectField
                             onChange={this.handleChange}
+                            source="/api/v1.0/fluid_type"
                             label="fluid_type_id"
                             name="fluid_type_id"
                             value={data.fluid_type_id}
                             data-normId={this.props.normId}
                             errors={errors}
-                        />
+                            />
                     </div>
                     <div className="col-md-2" style={wrapCellStyle}>
                         <TextField

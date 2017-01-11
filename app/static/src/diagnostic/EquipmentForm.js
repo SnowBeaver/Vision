@@ -786,7 +786,6 @@ const EquipmentForm = React.createClass({
             if (!this.state.normSubformSaved) {
                 xhr = this._saveNormAdditionalParams(this.state.equipmentId);
             }
-            //xhr = this._saveSubform(subform, this.state.equipmentId, path);
         }
         return xhr;
     },
