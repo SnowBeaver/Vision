@@ -167,6 +167,8 @@ var NewNormIsolationForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
+        this.props.cleanForm();
+        this.props.setNormSubformSaved();
         NotificationManager.success('Norms have been successfully saved');
     },
 
