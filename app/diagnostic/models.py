@@ -1448,7 +1448,7 @@ class Equipment(db.Model):
     manufacturer_id = db.Column('manufacturer_id', db.ForeignKey("manufacturer.id"), nullable=False)
     manufacturer = relationship('Manufacturer', foreign_keys='Equipment.manufacturer_id')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
+    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default='25')
     description = db.Column(db.UnicodeText)
     # Location. Indicate the named placed where the equipement is.
     # Example, a main transformer is at site Budapest, and at localisation Church street.
