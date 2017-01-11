@@ -180,6 +180,8 @@ var NewNormFuranForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
+        this.props.cleanForm();
+        this.props.setNormSubformSaved();
         NotificationManager.success('Norms have been successfully saved');
     },
 
@@ -194,13 +196,20 @@ var NewNormFuranForm = React.createClass({
             if (data.status >= 500) {
                 message = res.error.join(". ");
             } else if (res.error instanceof Object) {
-                // We get object of errors with field names as key
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
+                // We get object of errors with field names as key,
+                // grouped by norm_id
+                for (var normId in res.error) {
+                    for (var field in res.error[normId]) {
+                        var errorMessage = res.error[normId][field];
+                        if (Array.isArray(errorMessage)) {
+                            errorMessage = errorMessage.join(". ");
+                        }
+                        res.error[field + '_' + normId] = errorMessage;
+                        delete res.error[normId][field];
+                        if (Object.keys(res.error[normId]).length == 0) {
+                            delete res.error[normId];
+                        }
                     }
-                    res.error[field] = errorMessage;
                 }
                 this.setState({
                     errors: res.error
@@ -213,7 +222,7 @@ var NewNormFuranForm = React.createClass({
     },
 
     render: function () {
-        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
+        //var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         var items = [];
 
         for (var key in this.state.predefinedNorms) {

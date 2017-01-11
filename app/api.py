@@ -114,12 +114,15 @@ def prepare_data_for_tree_translation(tree_item_id, equipment_name):
 
 
 # Verifications
-def validate_or_abort(path, data_to_validate=None, update=False):
+def validate_or_abort(path, data_to_validate=None, update=False, abort_request=True):
     if not data_to_validate:
         data_to_validate = request.json
     v = Validator(ignore_none_values=True)
     if not v.validate(data_to_validate, get_schema_by_path(path), update):
-        abort(400, v.errors)
+        if abort_request:
+            abort(400, v.errors)
+        else:
+            return {'errors': v.errors}
     return v.document
 
 
@@ -238,6 +241,55 @@ def build_seach_equipment_query(items_model, search_value):
             Equipment.equipment_number.ilike("%{}%".format(search_value)),
             ))\
         .all()
+
+
+def add_or_update_norms(path):
+    items_model = get_model_by_path(path)
+    items = []
+    validation_errors, validated_norms = validate_multi(path, 'norm_id')
+
+    # If at least one item is not valid, return all validation errors
+    if validation_errors:
+        abort(400, validation_errors)
+    else:
+        # If there are no validation errors
+        # Update items
+        for norm in request.json:
+            if 'id' in norm:
+                item = db.session.query(items_model).get(norm['id'])
+                items.append(item)
+                set_attrs_to_item(item, norm)
+
+        # Save items
+        for validated_norm in validated_norms:
+            item = add_item(path, validated_norm)
+            items.append(item)
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            abort(500, e.args)
+
+    return [item.serialize() for item in items]
+
+
+def validate_multi(path, group_by_field):
+    validation_errors = {}
+    validated_norms = []
+
+    # Validate all items at once
+    for item in request.json:
+        if 'id' not in item:
+            validated_data = validate_or_abort(path, item, abort_request=False)
+            if validated_data.get('errors'):
+                # Save errors
+                if not validation_errors.get(item[group_by_field]):
+                    validation_errors[item[group_by_field]] = {}
+                validation_errors[item[group_by_field]].update(validated_data['errors'])
+            else:
+                # Save validated document
+                validated_norms.append(validated_data)
+    return validation_errors, validated_norms
 
 
 # Update
@@ -898,6 +950,6 @@ def norm_data_handler(path):
                     'norm_particles_data',
                     'norm_physic_data'):
         abort(404)
-    return return_json('result', add_or_update_items(path))
+    return return_json('result', add_or_update_norms(path))
 
 api.register_blueprint(api_blueprint)

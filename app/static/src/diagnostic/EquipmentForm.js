@@ -580,8 +580,6 @@ var EqAdditionalParams = React.createClass({
             tableName: ''
         }
     },
-    componentDidMount: function () {
-    },
 
     render: function () {
 
@@ -652,8 +650,6 @@ var NormAdditionalParams = React.createClass({
             tableName: ''
         }
     },
-    componentDidMount: function () {
-    },
 
     render: function () {
 
@@ -663,19 +659,43 @@ var NormAdditionalParams = React.createClass({
         switch (this.props.data.norm_option_text.name) {
             case 'norm_furan':
                 return (
-                    <NewNormFuranForm ref='norm_furan' source="/api/v1.0/norm_furan" errors={this.props.data.errors}/>);
+                    <NewNormFuranForm
+                        ref='norm_furan'
+                        source="/api/v1.0/norm_furan"
+                        setNormSubformSaved={this.props.setNormSubformSaved}
+                        cleanForm={this.props.clearForm} />);
                 break;
             case 'norm_gas':
-                return (<NewNormGasForm ref='norm_gas' source="/api/v1.0/norm_gas" errors={this.props.data.errors}/>);
+                return (
+                    <NewNormGasForm
+                        ref='norm_gas'
+                        source="/api/v1.0/norm_gas"
+                        setNormSubformSaved={this.props.setNormSubformSaved}
+                        cleanForm={this.props.clearForm} />);
                 break;
             case 'norm_isolation':
-                return (<NewNormIsolationForm ref='norm_isolation' source="/api/v1.0/norm_isolation" errors={this.props.data.errors}/>);
+                return (
+                    <NewNormIsolationForm
+                        ref='norm_isolation'
+                        source="/api/v1.0/norm_isolation"
+                        setNormSubformSaved={this.props.setNormSubformSaved}
+                        cleanForm={this.props.clearForm} />);
                 break;
             case 'norm_physic':
-                return (<NewNormPhysicForm ref='norm_physic' source="/api/v1.0/norm_physic" errors={this.props.data.errors}/>);
+                return (
+                    <NewNormPhysicForm
+                        ref='norm_physic'
+                        source="/api/v1.0/norm_physic"
+                        setNormSubformSaved={this.props.setNormSubformSaved}
+                        cleanForm={this.props.clearForm} />);
                 break;
             case 'particles':
-                return (<NewNormParticlesForm ref='particles' source="/api/v1.0/particles" errors={this.props.data.errors}/>);
+                return (
+                    <NewNormParticlesForm
+                        ref='particles'
+                        source="/api/v1.0/particles"
+                        setNormSubformSaved={this.props.setNormSubformSaved}
+                        cleanForm={this.props.clearForm} />);
                 break;
             default:
                 return null;
@@ -707,11 +727,13 @@ const EquipmentForm = React.createClass({
                 //'upstream1',  // TODO: Exclude upstream field or let adding multiple upstreams
                 'phys_position',
                 'tension4',
-                'manufactured',
+                'manufactured'
             ],
             changedFields: [],
             option_text: {},
-            equipmentId: null   // Is set when main form is saved
+            equipmentId: null,   // Is set when main form is saved
+            equipmentSubformSaved: false,
+            normSubformSaved: false
         };
 
         for (var i = 0; i < response.fields.length; i++) {
@@ -758,7 +780,13 @@ const EquipmentForm = React.createClass({
             })
         } else {
             // Save only subform (for instance, when saving subform for the first time, API returned errors)
-            xhr = this._saveSubform(subform, this.state.equipmentId, path);
+            if (!this.state.equipmentSubformSaved) {
+                xhr = this._saveSubform(subform, this.state.equipmentId, path);
+            }
+            if (!this.state.normSubformSaved) {
+                xhr = this._saveNormAdditionalParams(this.state.equipmentId);
+            }
+            //xhr = this._saveSubform(subform, this.state.equipmentId, path);
         }
         return xhr;
     },
@@ -815,9 +843,14 @@ const EquipmentForm = React.createClass({
         this.setState({loading: false});
     },
 
+    setNormSubformSaved: function () {
+        this.setState({normSubformSaved: true});
+    },
+
     _onSuccess: function (data) {
         // Clean the form
-        this.setState(this.getInitialState());
+        //this.setState(this.getInitialState());
+        this.setState({equipmentSubformSaved: true});
         NotificationManager.success('Equipment has been successfully saved');
     },
 
@@ -852,6 +885,10 @@ const EquipmentForm = React.createClass({
 
     _clearErrors: function () {
         this.setState({errors: {}});
+    },
+
+    clearForm: function () {
+        this.setState(this.getInitialState());
     },
 
     _onChange: function (e) {
@@ -1097,7 +1134,6 @@ const EquipmentForm = React.createClass({
             }
             state[fieldName] = timestamp;    // Already formatted to ISO string
         }
-        // state.changedFields = this.state.changedFields.concat(["visual_date"]);
         this.setState(state);
     },
 
@@ -1199,6 +1235,8 @@ const EquipmentForm = React.createClass({
                                 <div className="col-md-12">
                                     <NormAdditionalParams
                                         ref='normAdditionalParams'
+                                        clearForm={this.clearForm}
+                                        setNormSubformSaved={this.setNormSubformSaved}
                                         data={this.state}/>
                                 </div>
                             </div>
