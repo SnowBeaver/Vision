@@ -6,6 +6,7 @@ import {Link} from 'react-router';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import TextField from './TextField';
+import {validate, updateFieldErrors} from '../helpers';
 
 var NewNormFuranRow = React.createClass({
     handleChange: function (e) {
@@ -22,8 +23,7 @@ var NewNormFuranRow = React.createClass({
                         label="Name"
                         name="name"
                         value={data.name}
-                        data-type="text"
-                        data-len="50"
+                        data-normId={this.props.normId}
                         errors={errors}
                         />
                 </div>
@@ -33,7 +33,7 @@ var NewNormFuranRow = React.createClass({
                         label="C1"
                         name="c1"
                         value={data.c1}
-                        data-type="float"
+                        data-normId={this.props.normId}
                         errors={errors}
                         />
                 </div>
@@ -43,7 +43,7 @@ var NewNormFuranRow = React.createClass({
                         label="C2"
                         name="c2"
                         value={data.c2}
-                        data-type="float"
+                        data-normId={this.props.normId}
                         errors={errors}
                         />
                 </div>
@@ -53,7 +53,7 @@ var NewNormFuranRow = React.createClass({
                         label="C3"
                         name="c3"
                         value={data.c3}
-                        data-type="float"
+                        data-normId={this.props.normId}
                         errors={errors}
                         />
                 </div>
@@ -63,7 +63,7 @@ var NewNormFuranRow = React.createClass({
                         label="C4"
                         name="c4"
                         value={data.c4}
-                        data-type="float"
+                        data-normId={this.props.normId}
                         errors={errors}
                         />
                 </div>
@@ -95,6 +95,14 @@ var NewNormFuranForm = React.createClass({
         }
     },
 
+    _validateDict: {
+        name: {type: "text", maxLen: 50, label: "Name"},
+        c1: {type: "float", label: "C1"},
+        c2: {type: "float", label: "C2"},
+        c3: {type: "float", label: "C3"},
+        c4: {type: "float", label: "C4"}
+    },
+
     handleChange: function(e, normId){
         e.stopPropagation();
         var state = this.state;
@@ -102,6 +110,16 @@ var NewNormFuranForm = React.createClass({
             state.norms[normId] = {};
         }
         state.norms[normId][e.target.name] = e.target.value;
+
+        if (this._validateDict[e.target.name]) {
+            var errors = validate(e, this._validateDict);
+            state = updateFieldErrors(
+                this.state,
+                e.target.name + '_' + e.target.getAttribute('data-normId'),
+                state,
+                errors
+            );
+        }
         this.setState(state);
     },
 
@@ -120,7 +138,12 @@ var NewNormFuranForm = React.createClass({
     },
 
     is_valid: function () {
-        return (Object.keys(this.state.errors).length <= 0);
+        // Check errors only if there are norms
+        if (Object.keys(this.state.norms) > 0) {
+            return Object.keys(this.state.errors).length == 0;
+        } else {
+            return true;
+        }
     },
 
     _save: function (equipmentId) {

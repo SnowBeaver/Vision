@@ -764,8 +764,12 @@ const EquipmentForm = React.createClass({
     },
 
     _saveNormAdditionalParams(equipmentId) {
+        this._getNormAdditionalParamsForm().submit(equipmentId);
+    },
+
+    _getNormAdditionalParamsForm(){
         var formName = this.state.norm_option_text.name;
-        this.refs.normAdditionalParams.refs[formName].submit(equipmentId);
+        return this.refs.normAdditionalParams.refs[formName];
     },
 
     _saveSubform(subform, equipmentId, path){
@@ -794,10 +798,11 @@ const EquipmentForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this.is_valid()) {
+        if (!this.is_valid() || !this._getNormAdditionalParamsForm().is_valid()) {
             NotificationManager.error('Please correct the errors');
             return;
         }
+
         this._clearErrors();
         var xhr = this._save();
         if (xhr) {

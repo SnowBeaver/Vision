@@ -15,18 +15,17 @@ const TextField = React.createClass({
         let tooltip = <Tooltip id={this.props.label}>{this.props.label}</Tooltip>;
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
-        var type = (this.props["data-type"] != null) ? this.props["data-type"]: undefined;
-        var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
-        var validationState = (this.props.errors[name]) ? 'error' : null;
-        var error = this.props.errors[name];
+        var normId = (this.props["data-normId"] != null) ? this.props["data-normId"]: undefined;
+        var errorName = name + '_' + normId;
+        var validationState = (this.props.errors[errorName]) ? 'error' : null;
+        var error = this.props.errors[errorName];
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
-                                 data-type={type}
-                                 data-len={len}
+                                 data-normId={normId}
                                  onChange={this._onChange}
                     />
                     <HelpBlock className="warning">{error}</HelpBlock>
