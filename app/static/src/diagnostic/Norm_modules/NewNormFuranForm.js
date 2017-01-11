@@ -225,9 +225,19 @@ var NewNormFuranForm = React.createClass({
         var items = [];
 
         for (var key in this.state.predefinedNorms) {
+            var errorClass = '';
+            Object.keys(this.state.errors).map(
+                function(el) {
+                    if (new RegExp('_' + this.state.predefinedNorms[key].id + '$').test(el)) {
+                        errorClass = 'text-danger';
+                    }
+                }.bind(this)
+            );
             items.push(
                 <div className="row" key={this.state.predefinedNorms[key].id}>
-                    <div className="col-md-1"><strong>{this.state.predefinedNorms[key].name}</strong></div>
+                    <div className={errorClass + " col-md-1"}>
+                        <strong>{this.state.predefinedNorms[key].name}</strong>
+                    </div>
                     <NewNormFuranRow
                         data={this.state}
                         handleChange={this.handleChange}
