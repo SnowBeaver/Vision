@@ -6,6 +6,7 @@ import {Link} from 'react-router';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import TextField from './TextField';
+import {validate, updateFieldErrors} from '../helpers';
 
 // Can be moved to CSS file, if one is loaded with the page
 const overflowRowStyle = {
@@ -15,7 +16,8 @@ const overflowRowStyle = {
 };
 const wrapCellStyle = {
     display: 'inline-block',
-    float: 'none'
+    float: 'none',
+    'whiteSpace': 'initial'
 };
 
 var NewNormPhysicRow = React.createClass({
@@ -30,10 +32,10 @@ var NewNormPhysicRow = React.createClass({
                     <div className="col-md-2" style={wrapCellStyle}>
                         <TextField
                             onChange={this.handleChange}
-                            label="Name"
+                            label="Name *"
                             name="name"
                             value={data.name}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -43,7 +45,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Acid min"
                             name="acid_min"
                             value={data.acid_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -53,7 +55,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Acid max"
                             name="acid_max"
                             value={data.acid_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -63,7 +65,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Ift min"
                             name="ift_min"
                             value={data.ift_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -73,7 +75,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Ift max"
                             name="ift_max"
                             value={data.ift_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -83,7 +85,7 @@ var NewNormPhysicRow = React.createClass({
                             label="d1816 min"
                             name="d1816_min"
                             value={data.d1816_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -93,7 +95,7 @@ var NewNormPhysicRow = React.createClass({
                             label="d1816 max"
                             name="d1816_max"
                             value={data.d1816_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -103,7 +105,7 @@ var NewNormPhysicRow = React.createClass({
                             label="d877 min"
                             name="d877_min"
                             value={data.d877_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -113,7 +115,7 @@ var NewNormPhysicRow = React.createClass({
                             label="d877 max"
                             name="d877_max"
                             value={data.d877_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -123,7 +125,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Ift min"
                             name="ift_min"
                             value={data.ift_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -133,7 +135,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Color min"
                             name="color_min"
                             value={data.color_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -143,7 +145,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Ift min"
                             name="ift_min"
                             value={data.ift_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -153,7 +155,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Color max"
                             name="color_max"
                             value={data.color_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -163,7 +165,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Ift min"
                             name="ift_min"
                             value={data.ift_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -173,7 +175,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Density min"
                             name="density_min"
                             value={data.density_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -183,7 +185,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Density max"
                             name="density_max"
                             value={data.density_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -193,7 +195,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Ift min"
                             name="ift_min"
                             value={data.ift_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -203,7 +205,7 @@ var NewNormPhysicRow = React.createClass({
                             label="pf20 min"
                             name="pf20_min"
                             value={data.pf20_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -213,7 +215,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Ift min"
                             name="ift_min"
                             value={data.ift_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -223,7 +225,7 @@ var NewNormPhysicRow = React.createClass({
                             label="pf20 max"
                             name="pf20_max"
                             value={data.pf20_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -233,7 +235,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Water min"
                             name="water_min"
                             value={data.water_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -243,7 +245,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Water max"
                             name="water_max"
                             value={data.water_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -253,7 +255,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Flashpoint min"
                             name="flashpoint_min"
                             value={data.flashpoint_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -263,7 +265,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Flashpoint max"
                             name="flashpoint_max"
                             value={data.flashpoint_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -273,7 +275,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Pourpoint min"
                             name="pourpoint_min"
                             value={data.pourpoint_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -283,7 +285,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Pourpoint max"
                             name="pourpoint_max"
                             value={data.pourpoint_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -293,7 +295,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Viscosity min"
                             name="viscosity_min"
                             value={data.viscosity_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -303,7 +305,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Viscosity max"
                             name="viscosity_max"
                             value={data.viscosity_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -313,7 +315,7 @@ var NewNormPhysicRow = React.createClass({
                             label="d1816_2 min"
                             name="d1816_2_min"
                             value={data.d1816_2_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -323,7 +325,7 @@ var NewNormPhysicRow = React.createClass({
                             label="d1816_2 max"
                             name="d1816_2_max"
                             value={data.d1816_2_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -333,7 +335,7 @@ var NewNormPhysicRow = React.createClass({
                             label="Water min"
                             name="water_min"
                             value={data.water_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -343,7 +345,7 @@ var NewNormPhysicRow = React.createClass({
                             label="p100 min"
                             name="p100_min"
                             value={data.p100_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -353,7 +355,7 @@ var NewNormPhysicRow = React.createClass({
                             label="p100 max"
                             name="p100_max"
                             value={data.p100_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -363,7 +365,7 @@ var NewNormPhysicRow = React.createClass({
                             label="fluid_type_id"
                             name="fluid_type_id"
                             value={data.fluid_type_id}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -373,7 +375,7 @@ var NewNormPhysicRow = React.createClass({
                             label="cei156 min"
                             name="cei156_min"
                             value={data.cei156_min}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -383,7 +385,7 @@ var NewNormPhysicRow = React.createClass({
                             label="cei156 max"
                             name="cei156_max"
                             value={data.cei156_max}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -400,6 +402,39 @@ var NewNormPhysicForm = React.createClass({
             predefinedNorms: [],
             norms: {}
         }
+    },
+
+    _validateDict: {
+        name: {type: "text", required: true, maxLen: 50, label: "Name"},
+        acid_min: {type: "float", label: "Acid min"},
+        acid_max: {type: "float", label: "Acid max"},
+        ift_min: {type: "float", label: "Ift min"},
+        ift_max: {type: "float", label: "Ift max"},
+        d1816_min: {type: "float", label: "d1816 min"},
+        d1816_max: {type: "float", label: "d1816 max"},
+        d877_min: {type: "float", label: "d877 min"},
+        d877_max: {type: "float", label: "d877 max"},
+        color_min: {type: "float", label: "Color min"},
+        color_max: {type: "float", label: "Color max"},
+        density_min: {type: "float", label: "Density min"},
+        density_max: {type: "float", label: "Density max"},
+        pf20_min: {type: "float", label: "pf20 min"},
+        pf20_max: {type: "float", label: "pf20 max"},
+        water_min: {type: "float", label: "Water min"},
+        water_max: {type: "float", label: "Water max"},
+        flashpoint_min: {type: "float", label: "Flashpoint min"},
+        flashpoint_max: {type: "float", label: "Flashpoint max"},
+        pourpoint_min: {type: "float", label: "Pourpoint min"},
+        pourpoint_max: {type: "float", label: "Pourpoint max"},
+        viscosity_min: {type: "float", label: "Viscosity min"},
+        viscosity_max: {type: "float", label: "Viscosity max"},
+        d1816_2_min: {type: "float", label: "d1816_2 min"},
+        d1816_2_max: {type: "float", label: "d1816_2 max"},
+        p100_min: {type: "float", label: "p100 min"},
+        p100_max: {type: "float", label: "p100 max"},
+        fluid_type_id: {type: "int", label: "fluid Type Id"},
+        cei156_min: {type: "int", label: "cei156 min"},
+        cei156_max: {type: "int", label: "cei156 max"}
     },
 
     componentDidMount: function () {
@@ -420,6 +455,15 @@ var NewNormPhysicForm = React.createClass({
             state.norms[normId] = {};
         }
         state.norms[normId][e.target.name] = e.target.value;
+        if (this._validateDict[e.target.name]) {
+            var errors = validate(e, this._validateDict);
+            state = updateFieldErrors(
+                this.state,
+                e.target.name + '_' + e.target.getAttribute('data-normId'),
+                state,
+                errors
+            );
+        }
         this.setState(state);
     },
 
@@ -438,7 +482,22 @@ var NewNormPhysicForm = React.createClass({
     },
 
     is_valid: function () {
-        return (Object.keys(this.state.errors).length <= 0);
+        var errors = this.state.errors;
+        for (var fld in this._validateDict) {
+            for (var normId in this.state.norms) {
+                if (this._validateDict[fld].required === true && !this.state.norms[normId][fld]) {
+                    errors[fld + '_' + normId] = "This field is required";
+                }
+            }
+        }
+        this.setState({errors: errors});
+
+        // Check errors only if there are norms
+        if (Object.keys(this.state.norms) > 0) {
+            return Object.keys(this.state.errors).length == 0;
+        } else {
+            return true;
+        }
     },
 
     _save: function (equipmentId) {
@@ -475,6 +534,8 @@ var NewNormPhysicForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
+        this.props.cleanForm();
+        this.props.setNormSubformSaved();
         NotificationManager.success('Norms have been successfully saved');
     },
 
@@ -489,13 +550,20 @@ var NewNormPhysicForm = React.createClass({
             if (data.status >= 500) {
                 message = res.error.join(". ");
             } else if (res.error instanceof Object) {
-                // We get object of errors with field names as key
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
+                // We get object of errors with field names as key,
+                // grouped by norm_id
+                for (var normId in res.error) {
+                    for (var field in res.error[normId]) {
+                        var errorMessage = res.error[normId][field];
+                        if (Array.isArray(errorMessage)) {
+                            errorMessage = errorMessage.join(". ");
+                        }
+                        res.error[field + '_' + normId] = errorMessage;
+                        delete res.error[normId][field];
+                        if (Object.keys(res.error[normId]).length == 0) {
+                            delete res.error[normId];
+                        }
                     }
-                    res.error[field] = errorMessage;
                 }
                 this.setState({
                     errors: res.error
@@ -508,13 +576,23 @@ var NewNormPhysicForm = React.createClass({
     },
 
     render: function () {
-        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         var items = [];
 
         for (var key in this.state.predefinedNorms) {
+            var errorClass = '';
+            Object.keys(this.state.errors).map(
+                function(el) {
+                    if (new RegExp('_' + this.state.predefinedNorms[key].id + '$').test(el)) {
+                        errorClass = 'text-danger';
+                    }
+                }.bind(this)
+            );
+
             items.push(
                 <div className="row" key={this.state.predefinedNorms[key].id}>
-                    <div className="col-md-1"><strong>{this.state.predefinedNorms[key].name}</strong></div>
+                    <div className={errorClass + " col-md-1"}>
+                        <strong>{this.state.predefinedNorms[key].name}</strong>
+                    </div>
                     <NewNormPhysicRow
                         data={this.state}
                         handleChange={this.handleChange}
