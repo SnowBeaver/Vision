@@ -846,6 +846,7 @@ const EquipmentForm = React.createClass({
         this.setState({normSubformSaved: true});
     },
 
+
     _onSuccess: function (data) {
         // Clean the form
         //this.setState(this.getInitialState());
@@ -942,6 +943,7 @@ const EquipmentForm = React.createClass({
                 id: e.target.value,
                 text: e.target[e.target.selectedIndex].text
             };
+            form.normSubformSaved = false;
         }
 
 
