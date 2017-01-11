@@ -222,7 +222,6 @@ var NewNormFuranForm = React.createClass({
     },
 
     render: function () {
-        //var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         var items = [];
 
         for (var key in this.state.predefinedNorms) {

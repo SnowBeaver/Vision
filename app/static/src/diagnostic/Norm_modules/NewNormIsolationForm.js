@@ -6,6 +6,7 @@ import {Link} from 'react-router';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import TextField from './TextField';
+import {validate, updateFieldErrors} from '../helpers';
 
 
 var NewNormIsolationRow = React.createClass({
@@ -23,7 +24,7 @@ var NewNormIsolationRow = React.createClass({
                             label="C"
                             name="c"
                             value={data.c}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -33,7 +34,7 @@ var NewNormIsolationRow = React.createClass({
                             label="F"
                             name="f"
                             value={data.f}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -43,7 +44,7 @@ var NewNormIsolationRow = React.createClass({
                             label="Seal"
                             name="seal"
                             value={data.seal}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -53,7 +54,7 @@ var NewNormIsolationRow = React.createClass({
                             label="Not Seal"
                             name="notseal"
                             value={data.notseal}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -70,6 +71,13 @@ var NewNormIsolationForm = React.createClass({
             predefinedNorms: [],
             norms: {}
         }
+    },
+
+    _validateDict: {
+        c: {type: "float", label: "C"},
+        f: {type: "float", label: "F"},
+        notseal: {type: "float", label: "Not seal"},
+        seal: {type: "float", label: "Seal"}
     },
 
     componentDidMount: function () {
@@ -90,6 +98,15 @@ var NewNormIsolationForm = React.createClass({
             state.norms[normId] = {};
         }
         state.norms[normId][e.target.name] = e.target.value;
+        if (this._validateDict[e.target.name]) {
+            var errors = validate(e, this._validateDict);
+            state = updateFieldErrors(
+                this.state,
+                e.target.name + '_' + e.target.getAttribute('data-normId'),
+                state,
+                errors
+            );
+        }
         this.setState(state);
     },
 
@@ -108,7 +125,12 @@ var NewNormIsolationForm = React.createClass({
     },
 
     is_valid: function () {
-        return (Object.keys(this.state.errors).length <= 0);
+        // Check errors only if there are norms
+        if (Object.keys(this.state.norms) > 0) {
+            return Object.keys(this.state.errors).length == 0;
+        } else {
+            return true;
+        }
     },
 
     _save: function (equipmentId) {
@@ -159,13 +181,20 @@ var NewNormIsolationForm = React.createClass({
             if (data.status >= 500) {
                 message = res.error.join(". ");
             } else if (res.error instanceof Object) {
-                // We get object of errors with field names as key
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
+                // We get object of errors with field names as key,
+                // grouped by norm_id
+                for (var normId in res.error) {
+                    for (var field in res.error[normId]) {
+                        var errorMessage = res.error[normId][field];
+                        if (Array.isArray(errorMessage)) {
+                            errorMessage = errorMessage.join(". ");
+                        }
+                        res.error[field + '_' + normId] = errorMessage;
+                        delete res.error[normId][field];
+                        if (Object.keys(res.error[normId]).length == 0) {
+                            delete res.error[normId];
+                        }
                     }
-                    res.error[field] = errorMessage;
                 }
                 this.setState({
                     errors: res.error
@@ -178,7 +207,6 @@ var NewNormIsolationForm = React.createClass({
     },
 
     render: function () {
-        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
         var items = [];
 
         for (var key in this.state.predefinedNorms) {
