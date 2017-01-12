@@ -8645,3 +8645,25 @@ to the currently logged in user or are private.
 @apiUse DelItemSuccess
 @apiUse Error404
 """
+
+# Norm data records
+"""
+@api {post} /norm_data/multi/<path> Create or update multiple norm data records
+@apiVersion 1.0.0
+@apiName norm_data_handler
+@apiGroup test_result
+@path one of: norm_gas_data, norm_furan_data, norm_isolation_data, norm_particles_data, norm_physic_data
+@apiExample {curl} Example usage:
+    curl -i -H "Content-Type: application/json" -X POST -d '[{"norm_id":"4","equipment_id":98,"name":"d","condition":"1"},
+    '{"norm_id":"5","equipment_id":98,"condition":"2"}]'
+         http://localhost:8001/api/v1.0/norm_data/multi/norm_gas_data
+
+@apiParam   {Integer}    norm_id
+@apiParam   {Integer}    equipment_id
+@apiParam   {Integer}    campaign_id
+@apiParam   {Float}      h2
+...
+see norm_gas/norm_furan/norm_isolation/norm_particles/norm_physic
+@apiUse PostItemSuccess
+@apiUse Error400
+"""

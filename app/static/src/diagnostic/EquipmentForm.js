@@ -935,9 +935,7 @@ const EquipmentForm = React.createClass({
                 id: e.target.value,
                 text: e.target[e.target.selectedIndex].text
             }
-        }
-
-        if (e.target.name == 'norm_id') {
+        } else if (e.target.name == 'norm_id') {
             form['norm_option_text'] = {
                 name: e.target[e.target.selectedIndex].getAttribute('data-name'),
                 id: e.target.value,
