@@ -401,11 +401,11 @@ var AssignedToSelectField = React.createClass({
 
 var NormSelectField = React.createClass({
 
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value
-        })
-    },
+    //handleChange: function (event, index, value) {
+    //    this.setState({
+    //        value: event.target.value
+    //    })
+    //},
 
     getInitialState: function () {
         return {
@@ -452,7 +452,7 @@ var NormSelectField = React.createClass({
                         name="norm_id"
                         componentClass="select"
                         placeholder="Select norm"
-                        onChange={this.handleChange}
+                        onChange={this.props.onChange}
                         required={this.props.required}
                         value={this.props.value}>
                         <option value="">Select norm{this.props.required ? " *" : ""}</option>
@@ -465,6 +465,29 @@ var NormSelectField = React.createClass({
     }
 });
 
+var NormTypeSelectField = React.createClass({
+    render: function () {
+        return (
+            <div>
+                <FormGroup controlId="formControlsSelect6"
+                           validationState={this.props.errors.norm_type ? 'error' : null}>
+                    <FormControl
+                        name="norm_type"
+                        componentClass="select"
+                        placeholder="Select norm type"
+                        onChange={this.props.onChange}
+                        required={this.props.required}
+                        value={this.props.value}>
+                        <option value="">Select norm type{this.props.required ? " *" : ""}</option>
+                        <option value="standard">Standard</option>
+                        <option value="custom">Custom</option>
+                    </FormControl>
+                    <HelpBlock className="warning">{this.props.errors.norm_type}</HelpBlock>
+                </FormGroup>
+            </div>
+        );
+    }
+});
 
 var FrequencySelectField = React.createClass({
 
@@ -647,55 +670,110 @@ var NormAdditionalParams = React.createClass({
 
     getInitialState: function () {
         return {
-            tableName: ''
+            errors: {},
+            norm_id: ''
         }
     },
 
+    onChange: function (e) {
+        let state = {};
+        state[e.target.name] = e.target.value;
+        this.setState(state);
+    },
+
+    save: function () {
+
+    },
+
     render: function () {
+        let normSelectField = <NormSelectField
+            source="/api/v1.0/norm"
+            value={this.state.norm_id}
+            onChange={this.onChange}
+            errors={this.state.errors}
+            ref="norm_id"
+            required
+            />;
 
         if (typeof this.props.data.norm_option_text == 'undefined') {
-            return (<div></div>);
+            return (<div className="col-md-4 nopadding">{normSelectField}</div>);
         }
+
         switch (this.props.data.norm_option_text.name) {
             case 'norm_furan':
                 return (
-                    <NewNormFuranForm
-                        ref='norm_furan'
-                        source="/api/v1.0/norm_furan"
-                        setNormSubformSaved={this.props.setNormSubformSaved}
-                        cleanForm={this.props.clearForm} />);
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormFuranForm
+                                ref='norm_furan'
+                                source="/api/v1.0/norm_furan"
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_gas':
                 return (
-                    <NewNormGasForm
-                        ref='norm_gas'
-                        source="/api/v1.0/norm_gas"
-                        setNormSubformSaved={this.props.setNormSubformSaved}
-                        cleanForm={this.props.clearForm} />);
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormGasForm
+                                ref='norm_gas'
+                                source="/api/v1.0/norm_gas"
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_isolation':
                 return (
-                    <NewNormIsolationForm
-                        ref='norm_isolation'
-                        source="/api/v1.0/norm_isolation"
-                        setNormSubformSaved={this.props.setNormSubformSaved}
-                        cleanForm={this.props.clearForm} />);
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormIsolationForm
+                                ref='norm_isolation'
+                                source="/api/v1.0/norm_isolation"
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_physic':
                 return (
-                    <NewNormPhysicForm
-                        ref='norm_physic'
-                        source="/api/v1.0/norm_physic"
-                        setNormSubformSaved={this.props.setNormSubformSaved}
-                        cleanForm={this.props.clearForm} />);
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormPhysicForm
+                                ref='norm_physic'
+                                source="/api/v1.0/norm_physic"
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'particles':
                 return (
-                    <NewNormParticlesForm
-                        ref='particles'
-                        source="/api/v1.0/particles"
-                        setNormSubformSaved={this.props.setNormSubformSaved}
-                        cleanForm={this.props.clearForm} />);
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormParticlesForm
+                                ref='particles'
+                                source="/api/v1.0/particles"
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             default:
                 return null;
@@ -717,6 +795,7 @@ const EquipmentForm = React.createClass({
                 'location_id',
                 'assigned_to_id',
                 'norm_id',
+                'norm_type',
                 'name',
                 'serial',
                 'equipment_number',
@@ -1221,23 +1300,27 @@ const EquipmentForm = React.createClass({
 
                             <div className="row">
                                 <div className="col-lg-11">
-                                    <NormSelectField
-                                        source="/api/v1.0/norm"
-                                        value={this.state.norm_id}
+                                    <NormTypeSelectField
+                                        onChange={this._onChange}
+                                        value={this.state.norm_type}
                                         errors={this.state.errors}
-                                        ref="norm_id"
+                                        ref="norm_type"
                                         required
                                     />
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-md-12">
-                                    <NormAdditionalParams
-                                        ref='normAdditionalParams'
-                                        clearForm={this.clearForm}
-                                        setNormSubformSaved={this.setNormSubformSaved}
-                                        data={this.state}/>
-                                </div>
+                                {
+                                    this.state.norm_type == 'custom' ?
+                                        <div className="col-md-12">
+                                            <NormAdditionalParams
+                                                ref='normAdditionalParams'
+                                                clearForm={this.clearForm}
+                                                setNormSubformSaved={this.setNormSubformSaved}
+                                                data={this.state}/>
+                                        </div>
+                                    : null
+                                }
                             </div>
                             <FormGroup controlId="inputNameField"
                                        validationState={this.state.errors.name ? 'error' : null}>

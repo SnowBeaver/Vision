@@ -18,7 +18,7 @@ var NewNormParticlesRow = React.createClass({
         var errors = this.props.errors;
         return (
             <div className="col-md-11">
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="_2um"
@@ -28,7 +28,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="_5um"
@@ -38,7 +38,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="_10um"
@@ -48,7 +48,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="_15um"
@@ -58,7 +58,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="_25um"
@@ -68,7 +68,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="_50um"
@@ -78,7 +78,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="_100um"
@@ -88,7 +88,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="nas1638"
@@ -98,7 +98,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="iso4406_1"
@@ -108,7 +108,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="iso4406_2"
@@ -118,7 +118,7 @@ var NewNormParticlesRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="iso4406_3"
@@ -286,34 +286,13 @@ var NewNormParticlesForm = React.createClass({
     },
 
     render: function () {
-        var items = [];
-
-        for (var key in this.state.predefinedNorms) {
-            var errorClass = '';
-            Object.keys(this.state.errors).map(
-                function(el) {
-                    if (new RegExp('_' + this.state.predefinedNorms[key].id + '$').test(el)) {
-                        errorClass = 'text-danger';
-                    }
-                }.bind(this)
-            );
-
-            items.push(
-                <div className="row" key={this.state.predefinedNorms[key].id}>
-                    <div className={errorClass + " col-md-1"}>
-                        <strong>{this.state.predefinedNorms[key].id}</strong>
-                    </div>
-                    <NewNormParticlesRow
-                        data={this.state}
-                        handleChange={this.handleChange}
-                        normId={this.state.predefinedNorms[key].id}
-                        errors={this.state.errors}/>
-                </div>
-            );
-        }
         return (
             <div>
-                {items}
+                <NewNormParticlesRow
+                        data={this.state}
+                        handleChange={this.handleChange}
+                        normId={this.state.predefinedNorms.id}
+                        errors={this.state.errors}/>
             </div>
 
         )

@@ -12,16 +12,8 @@ import TextField from './TextField';
 import {validate, updateFieldErrors} from '../helpers';
 
 // Can be moved to CSS file, if one is loaded with the page
-const overflowRowStyle = {
-    'overflowX': "scroll",
-    'whiteSpace': 'nowrap',
-    'marginBottom': '10px'
-};
-const wrapCellStyle = {
-    display: 'inline-block',
-    float: 'none',
-    'whiteSpace': 'initial'
-};
+const overflowRowStyle = {};
+const wrapCellStyle = {};
 
 
 var FluidTypeSelectField = React.createClass({
@@ -574,34 +566,13 @@ var NewNormPhysicForm = React.createClass({
     },
 
     render: function () {
-        var items = [];
-
-        for (var key in this.state.predefinedNorms) {
-            var errorClass = '';
-            Object.keys(this.state.errors).map(
-                function(el) {
-                    if (new RegExp('_' + this.state.predefinedNorms[key].id + '$').test(el)) {
-                        errorClass = 'text-danger';
-                    }
-                }.bind(this)
-            );
-
-            items.push(
-                <div className="row" key={this.state.predefinedNorms[key].id}>
-                    <div className={errorClass + " col-md-1"}>
-                        <strong>{this.state.predefinedNorms[key].name}</strong>
-                    </div>
-                    <NewNormPhysicRow
-                        data={this.state}
-                        handleChange={this.handleChange}
-                        normId={this.state.predefinedNorms[key].id}
-                        errors={this.state.errors}/>
-                </div>
-            );
-        }
         return (
             <div>
-                {items}
+                <NewNormPhysicRow
+                        data={this.state}
+                        handleChange={this.handleChange}
+                        normId={this.state.predefinedNorms.id}
+                        errors={this.state.errors}/>
             </div>
 
         )

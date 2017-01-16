@@ -18,7 +18,7 @@ var NewNormGasRow = React.createClass({
         var errors = this.props.errors;
         return (
                 <div className="col-md-11">
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Name"
@@ -28,7 +28,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Condition"
@@ -38,7 +38,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="H2"
@@ -48,7 +48,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="CH4"
@@ -58,7 +58,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="C2H2"
@@ -68,7 +68,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="C2H4"
@@ -78,7 +78,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="C2H6"
@@ -88,7 +88,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="CO"
@@ -98,7 +98,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="CO2"
@@ -108,7 +108,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="TDCG"
@@ -118,7 +118,7 @@ var NewNormGasRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Fluid Level"
@@ -290,33 +290,13 @@ var NewNormGasForm = React.createClass({
     },
 
     render: function () {
-        var items = [];
-
-        for (var key in this.state.predefinedNorms) {
-            var errorClass = '';
-            Object.keys(this.state.errors).map(
-                function(el) {
-                    if (new RegExp('_' + this.state.predefinedNorms[key].id + '$').test(el)) {
-                        errorClass = 'text-danger';
-                    }
-                }.bind(this)
-            );
-            items.push(
-                <div className="row" key={this.state.predefinedNorms[key].id}>
-                    <div className={errorClass + " col-md-1"}>
-                        <strong>{this.state.predefinedNorms[key].name}</strong>
-                    </div>
-                    <NewNormGasRow
-                        data={this.state}
-                        handleChange={this.handleChange}
-                        normId={this.state.predefinedNorms[key].id}
-                        errors={this.state.errors}/>
-                </div>
-            );
-        }
         return (
             <div>
-                {items}
+                <NewNormGasRow
+                        data={this.state}
+                        handleChange={this.handleChange}
+                        normId={this.state.predefinedNorms.id}
+                        errors={this.state.errors}/>
             </div>
 
         )
