@@ -11,10 +11,6 @@ import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import TextField from './TextField';
 import {validate, updateFieldErrors} from '../helpers';
 
-// Can be moved to CSS file, if one is loaded with the page
-const overflowRowStyle = {};
-const wrapCellStyle = {};
-
 
 var FluidTypeSelectField = React.createClass({
     getInitialState: function () {
@@ -77,8 +73,8 @@ var NewNormPhysicRow = React.createClass({
         var data = this.props.data;
         var errors = this.props.errors;
         return (
-            <div className="col-md-11" style={overflowRowStyle}>
-                    <div className="col-md-2" style={wrapCellStyle}>
+            <div className="col-md-11">
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Name *"
@@ -88,7 +84,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Acid min"
@@ -98,7 +94,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Acid max"
@@ -108,7 +104,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Ift min"
@@ -118,7 +114,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Ift max"
@@ -128,7 +124,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="d1816 min"
@@ -138,7 +134,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="d1816 max"
@@ -148,7 +144,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="d877 min"
@@ -158,7 +154,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="d877 max"
@@ -168,7 +164,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Color min"
@@ -178,7 +174,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Color max"
@@ -188,7 +184,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Density min"
@@ -198,7 +194,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Density max"
@@ -208,7 +204,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="pf20 min"
@@ -218,7 +214,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="pf20 max"
@@ -228,7 +224,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Water min"
@@ -238,7 +234,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Water max"
@@ -248,7 +244,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Flashpoint min"
@@ -258,7 +254,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Flashpoint max"
@@ -268,7 +264,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Pourpoint min"
@@ -278,7 +274,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Pourpoint max"
@@ -288,7 +284,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Viscosity min"
@@ -298,7 +294,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="Viscosity max"
@@ -308,7 +304,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="d1816_2 min"
@@ -318,7 +314,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="d1816_2 max"
@@ -328,7 +324,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="p100 min"
@@ -338,7 +334,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="p100 max"
@@ -348,7 +344,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <FluidTypeSelectField
                             onChange={this.handleChange}
                             source="/api/v1.0/fluid_type"
@@ -359,7 +355,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                             />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="cei156 min"
@@ -369,7 +365,7 @@ var NewNormPhysicRow = React.createClass({
                             errors={errors}
                         />
                     </div>
-                    <div className="col-md-2" style={wrapCellStyle}>
+                    <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
                             label="cei156 max"

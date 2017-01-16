@@ -21,6 +21,16 @@ var NewNormIsolationRow = React.createClass({
                     <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
+                            label="Name"
+                            name="name"
+                            value={data.name}
+                            data-normId={this.props.normId}
+                            errors={errors}
+                            />
+                    </div>
+                    <div className="col-md-2">
+                        <TextField
+                            onChange={this.handleChange}
                             label="C"
                             name="c"
                             value={data.c}
