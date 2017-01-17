@@ -1343,7 +1343,7 @@ norm_physic_data_schema = {
     'fluid_type_id': type_integer_coerce_dict,
     'cei156_min': type_integer_coerce_dict,
     'cei156_max': dict_copy_union(type_integer_coerce_dict, {'more_then': 'cei156_min'}),
-    'norm_id': type_integer_coerce_required_dict,
+    'norm_id': type_integer_coerce_dict,
     'campaign_id': type_integer_coerce_dict,
     'equipment_id': type_integer_coerce_required_dict,
 }
@@ -1360,7 +1360,7 @@ norm_gas_data_schema = {
     'co2': type_float_coerce_dict,
     'tdcg': type_float_coerce_dict,
     'fluid_level': dict_copy_union(type_integer_coerce_dict, {'norm_gas_fluid_level': True}),
-    'norm_id': type_integer_coerce_required_dict,
+    'norm_id': type_integer_coerce_dict,
     'campaign_id': type_integer_coerce_dict,
     'equipment_id': type_integer_coerce_required_dict,
 }
@@ -1377,6 +1377,7 @@ norm_particles_data_schema = {
     'iso4406_1': type_float_coerce_dict,
     'iso4406_2': type_float_coerce_dict,
     'iso4406_3': type_float_coerce_dict,
+    'name': type_string_maxlength_50_dict,
     'norm_id': type_string_maxlength_50_dict,
     'campaign_id': type_integer_coerce_dict,
     'equipment_id': type_integer_coerce_required_dict,
@@ -1387,7 +1388,8 @@ norm_isolation_data_schema = {
     'f': type_float_coerce_dict,
     'notseal': type_float_coerce_dict,
     'seal': type_float_coerce_dict,
-    'norm_id': type_integer_coerce_required_dict,
+    'name': type_string_maxlength_50_dict,
+    'norm_id': type_integer_coerce_dict,
     'campaign_id': type_integer_coerce_dict,
     'equipment_id': type_integer_coerce_required_dict,
 }
@@ -1398,7 +1400,7 @@ norm_furan_data_schema = {
     'c2': type_float_coerce_dict,
     'c3': type_float_coerce_dict,
     'c4': type_float_coerce_dict,
-    'norm_id': type_integer_coerce_required_dict,
+    'norm_id': type_integer_coerce_dict,
     'campaign_id': type_integer_coerce_dict,
     'equipment_id': type_integer_coerce_required_dict,
 }
