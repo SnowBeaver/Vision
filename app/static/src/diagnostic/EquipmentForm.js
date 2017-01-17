@@ -671,24 +671,36 @@ var NormAdditionalParams = React.createClass({
     getInitialState: function () {
         return {
             errors: {},
-            norm_id: ''
+            norm_id: '',
+            norm_option_text:{}
         }
     },
 
     onChange: function (e) {
         let state = {};
         state[e.target.name] = e.target.value;
+        state['norm_option_text'] = {
+            name: e.target[e.target.selectedIndex].getAttribute('data-name'),
+            id: e.target.value,
+            text: e.target[e.target.selectedIndex].text
+        };
         this.setState(state);
     },
 
-    save: function () {
+    submit: function (equipmentId) {
+        if (this.state.norm_id) {
+            this.refs[this.state.norm_option_text.name].submit(equipmentId);
+        }
+    },
 
+    is_valid: function () {
+        return this.refs[this.state.norm_option_text.name].is_valid();
     },
 
     render: function () {
         let normSelectField = <NormSelectField
             source="/api/v1.0/norm"
-            value={this.state.norm_id}
+            value={this.props.data.norm_option_text && this.props.data.norm_option_text.id}
             onChange={this.onChange}
             errors={this.state.errors}
             ref="norm_id"
@@ -795,7 +807,6 @@ const EquipmentForm = React.createClass({
                 'location_id',
                 'assigned_to_id',
                 'norm_id',
-                'norm_type',
                 'name',
                 'serial',
                 'equipment_number',
@@ -812,7 +823,8 @@ const EquipmentForm = React.createClass({
             option_text: {},
             equipmentId: null,   // Is set when main form is saved
             equipmentSubformSaved: false,
-            normSubformSaved: false
+            normSubformSaved: false,
+            norm_type: ''
         };
 
         for (var i = 0; i < response.fields.length; i++) {
@@ -874,13 +886,13 @@ const EquipmentForm = React.createClass({
     },
 
     _getNormAdditionalParamsForm(){
-        var formName = this.state.norm_option_text.name;
-        return this.refs.normAdditionalParams.refs[formName];
+        return this.refs.normAdditionalParams;
     },
 
     _saveSubform(subform, equipmentId, path){
         var that = this;
         if (Object.keys(subform).length != 0) {
+            delete subform.norm_type;
             subform['equipment_id'] = equipmentId;
             for (var field in subform) {
                 if (subform[field] == "") {
@@ -1058,7 +1070,7 @@ const EquipmentForm = React.createClass({
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/,
-                "text": /(\w|\W)+$/,
+                "text": /(\w|\W)+$/
             };
             if (!typePatterns[type].test(value)) {
                 error = "Invalid " + type + " value";

@@ -178,22 +178,10 @@ var NewNormParticlesForm = React.createClass({
         }
     },
 
-    handleChange: function(e, normId){
+    handleChange: function(e){
         e.stopPropagation();
         var state = this.state;
-        if (!state.norms[normId]) {
-            state.norms[normId] = {};
-        }
-        state.norms[normId][e.target.name] = e.target.value;
-        if (this._validateDict[e.target.name]) {
-            var errors = validate(e, this._validateDict);
-            state = updateFieldErrors(
-                this.state,
-                e.target.name + '_' + e.target.getAttribute('data-normId'),
-                state,
-                errors
-            );
-        }
+        state.norms[e.target.name] = e.target.value;
         this.setState(state);
     },
 
@@ -222,26 +210,23 @@ var NewNormParticlesForm = React.createClass({
 
     _save: function (equipmentId) {
         var norms = this.state.norms;
-        var data = [];
-        for (var normId in norms) {
-            var normData = {norm_id: normId, equipment_id: equipmentId};
-            for (var key in norms[normId]) {
-                var value = norms[normId][key];
-                if (value == "") {
-                    value = null;
-                }
-                normData[key] = value;
+        var normData = {equipment_id: equipmentId};
+
+        for (var key in norms) {
+            var value = norms[key];
+            if (value == "") {
+                value = null;
             }
-            data.push(normData);
+            normData[key] = value;
         }
         var xhr;
-        if (Object.keys(data).length) {
+        if (Object.keys(normData).length) {
            xhr = $.authorizedAjax({
-                url: '/api/v1.0/norm_data/multi/norm_particles_data',
+                url: '/api/v1.0/norm_particles_data/',
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(data)
+                data: JSON.stringify(normData)
             });
         }
         return xhr;
