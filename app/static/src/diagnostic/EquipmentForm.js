@@ -688,9 +688,13 @@ var NormAdditionalParams = React.createClass({
     },
 
     submit: function (equipmentId) {
-        if (this.state.norm_id) {
-            this.refs[this.state.norm_option_text.name].submit(equipmentId);
+        if (this.props.data.norm_type == 'custom' && this.state.norm_id) {
+            this.saveCustomNorm(equipmentId);
         }
+    },
+
+    saveCustomNorm: function (equipmentId) {
+        this.refs[this.state.norm_option_text.name].submit(equipmentId);
     },
 
     is_valid: function () {
@@ -849,6 +853,10 @@ const EquipmentForm = React.createClass({
             data[key] = value;
         }
 
+        if (this.state.norm_type == 'standard') {
+            data.norm_id = 1;
+        }
+
         var that = this
             , xhr;
 
@@ -882,11 +890,24 @@ const EquipmentForm = React.createClass({
     },
 
     _saveNormAdditionalParams(equipmentId) {
-        this._getNormAdditionalParamsForm().submit(equipmentId);
+        if (this.state.norm_type == 'custom') {
+            this._getNormAdditionalParamsForm().submit(equipmentId);
+        } else if (this.state.norm_type == 'standard') {
+            this.saveStandardNorm(equipmentId);
+        }
     },
 
     _getNormAdditionalParamsForm(){
         return this.refs.normAdditionalParams;
+    },
+
+    saveStandardNorm: function (equipmentId) {
+        $.authorizedAjax({
+            url: '/api/v1.0/equipment/' + equipmentId + '/norm/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json'
+        });
     },
 
     _saveSubform(subform, equipmentId, path){
@@ -916,7 +937,7 @@ const EquipmentForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this.is_valid() || !this._getNormAdditionalParamsForm().is_valid()) {
+        if (!this.is_valid() || (this.state.norm_type == 'custom' && !this._getNormAdditionalParamsForm().is_valid())) {
             NotificationManager.error('Please correct the errors');
             return;
         }
@@ -1027,11 +1048,6 @@ const EquipmentForm = React.createClass({
                 text: e.target[e.target.selectedIndex].text
             }
         } else if (e.target.name == 'norm_id') {
-            //form['norm_option_text'] = {
-            //    name: e.target[e.target.selectedIndex].getAttribute('data-name'),
-            //    id: e.target.value,
-            //    text: e.target[e.target.selectedIndex].text
-            //};
             form.normSubformSaved = false;
         }
 
@@ -1226,6 +1242,14 @@ const EquipmentForm = React.createClass({
         this.setState(state);
     },
 
+    getNormType: function () {
+        return this.state.norm_type;
+    },
+
+    getEquipmentType: function () {
+        return this.state.equipment_type_id;
+    },
+
     render: function () {
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
         return (
@@ -1327,6 +1351,8 @@ const EquipmentForm = React.createClass({
                                             <NormAdditionalParams
                                                 ref='normAdditionalParams'
                                                 clearForm={this.clearForm}
+                                                getNormType={this.getNormType}
+                                                getEquipmentType={this.getEquipmentType}
                                                 setNormSubformSaved={this.setNormSubformSaved}
                                                 data={this.state}/>
                                         </div>
