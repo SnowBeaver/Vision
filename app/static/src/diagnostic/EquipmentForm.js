@@ -700,18 +700,18 @@ var NormAdditionalParams = React.createClass({
     render: function () {
         let normSelectField = <NormSelectField
             source="/api/v1.0/norm"
-            value={this.props.data.norm_option_text && this.props.data.norm_option_text.id}
+            value={this.state.norm_option_text.id}
             onChange={this.onChange}
             errors={this.state.errors}
             ref="norm_id"
             required
             />;
 
-        if (typeof this.props.data.norm_option_text == 'undefined') {
+        if (Object.keys(this.state.norm_option_text).length == 0) {
             return (<div className="col-md-4 nopadding">{normSelectField}</div>);
         }
 
-        switch (this.props.data.norm_option_text.name) {
+        switch (this.state.norm_option_text.name) {
             case 'norm_furan':
                 return (
                     <div>
@@ -1027,11 +1027,11 @@ const EquipmentForm = React.createClass({
                 text: e.target[e.target.selectedIndex].text
             }
         } else if (e.target.name == 'norm_id') {
-            form['norm_option_text'] = {
-                name: e.target[e.target.selectedIndex].getAttribute('data-name'),
-                id: e.target.value,
-                text: e.target[e.target.selectedIndex].text
-            };
+            //form['norm_option_text'] = {
+            //    name: e.target[e.target.selectedIndex].getAttribute('data-name'),
+            //    id: e.target.value,
+            //    text: e.target[e.target.selectedIndex].text
+            //};
             form.normSubformSaved = false;
         }
 
@@ -1206,7 +1206,6 @@ const EquipmentForm = React.createClass({
         state.changedFields = this.state.changedFields.concat([fieldName]);
         this.setState(state);
         this.refs[fieldName].componentDidMount();
-
     },
 
     _setDateTimeFieldDate(timestamp, fieldName){
