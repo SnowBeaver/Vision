@@ -99,6 +99,7 @@ var NewNormIsolationForm = React.createClass({
                 });
             }.bind(this), 'json');
         }
+        this.setState({norms: this.props.data || {}});
     },
 
     handleChange: function(e){
@@ -106,6 +107,7 @@ var NewNormIsolationForm = React.createClass({
         var state = this.state;
         state.norms[e.target.name] = e.target.value;
         this.setState(state);
+        this.props.saveNormGlobally('norm_isolation', state.norms);
     },
 
     submit: function (equipmentId) {
@@ -207,7 +209,7 @@ var NewNormIsolationForm = React.createClass({
         return (
             <div>
                 <NewNormIsolationRow
-                        data={this.state}
+                        data={this.state.norms}
                         handleChange={this.handleChange}
                         normId={this.state.predefinedNorms.id}
                         errors={this.state.errors}/>

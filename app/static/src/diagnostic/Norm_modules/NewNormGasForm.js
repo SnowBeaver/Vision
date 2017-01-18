@@ -169,6 +169,7 @@ var NewNormGasForm = React.createClass({
                 });
             }.bind(this), 'json');
         }
+        this.setState({norms: this.props.data || {}});
     },
 
     handleChange: function(e){
@@ -176,6 +177,7 @@ var NewNormGasForm = React.createClass({
         var state = this.state;
         state.norms[e.target.name] = e.target.value;
         this.setState(state);
+        this.props.saveNormGlobally('norm_gas', state.norms);
     },
 
     submit: function (equipmentId) {
@@ -278,7 +280,7 @@ var NewNormGasForm = React.createClass({
         return (
             <div>
                 <NewNormGasRow
-                        data={this.state}
+                        data={this.state.norms}
                         handleChange={this.handleChange}
                         normId={this.state.predefinedNorms.id}
                         errors={this.state.errors}/>

@@ -432,6 +432,7 @@ var NewNormPhysicForm = React.createClass({
                 });
             }.bind(this), 'json');
         }
+        this.setState({norms: this.props.data || {}});
     },
 
     handleChange: function(e){
@@ -439,6 +440,7 @@ var NewNormPhysicForm = React.createClass({
         var state = this.state;
         state.norms[e.target.name] = e.target.value;
         this.setState(state);
+        this.props.saveNormGlobally('norm_physic', state.norms);
     },
 
     submit: function (equipmentId) {
@@ -550,7 +552,7 @@ var NewNormPhysicForm = React.createClass({
         return (
             <div>
                 <NewNormPhysicRow
-                        data={this.state}
+                        data={this.state.norms}
                         handleChange={this.handleChange}
                         normId={this.state.predefinedNorms.id}
                         errors={this.state.errors}/>

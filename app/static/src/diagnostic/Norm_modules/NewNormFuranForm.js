@@ -93,6 +93,7 @@ var NewNormFuranForm = React.createClass({
                 });
             }.bind(this), 'json');
         }
+        this.setState({norms: this.props.data || {}});
     },
 
     _validateDict: {
@@ -108,6 +109,7 @@ var NewNormFuranForm = React.createClass({
         var state = this.state;
         state.norms[e.target.name] = e.target.value;
         this.setState(state);
+        this.props.saveNormGlobally('norm_furan', state.norms);
     },
 
     submit: function (equipmentId) {
@@ -115,7 +117,7 @@ var NewNormFuranForm = React.createClass({
             NotificationManager.error('Please correct the errors');
             return;
         }
-        this._clearErrors();
+        //this._clearErrors();
         var xhr = this._save(equipmentId);
         if (xhr) {
             xhr.done(this._onSuccess)

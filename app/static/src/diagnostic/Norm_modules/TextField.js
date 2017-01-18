@@ -19,12 +19,14 @@ const TextField = React.createClass({
         var errorName = name + '_' + normId;
         var validationState = (this.props.errors[errorName]) ? 'error' : null;
         var error = this.props.errors[errorName];
+        var value = (this.props.value != null) ? this.props.value : "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
+                                 value={value}
                                  data-normId={normId}
                                  onChange={this._onChange}
                     />
