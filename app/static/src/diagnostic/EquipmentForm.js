@@ -698,10 +698,6 @@ var NormAdditionalParams = React.createClass({
         }
     },
 
-    //saveCustomNorm: function (equipmentId) {
-    //    this.refs[this.state.norm_option_text.name].submit(equipmentId);
-    //},
-
     is_valid: function () {
         return this.refs[this.state.norm_option_text.name].is_valid();
     },
@@ -727,8 +723,6 @@ var NormAdditionalParams = React.createClass({
         if (Object.keys(this.state.norm_option_text).length == 0) {
             return (<div className="col-md-4 nopadding">{normSelectField}</div>);
         }
-
-        let block = null;
 
         switch (this.state.norm_option_text.name) {
             case 'norm_furan':
