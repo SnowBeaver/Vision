@@ -674,7 +674,8 @@ var NormAdditionalParams = React.createClass({
             norm_id: '',
             norm_option_text:{},
             norms: {},
-            refs: {}
+            refs: {},
+            normsToSave: 0
         }
     },
 
@@ -691,10 +692,25 @@ var NormAdditionalParams = React.createClass({
 
     submit: function (equipmentId) {
         if (this.props.data.norm_type == 'custom' && this.state.norm_id) {
+            this.setState({normsToSave: Object.keys(this.state.norms).length});
             for (let normName in this.state.norms) {
-                this.refs[normName].submit(equipmentId);
+                this.state.refs[normName].submit(equipmentId).done(this.clearForm)
+                        .fail(this._onError)
+                        .always(this.hideLoading)
             }
+
             //this.saveCustomNorm(equipmentId);
+        }
+    },
+
+    clearForm: function () {
+        // Clear main for after save of the last form
+        if (this.state.normsToSave == 1) {
+            this.props.clearForm();
+        } else {
+            let normsToSave = this.state.normsToSave;
+            normsToSave--;
+            this.setState({normsToSave: normsToSave});
         }
     },
 
@@ -704,9 +720,9 @@ var NormAdditionalParams = React.createClass({
 
     saveNormGlobally: function (norm, state) {
         let norms = this.state.norms;
-        //let refs = this.state.refs;
+        let refs = this.state.refs;
         norms[norm] = state;
-        //refs[norm] = this.refs[norm];
+        refs[norm] = this.refs[norm];
         this.setState({norms: norms});
     },
 
@@ -717,210 +733,101 @@ var NormAdditionalParams = React.createClass({
             onChange={this.onChange}
             errors={this.state.errors}
             ref="norm_id"
-            required
-            />;
+            required/>;
 
         if (Object.keys(this.state.norm_option_text).length == 0) {
             return (<div className="col-md-4 nopadding">{normSelectField}</div>);
         }
 
-        let showNormFuran = false;
-        let showNormGas = false;
-        let showNormParticles = false;
-        let showNormIsolation = false;
-        let showNormPhysic = false;
-
         switch (this.state.norm_option_text.name) {
             case 'norm_furan':
-                showNormFuran = true;
-                showNormGas = false;
-                showNormParticles = false;
-                showNormIsolation = false;
-                showNormPhysic = false;
-                //return (
-                //    <div>
-                //        <div className="col-md-12 nopadding">
-                //            <div className="col-md-4 nopadding">{normSelectField}</div>
-                //        </div>
-                //        <div>
-                //            <NewNormFuranForm
-                //                ref='norm_furan'
-                //                data={this.state.norms.norm_furan}
-                //                saveNormGlobally={this.saveNormGlobally}
-                //                source="/api/v1.0/norm_furan"
-                //                setNormSubformSaved={this.props.setNormSubformSaved}
-                //                cleanForm={this.props.clearForm} />
-                //        </div>
-                //    </div>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormFuranForm
+                                ref='norm_furan'
+                                data={this.state.norms.norm_furan}
+                                saveNormGlobally={this.saveNormGlobally}
+                                source="/api/v1.0/norm_furan"
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_gas':
-                showNormFuran = false;
-                showNormGas = true;
-                showNormParticles = false;
-                showNormIsolation = false;
-                showNormPhysic = false;
-                //return (
-                //    <div>
-                //        <div className="col-md-12 nopadding">
-                //            <div className="col-md-4 nopadding">{normSelectField}</div>
-                //        </div>
-                //        <div>
-                //            <NewNormGasForm
-                //                ref='norm_gas'
-                //                source="/api/v1.0/norm_gas"
-                //                data={this.state.norms.norm_gas}
-                //                saveNormGlobally={this.saveNormGlobally}
-                //                setNormSubformSaved={this.props.setNormSubformSaved}
-                //                cleanForm={this.props.clearForm} />
-                //        </div>
-                //    </div>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormGasForm
+                                ref='norm_gas'
+                                source="/api/v1.0/norm_gas"
+                                data={this.state.norms.norm_gas}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_isolation':
-                showNormFuran = false;
-                showNormGas = false;
-                showNormParticles = true;
-                showNormIsolation = false;
-                showNormPhysic = false;
-                //return (
-                //    <div>
-                //        <div className="col-md-12 nopadding">
-                //            <div className="col-md-4 nopadding">{normSelectField}</div>
-                //        </div>
-                //        <div>
-                //            <NewNormIsolationForm
-                //                ref='norm_isolation'
-                //                source="/api/v1.0/norm_isolation"
-                //                data={this.state.norms.norm_isolation}
-                //                saveNormGlobally={this.saveNormGlobally}
-                //                setNormSubformSaved={this.props.setNormSubformSaved}
-                //                cleanForm={this.props.clearForm} />
-                //        </div>
-                //    </div>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormIsolationForm
+                                ref='norm_isolation'
+                                source="/api/v1.0/norm_isolation"
+                                data={this.state.norms.norm_isolation}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_physic':
-                showNormFuran = false;
-                showNormGas = false;
-                showNormParticles = false;
-                showNormIsolation = false;
-                showNormPhysic = true;
-                //return (
-                //    <div>
-                //        <div className="col-md-12 nopadding">
-                //            <div className="col-md-4 nopadding">{normSelectField}</div>
-                //        </div>
-                //        <div>
-                //            <NewNormPhysicForm
-                //                ref='norm_physic'
-                //                source="/api/v1.0/norm_physic"
-                //                data={this.state.norms.norm_physic}
-                //                saveNormGlobally={this.saveNormGlobally}
-                //                setNormSubformSaved={this.props.setNormSubformSaved}
-                //                cleanForm={this.props.clearForm} />
-                //        </div>
-                //    </div>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormPhysicForm
+                                ref='norm_physic'
+                                source="/api/v1.0/norm_physic"
+                                data={this.state.norms.norm_physic}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'particles':
-                showNormFuran = false;
-                showNormGas = false;
-                showNormParticles = true;
-                showNormIsolation = false;
-                showNormPhysic = false;
-                //return (
-                //    <div>
-                //        <div className="col-md-12 nopadding">
-                //            <div className="col-md-4 nopadding">{normSelectField}</div>
-                //        </div>
-                //        <div>
-                //            <NewNormParticlesForm
-                //                ref='particles'
-                //                source="/api/v1.0/particles"
-                //                data={this.state.norms.norm_particles}
-                //                saveNormGlobally={this.saveNormGlobally}
-                //                setNormSubformSaved={this.props.setNormSubformSaved}
-                //                cleanForm={this.props.clearForm} />
-                //        </div>
-                //    </div>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormParticlesForm
+                                ref='particles'
+                                source="/api/v1.0/particles"
+                                data={this.state.norms.norm_particles}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             default:
                 return null;
         }
-
-        return (
-            <div>
-                <div className={!showNormFuran ? 'collapse' : ''}>
-                    <div className="col-md-12 nopadding">
-                        <div className="col-md-4 nopadding">{normSelectField}</div>
-                    </div>
-                    <div>
-                        <NewNormFuranForm
-                            ref='norm_furan'
-                            data={this.state.norms.norm_furan}
-                            saveNormGlobally={this.saveNormGlobally}
-                            source="/api/v1.0/norm_furan"
-                            setNormSubformSaved={this.props.setNormSubformSaved}
-                            cleanForm={this.props.clearForm}/>
-                    </div>
-                </div>
-
-                <div className={!showNormGas ? 'collapse' : ''}>
-                    <div className="col-md-12 nopadding">
-                        <div className="col-md-4 nopadding">{normSelectField}</div>
-                    </div>
-                    <div>
-                        <NewNormGasForm
-                            ref='norm_gas'
-                            source="/api/v1.0/norm_gas"
-                            data={this.state.norms.norm_gas}
-                            saveNormGlobally={this.saveNormGlobally}
-                            setNormSubformSaved={this.props.setNormSubformSaved}
-                            cleanForm={this.props.clearForm}/>
-                    </div>
-                </div>
-                <div className={!showNormIsolation ? 'collapse' : ''}>
-                    <div className="col-md-12 nopadding">
-                        <div className="col-md-4 nopadding">{normSelectField}</div>
-                    </div>
-                    <div>
-                        <NewNormIsolationForm
-                            ref='norm_isolation'
-                            source="/api/v1.0/norm_isolation"
-                            data={this.state.norms.norm_isolation}
-                            saveNormGlobally={this.saveNormGlobally}
-                            setNormSubformSaved={this.props.setNormSubformSaved}
-                            cleanForm={this.props.clearForm}/>
-                    </div>
-                </div>
-                <div className={!showNormPhysic ? 'collapse' : ''}>
-                    <div className="col-md-12 nopadding">
-                        <div className="col-md-4 nopadding">{normSelectField}</div>
-                    </div>
-                    <div>
-                        <NewNormPhysicForm
-                            ref='norm_physic'
-                            source="/api/v1.0/norm_physic"
-                            data={this.state.norms.norm_physic}
-                            saveNormGlobally={this.saveNormGlobally}
-                            setNormSubformSaved={this.props.setNormSubformSaved}
-                            cleanForm={this.props.clearForm}/>
-                    </div>
-                </div>
-
-                <div className={!showNormParticles ? 'collapse' : ''}>
-                    <div className="col-md-12 nopadding">
-                        <div className="col-md-4 nopadding">{normSelectField}</div>
-                    </div>
-                    <div>
-                        <NewNormParticlesForm
-                            ref='particles'
-                            source="/api/v1.0/particles"
-                            data={this.state.norms.norm_particles}
-                            saveNormGlobally={this.saveNormGlobally}
-                            setNormSubformSaved={this.props.setNormSubformSaved}
-                            cleanForm={this.props.clearForm}/>
-                    </div>
-                </div>
-            </div>
-        )
     }
 });
 
@@ -1084,7 +991,6 @@ const EquipmentForm = React.createClass({
     setNormSubformSaved: function () {
         this.setState({normSubformSaved: true});
     },
-
 
     _onSuccess: function (data) {
         // Clean the form

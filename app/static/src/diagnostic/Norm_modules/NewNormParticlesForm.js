@@ -184,7 +184,7 @@ var NewNormParticlesForm = React.createClass({
         var state = this.state;
         state.norms[e.target.name] = e.target.value;
         this.setState(state);
-        this.props.saveNormGlobally('norm_particles', state.norms);
+        this.props.saveNormGlobally('particles', state.norms);
     },
 
     submit: function (equipmentId) {
@@ -192,13 +192,14 @@ var NewNormParticlesForm = React.createClass({
             NotificationManager.error('Please correct the errors');
             return;
         }
-        this._clearErrors();
+        //this._clearErrors();
         var xhr = this._save(equipmentId);
-        if (xhr) {
-            xhr.done(this._onSuccess)
-                .fail(this._onError)
-                .always(this.hideLoading)
-        }
+        return xhr;
+        //if (xhr) {
+        //    xhr.done(this._onSuccess)
+        //        .fail(this._onError)
+        //        .always(this.hideLoading)
+        //}
     },
 
     is_valid: function () {
@@ -241,7 +242,7 @@ var NewNormParticlesForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
-        this.props.cleanForm();
+        //this.props.cleanForm();
         this.props.setNormSubformSaved();
         NotificationManager.success('Norms have been successfully saved');
     },

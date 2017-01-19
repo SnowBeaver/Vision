@@ -185,13 +185,14 @@ var NewNormGasForm = React.createClass({
             NotificationManager.error('Please correct the errors');
             return;
         }
-        this._clearErrors();
+        //this._clearErrors();
         var xhr = this._save(equipmentId);
-        if (xhr) {
-            xhr.done(this._onSuccess)
-                .fail(this._onError)
-                .always(this.hideLoading)
-        }
+        return xhr;
+        //if (xhr) {
+        //    xhr.done(this._onSuccess)
+        //        .fail(this._onError)
+        //        .always(this.hideLoading)
+        //}
     },
 
     is_valid: function () {
@@ -235,7 +236,7 @@ var NewNormGasForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
-        this.props.cleanForm();
+        //this.props.cleanForm();
         this.props.setNormSubformSaved();
         NotificationManager.success('Norms have been successfully saved');
     },

@@ -448,13 +448,14 @@ var NewNormPhysicForm = React.createClass({
             NotificationManager.error('Please correct the errors');
             return;
         }
-        this._clearErrors();
+        //this._clearErrors();
         var xhr = this._save(equipmentId);
-        if (xhr) {
-            xhr.done(this._onSuccess)
-                .fail(this._onError)
-                .always(this.hideLoading)
-        }
+        return xhr;
+        //if (xhr) {
+        //    xhr.done(this._onSuccess)
+        //        .fail(this._onError)
+        //        .always(this.hideLoading)
+        //}
     },
 
     is_valid: function () {
