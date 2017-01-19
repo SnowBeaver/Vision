@@ -16,9 +16,8 @@ const TextField = React.createClass({
         var label = (this.props.label != null) ? this.props.label : "";
         var name = (this.props.name != null) ? this.props.name : "";
         var normId = (this.props["data-normId"] != null) ? this.props["data-normId"]: undefined;
-        var errorName = name + '_' + normId;
-        var validationState = (this.props.errors[errorName]) ? 'error' : null;
-        var error = this.props.errors[errorName];
+        var validationState = (this.props.errors[name]) ? 'error' : null;
+        var error = this.props.errors[name];
         var value = (this.props.value != null) ? this.props.value : "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">

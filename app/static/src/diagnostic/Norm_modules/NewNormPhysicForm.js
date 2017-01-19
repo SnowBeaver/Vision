@@ -432,15 +432,19 @@ var NewNormPhysicForm = React.createClass({
                 });
             }.bind(this), 'json');
         }
-        this.setState({norms: this.props.data || {}});
+        this.setState({norms: this.props.data || {}, errors: this.props.errorData || {}});
     },
 
     handleChange: function(e){
         e.stopPropagation();
         var state = this.state;
         state.norms[e.target.name] = e.target.value;
+        if (this._validateDict[e.target.name]) {
+            var errors = validate(e, this._validateDict);
+            state = updateFieldErrors(this.state, e.target.name, state, errors);
+        }
         this.setState(state);
-        this.props.saveNormGlobally('norm_physic', state.norms);
+        this.props.saveNormGlobally('norm_physic', state.norms, state.errors);
     },
 
     submit: function (equipmentId) {
@@ -524,21 +528,14 @@ var NewNormPhysicForm = React.createClass({
             if (data.status >= 500) {
                 message = res.error.join(". ");
             } else if (res.error instanceof Object) {
-                // We get object of errors with field names as key,
-                // grouped by norm_id
-                for (var normId in res.error) {
-                    for (var field in res.error[normId]) {
-                        var errorMessage = res.error[normId][field];
-                        if (Array.isArray(errorMessage)) {
-                            errorMessage = errorMessage.join(". ");
-                        }
-                        res.error[field + '_' + normId] = errorMessage;
-                        delete res.error[normId][field];
-                        if (Object.keys(res.error[normId]).length == 0) {
-                            delete res.error[normId];
-                        }
-                    }
-                }
+                // We get object of errors with field names as key
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+					res.error[field] = errorMessage;
+				}
                 this.setState({
                     errors: res.error
                 });
