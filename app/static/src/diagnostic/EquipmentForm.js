@@ -713,7 +713,14 @@ var NormAdditionalParams = React.createClass({
     },
 
     is_valid: function () {
-        return this.refs[this.state.norm_option_text.name].is_valid();
+        let isValid = true;
+        for (let normName in this.state.norms) {
+            if (!this.state.refs[normName].is_valid()) {
+                isValid = false;
+                break;
+            }
+        }
+        return isValid;
     },
 
     saveNormGlobally: function (norm, state, newErrors) {
