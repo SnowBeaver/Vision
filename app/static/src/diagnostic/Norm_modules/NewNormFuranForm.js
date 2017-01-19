@@ -150,6 +150,9 @@ var NewNormFuranForm = React.createClass({
                 url: '/api/v1.0/norm_furan_data/',
                 type: 'POST',
                 dataType: 'json',
+                beforeSend: function(jqXHR, settings) {
+                    jqXHR.normName = 'norm_furan';
+                },
                 contentType: 'application/json',
                 data: JSON.stringify(normData)
             });

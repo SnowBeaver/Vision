@@ -702,6 +702,10 @@ var NormAdditionalParams = React.createClass({
         }
     },
 
+    _onError: function (xhr, ajaxOptions, thrownError) {
+        this.state.refs[xhr.normName]._onError(xhr, ajaxOptions, thrownError);
+    },
+
     clearForm: function () {
         // Clear main for after save of the last form
         if (this.state.normsToSave == 1) {

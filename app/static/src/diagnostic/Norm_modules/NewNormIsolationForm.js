@@ -146,6 +146,9 @@ var NewNormIsolationForm = React.createClass({
            xhr = $.authorizedAjax({
                 url: '/api/v1.0/norm_isolation_data/',
                 type: 'POST',
+                beforeSend: function(jqXHR, settings) {
+                    jqXHR.normName = 'norm_isolation';
+                },
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(normData)

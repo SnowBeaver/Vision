@@ -224,6 +224,9 @@ var NewNormParticlesForm = React.createClass({
                 url: '/api/v1.0/norm_particles_data/',
                 type: 'POST',
                 dataType: 'json',
+                beforeSend: function(jqXHR, settings) {
+                    jqXHR.normName = 'norm_particles';
+                },
                 contentType: 'application/json',
                 data: JSON.stringify(normData)
             });

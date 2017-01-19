@@ -490,6 +490,9 @@ var NewNormPhysicForm = React.createClass({
                 url: '/api/v1.0/norm_physic_data/',
                 type: 'POST',
                 dataType: 'json',
+                beforeSend: function(jqXHR, settings) {
+                    jqXHR.normName = 'norm_physic';
+                },
                 contentType: 'application/json',
                 data: JSON.stringify(normData)
             });

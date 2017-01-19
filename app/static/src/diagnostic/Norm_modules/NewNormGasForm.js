@@ -217,6 +217,9 @@ var NewNormGasForm = React.createClass({
            xhr = $.authorizedAjax({
                 url: '/api/v1.0/norm_gas_data/',
                 type: 'POST',
+                beforeSend: function(jqXHR, settings) {
+                    jqXHR.normName = 'norm_gas';
+                },
                 dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(normData)
