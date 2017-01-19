@@ -168,14 +168,6 @@ var NewNormParticlesForm = React.createClass({
     },
 
     componentDidMount: function () {
-        if (this.props.source) {
-            this.serverRequest = $.authorizedGet(this.props.source, function (result) {
-                var predefinedNorms = (result['result']);
-                this.setState({
-                    predefinedNorms: predefinedNorms
-                });
-            }.bind(this), 'json');
-        }
         this.setState({norms: this.props.data || {}, errors: this.props.errorData || {}});
     },
 

@@ -694,9 +694,10 @@ var NormAdditionalParams = React.createClass({
         if (this.props.data.norm_type == 'custom' && this.state.norm_id) {
             this.setState({normsToSave: Object.keys(this.state.norms).length});
             for (let normName in this.state.norms) {
-                this.state.refs[normName].submit(equipmentId).done(this.clearForm)
-                        .fail(this._onError)
-                        .always(this.hideLoading)
+                this.state.refs[normName]
+                    .submit(equipmentId)
+                    .done(this.clearForm)
+                    .fail(this._onError)
             }
         }
     },
@@ -759,7 +760,6 @@ var NormAdditionalParams = React.createClass({
                                 data={this.state.norms.norm_furan}
                                 errorData={this.state.errors.norm_furan}
                                 saveNormGlobally={this.saveNormGlobally}
-                                source="/api/v1.0/norm_furan"
                                 setNormSubformSaved={this.props.setNormSubformSaved}
                                 cleanForm={this.props.clearForm} />
                         </div>
@@ -774,7 +774,6 @@ var NormAdditionalParams = React.createClass({
                         <div>
                             <NewNormGasForm
                                 ref='norm_gas'
-                                source="/api/v1.0/norm_gas"
                                 data={this.state.norms.norm_gas}
                                 errorData={this.state.errors.norm_gas}
                                 saveNormGlobally={this.saveNormGlobally}
@@ -792,7 +791,6 @@ var NormAdditionalParams = React.createClass({
                         <div>
                             <NewNormIsolationForm
                                 ref='norm_isolation'
-                                source="/api/v1.0/norm_isolation"
                                 data={this.state.norms.norm_isolation}
                                 errorData={this.state.errors.norm_isolation}
                                 saveNormGlobally={this.saveNormGlobally}
@@ -810,7 +808,6 @@ var NormAdditionalParams = React.createClass({
                         <div>
                             <NewNormPhysicForm
                                 ref='norm_physic'
-                                source="/api/v1.0/norm_physic"
                                 data={this.state.norms.norm_physic}
                                 errorData={this.state.errors.norm_physic}
                                 saveNormGlobally={this.saveNormGlobally}
@@ -828,7 +825,6 @@ var NormAdditionalParams = React.createClass({
                         <div>
                             <NewNormParticlesForm
                                 ref='particles'
-                                source="/api/v1.0/particles"
                                 data={this.state.norms.particles}
                                 errorData={this.state.errors.particles}
                                 saveNormGlobally={this.saveNormGlobally}
