@@ -391,7 +391,7 @@ var NewNormPhysicForm = React.createClass({
     },
 
     _validateDict: {
-        name: {type: "text", required: true, maxLen: 50, label: "Name"},
+        name: {type: "text", required: true, maxLen: 20, label: "Name"},
         acid_min: {type: "float", label: "Acid min"},
         acid_max: {type: "float", label: "Acid max"},
         ift_min: {type: "float", label: "Ift min"},

@@ -90,7 +90,7 @@ var NewNormFuranForm = React.createClass({
 
     _validateDict: {
         name: {type: "text", maxLen: 50, label: "Name"},
-        c1: {type: "float", label: "C1"},
+        c1: {type: "text", label: "C1"},
         c2: {type: "float", label: "C2"},
         c3: {type: "float", label: "C3"},
         c4: {type: "float", label: "C4"}

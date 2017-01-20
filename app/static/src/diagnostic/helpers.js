@@ -66,7 +66,7 @@ function updateFieldErrors(initialState, fieldName, state, errors, append) {
     }
 
     // Update errors with new ones, if present
-    if (Object.keys(errors).length) {
+    if (errors.length) {
         state.errors[fieldName] = errors.join(". ");
     }
     return state;

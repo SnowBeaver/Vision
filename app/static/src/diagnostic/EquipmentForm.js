@@ -439,9 +439,11 @@ var NormSelectField = React.createClass({
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
+            var name = this.state.items[key].table_name != 'norm_particles' ? this.state.items[key].table_name : 'particles';
             menuItems.push(<option key={this.state.items[key].id}
+                                   className={this.props.errors[name] ? 'text-danger' : ''}
                                    value={this.state.items[key].id}
-                                   data-name={this.state.items[key].table_name != 'norm_particles' ? this.state.items[key].table_name : 'particles'}>{`${this.state.items[key].name}`}</option>);
+                                   data-name={name}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -681,9 +683,10 @@ var NormAdditionalParams = React.createClass({
 
     onChange: function (e) {
         let state = {};
+        let name = e.target[e.target.selectedIndex].getAttribute('data-name')
         state[e.target.name] = e.target.value;
         state['norm_option_text'] = {
-            name: e.target[e.target.selectedIndex].getAttribute('data-name'),
+            name: name,
             id: e.target.value,
             text: e.target[e.target.selectedIndex].text
         };
@@ -703,6 +706,9 @@ var NormAdditionalParams = React.createClass({
     },
 
     _onError: function (xhr, ajaxOptions, thrownError) {
+        let errors = this.state.errors;
+        errors[xhr.normName] = xhr.responseJSON.error;
+        this.setState(errors);
         this.state.refs[xhr.normName]._onError(xhr, ajaxOptions, thrownError);
     },
 
@@ -733,7 +739,11 @@ var NormAdditionalParams = React.createClass({
         let errors = this.state.errors;
         let refs = this.state.refs;
         norms[norm] = state;
-        errors[norm] = newErrors;
+        if (Object.keys(newErrors).length) {
+            errors[norm] = newErrors;
+        } else {
+            delete errors[norm];
+        }
         refs[norm] = this.refs[norm];
         this.setState({norms: norms, errors: errors});
     },

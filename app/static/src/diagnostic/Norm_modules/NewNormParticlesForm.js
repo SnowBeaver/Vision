@@ -154,6 +154,7 @@ var NewNormParticlesForm = React.createClass({
     },
 
      _validateDict: {
+        "name": {type: "text", maxLen: 50, label: "Name"},
         "_2um": {type: "float", label: "_2um"},
         "_5um": {type: "float", label: "_5um"},
         "_10um": {type: "float", label: "_10um"},
@@ -225,7 +226,7 @@ var NewNormParticlesForm = React.createClass({
                 type: 'POST',
                 dataType: 'json',
                 beforeSend: function(jqXHR, settings) {
-                    jqXHR.normName = 'norm_particles';
+                    jqXHR.normName = 'particles';
                 },
                 contentType: 'application/json',
                 data: JSON.stringify(normData)

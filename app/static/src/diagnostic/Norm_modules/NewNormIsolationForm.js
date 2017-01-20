@@ -84,6 +84,7 @@ var NewNormIsolationForm = React.createClass({
     },
 
     _validateDict: {
+        "name": {type: "text", maxLen: 50, label: "Name"},
         c: {type: "float", label: "C"},
         f: {type: "float", label: "F"},
         notseal: {type: "float", label: "Not seal"},
