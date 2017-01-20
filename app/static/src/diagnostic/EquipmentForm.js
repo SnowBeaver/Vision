@@ -723,10 +723,10 @@ var NormAdditionalParams = React.createClass({
         }
     },
 
-    is_valid: function () {
+    isValid: function () {
         let isValid = true;
         for (let normName in this.state.norms) {
-            if (!this.state.refs[normName].is_valid()) {
+            if (!this.state.refs[normName].isValid()) {
                 isValid = false;
                 break;
             }
@@ -772,7 +772,7 @@ var NormAdditionalParams = React.createClass({
                             <NewNormFuranForm
                                 ref='norm_furan'
                                 data={this.state.norms.norm_furan}
-                                errorData={this.state.errors.norm_furan}
+                                errorData={this.state.errors.norm_furan || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
                                 cleanForm={this.props.clearForm} />
@@ -789,7 +789,7 @@ var NormAdditionalParams = React.createClass({
                             <NewNormGasForm
                                 ref='norm_gas'
                                 data={this.state.norms.norm_gas}
-                                errorData={this.state.errors.norm_gas}
+                                errorData={this.state.errors.norm_gas || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
                                 cleanForm={this.props.clearForm} />
@@ -806,7 +806,7 @@ var NormAdditionalParams = React.createClass({
                             <NewNormIsolationForm
                                 ref='norm_isolation'
                                 data={this.state.norms.norm_isolation}
-                                errorData={this.state.errors.norm_isolation}
+                                errorData={this.state.errors.norm_isolation || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
                                 cleanForm={this.props.clearForm} />
@@ -823,7 +823,7 @@ var NormAdditionalParams = React.createClass({
                             <NewNormPhysicForm
                                 ref='norm_physic'
                                 data={this.state.norms.norm_physic}
-                                errorData={this.state.errors.norm_physic}
+                                errorData={this.state.errors.norm_physic || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
                                 cleanForm={this.props.clearForm} />
@@ -840,7 +840,7 @@ var NormAdditionalParams = React.createClass({
                             <NewNormParticlesForm
                                 ref='particles'
                                 data={this.state.norms.particles}
-                                errorData={this.state.errors.particles}
+                                errorData={this.state.errors.particles || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
                                 cleanForm={this.props.clearForm} />
@@ -993,7 +993,7 @@ const EquipmentForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this.is_valid() || (this.state.norm_type == 'custom' && !this._getNormAdditionalParamsForm().is_valid())) {
+        if (!this.isValid() || (this.state.norm_type == 'custom' && !this._getNormAdditionalParamsForm().isValid())) {
             NotificationManager.error('Please correct the errors');
             return;
         }
@@ -1181,7 +1181,7 @@ const EquipmentForm = React.createClass({
         return state;
     },
 
-    is_valid: function () {
+    isValid: function () {
         return (Object.keys(this.state.errors).length <= 0);
     },
 

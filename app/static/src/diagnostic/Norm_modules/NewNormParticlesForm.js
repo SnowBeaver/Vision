@@ -185,24 +185,18 @@ var NewNormParticlesForm = React.createClass({
     },
 
     submit: function (equipmentId) {
-        if (!this.is_valid()) {
+        if (!this.isValid()) {
             NotificationManager.error('Please correct the errors');
             return;
         }
-        //this._clearErrors();
         var xhr = this._save(equipmentId);
         return xhr;
-        //if (xhr) {
-        //    xhr.done(this._onSuccess)
-        //        .fail(this._onError)
-        //        .always(this.hideLoading)
-        //}
     },
 
-    is_valid: function () {
+    isValid: function () {
         // Check errors only if there are norms
         if (Object.keys(this.state.norms).length > 0) {
-            return Object.keys(this.state.errors).length == 0;
+            return Object.keys(this.props.errorData).length == 0 || Object.keys(this.state.errors).length == 0;
         } else {
             return true;
         }
@@ -242,13 +236,12 @@ var NewNormParticlesForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
-        //this.props.cleanForm();
         this.props.setNormSubformSaved();
         NotificationManager.success('Norms have been successfully saved');
     },
 
     _onError: function (data) {
-        var message = "Failed to add norms";
+        var message = "Failed to add particle norms";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
@@ -264,11 +257,7 @@ var NewNormParticlesForm = React.createClass({
 					if (Array.isArray(errorMessage)) {
 						errorMessage = errorMessage.join(". ");
 					}
-					res.error[field] = errorMessage;
 				}
-                this.setState({
-                    errors: res.error
-                });
             } else {
                 message = res.error;
             }
@@ -277,13 +266,14 @@ var NewNormParticlesForm = React.createClass({
     },
 
     render: function () {
+        let errors = this.props.errorData || this.state.errors;
         return (
             <div>
                 <NewNormParticlesRow
                         data={this.state.norms}
                         handleChange={this.handleChange}
                         normId={this.state.predefinedNorms.id}
-                        errors={this.state.errors}/>
+                        errors={errors}/>
             </div>
 
         )

@@ -90,7 +90,7 @@ var NewNormFuranForm = React.createClass({
 
     _validateDict: {
         name: {type: "text", maxLen: 50, label: "Name"},
-        c1: {type: "text", label: "C1"},
+        c1: {type: "float", label: "C1"},
         c2: {type: "float", label: "C2"},
         c3: {type: "float", label: "C3"},
         c4: {type: "float", label: "C4"}
@@ -109,24 +109,18 @@ var NewNormFuranForm = React.createClass({
     },
 
     submit: function (equipmentId) {
-        if (!this.is_valid()) {
+        if (!this.isValid()) {
             NotificationManager.error('Please correct the errors');
             return;
         }
-        //this._clearErrors();
         var xhr = this._save(equipmentId);
         return xhr;
-        //if (xhr) {
-        //    xhr.done(this._onSuccess)
-        //        .fail(this._onError)
-        //        .always(this.hideLoading)
-        //}
     },
 
-    is_valid: function () {
+    isValid: function () {
         // Check errors only if there are norms
         if (Object.keys(this.state.norms).length > 0) {
-            return Object.keys(this.state.errors).length == 0;
+            return Object.keys(this.props.errorData).length == 0 || Object.keys(this.state.errors).length == 0;
         } else {
             return true;
         }
@@ -173,7 +167,7 @@ var NewNormFuranForm = React.createClass({
     },
 
     _onError: function (data) {
-        var message = "Failed to add norms";
+        var message = "Failed to add furan norms";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
@@ -189,11 +183,7 @@ var NewNormFuranForm = React.createClass({
 					if (Array.isArray(errorMessage)) {
 						errorMessage = errorMessage.join(". ");
 					}
-					res.error[field] = errorMessage;
 				}
-                this.setState({
-                    errors: res.error
-                });
             } else {
                 message = res.error;
             }
@@ -202,13 +192,14 @@ var NewNormFuranForm = React.createClass({
     },
 
     render: function () {
+        let errors = this.props.errorData || this.state.errors;
         return (
             <div>
                 <NewNormFuranRow
                         data={this.state.norms}
                         handleChange={this.handleChange}
                         normId={this.state.predefinedNorms.id}
-                        errors={this.state.errors}/>
+                        errors={errors}/>
             </div>
         )
     }

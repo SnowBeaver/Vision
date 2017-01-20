@@ -440,21 +440,15 @@ var NewNormPhysicForm = React.createClass({
     },
 
     submit: function (equipmentId) {
-        if (!this.is_valid()) {
+        if (!this.isValid()) {
             NotificationManager.error('Please correct the errors');
             return;
         }
-        //this._clearErrors();
         var xhr = this._save(equipmentId);
         return xhr;
-        //if (xhr) {
-        //    xhr.done(this._onSuccess)
-        //        .fail(this._onError)
-        //        .always(this.hideLoading)
-        //}
     },
 
-    is_valid: function () {
+    isValid: function () {
         var errors = this.state.errors;
         for (var fld in this._validateDict) {
             for (var norm in this.state.norms) {
@@ -467,7 +461,7 @@ var NewNormPhysicForm = React.createClass({
 
         // Check errors only if there are norms
         if (Object.keys(this.state.norms).length > 0) {
-            return Object.keys(this.state.errors).length == 0;
+            return Object.keys(this.props.errorData).length == 0 || Object.keys(this.state.errors).length == 0;
         } else {
             return true;
         }
@@ -513,7 +507,7 @@ var NewNormPhysicForm = React.createClass({
     },
 
     _onError: function (data) {
-        var message = "Failed to add norms";
+        var message = "Failed to add physic norms";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
@@ -529,11 +523,7 @@ var NewNormPhysicForm = React.createClass({
 					if (Array.isArray(errorMessage)) {
 						errorMessage = errorMessage.join(". ");
 					}
-					res.error[field] = errorMessage;
 				}
-                this.setState({
-                    errors: res.error
-                });
             } else {
                 message = res.error;
             }
@@ -542,13 +532,14 @@ var NewNormPhysicForm = React.createClass({
     },
 
     render: function () {
+        let errors = this.props.errorData || this.state.errors;
         return (
             <div>
                 <NewNormPhysicRow
                         data={this.state.norms}
                         handleChange={this.handleChange}
                         normId={this.state.predefinedNorms.id}
-                        errors={this.state.errors}/>
+                        errors={errors}/>
             </div>
 
         )
