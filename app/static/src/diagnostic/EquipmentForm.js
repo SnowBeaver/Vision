@@ -866,7 +866,6 @@ const EquipmentForm = React.createClass({
                 'manufacturer_id',
                 'location_id',
                 'assigned_to_id',
-                'norm_id',
                 'name',
                 'serial',
                 'equipment_number',
@@ -907,10 +906,6 @@ const EquipmentForm = React.createClass({
                 value = null;
             }
             data[key] = value;
-        }
-
-        if (this.state.norm_type == 'standard') {
-            data.norm_id = 1;
         }
 
         var that = this
@@ -970,6 +965,7 @@ const EquipmentForm = React.createClass({
         var that = this;
         if (Object.keys(subform).length != 0) {
             delete subform.norm_type;
+            delete subform.norm_id;
             subform['equipment_id'] = equipmentId;
             for (var field in subform) {
                 if (subform[field] == "") {
@@ -1016,7 +1012,6 @@ const EquipmentForm = React.createClass({
 
     _onSuccess: function (data) {
         // Clean the form
-        //this.setState(this.getInitialState());
         this.setState({equipmentSubformSaved: true});
         NotificationManager.success('Equipment has been successfully saved');
     },

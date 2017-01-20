@@ -326,8 +326,6 @@ doc = ApiDoc(app=api)
 @apiSuccess {Integer}         assigned_to_id              User
 @apiSuccess {Dict}            assigned_to                 see: user->get an item
 @apiSuccess {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
-@apiSuccess {Integer}         norm_id
-@apiSuccess {Dict}            norm                        see: norm->get an item
 @apiSuccess {Integer}         tie_status                  TieAnalysisState.
 @apiSuccess {Integer}         status                      EquipmentState.
 @apiSuccess {Integer}         phys_position
@@ -348,7 +346,7 @@ doc = ApiDoc(app=api)
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
          -d '{"equipment_number":"987abc", "equipment_type_id":1, "location_id":4, \
-              "assigned_to_id": 4, "norm_id":2, "frequency":"25", "name": "Name"}' \
+              "assigned_to_id": 4, "frequency":"25", "name": "Name"}' \
           http://localhost:8001/api/v1.0/equipment/
 
 @apiParam {String(50)}      name                        Required.
@@ -356,7 +354,6 @@ doc = ApiDoc(app=api)
 @apiParam {Integer}         equipment_type_id           Required.
 @apiParam {Integer}         location_id                 Required.
 @apiParam {Integer}         assigned_to_id              Required. User id
-@apiParam {Integer}         norm_id                     Required.
 @apiParam {String(50)}      serial
 @apiParam {Integer}         manufacturer_id
 @apiParam {Integer}         manufactured                Year manufactured, from 1900

@@ -245,7 +245,6 @@ equipment_schema = {
     'equipment_type_id': type_integer_coerce_required_dict,
     'location_id': type_integer_coerce_required_dict,
     'assigned_to_id': type_integer_coerce_required_dict,
-    'norm_id': type_integer_coerce_required_dict,
     'manufacturer_id': type_integer_coerce_dict,
     'serial': type_string_maxlength_50_dict,
     'manufactured': dict_copy_union(type_integer_coerce_dict, {'min': 1900, 'max': datetime.now().year}),

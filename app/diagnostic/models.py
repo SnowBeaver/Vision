@@ -1477,15 +1477,6 @@ class Equipment(db.Model):
     # test inspection of tap changer or characteristic ?
     nbr_of_tap_change_ltc = db.Column(db.Integer)  # NbrTapChange.  Number of tap change on LTC
 
-    # its a separate norms table for all devices
-    norm_id = db.Column(
-        'norm_id',
-        db.ForeignKey("norm.id"),
-        nullable=False
-    )
-
-    norm = relationship('Norm', foreign_keys='Equipment.norm_id')
-
     # # its a state of a transformer / breaker /switch /motor / cable  not
     # upstream1 = db.Column(db.String(100))  # Upstream1. Upstream device name
 
@@ -1540,8 +1531,6 @@ class Equipment(db.Model):
                 'assigned_to_id': self.assigned_to_id,
                 'assigned_to': self.assigned_to and self.assigned_to.serialize(),
                 'nbr_of_tap_change_ltc': self.nbr_of_tap_change_ltc,
-                'norm_id': self.norm_id,
-                'norm': self.norm and self.norm.serialize(),
                 'tie_status': self.tie_status,
                 'status': self.status,
                 'phys_position': self.phys_position,
