@@ -1013,6 +1013,9 @@ const EquipmentForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState({equipmentSubformSaved: true});
+        if (this.state.norm_type == 'standard') {
+            this.setState(this.getInitialState());
+        }
         NotificationManager.success('Equipment has been successfully saved');
     },
 
