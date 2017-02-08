@@ -148,10 +148,11 @@ def save_equipment(data):
         item = get_additional_info(item)
         equipment = Equipment(**item)
         # Add equipment to the norm
-        equipment_norm.equipment = equipment
+        if equipment_norm:
+            equipment_norm.equipment = equipment
         db.session.add(equipment)
     try:
-        # db.session.commit()
+        db.session.commit()
         print('Added equipment')
     except Exception as e:
         db.session.rollback()
@@ -160,12 +161,13 @@ def save_equipment(data):
 
 def prepare_equipment_norms(item):
     norm_physic = db.session.query(NormPhysic).filter_by(name=item['norm_physic']).first()
+    equipment_norm = None
     if norm_physic:
         norm_physic = norm_physic.serialize()
         norm_physic['norm_id'] = norm_physic.pop('id')
         del norm_physic['equipment_id']
-    equipment_norm = NormPhysicData(**norm_physic)
-    db.session.add(equipment_norm)
+        equipment_norm = NormPhysicData(**norm_physic)
+        db.session.add(equipment_norm)
     del item['norm_physic']
     return item, equipment_norm
 
