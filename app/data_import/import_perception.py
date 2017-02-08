@@ -2,9 +2,8 @@ import os
 import pypyodbc
 import datetime
 
-from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProfile, \
-    Country, TestReason, TestType, TestStatus, Equipment, Norm, Location, Manufacturer, \
-    NormPhysic
+from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
+    NormPhysic, NormPhysicData
 from app.users.models import User
 from app import db
 
@@ -27,6 +26,11 @@ def clean_duplicates(data):
 
 def strip(data):
     return map(lambda x: x.strip() if isinstance(x, str) else None, data)
+
+
+def get_admin_id():
+    user_id = db.session.query(User).filter_by(name='admin').first().id
+    return user_id
 
 
 # Equipment records
@@ -54,7 +58,7 @@ def fetch_equipment_data(equipments):
     data = {
         'items': []
     }
-    user_id = db.session.query(User).filter_by(name='admin').first().id
+    user_id = get_admin_id()
     for equipment in equipments:
         data['items'].append(
             {
@@ -140,18 +144,30 @@ def save_additional_data(data):
 def save_equipment(data):
     items = data['items']
     for item in items:
-        # Save equipment norms
-        # equipment_norm = NormPhysicData(db.session.query(NormPhysic).filter_by(name=item['norm_physic']))
-        del item['norm_physic']
-
+        item, equipment_norm = prepare_equipment_norms(item)
         item = get_additional_info(item)
-        db.session.add(Equipment(**item))
+        equipment = Equipment(**item)
+        # Add equipment to the norm
+        equipment_norm.equipment = equipment
+        db.session.add(equipment)
     try:
-        db.session.commit()
+        # db.session.commit()
         print('Added equipment')
     except Exception as e:
         db.session.rollback()
     return True
+
+
+def prepare_equipment_norms(item):
+    norm_physic = db.session.query(NormPhysic).filter_by(name=item['norm_physic']).first()
+    if norm_physic:
+        norm_physic = norm_physic.serialize()
+        norm_physic['norm_id'] = norm_physic.pop('id')
+        del norm_physic['equipment_id']
+    equipment_norm = NormPhysicData(**norm_physic)
+    db.session.add(equipment_norm)
+    del item['norm_physic']
+    return item, equipment_norm
 
 
 def get_additional_info(item):
