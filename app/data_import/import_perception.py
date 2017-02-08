@@ -3,7 +3,7 @@ import pypyodbc
 import datetime
 
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
-    NormPhysic, NormPhysicData
+    NormPhysic, NormPhysicData, NormFuran, NormFuranData
 from app.users.models import User
 from app import db
 
@@ -84,7 +84,8 @@ def fetch_equipment_data(equipments):
                 'description': equipment[5], #Description
                 'frequency': equipment[54], #Frequence
                 'tie_status': equipment[93],   #LocTie
-                'norm_physic': equipment[61]    #NormePhy
+                'norm_physic': equipment[61],    #NormePhy
+                'norm_furan': equipment[63]     #NormeFur
             }
         )
     return data
@@ -144,36 +145,54 @@ def save_additional_data(data):
 def save_equipment(data):
     items = data['items']
     for item in items:
-        item, equipment_norm = prepare_equipment_norms(item)
+        item, equipment_norms = prepare_equipment_norms(item)
         item = get_additional_info(item)
         equipment = Equipment(**item)
-        # Add equipment to the norm
-        if equipment_norm:
-            equipment_norm.equipment = equipment
+        # Add equipment to the physic norm
+        if equipment_norms.get('norm_physic'):
+            equipment_norms['norm_physic'].equipment = equipment
+        # Add equipment to the furan norm
+        if equipment_norms.get('norm_furan'):
+            equipment_norms['norm_furan'].equipment = equipment
+
         db.session.add(equipment)
     try:
         db.session.commit()
         print('Added equipment')
+        print('Added equipment furan and physic norms')
     except Exception as e:
         db.session.rollback()
     return True
 
 
 def prepare_equipment_norms(item):
-    print('---', item['norm_physic'])
+    equipment_norms = {}
+    # Norm Physic
     norm_physic = db.session.query(NormPhysic).filter_by(name=item['norm_physic']).first()
-    equipment_norm = None
     if norm_physic:
-        print('====', item['norm_physic'])
         norm_physic = norm_physic.serialize()
         norm_physic['norm_id'] = norm_physic.pop('id')
         del norm_physic['equipment_id']
         del norm_physic['equipment_type']
+        del norm_physic['date_created']
         del norm_physic['equipment_type_id']
-        equipment_norm = NormPhysicData(**norm_physic)
-        db.session.add(equipment_norm)
+        equipment_norms['norm_physic'] = NormPhysicData(**norm_physic)
+        db.session.add(equipment_norms['norm_physic'])
     del item['norm_physic']
-    return item, equipment_norm
+
+    # Norm Furan
+    norm_furan = db.session.query(NormFuran).filter_by(name=item['norm_furan']).first()
+    if norm_furan:
+        norm_furan = norm_furan.serialize()
+        norm_furan['norm_id'] = norm_furan.pop('id')
+        del norm_furan['equipment_type']
+        del norm_furan['equipment_type_id']
+        del norm_furan['date_created']
+        equipment_norms['norm_furan'] = NormFuranData(**norm_furan)
+        db.session.add(equipment_norms['norm_furan'])
+    del item['norm_furan']
+
+    return item, equipment_norms
 
 
 def get_additional_info(item):
