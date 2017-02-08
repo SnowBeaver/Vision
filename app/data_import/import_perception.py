@@ -3,7 +3,8 @@ import pypyodbc
 import datetime
 
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
-    NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData
+    NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
+    Transformer
 from app.users.models import User
 from app import db
 
@@ -71,7 +72,7 @@ def fetch_equipment_data(equipments):
                 'nbr_of_tap_change_ltc': equipment[60],     # Nbr_Change_Prise
                 'status': None,
                 'phys_position': equipment[97],             # PosPhys
-                'tension4': equipment[104],                 #Tension4
+                'tension4': equipment[104],                 #Tension4   - TODO: Why is it in equipment not transformer table
                 'validated': equipment[150],                #Valider
                 'invalidation': equipment[151],             #EnValidation
                 'prev_serial_number': equipment[152],       #NoSerieEquipeAnc
@@ -87,7 +88,7 @@ def fetch_equipment_data(equipments):
                 'norm_physic': equipment[61],               #NormePhy
                 'norm_furan': equipment[63],                #NormeFur
                 'norm_gas': equipment[62],                  #NormeGD
-                'specific_data': {
+                'transformer_data': {
                     'fluid_volume': equipment[62],          #LitreHuile
                     'sealed': equipment[11],                #Scelle
                     'welded_cover': equipment[12],          #CouvSoude
@@ -95,7 +96,7 @@ def fetch_equipment_data(equipments):
                     'cooling_rating': equipment[62],        #
                     'autotransformer': equipment[29],       #Auto_Transfo
                     'threephase': equipment[14],            #TriPhase
-                    'gas_sensor_id': equipment[15],         #Capteur - get id
+                    'gassensor_id': equipment[15],          #Capteur - get id
                     'phase_number': equipment[62],          #
                     'frequency': equipment[54],             #Frequence
                     'primary_tension': equipment[22],       #Tension1
@@ -118,7 +119,7 @@ def fetch_equipment_data(equipments):
                     'bushing_neutral2': equipment[43],        #Bushing_Neutre2
                     'bushing_neutral3': equipment[44],        #Bushing_Neutre3
                     'bushing_neutral4': equipment[110],       #Bushing_Neutre4
-                    'ltc1': equipment[39],                    #ChangeurP1
+                    'ltc1': equipment[39],                    #ChangeurP1 (load tap changer)
                     'ltc2': equipment[40],                    #ChangeurP2
                     'ltc3': equipment[41],                    #ChangeurP3
                     'temperature_rise': equipment[59],      #Temp_elevation
@@ -216,15 +217,21 @@ def save_additional_data(data):
 
 
 def save_equipment(data):
-    """ Save equipment, related norms (physic, furan and gas) """
+    """
+    Save equipment, related norms (physic, furan and gas),
+    equipment data which depends on type
+    """
     items = data['items']
     for item in items:
         item, equipment_norms = prepare_equipment_norms(item)   # Norms
-        item = get_additional_info(item)    # location_id, manufacturer_id and equipment_type_id
-        equipment = Equipment(**item)       # Equipment
-        equipment = add_equipment_to_norms(equipment_norms, equipment)
-        # Equipment data depending on type
-        save_equipment_type_data(item)
+        # item, transformer = save_equipment_type_data(item)      # Equipment data depending on type
+        item = get_additional_info(item)           # location_id, manufacturer_id and equipment_type_id
+        equipment = Equipment(**item)              # Equipment
+        # equipment = add_equipment_to_norms(equipment_norms, equipment)
+
+        # Add equipment to transformer record
+        # if transformer:
+        #     transformer.equipment = equipment
 
         db.session.add(equipment)
     try:
@@ -232,6 +239,7 @@ def save_equipment(data):
         print('Added equipment')
         print('Added furan, physic and gas norms of all equipment items')
     except Exception as e:
+        print(e)
         db.session.rollback()
     return True
 
@@ -257,12 +265,17 @@ def add_equipment_to_norms(equipment_norms, equipment):
 
 def save_equipment_type_data(item):
     """ Save data related to equipment and which depends on type """
-    transformer_id = db.session.query(EquipmentType).filter_by(code='T').first()
-    data = {}
-    if transformer_id and item['equipment_type_id'] == transformer_id:
-        data = {
+    # Transformer
+    # transformer_id = db.session.query(EquipmentType).filter_by(code='T').first()
+    transformer = None
+    # print('--', item['equipment_type_id'])
+    # print('--+', transformer_id.id)
+    if item['equipment_type_id'] == 'T':
+        transformer = Transformer(**item['transformer_data'])
+        db.session.add(transformer)
+    del item['transformer_data']
 
-        }
+    return item, transformer
 
 
 def prepare_equipment_norms(item):
