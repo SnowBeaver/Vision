@@ -1448,7 +1448,7 @@ class Equipment(db.Model):
     manufacturer_id = db.Column('manufacturer_id', db.ForeignKey("manufacturer.id"), nullable=False)
     manufacturer = relationship('Manufacturer', foreign_keys='Equipment.manufacturer_id')
     manufactured = db.Column(db.Integer)  # ManuYear. Year manufactured
-    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))
+    frequency = db.Column(sqla.Enum('25', '50', '60', 'DC', name="Frequency"), default='25')
     description = db.Column(db.UnicodeText)
     # Location. Indicate the named placed where the equipement is.
     # Example, a main transformer is at site Budapest, and at localisation Church street.
@@ -1476,15 +1476,6 @@ class Equipment(db.Model):
 
     # test inspection of tap changer or characteristic ?
     nbr_of_tap_change_ltc = db.Column(db.Integer)  # NbrTapChange.  Number of tap change on LTC
-
-    # its a separate norms table for all devices
-    norm_id = db.Column(
-        'norm_id',
-        db.ForeignKey("norm.id"),
-        nullable=False
-    )
-
-    norm = relationship('Norm', foreign_keys='Equipment.norm_id')
 
     # # its a state of a transformer / breaker /switch /motor / cable  not
     # upstream1 = db.Column(db.String(100))  # Upstream1. Upstream device name
@@ -1540,8 +1531,6 @@ class Equipment(db.Model):
                 'assigned_to_id': self.assigned_to_id,
                 'assigned_to': self.assigned_to and self.assigned_to.serialize(),
                 'nbr_of_tap_change_ltc': self.nbr_of_tap_change_ltc,
-                'norm_id': self.norm_id,
-                'norm': self.norm and self.norm.serialize(),
                 'tie_status': self.tie_status,
                 'status': self.status,
                 'phys_position': self.phys_position,
@@ -3464,12 +3453,16 @@ class NormPhysic(db.Model):
     fluid_type_id = db.Column(db.Integer, server_default=db.text("0"))
     cei156_min = db.Column(db.Integer, server_default=db.text("0"))
     cei156_max = db.Column(db.Integer, server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
+
+    equipment_type_id = db.Column(db.Integer, db.ForeignKey("equipment_type.id"))
+    equipment_type = db.relationship('EquipmentType', backref='norm_physic')
 
     def __repr__(self):
         return self.name
 
     def serialize(self):
-        """Return object data in easily serializeable format"""
+        """Return object data in easily serializable format"""
         return {'id': self.id,
                 'name': self.name,
                 'equipment_id': self.equipment_id,
@@ -3502,6 +3495,9 @@ class NormPhysic(db.Model):
                 'fluid_type_id': self.fluid_type_id,
                 'cei156_min': self.cei156_min,
                 'cei156_max': self.cei156_max,
+                'date_created': dump_datetime(self.date_created),
+                'equipment_type_id': self.equipment_type_id,
+                'equipment_type': self.equipment_type and self.equipment_type.serialize()
                 }
 
 
@@ -3521,13 +3517,17 @@ class NormGas(db.Model):
     co2 = db.Column('co2', db.Float(53), server_default=db.text("0"))
     tdcg = db.Column('tdcg', db.Float(53), server_default=db.text("0"))
     fluid_level = db.Column('fluid_level', db.Integer, server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
     # db.Index('norm_gas_condition_key', 'name', 'condition', unique=True)
+
+    equipment_type_id = db.Column(db.Integer, db.ForeignKey("equipment_type.id"))
+    equipment_type = db.relationship('EquipmentType', backref='norm_gas')
 
     def __repr__(self):
         return self.name
 
     def serialize(self):
-        """Return object data in easily serializeable format"""
+        """Return object data in easily serializable format"""
         return {'id': self.id,
                 'name': self.name,
                 'condition': self.condition,
@@ -3540,6 +3540,9 @@ class NormGas(db.Model):
                 'co2': self.co2,
                 'tdcg': self.tdcg,
                 'fluid_level': self.fluid_level,
+                'date_created': dump_datetime(self.date_created),
+                'equipment_type_id': self.equipment_type_id,
+                'equipment_type': self.equipment_type and self.equipment_type.serialize()
                 }
 
 
@@ -3560,12 +3563,16 @@ class NormParticles(db.Model):
     iso4406_1 = db.Column(db.Float(53))  # ISO4406_1
     iso4406_2 = db.Column(db.Float(53))  # ISO4406_2
     iso4406_3 = db.Column(db.Float(53))  # ISO4406_3
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
+
+    equipment_type_id = db.Column(db.Integer, db.ForeignKey("equipment_type.id"))
+    equipment_type = db.relationship('EquipmentType', backref='norm_particles')
 
     def __repr__(self):
         return self.id
 
     def serialize(self):
-        """Return object data in easily serializeable format"""
+        """Return object data in easily serializable format"""
         return {'id': self.id,
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
@@ -3580,6 +3587,9 @@ class NormParticles(db.Model):
                 'iso4406_1': self.iso4406_1,
                 'iso4406_2': self.iso4406_2,
                 'iso4406_3': self.iso4406_3,
+                'date_created': dump_datetime(self.date_created),
+                'equipment_type_id': self.equipment_type_id,
+                'equipment_type': self.equipment_type and self.equipment_type.serialize()
                 }
 
 
@@ -3592,6 +3602,10 @@ class NormIsolation(db.Model):
     f = db.Column('f', db.Float(53), server_default=db.text("0"))
     notseal = db.Column('notseal', db.Float(53), server_default=db.text("0"))
     seal = db.Column('seal', db.Float(53), server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
+
+    equipment_type_id = db.Column(db.Integer, db.ForeignKey("equipment_type.id"))
+    equipment_type = db.relationship('EquipmentType', backref='norm_isolation')
 
     def __repr__(self):
         return "{} {}".format(self.__tablename__, self.id)
@@ -3603,6 +3617,9 @@ class NormIsolation(db.Model):
                 'f': self.f,
                 'notseal': self.notseal,
                 'seal': self.seal,
+                'date_created': dump_datetime(self.date_created),
+                'equipment_type_id': self.equipment_type_id,
+                'equipment_type': self.equipment_type and self.equipment_type.serialize()
                 }
 
 
@@ -3616,6 +3633,10 @@ class NormFuran(db.Model):
     c2 = db.Column(db.Float(53), server_default=db.text("0"))
     c3 = db.Column(db.Float(53), server_default=db.text("0"))
     c4 = db.Column(db.Float(53), server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
+
+    equipment_type_id = db.Column(db.Integer, db.ForeignKey("equipment_type.id"))
+    equipment_type = db.relationship('EquipmentType', backref='norm_furan')
 
     def __repr__(self):
         return self.name
@@ -3628,6 +3649,9 @@ class NormFuran(db.Model):
                 'c2': self.c2,
                 'c3': self.c3,
                 'c4': self.c4,
+                'date_created': dump_datetime(self.date_created),
+                'equipment_type_id': self.equipment_type_id,
+                'equipment_type': self.equipment_type and self.equipment_type.serialize()
                 }
 
 
@@ -3806,13 +3830,14 @@ class NormGasData(db.Model):
     co2 = db.Column('co2', db.Float(53), server_default=db.text("0"))
     tdcg = db.Column('tdcg', db.Float(53), server_default=db.text("0"))
     fluid_level = db.Column('fluid_level', db.Integer, server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
 
     norm_id = db.Column(db.Integer, db.ForeignKey("norm_gas.id"))
-    campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users_user.id"))
     equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"))
 
     norm = db.relationship('NormGas', backref='norm_gas_data')
-    campaign = db.relationship('Campaign', backref='norm_gas_data')
+    user = db.relationship('User', backref='norm_gas_data')
     equipment = db.relationship('Equipment', backref='norm_gas_data')
 
     def __repr__(self):
@@ -3832,10 +3857,11 @@ class NormGasData(db.Model):
                 'co2': self.co2,
                 'tdcg': self.tdcg,
                 'fluid_level': self.fluid_level,
+                'date_created': dump_datetime(self.date_created),
                 'norm_id': self.norm_id,
                 'norm': self.norm and self.norm.serialize(),
-                'campaign_id': self.campaign_id,
-                'campaign': self.campaign and self.campaign.serialize(),
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
                 }
@@ -3851,13 +3877,14 @@ class NormFuranData(db.Model):
     c2 = db.Column(db.Float(53), server_default=db.text("0"))
     c3 = db.Column(db.Float(53), server_default=db.text("0"))
     c4 = db.Column(db.Float(53), server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
 
     norm_id = db.Column(db.Integer, db.ForeignKey("norm_furan.id"))
-    campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users_user.id"))
     equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"))
 
     norm = db.relationship('NormFuran', backref='norm_furan_data')
-    campaign = db.relationship('Campaign', backref='norm_furan_data')
+    user = db.relationship('User', backref='norm_furan_data')
     equipment = db.relationship('Equipment', backref='norm_furan_data')
 
     def __repr__(self):
@@ -3871,10 +3898,11 @@ class NormFuranData(db.Model):
                 'c2': self.c2,
                 'c3': self.c3,
                 'c4': self.c4,
+                'date_created': dump_datetime(self.date_created),
                 'norm_id': self.norm_id,
                 'norm': self.norm and self.norm.serialize(),
-                'campaign_id': self.campaign_id,
-                'campaign': self.campaign and self.campaign.serialize(),
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
                 }
@@ -3889,13 +3917,15 @@ class NormIsolationData(db.Model):
     f = db.Column('f', db.Float(53), server_default=db.text("0"))
     notseal = db.Column('notseal', db.Float(53), server_default=db.text("0"))
     seal = db.Column('seal', db.Float(53), server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
+    name = db.Column(db.String(50))
 
     norm_id = db.Column(db.Integer, db.ForeignKey("norm_isolation.id"))
-    campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users_user.id"))
     equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"))
 
     norm = db.relationship('NormIsolation', backref='norm_isolation_data')
-    campaign = db.relationship('Campaign', backref='norm_isolation_data')
+    user = db.relationship('User', backref='norm_isolation_data')
     equipment = db.relationship('Equipment', backref='norm_isolation_data')
 
     def __repr__(self):
@@ -3908,10 +3938,12 @@ class NormIsolationData(db.Model):
                 'f': self.f,
                 'notseal': self.notseal,
                 'seal': self.seal,
+                'name': self.name,
+                'date_created': dump_datetime(self.date_created),
                 'norm_id': self.norm_id,
                 'norm': self.norm and self.norm.serialize(),
-                'campaign_id': self.campaign_id,
-                'campaign': self.campaign and self.campaign.serialize(),
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
                 }
@@ -3952,13 +3984,14 @@ class NormPhysicData(db.Model):
     fluid_type_id = db.Column(db.Integer, server_default=db.text("0"))
     cei156_min = db.Column(db.Integer, server_default=db.text("0"))
     cei156_max = db.Column(db.Integer, server_default=db.text("0"))
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
 
     norm_id = db.Column(db.Integer, db.ForeignKey("norm_physic.id"))
-    campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users_user.id"))
     equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"))
 
     norm = db.relationship('NormPhysic', backref='norm_physic_data')
-    campaign = db.relationship('Campaign', backref='norm_physic_data')
+    user = db.relationship('User', backref='norm_physic_data')
     equipment = db.relationship('Equipment', backref='norm_physic_data')
 
     def __repr__(self):
@@ -3997,10 +4030,11 @@ class NormPhysicData(db.Model):
                 'fluid_type_id': self.fluid_type_id,
                 'cei156_min': self.cei156_min,
                 'cei156_max': self.cei156_max,
+                'date_created': dump_datetime(self.date_created),
                 'norm_id': self.norm_id,
                 'norm': self.norm and self.norm.serialize(),
-                'campaign_id': self.campaign_id,
-                'campaign': self.campaign and self.campaign.serialize(),
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
                 }
@@ -4022,13 +4056,15 @@ class NormParticlesData(db.Model):
     iso4406_1 = db.Column(db.Float(53))  # ISO4406_1
     iso4406_2 = db.Column(db.Float(53))  # ISO4406_2
     iso4406_3 = db.Column(db.Float(53))  # ISO4406_3
+    date_created = db.Column(db.DateTime, server_default=sqla.text("(now() at time zone 'utc')"))
+    name = db.Column(db.String(50))
 
     norm_id = db.Column(db.Integer, db.ForeignKey("norm_particles.id"))
-    campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users_user.id"))
     equipment_id = db.Column(db.Integer, db.ForeignKey("equipment.id"))
 
     norm = db.relationship('NormParticles', backref='norm_particles_data')
-    campaign = db.relationship('Campaign', backref='norm_particles_data')
+    user = db.relationship('User', backref='norm_particles_data')
     equipment = db.relationship('Equipment', backref='norm_particles_data')
 
     def __repr__(self):
@@ -4048,10 +4084,12 @@ class NormParticlesData(db.Model):
                 'iso4406_1': self.iso4406_1,
                 'iso4406_2': self.iso4406_2,
                 'iso4406_3': self.iso4406_3,
+                'name': self.name,
+                'date_created': dump_datetime(self.date_created),
                 'norm_id': self.norm_id,
                 'norm': self.norm and self.norm.serialize(),
-                'campaign_id': self.campaign_id,
-                'campaign': self.campaign and self.campaign.serialize(),
+                'user_id': self.user_id,
+                'user': self.user and self.user.serialize(),
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
                 }

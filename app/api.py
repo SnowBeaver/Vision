@@ -6,7 +6,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict
 from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProfile, \
-    Country, TestReason, TestType, TestStatus, Equipment
+    Country, TestReason, TestType, TestStatus, Equipment, Norm
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
@@ -114,12 +114,15 @@ def prepare_data_for_tree_translation(tree_item_id, equipment_name):
 
 
 # Verifications
-def validate_or_abort(path, data_to_validate=None, update=False):
+def validate_or_abort(path, data_to_validate=None, update=False, abort_request=True):
     if not data_to_validate:
         data_to_validate = request.json
     v = Validator(ignore_none_values=True)
     if not v.validate(data_to_validate, get_schema_by_path(path), update):
-        abort(400, v.errors)
+        if abort_request:
+            abort(400, v.errors)
+        else:
+            return {'errors': v.errors}
     return v.document
 
 
@@ -238,6 +241,25 @@ def build_seach_equipment_query(items_model, search_value):
             Equipment.equipment_number.ilike("%{}%".format(search_value)),
             ))\
         .all()
+
+
+def validate_multi(path, group_by_field):
+    validation_errors = {}
+    validated_norms = []
+
+    # Validate all items at once
+    for item in request.json:
+        if 'id' not in item:
+            validated_data = validate_or_abort(path, item, abort_request=False)
+            if validated_data.get('errors'):
+                # Save errors
+                if not validation_errors.get(item[group_by_field]):
+                    validation_errors[item[group_by_field]] = {}
+                validation_errors[item[group_by_field]].update(validated_data['errors'])
+            else:
+                # Save validated document
+                validated_norms.append(validated_data)
+    return validation_errors, validated_norms
 
 
 # Update
@@ -369,6 +391,62 @@ def delete_upstream_of_equipment(item_id, upstream_id):
 # Remove connection between equipment and its downstream
 def delete_downstream_of_equipment(item_id, downstream_id):
     return delete_upstream_of_equipment(downstream_id, item_id)
+
+
+# Add standard norms to an equipment
+def add_standard_norms_to_equipment(item_id):
+    available_norms = get_available_norms()
+    if available_norms:
+        equipment = db.session.query(Equipment).filter_by(id=item_id).first()
+        if equipment:
+            equipment_type_id = equipment.equipment_type_id
+            add_equipment_norms_to_session(available_norms, equipment_type_id, item_id)
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                abort(500, e.args)
+    return True
+
+
+# Get all currently available norms
+def get_available_norms():
+    norms = db.session.query(Norm).all()
+    available_norms = {}
+    for norm in norms:
+        norm_model = model_dict.get(norm.table_name, {}).get('model')
+        if norm_model:
+            available_norms[norm_model] = norm.table_name
+    return available_norms
+
+
+def add_equipment_norms_to_session(available_norms, equipment_type_id, item_id):
+    for norm_model, norm_table_name in available_norms.items():
+        # Get standard norm
+        equipment_norm = db.session.query(norm_model) \
+            .filter_by(equipment_type_id=equipment_type_id) \
+            .order_by(norm_model.date_created.desc()) \
+            .first()
+        if equipment_norm:
+            equipment_norm = prepare_equipment_norm_data(equipment_norm, norm_table_name, item_id)
+            if equipment_norm:
+                db.session.add(equipment_norm)
+
+
+# Pre-process standard norm to save it to norm data table
+def prepare_equipment_norm_data(equipment_norm, norm_table_name, item_id):
+    equipment_norm = equipment_norm.serialize()
+    equipment_norm_model = model_dict.get("{}_data".format(norm_table_name), {}).get('model')
+    if equipment_norm_model:
+        equipment_norm['norm_id'] = equipment_norm.pop('id')
+        equipment_norm['equipment_id'] = item_id
+        equipment_norm['user_id'] = login.current_user.id
+        del equipment_norm['equipment_type_id']
+        del equipment_norm['equipment_type']
+        del equipment_norm['date_created']
+        equipment_norm = equipment_norm_model(**equipment_norm)
+        return equipment_norm
+    return {}
 
 
 # Add a lot of test results
@@ -670,6 +748,14 @@ def delete_equipment_downstream_handler(item_id, downstream_id):
     return return_json('result', delete_downstream_of_equipment(item_id, downstream_id))
 
 
+# Add standard norms to the equipment
+@api_blueprint.route('/equipment/<int:item_id>/norm/', methods=['POST'])
+@login_required
+def create_equipment_standard_norms_handler(item_id):
+    abort_if_wrong_id(item_id)
+    return return_json('result', add_standard_norms_to_equipment(item_id))
+
+
 # Create a lot of test_results with equipment using one query
 @api_blueprint.route('/test_result/equipment/', methods=['POST'])
 @login_required
@@ -885,19 +971,5 @@ def get_release_version_handler():
     answer = os.popen('git tag -l "v*"').read()
     current_version = answer.rstrip().split('\n')[-1:]
     return return_json('result', current_version)
-
-
-# Create or update a lot of norm data records
-@api_blueprint.route('/norm_data/multi/<path>', methods=['POST'])
-@login_required
-@json_required
-def norm_data_handler(path):
-    if path not in ('norm_gas_data',
-                    'norm_furan_data',
-                    'norm_isolation_data',
-                    'norm_particles_data',
-                    'norm_physic_data'):
-        abort(404)
-    return return_json('result', add_or_update_items(path))
 
 api.register_blueprint(api_blueprint)

@@ -6,6 +6,7 @@ import {Link} from 'react-router';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import TextField from './TextField';
+import {validate, updateFieldErrors} from '../helpers';
 
 
 var NewNormIsolationRow = React.createClass({
@@ -20,10 +21,20 @@ var NewNormIsolationRow = React.createClass({
                     <div className="col-md-2">
                         <TextField
                             onChange={this.handleChange}
+                            label="Name"
+                            name="name"
+                            value={data.name}
+                            data-normId={this.props.normId}
+                            errors={errors}
+                            />
+                    </div>
+                    <div className="col-md-2">
+                        <TextField
+                            onChange={this.handleChange}
                             label="C"
                             name="c"
                             value={data.c}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -33,7 +44,7 @@ var NewNormIsolationRow = React.createClass({
                             label="F"
                             name="f"
                             value={data.f}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -43,7 +54,7 @@ var NewNormIsolationRow = React.createClass({
                             label="Seal"
                             name="seal"
                             value={data.seal}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -53,7 +64,7 @@ var NewNormIsolationRow = React.createClass({
                             label="Not Seal"
                             name="notseal"
                             value={data.notseal}
-                            data-type="float"
+                            data-normId={this.props.normId}
                             errors={errors}
                         />
                     </div>
@@ -72,67 +83,70 @@ var NewNormIsolationForm = React.createClass({
         }
     },
 
-    componentDidMount: function () {
-        if (this.props.source) {
-            this.serverRequest = $.authorizedGet(this.props.source, function (result) {
-                var predefinedNorms = (result['result']);
-                this.setState({
-                    predefinedNorms: predefinedNorms
-                });
-            }.bind(this), 'json');
-        }
+    _validateDict: {
+        "name": {type: "text", maxLen: 50, label: "Name"},
+        c: {type: "float", label: "C"},
+        f: {type: "float", label: "F"},
+        notseal: {type: "float", label: "Not seal"},
+        seal: {type: "float", label: "Seal"}
     },
 
-    handleChange: function(e, normId){
+    componentDidMount: function () {
+        this.setState({norms: this.props.data || {}, errors: this.props.errorData || {}});
+    },
+
+    handleChange: function(e){
         e.stopPropagation();
         var state = this.state;
-        if (!state.norms[normId]) {
-            state.norms[normId] = {};
+        state.norms[e.target.name] = e.target.value;
+        if (this._validateDict[e.target.name]) {
+            var errors = validate(e, this._validateDict);
+            state = updateFieldErrors(this.state, e.target.name, state, errors);
         }
-        state.norms[normId][e.target.name] = e.target.value;
         this.setState(state);
+        this.props.saveNormGlobally('norm_isolation', state.norms, state.errors);
     },
 
     submit: function (equipmentId) {
-        if (!this.is_valid()) {
+        if (!this.isValid()) {
             NotificationManager.error('Please correct the errors');
             return;
         }
-        this._clearErrors();
         var xhr = this._save(equipmentId);
-        if (xhr) {
-            xhr.done(this._onSuccess)
-                .fail(this._onError)
-                .always(this.hideLoading)
-        }
+        return xhr;
     },
 
-    is_valid: function () {
-        return (Object.keys(this.state.errors).length <= 0);
+    isValid: function () {
+        // Check errors only if there are norms
+        if (Object.keys(this.state.norms).length > 0) {
+            return Object.keys(this.props.errorData).length == 0 || Object.keys(this.state.errors).length == 0;
+        } else {
+            return true;
+        }
     },
 
     _save: function (equipmentId) {
         var norms = this.state.norms;
-        var data = [];
-        for (var normId in norms) {
-            var normData = {norm_id: normId, equipment_id: equipmentId};
-            for (var key in norms[normId]) {
-                var value = norms[normId][key];
-                if (value == "") {
-                    value = null;
-                }
-                normData[key] = value;
+        var normData = {equipment_id: equipmentId};
+
+        for (var key in norms) {
+            var value = norms[key];
+            if (value == "") {
+                value = null;
             }
-            data.push(normData);
+            normData[key] = value;
         }
         var xhr;
-        if (Object.keys(data).length) {
+        if (Object.keys(normData).length) {
            xhr = $.authorizedAjax({
-                url: '/api/v1.0/norm_data/multi/norm_isolation_data',
+                url: '/api/v1.0/norm_isolation_data/',
                 type: 'POST',
+                beforeSend: function(jqXHR, settings) {
+                    jqXHR.normName = 'norm_isolation';
+                },
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(data)
+                data: JSON.stringify(normData)
             });
         }
         return xhr;
@@ -145,11 +159,13 @@ var NewNormIsolationForm = React.createClass({
     _onSuccess: function (data) {
         // Clean the form
         this.setState(this.getInitialState());
+        this.props.cleanForm();
+        this.props.setNormSubformSaved();
         NotificationManager.success('Norms have been successfully saved');
     },
 
     _onError: function (data) {
-        var message = "Failed to add norms";
+        var message = "Failed to add isolation norms";
         var res = data.responseJSON;
         if (res.message) {
             message = data.responseJSON.message;
@@ -160,16 +176,12 @@ var NewNormIsolationForm = React.createClass({
                 message = res.error.join(". ");
             } else if (res.error instanceof Object) {
                 // We get object of errors with field names as key
-                for (var field in res.error) {
-                    var errorMessage = res.error[field];
-                    if (Array.isArray(errorMessage)) {
-                        errorMessage = errorMessage.join(". ");
-                    }
-                    res.error[field] = errorMessage;
-                }
-                this.setState({
-                    errors: res.error
-                });
+				for (var field in res.error) {
+					var errorMessage = res.error[field];
+					if (Array.isArray(errorMessage)) {
+						errorMessage = errorMessage.join(". ");
+					}
+				}
             } else {
                 message = res.error;
             }
@@ -178,24 +190,14 @@ var NewNormIsolationForm = React.createClass({
     },
 
     render: function () {
-        var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
-        var items = [];
-
-        for (var key in this.state.predefinedNorms) {
-            items.push(
-                <div className="row" key={this.state.predefinedNorms[key].id}>
-                    <div className="col-md-1"><strong>{this.state.predefinedNorms[key].c}</strong></div>
-                    <NewNormIsolationRow
-                        data={this.state}
-                        handleChange={this.handleChange}
-                        normId={this.state.predefinedNorms[key].id}
-                        errors={this.state.errors}/>
-                </div>
-            );
-        }
+        let errors = this.props.errorData || this.state.errors;
         return (
             <div>
-                {items}
+                <NewNormIsolationRow
+                        data={this.state.norms}
+                        handleChange={this.handleChange}
+                        normId={this.state.predefinedNorms.id}
+                        errors={errors}/>
             </div>
 
         )

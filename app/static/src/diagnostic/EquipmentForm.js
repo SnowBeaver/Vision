@@ -401,11 +401,11 @@ var AssignedToSelectField = React.createClass({
 
 var NormSelectField = React.createClass({
 
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value
-        })
-    },
+    //handleChange: function (event, index, value) {
+    //    this.setState({
+    //        value: event.target.value
+    //    })
+    //},
 
     getInitialState: function () {
         return {
@@ -439,9 +439,11 @@ var NormSelectField = React.createClass({
     render: function () {
         var menuItems = [];
         for (var key in this.state.items) {
+            var name = this.state.items[key].table_name != 'norm_particles' ? this.state.items[key].table_name : 'particles';
             menuItems.push(<option key={this.state.items[key].id}
+                                   className={this.props.errors[name] ? 'text-danger' : ''}
                                    value={this.state.items[key].id}
-                                   data-name={this.state.items[key].table_name != 'norm_particles' ? this.state.items[key].table_name : 'particles'}>{`${this.state.items[key].name}`}</option>);
+                                   data-name={name}>{`${this.state.items[key].name}`}</option>);
         }
 
         return (
@@ -452,7 +454,7 @@ var NormSelectField = React.createClass({
                         name="norm_id"
                         componentClass="select"
                         placeholder="Select norm"
-                        onChange={this.handleChange}
+                        onChange={this.props.onChange}
                         required={this.props.required}
                         value={this.props.value}>
                         <option value="">Select norm{this.props.required ? " *" : ""}</option>
@@ -465,6 +467,29 @@ var NormSelectField = React.createClass({
     }
 });
 
+var NormTypeSelectField = React.createClass({
+    render: function () {
+        return (
+            <div>
+                <FormGroup controlId="formControlsSelect6"
+                           validationState={this.props.errors.norm_type ? 'error' : null}>
+                    <FormControl
+                        name="norm_type"
+                        componentClass="select"
+                        placeholder="Select norm type"
+                        onChange={this.props.onChange}
+                        required={this.props.required}
+                        value={this.props.value}>
+                        <option value="">Select norm type{this.props.required ? " *" : ""}</option>
+                        <option value="standard">Standard</option>
+                        <option value="custom">Custom</option>
+                    </FormControl>
+                    <HelpBlock className="warning">{this.props.errors.norm_type}</HelpBlock>
+                </FormGroup>
+            </div>
+        );
+    }
+});
 
 var FrequencySelectField = React.createClass({
 
@@ -580,8 +605,6 @@ var EqAdditionalParams = React.createClass({
             tableName: ''
         }
     },
-    componentDidMount: function () {
-    },
 
     render: function () {
 
@@ -649,33 +672,180 @@ var NormAdditionalParams = React.createClass({
 
     getInitialState: function () {
         return {
-            tableName: ''
+            errors: {},
+            norm_id: '',
+            norm_option_text:{},
+            norms: {},
+            refs: {},
+            normsToSave: 0
         }
     },
-    componentDidMount: function () {
+
+    onChange: function (e) {
+        let state = {};
+        let name = e.target[e.target.selectedIndex].getAttribute('data-name')
+        state[e.target.name] = e.target.value;
+        state['norm_option_text'] = {
+            name: name,
+            id: e.target.value,
+            text: e.target[e.target.selectedIndex].text
+        };
+        this.setState(state);
+    },
+
+    submit: function (equipmentId) {
+        if (this.props.data.norm_type == 'custom' && this.state.norm_id) {
+            this.setState({normsToSave: Object.keys(this.state.norms).length});
+            for (let normName in this.state.norms) {
+                this.state.refs[normName]
+                    .submit(equipmentId)
+                    .done(this.clearForm)
+                    .fail(this._onError)
+            }
+        }
+    },
+
+    _onError: function (xhr, ajaxOptions, thrownError) {
+        let errors = this.state.errors;
+        errors[xhr.normName] = xhr.responseJSON.error;
+        this.setState(errors);
+        this.state.refs[xhr.normName]._onError(xhr, ajaxOptions, thrownError);
+    },
+
+    clearForm: function () {
+        // Clear main for after save of the last form
+        if (this.state.normsToSave == 1) {
+            this.props.clearForm();
+        } else {
+            let normsToSave = this.state.normsToSave;
+            normsToSave--;
+            this.setState({normsToSave: normsToSave});
+        }
+    },
+
+    isValid: function () {
+        let isValid = true;
+        for (let normName in this.state.norms) {
+            if (!this.state.refs[normName].isValid()) {
+                isValid = false;
+                break;
+            }
+        }
+        return isValid;
+    },
+
+    saveNormGlobally: function (norm, state, newErrors) {
+        let norms = this.state.norms;
+        let errors = this.state.errors;
+        let refs = this.state.refs;
+        norms[norm] = state;
+        if (Object.keys(newErrors).length) {
+            errors[norm] = newErrors;
+        } else {
+            delete errors[norm];
+        }
+        refs[norm] = this.refs[norm];
+        this.setState({norms: norms, errors: errors});
     },
 
     render: function () {
+        let normSelectField = <NormSelectField
+            source="/api/v1.0/norm"
+            value={this.state.norm_option_text.id}
+            onChange={this.onChange}
+            errors={this.state.errors}
+            ref="norm_id"
+            required/>;
 
-        if (typeof this.props.data.norm_option_text == 'undefined') {
-            return (<div></div>);
+        if (Object.keys(this.state.norm_option_text).length == 0) {
+            return (<div className="col-md-4 nopadding">{normSelectField}</div>);
         }
-        switch (this.props.data.norm_option_text.name) {
+
+        switch (this.state.norm_option_text.name) {
             case 'norm_furan':
                 return (
-                    <NewNormFuranForm ref='norm_furan' source="/api/v1.0/norm_furan" errors={this.props.data.errors}/>);
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormFuranForm
+                                ref='norm_furan'
+                                data={this.state.norms.norm_furan}
+                                errorData={this.state.errors.norm_furan || {}}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_gas':
-                return (<NewNormGasForm ref='norm_gas' source="/api/v1.0/norm_gas" errors={this.props.data.errors}/>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormGasForm
+                                ref='norm_gas'
+                                data={this.state.norms.norm_gas}
+                                errorData={this.state.errors.norm_gas || {}}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_isolation':
-                return (<NewNormIsolationForm ref='norm_isolation' source="/api/v1.0/norm_isolation" errors={this.props.data.errors}/>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormIsolationForm
+                                ref='norm_isolation'
+                                data={this.state.norms.norm_isolation}
+                                errorData={this.state.errors.norm_isolation || {}}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'norm_physic':
-                return (<NewNormPhysicForm ref='norm_physic' source="/api/v1.0/norm_physic" errors={this.props.data.errors}/>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormPhysicForm
+                                ref='norm_physic'
+                                data={this.state.norms.norm_physic}
+                                errorData={this.state.errors.norm_physic || {}}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             case 'particles':
-                return (<NewNormParticlesForm ref='particles' source="/api/v1.0/particles" errors={this.props.data.errors}/>);
+                return (
+                    <div>
+                        <div className="col-md-12 nopadding">
+                            <div className="col-md-4 nopadding">{normSelectField}</div>
+                        </div>
+                        <div>
+                            <NewNormParticlesForm
+                                ref='particles'
+                                data={this.state.norms.particles}
+                                errorData={this.state.errors.particles || {}}
+                                saveNormGlobally={this.saveNormGlobally}
+                                setNormSubformSaved={this.props.setNormSubformSaved}
+                                cleanForm={this.props.clearForm} />
+                        </div>
+                    </div>);
                 break;
             default:
                 return null;
@@ -696,7 +866,6 @@ const EquipmentForm = React.createClass({
                 'manufacturer_id',
                 'location_id',
                 'assigned_to_id',
-                'norm_id',
                 'name',
                 'serial',
                 'equipment_number',
@@ -707,11 +876,14 @@ const EquipmentForm = React.createClass({
                 //'upstream1',  // TODO: Exclude upstream field or let adding multiple upstreams
                 'phys_position',
                 'tension4',
-                'manufactured',
+                'manufactured'
             ],
             changedFields: [],
             option_text: {},
-            equipmentId: null   // Is set when main form is saved
+            equipmentId: null,   // Is set when main form is saved
+            equipmentSubformSaved: false,
+            normSubformSaved: false,
+            norm_type: ''
         };
 
         for (var i = 0; i < response.fields.length; i++) {
@@ -758,19 +930,42 @@ const EquipmentForm = React.createClass({
             })
         } else {
             // Save only subform (for instance, when saving subform for the first time, API returned errors)
-            xhr = this._saveSubform(subform, this.state.equipmentId, path);
+            if (!this.state.equipmentSubformSaved) {
+                xhr = this._saveSubform(subform, this.state.equipmentId, path);
+            }
+            if (!this.state.normSubformSaved) {
+                xhr = this._saveNormAdditionalParams(this.state.equipmentId);
+            }
         }
         return xhr;
     },
 
     _saveNormAdditionalParams(equipmentId) {
-        var formName = this.state.norm_option_text.name;
-        this.refs.normAdditionalParams.refs[formName].submit(equipmentId);
+        if (this.state.norm_type == 'custom') {
+            this._getNormAdditionalParamsForm().submit(equipmentId);
+        } else if (this.state.norm_type == 'standard') {
+            this.saveStandardNorm(equipmentId);
+        }
+    },
+
+    _getNormAdditionalParamsForm(){
+        return this.refs.normAdditionalParams;
+    },
+
+    saveStandardNorm: function (equipmentId) {
+        $.authorizedAjax({
+            url: '/api/v1.0/equipment/' + equipmentId + '/norm/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json'
+        });
     },
 
     _saveSubform(subform, equipmentId, path){
         var that = this;
         if (Object.keys(subform).length != 0) {
+            delete subform.norm_type;
+            delete subform.norm_id;
             subform['equipment_id'] = equipmentId;
             for (var field in subform) {
                 if (subform[field] == "") {
@@ -794,10 +989,11 @@ const EquipmentForm = React.createClass({
 
     _onSubmit: function (e) {
         e.preventDefault();
-        if (!this.is_valid()) {
+        if (!this.isValid() || (this.state.norm_type == 'custom' && !this._getNormAdditionalParamsForm().isValid())) {
             NotificationManager.error('Please correct the errors');
             return;
         }
+
         this._clearErrors();
         var xhr = this._save();
         if (xhr) {
@@ -810,9 +1006,16 @@ const EquipmentForm = React.createClass({
         this.setState({loading: false});
     },
 
+    setNormSubformSaved: function () {
+        this.setState({normSubformSaved: true});
+    },
+
     _onSuccess: function (data) {
         // Clean the form
-        this.setState(this.getInitialState());
+        this.setState({equipmentSubformSaved: true});
+        if (this.state.norm_type == 'standard') {
+            this.setState(this.getInitialState());
+        }
         NotificationManager.success('Equipment has been successfully saved');
     },
 
@@ -847,6 +1050,10 @@ const EquipmentForm = React.createClass({
 
     _clearErrors: function () {
         this.setState({errors: {}});
+    },
+
+    clearForm: function () {
+        this.setState(this.getInitialState());
     },
 
     _onChange: function (e) {
@@ -893,14 +1100,8 @@ const EquipmentForm = React.createClass({
                 id: e.target.value,
                 text: e.target[e.target.selectedIndex].text
             }
-        }
-
-        if (e.target.name == 'norm_id') {
-            form['norm_option_text'] = {
-                name: e.target[e.target.selectedIndex].getAttribute('data-name'),
-                id: e.target.value,
-                text: e.target[e.target.selectedIndex].text
-            };
+        } else if (e.target.name == 'norm_id') {
+            form.normSubformSaved = false;
         }
 
 
@@ -938,7 +1139,7 @@ const EquipmentForm = React.createClass({
             var typePatterns = {
                 "float": /^(-|\+?)[0-9]+(\.)?[0-9]*$/,
                 "int": /^(-|\+)?(0|[1-9]\d*)$/,
-                "text": /(\w|\W)+$/,
+                "text": /(\w|\W)+$/
             };
             if (!typePatterns[type].test(value)) {
                 error = "Invalid " + type + " value";
@@ -978,7 +1179,7 @@ const EquipmentForm = React.createClass({
         return state;
     },
 
-    is_valid: function () {
+    isValid: function () {
         return (Object.keys(this.state.errors).length <= 0);
     },
 
@@ -1074,7 +1275,6 @@ const EquipmentForm = React.createClass({
         state.changedFields = this.state.changedFields.concat([fieldName]);
         this.setState(state);
         this.refs[fieldName].componentDidMount();
-
     },
 
     _setDateTimeFieldDate(timestamp, fieldName){
@@ -1092,8 +1292,15 @@ const EquipmentForm = React.createClass({
             }
             state[fieldName] = timestamp;    // Already formatted to ISO string
         }
-        // state.changedFields = this.state.changedFields.concat(["visual_date"]);
         this.setState(state);
+    },
+
+    getNormType: function () {
+        return this.state.norm_type;
+    },
+
+    getEquipmentType: function () {
+        return this.state.equipment_type_id;
     },
 
     render: function () {
@@ -1181,21 +1388,29 @@ const EquipmentForm = React.createClass({
 
                             <div className="row">
                                 <div className="col-lg-11">
-                                    <NormSelectField
-                                        source="/api/v1.0/norm"
-                                        value={this.state.norm_id}
+                                    <NormTypeSelectField
+                                        onChange={this._onChange}
+                                        value={this.state.norm_type}
                                         errors={this.state.errors}
-                                        ref="norm_id"
+                                        ref="norm_type"
                                         required
                                     />
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-md-12">
-                                    <NormAdditionalParams
-                                        ref='normAdditionalParams'
-                                        data={this.state}/>
-                                </div>
+                                {
+                                    this.state.norm_type == 'custom' ?
+                                        <div className="col-md-12">
+                                            <NormAdditionalParams
+                                                ref='normAdditionalParams'
+                                                clearForm={this.clearForm}
+                                                getNormType={this.getNormType}
+                                                getEquipmentType={this.getEquipmentType}
+                                                setNormSubformSaved={this.setNormSubformSaved}
+                                                data={this.state}/>
+                                        </div>
+                                    : null
+                                }
                             </div>
                             <FormGroup controlId="inputNameField"
                                        validationState={this.state.errors.name ? 'error' : null}>
