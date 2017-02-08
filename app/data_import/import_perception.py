@@ -29,7 +29,7 @@ def strip(data):
 
 
 def get_admin_id():
-    user_id = db.session.query(User).filter_by(name='admin').first().id
+    user_id = db.session.query(User).filter_by(email='admin@visiondiagnostic.org').first().id
     return user_id
 
 
@@ -160,12 +160,16 @@ def save_equipment(data):
 
 
 def prepare_equipment_norms(item):
+    print('---', item['norm_physic'])
     norm_physic = db.session.query(NormPhysic).filter_by(name=item['norm_physic']).first()
     equipment_norm = None
     if norm_physic:
+        print('====', item['norm_physic'])
         norm_physic = norm_physic.serialize()
         norm_physic['norm_id'] = norm_physic.pop('id')
         del norm_physic['equipment_id']
+        del norm_physic['equipment_type']
+        del norm_physic['equipment_type_id']
         equipment_norm = NormPhysicData(**norm_physic)
         db.session.add(equipment_norm)
     del item['norm_physic']
@@ -278,10 +282,11 @@ def run_import():
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
     cursor = connection.cursor()
 
-    # Save equipment and data related to it
-    process_equipment_records(cursor)
     # Save predefined norms
     process_norms(cursor)
+
+    # Save equipment and data related to it
+    process_equipment_records(cursor)
 
     cursor.close()
     connection.close()
