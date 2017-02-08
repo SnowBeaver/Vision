@@ -3,7 +3,7 @@ import pypyodbc
 import datetime
 
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
-    NormPhysic, NormPhysicData, NormFuran, NormFuranData
+    NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData
 from app.users.models import User
 from app import db
 
@@ -70,22 +70,23 @@ def fetch_equipment_data(equipments):
                 'assigned_to_id': user_id,
                 'nbr_of_tap_change_ltc': equipment[60],     # Nbr_Change_Prise
                 'status': None,
-                'phys_position': equipment[97],      # PosPhys
-                'tension4': equipment[104],     #Tension4
-                'validated': equipment[150],     #Valider
-                'invalidation': equipment[151],  #EnValidation
-                'prev_serial_number': equipment[152],   #NoSerieEquipeAnc
+                'phys_position': equipment[97],             # PosPhys
+                'tension4': equipment[104],                 #Tension4
+                'validated': equipment[150],                #Valider
+                'invalidation': equipment[151],             #EnValidation
+                'prev_serial_number': equipment[152],       #NoSerieEquipeAnc
                 'prev_equipment_number': equipment[153],    #NoEquipementAnc
-                'sibling': equipment[154],   #Fratrie
+                'sibling': equipment[154],                  #Fratrie
                 'name': None,
-                'serial': equipment[6], #NoSerieEquipe
+                'serial': equipment[6],                     #NoSerieEquipe
                 'manufacturer_id': equipment[7].strip() if equipment[7] else None,    #get id
-                'manufactured': equipment[8],   #annee
-                'description': equipment[5], #Description
-                'frequency': equipment[54], #Frequence
-                'tie_status': equipment[93],   #LocTie
-                'norm_physic': equipment[61],    #NormePhy
-                'norm_furan': equipment[63]     #NormeFur
+                'manufactured': equipment[8],               #annee
+                'description': equipment[5],                #Description
+                'frequency': equipment[54],                 #Frequence
+                'tie_status': equipment[93],                #LocTie
+                'norm_physic': equipment[61],               #NormePhy
+                'norm_furan': equipment[63],                #NormeFur
+                'norm_gas': equipment[62],                  #NormeGD
             }
         )
     return data
@@ -151,9 +152,18 @@ def save_equipment(data):
         # Add equipment to the physic norm
         if equipment_norms.get('norm_physic'):
             equipment_norms['norm_physic'].equipment = equipment
+
         # Add equipment to the furan norm
         if equipment_norms.get('norm_furan'):
             equipment_norms['norm_furan'].equipment = equipment
+
+        # Add equipment to the gas norms
+        # There are several gas norms with the same name in DB,
+        # but different condition
+        # Add them ALL to equipment
+        if equipment_norms.get('norm_gas'):
+            for norm in equipment_norms.get('norm_gas'):
+                norm.equipment = equipment
 
         db.session.add(equipment)
     try:
@@ -166,33 +176,61 @@ def save_equipment(data):
 
 
 def prepare_equipment_norms(item):
+    """ Prepare (clone and modify, if needed) norms related to saved equipment """
     equipment_norms = {}
     # Norm Physic
-    norm_physic = db.session.query(NormPhysic).filter_by(name=item['norm_physic']).first()
-    if norm_physic:
-        norm_physic = norm_physic.serialize()
-        norm_physic['norm_id'] = norm_physic.pop('id')
-        del norm_physic['equipment_id']
-        del norm_physic['equipment_type']
-        del norm_physic['date_created']
-        del norm_physic['equipment_type_id']
-        equipment_norms['norm_physic'] = NormPhysicData(**norm_physic)
-        db.session.add(equipment_norms['norm_physic'])
+    norm = get_and_clone_norm(item['norm_physic'], NormPhysic, NormPhysicData)
+    if norm:
+        equipment_norms['norm_physic'] = norm
     del item['norm_physic']
 
     # Norm Furan
-    norm_furan = db.session.query(NormFuran).filter_by(name=item['norm_furan']).first()
-    if norm_furan:
-        norm_furan = norm_furan.serialize()
-        norm_furan['norm_id'] = norm_furan.pop('id')
-        del norm_furan['equipment_type']
-        del norm_furan['equipment_type_id']
-        del norm_furan['date_created']
-        equipment_norms['norm_furan'] = NormFuranData(**norm_furan)
-        db.session.add(equipment_norms['norm_furan'])
+    norm = get_and_clone_norm(item['norm_furan'], NormFuran, NormFuranData)
+    if norm:
+        equipment_norms['norm_furan'] = norm
     del item['norm_furan']
 
+    # Norms Gas
+    norms = get_and_clone_norms(item['norm_gas'], NormGas, NormGasData)
+    if norms:
+        equipment_norms['norm_gas'] = norms
+    del item['norm_gas']
+
     return item, equipment_norms
+
+
+def get_and_clone_norm(norm_name, norm_model, norm_data_model):
+    """ Clone one norm from DB """
+    norm = db.session.query(norm_model).filter_by(name=norm_name).first()
+    cloned_norm = None
+    if norm:
+        cloned_norm = modify_norm_before_clone(norm, norm_data_model)
+        db.session.add(cloned_norm)
+    return cloned_norm
+
+
+def get_and_clone_norms(norm_name, norm_model, norm_data_model):
+    """ Clone multiple norms from DB """
+    norms = db.session.query(norm_model).filter_by(name=norm_name).all()
+    cloned_norms = []
+    for norm in norms:
+        norm = modify_norm_before_clone(norm, norm_data_model)
+        db.session.add(norm)
+        cloned_norms.append(norm)
+    return cloned_norms
+
+
+def modify_norm_before_clone(norm, norm_data_model):
+    """ Remove extra fields which are not in norm data tables"""
+    norm = norm.serialize()
+    norm['norm_id'] = norm.pop('id')
+    if 'equipment_id' in norm:
+        del norm['equipment_id']
+    del norm['equipment_type']
+    del norm['date_created']
+    del norm['equipment_type_id']
+    cloned_norm = norm_data_model(**norm)
+    return cloned_norm
 
 
 def get_additional_info(item):
