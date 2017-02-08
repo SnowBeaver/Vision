@@ -87,6 +87,78 @@ def fetch_equipment_data(equipments):
                 'norm_physic': equipment[61],               #NormePhy
                 'norm_furan': equipment[63],                #NormeFur
                 'norm_gas': equipment[62],                  #NormeGD
+                'specific_data': {
+                    'fluid_volume': equipment[62],          #LitreHuile
+                    'sealed': equipment[11],                #Scelle
+                    'welded_cover': equipment[12],          #CouvSoude
+                    'windings': equipment[28],              #Bobine
+                    'cooling_rating': equipment[62],        #
+                    'autotransformer': equipment[29],       #Auto_Transfo
+                    'threephase': equipment[14],            #TriPhase
+                    'gas_sensor_id': equipment[15],         #Capteur - get id
+                    'phase_number': equipment[62],          #
+                    'frequency': equipment[54],             #Frequence
+                    'primary_tension': equipment[22],       #Tension1
+                    'secondary_tension': equipment[23],     #Tension2
+                    'tertiary_tension': equipment[24],      #Tension3
+                    'based_transformerp_ower': equipment[62],             #Puissance1 - ?
+                    'first_cooling_stage_power': equipment[62],           #Puissance2 - ?
+                    'second_cooling_stage_power': equipment[62],          #Puissance3 - ?
+                    'primary_winding_connection': equipment[30],          #Raccord_Bobine1
+                    'secondary_winding_connection': equipment[31],        #Raccord_Bobine2
+                    'tertiary_winding_connection': equipment[32],         #Raccord_Bobine3
+                    'windind_metal': equipment[49],         #Bobine_Materiel
+                    'bil1': equipment[33],                  #BIL1
+                    'bil2': equipment[34],                  #BIL2
+                    'bil3': equipment[35],                  #Bil3
+                    'static_shield1': equipment[36],          #Ecran_Electro1
+                    'static_shield2': equipment[37],          #Ecran_Electro2
+                    'static_shield3': equipment[38],          #Ecran_Electro3
+                    'bushing_neutral1': equipment[42],        #Bushing_Neutre1
+                    'bushing_neutral2': equipment[43],        #Bushing_Neutre2
+                    'bushing_neutral3': equipment[44],        #Bushing_Neutre3
+                    'bushing_neutral4': equipment[110],       #Bushing_Neutre4
+                    'ltc1': equipment[39],                    #ChangeurP1
+                    'ltc2': equipment[40],                    #ChangeurP2
+                    'ltc3': equipment[41],                    #ChangeurP3
+                    'temperature_rise': equipment[59],      #Temp_elevation
+                    'impedance1': equipment[55],            #Impedance1
+                    'imp_base1': equipment[56],             #Imp_Base1
+                    'impedance2': equipment[57],            #Impedance2
+                    'imp_base2': equipment[58],             #Imp_Base2
+                    'mvaforced11': equipment[116],          #PuisForce11
+                    'mvaforced12': equipment[117],          #PuisForce12
+                    'mvaforced13': equipment[118],          #PuisForce13
+                    'mvaforced14': equipment[119],          #PuisForce14
+                    'mvaforced21': equipment[120],          #PuisForce21
+                    'mvaforced22': equipment[121],          #PuisForce22
+                    'mvaforced23': equipment[122],          #PuisForce23
+                    'mvaforced24': equipment[123],          #PuisForce24
+                    'impedance3': equipment[124],           #Impedance3
+                    'impbasedmva3': equipment[125],         #Imp_Base3
+                    'formula_ratio2': equipment[64],        #Formule_Ratio2
+                    'formula_ratio': equipment[50],         #Formule_Ratio
+                    'ratio_tag1': equipment[51],            #Etiquette1
+                    'ratio_tag2': equipment[52],            #Etiquette2
+                    'ratio_tag3': equipment[53],            #Etiquette3
+                    'ratio_tag4': equipment[65],            #Etiquette4
+                    'ratio_tag5': equipment[66],            #Etiquette5
+                    'ratio_tag6': equipment[67],            #Etiquette6
+                    'mvaactual': equipment[98],             #MWActuel
+                    'mvaractual': equipment[99],            #MVARActuel
+                    'mwreserve': equipment[100],            #MWReserve
+                    'mvarreserve': equipment[101],          #MVARReserve
+                    'mwultime': equipment[102],             #MWUltime
+                    'mvarultime': equipment[103],           #MVARUltime
+                    'mva4': equipment[105],                 #Puissance4 - ?
+                    'quaternary_winding_connection': equipment[106], #Raccord_Bobine4
+                    'bil4': equipment[107],                 #BIL4
+                    'static_shield4': equipment[108],       #Ecran_Electro4
+                    'ratio_tag7': equipment[112],           #Etiquette7
+                    'ratiot_ag8': equipment[113],           #Etiquette8
+                    'formula_ratio3': equipment[115],       #Formule_Ratio3
+
+                }
             }
         )
     return data
@@ -144,35 +216,53 @@ def save_additional_data(data):
 
 
 def save_equipment(data):
+    """ Save equipment, related norms (physic, furan and gas) """
     items = data['items']
     for item in items:
-        item, equipment_norms = prepare_equipment_norms(item)
-        item = get_additional_info(item)
-        equipment = Equipment(**item)
-        # Add equipment to the physic norm
-        if equipment_norms.get('norm_physic'):
-            equipment_norms['norm_physic'].equipment = equipment
-
-        # Add equipment to the furan norm
-        if equipment_norms.get('norm_furan'):
-            equipment_norms['norm_furan'].equipment = equipment
-
-        # Add equipment to the gas norms
-        # There are several gas norms with the same name in DB,
-        # but different condition
-        # Add them ALL to equipment
-        if equipment_norms.get('norm_gas'):
-            for norm in equipment_norms.get('norm_gas'):
-                norm.equipment = equipment
+        item, equipment_norms = prepare_equipment_norms(item)   # Norms
+        item = get_additional_info(item)    # location_id, manufacturer_id and equipment_type_id
+        equipment = Equipment(**item)       # Equipment
+        equipment = add_equipment_to_norms(equipment_norms, equipment)
+        # Equipment data depending on type
+        save_equipment_type_data(item)
 
         db.session.add(equipment)
     try:
         db.session.commit()
         print('Added equipment')
-        print('Added equipment furan and physic norms')
+        print('Added furan, physic and gas norms of all equipment items')
     except Exception as e:
         db.session.rollback()
     return True
+
+
+def add_equipment_to_norms(equipment_norms, equipment):
+    # Add equipment to the physic norm
+    if equipment_norms.get('norm_physic'):
+        equipment_norms['norm_physic'].equipment = equipment
+
+    # Add equipment to the furan norm
+    if equipment_norms.get('norm_furan'):
+        equipment_norms['norm_furan'].equipment = equipment
+
+    # Add equipment to the gas norms
+    # There are several gas norms with the same name in DB,
+    # but different condition
+    # Add them ALL to equipment
+    if equipment_norms.get('norm_gas'):
+        for norm in equipment_norms.get('norm_gas'):
+            norm.equipment = equipment
+    return equipment
+
+
+def save_equipment_type_data(item):
+    """ Save data related to equipment and which depends on type """
+    transformer_id = db.session.query(EquipmentType).filter_by(code='T').first()
+    data = {}
+    if transformer_id and item['equipment_type_id'] == transformer_id:
+        data = {
+
+        }
 
 
 def prepare_equipment_norms(item):
@@ -321,11 +411,11 @@ def process_equipment_records(cursor):
 
     # Prepare and save additional data from equipment
     additional_data = fetch_additional_data(equipments)
-    save_additional_data(data=additional_data)
+    save_additional_data(data=additional_data)      # Location and manufacturers
 
     # Save equipment
     equipment_data = fetch_equipment_data(equipments)
-    save_equipment(equipment_data)
+    save_equipment(equipment_data)                  # Equipment and norms related to them
 
 
 def process_norms(cursor):
