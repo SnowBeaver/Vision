@@ -4,7 +4,7 @@ import datetime
 
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
-    Transformer, GasSensor
+    Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab
 from app.users.models import User
 from app import db
 
@@ -454,6 +454,104 @@ def fetch_gas_sensor(items):
     return data
 
 
+# Electrical Profile
+def get_el_profiles(cursor):
+    query = __el_profiles_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_el_profiles(items):
+    data = {
+        'items': []
+    }
+    items_in_db = db.session.query(ElectricalProfile).all()
+    existing_items = [item.name for item in items_in_db]
+
+    for item in items:
+        if item[0] in existing_items:
+            continue
+
+        data['items'].append(
+            {
+                'name': item[0],            # NoProfil
+                'description': item[1],     # Description
+                'shared': True,             #TODO
+                'bushing': item[5],         #TODO
+                'winding': item[5],         # BOB_PF
+                'insulation_pf': item[8],   # BOB_RES
+                'insulation': item[4],      # RES_ISOL
+                'visual': item[9],          # INSP_VIS
+                'resistance': item[10],     #TODO
+                'degree': item[10],         #TODO
+                'turns': item[10],          # TTR
+            }
+        )
+    return data
+
+
+# Fluid Profile
+def get_fluid_profiles(cursor):
+    query = __fluid_profiles_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_fluid_profiles(items):
+    data = {
+        'items': []
+    }
+    items_in_db = db.session.query(FluidProfile).all()
+    existing_items = [item.name for item in items_in_db]
+
+    for item in items:
+        if item[0] in existing_items:
+            continue
+
+        data['items'].append(
+            {
+                'name': item[0],            # NoProfil
+                'description': item[1],     # Description
+                'shared': True,             #TODO
+                'gas': True,             #TODO
+                'water': True,             #TODO
+                'furans': True,             #TODO
+                'inhibitor': True,             #TODO
+                'pcb': True,             #TODO
+                'qty': True,             #TODO
+            }
+        )
+    return data
+
+
+# Labs
+def get_labs(cursor):
+    query = __labs_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_labs(items):
+    data = {
+        'items': []
+    }
+    items_in_db = db.session.query(Lab).all()
+    existing_items = [item.name for item in items_in_db]
+
+    for item in items:
+        if item[0] in existing_items:
+            continue
+
+        data['items'].append(
+            {
+                # 'code': item[1],         # CodeLaboratoire
+                'analyser': None,        # -
+                'name': item[0],         # Laboratoire
+            }
+        )
+    return data
+
+
 def process_equipment_records(cursor):
     # Get all equipment
     equipments = get_equipment(cursor)
@@ -479,6 +577,24 @@ def process_gas_sensor(cursor):
     save_items(gas_sensors, GasSensor)
 
 
+def process_electrical_profile(cursor):
+    profiles = get_el_profiles(cursor)
+    profiles = fetch_el_profiles(profiles)
+    save_items(profiles, ElectricalProfile)
+
+
+def process_fluid_profile(cursor):
+    profiles = get_fluid_profiles(cursor)
+    profiles = fetch_fluid_profiles(profiles)
+    save_items(profiles, FluidProfile)
+
+
+def process_labs(cursor):
+    labs = get_labs(cursor)
+    labs = fetch_labs(labs)
+    save_items(labs, Lab)
+
+
 def run_import():
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
@@ -489,6 +605,15 @@ def run_import():
 
     # Save gas sensor data (Capteur_GAZ)
     process_gas_sensor(cursor)
+
+    # Save electrical profile
+    process_electrical_profile(cursor)
+
+    # Save fluid profile
+    # process_fluid_profile(cursor) #TODO
+
+    # Save laboratories
+    process_labs(cursor)
 
     # Save equipment and data related to it
     process_equipment_records(cursor)
@@ -542,6 +667,38 @@ def __gas_sensor_sql():
                'N2,ErreurPPM,ErreurPourcent'
     query = "SELECT {} FROM Capteur_GAZ".format(all_cols)
     return query
+
+
+def __el_profiles_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'NoProfil,Description,Period,TRAV,RES_ISOL,BOB_PF,BOB_PF_DOB,DP,BOB_RES,INSP_VIS,' \
+               'TTR'
+    query = "SELECT {} FROM ProfilTestElec".format(all_cols)
+    return query
+
+
+def __fluid_profiles_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'NoProfil,Description,Period,GD,EAU_SER,ANT_SER,BPC_SER,Lieu_SER,EAU_POT,' \
+               'ANT_POT,BPC_POT,PAR,MDH,TestD1816,TestD1816_2,TestD877,TestCEI156,TestIFT,TestAcid,' \
+               'TestFacteurP,TestFacteurP100,TestDensite,TestPEclair,TestPEcoulement,TestViscosite,TestCouleur,TestFBoue,TestPAniline,TestSCorrosif,' \
+               'TestVisuel,Lieu_POT,EAU_FIO,ANT_FIO,BPC_FIO,Lieu_FIO,FUR_SER,FUR_POT'
+    query = "SELECT {} FROM ProfilTestElec".format(all_cols)
+    return query
+
+
+def __labs_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'Laboratoire,CodeLaboratoire'
+    query = "SELECT {} FROM Laboratoire".format(all_cols)
+    return query
+
 
 if __name__ == '__main__':
     run_import()
