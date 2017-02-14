@@ -510,15 +510,48 @@ def fetch_fluid_profiles(items):
 
         data['items'].append(
             {
-                'name': item[0],            # NoProfil
-                'description': item[1],     # Description
-                'shared': True,             #TODO
-                'gas': True,             #TODO
-                'water': True,             #TODO
-                'furans': True,             #TODO
-                'inhibitor': True,             #TODO
-                'pcb': True,             #TODO
-                'qty': True,             #TODO
+                'name': item[0],             # NoProfil
+                'description': item[1],      # Description
+                'shared': True,              #
+
+                # syringe
+                'gas': item[3],              #GD
+                'water': item[4],            #EAU_SER
+                'furans': item[35],          #FUR_SER
+                'inhibitor': None,           #TODO
+                'pcb': item[6],              #BPC_SER
+                'qty': None,                 #TODO
+                'sampling': item[7],         #Lieu_SER
+
+                # jar
+                'dielec': item[13],          #TestD1816
+                'acidity': item[18],         #TestAcid
+                'density': item[21],         #TestDensite
+                'pcb_jar': None,             #TODO
+                'inhibitor_jar': None,       #TODO
+                'point': None,               #TODO
+                'dielec_2': item[14],        #TestD1816_2
+                'color': item[25],           #TestCouleur
+                'pf': item[19],              #TestFacteurP
+                'particles': item[11],       #PAR
+                'metals': item[22],          #TestPEclair
+                'viscosity': item[24],       #TestViscosite
+                'dielec_d': item[15],        #TestD877
+                'ift': item[17],             #TestIFT
+                'pf_100': item[20],          #TestFacteurP100
+                'furans_f': item[36],        #FUR_POT
+                'water_w': item[8],          #EAU_POT
+                'corr': item[29],            #TestSCorrosif
+                'dielec_i': item[16],        #TestCEI156
+                'visual': item[29],          #TestVisuel
+                'qty_jar': None,             #TODO
+                'sampling_jar': item[30],    #Lieu_POT
+                
+                # vial
+                'pcb_vial': None,            #TODO
+                'antioxidant': item[32],     #ANT_FIO
+                'qty_vial': None,            #TODO
+                'sampling_vial': item[34],   #Lieu_FIO
             }
         )
     return data
@@ -610,7 +643,7 @@ def run_import():
     process_electrical_profile(cursor)
 
     # Save fluid profile
-    # process_fluid_profile(cursor) #TODO
+    process_fluid_profile(cursor)
 
     # Save laboratories
     process_labs(cursor)
@@ -687,7 +720,7 @@ def __fluid_profiles_sql():
                'ANT_POT,BPC_POT,PAR,MDH,TestD1816,TestD1816_2,TestD877,TestCEI156,TestIFT,TestAcid,' \
                'TestFacteurP,TestFacteurP100,TestDensite,TestPEclair,TestPEcoulement,TestViscosite,TestCouleur,TestFBoue,TestPAniline,TestSCorrosif,' \
                'TestVisuel,Lieu_POT,EAU_FIO,ANT_FIO,BPC_FIO,Lieu_FIO,FUR_SER,FUR_POT'
-    query = "SELECT {} FROM ProfilTestElec".format(all_cols)
+    query = "SELECT {} FROM ProfilEchantFluid".format(all_cols)
     return query
 
 
