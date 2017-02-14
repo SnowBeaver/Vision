@@ -4,7 +4,7 @@ import datetime
 
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
-    Transformer
+    Transformer, GasSensor
 from app.users.models import User
 from app import db
 
@@ -71,7 +71,7 @@ def fetch_equipment_data(equipments):
                 'assigned_to_id': user_id,
                 'nbr_of_tap_change_ltc': equipment[60],     # Nbr_Change_Prise
                 'status': None,
-                'phys_position': equipment[97],             # PosPhys
+                'phys_position': equipment[97],             #PosPhys
                 'tension4': equipment[104],                 #Tension4   - TODO: Why is it in equipment not transformer table
                 'validated': equipment[150],                #Valider
                 'invalidation': equipment[151],             #EnValidation
@@ -89,22 +89,22 @@ def fetch_equipment_data(equipments):
                 'norm_furan': equipment[63],                #NormeFur
                 'norm_gas': equipment[62],                  #NormeGD
                 'transformer_data': {
-                    'fluid_volume': equipment[62],          #LitreHuile
+                    'fluid_volume': equipment[4],           #LitreHuile
                     'sealed': equipment[11],                #Scelle
                     'welded_cover': equipment[12],          #CouvSoude
                     'windings': equipment[28],              #Bobine
-                    'cooling_rating': equipment[62],        #
+                    'cooling_rating': None,                 #TODO
                     'autotransformer': equipment[29],       #Auto_Transfo
-                    'threephase': equipment[14],            #TriPhase
-                    'gassensor_id': equipment[15],          #Capteur - get id
-                    'phase_number': equipment[62],          #
-                    'frequency': equipment[54],             #Frequence
+                    'threephase': equipment[13],            #TriPhase
+                    'gassensor_id': equipment[15],          #Capteur
+                    'phase_number': None,                   #TODO
+                    'frequency': str(equipment[54]),        #Frequence
                     'primary_tension': equipment[22],       #Tension1
                     'secondary_tension': equipment[23],     #Tension2
                     'tertiary_tension': equipment[24],      #Tension3
-                    'based_transformerp_ower': equipment[62],             #Puissance1 - ?
-                    'first_cooling_stage_power': equipment[62],           #Puissance2 - ?
-                    'second_cooling_stage_power': equipment[62],          #Puissance3 - ?
+                    'based_transformerp_ower': equipment[25],             #Puissance1 - ?
+                    'first_cooling_stage_power': equipment[26],           #Puissance2 - ?
+                    'second_cooling_stage_power': equipment[27],          #Puissance3 - ?
                     'primary_winding_connection': equipment[30],          #Raccord_Bobine1
                     'secondary_winding_connection': equipment[31],        #Raccord_Bobine2
                     'tertiary_winding_connection': equipment[32],         #Raccord_Bobine3
@@ -112,16 +112,16 @@ def fetch_equipment_data(equipments):
                     'bil1': equipment[33],                  #BIL1
                     'bil2': equipment[34],                  #BIL2
                     'bil3': equipment[35],                  #Bil3
-                    'static_shield1': equipment[36],          #Ecran_Electro1
-                    'static_shield2': equipment[37],          #Ecran_Electro2
-                    'static_shield3': equipment[38],          #Ecran_Electro3
-                    'bushing_neutral1': equipment[42],        #Bushing_Neutre1
-                    'bushing_neutral2': equipment[43],        #Bushing_Neutre2
-                    'bushing_neutral3': equipment[44],        #Bushing_Neutre3
-                    'bushing_neutral4': equipment[110],       #Bushing_Neutre4
-                    'ltc1': equipment[39],                    #ChangeurP1 (load tap changer)
-                    'ltc2': equipment[40],                    #ChangeurP2
-                    'ltc3': equipment[41],                    #ChangeurP3
+                    'static_shield1': equipment[36],        #Ecran_Electro1
+                    'static_shield2': equipment[37],        #Ecran_Electro2
+                    'static_shield3': equipment[38],        #Ecran_Electro3
+                    'bushing_neutral1': equipment[42],      #Bushing_Neutre1
+                    'bushing_neutral2': equipment[43],      #Bushing_Neutre2
+                    'bushing_neutral3': equipment[44],      #Bushing_Neutre3
+                    'bushing_neutral4': equipment[110],     #Bushing_Neutre4
+                    'ltc1': equipment[39],                  #ChangeurP1 (load tap changer)
+                    'ltc2': equipment[40],                  #ChangeurP2
+                    'ltc3': equipment[41],                  #ChangeurP3
                     'temperature_rise': equipment[59],      #Temp_elevation
                     'impedance1': equipment[55],            #Impedance1
                     'imp_base1': equipment[56],             #Imp_Base1
@@ -158,7 +158,7 @@ def fetch_equipment_data(equipments):
                     'ratio_tag7': equipment[112],           #Etiquette7
                     'ratiot_ag8': equipment[113],           #Etiquette8
                     'formula_ratio3': equipment[115],       #Formule_Ratio3
-
+                    # 'fluid_type_id': equipment[68],         #TypeHuile  - This field is not in the model
                 }
             }
         )
@@ -224,14 +224,14 @@ def save_equipment(data):
     items = data['items']
     for item in items:
         item, equipment_norms = prepare_equipment_norms(item)   # Norms
-        # item, transformer = save_equipment_type_data(item)      # Equipment data depending on type
+        item, transformer = save_equipment_type_data(item)      # Equipment data depending on type
         item = get_additional_info(item)           # location_id, manufacturer_id and equipment_type_id
         equipment = Equipment(**item)              # Equipment
-        # equipment = add_equipment_to_norms(equipment_norms, equipment)
+        equipment = add_equipment_to_norms(equipment_norms, equipment)
 
         # Add equipment to transformer record
-        # if transformer:
-        #     transformer.equipment = equipment
+        if transformer:
+            transformer.equipment = equipment
 
         db.session.add(equipment)
     try:
@@ -266,15 +266,12 @@ def add_equipment_to_norms(equipment_norms, equipment):
 def save_equipment_type_data(item):
     """ Save data related to equipment and which depends on type """
     # Transformer
-    # transformer_id = db.session.query(EquipmentType).filter_by(code='T').first()
     transformer = None
-    # print('--', item['equipment_type_id'])
-    # print('--+', transformer_id.id)
     if item['equipment_type_id'] == 'T':
         transformer = Transformer(**item['transformer_data'])
         db.session.add(transformer)
     del item['transformer_data']
-
+    # TODO: L and S equipment types
     return item, transformer
 
 
@@ -418,6 +415,45 @@ def save_items(data, model):
     return True
 
 
+# Gas sensor
+def get_gas_sensors(cursor):
+    query = __gas_sensor_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_gas_sensor(items):
+    data = {
+        'items': []
+    }
+    items_in_db = db.session.query(GasSensor).all()
+    existing_items = [item.model for item in items_in_db]
+
+    for item in items:
+        if item[0] in existing_items:
+            continue
+
+        data['items'].append(
+            {
+                'h2': item[2],      # H2
+                'ch4': item[3],     # CH4
+                'c2h2': item[4],    # C2H2
+                'c2h4': item[5],    # C2H4
+                'c2h6': item[6],    # C2H6
+                'co': item[7],      # CO
+                'co2': item[8],     # CO2
+                'o2': item[9],      # O2
+                'n2': item[10],     # N2
+                'ppm_error': item[11],      # ErreurPPM
+                'percent_error': item[12],  # ErreurPourcent
+                'model': item[0],           # Capteur
+                'equipment_id': None,       #
+                #TODO MAnufacturier -?
+            }
+        )
+    return data
+
+
 def process_equipment_records(cursor):
     # Get all equipment
     equipments = get_equipment(cursor)
@@ -437,6 +473,12 @@ def process_norms(cursor):
     save_items(norm_physic, NormPhysic)
 
 
+def process_gas_sensor(cursor):
+    gas_sensors = get_gas_sensors(cursor)
+    gas_sensors = fetch_gas_sensor(gas_sensors)
+    save_items(gas_sensors, GasSensor)
+
+
 def run_import():
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
@@ -444,6 +486,9 @@ def run_import():
 
     # Save predefined norms
     process_norms(cursor)
+
+    # Save gas sensor data (Capteur_GAZ)
+    process_gas_sensor(cursor)
 
     # Save equipment and data related to it
     process_equipment_records(cursor)
@@ -488,6 +533,15 @@ def __norm_physic_sql():
     query = "SELECT {} FROM NormePhysique".format(all_cols)
     return query
 
+
+def __gas_sensor_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'Capteur,Manufacturier,H2,CH4,C2H2,C2H4,C2H6,CO,CO2,O2,' \
+               'N2,ErreurPPM,ErreurPourcent'
+    query = "SELECT {} FROM Capteur_GAZ".format(all_cols)
+    return query
 
 if __name__ == '__main__':
     run_import()

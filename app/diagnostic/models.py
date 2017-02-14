@@ -594,7 +594,7 @@ class Transformer(db.Model):
     # fluid_level_id = db.Column(db.Integer, db.ForeignKey("fluid_level.id"))
     # fluid_level = db.relationship('FluidLevel', foreign_keys='Transformer.fluid_level_id')
 
-    gassensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"), nullable=False)
+    gassensor_id = db.Column('gas_sensor_id', db.ForeignKey("gas_sensor.id"))
     gas_sensor = relationship('GasSensor', backref='transformer')
 
     phase_number = db.Column(db.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
