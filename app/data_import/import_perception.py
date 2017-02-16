@@ -2,9 +2,12 @@ import os
 import pypyodbc
 import datetime
 
+from sqlalchemy import or_, and_
+
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
-    Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab
+    Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
+    Contract, ContractStatus
 from app.users.models import User
 from app import db
 
@@ -546,7 +549,7 @@ def fetch_fluid_profiles(items):
                 'visual': item[29],          #TestVisuel
                 'qty_jar': None,             #TODO
                 'sampling_jar': item[30],    #Lieu_POT
-                
+
                 # vial
                 'pcb_vial': None,            #TODO
                 'antioxidant': item[32],     #ANT_FIO
@@ -628,6 +631,220 @@ def process_labs(cursor):
     save_items(labs, Lab)
 
 
+def process_test_results_and_campaigns(cursor):
+    # Get recommendations
+    campaigns = get_campaigns(cursor)
+
+    processed_campaigns = fetch_campaigns(campaigns)
+    processed_test_results = fetch_test_results(campaigns)
+
+    campaigns, test_results = process_additional_data(processed_campaigns['items'], processed_test_results['items'])
+    save_test_results_and_campaigns(campaigns, test_results)
+
+
+def process_additional_data(campaigns, test_results):
+    # Get equipment ids, lab ids at once
+    equipments = []
+    labs = []
+    for test_result in test_results:
+        equipments.append(and_(Equipment.equipment_number == test_result['equipment_number'],
+                               Equipment.serial == test_result['serial']))
+        labs.append(test_result['lab_id'])
+    equipment_in_db = db.session.query(Equipment).filter(or_(*equipments)).all()
+    equipment_mapping = {'{}_{}'.format(equipment.equipment_number.strip(), equipment.serial.strip()): equipment.id for
+                         equipment in equipment_in_db}
+
+    lab_in_db = db.session.query(Lab).filter(Lab.name.in_(labs))
+    lab_mapping = {lab.name: lab.id for lab in lab_in_db}
+
+    # Map Test results, lab ids to equipment id
+    for test_result in test_results:
+        if test_result.get('equipment_number') and test_result.get('serial'):
+            # Equipment id
+            test_result['equipment_id'] = equipment_mapping.get(
+                '{}_{}'.format(test_result['equipment_number'].strip(), test_result['serial'].strip()))
+            del test_result['equipment_number']
+            del test_result['serial']
+
+        if test_result.get('lab_id'):
+            # lab id
+            test_result['lab_id'] = lab_mapping.get(test_result['lab_id'])
+
+    return campaigns, test_results
+
+
+def save_test_results_and_campaigns(campaigns, test_results):
+    mapped_campaigns = {}
+    for campaign in campaigns:
+        campaign_id = campaign.pop('clef_analyse', None)
+        added_campaign = Campaign(**campaign)
+        db.session.add(added_campaign)
+        mapped_campaigns[campaign_id] = added_campaign
+
+    test_results = save_contracts(test_results)
+
+    # Map campaigns to test results
+    for test_result in test_results:
+        test_result['campaign'] = mapped_campaigns.get(test_result.pop('clef_analyse', None))
+        db.session.add(TestResult(**test_result))
+
+    try:
+        db.session.commit()
+        print('Added campaigns and test results')
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+
+
+def save_contracts(test_results):
+    # Save contracts
+    existing_contracts = db.session.query(Contract).all()
+    existing_contracts = {existing_contract.name: existing_contract for existing_contract in existing_contracts}
+
+    for test_result in test_results:
+        contract_name = test_result['lab_contract_id']
+        contract_status_id = test_result['lab_contract_status_id']
+        # Map existing contract to test result
+        if contract_name in existing_contracts.keys():
+            test_result['lab_contract'] = existing_contracts[contract_name]
+        else:
+            # Create new contract and map it
+            contract = Contract(name=contract_name, contract_status_id=contract_status_id)
+            db.session.add(contract)
+            existing_contracts[contract_name] = contract
+            test_result['lab_contract'] = contract
+        del test_result['lab_contract']
+        del test_result['lab_contract_status_id']
+
+    return test_results
+
+
+# Campaigns
+def get_campaigns(cursor):
+    query = __campaigns_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_campaigns(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                            # ClefAnalyse
+                'date_created': datetime.datetime.utcnow(),         # -
+                'created_by_id': get_admin_id(),                    # -
+                'contract_id': item[31],                            # NoContrat
+                'date_sampling': item[12],                          # DatePrelevement
+                'description': item[25],                            # Commentaire
+                'status_id': item[32],                              # EtatCommande
+            }
+        )
+    return data
+
+
+# Test results
+def get_test_results(cursor):
+    query = __test_results_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_test_results(items):
+    data = {
+        'items': []
+    }
+
+    for item in items:
+        data['items'].append(
+            {
+                # 'campaign_id': item[1],         #
+                'clef_analyse': item[0],          # ClefAnalyse
+                'lab_contract_status_id': item[32],  # EtatCommande
+                'serial': item[1],                # NoSerieEquipe
+                'equipment_number': item[2],      # NoEquipement
+                'test_reason_id': item[7],        # CodeMotif
+                'date_analyse': item[3],          # DateAnalyse
+                'test_type_id': item[4],          # TypeAnalyse - get id
+                'sampling_point_id': item[8],     # CodeLieu
+                'test_status_id': item[26],        # EtatCodeAnalyse
+                'equipment_id': item[29],          # TestEquipNum
+                'fluid_profile_id': item[0],      #
+                'electrical_profile_id': item[0], #
+                'percent_ratio': item[9],         # PourcentRatio
+                'material_id': item[6],           # CodeMatiere
+                'fluid_type_id': item[10],         # TypeHuile
+                'performed_by_id': item[14],       # PrelevePar
+                'lab_id': item[17],                # Laboratoire
+                'lab_contract_id': item[36],       # NoContratLab
+                'seringe_num': item[37],           # SeringueNum
+                'mws': item[27],                   # MWs
+                'temperature': item[28],           # Temperature
+                'containers': item[33],            # NbrContenant
+                'transmission': item[16],          # Transmission
+                'charge': item[11],                # Charge
+                'remark': item[13],                # Remarque
+                'modifier': item[15],              # Modifier
+                'repair_date': item[18],           # DateReparation
+                'repair_description': item[19],    # Desc_Reparation
+                'ambient_air_temperature': None,   # Ambient_Air_Temperature - #TODO: no such column in DB
+
+                # electriacal profile fields
+                'bushing': None,                 #
+                'winding': None,                 #
+                'insulation_pf': None,           #
+                'insulation': None,              #
+                'visual_inspection': None,       #
+                'resistance': None,              #
+                'degree': None,                  #
+                'turns': None,                   #
+
+                # fluid profile field
+                # syringe
+                'gas': None,                     #
+                'water': None,                   #
+                'furans': None,                  #
+                'inhibitor': None,               #
+                'pcb': None,                     #
+                'qty': None,                     #
+                'sampling': None,                #
+
+                # jar
+                'dielec': None,                  #
+                'acidity': None,                 #
+                'density': None,                 #
+                'pcb_jar': None,                 #
+                'inhibitor_jar': None,           #
+                'point': None,                   #
+                'dielec_2': None,                #
+                'color': None,                   #
+                'pf': None,                      #
+                'particles': None,               #
+                'metals': None,                  #
+                'viscosity': None,               #
+                'dielec_d': None,                #
+                'ift': None,                     #
+                'pf_100': None,                  #
+                'furans_f': None,                #
+                'water_w': None,                 #
+                'corr': None,                    #
+                'dielec_i': None,                #
+                'visual': None,                  #
+                'qty_jar': None,                 #
+                'sampling_jar': None,            #
+
+                # vial
+                'pcb_vial': None,                #
+                'antioxidant': None,             #
+                'qty_vial': None,                #
+                'sampling_vial': None,           #
+            }
+        )
+    return data
+
+
 def run_import():
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
@@ -645,14 +862,62 @@ def run_import():
     # Save fluid profile
     process_fluid_profile(cursor)
 
-    # Save laboratories
+    # Save laboratories TODO: (get also labs from Analyse table -?)
     process_labs(cursor)
 
     # Save equipment and data related to it
     process_equipment_records(cursor)
 
+    # Save test results
+    process_test_results_and_campaigns(cursor)
+
     cursor.close()
     connection.close()
+
+
+class OldDBNotations:
+
+    @staticmethod
+    def test_reasons():
+        items = {
+            0: 'Undetermined',
+            1: 'Preventive',
+            2: 'Reception',
+            3: 'Commissioning',
+            4: 'Study',
+            5: 'Fault',
+            6: 'After degassing',
+            7: 'After Fuller earth',
+            8: 'New oil',
+            9: 'Replace the oil',
+            10: 'Other'
+        }
+        return items
+
+    @staticmethod
+    def test_types():
+        items = {
+            'GD': 'Dissolved gas',
+            'DG': 'Dissolved gas',
+            'PHY': 'Fluid',
+            'EAU': 'Water',
+            'H2O': 'Water',
+            'TTR': 'Turns ratio test (TTR)',
+            'BCD': '',
+            'ResI': 'Insulation resistance',
+            'IRes': 'Insulation resistance',
+            'WCD': 'Winding Cap. and PF',
+            'VisI': 'Visual inspection',
+            'FUR': 'Furans',
+            'BUSH': 'Bushing Cap. and PF',
+            'WRes': 'Resistance; winding/contact',
+            'PCB': 'PCB',
+            'MIO': 'Metals in oil',
+            'PAR': 'Particles',
+            'DBPC': 'Inhibitor',
+            'DP': 'Degree of Polymerization (DP)',
+        }
+        return items
 
 
 # SQL
@@ -730,6 +995,27 @@ def __labs_sql():
     # to know exact position of column on retrieve
     all_cols = 'Laboratoire,CodeLaboratoire'
     query = "SELECT {} FROM Laboratoire".format(all_cols)
+    return query
+
+
+def __campaigns_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,DateAnalyse,TypeAnalyse,NoAnalyse,CodeMatiere,CodeMotif,CodeLieu,PourcentRatio,' \
+               'TypeHuile,Charge,DatePrelevement,Remarque,PrelevePar,Modifier,Transmission,Laboratoire,DateReparation,Desc_Reparation,' \
+               'If_REM,If_OK,CodeRecommandation,RecommandationEcrite,DateApplication,Commentaire,EtatCodeAnalyse,MWs,Temperature,TestEquipNum,' \
+               'CartEchantImp,NoContrat,EtatCommande,NbrContenant,CartEchantRassembler,RegroupEssaiType,NoContratLab,SeringueNum'
+    query = "SELECT {} FROM Analyse".format(all_cols)
+    return query
+
+
+def __test_results_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'NoEquipement,NoSerieEquipe,TypeAnalyse,Site,Localisation,CodeGravite,Desc1,Desc2,Desc3'
+    query = "SELECT {} FROM Analyse".format(all_cols)
     return query
 
 
