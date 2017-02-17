@@ -7,7 +7,7 @@ from sqlalchemy import or_, and_
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
-    Contract, ContractStatus, TestType, FluidType
+    Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus
 from app.users.models import User
 from app import db
 
@@ -676,8 +676,21 @@ def process_additional_data(campaigns, test_results):
         if test_result.get('performed_by_id'):
             test_result['performed_by_id'] = db_info['user_mapping'].get(test_result['performed_by_id'])
 
+        # fluid_type_id
         if test_result.get('fluid_type_id') or test_result.get('fluid_type_id') == 0:
             test_result['fluid_type_id'] = db_info['fluid_types_mapping'].get(test_result['fluid_type_id'])
+
+        # sampling_point_id
+        if test_result.get('sampling_point_id') or test_result.get('sampling_point_id') == 0:
+            test_result['sampling_point_id'] = db_info['sampling_point_mapping'].get(test_result['sampling_point_id'])
+
+        # test_reason_id
+        if test_result.get('test_reason_id') or test_result.get('test_reason_id') == 0:
+            test_result['test_reason_id'] = db_info['test_reasons_mapping'].get(test_result['test_reason_id'])
+
+        # test_status_id
+        if test_result.get('test_status_id') or test_result.get('test_status_id') == 0:
+            test_result['test_status_id'] = db_info['test_statuses_mapping'].get(test_result['test_status_id'])
 
     return campaigns, test_results
 
@@ -690,6 +703,9 @@ def get_existing_db_info(test_results):
         'test_types_mapping': {},
         'user_mapping': {},
         'fluid_types_mapping': {},
+        'sampling_point_mapping': {},
+        'test_reasons_mapping': {},
+        'test_statuses_mapping': {}
     }
     # Equipment
     collected_info = collect_test_result_info_for_query(test_results)
@@ -701,7 +717,9 @@ def get_existing_db_info(test_results):
     db_info['test_types_mapping'] = get_test_types_by_names(collected_info['test_types'])
     db_info['user_mapping'] = get_users_by_names(collected_info['users'])
     db_info['fluid_types_mapping'] = get_fluid_types_by_names(collected_info['fluid_types'])
-
+    db_info['sampling_point_mapping'] = get_sampling_points_by_names(collected_info['sampling_points'])
+    db_info['test_reasons_mapping'] = get_test_reasons_by_names(collected_info['test_reasons'])
+    db_info['test_statuses_mapping'] = get_test_statuses_by_names(collected_info['test_statuses'])
     return db_info
 
 
@@ -712,21 +730,31 @@ def collect_test_result_info_for_query(test_results):
         'labs': [],
         'test_types': [],
         'users': [],
-        'fluid_types': []
+        'fluid_types': [],
+        'sampling_points': [],
+        'test_reasons': [],
+        'test_statuses': []
     }
     for test_result in test_results:
         result['equipments'].append(and_(Equipment.equipment_number == test_result['equipment_number'],
                                          Equipment.serial == test_result['serial']))
-
         result['labs'].append(test_result['lab_id'])
+        result['users'].append(test_result['performed_by_id'])
 
         if OldDBNotations.test_types_old_new().get(test_result['test_type_id']):
             result['test_types'].append(OldDBNotations.test_types_old_new()[test_result['test_type_id']])
 
-        result['users'].append(test_result['performed_by_id'])
-
         if OldDBNotations.fluid_type_old_new().get(test_result['fluid_type_id']):
             result['fluid_types'].append(OldDBNotations.fluid_type_old_new()[test_result['fluid_type_id']])
+
+        if OldDBNotations.sampling_point_old_new().get(test_result['sampling_point_id']):
+            result['sampling_points'].append(OldDBNotations.sampling_point_old_new()[test_result['sampling_point_id']])
+
+        if OldDBNotations.test_reason_old_new().get(test_result['test_reason_id']):
+            result['test_reasons'].append(OldDBNotations.test_reason_old_new()[test_result['test_reason_id']])
+
+        if OldDBNotations.test_statuses_old_new().get(test_result['test_status_id']):
+            result['test_statuses'].append(OldDBNotations.test_statuses_old_new()[test_result['test_status_id']])
     return result
 
 
@@ -759,6 +787,33 @@ def get_fluid_types_by_names(names):
     fluid_types_mapping = {get_key_by_val(OldDBNotations.fluid_type_old_new(), fluid_type.name): fluid_type.id for
                            fluid_type in fluid_types_in_db}
     return fluid_types_mapping
+
+
+def get_sampling_points_by_names(names):
+    # Sampling points
+    sampling_points_in_db = db.session.query(SamplingPoint).filter(SamplingPoint.name.in_(names))
+    sampling_points_mapping = {
+        get_key_by_val(OldDBNotations.sampling_point_old_new(), sampling_point.name): sampling_point.id for
+        sampling_point in sampling_points_in_db}
+    return sampling_points_mapping
+
+
+def get_test_reasons_by_names(names):
+    # Test reasons
+    test_reasons_in_db = db.session.query(TestReason).filter(TestReason.name.in_(names))
+    test_reasons_mapping = {
+        get_key_by_val(OldDBNotations.test_reason_old_new(), test_reason.name): test_reason.id for
+        test_reason in test_reasons_in_db}
+    return test_reasons_mapping
+
+
+def get_test_statuses_by_names(names):
+    # Test statuses
+    test_statuses_in_db = db.session.query(TestStatus).filter(TestStatus.name.in_(names))
+    test_statuses_mapping = {
+        get_key_by_val(OldDBNotations.test_statuses_old_new(), test_status.name): test_status.id for
+        test_status in test_statuses_in_db}
+    return test_statuses_mapping
 
 
 def save_test_results_and_campaigns(campaigns, test_results):
@@ -865,19 +920,13 @@ def fetch_campaigns(items):
                 'contract_id': item[31],                            # NoContrat
                 'date_sampling': item[12],                          # DatePrelevement
                 'description': item[25],                            # Commentaire
-                'status_id': None,                              # TODO: EtatCommande
+                'status_id': None,                                  # TODO: EtatCommande
             }
         )
     return data
 
 
 # Test results
-def get_test_results(cursor):
-    query = __test_results_sql()
-    cursor.execute(query)
-    return cursor.fetchall()
-
-
 def fetch_test_results(items):
     data = {
         'items': []
@@ -886,21 +935,26 @@ def fetch_test_results(items):
     for item in items:
         data['items'].append(
             {
-                # 'campaign_id': item[1],         #
-                'clef_analyse': item[0],          # ClefAnalyse
+                'campaign_id': None,               # Added later
+                'clef_analyse': item[0],           # ClefAnalyse
                 'lab_contract_status_id': item[32],  # EtatCommande
-                'serial': item[1],                # NoSerieEquipe
-                'equipment_number': item[2],      # NoEquipement
-                'test_reason_id': item[7],        # CodeMotif
-                'date_analyse': item[3],          # DateAnalyse
-                'test_type_id': item[4],          # TypeAnalyse - get id
-                'sampling_point_id': item[8],     # CodeLieu
+                'serial': item[1],                 # NoSerieEquipe
+                'equipment_number': item[2],       # NoEquipement
+                'test_reason_id': item[7],         # CodeMotif
+                'date_analyse': item[3],           # DateAnalyse
+                'test_type_id': item[4],           # TypeAnalyse - get id
+                'sampling_point_id': item[8],      # CodeLieu
                 'test_status_id': item[26],        # EtatCodeAnalyse
-                'equipment_id': item[29],          # TestEquipNum
+                'equipment_id': None,              # Added later
                 'fluid_profile_id': None,          #
                 'electrical_profile_id': None,     #
-                'percent_ratio': item[9],         # PourcentRatio
-                'material_id': item[6],           # CodeMatiere
+                'percent_ratio': item[9],          # PourcentRatio
+
+                # The CodeMatiere is used only for cases to analyse the repair/maintenance
+                # area to evaluate contamination for instance.
+                # It is not directly related to Equipment diagnostic.
+                # It is related to Equipment repair byproducts
+                'material_id': None,               # Bobine_Materiel from Equipement
                 'fluid_type_id': item[10],         # TypeHuile
                 'performed_by_id': item[14] or None,       # PrelevePar
                 'lab_id': item[17],                # Laboratoire
@@ -997,6 +1051,8 @@ def run_import():
     # Save test results
     process_test_results_and_campaigns(cursor)
 
+    #TODO Save material_ids for test_results
+
     cursor.close()
     connection.close()
 
@@ -1073,34 +1129,21 @@ class OldDBNotations:
         return items
 
     @staticmethod
+    def test_statuses_old_new():
+        # EtatCodeAnalyse
+        # {old db id: new db value}
+        items = {
+            0: 'Been sampled',
+            1: 'Laboratory',
+            2: 'Diagnosis',
+            3: 'Recommendation',
+            4: 'Completed',
+        }
+        return items
+
+    @staticmethod
     def fluid_type_old():
         # TypeHuile
-        items = {
-            0: 'mineral oil',
-            1: 'silicone oil',
-            2: 'Rtemp',
-            3: 'Wecosol',
-            4: 'BPC'
-        }
-        return items
-
-    @staticmethod
-    def fluid_type_old_new():
-        # TypeHuile
-        # {old db value: new db value}
-        # others are not in new DB
-        items = {
-            0: 'Mineral oil',
-            1: 'Silicone',
-            2: 'Rtemp',
-            3: 'Wecosol',
-            4: 'PCB'
-        }
-        return items
-
-    @staticmethod
-    def material_old():
-        # CodeMatiere
         items = {
             0: 'Huile',
             1: 'Silicone',
@@ -1108,6 +1151,72 @@ class OldDBNotations:
             3: 'solid',
             4: 'Gaz',
             5: 'Autre'
+        }
+        return items
+
+    @staticmethod
+    def fluid_type_old_new():
+        # TypeHuile
+        # {old db id: new db value}
+        items = {
+            0: 'Oil',
+            1: 'Silicone',
+            2: 'Water',
+            3: 'Solid',
+            4: 'Gaz',
+            5: 'Other'
+        }
+        return items
+
+    @staticmethod
+    def sampling_point_old():
+        # CodeLieu
+        items = {
+            0: 'Main tank - bottom',
+            1: 'Main tank - top',
+            2: 'Gaz relay',
+            3: 'Other'
+        }
+        return items
+
+    @staticmethod
+    def sampling_point_old_new():
+        # CodeLieu
+        # {old db id: new db value}
+        items = {
+            0: 'Main tank-Bottom',
+            1: 'Main tank-Top',
+            2: 'Gas relay',
+            3: 'Other'
+        }
+        return items
+
+    @staticmethod
+    def test_reason_old():
+        # CodeMotif
+        items = {
+            0: 'Preventif',
+            1: 'Mise en service',
+            2: 'Etude',
+            3: 'Urgent',
+            4: 'Apres degazage',
+            5: 'apres t. foulon',
+            6: 'Autre',
+        }
+        return items
+
+    @staticmethod
+    def test_reason_old_new():
+        # CodeMotif
+        # {old db id: new db value}
+        items = {
+            0: 'Preventive',
+            1: 'Commissioning',
+            2: 'Study',
+            3: 'Urgent',
+            4: 'After degassing',
+            5: 'After Fuller earth',
+            6: 'Other',
         }
         return items
 
