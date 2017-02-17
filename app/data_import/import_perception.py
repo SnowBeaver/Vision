@@ -859,8 +859,6 @@ def save_contracts(test_results, campaigns):
         existing_contracts=existing_contracts,
         existing_contract_statuses=existing_contract_statuses
     )
-
-    print('===', test_results)
     return test_results, campaigns
 
 
