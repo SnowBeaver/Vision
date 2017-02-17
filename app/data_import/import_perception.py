@@ -7,7 +7,7 @@ from sqlalchemy import or_, and_
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
-    Contract, ContractStatus
+    Contract, ContractStatus, TestType, FluidType
 from app.users.models import User
 from app import db
 
@@ -35,6 +35,13 @@ def strip(data):
 def get_admin_id():
     user_id = db.session.query(User).filter_by(email='admin@visiondiagnostic.org').first().id
     return user_id
+
+
+def get_key_by_val(items, value):
+    try:
+        return items.keys()[items.values().index(value)]
+    except:
+        return None
 
 
 # Equipment records
@@ -638,50 +645,132 @@ def process_test_results_and_campaigns(cursor):
     processed_campaigns = fetch_campaigns(campaigns)
     processed_test_results = fetch_test_results(campaigns)
 
-    campaigns, test_results = process_additional_data(processed_campaigns['items'], processed_test_results['items'])
+    campaigns, test_results = process_additional_data(
+        campaigns=processed_campaigns['items'],
+        test_results=processed_test_results['items']
+    )
     save_test_results_and_campaigns(campaigns, test_results)
 
 
 def process_additional_data(campaigns, test_results):
-    # Get equipment ids, lab ids at once
-    equipments = []
-    labs = []
-    for test_result in test_results:
-        equipments.append(and_(Equipment.equipment_number == test_result['equipment_number'],
-                               Equipment.serial == test_result['serial']))
-        labs.append(test_result['lab_id'])
-    equipment_in_db = db.session.query(Equipment).filter(or_(*equipments)).all()
-    equipment_mapping = {'{}_{}'.format(equipment.equipment_number.strip(), equipment.serial.strip()): equipment.id for
-                         equipment in equipment_in_db}
-
-    lab_in_db = db.session.query(Lab).filter(Lab.name.in_(labs))
-    lab_mapping = {lab.name: lab.id for lab in lab_in_db}
+    db_info = get_existing_db_info(test_results=test_results)
 
     # Map Test results, lab ids to equipment id
     for test_result in test_results:
+        # Equipment id
         if test_result.get('equipment_number') and test_result.get('serial'):
-            # Equipment id
-            test_result['equipment_id'] = equipment_mapping.get(
+            test_result['equipment_id'] = db_info['equipment_mapping'].get(
                 '{}_{}'.format(test_result['equipment_number'].strip(), test_result['serial'].strip()))
             del test_result['equipment_number']
             del test_result['serial']
 
+        # lab id
         if test_result.get('lab_id'):
-            # lab id
-            test_result['lab_id'] = lab_mapping.get(test_result['lab_id'])
+            test_result['lab_id'] = db_info['lab_mapping'].get(test_result['lab_id'])
+
+        # test_type_id
+        if test_result.get('test_type_id'):
+            test_result['test_type_id'] = db_info['test_types_mapping'].get(test_result['test_type_id'])
+
+        # performed_by_id
+        if test_result.get('performed_by_id'):
+            test_result['performed_by_id'] = db_info['user_mapping'].get(test_result['performed_by_id'])
+
+        if test_result.get('fluid_type_id') or test_result.get('fluid_type_id') == 0:
+            test_result['fluid_type_id'] = db_info['fluid_types_mapping'].get(test_result['fluid_type_id'])
 
     return campaigns, test_results
 
 
+def get_existing_db_info(test_results):
+    """Get equipment ids, lab ids, test_types in one query"""
+    db_info = {
+        'equipment_mapping': {},
+        'lab_mapping': {},
+        'test_types_mapping': {},
+        'user_mapping': {},
+        'fluid_types_mapping': {},
+    }
+    # Equipment
+    collected_info = collect_test_result_info_for_query(test_results)
+
+    equipment_in_db = db.session.query(Equipment).filter(or_(*collected_info['equipments'])).all()
+    db_info['equipment_mapping'] = {'{}_{}'.format(
+        equipment.equipment_number.strip(), equipment.serial.strip()): equipment.id for equipment in equipment_in_db}
+    db_info['lab_mapping'] = get_labs_by_names(collected_info['labs'])
+    db_info['test_types_mapping'] = get_test_types_by_names(collected_info['test_types'])
+    db_info['user_mapping'] = get_users_by_names(collected_info['users'])
+    db_info['fluid_types_mapping'] = get_fluid_types_by_names(collected_info['fluid_types'])
+
+    return db_info
+
+
+def collect_test_result_info_for_query(test_results):
+    # Collect all ids, names, etc
+    result = {
+        'equipments': [],
+        'labs': [],
+        'test_types': [],
+        'users': [],
+        'fluid_types': []
+    }
+    for test_result in test_results:
+        result['equipments'].append(and_(Equipment.equipment_number == test_result['equipment_number'],
+                                         Equipment.serial == test_result['serial']))
+
+        result['labs'].append(test_result['lab_id'])
+
+        if OldDBNotations.test_types_old_new().get(test_result['test_type_id']):
+            result['test_types'].append(OldDBNotations.test_types_old_new()[test_result['test_type_id']])
+
+        result['users'].append(test_result['performed_by_id'])
+
+        if OldDBNotations.fluid_type_old_new().get(test_result['fluid_type_id']):
+            result['fluid_types'].append(OldDBNotations.fluid_type_old_new()[test_result['fluid_type_id']])
+    return result
+
+
+def get_labs_by_names(names):
+    # Labs
+    lab_in_db = db.session.query(Lab).filter(Lab.name.in_(names))
+    lab_mapping = {lab.name: lab.id for lab in lab_in_db}
+    return lab_mapping
+
+
+def get_test_types_by_names(names):
+    # Test types
+    test_types_in_db = db.session.query(TestType).filter(TestType.name.in_(names))
+    test_types_mapping = {get_key_by_val(OldDBNotations.test_types_old_new(), test_type.name): test_type.id for test_type in
+                          test_types_in_db}
+    if None in test_types_mapping:
+        del test_types_mapping[None]
+    return test_types_mapping
+
+
+def get_users_by_names(names):
+    users_in_db = db.session.query(User).filter(User.name.in_(names))
+    user_mapping = {user.name: user.id for user in users_in_db}
+    return user_mapping
+
+
+def get_fluid_types_by_names(names):
+    # Fluid types
+    fluid_types_in_db = db.session.query(FluidType).filter(FluidType.name.in_(names))
+    fluid_types_mapping = {get_key_by_val(OldDBNotations.fluid_type_old_new(), fluid_type.name): fluid_type.id for
+                           fluid_type in fluid_types_in_db}
+    return fluid_types_mapping
+
+
 def save_test_results_and_campaigns(campaigns, test_results):
     mapped_campaigns = {}
+
+    test_results, campaigns = save_contracts(test_results, campaigns)
+
     for campaign in campaigns:
         campaign_id = campaign.pop('clef_analyse', None)
         added_campaign = Campaign(**campaign)
         db.session.add(added_campaign)
         mapped_campaigns[campaign_id] = added_campaign
-
-    test_results = save_contracts(test_results)
 
     # Map campaigns to test results
     for test_result in test_results:
@@ -696,27 +785,64 @@ def save_test_results_and_campaigns(campaigns, test_results):
         db.session.rollback()
 
 
-def save_contracts(test_results):
+def save_contracts(test_results, campaigns):
     # Save contracts
     existing_contracts = db.session.query(Contract).all()
     existing_contracts = {existing_contract.name: existing_contract for existing_contract in existing_contracts}
 
+    existing_contract_statuses = db.session.query(ContractStatus).all()
+    existing_contract_statuses = {existing_contract_status.name: existing_contract_status.id for existing_contract_status
+                                  in existing_contract_statuses}
+
+    test_results, existing_contracts, existing_contract_statuses = save_test_result_contracts(
+        test_results=test_results,
+        existing_contracts=existing_contracts,
+        existing_contract_statuses=existing_contract_statuses
+    )
+    campaigns, existing_contracts, existing_contract_statuses = save_campaign_contracts(
+        campaigns=campaigns,
+        existing_contracts=existing_contracts,
+        existing_contract_statuses=existing_contract_statuses
+    )
+
+    print('===', test_results)
+    return test_results, campaigns
+
+
+def save_test_result_contracts(test_results, existing_contracts, existing_contract_statuses):
     for test_result in test_results:
         contract_name = test_result['lab_contract_id']
-        contract_status_id = test_result['lab_contract_status_id']
+        old_contract_status_id = test_result['lab_contract_status_id']
         # Map existing contract to test result
         if contract_name in existing_contracts.keys():
             test_result['lab_contract'] = existing_contracts[contract_name]
         else:
             # Create new contract and map it
-            contract = Contract(name=contract_name, contract_status_id=contract_status_id)
+            new_contract_status_id = existing_contract_statuses.get(
+                OldDBNotations.contract_statuses_old()[old_contract_status_id])
+            contract = Contract(name=contract_name, contract_status_id=new_contract_status_id)
             db.session.add(contract)
             existing_contracts[contract_name] = contract
             test_result['lab_contract'] = contract
-        del test_result['lab_contract']
+        del test_result['lab_contract_id']
         del test_result['lab_contract_status_id']
+    return test_results, existing_contracts, existing_contract_statuses
 
-    return test_results
+
+def save_campaign_contracts(campaigns, existing_contracts, existing_contract_statuses):
+    for campaign in campaigns:
+        contract_name = campaign['contract_id']
+        # Map existing contract to test result
+        if contract_name in existing_contracts.keys():
+            campaign['contract'] = existing_contracts[contract_name]
+        else:
+            # Create new contract and map it
+            contract = Contract(name=contract_name, contract_status_id=existing_contract_statuses.get('-'))
+            db.session.add(contract)
+            existing_contracts[contract_name] = contract
+            campaign['contract'] = contract
+        del campaign['contract_id']
+    return campaigns, existing_contracts, existing_contract_statuses
 
 
 # Campaigns
@@ -739,7 +865,7 @@ def fetch_campaigns(items):
                 'contract_id': item[31],                            # NoContrat
                 'date_sampling': item[12],                          # DatePrelevement
                 'description': item[25],                            # Commentaire
-                'status_id': item[32],                              # EtatCommande
+                'status_id': None,                              # TODO: EtatCommande
             }
         )
     return data
@@ -771,12 +897,12 @@ def fetch_test_results(items):
                 'sampling_point_id': item[8],     # CodeLieu
                 'test_status_id': item[26],        # EtatCodeAnalyse
                 'equipment_id': item[29],          # TestEquipNum
-                'fluid_profile_id': item[0],      #
-                'electrical_profile_id': item[0], #
+                'fluid_profile_id': None,          #
+                'electrical_profile_id': None,     #
                 'percent_ratio': item[9],         # PourcentRatio
                 'material_id': item[6],           # CodeMatiere
                 'fluid_type_id': item[10],         # TypeHuile
-                'performed_by_id': item[14],       # PrelevePar
+                'performed_by_id': item[14] or None,       # PrelevePar
                 'lab_id': item[17],                # Laboratoire
                 'lab_contract_id': item[36],       # NoContratLab
                 'seringe_num': item[37],           # SeringueNum
@@ -791,7 +917,7 @@ def fetch_test_results(items):
                 'repair_description': item[19],    # Desc_Reparation
                 'ambient_air_temperature': None,   # Ambient_Air_Temperature - #TODO: no such column in DB
 
-                # electriacal profile fields
+                # electrical profile fields
                 'bushing': None,                 #
                 'winding': None,                 #
                 'insulation_pf': None,           #
@@ -876,9 +1002,10 @@ def run_import():
 
 
 class OldDBNotations:
-
+    """Contains items which were hard-coded in the old DB"""
     @staticmethod
-    def test_reasons():
+    def test_reasons_old():
+        # CodeMotif
         items = {
             0: 'Undetermined',
             1: 'Preventive',
@@ -895,7 +1022,9 @@ class OldDBNotations:
         return items
 
     @staticmethod
-    def test_types():
+    def test_types_old_new():
+        # TypeAnalyse
+        # {old db value: new db value}
         items = {
             'GD': 'Dissolved gas',
             'DG': 'Dissolved gas',
@@ -903,7 +1032,7 @@ class OldDBNotations:
             'EAU': 'Water',
             'H2O': 'Water',
             'TTR': 'Turns ratio test (TTR)',
-            'BCD': '',
+            'BCD': '',  #TODO
             'ResI': 'Insulation resistance',
             'IRes': 'Insulation resistance',
             'WCD': 'Winding Cap. and PF',
@@ -916,6 +1045,69 @@ class OldDBNotations:
             'PAR': 'Particles',
             'DBPC': 'Inhibitor',
             'DP': 'Degree of Polymerization (DP)',
+        }
+        return items
+
+    @staticmethod
+    def contract_statuses_old():
+        # EtatCommande
+        items = {
+            0: 'Planned',
+            1: 'Requisition',
+            2: 'Contracted',
+            3: 'Results Approved',
+            4: 'Payed'
+        }
+        return items
+
+    @staticmethod
+    def test_statuses_old():
+        # EtatCodeAnalyse
+        items = {
+            0: 'Been sampled',
+            1: 'At lab facilities',
+            2: 'In Diagnostic',
+            3: 'In Recommendation',
+            4: 'Completed'
+        }
+        return items
+
+    @staticmethod
+    def fluid_type_old():
+        # TypeHuile
+        items = {
+            0: 'mineral oil',
+            1: 'silicone oil',
+            2: 'Rtemp',
+            3: 'Wecosol',
+            4: 'BPC'
+        }
+        return items
+
+    @staticmethod
+    def fluid_type_old_new():
+        # TypeHuile
+        # {old db value: new db value}
+        # others are not in new DB
+        items = {
+            0: 'Mineral oil',
+            1: 'Silicone',
+            2: 'Rtemp',
+            3: 'Wecosol',
+            4: 'PCB'
+        }
+        return items
+
+    @staticmethod
+    def material_old():
+        # CodeMatiere
+        items = {
+            0: 'Huile',
+            1: 'Silicone',
+            2: 'EAU',
+            3: 'solid',
+            4: 'Gaz',
+            5: 'Autre'
         }
         return items
 

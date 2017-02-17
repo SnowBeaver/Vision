@@ -21,6 +21,9 @@ def upgrade():
         INSERT INTO public.contract_status (name) VALUES ('Contracted');
         INSERT INTO public.contract_status (name) VALUES ('Results Approved');
         INSERT INTO public.contract_status (name) VALUES ('Payed');
+        INSERT INTO public.contract_status (name) VALUES ('-'); -- Neutral status used for campaigns
+
+
     """
     op.execute(sql=sql)
 
