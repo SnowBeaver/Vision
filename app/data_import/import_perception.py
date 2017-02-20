@@ -9,7 +9,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
-    DissolvedGasTest
+    DissolvedGasTest, InsulationResistanceTest
 from app.users.models import User
 from app import db
 
@@ -974,11 +974,17 @@ def get_and_prepare_tests(cursor, test_results):
     dg_tests = fetch_dg_tests(dg_tests)
     dg_tests = {test.pop('clef_analyse'): test for test in dg_tests['items']}
 
+    # Insulation Resistance Test
+    ins_res_tests = get_ins_res_tests(cursor, test_nrs)
+    ins_res_tests = fetch_ins_res_tests(ins_res_tests)
+    ins_res_tests = {test.pop('clef_analyse'): test for test in ins_res_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
         'ttr': ttr_tests,
-        'dg': dg_tests
+        'dg': dg_tests,
+        'ins_res': ins_res_tests
     }
 
 
@@ -1011,6 +1017,13 @@ def save_tests(tests, test_nr, test_result):
         dg_test.test_result = test_result
         test_result.gas = True
         db.session.add(dg_test)
+
+    # Insulation Resistance
+    if tests['ins_res'].get(test_nr):
+        ins_res_test = InsulationResistanceTest(**tests['ins_res'].get(test_nr))
+        ins_res_test.test_result = test_result
+        test_result.insulation = True
+        db.session.add(ins_res_test)
 
 
 # Water
@@ -1138,6 +1151,40 @@ def fetch_dg_tests(items):
                 'c2h6_flag': item[17],                      # bC2H6
                 'cap_gaz': item[12],                        # CAP_GAZ
                 'content_gaz': item[22],                    # ContenuGaz
+            }
+        )
+    return data
+
+
+def get_ins_res_tests(cursor, test_nrs):
+    query = __ins_res_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_ins_res_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                     # ClefAnalyse
+                'test_kv1': item[3],                         # TestKV1
+                'resistance1': item[5],                      # Meter1
+                'multiplier1': item[4],                      # Multiplier1
+                'test_kv2': item[6],                         # TestKV2
+                'resistance2': item[7],                      # Meter2
+                'multiplier2': item[8],                      # Multiplier2
+                'test_kv3': item[9],                         # TestKV3
+                'resistance3': item[10],                     # Meter3
+                'multiplier3': item[11],                     # Multiplier3
+                'test_kv4': item[12],                        # TestKV4
+                'resistance4': item[13],                     # Meter4
+                'multiplier4': item[14],                     # Multiplier4
+                'test_kv5': item[15],                        # TestKV5
+                'resistance5': item[16],                     # Meter5
+                'multiplier5': item[17],                     # Multiplier5
             }
         )
     return data
@@ -1644,6 +1691,17 @@ def __dg_test_sql(test_nrs):
                'O2,N2,CAP_GAZ,bH2,bCH4,bC2H2,bC2H4,bC2H6,bCO,bCO2,' \
                'bO2,bN2,ContenuGaz'
     query = "SELECT {} FROM Gaz_Dissous WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Insulation Resistance
+def __ins_res_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,TestKV1,Multiplier1,Meter1,TestKV2,Meter2,Multiplier2,TestKV3,' \
+               'Meter3,Multiplier3,TestKV4,Meter4,Multiplier4,TestKV5,Meter5,Multiplier5,Type_Doble'
+    query = "SELECT {} FROM Res_Isolation WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
