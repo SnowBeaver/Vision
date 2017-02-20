@@ -7,7 +7,8 @@ from sqlalchemy import or_, and_
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
-    Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus
+    Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
+    Recommendation, TestRecommendation
 from app.users.models import User
 from app import db
 
@@ -37,11 +38,9 @@ def get_admin_id():
     return user_id
 
 
-def get_key_by_val(items, value):
-    try:
-        return items.keys()[items.values().index(value)]
-    except:
-        return None
+def get_keys_by_val(items, value):
+    found_keys = [key for key, val in items.items() if val == value]
+    return found_keys or None
 
 
 # Equipment records
@@ -567,6 +566,13 @@ def fetch_fluid_profiles(items):
     return data
 
 
+# Recommendations
+def get_recommendations(cursor):
+    query = __recommendations_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
 # Labs
 def get_labs(cursor):
     query = __labs_sql()
@@ -641,19 +647,26 @@ def process_labs(cursor):
 def process_test_results_and_campaigns(cursor):
     # Get recommendations
     campaigns = get_campaigns(cursor)
+    recommendations = get_recommendations(cursor)
 
     processed_campaigns = fetch_campaigns(campaigns)
     processed_test_results = fetch_test_results(campaigns)
+    processed_recommendations = fetch_recommendations(recommendations)
 
-    campaigns, test_results = process_additional_data(
-        campaigns=processed_campaigns['items'],
-        test_results=processed_test_results['items']
+    # Use mapped recommendation to get recommendation name
+    # by having only test_type and recommendation code in test result
+    # and then get recommendation id from new DB by recommendation name
+    processed_recommendations = map_recommendations_names_to_ids(processed_recommendations['items'])
+
+    test_results = process_additional_data(
+        test_results=processed_test_results['items'],
+        recommendations=processed_recommendations
     )
-    save_test_results_and_campaigns(campaigns, test_results)
+    save_test_results_and_campaigns(processed_campaigns['items'], test_results)
 
 
-def process_additional_data(campaigns, test_results):
-    db_info = get_existing_db_info(test_results=test_results)
+def process_additional_data(test_results, recommendations):
+    db_info = get_existing_db_info(test_results=test_results, recommendations=recommendations)
 
     # Map Test results, lab ids to equipment id
     for test_result in test_results:
@@ -667,6 +680,12 @@ def process_additional_data(campaigns, test_results):
         # lab id
         if test_result.get('lab_id'):
             test_result['lab_id'] = db_info['lab_mapping'].get(test_result['lab_id'])
+
+        # test recommendation
+        if test_result.get('test_recommendation_code') or test_result.get('test_recommendation_code') == 0:
+            recommendation_id = '{}_{}'.format(test_result.get('test_type_id'),
+                                               test_result.get('test_recommendation_code'))
+            test_result['test_recommendation'] = db_info['test_recommendations_mapping'].get(recommendation_id)
 
         # test_type_id
         if test_result.get('test_type_id'):
@@ -692,10 +711,10 @@ def process_additional_data(campaigns, test_results):
         if test_result.get('test_status_id') or test_result.get('test_status_id') == 0:
             test_result['test_status_id'] = db_info['test_statuses_mapping'].get(test_result['test_status_id'])
 
-    return campaigns, test_results
+    return test_results
 
 
-def get_existing_db_info(test_results):
+def get_existing_db_info(test_results, recommendations):
     """Get equipment ids, lab ids, test_types in one query"""
     db_info = {
         'equipment_mapping': {},
@@ -705,10 +724,11 @@ def get_existing_db_info(test_results):
         'fluid_types_mapping': {},
         'sampling_point_mapping': {},
         'test_reasons_mapping': {},
-        'test_statuses_mapping': {}
+        'test_statuses_mapping': {},
+        'test_recommendations_mapping': {}
     }
     # Equipment
-    collected_info = collect_test_result_info_for_query(test_results)
+    collected_info = collect_test_result_info_for_query(test_results, recommendations)
 
     equipment_in_db = db.session.query(Equipment).filter(or_(*collected_info['equipments'])).all()
     db_info['equipment_mapping'] = {'{}_{}'.format(
@@ -720,10 +740,11 @@ def get_existing_db_info(test_results):
     db_info['sampling_point_mapping'] = get_sampling_points_by_names(collected_info['sampling_points'])
     db_info['test_reasons_mapping'] = get_test_reasons_by_names(collected_info['test_reasons'])
     db_info['test_statuses_mapping'] = get_test_statuses_by_names(collected_info['test_statuses'])
+    db_info['test_recommendations_mapping'] = get_test_recommendations_by_name(collected_info['test_recommendations'], recommendations)
     return db_info
 
 
-def collect_test_result_info_for_query(test_results):
+def collect_test_result_info_for_query(test_results, recommendations):
     # Collect all ids, names, etc
     result = {
         'equipments': [],
@@ -733,13 +754,18 @@ def collect_test_result_info_for_query(test_results):
         'fluid_types': [],
         'sampling_points': [],
         'test_reasons': [],
-        'test_statuses': []
+        'test_statuses': [],
+        'test_recommendations': []
     }
     for test_result in test_results:
         result['equipments'].append(and_(Equipment.equipment_number == test_result['equipment_number'],
                                          Equipment.serial == test_result['serial']))
         result['labs'].append(test_result['lab_id'])
         result['users'].append(test_result['performed_by_id'])
+        result['test_recommendations'].append(recommendations.get('{}_{}'.format(
+            test_result['test_type_id'],
+            test_result['test_recommendation_code'])
+        ))
 
         if OldDBNotations.test_types_old_new().get(test_result['test_type_id']):
             result['test_types'].append(OldDBNotations.test_types_old_new()[test_result['test_type_id']])
@@ -768,8 +794,8 @@ def get_labs_by_names(names):
 def get_test_types_by_names(names):
     # Test types
     test_types_in_db = db.session.query(TestType).filter(TestType.name.in_(names))
-    test_types_mapping = {get_key_by_val(OldDBNotations.test_types_old_new(), test_type.name): test_type.id for test_type in
-                          test_types_in_db}
+    test_types_mapping = {key: test_type.id for test_type in test_types_in_db for key in
+                          get_keys_by_val(OldDBNotations.test_types_old_new(), test_type.name)}
     if None in test_types_mapping:
         del test_types_mapping[None]
     return test_types_mapping
@@ -784,36 +810,43 @@ def get_users_by_names(names):
 def get_fluid_types_by_names(names):
     # Fluid types
     fluid_types_in_db = db.session.query(FluidType).filter(FluidType.name.in_(names))
-    fluid_types_mapping = {get_key_by_val(OldDBNotations.fluid_type_old_new(), fluid_type.name): fluid_type.id for
-                           fluid_type in fluid_types_in_db}
+    fluid_types_mapping = {key: fluid_type.id for fluid_type in fluid_types_in_db for key in
+                           get_keys_by_val(OldDBNotations.fluid_type_old_new(), fluid_type.name)}
     return fluid_types_mapping
 
 
 def get_sampling_points_by_names(names):
     # Sampling points
     sampling_points_in_db = db.session.query(SamplingPoint).filter(SamplingPoint.name.in_(names))
-    sampling_points_mapping = {
-        get_key_by_val(OldDBNotations.sampling_point_old_new(), sampling_point.name): sampling_point.id for
-        sampling_point in sampling_points_in_db}
+    sampling_points_mapping = {key: sampling_point.id for sampling_point in sampling_points_in_db for key in
+                               get_keys_by_val(OldDBNotations.sampling_point_old_new(), sampling_point.name)}
     return sampling_points_mapping
 
 
 def get_test_reasons_by_names(names):
     # Test reasons
     test_reasons_in_db = db.session.query(TestReason).filter(TestReason.name.in_(names))
-    test_reasons_mapping = {
-        get_key_by_val(OldDBNotations.test_reason_old_new(), test_reason.name): test_reason.id for
-        test_reason in test_reasons_in_db}
+    test_reasons_mapping = {key: test_reason.id for test_reason in test_reasons_in_db for key in
+                            get_keys_by_val(OldDBNotations.test_reason_old_new(), test_reason.name)}
     return test_reasons_mapping
 
 
 def get_test_statuses_by_names(names):
     # Test statuses
     test_statuses_in_db = db.session.query(TestStatus).filter(TestStatus.name.in_(names))
-    test_statuses_mapping = {
-        get_key_by_val(OldDBNotations.test_statuses_old_new(), test_status.name): test_status.id for
-        test_status in test_statuses_in_db}
+    test_statuses_mapping = {key: test_status.id for test_status in test_statuses_in_db for key in
+                             get_keys_by_val(OldDBNotations.test_statuses_old_new(), test_status.name)}
     return test_statuses_mapping
+
+
+def get_test_recommendations_by_name(names, recommendations):
+    # Test recommendations
+    recommendations_in_db = db.session.query(Recommendation).filter(Recommendation.name.in_(names))
+    recommendations_mapping = {recommendation.name: recommendation.id for recommendation in recommendations_in_db}
+    recommendations_mapping = {
+        rec_id: recommendations_mapping.get(name) for rec_id, name in recommendations.items()
+    }
+    return recommendations_mapping
 
 
 def save_test_results_and_campaigns(campaigns, test_results):
@@ -830,11 +863,25 @@ def save_test_results_and_campaigns(campaigns, test_results):
     # Map campaigns to test results
     for test_result in test_results:
         test_result['campaign'] = mapped_campaigns.get(test_result.pop('clef_analyse', None))
-        db.session.add(TestResult(**test_result))
+
+        # Save test recommendations
+        test_recommendation = {
+            'recommendation_id': test_result.pop('test_recommendation', None),
+            'recommendation_notes': test_result.pop('test_recommendation_notes', None),
+            'user_id': get_admin_id(),
+            'test_type_id': test_result['test_type_id']
+        }
+        del test_result['test_recommendation_code']
+
+        test_result_obj = TestResult(**test_result)
+        db.session.add(test_result_obj)
+        test_recommendation['test_result'] = test_result_obj
+        test_recommendation = TestRecommendation(**test_recommendation)
+        db.session.add(test_recommendation)
 
     try:
         db.session.commit()
-        print('Added campaigns and test results')
+        print('Added campaigns, test results and test recommendations')
     except Exception as e:
         print(e)
         db.session.rollback()
@@ -1018,15 +1065,45 @@ def fetch_test_results(items):
                 'antioxidant': None,             #
                 'qty_vial': None,                #
                 'sampling_vial': None,           #
+
+                # Test recommendations
+                'test_recommendation_code': item[22],    # CodeRecommandation
+                'test_recommendation_notes': item[23],   # RecommandationEcrite
             }
         )
     return data
+
+
+# Recommendations
+def fetch_recommendations(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'test_type': item[0],                               # TypeAnalyse
+                'recommendation_code': item[1],                     # CodeRecommandation
+                'recommendation_name': item[2],                     # RecommandationA
+            }
+        )
+    return data
+
+
+def map_recommendations_names_to_ids(recommendations):
+    mapped_recommendations = {}     # {test_type + _ + code: name}
+    for recommendation in recommendations:
+        rec_id = '{}_{}'.format(recommendation['test_type'], recommendation['recommendation_code'])
+        mapped_recommendations[rec_id] = recommendation['recommendation_name']
+    return mapped_recommendations
 
 
 def run_import():
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
     cursor = connection.cursor()
+
+    #TODO Extract data partially using LIMIT OFFSER
 
     # Save predefined norms
     process_norms(cursor)
@@ -1315,6 +1392,15 @@ def __test_results_sql():
     # to know exact position of column on retrieve
     all_cols = 'NoEquipement,NoSerieEquipe,TypeAnalyse,Site,Localisation,CodeGravite,Desc1,Desc2,Desc3'
     query = "SELECT {} FROM Analyse".format(all_cols)
+    return query
+
+
+def __recommendations_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'TypeAnalyse,CodeRecommandation,RecommandationA'
+    query = "SELECT {} FROM Recommandation".format(all_cols)
     return query
 
 
