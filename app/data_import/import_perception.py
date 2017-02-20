@@ -8,7 +8,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
-    Recommendation, TestRecommendation, WaterTest
+    Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest
 from app.users.models import User
 from app import db
 
@@ -901,6 +901,14 @@ def save_tests(tests, test_nr, test_result):
         test_result.water = True
         db.session.add(water_test)
 
+    # Polymerisation Degree Test
+    if tests['pd'].get(test_nr):
+        pd_test = PolymerisationDegreeTest(**tests['pd'].get(test_nr))
+        pd_test.test_result = test_result
+        test_result.degree = True
+        db.session.add(pd_test)
+
+
 
 def save_contracts(test_results, campaigns):
     # Save contracts
@@ -967,11 +975,18 @@ def get_and_prepare_tests(cursor, test_results):
     water_tests = get_water_tests(cursor, test_nrs)
     water_tests = fetch_water_tests(water_tests)
     water_tests = {test.pop('clef_analyse'): test for test in water_tests['items']}
+
+    # Polymerisation Degree Test
+    pd_tests = get_pd_tests(cursor, test_nrs)
+    pd_tests = fetch_pd_tests(pd_tests)
+    pd_tests = {test.pop('clef_analyse'): test for test in pd_tests['items']}
     return {
-        'water': water_tests
+        'water': water_tests,
+        'pd': pd_tests,
     }
 
 
+# Water
 def get_water_tests(cursor, test_nrs):
     query = __water_test_sql(test_nrs)
     cursor.execute(query)
@@ -989,6 +1004,40 @@ def fetch_water_tests(items):
                 'water': item[3],                            # Eau
                 'remark': item[4],                           # REMARQUE
                 'water_flag': item[5],                       # bEau
+            }
+        )
+    return data
+
+
+# Polymerisation Degree Test
+def get_pd_tests(cursor, test_nrs):
+    query = __pd_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_pd_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                   # ClefAnalyse
+                'phase_a1': item[3],                       # PhaseA1
+                'phase_a2': item[4],                       # PhaseA2
+                'phase_a3': item[5],                       # PhaseA3
+                'phase_b1': item[6],                       # PhaseB1
+                'phase_b2': item[7],                       # PhaseB2
+                'phase_b3': item[8],                       # PhaseB3
+                'phase_c1': item[9],                       # PhaseC1
+                'phase_c2': item[10],                      # PhaseC2
+                'phase_c3': item[11],                      # PhaseC3
+                'lead_a': None,                         # TODO
+                'lead_b': None,                         # TODO
+                'lead_c': None,                         # TODO
+                'lead_n': None,                         # TODO
+                'winding': None,                        # TODO
             }
         )
     return data
@@ -1454,12 +1503,24 @@ def __recommendations_sql():
 
 
 # Tests
+# Water
 def __water_test_sql(test_nrs):
     # Name all column names because cannot get them from cursor
     # (they are fetched as Chinese letters)
     # to know exact position of column on retrieve
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Eau,REMARQUE,bEau'
     query = "SELECT {} FROM Eau WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Polymerisation degree
+def __pd_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,PhaseA1,PhaseA2,PhaseA3,PhaseB1,PhaseB2,PhaseB3,PhaseC1,' \
+               'PhaseC2,PhaseC3'
+    query = "SELECT {} FROM DP WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 
