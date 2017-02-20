@@ -8,7 +8,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
-    Recommendation, TestRecommendation
+    Recommendation, TestRecommendation, WaterTest
 from app.users.models import User
 from app import db
 
@@ -662,7 +662,8 @@ def process_test_results_and_campaigns(cursor):
         test_results=processed_test_results['items'],
         recommendations=processed_recommendations
     )
-    save_test_results_and_campaigns(processed_campaigns['items'], test_results)
+    tests = get_and_prepare_tests(cursor=cursor, test_results=test_results)
+    save_test_results_and_campaigns(processed_campaigns['items'], test_results, tests)
 
 
 def process_additional_data(test_results, recommendations):
@@ -725,7 +726,7 @@ def get_existing_db_info(test_results, recommendations):
         'sampling_point_mapping': {},
         'test_reasons_mapping': {},
         'test_statuses_mapping': {},
-        'test_recommendations_mapping': {}
+        'test_recommendations_mapping': {},
     }
     # Equipment
     collected_info = collect_test_result_info_for_query(test_results, recommendations)
@@ -849,7 +850,7 @@ def get_test_recommendations_by_name(names, recommendations):
     return recommendations_mapping
 
 
-def save_test_results_and_campaigns(campaigns, test_results):
+def save_test_results_and_campaigns(campaigns, test_results, tests):
     mapped_campaigns = {}
 
     test_results, campaigns = save_contracts(test_results, campaigns)
@@ -862,7 +863,9 @@ def save_test_results_and_campaigns(campaigns, test_results):
 
     # Map campaigns to test results
     for test_result in test_results:
-        test_result['campaign'] = mapped_campaigns.get(test_result.pop('clef_analyse', None))
+
+        test_nr = test_result.pop('clef_analyse', None)
+        test_result['campaign'] = mapped_campaigns.get(test_nr)
 
         # Save test recommendations
         test_recommendation = {
@@ -879,12 +882,24 @@ def save_test_results_and_campaigns(campaigns, test_results):
         test_recommendation = TestRecommendation(**test_recommendation)
         db.session.add(test_recommendation)
 
+        save_tests(tests, test_nr, test_result_obj)
+
     try:
         db.session.commit()
-        print('Added campaigns, test results and test recommendations')
+        print('Added campaigns, test results, test recommendations and tests')
     except Exception as e:
         print(e)
         db.session.rollback()
+
+
+def save_tests(tests, test_nr, test_result):
+    """Add tests to the session"""
+    # Water Test
+    if tests['water'].get(test_nr):
+        water_test = WaterTest(**tests['water'].get(test_nr))
+        water_test.test_result = test_result
+        test_result.water = True
+        db.session.add(water_test)
 
 
 def save_contracts(test_results, campaigns):
@@ -943,6 +958,40 @@ def save_campaign_contracts(campaigns, existing_contracts, existing_contract_sta
             campaign['contract'] = contract
         del campaign['contract_id']
     return campaigns, existing_contracts, existing_contract_statuses
+
+
+def get_and_prepare_tests(cursor, test_results):
+    test_nrs = [test_result['clef_analyse'] for test_result in test_results]
+
+    # Water
+    water_tests = get_water_tests(cursor, test_nrs)
+    water_tests = fetch_water_tests(water_tests)
+    water_tests = {test.pop('clef_analyse'): test for test in water_tests['items']}
+    return {
+        'water': water_tests
+    }
+
+
+def get_water_tests(cursor, test_nrs):
+    query = __water_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_water_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                     # ClefAnalyse
+                'water': item[3],                            # Eau
+                'remark': item[4],                           # REMARQUE
+                'water_flag': item[5],                       # bEau
+            }
+        )
+    return data
 
 
 # Campaigns
@@ -1401,6 +1450,16 @@ def __recommendations_sql():
     # to know exact position of column on retrieve
     all_cols = 'TypeAnalyse,CodeRecommandation,RecommandationA'
     query = "SELECT {} FROM Recommandation".format(all_cols)
+    return query
+
+
+# Tests
+def __water_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Eau,REMARQUE,bEau'
+    query = "SELECT {} FROM Eau WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 
