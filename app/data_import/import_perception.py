@@ -9,7 +9,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
-    DissolvedGasTest, InsulationResistanceTest
+    DissolvedGasTest, InsulationResistanceTest, BushingTest
 from app.users.models import User
 from app import db
 
@@ -979,12 +979,18 @@ def get_and_prepare_tests(cursor, test_results):
     ins_res_tests = fetch_ins_res_tests(ins_res_tests)
     ins_res_tests = {test.pop('clef_analyse'): test for test in ins_res_tests['items']}
 
+    # Bushing
+    bushing_tests = get_bushing_tests(cursor, test_nrs)
+    bushing_tests = fetch_bushing_tests(bushing_tests)
+    bushing_tests = {test.pop('clef_analyse'): test for test in bushing_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
         'ttr': ttr_tests,
         'dg': dg_tests,
-        'ins_res': ins_res_tests
+        'ins_res': ins_res_tests,
+        'bushing': bushing_tests
     }
 
 
@@ -1024,6 +1030,13 @@ def save_tests(tests, test_nr, test_result):
         ins_res_test.test_result = test_result
         test_result.insulation = True
         db.session.add(ins_res_test)
+
+    # Bushing
+    if tests['bushing'].get(test_nr):
+        bushing_test = BushingTest(**tests['bushing'].get(test_nr))
+        bushing_test.test_result = test_result
+        test_result.bushing = True
+        db.session.add(bushing_test)
 
 
 # Water
@@ -1156,6 +1169,7 @@ def fetch_dg_tests(items):
     return data
 
 
+# Insulation Resistance
 def get_ins_res_tests(cursor, test_nrs):
     query = __ins_res_test_sql(test_nrs)
     cursor.execute(query)
@@ -1185,6 +1199,102 @@ def fetch_ins_res_tests(items):
                 'test_kv5': item[15],                        # TestKV5
                 'resistance5': item[16],                     # Meter5
                 'multiplier5': item[17],                     # Multiplier5
+            }
+        )
+    return data
+
+
+# Bushing
+def get_bushing_tests(cursor, test_nrs):
+    query = __bushing_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_bushing_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],             # ClefAnalyse
+                'h1': item[3],                       # H1
+                'h2': item[4],                       # H2
+                'h3': item[5],                       # H3
+                'hn': item[6],                       # Hn
+                'h1c1': item[7],                     # H1C1
+                'h2c1': item[8],                     # H2C1
+                'h3c1': item[9],                     # H3C1
+                'hnc1': item[10],                    # HnC1
+                'h1c2': item[11],                    # H1C2
+                'h2c2': item[12],                    # H2C2
+                'h3c2': item[13],                    # H3C2
+                'hnc2': item[14],                    # HnC2
+                'x1': item[15],                      # X1
+                'x2': item[16],                      # X2
+                'x3': item[17],                      # X3
+                'xn': item[18],                      # Xn
+                'x1c1': item[19],                    # X1C1
+                'x2c1': item[20],                    # X2C1
+                'x3c1': item[21],                    # X3C1
+                'xnc1': item[22],                    # XnC1
+                'x1c2': item[23],                    # X1C2
+                'x2c2': item[24],                    # X2C2
+                'x3c2': item[25],                    # X3C2
+                'xnc2': item[26],                    # XnC2
+                't1': item[27],                      # T1
+                't2': item[28],                      # T2
+                't3': item[29],                      # T3
+                'tn': item[30],                      # Tn
+                't1c1': item[31],                    # T1C1
+                't2c1': item[32],                    # T2C1
+                't3c1': item[33],                    # T3C1
+                'tnc1': item[34],                    # TnC1
+                't1c2': item[35],                    # T1C2
+                't2c2': item[36],                    # T2C2
+                't3c2': item[37],                    # T3C2
+                'tnc2': item[38],                    # TnC2
+                'temperature': item[39],             # Temperature
+                'facteur': item[40],                 # Facteur
+                'facteur1': item[41],                # Facteur1
+                'facteur2': item[42],                # Facteur2
+                'q1': item[43],                      # Q1
+                'q2': item[44],                      # Q2
+                'q3': item[45],                      # Q3
+                'qn': item[46],                      # QN
+                'q1c1': item[47],                    # Q1C1
+                'q2c1': item[48],                    # Q2C1
+                'q3c1': item[49],                    # Q3C1
+                'qnc1': item[50],                    # QNC1
+                'q1c2': item[51],                    # Q1C1
+                'q2c2': item[52],                    # Q2C1
+                'q3c2': item[53],                    # Q3C2
+                'qnc2': item[54],                    # QNC2
+                'facteur3': item[55],                # Facteur3
+                'humidity': item[56],                # Humidite
+
+                'test_kv_h1': item[57],                       # Test_kV_H1
+                'test_kv_h2': item[58],                       # Test_kV_H2
+                'test_kv_h3': item[59],                       # Test_kV_H3
+                'test_kv_hn': item[60],                       # Test_kV_HN
+                'test_kv_x1': item[61],                       # Test_kV_X1
+                'test_kv_x2': item[62],                       # Test_kV_X2
+                'test_kv_x3': item[63],                       # Test_kV_X3
+                'test_kv_xn': item[64],                       # Test_kV_XN
+                'test_kv_t1': item[65],                       # Test_kV_T1
+                'test_kv_t2': item[66],                       # Test_kV_T2
+                'test_kv_t3': item[67],                       # Test_kV_T3
+                'test_kv_tn': item[68],                       # Test_kV_TN
+                'test_kv_q1': item[69],                       # Test_kV_Q1
+                'test_kv_q2': item[70],                       # Test_kV_Q2
+                'test_kv_q3': item[71],                       # Test_kV_Q3
+                'test_kv_qn': item[72],                       # Test_kV_QN
+
+                'facteurn': item[89],                         # FacteurN
+                'facteurn1': item[90],                        # FacteurN1
+                'facteurn2': item[91],                        # FacteurN2
+                'facteurn3': item[92],                        # FacteurN3
             }
         )
     return data
@@ -1702,6 +1812,25 @@ def __ins_res_test_sql(test_nrs):
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,TestKV1,Multiplier1,Meter1,TestKV2,Meter2,Multiplier2,TestKV3,' \
                'Meter3,Multiplier3,TestKV4,Meter4,Multiplier4,TestKV5,Meter5,Multiplier5,Type_Doble'
     query = "SELECT {} FROM Res_Isolation WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Bushing Test
+def __bushing_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,H1,H2,H3,Hn,H1C1,H2C1,H3C1,' \
+               'HnC1,H1C2,H2C2,H3C2,HnC2,X1,X2,X3,Xn,X1C1,' \
+               'X2C1,X3C1,XnC1,X1C2,X2C2,X3C2,XnC2,T1,T2,T3,' \
+               'Tn,T1C1,T2C1,T3C1,TnC1,T1C2,T2C2,T3C2,TnC2,Temperature,' \
+               'Facteur,Facteur1,Facteur2,Q1,Q2,Q3,QN,Q1C1,Q2C1,Q3C1,' \
+               'QNC1,Q1C2,Q2C2,Q3C2,QNC2,Facteur3,Humidite,Test_kV_H1,Test_kV_H2,Test_kV_H3,' \
+               'Test_kV_HN,Test_kV_X1,Test_kV_X2,Test_kV_X3,Test_kV_XN,Test_kV_T1,Test_kV_T2,Test_kV_T3,Test_kV_TN,Test_kV_Q1,' \
+               'Test_kV_Q2,Test_kV_Q3,Test_kV_QN,Test_PFC2_H1,Test_PFC2_H2,Test_PFC2_H3,Test_PFC2_HN,Test_PFC2_X1,Test_PFC2_X2,Test_PFC2_X3,' \
+               'Test_PFC2_XN,Test_PFC2_T1,Test_PFC2_T2,Test_PFC2_T3,Test_PFC2_TN,Test_PFC2_Q1,Test_PFC2_Q2,Test_PFC2_Q3,Test_PFC2_QN,FacteurN,' \
+               'FacteurN1,FacteurN2,FacteurN3'
+    query = "SELECT {} FROM Traverse  WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
