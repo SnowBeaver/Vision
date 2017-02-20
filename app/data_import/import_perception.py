@@ -8,7 +8,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
-    Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest
+    Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest
 from app.users.models import User
 from app import db
 
@@ -892,24 +892,6 @@ def save_test_results_and_campaigns(campaigns, test_results, tests):
         db.session.rollback()
 
 
-def save_tests(tests, test_nr, test_result):
-    """Add tests to the session"""
-    # Water Test
-    if tests['water'].get(test_nr):
-        water_test = WaterTest(**tests['water'].get(test_nr))
-        water_test.test_result = test_result
-        test_result.water = True
-        db.session.add(water_test)
-
-    # Polymerisation Degree Test
-    if tests['pd'].get(test_nr):
-        pd_test = PolymerisationDegreeTest(**tests['pd'].get(test_nr))
-        pd_test.test_result = test_result
-        test_result.degree = True
-        db.session.add(pd_test)
-
-
-
 def save_contracts(test_results, campaigns):
     # Save contracts
     existing_contracts = db.session.query(Contract).all()
@@ -980,10 +962,40 @@ def get_and_prepare_tests(cursor, test_results):
     pd_tests = get_pd_tests(cursor, test_nrs)
     pd_tests = fetch_pd_tests(pd_tests)
     pd_tests = {test.pop('clef_analyse'): test for test in pd_tests['items']}
+
+    # TTR
+    ttr_tests = get_ttr_tests(cursor, test_nrs)
+    ttr_tests = fetch_ttr_tests(ttr_tests)
+    ttr_tests = {test.pop('clef_analyse'): test for test in ttr_tests['items']}
     return {
         'water': water_tests,
         'pd': pd_tests,
+        'ttr': ttr_tests
     }
+
+
+def save_tests(tests, test_nr, test_result):
+    """Add tests to the session"""
+    # Water Test
+    if tests['water'].get(test_nr):
+        water_test = WaterTest(**tests['water'].get(test_nr))
+        water_test.test_result = test_result
+        test_result.water = True
+        db.session.add(water_test)
+
+    # Polymerisation Degree Test
+    if tests['pd'].get(test_nr):
+        pd_test = PolymerisationDegreeTest(**tests['pd'].get(test_nr))
+        pd_test.test_result = test_result
+        test_result.degree = True
+        db.session.add(pd_test)
+
+    # TTR
+    if tests['ttr'].get(test_nr):
+        ttr_test = TransformerTurnRatioTest(**tests['ttr'].get(test_nr))
+        ttr_test.test_result = test_result
+        test_result.turns = True
+        db.session.add(ttr_test)
 
 
 # Water
@@ -1038,6 +1050,39 @@ def fetch_pd_tests(items):
                 'lead_c': None,                         # TODO
                 'lead_n': None,                         # TODO
                 'winding': None,                        # TODO
+            }
+        )
+    return data
+
+
+# TTR
+def get_ttr_tests(cursor, test_nrs):
+    query = __ttr_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_ttr_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                  # ClefAnalyse
+                'winding': item[3],                       # Bobine
+                'tap_position': item[4],                  # Tap_Num
+                'measured_current1': item[5],             # Mesure1
+                'measured_current2': item[6],             # Mesure2
+                'measured_current3': item[7],             # Mesure3
+                'calculated_current1': item[8],           # CouExitation1
+                'calculated_current2': item[9],           # CouExitation2
+                'calculated_current3': item[10],          # CouExitation3
+                'error1': item[12],                       # ErrCal1
+                'error2': item[13],                       # ErrCal2
+                'error3': item[14],                       # ErrCal3
+                'ratio': item[11],                        # Ratio
+                'select': item[15],                       # Select
             }
         )
     return data
@@ -1522,6 +1567,20 @@ def __pd_test_sql(test_nrs):
                'PhaseC2,PhaseC3'
     query = "SELECT {} FROM DP WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
+
+
+# TTR
+def __ttr_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Bobine,Tap_Num,Mesure1,Mesure2,Mesure3,CouExitation1,CouExitation2,' \
+               'CouExitation3,Ratio,ErrCal1,ErrCal2,ErrCal3,"Select"'
+    query = "SELECT {} FROM TTR WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+
 
 
 if __name__ == '__main__':
