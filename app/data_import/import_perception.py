@@ -8,7 +8,8 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
-    Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest
+    Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
+    DissolvedGasTest
 from app.users.models import User
 from app import db
 
@@ -967,10 +968,17 @@ def get_and_prepare_tests(cursor, test_results):
     ttr_tests = get_ttr_tests(cursor, test_nrs)
     ttr_tests = fetch_ttr_tests(ttr_tests)
     ttr_tests = {test.pop('clef_analyse'): test for test in ttr_tests['items']}
+
+    # Dissolved Gas Test
+    dg_tests = get_dg_tests(cursor, test_nrs)
+    dg_tests = fetch_dg_tests(dg_tests)
+    dg_tests = {test.pop('clef_analyse'): test for test in dg_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
-        'ttr': ttr_tests
+        'ttr': ttr_tests,
+        'dg': dg_tests
     }
 
 
@@ -996,6 +1004,13 @@ def save_tests(tests, test_nr, test_result):
         ttr_test.test_result = test_result
         test_result.turns = True
         db.session.add(ttr_test)
+
+    # Dissolved Gas
+    if tests['dg'].get(test_nr):
+        dg_test = DissolvedGasTest(**tests['dg'].get(test_nr))
+        dg_test.test_result = test_result
+        test_result.gas = True
+        db.session.add(dg_test)
 
 
 # Water
@@ -1083,6 +1098,46 @@ def fetch_ttr_tests(items):
                 'error3': item[14],                       # ErrCal3
                 'ratio': item[11],                        # Ratio
                 'select': item[15],                       # Select
+            }
+        )
+    return data
+
+
+# Dissolved gas
+def get_dg_tests(cursor, test_nrs):
+    query = __dg_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_dg_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                    # ClefAnalyse
+                'h2': item[3],                              # H2
+                'o2': item[10],                             # O2
+                'n2': item[11],                             # N2
+                'co': item[8],                              # CO
+                'ch4': item[4],                             # CH4
+                'co2': item[9],                             # CO2
+                'c2h2': item[5],                            # C2H2
+                'c2h4': item[6],                            # C2H4
+                'c2h6': item[7],                            # C2H6
+                'h2_flag': item[13],                        # bH2
+                'o2_flag': item[20],                        # bO2
+                'n2_flag': item[21],                        # bN2
+                'co_flag': item[18],                        # bCO
+                'ch4_flag': item[14],                       # bCH4
+                'co2_flag': item[19],                       # bCO2
+                'c2h2_flag': item[15],                      # bC2H2
+                'c2h4_flag': item[16],                      # bC2H4
+                'c2h6_flag': item[17],                      # bC2H6
+                'cap_gaz': item[12],                        # CAP_GAZ
+                'content_gaz': item[22],                    # ContenuGaz
             }
         )
     return data
@@ -1580,8 +1635,16 @@ def __ttr_test_sql(test_nrs):
     return query
 
 
-
-
+# Water
+def __dg_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,H2,CH4,C2H2,C2H4,C2H6,CO,CO2,' \
+               'O2,N2,CAP_GAZ,bH2,bCH4,bC2H2,bC2H4,bC2H6,bCO,bCO2,' \
+               'bO2,bN2,ContenuGaz'
+    query = "SELECT {} FROM Gaz_Dissous WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
 
 if __name__ == '__main__':
     run_import()
