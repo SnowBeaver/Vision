@@ -10,7 +10,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
     DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
-    MetalsInOilTest, VisualInspectionTest
+    MetalsInOilTest, VisualInspectionTest, WindingResistanceTest
 from app.users.models import User
 from app import db
 
@@ -1015,6 +1015,11 @@ def get_and_prepare_tests(cursor, test_results):
     visual_insp_tests = fetch_visual_insp_tests(visual_insp_tests)
     visual_insp_tests = {test.pop('clef_analyse'): test for test in visual_insp_tests['items']}
 
+    # Winding Resistance (Res_Bobine)
+    winding_resistance_tests = get_winding_resistance_tests(cursor, test_nrs)
+    winding_resistance_tests = fetch_winding_resistance_tests(winding_resistance_tests)
+    winding_resistance_tests = {test.pop('clef_analyse'): test for test in winding_resistance_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -1027,7 +1032,8 @@ def get_and_prepare_tests(cursor, test_results):
         'inhibitor': inhibitor_tests,
         'winding': winding_tests,
         'metals': metals_tests,
-        'visual': visual_insp_tests
+        'visual': visual_insp_tests,
+        'resistance': winding_resistance_tests,
     }
 
 
@@ -1128,6 +1134,13 @@ def save_tests(tests, test_nr, test_result):
         visual_insp_test.test_result = test_result
         test_result.visual = True
         db.session.add(visual_insp_test)
+
+    # Winding Resistance (Res_Bobine)
+    if tests['resistance'].get(test_nr):
+        winding_resistance_test = WindingResistanceTest(**tests['resistance'].get(test_nr))
+        winding_resistance_test.test_result = test_result
+        test_result.metals = True
+        db.session.add(winding_resistance_test)
 
 
 # Water
@@ -1688,9 +1701,40 @@ def fetch_visual_insp_tests(items):
                 'grounding_value': item[42],                     # Matt_Valeur
                 'grounding_connection_id': item[43],             # Matt_Raccord
 
-                'misc_foundation_id': None,                     #
+                'misc_foundation_id': None,                      #
                 'misc_temp_ambiant': item[46],                   # Temp_Ambiant
                 'misc_load': item[47],                           # Charge
+            }
+        )
+    return data
+
+
+# Winding resistance (Res_Bobine)
+def get_winding_resistance_tests(cursor, test_nrs):
+    query = __winding_resistance_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_winding_resistance_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],               # ClefAnalyse
+                'winding': item[3],                    # Bobine
+                'tap_position': item[4],               # Tap_Num
+                'mesure1': item[5],                    # Mesure1
+                'temp1': item[6],                      # Temp1
+                'corr1': item[11],                     # Corr1
+                'mesure2': item[7],                    # Mesure2
+                'temp2': item[8],                      # Temp2
+                'corr2': item[12],                     # Corr2
+                'mesure3': item[9],                    # Mesure3
+                'temp3': item[10],                     # Temp3
+                'corr3': item[13],                     # Corr3
             }
         )
     return data
@@ -1929,6 +1973,7 @@ class OldDBNotations:
             'PAR': 'Particles',
             'DBPC': 'Inhibitor',
             'DP': 'Degree of Polymerization (DP)',
+            'ResB': 'Resistance; winding/contact'
         }
         return items
 
@@ -2306,6 +2351,17 @@ def __visual_insp_test_sql(test_nrs):
                'Rad_Aspect_General,Notes,Cuve_Temp_Bob_Decl1,Cuve_Temp_Bob_Decl2,Cuve_Temp_Bob_Decl3,Cuve_Temp_Liq_Decl1,Cuve_Temp_Liq_Decl2,Cuve_Temp_Liq_Decl3,Cuve_TempContact_Bob_Decl1,' \
                'Cuve_TempContact_Liq_Decl1'
     query = "SELECT {} FROM Inspection_Visuel WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Winding resistance
+def __winding_resistance_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Bobine,Tap_Num,Mesure1,Temp1,Mesure2,Temp2,Mesure3,' \
+               'Temp3,Corr1,Corr2,Corr3'
+    query = "SELECT {} FROM Res_Bobine WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
