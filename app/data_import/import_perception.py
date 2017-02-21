@@ -10,7 +10,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
     DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
-    MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest
+    MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest, FuranTest
 from app.users.models import User
 from app import db
 
@@ -1025,6 +1025,11 @@ def get_and_prepare_tests(cursor, test_results):
     particle_tests = fetch_particle_tests(particle_tests)
     particle_tests = {test.pop('clef_analyse'): test for test in particle_tests['items']}
 
+    # Furans
+    furan_tests = get_furan_tests(cursor, test_nrs)
+    furan_tests = fetch_furan_tests(furan_tests)
+    furan_tests = {test.pop('clef_analyse'): test for test in furan_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -1039,7 +1044,8 @@ def get_and_prepare_tests(cursor, test_results):
         'metals': metals_tests,
         'visual': visual_insp_tests,
         'resistance': winding_resistance_tests,
-        'particle': particle_tests
+        'particle': particle_tests,
+        'furan': furan_tests
     }
 
 
@@ -1154,6 +1160,13 @@ def save_tests(tests, test_nr, test_result):
         particle_test.test_result = test_result
         test_result.particles = True
         db.session.add(particle_test)
+
+    # Furans
+    if tests['furan'].get(test_nr):
+        furan_test = FuranTest(**tests['furan'].get(test_nr))
+        furan_test.test_result = test_result
+        test_result.furans = True
+        db.session.add(furan_test)
 
 
 # Water
@@ -1779,6 +1792,36 @@ def fetch_particle_tests(items):
                 'iso4406_1': item[10],              # ISO4406_1
                 'iso4406_2': item[11],              # ISO4406_2
                 'iso4406_3': item[12],              # ISO4406_3
+            }
+        )
+    return data
+
+
+# Furans
+def get_furan_tests(cursor, test_nrs):
+    query = __furan_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_furan_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],          # ClefAnalyse
+                'hmf': item[3],                   # HMF
+                'fol': item[4],                   # FOL
+                'fal': item[5],                   # FAL
+                'acf': item[6],                   # ACF
+                'mef': item[7],                   # MEF
+                'hmf_flag': item[8],              # bHMF
+                'fol_flag': item[9],              # bFOL
+                'fal_flag': item[10],             # bFAL
+                'acf_flag': item[11],             # bACF
+                'mef_flag': item[12],             # bMEF
             }
         )
     return data
@@ -2417,6 +2460,17 @@ def __particle_test_sql(test_nrs):
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,"2um","5um","10um","15um","25um","50um","100um",' \
                'ISO4406_1,ISO4406_2,ISO4406_3,NAS1638'
     query = "SELECT {} FROM Particules WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Furan
+def __furan_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,HMF,FOL,FAL,ACF,MEF,bHMF,bFOL,' \
+               'bFAL,bACF,bMEF'
+    query = "SELECT {} FROM Furane WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
