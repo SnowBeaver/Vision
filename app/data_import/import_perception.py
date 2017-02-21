@@ -9,7 +9,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
-    DissolvedGasTest, InsulationResistanceTest, BushingTest
+    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest
 from app.users.models import User
 from app import db
 
@@ -984,13 +984,19 @@ def get_and_prepare_tests(cursor, test_results):
     bushing_tests = fetch_bushing_tests(bushing_tests)
     bushing_tests = {test.pop('clef_analyse'): test for test in bushing_tests['items']}
 
+    # Fluid
+    fluid_tests = get_fluid_tests(cursor, test_nrs)
+    fluid_tests = fetch_fluid_tests(fluid_tests)
+    fluid_tests = {test.pop('clef_analyse'): test for test in fluid_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
         'ttr': ttr_tests,
         'dg': dg_tests,
         'ins_res': ins_res_tests,
-        'bushing': bushing_tests
+        'bushing': bushing_tests,
+        'fluid': fluid_tests
     }
 
 
@@ -1037,6 +1043,15 @@ def save_tests(tests, test_nr, test_result):
         bushing_test.test_result = test_result
         test_result.bushing = True
         db.session.add(bushing_test)
+
+    # Fluid
+    if tests['fluid'].get(test_nr):
+        test_flags = tests['fluid'].get(test_nr).pop('test_flags', None)
+        fluid_test = FluidTest(**tests['fluid'].get(test_nr))
+        fluid_test.test_result = test_result
+        for test_flag, value in test_flags.items():
+            setattr(test_result, test_flag, value)
+        db.session.add(fluid_test)
 
 
 # Water
@@ -1295,6 +1310,64 @@ def fetch_bushing_tests(items):
                 'facteurn1': item[90],                        # FacteurN1
                 'facteurn2': item[91],                        # FacteurN2
                 'facteurn3': item[92],                        # FacteurN3
+            }
+        )
+    return data
+
+
+# Fluid
+def get_fluid_tests(cursor, test_nrs):
+    query = __fluid_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_fluid_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                     # ClefAnalyse
+                'dielectric_1816': item[3],                  # D1816
+                'dielectric_1816_2': item[4],                # D1816_2
+                'dielectric_877': item[5],                   # D877
+                'dielectric_iec_156': item[19],              # CEI156
+                'acidity': item[7],                          # Acid
+                'color': item[15],                           # Couleur
+                'ift': item[6],                              # IFT
+                'visual': item[18],                          # VISUEL
+                'density': item[10],                         # Densite
+                'pf20c': item[8],                            # FacteurP
+                'pf100c': item[9],                           # FacteurP100
+                'sludge': item[15],                          # FBoue
+                'aniline_point': item[16],                   # PAniline
+                'corrosive_sulfur': item[17],                # SCorrosif
+                'viscosity': item[13],                       # Viscosite
+                'flash_point': item[11],                     # PEclair
+                'pour_point': item[12],                      # PEcoulement
+                'dielectric_1816_flag': item[20],            # bD1816
+                'dielectric_1816_2_flag': item[21],          # bD1816_2
+                'dielectric_877_flag': item[22],             # bD877
+                'dielectric_iec_156_flag': item[23],         # bCEI156
+
+                'test_flags': {
+                    'density': item[32],      # TestDensite
+                    'dielec': item[24],       # TestD1816
+                    'acidity': item[29],      # TestAcid
+                    'point': item[34],        # TestPEcoulement
+                    'dielec_2': item[25],     # TestD1816_2
+                    'color': item[34],        # TestPEcoulement
+                    'pf': item[30],           # TestFacteurP
+                    'viscosity': item[35],    # TestViscosite
+                    'dielec_d': item[26],     # TestD877
+                    'ift': item[28],          # TestIFT
+                    'pf_100': item[31],       # TestFacteurP100
+                    'corr': item[39],         # TestSCorrosif
+                    'dielec_i': item[27],     # TestCEI156
+                    'visual': item[40],       # TestVisuel
+                }
             }
         )
     return data
@@ -1831,6 +1904,20 @@ def __bushing_test_sql(test_nrs):
                'Test_PFC2_XN,Test_PFC2_T1,Test_PFC2_T2,Test_PFC2_T3,Test_PFC2_TN,Test_PFC2_Q1,Test_PFC2_Q2,Test_PFC2_Q3,Test_PFC2_QN,FacteurN,' \
                'FacteurN1,FacteurN2,FacteurN3'
     query = "SELECT {} FROM Traverse  WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Fluid
+def __fluid_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoEquipement,NoSerieEquipe,D1816,D1816_2,D877,IFT,Acid,FacteurP,FacteurP100,' \
+               'Densite,PEclair,PEcoulement,Viscosite,Couleur,FBoue,PAniline,SCorrosif,VISUEL,CEI156,' \
+               'bD1816,bD1816_2,bD877,bCEI156,TestD1816,TestD1816_2,TestD877,TestCEI156,TestIFT,TestAcid,' \
+               'TestFacteurP,TestFacteurP100,TestDensite,TestPEclair,TestPEcoulement,TestViscosite,TestCouleur,TestFBoue,TestPAniline,TestSCorrosif,' \
+               'TestVisuel'
+    query = "SELECT {} FROM PHY WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
