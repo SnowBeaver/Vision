@@ -10,7 +10,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
     DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
-    MetalsInOilTest, VisualInspectionTest, WindingResistanceTest
+    MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest
 from app.users.models import User
 from app import db
 
@@ -1020,6 +1020,11 @@ def get_and_prepare_tests(cursor, test_results):
     winding_resistance_tests = fetch_winding_resistance_tests(winding_resistance_tests)
     winding_resistance_tests = {test.pop('clef_analyse'): test for test in winding_resistance_tests['items']}
 
+    # Particles
+    particle_tests = get_particle_tests(cursor, test_nrs)
+    particle_tests = fetch_particle_tests(particle_tests)
+    particle_tests = {test.pop('clef_analyse'): test for test in particle_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -1034,6 +1039,7 @@ def get_and_prepare_tests(cursor, test_results):
         'metals': metals_tests,
         'visual': visual_insp_tests,
         'resistance': winding_resistance_tests,
+        'particle': particle_tests
     }
 
 
@@ -1139,8 +1145,15 @@ def save_tests(tests, test_nr, test_result):
     if tests['resistance'].get(test_nr):
         winding_resistance_test = WindingResistanceTest(**tests['resistance'].get(test_nr))
         winding_resistance_test.test_result = test_result
-        test_result.metals = True
+        test_result.resistance = True
         db.session.add(winding_resistance_test)
+
+    # Particle
+    if tests['particle'].get(test_nr):
+        particle_test = ParticleTest(**tests['particle'].get(test_nr))
+        particle_test.test_result = test_result
+        test_result.particles = True
+        db.session.add(particle_test)
 
 
 # Water
@@ -1740,6 +1753,37 @@ def fetch_winding_resistance_tests(items):
     return data
 
 
+# Particle
+def get_particle_tests(cursor, test_nrs):
+    query = __particle_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_particle_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],            # ClefAnalyse
+                '_2um': item[3],                    # 2um
+                '_5um': item[4],                    # 5um
+                '_10um': item[5],                   # 10um
+                '_15um': item[6],                   # 15um
+                '_25um': item[7],                   # 25um
+                '_50um': item[8],                   # 50um
+                '_100um': item[9],                  # 100um
+                'nas1638': item[13],                # NAS1638
+                'iso4406_1': item[10],              # ISO4406_1
+                'iso4406_2': item[11],              # ISO4406_2
+                'iso4406_3': item[12],              # ISO4406_3
+            }
+        )
+    return data
+
+
 # Campaigns
 def get_campaigns(cursor):
     query = __campaigns_sql()
@@ -1970,10 +2014,10 @@ class OldDBNotations:
             'PCB': 'PCB',
             'MIO': 'Metals in oil',
             'MDH': 'Metals in oil',
-            'PAR': 'Particles',
+            'PAR': 'Particles',                     # Particules table
             'DBPC': 'Inhibitor',
             'DP': 'Degree of Polymerization (DP)',
-            'ResB': 'Resistance; winding/contact'
+            'ResB': 'Resistance; winding/contact'   # Res_Bobine table
         }
         return items
 
@@ -2362,6 +2406,17 @@ def __winding_resistance_test_sql(test_nrs):
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Bobine,Tap_Num,Mesure1,Temp1,Mesure2,Temp2,Mesure3,' \
                'Temp3,Corr1,Corr2,Corr3'
     query = "SELECT {} FROM Res_Bobine WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Particle
+def __particle_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,"2um","5um","10um","15um","25um","50um","100um",' \
+               'ISO4406_1,ISO4406_2,ISO4406_3,NAS1638'
+    query = "SELECT {} FROM Particules WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
