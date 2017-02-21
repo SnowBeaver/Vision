@@ -9,7 +9,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
-    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest
+    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest
 from app.users.models import User
 from app import db
 
@@ -989,6 +989,11 @@ def get_and_prepare_tests(cursor, test_results):
     fluid_tests = fetch_fluid_tests(fluid_tests)
     fluid_tests = {test.pop('clef_analyse'): test for test in fluid_tests['items']}
 
+    # PCB
+    pcb_tests = get_pcb_tests(cursor, test_nrs)
+    pcb_tests = fetch_pcb_tests(pcb_tests)
+    pcb_tests = {test.pop('clef_analyse'): test for test in pcb_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -996,7 +1001,8 @@ def get_and_prepare_tests(cursor, test_results):
         'dg': dg_tests,
         'ins_res': ins_res_tests,
         'bushing': bushing_tests,
-        'fluid': fluid_tests
+        'fluid': fluid_tests,
+        'pcb': pcb_tests
     }
 
 
@@ -1052,6 +1058,13 @@ def save_tests(tests, test_nr, test_result):
         for test_flag, value in test_flags.items():
             setattr(test_result, test_flag, value)
         db.session.add(fluid_test)
+
+    # PCB
+    if tests['pcb'].get(test_nr):
+        pcb_test = PCBTest(**tests['pcb'].get(test_nr))
+        pcb_test.test_result = test_result
+        test_result.pcd = True  # TODO
+        db.session.add(pcb_test)
 
 
 # Water
@@ -1368,6 +1381,34 @@ def fetch_fluid_tests(items):
                     'dielec_i': item[27],     # TestCEI156
                     'visual': item[40],       # TestVisuel
                 }
+            }
+        )
+    return data
+
+
+# PCB
+def get_pcb_tests(cursor, test_nrs):
+    query = __pcb_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_pcb_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                  # ClefAnalyse
+                'aroclor_1242': item[3],                  # Bpc1242
+                'aroclor_1254': item[4],                  # Bpc1254
+                'aroclor_1260': item[5],                  # Bpc1260
+                'aroclor_1242_flag': item[6],             # b1242
+                'aroclor_1254_flag': item[7],             # b1254
+                'aroclor_1260_flag': item[8],             # b1260
+                'pcb_total': item[9],                     # BPCTotal
+                'total_flag': item[10],                   # bTotal
             }
         )
     return data
@@ -1918,6 +1959,17 @@ def __fluid_test_sql(test_nrs):
                'TestFacteurP,TestFacteurP100,TestDensite,TestPEclair,TestPEcoulement,TestViscosite,TestCouleur,TestFBoue,TestPAniline,TestSCorrosif,' \
                'TestVisuel'
     query = "SELECT {} FROM PHY WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# PCB
+def __pcb_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Bpc1242,Bpc1254,Bpc1260,b1242,b1254,b1260,BPCTotal,' \
+               'bTotal'
+    query = "SELECT {} FROM BPC WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
