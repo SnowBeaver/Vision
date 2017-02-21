@@ -1087,9 +1087,12 @@ def save_tests(tests, test_nr, test_result):
 
     # Winding (BCD)
     if tests['winding'].get(test_nr):
+        add_values = tests['winding'].get(test_nr).pop('flds_not_in_model', None)
         winding_test = WindingTest(**tests['winding'].get(test_nr))
         winding_test.test_result = test_result
         test_result.winding = True  # TODO: Check
+        for key, value in add_values.items():
+            setattr(winding_test, key, value)
         db.session.add(winding_test)
 
 
@@ -1486,6 +1489,55 @@ def fetch_winding_tests(items):
                 'w_multiplier1': item[7],        # wMultiplier1
                 'type_doble': item[53],          # Type_Doble
                 'humidity': item[54],            # Humidite
+
+                'flds_not_in_model': {
+                    'test_kv2': item[8],          # TestKV2
+                    'test_kv3': item[13],         # TestKV3
+                    'test_kv4': item[18],         # TestKV4
+                    'test_kv5': item[23],         # TestKV5
+                    'test_kv6': item[28],         # TestKV6
+                    'test_kv7': item[33],         # TestKV7
+                    'test_kv8': item[38],         # TestKV8
+                    'test_kv9': item[43],         # TestKV9
+                    'test_kv10': item[48],        # TestKV10
+                    'm_meter2': item[9],              # mMeter2
+                    'm_meter3': item[14],             # mMeter3
+                    'm_meter4': item[19],             # mMeter4
+                    'm_meter5': item[25],             # mMeter5
+                    'm_meter6': item[29],             # mMeter6
+                    'm_meter7': item[34],             # mMeter7
+                    'm_meter8': item[39],             # mMeter8
+                    'm_meter9': item[44],             # mMeter9
+                    'm_meter10': item[49],            # mMeter10
+                    'm_multiplier2': item[10],        # mMultiplier2
+                    'm_multiplier3': item[15],        # mMultiplier3
+                    'm_multiplier4': item[20],        # mMultiplier4
+                    'm_multiplier5': item[25],        # mMultiplier5
+                    'm_multiplier6': item[30],        # mMultiplier6
+                    'm_multiplier7': item[35],        # mMultiplier7
+                    'm_multiplier8': item[40],        # mMultiplier8
+                    'm_multiplier9': item[45],        # mMultiplier9
+                    'm_multiplier10': item[50],       # mMultiplier10
+                    'w_meter2': item[11],             # wMeter2
+                    'w_meter3': item[16],             # wMeter3
+                    'w_meter4': item[21],             # wMeter4
+                    'w_meter5': item[26],             # wMeter5
+                    'w_meter6': item[31],             # wMeter6
+                    'w_meter7': item[36],             # wMeter7
+                    'w_meter8': item[41],             # wMeter8
+                    'w_meter9': item[46],             # wMeter9
+                    'w_meter10': item[51],            # wMeter10
+                    'w_multiplier2': item[12],        # wMultiplier2
+                    'w_multiplier3': item[17],        # wMultiplier3
+                    'w_multiplier4': item[22],        # wMultiplier4
+                    'w_multiplier5': item[27],        # wMultiplier5
+                    'w_multiplier6': item[32],        # wMultiplier6
+                    'w_multiplier7': item[37],        # wMultiplier7
+                    'w_multiplier8': item[42],        # wMultiplier8
+                    'w_multiplier9': item[47],        # wMultiplier9
+                    'w_multiplier10': item[52],       # wMultiplier10
+                }
+
             }
         )
     return data
