@@ -9,7 +9,8 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
-    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest
+    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
+    MetalsInOilTest
 from app.users.models import User
 from app import db
 
@@ -1004,6 +1005,11 @@ def get_and_prepare_tests(cursor, test_results):
     winding_tests = fetch_winding_tests(winding_tests)
     winding_tests = {test.pop('clef_analyse'): test for test in winding_tests['items']}
 
+    # Metals in Oil
+    metals_tests = get_metals_tests(cursor, test_nrs)
+    metals_tests = fetch_metals_tests(metals_tests)
+    metals_tests = {test.pop('clef_analyse'): test for test in metals_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -1015,6 +1021,7 @@ def get_and_prepare_tests(cursor, test_results):
         'pcb': pcb_tests,
         'inhibitor': inhibitor_tests,
         'winding': winding_tests,
+        'metals': metals_tests
     }
 
 
@@ -1090,10 +1097,17 @@ def save_tests(tests, test_nr, test_result):
         add_values = tests['winding'].get(test_nr).pop('flds_not_in_model', None)
         winding_test = WindingTest(**tests['winding'].get(test_nr))
         winding_test.test_result = test_result
-        test_result.winding = True  # TODO: Check
+        test_result.winding = True
         for key, value in add_values.items():
             setattr(winding_test, key, value)
         db.session.add(winding_test)
+
+    # Metals in Oil
+    if tests['metals'].get(test_nr):
+        metals_test = MetalsInOilTest(**tests['metals'].get(test_nr))
+        metals_test.test_result = test_result
+        test_result.metals = True
+        db.session.add(metals_test)
 
 
 # Water
@@ -1543,6 +1557,48 @@ def fetch_winding_tests(items):
     return data
 
 
+# Metals in Oil
+def get_metals_tests(cursor, test_nrs):
+    query = __metals_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_metals_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],     # ClefAnalyse
+                'iron': item[4],             # Fer
+                'nickel': item[8],           # Nickel
+                'aluminium': item[3],        # Aluminium
+                'copper': item[10],          # Cuivre
+                'tin': item[6],             # Etain
+                'silver': item[9],          # Argent
+                'lead': item[5],            # Plomb
+                'zinc': item[7],            # Zinc
+                'arsenic': None,            #
+                'cadmium': None,            #
+                'chrome': None,             #
+                'iron_flag': item[12],      # bFer
+                'nickel_flag': item[15],    # bNickel
+                'aluminium_flag': item[11], # bAlu
+                'copper_flag': item[18],    # bCuivre
+                'tin_flag': item[13],       # bEtain
+                'silver_flag': item[16],    # bArgent
+                'lead_flag': item[18],      # bPlomb
+                'zinc_flag': item[15],      # bZinc
+                'arsenic_flag': None,       #
+                'cadmium_flag': None,       #
+                'chrome_flag': None,        #
+            }
+        )
+    return data
+
+
 # Campaigns
 def get_campaigns(cursor):
     query = __campaigns_sql()
@@ -1761,7 +1817,7 @@ class OldDBNotations:
             'EAU': 'Water',
             'H2O': 'Water',
             'TTR': 'Turns ratio test (TTR)',
-            'BCD': '',  #TODO
+            'BCD': 'Winding Cap. and PF',
             'ResI': 'Insulation resistance',
             'IRes': 'Insulation resistance',
             'WCD': 'Winding Cap. and PF',
@@ -1771,6 +1827,7 @@ class OldDBNotations:
             'WRes': 'Resistance; winding/contact',
             'PCB': 'PCB',
             'MIO': 'Metals in oil',
+            'MDH': 'Metals in oil',
             'PAR': 'Particles',
             'DBPC': 'Inhibitor',
             'DP': 'Degree of Polymerization (DP)',
@@ -2124,6 +2181,17 @@ def __winding_test_sql(test_nrs):
                'mMultiplier8,wMeter8,wMultiplier8,TestKV9,mMeter9,mMultiplier9,wMeter9,wMultiplier9,TestKV10,mMeter10,' \
                'mMultiplier10,wMeter10,wMultiplier10,Type_Doble,Humidite'
     query = "SELECT {} FROM BCD WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Metals in Oil
+def __metals_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Aluminium,Fer,Plomb,Etain,Zinc,Nickel,Argent,' \
+               'Cuivre,bAlu,bFer,bEtain,bZinc,bNickel,bArgent,bPlomb,bCuivre'
+    query = "SELECT {} FROM Metaux_Dans_Huiles WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
