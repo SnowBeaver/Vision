@@ -10,7 +10,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
     DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
-    MetalsInOilTest
+    MetalsInOilTest, VisualInspectionTest
 from app.users.models import User
 from app import db
 
@@ -1010,6 +1010,11 @@ def get_and_prepare_tests(cursor, test_results):
     metals_tests = fetch_metals_tests(metals_tests)
     metals_tests = {test.pop('clef_analyse'): test for test in metals_tests['items']}
 
+    # Visual Inspection
+    visual_insp_tests = get_visual_insp_tests(cursor, test_nrs)
+    visual_insp_tests = fetch_visual_insp_tests(visual_insp_tests)
+    visual_insp_tests = {test.pop('clef_analyse'): test for test in visual_insp_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -1021,7 +1026,8 @@ def get_and_prepare_tests(cursor, test_results):
         'pcb': pcb_tests,
         'inhibitor': inhibitor_tests,
         'winding': winding_tests,
-        'metals': metals_tests
+        'metals': metals_tests,
+        'visual': visual_insp_tests
     }
 
 
@@ -1108,6 +1114,20 @@ def save_tests(tests, test_nr, test_result):
         metals_test.test_result = test_result
         test_result.metals = True
         db.session.add(metals_test)
+
+    # Visual Inspection
+    if tests['visual'].get(test_nr):
+        # TODO: Check ids in new and old DBs
+        # Increase all ids by 1 for now, as they start with 0 in old DB
+        vis_inp_data = tests['visual'].get(test_nr)
+        for key, value in vis_inp_data.items():
+            if value and '_id' in key and str(value).isnumeric():
+                vis_inp_data[key] = int(value) + 1
+
+        visual_insp_test = VisualInspectionTest(**vis_inp_data)
+        visual_insp_test.test_result = test_result
+        test_result.visual = True
+        db.session.add(visual_insp_test)
 
 
 # Water
@@ -1599,6 +1619,83 @@ def fetch_metals_tests(items):
     return data
 
 
+# Visual Inspection
+def get_visual_insp_tests(cursor, test_nrs):
+    query = __visual_insp_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_visual_insp_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],                # ClefAnalyse
+                'notes': item[52],                      # Notes
+
+                'tank_cover_gasket_id': item[3],        # Cuve_Jt_Couvercle
+                'tank_manhole_gasket_id': item[4],      # Cuve_boucle_acces
+                'tank_gas_relay_id': item[6],           # Cuve_Relais_Gaz
+                'tank_oil_level_id': item[7],           # Cuve_Niveau
+                'tank_winding_temp_max': item[8],       # Cuve_Temp_Bobinage
+                'tank_winding_temp_actual': item[9],    # Cuve_Temp_Bobinage2
+                'tank_oil_temp_max': item[10],          # Cuve_Temp_Huile
+                'tank_oil_temp_actual': item[11],        # Cuve_Temp_Huile2
+                'tank_winding_flag': item[17],           # Cuve_Vent
+                'tank_oil_flag': item[19],               # Cuve_Chauffage
+                'tank_pressure_unit_id': item[20],       # Cuve_PresUnit
+                'tank_pressure': item[12],               # Cuve_Pression
+                'tank_overpressure_valve_id': item[13],  # Cuve_Valve_Sup
+                'tank_sampling_valve_id': item[14],      # Cuve_Valve_Echant
+                'tank_oil_pump_id': item[15],            # Cuve_Pompe_Huile
+                'tank_gas_analyser': item[17],           # Cuve_Cap_Gaz
+                'tank_overall_condition_id': item[18],   # Cuve_Peinture
+
+                'exp_tank_pipe_gasket_id': item[35],     # Ce_Jt_Tuyau
+                'exp_tank_oil_level_id': item[36],       # Ce_Niveau
+                'exp_tank_paint_id': item[37],           # Ce_Peinture
+                'exp_tank_overall_condition_id': item[39],       # Ce_Dessicat
+
+                'bushing_gasket_id': item[39],                   # Ta_Jt
+                'bushing_oil_level_id': item[40],                # Ta_Niveau
+                'bushing_overall_condition_id': item[41],        # Ta_Proprete
+
+                'tap_changer_gasket_id': item[21],               # Cp_Jt
+                'tap_changer_oil_level_id': item[22],            # Cp_Niveau
+                'tap_changer_temp_max': item[23],                # Cp_Temp
+                'tap_changer_temp_actual': item[24],             # Cp_Temp2
+                'tap_changer_pressure_max': item[25],            # Cp_Pression
+                'tap_changer_pressure_actual': item[26],         # Cp_Pression2
+                'tap_changer_pressure_unit_id': item[34],        # Cp_PresUnit
+                'tap_changer_tap_position': item[33],            # Cp_Position_Prises
+                'tap_changer_overpressure_valve_id': item[27],   # Cp_Valve_Sup
+                'tap_changer_operation_counter': item[29],       # Cp_Num_Operation
+                'tap_changer_counter_id': item[31],              # Cp_Compteur
+                'tap_changer_filter_id': item[30],               # Cp_Filtre
+                'tap_changer_overall_condition_id': item[28],    # Cp_Peinture
+
+                'radiator_fan_id': item[50],                     # Rad_Ventilation
+                'radiator_gasket_id': item[5],                  # Cuve_Jt_Radiateurs
+                'radiator_overall_condition_id': item[51],       # Rad_Aspect_General
+
+                'control_cab_connection_id': item[48],           # Con_Raccord_Electrique
+                'control_cab_heating_id': item[44],              # SS_Indicateur
+                'control_cab_overall_condition_id': item[49],    # Con_aspect_General
+
+                'grounding_value': item[42],                     # Matt_Valeur
+                'grounding_connection_id': item[43],             # Matt_Raccord
+
+                'misc_foundation_id': None,                     #
+                'misc_temp_ambiant': item[46],                   # Temp_Ambiant
+                'misc_load': item[47],                           # Charge
+            }
+        )
+    return data
+
+
 # Campaigns
 def get_campaigns(cursor):
     query = __campaigns_sql()
@@ -1822,6 +1919,7 @@ class OldDBNotations:
             'IRes': 'Insulation resistance',
             'WCD': 'Winding Cap. and PF',
             'VisI': 'Visual inspection',
+            'InspV': 'Visual inspection',
             'FUR': 'Furans',
             'BUSH': 'Bushing Cap. and PF',
             'WRes': 'Resistance; winding/contact',
@@ -2192,6 +2290,22 @@ def __metals_test_sql(test_nrs):
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Aluminium,Fer,Plomb,Etain,Zinc,Nickel,Argent,' \
                'Cuivre,bAlu,bFer,bEtain,bZinc,bNickel,bArgent,bPlomb,bCuivre'
     query = "SELECT {} FROM Metaux_Dans_Huiles WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Visual Inspection
+def __visual_insp_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Cuve_Jt_Couvercle,Cuve_boucle_acces,Cuve_Jt_Radiateurs,Cuve_Relais_Gaz,Cuve_Niveau,Cuve_Temp_Bobinage,Cuve_Temp_Bobinage2,' \
+               'Cuve_Temp_Huile,Cuve_Temp_Huile2,Cuve_Pression,Cuve_Valve_Sup,Cuve_Valve_Echant,Cuve_Pompe_Huile,Cuve_Vent,Cuve_Cap_Gaz,Cuve_Peinture,Cuve_Chauffage,' \
+               'Cuve_PresUnit,Cp_Jt,Cp_Niveau,Cp_Temp,Cp_Temp2,Cp_Pression,Cp_Pression2,Cp_Valve_Sup,Cp_Peinture,Cp_Num_Operation,' \
+               'Cp_Filtre,Cp_Compteur,Cp_Jt_Echant,Cp_Position_Prises,Cp_PresUnit,Ce_Jt_Tuyau,Ce_Niveau,Ce_Peinture,Ce_Dessicat,Ta_Jt,' \
+               'Ta_Niveau,Ta_Proprete,Matt_Valeur,Matt_Raccord,SS_Indicateur,Assise,Temp_Ambiant,Charge,Con_Raccord_Electrique,Con_aspect_General,Rad_Ventilation,' \
+               'Rad_Aspect_General,Notes,Cuve_Temp_Bob_Decl1,Cuve_Temp_Bob_Decl2,Cuve_Temp_Bob_Decl3,Cuve_Temp_Liq_Decl1,Cuve_Temp_Liq_Decl2,Cuve_Temp_Liq_Decl3,Cuve_TempContact_Bob_Decl1,' \
+               'Cuve_TempContact_Liq_Decl1'
+    query = "SELECT {} FROM Inspection_Visuel WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
