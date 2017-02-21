@@ -9,7 +9,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
-    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest
+    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest
 from app.users.models import User
 from app import db
 
@@ -994,6 +994,11 @@ def get_and_prepare_tests(cursor, test_results):
     pcb_tests = fetch_pcb_tests(pcb_tests)
     pcb_tests = {test.pop('clef_analyse'): test for test in pcb_tests['items']}
 
+    # Inhibitor (DBPC)
+    inhibitor_tests = get_inhibitor_tests(cursor, test_nrs)
+    inhibitor_tests = fetch_inhibitor_tests(inhibitor_tests)
+    inhibitor_tests = {test.pop('clef_analyse'): test for test in inhibitor_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -1002,7 +1007,8 @@ def get_and_prepare_tests(cursor, test_results):
         'ins_res': ins_res_tests,
         'bushing': bushing_tests,
         'fluid': fluid_tests,
-        'pcb': pcb_tests
+        'pcb': pcb_tests,
+        'inhibitor': inhibitor_tests,
     }
 
 
@@ -1063,8 +1069,15 @@ def save_tests(tests, test_nr, test_result):
     if tests['pcb'].get(test_nr):
         pcb_test = PCBTest(**tests['pcb'].get(test_nr))
         pcb_test.test_result = test_result
-        test_result.pcd = True  # TODO
+        test_result.pcd = True  # TODO: Check
         db.session.add(pcb_test)
+
+    # Inhibitor
+    if tests['inhibitor'].get(test_nr):
+        inhibitor_test = InhibitorTest(**tests['inhibitor'].get(test_nr))
+        inhibitor_test.test_result = test_result
+        test_result.inhibitor = True  # TODO: Check
+        db.session.add(inhibitor_test)
 
 
 # Water
@@ -1409,6 +1422,30 @@ def fetch_pcb_tests(items):
                 'aroclor_1260_flag': item[8],             # b1260
                 'pcb_total': item[9],                     # BPCTotal
                 'total_flag': item[10],                   # bTotal
+            }
+        )
+    return data
+
+
+# Inhibitor
+def get_inhibitor_tests(cursor, test_nrs):
+    query = __inhibitor_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_inhibitor_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],            # ClefAnalyse
+                'inhibitor_type': None,             # TODO: check
+                'inhibitor': item[3],               # DBPC
+                'remark': item[4],                  # REMARQUE
+                'inhibitor_flag': item[5],          # bDBPC
             }
         )
     return data
@@ -1970,6 +2007,16 @@ def __pcb_test_sql(test_nrs):
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,Bpc1242,Bpc1254,Bpc1260,b1242,b1254,b1260,BPCTotal,' \
                'bTotal'
     query = "SELECT {} FROM BPC WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Inhibitor
+def __inhibitor_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,DBPC,REMARQUE,bDBPC'
+    query = "SELECT {} FROM DBPC WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
