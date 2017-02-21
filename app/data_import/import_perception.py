@@ -9,7 +9,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Transformer, GasSensor, ElectricalProfile, FluidProfile, Lab, Campaign, TestResult,\
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
-    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest
+    DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest
 from app.users.models import User
 from app import db
 
@@ -999,6 +999,11 @@ def get_and_prepare_tests(cursor, test_results):
     inhibitor_tests = fetch_inhibitor_tests(inhibitor_tests)
     inhibitor_tests = {test.pop('clef_analyse'): test for test in inhibitor_tests['items']}
 
+    # Winding (BCD)
+    winding_tests = get_winding_tests(cursor, test_nrs)
+    winding_tests = fetch_winding_tests(winding_tests)
+    winding_tests = {test.pop('clef_analyse'): test for test in winding_tests['items']}
+
     return {
         'water': water_tests,
         'pd': pd_tests,
@@ -1009,6 +1014,7 @@ def get_and_prepare_tests(cursor, test_results):
         'fluid': fluid_tests,
         'pcb': pcb_tests,
         'inhibitor': inhibitor_tests,
+        'winding': winding_tests,
     }
 
 
@@ -1072,12 +1078,19 @@ def save_tests(tests, test_nr, test_result):
         test_result.pcd = True  # TODO: Check
         db.session.add(pcb_test)
 
-    # Inhibitor
+    # Inhibitor (DPCB)
     if tests['inhibitor'].get(test_nr):
         inhibitor_test = InhibitorTest(**tests['inhibitor'].get(test_nr))
         inhibitor_test.test_result = test_result
         test_result.inhibitor = True  # TODO: Check
         db.session.add(inhibitor_test)
+
+    # Winding (BCD)
+    if tests['winding'].get(test_nr):
+        winding_test = WindingTest(**tests['winding'].get(test_nr))
+        winding_test.test_result = test_result
+        test_result.winding = True  # TODO: Check
+        db.session.add(winding_test)
 
 
 # Water
@@ -1427,7 +1440,7 @@ def fetch_pcb_tests(items):
     return data
 
 
-# Inhibitor
+# Inhibitor (DPCB)
 def get_inhibitor_tests(cursor, test_nrs):
     query = __inhibitor_test_sql(test_nrs)
     cursor.execute(query)
@@ -1446,6 +1459,33 @@ def fetch_inhibitor_tests(items):
                 'inhibitor': item[3],               # DBPC
                 'remark': item[4],                  # REMARQUE
                 'inhibitor_flag': item[5],          # bDBPC
+            }
+        )
+    return data
+
+
+# Winding (BCD)
+def get_winding_tests(cursor, test_nrs):
+    query = __winding_test_sql(test_nrs)
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+def fetch_winding_tests(items):
+    data = {
+        'items': []
+    }
+    for item in items:
+        data['items'].append(
+            {
+                'clef_analyse': item[0],         # ClefAnalyse
+                'test_kv1': item[3],             # TestKV1
+                'm_meter1': item[4],             # mMeter1
+                'm_multiplier1': item[5],        # mMultiplier1
+                'w_meter1': item[6],             # wMeter1
+                'w_multiplier1': item[7],        # wMultiplier1
+                'type_doble': item[53],          # Type_Doble
+                'humidity': item[54],            # Humidite
             }
         )
     return data
@@ -2017,6 +2057,21 @@ def __inhibitor_test_sql(test_nrs):
     # to know exact position of column on retrieve
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,DBPC,REMARQUE,bDBPC'
     query = "SELECT {} FROM DBPC WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
+    return query
+
+
+# Winding
+def __winding_test_sql(test_nrs):
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,TestKV1,mMeter1,mMultiplier1,wMeter1,wMultiplier1,TestKV2,mMeter2,' \
+               'mMultiplier2,wMeter2,wMultiplier2,TestKV3,mMeter3,mMultiplier3,wMeter3,wMultiplier3,TestKV4,mMeter4,' \
+               'mMultiplier4,wMeter4,wMultiplier4,TestKV5,mMeter5,mMultiplier5,wMeter5,wMultiplier5,TestKV6,mMeter6,' \
+               'mMultiplier6,wMeter6,wMultiplier6,TestKV7,mMeter7,mMultiplier7,wMeter7,wMultiplier7,TestKV8,mMeter8,' \
+               'mMultiplier8,wMeter8,wMultiplier8,TestKV9,mMeter9,mMultiplier9,wMeter9,wMultiplier9,TestKV10,mMeter10,' \
+               'mMultiplier10,wMeter10,wMultiplier10,Type_Doble,Humidite'
+    query = "SELECT {} FROM BCD WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
 
 if __name__ == '__main__':
