@@ -10,7 +10,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Contract, ContractStatus, TestType, FluidType, SamplingPoint, TestReason, TestStatus, \
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
     DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
-    MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest, FuranTest
+    MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest, FuranTest, Material
 from app.users.models import User
 from app import db
 
@@ -279,11 +279,23 @@ def save_equipment_type_data(item):
     # Transformer
     transformer = None
     if item['equipment_type_id'] == 'T':
-        transformer = Transformer(**item['transformer_data'])
+        transformer_data = item['transformer_data']
+        transformer_data = get_winding_metal_id(transformer_data)
+        transformer = Transformer(**transformer_data)
+
         db.session.add(transformer)
     del item['transformer_data']
     # TODO: L and S equipment types
     return item, transformer
+
+
+def get_winding_metal_id(transformer_data):
+    if transformer_data.get('windind_metal') or transformer_data.get('windind_metal') == 0:
+        winding_metal_name = OldDBNotations.winding_material_old_new().get(transformer_data['windind_metal'])
+        winding_metal = db.session.query(Material).filter_by(name=winding_metal_name).first()
+        if winding_metal:
+            transformer_data['windind_metal'] = winding_metal.id
+    return transformer_data
 
 
 def prepare_equipment_norms(item):
@@ -675,8 +687,11 @@ def process_additional_data(test_results, recommendations):
     for test_result in test_results:
         # Equipment id
         if test_result.get('equipment_number') and test_result.get('serial'):
-            test_result['equipment_id'] = db_info['equipment_mapping'].get(
+            test_result['equipment'] = db_info['equipment_mapping'].get(
                 '{}_{}'.format(test_result['equipment_number'].strip(), test_result['serial'].strip()))
+            # test_result['material_id'] = db_info['equipment_mapping'].get(
+            #     '{}_{}'.format(test_result['equipment_number'].strip(), test_result['serial'].strip())).
+
             del test_result['equipment_number']
             del test_result['serial']
 
@@ -735,7 +750,7 @@ def get_existing_db_info(test_results, recommendations):
 
     equipment_in_db = db.session.query(Equipment).filter(or_(*collected_info['equipments'])).all()
     db_info['equipment_mapping'] = {'{}_{}'.format(
-        equipment.equipment_number.strip(), equipment.serial.strip()): equipment.id for equipment in equipment_in_db}
+        equipment.equipment_number.strip(), equipment.serial.strip()): equipment for equipment in equipment_in_db}
     db_info['lab_mapping'] = get_labs_by_names(collected_info['labs'])
     db_info['test_types_mapping'] = get_test_types_by_names(collected_info['test_types'])
     db_info['user_mapping'] = get_users_by_names(collected_info['users'])
@@ -1881,7 +1896,7 @@ def fetch_test_results(items):
                 # area to evaluate contamination for instance.
                 # It is not directly related to Equipment diagnostic.
                 # It is related to Equipment repair byproducts
-                'material_id': None,               # Bobine_Materiel from Equipement
+                'material_id': None,               # Should be imported to the other table
                 'fluid_type_id': item[10],         # TypeHuile
                 'performed_by_id': item[14] or None,       # PrelevePar
                 'lab_id': item[17],                # Laboratoire
@@ -2007,8 +2022,6 @@ def run_import():
 
     # Save test results
     process_test_results_and_campaigns(cursor)
-
-    #TODO Save material_ids for test_results
 
     cursor.close()
     connection.close()
@@ -2177,6 +2190,25 @@ class OldDBNotations:
             4: 'After degassing',
             5: 'After Fuller earth',
             6: 'Other',
+        }
+        return items
+
+    @staticmethod
+    def winding_material_old():
+        # Bobine_Materiel
+        items = {
+            0: 'Copper',
+            1: 'Aluminium',
+        }
+        return items
+
+    @staticmethod
+    def winding_material_old_new():
+        # Bobine_Materiel
+        # {old db id: new db value}
+        items = {
+            0: 'Copper',
+            1: 'Aluminium',
         }
         return items
 
