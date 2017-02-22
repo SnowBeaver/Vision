@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 import pypyodbc
 import datetime
@@ -594,6 +595,13 @@ def get_labs(cursor):
     return cursor.fetchall()
 
 
+# Labs from test result table
+def get_test_result_labs(cursor):
+    query = __labs_from_test_result_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
 def fetch_labs(items):
     data = {
         'items': []
@@ -602,16 +610,18 @@ def fetch_labs(items):
     existing_items = [item.name for item in items_in_db]
 
     for item in items:
-        if item[0] in existing_items:
+        name = item[0].strip() if item[0] else None
+        if name in existing_items or name == 'Non déterminé':
             continue
 
         data['items'].append(
             {
                 # 'code': item[1],         # CodeLaboratoire
-                'analyser': None,        # -
-                'name': item[0],         # Laboratoire
+                'analyser': None,          # -
+                'name': name,              # Laboratoire
             }
         )
+        existing_items.append(name)    # Do not add same item twice
     return data
 
 
@@ -658,6 +668,12 @@ def process_labs(cursor):
     save_items(labs, Lab)
 
 
+def process_labs_from_test_result(cursor):
+    labs = get_test_result_labs(cursor)
+    labs = fetch_labs(labs)
+    save_items(labs, Lab)
+
+
 def process_test_results_and_campaigns(cursor):
     # Get recommendations
     campaigns = get_campaigns(cursor)
@@ -689,15 +705,13 @@ def process_additional_data(test_results, recommendations):
         if test_result.get('equipment_number') and test_result.get('serial'):
             test_result['equipment'] = db_info['equipment_mapping'].get(
                 '{}_{}'.format(test_result['equipment_number'].strip(), test_result['serial'].strip()))
-            # test_result['material_id'] = db_info['equipment_mapping'].get(
-            #     '{}_{}'.format(test_result['equipment_number'].strip(), test_result['serial'].strip())).
 
             del test_result['equipment_number']
             del test_result['serial']
 
         # lab id
         if test_result.get('lab_id'):
-            test_result['lab_id'] = db_info['lab_mapping'].get(test_result['lab_id'])
+            test_result['lab_id'] = db_info['lab_mapping'].get(test_result['lab_id'].strip())
 
         # test recommendation
         if test_result.get('test_recommendation_code') or test_result.get('test_recommendation_code') == 0:
@@ -2014,8 +2028,11 @@ def run_import():
     # Save fluid profile
     process_fluid_profile(cursor)
 
-    # Save laboratories TODO: (get also labs from Analyse table -?)
+    # Save laboratories
     process_labs(cursor)
+
+    # Save laboratories from Analyse table
+    process_labs_from_test_result(cursor)
 
     # Save equipment and data related to it
     process_equipment_records(cursor)
@@ -2288,6 +2305,15 @@ def __labs_sql():
     # to know exact position of column on retrieve
     all_cols = 'Laboratoire,CodeLaboratoire'
     query = "SELECT {} FROM Laboratoire".format(all_cols)
+    return query
+
+
+def __labs_from_test_result_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    all_cols = 'Laboratoire'
+    query = "SELECT {} FROM Analyse".format(all_cols)
     return query
 
 
