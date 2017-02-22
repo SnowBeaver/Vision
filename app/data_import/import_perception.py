@@ -105,11 +105,11 @@ def fetch_equipment_data(equipments):
                     'sealed': equipment[11],                #Scelle
                     'welded_cover': equipment[12],          #CouvSoude
                     'windings': equipment[28],              #Bobine
-                    'cooling_rating': None,                 #TODO
+                    'cooling_rating': None,                 #TODO: check
                     'autotransformer': equipment[29],       #Auto_Transfo
                     'threephase': equipment[13],            #TriPhase
                     'gassensor_id': equipment[15],          #Capteur
-                    'phase_number': None,                   #TODO
+                    'phase_number': None,                   #TODO: check
                     'frequency': str(equipment[54]),        #Frequence
                     'primary_tension': equipment[22],       #Tension1
                     'secondary_tension': equipment[23],     #Tension2
@@ -536,7 +536,7 @@ def fetch_fluid_profiles(items):
             {
                 'name': item[0],             # NoProfil
                 'description': item[1],      # Description
-                'shared': True,              #
+                'shared': False,             #
 
                 # syringe
                 'gas': item[3],              #GD
@@ -544,7 +544,7 @@ def fetch_fluid_profiles(items):
                 'furans': item[35],          #FUR_SER
                 'inhibitor': item[5],        #ANT_SER
                 'pcb': item[6],              #BPC_SER
-                'qty': None,                 #TODO
+                'qty': None,                 #TODO:check
                 'sampling': item[7],         #Lieu_SER
 
                 # jar
@@ -553,12 +553,12 @@ def fetch_fluid_profiles(items):
                 'density': item[21],         #TestDensite
                 'pcb_jar': item[11],         #BPC_POT
                 'inhibitor_jar': item[10],   #ANT_POT
-                'point': None,               #TODO
+                'point': item[22],           #TestPEclair TODO: Check - TestPEclair or TestPEcoulement -?
                 'dielec_2': item[14],        #TestD1816_2
                 'color': item[25],           #TestCouleur
                 'pf': item[19],              #TestFacteurP
-                'particles': item[11],       #PAR
-                'metals': item[22],          #TestPEclair
+                'particles': item[11],       #
+                'metals': item[12],          #MDH
                 'viscosity': item[24],       #TestViscosite
                 'dielec_d': item[15],        #TestD877
                 'ift': item[17],             #TestIFT
@@ -568,13 +568,13 @@ def fetch_fluid_profiles(items):
                 'corr': item[29],            #TestSCorrosif
                 'dielec_i': item[16],        #TestCEI156
                 'visual': item[29],          #TestVisuel
-                'qty_jar': None,             #TODO
+                'qty_jar': None,             #TODO:check
                 'sampling_jar': item[30],    #Lieu_POT
 
                 # vial
                 'pcb_vial': item[34],        # BPC_FIO
                 'antioxidant': item[32],     #ANT_FIO
-                'qty_vial': None,            #TODO
+                'qty_vial': None,            #TODO:check
                 'sampling_vial': item[34],   #Lieu_FIO
             }
         )
@@ -1892,7 +1892,7 @@ def fetch_campaigns(items):
                 'contract_id': item[31],                            # NoContrat
                 'date_sampling': item[12],                          # DatePrelevement
                 'description': item[25],                            # Commentaire
-                'status_id': None,                                  # TODO: EtatCommande
+                'status_id': None,                                  # No similar column was found
             }
         )
     return data
@@ -1941,7 +1941,7 @@ def fetch_test_results(items):
                 'modifier': item[15],              # Modifier
                 'repair_date': item[18],           # DateReparation
                 'repair_description': item[19],    # Desc_Reparation
-                'ambient_air_temperature': None,   # Ambient_Air_Temperature - #TODO: no such column in DB
+                'ambient_air_temperature': None,   # Ambient_Air_Temperature - no such column in old DB
 
                 # electrical profile fields
                 'bushing': None,                 #
