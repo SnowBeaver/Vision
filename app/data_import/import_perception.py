@@ -84,7 +84,7 @@ def fetch_equipment_data(equipments):
                 'nbr_of_tap_change_ltc': equipment[60],     # Nbr_Change_Prise
                 'status': None,
                 'phys_position': equipment[97],             #PosPhys
-                'tension4': equipment[104],                 #Tension4   - TODO: Why is it in equipment not transformer table
+                'tension4': equipment[104],                 #Tension4
                 'validated': equipment[150],                #Valider
                 'invalidation': equipment[151],             #EnValidation
                 'prev_serial_number': equipment[152],       #NoSerieEquipeAnc
@@ -114,9 +114,9 @@ def fetch_equipment_data(equipments):
                     'primary_tension': equipment[22],       #Tension1
                     'secondary_tension': equipment[23],     #Tension2
                     'tertiary_tension': equipment[24],      #Tension3
-                    'based_transformerp_ower': equipment[25],             #Puissance1 - ?
-                    'first_cooling_stage_power': equipment[26],           #Puissance2 - ?
-                    'second_cooling_stage_power': equipment[27],          #Puissance3 - ?
+                    'based_transformerp_ower': equipment[25],             #Puissance1
+                    'first_cooling_stage_power': equipment[26],           #Puissance2
+                    'second_cooling_stage_power': equipment[27],          #Puissance3
                     'primary_winding_connection': equipment[30],          #Raccord_Bobine1
                     'secondary_winding_connection': equipment[31],        #Raccord_Bobine2
                     'tertiary_winding_connection': equipment[32],         #Raccord_Bobine3
@@ -416,8 +416,8 @@ def fetch_norm_physic(norms):
                 'd1816_2_max': norm[25],
                 'p100_min': norm[26],   #FacteurP100_MIN
                 'p100_max': norm[27],   #FacteurP100_MAX
-                'fluid_type_id': norm[28],  #TODO: TypeHuile - ?
-                'equipment_id': -1,     #TODO: Why do we need equipment_id in the table - ?
+                'fluid_type_id': norm[28],  # TypeHuile
+                'equipment_id': -1,         # We don't need equipment id in the predefined norms
                 'cei156_min': norm[29],
                 'cei156_max': norm[30],
                 'equipment_type_id': db.session.query(EquipmentType).filter_by(code=norm[1]).first().id if norm[1] else None,
@@ -500,14 +500,14 @@ def fetch_el_profiles(items):
             {
                 'name': item[0],            # NoProfil
                 'description': item[1],     # Description
-                'shared': True,             #TODO
-                'bushing': item[5],         #TODO
-                'winding': item[5],         # BOB_PF
-                'insulation_pf': item[8],   # BOB_RES
-                'insulation': item[4],      # RES_ISOL
+                'shared': False,            #
+                'bushing': item[3],         # TRAV
+                'winding': item[5],         # BOB_PF TODO: Check
+                'insulation_pf': item[6],   # BOB_PF_DOB TODO: Check
+                'insulation': item[4],      # RES_ISOL TODO: Check
                 'visual': item[9],          # INSP_VIS
-                'resistance': item[10],     #TODO
-                'degree': item[10],         #TODO
+                'resistance': item[8],      # BOB_RES TODO: Check
+                'degree': item[7],          # DP
                 'turns': item[10],          # TTR
             }
         )
@@ -542,7 +542,7 @@ def fetch_fluid_profiles(items):
                 'gas': item[3],              #GD
                 'water': item[4],            #EAU_SER
                 'furans': item[35],          #FUR_SER
-                'inhibitor': None,           #TODO
+                'inhibitor': item[5],        #ANT_SER
                 'pcb': item[6],              #BPC_SER
                 'qty': None,                 #TODO
                 'sampling': item[7],         #Lieu_SER
@@ -551,8 +551,8 @@ def fetch_fluid_profiles(items):
                 'dielec': item[13],          #TestD1816
                 'acidity': item[18],         #TestAcid
                 'density': item[21],         #TestDensite
-                'pcb_jar': None,             #TODO
-                'inhibitor_jar': None,       #TODO
+                'pcb_jar': item[11],         #BPC_POT
+                'inhibitor_jar': item[10],   #ANT_POT
                 'point': None,               #TODO
                 'dielec_2': item[14],        #TestD1816_2
                 'color': item[25],           #TestCouleur
@@ -572,7 +572,7 @@ def fetch_fluid_profiles(items):
                 'sampling_jar': item[30],    #Lieu_POT
 
                 # vial
-                'pcb_vial': None,            #TODO
+                'pcb_vial': item[34],        # BPC_FIO
                 'antioxidant': item[32],     #ANT_FIO
                 'qty_vial': None,            #TODO
                 'sampling_vial': item[34],   #Lieu_FIO
@@ -641,7 +641,23 @@ def process_equipment_records(cursor):
 def process_norms(cursor):
     norm_physic = get_norms(cursor)
     norm_physic = fetch_norm_physic(norm_physic)
+    norm_physic = process_additional_norm_data(norm_physic)
     save_items(norm_physic, NormPhysic)
+
+
+def process_additional_norm_data(norm_physic):
+    """Add appropriate fluid type id to the norm"""
+    collected_fluid_types = []
+    for norm in norm_physic['items']:
+        collected_fluid_types.append(OldDBNotations.fluid_type_old_new().get(norm['fluid_type_id']))
+
+    fluid_types_mapping = get_fluid_types_by_names(collected_fluid_types)
+
+    for norm in norm_physic['items']:
+        # fluid_type_id
+        if norm.get('fluid_type_id') or norm.get('fluid_type_id') == 0:
+            norm['fluid_type_id'] = fluid_types_mapping.get(norm['fluid_type_id'])
+    return norm_physic
 
 
 def process_gas_sensor(cursor):
@@ -1245,11 +1261,11 @@ def fetch_pd_tests(items):
                 'phase_c1': item[9],                       # PhaseC1
                 'phase_c2': item[10],                      # PhaseC2
                 'phase_c3': item[11],                      # PhaseC3
-                'lead_a': None,                         # TODO
-                'lead_b': None,                         # TODO
-                'lead_c': None,                         # TODO
-                'lead_n': None,                         # TODO
-                'winding': None,                        # TODO
+                'lead_a': None,                            # Not found in old DB
+                'lead_b': None,                            # Not found in old DB
+                'lead_c': None,                            # Not found in old DB
+                'lead_n': None,                            # Not found in old DB
+                'winding': None,                           # Not found in old DB
             }
         )
     return data
