@@ -13,7 +13,7 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
     MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest, FuranTest, Material, \
     Breaker, LoadTapChanger, AirCircuitBreaker, Bushing, Capacitor, PowerSource, Cable, SwitchGear, \
-    InductionMachine, SynchronousMachine, Rectifier, Tank, Switch
+    InductionMachine, SynchronousMachine, Rectifier, Tank, Switch, EquipmentConnection
 from app.users.models import User
 from app import db
 
@@ -102,6 +102,7 @@ def fetch_equipment_data(equipments):
                 'norm_physic': equipment[61],               #NormePhy
                 'norm_furan': equipment[63],                #NormeFur
                 'norm_gas': equipment[62],                  #NormeGD
+                'upstreams': equipment[83],                 #LocAmont1
 
                 'extra_equipment_props': {
                     'air_breaker_data': {                       # A
@@ -322,7 +323,14 @@ def save_equipment(data):
     equipment data which depends on type
     """
     items = data['items']
+    equipment_key_item_mapping = {}
     for item in items:
+        # TODO: Equipment number is not unique, but it is used
+        # in the Upstream field in the old DB
+        upstream_data = {
+            'upstreams': item.pop('upstreams')
+        }
+
         item, equipment_norms = prepare_equipment_norms(item)   # Norms
         item, additional_equipment = save_equipment_type_data(item)      # Equipment data depending on type
         item = get_additional_info(item)           # location_id, manufacturer_id and equipment_type_id
@@ -332,8 +340,13 @@ def save_equipment(data):
         # Add equipment to transformer record
         if additional_equipment:
             additional_equipment.equipment = equipment
-
         db.session.add(equipment)
+
+        upstream_data['equipment'] = equipment
+        equipment_key_item_mapping[equipment.equipment_number.strip()] = upstream_data
+
+    save_upstreams(equipment_key_item_mapping)
+
     try:
         db.session.commit()
         print('Added equipment')
@@ -342,6 +355,24 @@ def save_equipment(data):
         print(e)
         db.session.rollback()
     return True
+
+
+def save_upstreams(equipment_key_item_mapping):
+    """Save upstreams"""
+    for number, data in equipment_key_item_mapping.items():
+        upstreams = data['upstreams']
+        equipment = data['equipment']
+        if upstreams:
+            upstreams = upstreams.split(';')
+        # Check each upstream because there are records like ';'
+        upstreams = [upstream for upstream in upstreams if upstream]
+        # if there are upstreams, add them to session
+        if upstreams:
+            for upstream in upstreams:
+                # Get parent equipment
+                parent = equipment_key_item_mapping.get(upstream.strip())
+                if parent:
+                    db.session.add(EquipmentConnection(equipment=equipment, parent=parent['equipment']))
 
 
 def add_equipment_to_norms(equipment_norms, equipment):
