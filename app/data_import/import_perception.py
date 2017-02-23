@@ -12,7 +12,8 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     Recommendation, TestRecommendation, WaterTest, PolymerisationDegreeTest, TransformerTurnRatioTest, \
     DissolvedGasTest, InsulationResistanceTest, BushingTest, FluidTest, PCBTest, InhibitorTest, WindingTest, \
     MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest, FuranTest, Material, \
-    Breaker, LoadTapChanger
+    Breaker, LoadTapChanger, AirCircuitBreaker, Bushing, Capacitor, PowerSource, Cable, SwitchGear, \
+    InductionMachine, SynchronousMachine, Rectifier, Tank, Switch
 from app.users.models import User
 from app import db
 
@@ -364,29 +365,115 @@ def add_equipment_to_norms(equipment_norms, equipment):
 
 def save_equipment_type_data(item):
     """ Save data related to equipment and which depends on type """
-    # Transformer
     additional_equipment = None
     equipment_type = item['equipment_type_id']
     extra_equipment_props = item.pop('extra_equipment_props', {})
 
     # TODO: L and S equipment types
-
-    if equipment_type == 'T':
-        transformer_data = get_winding_metal_id(extra_equipment_props['transformer_data'])
-        additional_equipment = Transformer(**transformer_data)
-        db.session.add(additional_equipment)
-    # Breaker
-    elif equipment_type == 'D':
-        breaker_data = add_fluid_type_id(extra_equipment_props['breaker_data'])
-        additional_equipment = Breaker(**breaker_data)
-        db.session.add(additional_equipment)
-    # Load Tap changer
-    elif equipment_type == 'P':
-        load_tap_changer_data = add_fluid_type_id(extra_equipment_props['load_tap_changer_data'])
-        additional_equipment = LoadTapChanger(**load_tap_changer_data)
-        db.session.add(additional_equipment)
-
+    type_action_mapping = {
+        'A': ExtraEquipmentProps.air_breaker,
+        'B': ExtraEquipmentProps.bushing,
+        'C': ExtraEquipmentProps.capacitor,
+        'D': ExtraEquipmentProps.breaker,
+        'E': ExtraEquipmentProps.power_source,
+        'G': ExtraEquipmentProps.cable,
+        'H': ExtraEquipmentProps.switchgear,
+        'I': ExtraEquipmentProps.induction_machine,
+        'J': ExtraEquipmentProps.synchronous_machine,
+        'L': None,
+        'P': ExtraEquipmentProps.load_tap_changer,
+        'R': ExtraEquipmentProps.rectifier,
+        'S': None,
+        'T': ExtraEquipmentProps.transformer,
+        'Y': ExtraEquipmentProps.tank,
+        'Z': ExtraEquipmentProps.switch,
+    }
+    if type_action_mapping[equipment_type]:
+        additional_equipment = type_action_mapping[equipment_type](extra_equipment_props)
     return item, additional_equipment
+
+
+class ExtraEquipmentProps:
+
+    @classmethod
+    def add_fluid_type_id(cls, data, model):
+        data = add_fluid_type_id(data)
+        additional_equipment = cls.add_to_session(data, model)
+        return additional_equipment
+
+    @classmethod
+    def add_winding_metal_id(cls, data, model):
+        data = get_winding_metal_id(data)
+        additional_equipment = cls.add_to_session(data, model)
+        return additional_equipment
+
+    @classmethod
+    def add_to_session(cls, data, model):
+        additional_equipment = model(**data)
+        db.session.add(additional_equipment)
+        return additional_equipment
+
+    @classmethod
+    def air_breaker(cls, data):
+        return cls.add_to_session(data['air_breaker_data'], AirCircuitBreaker)
+
+    @classmethod
+    def bushing(cls, data):
+        return cls.add_fluid_type_id(data['bushing_data'], Bushing)
+
+    @classmethod
+    def capacitor(cls, data):
+        return cls.add_to_session(data['capacitor_data'], Capacitor)
+
+    @classmethod
+    def breaker(cls, data):
+        return cls.add_fluid_type_id(data['breaker_data'], Breaker)
+
+    @classmethod
+    def power_source(cls, data):
+        return cls.add_to_session(data['power_source_data'], PowerSource)
+
+    @classmethod
+    def cable(cls, data):
+        # TODO: insulation_id
+        return cls.add_to_session(data['cable_data'], Cable)
+
+    @classmethod
+    def switchgear(cls, data):
+        # TODO: insulation_id
+        return cls.add_to_session(data['switchgear_data'], SwitchGear)
+
+    @classmethod
+    def induction_machine(cls, data):
+        return cls.add_to_session(data['induction_machine_data'], InductionMachine)
+
+    @classmethod
+    def synchronous_machine(cls, data):
+        return cls.add_to_session(data['synchronous_machine_data'], SynchronousMachine)
+
+    @classmethod
+    def transformer(cls, data):
+        return cls.add_winding_metal_id(data['transformer_data'], Transformer)
+
+    @classmethod
+    def load_tap_changer(cls, data):
+        return cls.add_fluid_type_id(data['load_tap_changer_data'], LoadTapChanger)
+
+    @classmethod
+    def rectifier(cls, data):
+        # TODO: fluid_level_id
+        # TODO: gas_sensor_id
+        return cls.add_fluid_type_id(data['rectifier_data'], Rectifier)
+
+    @classmethod
+    def tank(cls, data):
+        # TODO: fluid_level_id
+        return cls.add_fluid_type_id(data['tank_data'], Tank)
+
+    @classmethod
+    def switch(cls, data):
+        # TODO: interrupting_medium_id
+        return cls.add_to_session(data['switch_data'], Switch)
 
 
 def get_winding_metal_id(transformer_data):
