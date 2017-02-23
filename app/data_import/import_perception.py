@@ -19,6 +19,7 @@ from app import db
 
 
 DB_PATH = os.path.abspath('./Example_English.MDB')
+# DB_PATH = os.path.abspath('./Industiesavril2008.sei')
 odbc_connection_str = 'DRIVER={MDBTools};DBQ=%s;unicode_results=True;ansi=True;' % (DB_PATH,)
 
 
@@ -46,6 +47,13 @@ def get_admin_id():
 def get_keys_by_val(items, value):
     found_keys = [key for key, val in items.items() if val == value]
     return found_keys or None
+
+
+# Equipment total number
+def count_equipment(cursor):
+    query = __equipment_nr_sql()
+    cursor.execute(query)
+    return cursor.fetchall()
 
 
 # Equipment records
@@ -853,6 +861,7 @@ def process_equipment_records(cursor):
     # Save equipment
     equipment_data = fetch_equipment_data(equipments)
     save_equipment(equipment_data)                  # Equipment and norms related to them
+    return equipment_data
 
 
 def process_norms(cursor):
@@ -916,9 +925,9 @@ def process_labs_from_test_result(cursor):
     save_items(labs, Lab)
 
 
-def process_test_results_and_campaigns(cursor):
+def process_test_results_and_campaigns(cursor, equipment_ids):
     # Get recommendations
-    campaigns = get_campaigns(cursor)
+    campaigns = get_campaigns(cursor, equipment_ids)
     recommendations = get_recommendations(cursor)
 
     processed_campaigns = fetch_campaigns(campaigns)
@@ -929,12 +938,13 @@ def process_test_results_and_campaigns(cursor):
     # by having only test_type and recommendation code in test result
     # and then get recommendation id from new DB by recommendation name
     processed_recommendations = map_recommendations_names_to_ids(processed_recommendations['items'])
-
     test_results = process_additional_data(
         test_results=processed_test_results['items'],
         recommendations=processed_recommendations
     )
-    tests = get_and_prepare_tests(cursor=cursor, test_results=test_results)
+    tests = []
+    if test_results:
+        tests = get_and_prepare_tests(cursor=cursor, test_results=test_results)
     save_test_results_and_campaigns(processed_campaigns['items'], test_results, tests)
 
 
@@ -1006,7 +1016,7 @@ def get_existing_db_info(test_results, recommendations):
 
     equipment_in_db = db.session.query(Equipment).filter(or_(*collected_info['equipments'])).all()
     db_info['equipment_mapping'] = {'{}_{}'.format(
-        equipment.equipment_number.strip(), equipment.serial.strip()): equipment for equipment in equipment_in_db}
+        equipment.equipment_number.strip(), equipment.serial.strip()): equipment for equipment in equipment_in_db if equipment.serial and equipment.equipment_number}
     db_info['lab_mapping'] = get_labs_by_names(collected_info['labs'])
     db_info['test_types_mapping'] = get_test_types_by_names(collected_info['test_types'])
     db_info['user_mapping'] = get_users_by_names(collected_info['users'])
@@ -1155,7 +1165,8 @@ def save_test_results_and_campaigns(campaigns, test_results, tests):
         test_recommendation = TestRecommendation(**test_recommendation)
         db.session.add(test_recommendation)
 
-        save_tests(tests, test_nr, test_result_obj)
+        if tests:
+            save_tests(tests, test_nr, test_result_obj)
 
     try:
         db.session.commit()
@@ -2099,8 +2110,11 @@ def fetch_furan_tests(items):
 
 
 # Campaigns
-def get_campaigns(cursor):
+def get_campaigns(cursor, equipment_ids):
     query = __campaigns_sql()
+    where_clause = get_equipment_where_clause(equipment_ids)
+    if where_clause:
+        query += where_clause
     cursor.execute(query)
     return cursor.fetchall()
 
@@ -2276,11 +2290,15 @@ def run_import():
     # Save laboratories from Analyse table
     process_labs_from_test_result(cursor)
 
-    # Save equipment and data related to it
-    process_equipment_records(cursor)
+    # Get equipment partially
+    # total_equipment = count_equipment(cursor)
 
-    # Save test results
-    process_test_results_and_campaigns(cursor)
+    # Save equipment and data related to it
+    equipment_data = process_equipment_records(cursor)
+    equipment_ids = [{'nr': equipment['equipment_number'], 'serial': equipment['serial']} for equipment in equipment_data['items']]
+
+    # Save test results only for fetched equipment
+    process_test_results_and_campaigns(cursor, equipment_ids)
 
     cursor.close()
     connection.close()
@@ -2470,6 +2488,16 @@ class OldDBNotations:
             1: 'Aluminium',
         }
         return items
+
+
+def get_equipment_where_clause(equipment_ids):
+    or_clauses = []
+    where_clause = ''
+    for equipment_id in equipment_ids:
+        or_clauses.append("('NoEquipement'='{}' AND 'NoSerieEquipe'='{}')".format(equipment_id['nr'], equipment_id['serial']))
+    if or_clauses:
+        where_clause += " WHERE {}".format(' OR '.join(or_clauses))
+    return where_clause
 
 
 # SQL
@@ -2772,6 +2800,16 @@ def __furan_test_sql(test_nrs):
                'bFAL,bACF,bMEF'
     query = "SELECT {} FROM Furane WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
     return query
+
+
+# Equipment number
+def __equipment_nr_sql():
+    # Name all column names because cannot get them from cursor
+    # (they are fetched as Chinese letters)
+    # to know exact position of column on retrieve
+    query = "SELECT COUNT('NoEquipement') FROM Equipement"
+    return query
+
 
 if __name__ == '__main__':
     run_import()
