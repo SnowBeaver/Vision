@@ -49,18 +49,11 @@ def get_keys_by_val(items, value):
     return found_keys or None
 
 
-# Equipment total number
-def count_equipment(cursor):
-    query = __equipment_nr_sql()
-    cursor.execute(query)
-    return cursor.fetchall()
-
-
 # Equipment records
-def get_equipment(cursor):
-    query = __equipment_sql()
+def get_equipment(cursor, limit, last_pk=None):
+    query = __equipment_sql(last_pk)
     cursor.execute(query)
-    return cursor.fetchall()
+    return cursor.fetchmany(limit)
 
 
 def fetch_additional_data(equipments):
@@ -348,6 +341,7 @@ def save_equipment(data):
         # Add equipment to transformer record
         if additional_equipment:
             additional_equipment.equipment = equipment
+        print("NoEquipement: {:15} Serial: {}".format(equipment.equipment_number, equipment.serial))
         db.session.add(equipment)
 
         upstream_data['equipment'] = equipment
@@ -850,9 +844,9 @@ def fetch_labs(items):
     return data
 
 
-def process_equipment_records(cursor):
+def process_equipment_records(cursor, limit, last_pk):
     # Get all equipment
-    equipments = get_equipment(cursor)
+    equipments = get_equipment(cursor, limit, last_pk)
 
     # Prepare and save additional data from equipment
     additional_data = fetch_additional_data(equipments)
@@ -1016,7 +1010,7 @@ def get_existing_db_info(test_results, recommendations):
 
     equipment_in_db = db.session.query(Equipment).filter(or_(*collected_info['equipments'])).all()
     db_info['equipment_mapping'] = {'{}_{}'.format(
-        equipment.equipment_number.strip(), equipment.serial.strip()): equipment for equipment in equipment_in_db if equipment.serial and equipment.equipment_number}
+        equipment.equipment_number.encode('utf-8').strip(), equipment.serial.encode('utf-8').strip()): equipment for equipment in equipment_in_db if equipment.serial and equipment.equipment_number}
     db_info['lab_mapping'] = get_labs_by_names(collected_info['labs'])
     db_info['test_types_mapping'] = get_test_types_by_names(collected_info['test_types'])
     db_info['user_mapping'] = get_users_by_names(collected_info['users'])
@@ -2266,6 +2260,8 @@ def map_recommendations_names_to_ids(recommendations):
 
 
 def run_import():
+    LIMIT_NR = 12
+
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
     cursor = connection.cursor()
@@ -2291,17 +2287,25 @@ def run_import():
     process_labs_from_test_result(cursor)
 
     # Get equipment partially
-    # total_equipment = count_equipment(cursor)
-
-    # Save equipment and data related to it
-    equipment_data = process_equipment_records(cursor)
-    equipment_ids = [{'nr': equipment['equipment_number'], 'serial': equipment['serial']} for equipment in equipment_data['items']]
-
-    # Save test results only for fetched equipment
-    process_test_results_and_campaigns(cursor, equipment_ids)
+    # TODO: Treat special symbols correctly
+    equipment_data = process_equipment_records(cursor, limit=LIMIT_NR, last_pk=None)
+    while equipment_data['items']:
+        equipment_data = process_equipment_in_batches(cursor, equipment_data, LIMIT_NR)
 
     cursor.close()
     connection.close()
+
+
+def process_equipment_in_batches(cursor, equipment_data, limit):
+    equipment_ids = [{'equipment_number': equipment['equipment_number'], 'serial': equipment['serial']} for equipment in
+                     equipment_data['items']]  # Save test results only for fetched equipment
+    process_test_results_and_campaigns(cursor, equipment_ids)
+
+    # Get next records
+    last_equipment = equipment_data['items'][len(equipment_data['items']) - 1]
+    last_pk = {'equipment_number': last_equipment['equipment_number'], 'serial': last_equipment['serial']}
+    equipment_data = process_equipment_records(cursor, limit=limit, last_pk=last_pk)
+    return equipment_data
 
 
 class OldDBNotations:
@@ -2494,14 +2498,14 @@ def get_equipment_where_clause(equipment_ids):
     or_clauses = []
     where_clause = ''
     for equipment_id in equipment_ids:
-        or_clauses.append("('NoEquipement'='{}' AND 'NoSerieEquipe'='{}')".format(equipment_id['nr'], equipment_id['serial']))
+        or_clauses.append("('NoEquipement'='{}' AND 'NoSerieEquipe'='{}')".format(equipment_id['equipment_number'], equipment_id['serial']))
     if or_clauses:
         where_clause += " WHERE {}".format(' OR '.join(or_clauses))
     return where_clause
 
 
 # SQL
-def __equipment_sql():
+def __equipment_sql(last_pk):
     # Name all column names because cannot get them from cursor
     # (they are fetched as Chinese letters)
     # to know exact position of column on retrieve
@@ -2522,6 +2526,15 @@ def __equipment_sql():
                'Bush_Mfr_Q3,Bush_Mfr_QN,Bush_Type_H,Bush_Type_HN,Bush_Type_X,Bush_Type_XN,Bush_Type_T,Bush_Type_TN,Bush_Type_Q,Bush_Type_QN,' \
                'Valider,EnValidation,NoSerieEquipeAnc,NoEquipementAnc,Fratrie'
     query = "SELECT {} FROM Equipement".format(all_cols)
+
+    if last_pk:
+        query += """
+         WHERE
+         (NoEquipement > '{}'
+         OR (NoEquipement = '{}'
+             AND NoSerieEquipe > '{}'
+            ))
+         """.format(last_pk['equipment_number'], last_pk['equipment_number'], last_pk['serial'])
     return query
 
 
@@ -2799,15 +2812,6 @@ def __furan_test_sql(test_nrs):
     all_cols = 'ClefAnalyse,NoSerieEquipe,NoEquipement,HMF,FOL,FAL,ACF,MEF,bHMF,bFOL,' \
                'bFAL,bACF,bMEF'
     query = "SELECT {} FROM Furane WHERE {}".format(all_cols, ' OR '.join([" ClefAnalyse = '{}'".format(test_nr) for test_nr in test_nrs]))
-    return query
-
-
-# Equipment number
-def __equipment_nr_sql():
-    # Name all column names because cannot get them from cursor
-    # (they are fetched as Chinese letters)
-    # to know exact position of column on retrieve
-    query = "SELECT COUNT('NoEquipement') FROM Equipement"
     return query
 
 
