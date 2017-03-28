@@ -107,14 +107,14 @@ def fetch_equipment_data(equipments):
 
                 'extra_equipment_props': {
                     'air_breaker_data': {                       # A
-                        'current_rating': None,                 # TODO
+                        'current_rating': None,                 # there is no old column name for current_rating
                     },
                     'bushing_data': {                           # B
-                        'type': None,   # TODO
-                        'model': None,  # TODO
-                        'kv': None,     # TODO
-                        'sealed': equipment[11],                #Scelle
-                        'current': None,     # TODO
+                        'type': None,   # TODO: neutral or phase
+                        'model': None,  # Added in new DB
+                        'kv': equipment[22],                    # Tension1
+                        'sealed': equipment[11],                # Scelle
+                        'current': None,     # In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
                         'fluid_volume': equipment[4],    #LitreHuile
                         'bil': None,       # TODO    - Bil1/Bil2/Bil3/Bil4
                         'c1': None,     # TODO
@@ -122,15 +122,16 @@ def fetch_equipment_data(equipments):
                         'c2': None,     # TODO
                         'c2pf': None,     # TODO
                         'fluid_type_id': equipment[68],         # TypeHuile
+                        #TODO: add all the fields from old DB
 
                     },
                     'capacitor_data': {                             # C
-                        'kv': None, # TODO
+                        'kv': equipment[22],                        # Tension1
                         'kvar': None, # TODO
                         'bil': None,    # TODO    - Bil1/Bil2/Bil3/Bil4
                     },
                     'breaker_data': {                               # D
-                        'current_rating': None,                     # TODO
+                        'current_rating': None,                     # there is no old column name for current_rating
                         'open': equipment[94],                      # LocEntretienEtat TODO
                         'fluid_type_id': equipment[68],             # TypeHuile
                         'fluid_level_id': None,                     #TODO
@@ -138,27 +139,27 @@ def fetch_equipment_data(equipments):
                         'breaker_mechanism_id': None,               #TODO
                     },
                     'power_source_data': {                          # E
-                        'kv': None,                                 # TODO
+                        'kv': equipment[22],                        # Tension1
                         'threephase': equipment[13],                # TriPhase
                     },
                     'cable_data': {                             # G
-                        'model': None,                          # TODO
+                        'model': None,                          # Added in new DB
                         'sealed': equipment[11],                # Scelle
                         'threephase': equipment[13],            # TriPhase,
                         'insulation_id': None,                  # TODO
                     },
                     'switchgear_data': {                        # H
-                         'current_rating': None,                # TODO
+                         'current_rating': None,                # there is no old column name for current_rating
                          'insulation_id': None,                 # TODO
                     },
                     'induction_machine_data': {                 # I
-                         'current_rating': None,                # TODO
+                         'current_rating': None,                # there is no old column name for current_rating
                          'hp': None,                # TODO
                          'kva': None,                # TODO
                          'pf': None,                # TODO
                     },
                     'synchronous_machine_data': {                    # J
-                        'current_rating': None,    # TODO
+                        'current_rating': None,    # there is no old column name for current_rating
                         'hp': None,                # TODO
                         'kw': None,                # TODO
                     },
@@ -166,7 +167,7 @@ def fetch_equipment_data(equipments):
                         'filter': equipment[21],                    # Filtreur
                         'counter': equipment[20],                   # Compteur
                         'number_of_taps': equipment[60],            # Nbr_Change_Prise
-                        'model': None,                              # TODO
+                        'model': None,                              # Added in new DB
                         'fluid_type_id': equipment[68],             # TypeHuile
                         'fluid_level_id': None,                     # TODO
                         'interrupting_medium_id': None,             # TODO
@@ -257,7 +258,7 @@ def fetch_equipment_data(equipments):
                         'fluid_type_id': equipment[68],         #TypeHuile
                     },
                     'switch_data': {                            # Z
-                         'current_rating': None,          #TODO
+                         'current_rating': None,                # there is no old column name for current_rating
                          'threephase': equipment[13],              #TriPhase
                          'interrupting_medium_id': None,  #TODO
                     }
@@ -691,7 +692,7 @@ def fetch_gas_sensor(items):
                 'percent_error': item[12],  # ErreurPourcent
                 'model': item[0],           # Capteur
                 'equipment_id': None,       #
-                #TODO MAnufacturier -?
+                #TODO MAnufacturier -? add to new
             }
         )
     return data
@@ -721,11 +722,11 @@ def fetch_el_profiles(items):
                 'description': item[1],     # Description
                 'shared': False,            #
                 'bushing': item[3],         # TRAV
-                'winding': item[5],         # BOB_PF TODO: Check
-                'insulation_pf': item[6],   # BOB_PF_DOB TODO: Check
-                'insulation': item[4],      # RES_ISOL TODO: Check
+                'winding': item[5],         # BOB_PF
+                'insulation_pf': item[6],   # BOB_PF_DOB
+                'insulation': item[4],      # RES_ISOL
                 'visual': item[9],          # INSP_VIS
-                'resistance': item[8],      # BOB_RES TODO: Check
+                'resistance': item[8],      # BOB_RES
                 'degree': item[7],          # DP
                 'turns': item[10],          # TTR
             }
@@ -755,7 +756,7 @@ def fetch_fluid_profiles(items):
             {
                 'name': item[0],             # NoProfil
                 'description': item[1],      # Description
-                'shared': False,             #
+                'shared': False,             # no such field in old db
 
                 # syringe
                 'gas': item[3],              #GD
@@ -770,13 +771,13 @@ def fetch_fluid_profiles(items):
                 'dielec': item[13],          #TestD1816
                 'acidity': item[18],         #TestAcid
                 'density': item[21],         #TestDensite
-                'pcb_jar': item[11],         #BPC_POT
-                'inhibitor_jar': item[10],   #ANT_POT
-                'point': item[22],           #TestPEclair TODO: Check - TestPEclair or TestPEcoulement -?
+                'pcb_jar': item[10],         #BPC_POT
+                'inhibitor_jar': item[9],    #ANT_POT
+                'point': item[23],           #TestPEcoulement - Yes Pour Point. I never encounter Aniline Point Test so far
                 'dielec_2': item[14],        #TestD1816_2
                 'color': item[25],           #TestCouleur
                 'pf': item[19],              #TestFacteurP
-                'particles': item[11],       #
+                'particles': item[11],       # TODO
                 'metals': item[12],          #MDH
                 'viscosity': item[24],       #TestViscosite
                 'dielec_d': item[15],        #TestD877
@@ -784,7 +785,7 @@ def fetch_fluid_profiles(items):
                 'pf_100': item[20],          #TestFacteurP100
                 'furans_f': item[36],        #FUR_POT
                 'water_w': item[8],          #EAU_POT
-                'corr': item[29],            #TestSCorrosif
+                'corr': item[28],            #TestSCorrosif
                 'dielec_i': item[16],        #TestCEI156
                 'visual': item[29],          #TestVisuel
                 'qty_jar': None,             #TODO:check
@@ -1747,9 +1748,9 @@ def fetch_fluid_tests(items):
                     'density': item[32],      # TestDensite
                     'dielec': item[24],       # TestD1816
                     'acidity': item[29],      # TestAcid
-                    'point': item[34],        # TestPEcoulement
+                    'point': item[34] or item[33],        # if any of TestPEcoulement or TestPEclair is checked
                     'dielec_2': item[25],     # TestD1816_2
-                    'color': item[34],        # TestPEcoulement
+                    'color': item[36],        # TestCouleur
                     'pf': item[30],           # TestFacteurP
                     'viscosity': item[35],    # TestViscosite
                     'dielec_d': item[26],     # TestD877
