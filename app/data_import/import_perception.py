@@ -114,7 +114,7 @@ def fetch_equipment_data(equipments):
                         'model': None,  # Added in new DB
                         'kv': equipment[22],                    # Tension1
                         'sealed': equipment[11],                # Scelle
-                        'current': None,     # In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
+                        'current_rating': None,     # In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current - (replace current by current_rating)
                         'fluid_volume': equipment[4],    #LitreHuile
                         'bil': None,       # TODO    - Bil1/Bil2/Bil3/Bil4
                         'c1': None,     # TODO
@@ -129,6 +129,7 @@ def fetch_equipment_data(equipments):
                         'kv': equipment[22],                        # Tension1
                         'kvar': None, # TODO
                         'bil': None,    # TODO    - Bil1/Bil2/Bil3/Bil4
+                        'current_rating': None #TODO: add to DB and model - Following equipment must have current_rating fields
                     },
                     'breaker_data': {                               # D
                         'current_rating': None,                     # there is no old column name for current_rating
@@ -147,6 +148,7 @@ def fetch_equipment_data(equipments):
                         'sealed': equipment[11],                # Scelle
                         'threephase': equipment[13],            # TriPhase,
                         'insulation_id': None,                  # TODO
+                        'current_rating': None                  # TODO: add fld to model and DB - Following equipment must have current_rating fields
                     },
                     'switchgear_data': {                        # H
                          'current_rating': None,                # there is no old column name for current_rating
@@ -171,6 +173,7 @@ def fetch_equipment_data(equipments):
                         'fluid_type_id': equipment[68],             # TypeHuile
                         'fluid_level_id': None,                     # TODO
                         'interrupting_medium_id': None,             # TODO
+                        'current_rating': None   # TODO: add fld to model and DB - Following equipment must have current_rating fields
                     },
                     'rectifier_data': {                         # R
                          'fluid_volume': equipment[4],          #LitreHuile
@@ -186,11 +189,11 @@ def fetch_equipment_data(equipments):
                         'sealed': equipment[11],                #Scelle
                         'welded_cover': equipment[12],          #CouvSoude
                         'windings': equipment[28],              #Bobine
-                        'cooling_rating': None,                 #TODO: check
+                        'cooling_rating': None,                 #transformer cooling_rating did not exist in old db
                         'autotransformer': equipment[29],       #Auto_Transfo
-                        'threephase': equipment[13],            #TriPhase
+                        'threephase': equipment[13],            #TODO: Boolean flag - TriPhase - if true=3, else=1
                         'gassensor_id': equipment[15],          #Capteur
-                        'phase_number': None,                   #TODO: check
+                        'phase_number': equipment[13],          #TriPhase - Phase_number = Triphase.
                         'frequency': str(equipment[54]),        #Frequence
                         'primary_tension': equipment[22],       #Tension1
                         'secondary_tension': equipment[23],     #Tension2
@@ -201,7 +204,11 @@ def fetch_equipment_data(equipments):
                         'primary_winding_connection': equipment[30],          #Raccord_Bobine1
                         'secondary_winding_connection': equipment[31],        #Raccord_Bobine2
                         'tertiary_winding_connection': equipment[32],         #Raccord_Bobine3
-                        'windind_metal': equipment[49],         #Bobine_Materiel
+                        # 'windind_metal': equipment[49],         #Bobine_Materiel
+                        'winding_metal1': equipment[49],         #TODO - Bobine_Materiel -?
+                        'winding_metal2': None,         #in transformer delete winding_metal and add winding_metal2
+                        'winding_metal3': None,         #in transformer delete winding_metal and add winding_metal3
+                        'winding_metal4': None,         #in transformer delete winding_metal and add winding_metal4
                         'bil1': equipment[33],                  #BIL1
                         'bil2': equipment[34],                  #BIL2
                         'bil3': equipment[35],                  #Bil3
@@ -230,6 +237,8 @@ def fetch_equipment_data(equipments):
                         'mvaforced24': equipment[123],          #PuisForce24
                         'impedance3': equipment[124],           #Impedance3
                         'impbasedmva3': equipment[125],         #Imp_Base3
+                        'impedance4': equipment[124],           #TODO: add fld to model and DB Impedance4 -  in transformer add: impedance4 and impbasedmva4
+                        'impbasedmva4': equipment[125],         #TODO: add fld to model and DB Imp_Base4 -  in transformer add: impedance4 and impbasedmva4
                         'formula_ratio2': equipment[64],        #Formule_Ratio2
                         'formula_ratio': equipment[50],         #Formule_Ratio
                         'ratio_tag1': equipment[51],            #Etiquette1
@@ -249,7 +258,7 @@ def fetch_equipment_data(equipments):
                         'bil4': equipment[107],                 #BIL4
                         'static_shield4': equipment[108],       #Ecran_Electro4
                         'ratio_tag7': equipment[112],           #Etiquette7
-                        'ratiot_ag8': equipment[113],           #Etiquette8
+                        'ratio_tag8': equipment[113],           #Etiquette8
                         'formula_ratio3': equipment[115],       #Formule_Ratio3
                         # 'fluid_type_id': equipment[68],         #TypeHuile  - This field is not in the model
                     },
@@ -764,7 +773,7 @@ def fetch_fluid_profiles(items):
                 'furans': item[35],          #FUR_SER
                 'inhibitor': item[5],        #ANT_SER
                 'pcb': item[6],              #BPC_SER
-                'qty': None,                 #TODO:check
+                'qty': None,                 #TODO: check
                 'sampling': item[7],         #Lieu_SER
 
                 # jar
@@ -1808,7 +1817,7 @@ def fetch_inhibitor_tests(items):
         data['items'].append(
             {
                 'clef_analyse': item[0],            # ClefAnalyse
-                'inhibitor_type': None,             # TODO: check
+                'inhibitor_type': None,             # inhibitor_type did not exist in old db
                 'inhibitor': item[3],               # DBPC
                 'remark': item[4],                  # REMARQUE
                 'inhibitor_flag': item[5],          # bDBPC
