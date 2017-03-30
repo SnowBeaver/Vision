@@ -237,8 +237,8 @@ def fetch_equipment_data(equipments):
                         'mvaforced24': equipment[123],          #PuisForce24
                         'impedance3': equipment[124],           #Impedance3
                         'impbasedmva3': equipment[125],         #Imp_Base3
-                        'impedance4': equipment[124],           #TODO: add fld to model and DB Impedance4 -  in transformer add: impedance4 and impbasedmva4
-                        'impbasedmva4': equipment[125],         #TODO: add fld to model and DB Imp_Base4 -  in transformer add: impedance4 and impbasedmva4
+                        'impedance4': None,           #TODO: add fld to model and DB Impedance4 -  in transformer add: impedance4 and impbasedmva4
+                        'impbasedmva4': None,         #TODO: add fld to model and DB Imp_Base4 -  in transformer add: impedance4 and impbasedmva4
                         'formula_ratio2': equipment[64],        #Formule_Ratio2
                         'formula_ratio': equipment[50],         #Formule_Ratio
                         'ratio_tag1': equipment[51],            #Etiquette1
@@ -520,11 +520,11 @@ class ExtraEquipmentProps:
 
 
 def get_winding_metal_id(transformer_data):
-    if transformer_data.get('windind_metal') or transformer_data.get('windind_metal') == 0:
-        winding_metal_name = OldDBNotations.winding_material_old_new().get(transformer_data['windind_metal'])
+    if transformer_data.get('winding_metal1') or transformer_data.get('winding_metal1') == 0:
+        winding_metal_name = OldDBNotations.winding_material_old_new().get(transformer_data['winding_metal1'])
         winding_metal = db.session.query(Material).filter_by(name=winding_metal_name).first()
         if winding_metal:
-            transformer_data['windind_metal'] = winding_metal.id
+            transformer_data['winding_metal1'] = winding_metal.id
     return transformer_data
 
 

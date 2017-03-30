@@ -625,7 +625,10 @@ class Transformer(db.Model):
     tertiary_winding_connection = db.Column(db.Integer)
 
     # winding metal is a property of winding
-    windind_metal = db.Column(db.Integer)  # WindingMetal. Copper or aluminium
+    winding_metal1 = db.Column(db.Integer)  # WindingMetal. Copper or aluminium
+    winding_metal2 = db.Column(db.Integer)  # in transformer delete winding_metal and add winding_metal2
+    winding_metal3 = db.Column(db.Integer)  # in transformer delete winding_metal and add winding_metal3
+    winding_metal4 = db.Column(db.Integer)  # in transformer delete winding_metal and add winding_metal4
 
     bil1 = db.Column(db.Float(53))  # BIL1. Primary Insulation level in kV
     bil2 = db.Column(db.Float(53))  # BIL2. Secondary Insulation level in kV
@@ -665,6 +668,9 @@ class Transformer(db.Model):
 
     impedance3 = db.Column(db.Float(53))  # Impedance3. Impedance at third forced cooling MVA
     impbasedmva3 = db.Column(db.Float(53))  # ImpBasedMVA3
+
+    impedance4 = db.Column(db.Float(53))  # Impedance4. Impedance at third forced cooling MVA - [ March 28, 2017 22:39 ] Michel Bélanger: in transformer add: impedance4 and impbasedmva4
+    impbasedmva4 = db.Column(db.Float(53))  # ImpBasedMVA4
 
     # it belongs to transformer , tap voltage, it s a part of the test process
     formula_ratio2 = db.Column(db.Integer)  # RatioFormula2. Formula used for TTR
@@ -820,7 +826,10 @@ class Transformer(db.Model):
             'primary_winding_connection': self.primary_winding_connection,
             'secondary_winding_connection': self.secondary_winding_connection,
             'tertiary_winding_connection': self.tertiary_winding_connection,
-            'windind_metal': self.windind_metal,
+            'winding_metal1': self.winding_metal1,
+            'winding_metal2': self.winding_metal2,
+            'winding_metal3': self.winding_metal3,
+            'winding_metal4': self.winding_metal4,
             'bil1': self.bil1,
             'bil2': self.bil2,
             'bil3': self.bil3,
@@ -849,6 +858,8 @@ class Transformer(db.Model):
             'mvaforced24': self.mvaforced24,
             'impedance3': self.impedance3,
             'impbasedmva3': self.impbasedmva3,
+            'impedance4': self.impedance4,
+            'impbasedmva4': self.impbasedmva4,
             'formula_ratio2': self.formula_ratio2,
             'formula_ratio': self.formula_ratio,
             'ratio_tag1': self.ratio_tag1,
