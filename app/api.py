@@ -213,8 +213,8 @@ def get_items(path, args):
             search_value = kwargs.pop('search_all')
             return [item.serialize() for item in build_seach_equipment_query(items_model, search_value)]
 
-        return [item.serialize() for item in db.session.query(items_model).filter_by(**kwargs)]
-    return [item.serialize() for item in db.session.query(items_model).all()]
+        return [item.serialize() for item in db.session.query(items_model).filter_by(**kwargs).limit(5)]
+    return [item.serialize() for item in db.session.query(items_model).limit(5).all()]
 
 
 def build_seach_equipment_query(items_model, search_value):

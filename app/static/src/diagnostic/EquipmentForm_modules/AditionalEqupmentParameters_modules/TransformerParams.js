@@ -168,9 +168,9 @@ var TransformerParams = React.createClass({
                 'mwreserve':'', 'mvareserve':'', 'mwultime':'', 'mvarultime':'',
                 'ratio_tag1':'', 'ratio_tag2':'', 'ratio_tag3':'', 'ratio_tag4':'',
                 ',static_shield1':'', ',static_shield2':'', 'ratio_tag5':'', 'ratio_tag6':'',
-                'ratio_tag7':'', 'ratiot_ag8':'', 'static_shield3':'', 'static_shield4':'',
+                'ratio_tag7':'', 'ratio_tag8':'', 'static_shield3':'', 'static_shield4':'',
                 'bushing_neutral1':'', 'bushing_neutral2':'', 'bushing_neutral3':'', 'bushing_neutral4':'',
-                'windings':'', 'windind_metal':'', 'primary_winding_connection':'', 'secondary_winding_connection':'',
+                'windings':'', 'winding_metal1':'', 'primary_winding_connection':'', 'secondary_winding_connection':'',
                 'tertiary_winding_connection':'', 'quaternary_winding_connection':'', 'based_transformerp_ower':'', 'autotransformer':'',
                 'bil1':'', 'bil2':'', 'ltc1':'', 'ltc2':'',
                 'first_cooling_stage_power':'', 'second_cooling_stage_power':'',
@@ -544,8 +544,8 @@ var TransformerParams = React.createClass({
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Ratio Tag 8"
-                                   name="ratiot_ag8"
-                                   value={this.state.ratiot_ag8}
+                                   name="ratio_tag8"
+                                   value={this.state.ratio_tag8}
                                    errors={errors}
                                    data-len="20"/>
                     </div>
@@ -605,8 +605,8 @@ var TransformerParams = React.createClass({
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Winding Metal"
-                                   name="windind_metal"
-                                   value={this.state.windind_metal}
+                                   name="winding_metal1"
+                                   value={this.state.winding_metal1}
                                    errors={errors}
                                    data-type="int"/>
                     </div>

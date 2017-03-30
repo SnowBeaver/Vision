@@ -2167,7 +2167,7 @@ var TransformerParams = React.createClass({
                         <TextField label="Ratio Tag 7" name="ratio_tag7" value={this.state.ratio_tag7}/>
                     </div>
                     <div className="col-md-1">
-                        <TextField label="Ratio Tag 8" name="ratiot_ag8" value={this.state.ratiot_ag8}/>
+                        <TextField label="Ratio Tag 8" name="ratio_tag8" value={this.state.ratio_tag8}/>
                     </div>
 
                 </div>

@@ -1847,7 +1847,7 @@ to the currently logged in user or are private.
 @apiSuccess {Integer}     primary_winding_connection
 @apiSuccess {Integer}     secondary_winding_connection
 @apiSuccess {Integer}     tertiary_winding_connection
-@apiSuccess {Integer}     windind_metal
+@apiSuccess {Integer}     winding_metal1
 @apiSuccess {Float}       bil1
 @apiSuccess {Float}       bil2
 @apiSuccess {Float}       bil3
@@ -1919,7 +1919,7 @@ to the currently logged in user or are private.
 @apiSuccess {Float}       bil4
 @apiSuccess {Float}       static_shield4
 @apiSuccess {Float}       ratio_tag7
-@apiSuccess {Float}       ratiot_ag8
+@apiSuccess {Float}       ratio_tag8
 @apiSuccess {Float}       formula_ratio3
 @apiUse GetItemSuccess
 @apiUse Error404
@@ -1956,7 +1956,7 @@ to the currently logged in user or are private.
 @apiParam   {Integer}     primary_winding_connection
 @apiParam   {Integer}     secondary_winding_connection
 @apiParam   {Integer}     tertiary_winding_connection
-@apiParam   {Integer}     windind_metal
+@apiParam   {Integer}     winding_metal1
 @apiParam   {Float}       bil1
 @apiParam   {Float}       bil2
 @apiParam   {Float}       bil3
@@ -2016,7 +2016,7 @@ to the currently logged in user or are private.
 @apiParam   {Float}       bil4
 @apiParam   {Float}       static_shield4
 @apiParam   {Float}       ratio_tag7
-@apiParam   {Float}       ratiot_ag8
+@apiParam   {Float}       ratio_tag8
 @apiParam   {Float}       formula_ratio3
 @apiUse PostItemSuccess
 @apiUse Error400

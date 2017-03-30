@@ -510,7 +510,7 @@ transformer_schema = {
     'primary_winding_connection': type_integer_coerce_dict,
     'secondary_winding_connection': type_integer_coerce_dict,
     'tertiary_winding_connection': type_integer_coerce_dict,
-    'windind_metal': type_integer_coerce_dict,
+    'winding_metal1': type_integer_coerce_dict,
     'bil1': type_float_coerce_dict,
     'bil2': type_float_coerce_dict,
     'bil3': type_float_coerce_dict,
@@ -570,7 +570,7 @@ transformer_schema = {
     'bil4': type_float_coerce_dict,
     'static_shield4': type_float_coerce_dict,
     'ratio_tag7': type_float_coerce_dict,
-    'ratiot_ag8': type_float_coerce_dict,
+    'ratio_tag8': type_float_coerce_dict,
     'formula_ratio3': type_float_coerce_dict,
 }
 breaker_schema = {
