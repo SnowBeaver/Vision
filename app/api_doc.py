@@ -2261,7 +2261,7 @@ to the currently logged in user or are private.
 @apiSuccess {String}    type    'phase' or 'Neutral'
 @apiSuccess {Float}     kv
 @apiSuccess {Boolean}   sealed
-@apiSuccess {Integer}   current
+@apiSuccess {Integer}   current_rating
 @apiSuccess {Float}     fluid_volume
 @apiSuccess {Integer}   bil
 @apiSuccess {Float}     c1
@@ -2288,7 +2288,7 @@ to the currently logged in user or are private.
 @apiParam   {String}        type      allowed: 'phase' or 'Neutral'
 @apiParam   {Float}         kv
 @apiParam   {Boolean}       sealed
-@apiParam   {Integer}       current
+@apiParam   {Integer}       current_rating
 @apiParam   {Float}         fluid_volume
 @apiParam   {Integer(8)}    bil
 @apiParam   {Float}         c1

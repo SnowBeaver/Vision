@@ -229,7 +229,7 @@ var BushingParams = React.createClass({
         return {
             loading: false,
             errors: {},
-            fields: ["phase_number", "sealed", "winding", "model", "kw", "current", "fluid_volume",
+            fields: ["phase_number", "sealed", "winding", "model", "kw", "current_rating", "fluid_volume",
                 "bushing_manufacturer_h1", "bushing_manufacturer_h2", "bushing_manufacturer_h3", "bushing_manufacturer_hn",
                 "bushing_manufacturer_x1", "bushing_manufacturer_x2", "bushing_manufacturer_x3", "bushing_manufacturer_xn",
                 "bushing_manufacturer_t1", "bushing_manufacturer_t2", "bushing_manufacturer_t3", "bushing_manufacturer_tn",
@@ -395,7 +395,7 @@ var BushingParams = React.createClass({
 
                 <div className="row">
                     <div className="col-md-2">
-                        <TextField label="Current" name="current" value={this.state.current}/>
+                        <TextField label="Current" name="current_rating" value={this.state.current_rating}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="BIL" name="bil" value={this.state.bil}/>

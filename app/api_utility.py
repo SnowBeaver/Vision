@@ -600,7 +600,7 @@ bushing_schema = {
     'type': dict_copy_union(type_string_dict, {'allowed': ['phase', 'Neutral']}),
     'kv': type_float_coerce_dict,
     'sealed': type_boolean_coerce_dict,
-    'current': type_integer_coerce_dict,
+    'current_rating': type_integer_coerce_dict,
     'fluid_volume': type_float_coerce_dict,
     'bil': type_integer_coerce_8_digits_dict,
     'c1': type_float_coerce_dict,
