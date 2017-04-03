@@ -87,6 +87,9 @@ def upgrade():
     ALTER TABLE public.transformer ADD winding_metal3 INT NULL;
     ALTER TABLE public.transformer ADD winding_metal4 INT NULL;
 
+    -- in test_result tabel, we should rename qty for qty_ser in TestResult
+    -- we should rename qty for qty_ser in FluidProfile
+    ALTER TABLE public.test_result RENAME COLUMN qty TO qty_ser;
 """
     op.execute(sql=sql)
 
@@ -144,6 +147,10 @@ def downgrade():
     ALTER TABLE public.transformer DROP winding_metal2;
     ALTER TABLE public.transformer DROP winding_metal3;
     ALTER TABLE public.transformer DROP winding_metal4;
+
+    -- in test_result tabel, we should rename qty for qty_ser in TestResult
+    -- we should rename qty for qty_ser in FluidProfile
+    ALTER TABLE public.test_result RENAME COLUMN qty_ser TO qty;
 """
     op.execute(sql=sql)
 

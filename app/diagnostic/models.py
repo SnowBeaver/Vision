@@ -318,7 +318,7 @@ class FluidProfile(db.Model):
     furans = db.Column(db.Boolean(False))
     inhibitor = db.Column(db.Boolean(False))
     pcb = db.Column(db.Boolean(False))
-    qty = db.Column(db.Integer) # qty Syringe
+    qty_ser = db.Column(db.Integer) # qty_ser Syringe
     sampling = db.Column(db.Integer)
     # jar
     dielec = db.Column(db.Boolean(False))
@@ -353,7 +353,7 @@ class FluidProfile(db.Model):
     #     if data:
     #         for key in data.keys():
     #             if hasattr(self, key):
-    #                 if key in ['selection', 'description', 'qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial',
+    #                 if key in ['selection', 'description', 'qty_ser', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial',
     #                            'sampling_vial', 'sampling_vial']:
     #                     if data[key]:
     #                         setattr(self, key, data[key])
@@ -370,7 +370,7 @@ class FluidProfile(db.Model):
             # print attr
             if attr in ('name', 'description'):
                 setattr(self, attr, '')
-            if attr in ['qty', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
+            if attr in ['qty_ser', 'sampling', 'qty_jar', 'sampling_jar', 'qty_vial', 'sampling_vial', 'sampling_vial']:
                 setattr(self, attr, 0)
             else:
                 setattr(self, attr, False)
@@ -392,7 +392,7 @@ class FluidProfile(db.Model):
                 'furans': self.furans,
                 'inhibitor': self.inhibitor,
                 'pcb': self.pcb,
-                'qty': self.qty,
+                'qty_ser': self.qty_ser,
                 'sampling': self.sampling,
                 'dielec': self.dielec,
                 'acidity': self.acidity,
@@ -1600,8 +1600,10 @@ class Equipment(db.Model):
     sibling = db.Column(db.Integer)
 
     def __repr__(self):
-        return "{} {} {}".format(self.name, self.serial, self.equipment_number)
-
+        # print(self.name, self.serial, unicode(self.equipment_number.encode('utf-8')) if self.equipment_number else '')
+        return "{} {} {}".format(self.name.encode('utf-8') if self.name else '',
+                                 self.serial.encode('utf-8') if self.serial else '',
+                                 self.equipment_number.encode('utf-8') if self.equipment_number else '')
 
     def serialize(self):
         """Return object data in easily serializeable format"""
@@ -2036,7 +2038,7 @@ class TestResult(db.Model):
     furans = db.Column(db.Boolean(False))
     inhibitor = db.Column(db.Boolean(False))
     pcb = db.Column(db.Boolean(False))
-    qty = db.Column(db.Integer)  # qty Syringe
+    qty_ser = db.Column(db.Integer)  # qty_ser Syringe -  in test_result tabel , we should rename qty for qty_ser
     sampling = db.Column(db.Integer)
     # jar
     dielec = db.Column(db.Boolean(False))
@@ -2147,7 +2149,7 @@ class TestResult(db.Model):
             'furans': self.furans,
             'inhibitor': self.inhibitor,
             'pcb': self.pcb,
-            'qty': self.qty,
+            'qty_ser': self.qty_ser,
             'sampling': self.sampling,
             'dielec': self.dielec,
             'acidity': self.acidity,

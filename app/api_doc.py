@@ -948,7 +948,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(1024)}  description
 @apiSuccess {Boolean}       shared
 @apiSuccess {String}        profile_type  fluid_profile
-@apiSuccess {Integer}       qty
+@apiSuccess {Integer}       qty_ser
 @apiSuccess {Integer}       sampling
 @apiSuccess {Integer}       qty_jar
 @apiSuccess {Integer}       sampling_jar
@@ -998,7 +998,7 @@ doc = ApiDoc(app=api)
 @apiParam {String(256)}   name
 @apiParam {String(1024)}  description
 @apiParam {Boolean}       shared
-@apiParam {Integer}       qty
+@apiParam {Integer}       qty_ser
 @apiParam {Integer}       sampling
 @apiParam {Integer}       qty_jar
 @apiParam {Integer}       sampling_jar
@@ -1172,7 +1172,7 @@ Can filter also by:
 @apiSuccess {Boolean}   furans
 @apiSuccess {Boolean}   inhibitor
 @apiSuccess {Boolean}   pcb
-@apiSuccess {Integer}   qty
+@apiSuccess {Integer}   qty_ser
 @apiSuccess {Integer}   sampling
 @apiSuccess {Boolean}   dielec
 @apiSuccess {Boolean}   acidity
@@ -1255,7 +1255,7 @@ Can filter also by:
 @apiParam {Boolean}   furans
 @apiParam {Boolean}   inhibitor
 @apiParam {Boolean}   pcb
-@apiParam {Integer}   qty
+@apiParam {Integer}   qty_ser
 @apiParam {Integer}   sampling
 @apiParam {Boolean}   dielec
 @apiParam {Boolean}   acidity

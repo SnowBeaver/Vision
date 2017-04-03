@@ -290,7 +290,7 @@ const FluidProfileForm = React.createClass({
                 'point', 'viscosity', 'corr', 'dielec_i',
                 'visual', 'pcb_vial', 'antioxidant',
                 'sampling', 'sampling_jar', 'sampling_vial',
-                'qty', 'qty_jar', 'qty_vial', 'sampling',
+                'qty_ser', 'qty_jar', 'qty_vial', 'sampling',
                 'shared', 'name', 'description'
             ]
         }
@@ -498,7 +498,7 @@ const FluidProfileForm = React.createClass({
         }
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
-        state['data']['qty'] = this.calculate_qty(state['data']);
+        state['data']['qty_ser'] = this.calculate_qty(state['data']);
         state['data']['qty_jar'] = this.calculate_qty_jar(state['data']);
         state['data']['qty_vial'] = this.calculate_qty_vial(state['data']);
         this.setState(state);
@@ -631,12 +631,12 @@ const FluidProfileForm = React.createClass({
                                         </div>
                                         <div className="col-md-4 nopadding">
                                             <div className="col-md-3 nopadding padding-right-xs">
-                                                <FormGroup validationState={this.state.errors.qty ? 'error' : null}>
+                                                <FormGroup validationState={this.state.errors.qty_ser ? 'error' : null}>
                                                     <ControlLabel>Quantity</ControlLabel>
-                                                    <FormControl type="text" ref="qty" name="qty"
-                                                                 value={this.state.data.qty}
+                                                    <FormControl type="text" ref="qty_ser" name="qty_ser"
+                                                                 value={this.state.data.qty_ser}
                                                                  data-type="float"/>
-                                                    <HelpBlock className="warning">{this.state.errors.qty}</HelpBlock>
+                                                    <HelpBlock className="warning">{this.state.errors.qty_ser}</HelpBlock>
 								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>

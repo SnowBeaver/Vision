@@ -455,7 +455,7 @@ class CampaignView(MyModelView):
 
     form_excluded_columns = (
         # 'id',
-        # 'location_id',
+        # 'location_id',z
         # 'if_rem',
         # 'if_ok',
         # 'sibling',
@@ -541,7 +541,7 @@ class FluidProfileView(MyModelView):
     # column_sortable_list = (['name'])
     column_searchable_list = (['name'])
     column_exclude_list = (['description'])
-    column_labels = {'qty': 'Qty Syringe', 'pf': 'Pf 20', 'point': 'Pour Point'}
+    column_labels = {'qty_ser': 'Qty Syringe', 'pf': 'Pf 20', 'point': 'Pour Point'}
 
     def __init__(self, dbsession):
         super(FluidProfileView, self).__init__(
@@ -595,7 +595,7 @@ class TestResultView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
 
-    # # List of columns that can be sorted.
+    # List of columns that can be sorted.
     column_sortable_list = ('date_analyse', 'test_reason_id', 'test_type_id',
                             'test_status', 'sampling_point_id', 'campaign_id')
     column_searchable_list = ('date_analyse', 'test_reason_id', 'test_type_id',
