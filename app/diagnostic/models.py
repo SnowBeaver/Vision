@@ -1600,10 +1600,7 @@ class Equipment(db.Model):
     sibling = db.Column(db.Integer)
 
     def __repr__(self):
-        # print(self.name, self.serial, unicode(self.equipment_number.encode('utf-8')) if self.equipment_number else '')
-        return "{} {} {}".format(self.name.encode('utf-8') if self.name else '',
-                                 self.serial.encode('utf-8') if self.serial else '',
-                                 self.equipment_number.encode('utf-8') if self.equipment_number else '')
+        return "{} {} {}".format(self.name, self.serial, self.equipment_number)
 
     def serialize(self):
         """Return object data in easily serializeable format"""
