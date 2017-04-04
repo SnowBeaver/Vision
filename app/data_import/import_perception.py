@@ -736,7 +736,7 @@ def fetch_gas_sensor(items):
                 'percent_error': item[12],  # ErreurPourcent
                 'model': item[0],           # Capteur
                 'equipment_id': None,       #
-                # 'manufacturer_id': item[1],    # Manufacturier TODO: get id
+                'manufacturer_id': item[1],    # Manufacturier
             }
         )
     return data
@@ -957,6 +957,7 @@ def add_gas_sensor_id(item, fld='gas_sensor_id'):
 def process_gas_sensor(cursor):
     gas_sensors = get_gas_sensors(cursor)
     gas_sensors = fetch_gas_sensor(gas_sensors)
+    gas_sensors = process_gas_sensor_additional_data(gas_sensors)
     save_items(gas_sensors, GasSensor)
 
 
@@ -1055,6 +1056,18 @@ def process_additional_data(test_results, recommendations):
             test_result['test_status_id'] = db_info['test_statuses_mapping'].get(test_result['test_status_id'])
 
     return test_results
+
+
+def process_gas_sensor_additional_data(gas_sensors):
+    for item in gas_sensors['items']:
+        manufacturer = db.session.query(Manufacturer).filter_by(name=item['manufacturer_id']).first()
+        if manufacturer:
+            item['manufacturer_id'] = manufacturer.id if item['manufacturer_id'] else None
+        else:
+            # Save manufacturer to DB and add to gas sensor
+            manufacturer = db.session.add(Manufacturer(name=item.pop('manufacturer_id')))
+            item['manufacturer'] = manufacturer
+    return gas_sensors
 
 
 def get_existing_db_info(test_results, recommendations):
