@@ -24,6 +24,9 @@ def upgrade():
 
     -- We should add this field (open) to switch table
     ALTER TABLE public.switch ADD COLUMN open BOOLEAN NULL;
+
+    -- table tap_changer is also missing a field 'tap_set'
+    ALTER TABLE public.tap_changer ADD COLUMN tap_set INTEGER NULL;
 """
     op.execute(sql=sql)
 
@@ -38,5 +41,8 @@ def downgrade():
 
     -- We should add this field (open) to switch table
     ALTER TABLE public.switch DROP COLUMN open;
+
+    -- table tap_changer is also missing a field 'tap_set'
+    ALTER TABLE public.tap_changer DROP COLUMN tap_set;
 """
     op.execute(sql=sql)

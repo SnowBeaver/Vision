@@ -2171,6 +2171,7 @@ to the currently logged in user or are private.
 @apiSuccess {String}    filter
 @apiSuccess {Integer}   counter
 @apiSuccess {Integer}   number_of_taps
+@apiSuccess {Integer}   tap_set
 @apiSuccess {Integer}   fluid_type_id
 @apiSuccess {Dict}      fluid_type                 see: fluid_type->get an item
 @apiSuccess {Integer}   fluid_level_id
@@ -2195,6 +2196,7 @@ to the currently logged in user or are private.
 @apiParam   {String(30)}    filter
 @apiParam   {Integer}       counter
 @apiParam   {Integer}       number_of_taps
+@apiParam   {Integer}       tap_set
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Integer}       fluid_level_id
 @apiParam   {Integer}       interrupting_medium_id

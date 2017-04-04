@@ -116,7 +116,7 @@ def fetch_equipment_data(equipments):
                         'sealed': equipment[11],                # Scelle
                         'current_rating': None,     # In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current - (replace current by current_rating)
                         'fluid_volume': equipment[4],    #LitreHuile
-                        'bil': None,       # TODO    - Bil1/Bil2/Bil3/Bil4
+                        'bil': None,       # TODO - In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
                         'c1': None,     # TODO
                         'c1pf': None,     # TODO
                         'c2': None,     # TODO
@@ -128,14 +128,14 @@ def fetch_equipment_data(equipments):
                     'capacitor_data': {                             # C
                         'kv': equipment[22],                        # Tension1
                         'kvar': None, # TODO
-                        'bil': None,    # TODO    - Bil1/Bil2/Bil3/Bil4
+                        'bil': None,    # TODO In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
                         'current_rating': None #TODO: add to DB and model - Following equipment must have current_rating fields
                     },
                     'breaker_data': {                               # D
                         'current_rating': None,                     # there is no old column name for current_rating
                         'open': equipment[94],                      # LocEntretienEtat TODO in either case, it was not used in the old DB
                         'fluid_type_id': equipment[68],             # TypeHuile
-                        'fluid_level_id': None,                     #TODO
+                        'fluid_level_id': None,                     #TODO fluid_level have no equivalent
                         'interrupting_medium_id': equipment[68],    #TODO About interrupting_medium, it is equivalent to Fluide type - Interrupting_medium = TypeHuile in table Equipment
                         'breaker_mechanism_id': None,               # there is no equivalent to breaker_mechanism_id
                     },
@@ -171,9 +171,10 @@ def fetch_equipment_data(equipments):
                         'number_of_taps': equipment[60],            # Nbr_Change_Prise
                         'model': None,                              # Added in new DB
                         'fluid_type_id': equipment[68],             # TypeHuile
-                        'fluid_level_id': None,                     # TODO
+                        'fluid_level_id': None,                     # TODO fluid_level have no equivalent
                         'interrupting_medium_id': None,             # TODO
-                        'current_rating': None   # TODO: add fld to model and DB - Following equipment must have current_rating fields
+                        'current_rating': None,   # TODO: add fld to model and DB - Following equipment must have current_rating fields
+                        'tap_set': None,
                     },
                     'rectifier_data': {                         # R
                          'fluid_volume': equipment[4],          #LitreHuile

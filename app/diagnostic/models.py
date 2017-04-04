@@ -964,6 +964,7 @@ class LoadTapChanger(db.Model):
     counter = db.Column(db.Integer)  # Counter. Used for load tap changer or arrester (ligthning)
     number_of_taps = db.Column(db.Integer)
     model = db.Column(db.String(50))
+    tap_set = db.Column(db.Integer)     # the tap number the load tap changer is set at.
 
     current_rating = db.Column(db.Numeric(6))
 
@@ -992,6 +993,7 @@ class LoadTapChanger(db.Model):
             'current_rating': self.current_rating,
             'number_of_taps': self.number_of_taps,
             'model': self.model,
+            'tap_set': self.tap_set,
             'fluid_type_id': self.fluid_type_id,
             'fluid_type': self.fluid_type and self.fluid_type.serialize(),
             'fluid_level_id': self.fluid_level_id,

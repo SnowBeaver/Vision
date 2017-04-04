@@ -593,6 +593,7 @@ tap_changer_schema = {
     'fluid_level_id': type_integer_coerce_dict,
     'interrupting_medium_id': type_integer_coerce_dict,
     'equipment_id': type_integer_coerce_required_dict,
+    'tap_set': type_integer_coerce_dict,
 }
 bushing_schema = {
     'id': readonly_dict,
