@@ -110,33 +110,54 @@ def fetch_equipment_data(equipments):
                         'current_rating': None,                 # there is no old column name for current_rating
                     },
                     'bushing_data': {                           # B
-                        'type': None,   # TODO: neutral or phase
                         'model': None,  # Added in new DB
                         'kv': equipment[22],                    # Tension1
                         'sealed': equipment[11],                # Scelle
                         'current_rating': None,     # In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current - (replace current by current_rating)
                         'fluid_volume': equipment[4],    #LitreHuile
-                        'bil': None,       # TODO - In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
-                        'c1': None,     # TODO
-                        'c1pf': None,     # TODO
-                        'c2': None,     # TODO
-                        'c2pf': None,     # TODO
+                        'bil': None,       # In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
+                        'c1': None,     #
+                        'c1pf': None,     #
+                        'c2': None,     #
+                        'c2pf': None,     #
                         'fluid_type_id': equipment[68],         # TypeHuile
-                        #TODO: add all the fields from old DB
-
+                        'mfr_h1_id': equipment[126],   # Bush_Mfr_H1
+                        'mfr_h2_id': equipment[127],   # Bush_Mfr_H2
+                        'mfr_h3_id': equipment[128],   # Bush_Mfr_H3
+                        'mfr_hn_id': equipment[129],   # Bush_Mfr_HN
+                        'mfr_x1_id': equipment[130],   # Bush_Mfr_X1
+                        'mfr_x2_id': equipment[131],   # Bush_Mfr_X2
+                        'mfr_x3_id': equipment[132],   # Bush_Mfr_X3
+                        'mfr_xn_id': equipment[133],   # Bush_Mfr_XN
+                        'mfr_t1_id': equipment[134],   # Bush_Mfr_T1
+                        'mfr_t2_id': equipment[135],   # Bush_Mfr_T2
+                        'mfr_t3_id': equipment[136],   # Bush_Mfr_T3
+                        'mfr_tn_id': equipment[137],   # Bush_Mfr_TN
+                        'mfr_q1_id': equipment[138],   # Bush_Mfr_Q1
+                        'mfr_q2_id': equipment[139],   # Bush_Mfr_Q2
+                        'mfr_q3_id': equipment[140],   # Bush_Mfr_Q3
+                        'mfr_qn_id': equipment[141],   # Bush_Mfr_QN
+                        'type_h': equipment[142],   # Bush_Type_H
+                        'type_hn': equipment[143],   # Bush_Type_HN
+                        'type_x': equipment[144],   # Bush_Type_X
+                        'type_xn': equipment[145],   # Bush_Type_XN
+                        'type_t': equipment[146],   # Bush_Type_T
+                        'type_tn': equipment[147],   # Bush_Type_TN
+                        'type_q': equipment[148],   # Bush_Type_Q
+                        'type_qn': equipment[149],   # Bush_Type_QN
                     },
                     'capacitor_data': {                             # C
                         'kv': equipment[22],                        # Tension1
                         'kvar': None, # TODO
-                        'bil': None,    # TODO In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
-                        'current_rating': None #TODO: add to DB and model - Following equipment must have current_rating fields
+                        'bil': None,    # In the old DB, Equipment have BIL1 BIL2 and BIL3. But it does not have Current
+                        'current_rating': None   # add to DB and model - Following equipment must have current_rating fields
                     },
                     'breaker_data': {                               # D
                         'current_rating': None,                     # there is no old column name for current_rating
-                        'open': equipment[94],                      # LocEntretienEtat TODO in either case, it was not used in the old DB
+                        'open': None,                               # LocEntretienEtat in either case, it was not used in the old DB
                         'fluid_type_id': equipment[68],             # TypeHuile
-                        'fluid_level_id': None,                     #TODO fluid_level have no equivalent
-                        'interrupting_medium_id': equipment[68],    #TODO About interrupting_medium, it is equivalent to Fluide type - Interrupting_medium = TypeHuile in table Equipment
+                        'fluid_level_id': None,                     # fluid_level have no equivalent
+                        'interrupting_medium_id': equipment[68],    # interrupting_medium, it is equivalent to Fluide type - Interrupting_medium = TypeHuile in table Equipment
                         'breaker_mechanism_id': None,               # there is no equivalent to breaker_mechanism_id
                     },
                     'power_source_data': {                          # E
@@ -147,23 +168,23 @@ def fetch_equipment_data(equipments):
                         'model': None,                          # Added in new DB
                         'sealed': equipment[11],                # Scelle
                         'threephase': equipment[13],            # TriPhase,
-                        'insulation_id': None,                  # TODO Cable: insulation_id has no equivalent.
-                        'current_rating': None                  # TODO: add fld to model and DB - Following equipment must have current_rating fields
+                        'insulation_id': None,                  # Cable: insulation_id has no equivalent.
+                        'current_rating': None                  # add fld to model and DB - Following equipment must have current_rating fields
                     },
                     'switchgear_data': {                        # H
                          'current_rating': None,                # there is no old column name for current_rating
-                         'insulation_id': None,                 # TODO switchgear: insulation_id has no equivalent
+                         'insulation_id': None,                 # switchgear: insulation_id has no equivalent
                     },
                     'induction_machine_data': {                 # I
                          'current_rating': None,                # there is no old column name for current_rating
-                         'hp': None,                # TODO HP= no equivalent
-                         'kva': equipment[25],      # TODO KVA=Puissance1
-                         'pf': None,                # TODO pf=no equivalent
+                         'hp': None,                # HP= no equivalent
+                         'kva': equipment[25],      # KVA=Puissance1
+                         'pf': None,                # pf=no equivalent
                     },
                     'synchronous_machine_data': {                    # J
                         'current_rating': None,    # there is no old column name for current_rating
-                        'hp': None,                # TODO HP: no equivalent
-                        'kw': equipment[25],       # TODO KW=Puissance1
+                        'hp': None,                # HP: no equivalent
+                        'kw': equipment[25],       # KW=Puissance1
                     },
                     'load_tap_changer_data': {                      # P
                         'filter': equipment[21],                    # Filtreur
@@ -171,18 +192,18 @@ def fetch_equipment_data(equipments):
                         'number_of_taps': equipment[60],            # Nbr_Change_Prise
                         'model': None,                              # Added in new DB
                         'fluid_type_id': equipment[68],             # TypeHuile
-                        'fluid_level_id': None,                     # TODO fluid_level have no equivalent
-                        'interrupting_medium_id': None,             # TODO
-                        'current_rating': None,   # TODO: add fld to model and DB - Following equipment must have current_rating fields
+                        'fluid_level_id': None,                     # fluid_level have no equivalent
+                        'interrupting_medium_id': equipment[68],    # TypeHuile
+                        'current_rating': None,   # add fld to model and DB - Following equipment must have current_rating fields
                         'tap_set': None,
                     },
                     'rectifier_data': {                         # R
                          'fluid_volume': equipment[4],          #LitreHuile
                          'sealed': equipment[11],               #Scelle
                          'welded_cover': equipment[12],         #CouvSoude
-                         'cooling_rating': None,                # TODO Rectifier: no equivalent
+                         'cooling_rating': None,                # Rectifier: no equivalent
                          'fluid_type_id':  equipment[68],       # TypeHuile
-                         'fluid_level_id': None,                # TODO Rectifier: no equivalent
+                         'fluid_level_id': None,                # Rectifier: no equivalent
                          'gas_sensor_id': equipment[15],        #Capteur
                     },
                     'transformer_data': {                       # T
@@ -192,9 +213,9 @@ def fetch_equipment_data(equipments):
                         'windings': equipment[28],              #Bobine
                         'cooling_rating': None,                 #transformer cooling_rating did not exist in old db
                         'autotransformer': equipment[29],       #Auto_Transfo
-                        'threephase': equipment[13],            #TODO: Boolean flag - TriPhase - if true=3, else=1
+                        'threephase': equipment[13],            #Boolean flag - TriPhase - if true=3, else=1
                         'gassensor_id': equipment[15],          #Capteur
-                        'phase_number': equipment[13],          #TriPhase - Phase_number = Triphase.
+                        'phase_number': None,          #TODO: TriPhase - Phase_number = Triphase.
                         'frequency': str(equipment[54]),        #Frequence
                         'primary_tension': equipment[22],       #Tension1
                         'secondary_tension': equipment[23],     #Tension2
@@ -205,8 +226,7 @@ def fetch_equipment_data(equipments):
                         'primary_winding_connection': equipment[30],          #Raccord_Bobine1
                         'secondary_winding_connection': equipment[31],        #Raccord_Bobine2
                         'tertiary_winding_connection': equipment[32],         #Raccord_Bobine3
-                        # 'windind_metal': equipment[49],         #Bobine_Materiel
-                        'winding_metal1': equipment[49],         #TODO - Bobine_Materiel -?
+                        'winding_metal1': equipment[49],         # Bobine_Materiel
                         'winding_metal2': None,         #in transformer delete winding_metal and add winding_metal2
                         'winding_metal3': None,         #in transformer delete winding_metal and add winding_metal3
                         'winding_metal4': None,         #in transformer delete winding_metal and add winding_metal4
@@ -238,8 +258,8 @@ def fetch_equipment_data(equipments):
                         'mvaforced24': equipment[123],          #PuisForce24
                         'impedance3': equipment[124],           #Impedance3
                         'impbasedmva3': equipment[125],         #Imp_Base3
-                        'impedance4': None,           #TODO: add fld to model and DB Impedance4 -  in transformer add: impedance4 and impbasedmva4
-                        'impbasedmva4': None,         #TODO: add fld to model and DB Imp_Base4 -  in transformer add: impedance4 and impbasedmva4
+                        'impedance4': None,           # add fld to model and DB Impedance4 -  in transformer add: impedance4 and impbasedmva4
+                        'impbasedmva4': None,         # add fld to model and DB Imp_Base4 -  in transformer add: impedance4 and impbasedmva4
                         'formula_ratio2': equipment[64],        #Formule_Ratio2
                         'formula_ratio': equipment[50],         #Formule_Ratio
                         'ratio_tag1': equipment[51],            #Etiquette1
@@ -269,8 +289,8 @@ def fetch_equipment_data(equipments):
                     },
                     'switch_data': {                            # Z
                          'current_rating': None,                # there is no old column name for current_rating
-                         'threephase': equipment[13],              #TriPhase
-                         'interrupting_medium_id': equipment[68],  #TODO TypeHuile
+                         'threephase': equipment[13],              # TriPhase
+                         'interrupting_medium_id': equipment[68],  # TypeHuile
                          'switch': None,       # We should add this field (open) to switch table - in either case, it was not used in the old DB
                     }
                 }
@@ -447,6 +467,12 @@ class ExtraEquipmentProps:
         return additional_equipment
 
     @classmethod
+    def add_interrupting_medium_id(cls, data, model):
+        data = add_interrupting_medium_id(data)
+        additional_equipment = cls.add_to_session(data, model)
+        return additional_equipment
+
+    @classmethod
     def add_winding_metal_id(cls, data, model):
         data = get_winding_metal_id(data)
         additional_equipment = cls.add_to_session(data, model)
@@ -480,12 +506,10 @@ class ExtraEquipmentProps:
 
     @classmethod
     def cable(cls, data):
-        # TODO: insulation_id
         return cls.add_to_session(data['cable_data'], Cable)
 
     @classmethod
     def switchgear(cls, data):
-        # TODO: insulation_id
         return cls.add_to_session(data['switchgear_data'], SwitchGear)
 
     @classmethod
@@ -506,19 +530,17 @@ class ExtraEquipmentProps:
 
     @classmethod
     def rectifier(cls, data):
-        # TODO: fluid_level_id
         # TODO: gas_sensor_id
         return cls.add_fluid_type_id(data['rectifier_data'], Rectifier)
 
     @classmethod
     def tank(cls, data):
-        # TODO: fluid_level_id
         return cls.add_fluid_type_id(data['tank_data'], Tank)
 
     @classmethod
     def switch(cls, data):
         # TODO: interrupting_medium_id
-        return cls.add_to_session(data['switch_data'], Switch)
+        return cls.add_interrupting_medium_id(data['switch_data'], Switch)
 
 
 def get_winding_metal_id(transformer_data):
@@ -703,7 +725,7 @@ def fetch_gas_sensor(items):
                 'percent_error': item[12],  # ErreurPourcent
                 'model': item[0],           # Capteur
                 'equipment_id': None,       #
-                #TODO MAnufacturier -? add to new
+                'manufacturer_id': item[1],    # Manufacturier
             }
         )
     return data
@@ -775,7 +797,7 @@ def fetch_fluid_profiles(items):
                 'furans': item[35],          #FUR_SER
                 'inhibitor': item[5],        #ANT_SER
                 'pcb': item[6],              #BPC_SER
-                'qty_ser': None,             #TODO: container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
+                'qty_ser': None,             #container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
                 'sampling': item[7],         #Lieu_SER
 
                 # jar
@@ -788,7 +810,7 @@ def fetch_fluid_profiles(items):
                 'dielec_2': item[14],        #TestD1816_2
                 'color': item[25],           #TestCouleur
                 'pf': item[19],              #TestFacteurP
-                'particles': item[11],       # TODO fluid_profile, there is no equivalent
+                'particles': item[11],       #fluid_profile, there is no equivalent
                 'metals': item[12],          #MDH
                 'viscosity': item[24],       #TestViscosite
                 'dielec_d': item[15],        #TestD877
@@ -799,13 +821,13 @@ def fetch_fluid_profiles(items):
                 'corr': item[28],            #TestSCorrosif
                 'dielec_i': item[16],        #TestCEI156
                 'visual': item[29],          #TestVisuel
-                'qty_jar': None,             #TODO: container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
+                'qty_jar': None,             #container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
                 'sampling_jar': item[30],    #Lieu_POT
 
                 # vial
                 'pcb_vial': item[34],        # BPC_FIO
                 'antioxidant': item[32],     #ANT_FIO
-                'qty_vial': None,            #TODO: container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
+                'qty_vial': None,            #container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
                 'sampling_vial': item[34],   #Lieu_FIO
             }
         )
@@ -842,7 +864,7 @@ def fetch_labs(items):
 
     for item in items:
         name = item[0].strip() if item[0] else None
-        if name in existing_items or name == 'Non déterminé':
+        if unicode(name, 'utf-8') in existing_items or unicode(name, 'utf-8') == unicode('Non déterminé', 'utf-8'):
             continue
 
         data['items'].append(
@@ -898,6 +920,15 @@ def add_fluid_type_id(item):
     fluid_types_mapping = get_fluid_types_by_names(collected_fluid_types)
     if item.get('fluid_type_id') or item.get('fluid_type_id') == 0:
         item['fluid_type_id'] = fluid_types_mapping.get(item['fluid_type_id'])
+    return item
+
+
+def add_interrupting_medium_id(item):
+    """Add appropriate interrupting medium id (same as fluid type id) to the item """
+    collected_fluid_types = [OldDBNotations.fluid_type_old_new().get(item['interrupting_medium_id'])]
+    fluid_types_mapping = get_fluid_types_by_names(collected_fluid_types)
+    if item.get('interrupting_medium_id') or item.get('interrupting_medium_id') == 0:
+        item['interrupting_medium_id'] = fluid_types_mapping.get(item['interrupting_medium_id'])
     return item
 
 
@@ -2272,7 +2303,7 @@ def map_recommendations_names_to_ids(recommendations):
 
 
 def run_import():
-    LIMIT_NR = 12
+    LIMIT_NR = 1
 
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
@@ -2301,8 +2332,8 @@ def run_import():
     # Get equipment partially
     # TODO: Treat special symbols correctly
     equipment_data = process_equipment_records(cursor, limit=LIMIT_NR, last_pk=None)
-    while equipment_data['items']:
-        equipment_data = process_equipment_in_batches(cursor, equipment_data, LIMIT_NR)
+    # while equipment_data['items']:
+    #     equipment_data = process_equipment_in_batches(cursor, equipment_data, LIMIT_NR)
 
     cursor.close()
     connection.close()
