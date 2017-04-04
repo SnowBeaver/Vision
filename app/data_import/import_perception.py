@@ -18,8 +18,8 @@ from app.users.models import User
 from app import db
 
 
-DB_PATH = os.path.abspath('./Example_English.MDB')
-# DB_PATH = os.path.abspath('./Industiesavril2008.sei')
+# DB_PATH = os.path.abspath('./Example_English.MDB')
+DB_PATH = os.path.abspath('./Industiesavril2008.sei')
 odbc_connection_str = 'DRIVER={MDBTools};DBQ=%s;unicode_results=True;ansi=True;' % (DB_PATH,)
 
 
@@ -473,8 +473,20 @@ class ExtraEquipmentProps:
         return additional_equipment
 
     @classmethod
-    def add_winding_metal_id(cls, data, model):
+    def add_winding_metal_and_gas_sensor_id(cls, data, model):
+        # winding_metal_id
         data = get_winding_metal_id(data)
+        # gas_sensor_id
+        data = add_gas_sensor_id(item=data, fld='gassensor_id')
+        additional_equipment = cls.add_to_session(data, model)
+        return additional_equipment
+
+    @classmethod
+    def add_fluid_type_and_gas_sensor_ids(cls, data, model):
+        # fluid_type_id
+        data = add_fluid_type_id(data)
+        # gas_sensor_id
+        data = add_gas_sensor_id(data)
         additional_equipment = cls.add_to_session(data, model)
         return additional_equipment
 
@@ -522,7 +534,8 @@ class ExtraEquipmentProps:
 
     @classmethod
     def transformer(cls, data):
-        return cls.add_winding_metal_id(data['transformer_data'], Transformer)
+        # gas sensor id
+        return cls.add_winding_metal_and_gas_sensor_id(data['transformer_data'], Transformer)
 
     @classmethod
     def load_tap_changer(cls, data):
@@ -530,8 +543,7 @@ class ExtraEquipmentProps:
 
     @classmethod
     def rectifier(cls, data):
-        # TODO: gas_sensor_id
-        return cls.add_fluid_type_id(data['rectifier_data'], Rectifier)
+        return cls.add_fluid_type_and_gas_sensor_ids(data['rectifier_data'], Rectifier)
 
     @classmethod
     def tank(cls, data):
@@ -539,7 +551,6 @@ class ExtraEquipmentProps:
 
     @classmethod
     def switch(cls, data):
-        # TODO: interrupting_medium_id
         return cls.add_interrupting_medium_id(data['switch_data'], Switch)
 
 
@@ -725,7 +736,7 @@ def fetch_gas_sensor(items):
                 'percent_error': item[12],  # ErreurPourcent
                 'model': item[0],           # Capteur
                 'equipment_id': None,       #
-                'manufacturer_id': item[1],    # Manufacturier
+                # 'manufacturer_id': item[1],    # Manufacturier TODO: get id
             }
         )
     return data
@@ -864,7 +875,9 @@ def fetch_labs(items):
 
     for item in items:
         name = item[0].strip() if item[0] else None
-        if unicode(name, 'utf-8') in existing_items or unicode(name, 'utf-8') == unicode('Non déterminé', 'utf-8'):
+        if name \
+                and (unicode(name, 'utf-8') in existing_items
+                     or unicode(name, 'utf-8') == unicode('Non déterminé', 'utf-8')):
             continue
 
         data['items'].append(
@@ -929,6 +942,15 @@ def add_interrupting_medium_id(item):
     fluid_types_mapping = get_fluid_types_by_names(collected_fluid_types)
     if item.get('interrupting_medium_id') or item.get('interrupting_medium_id') == 0:
         item['interrupting_medium_id'] = fluid_types_mapping.get(item['interrupting_medium_id'])
+    return item
+
+
+def add_gas_sensor_id(item, fld='gas_sensor_id'):
+    """Add appropriate gas sensor id to the item"""
+    collected_gas_sensor_models = [item[fld]]
+    gas_sensors_mapping = get_gas_sensors_by_models(collected_gas_sensor_models)
+    if item.get(fld) or item.get(fld) == 0:
+        item[fld] = gas_sensors_mapping.get(item[fld])
     return item
 
 
@@ -1168,6 +1190,13 @@ def get_test_recommendations_by_name(names, recommendations):
         rec_id: recommendations_mapping.get(name) for rec_id, name in recommendations.items()
     }
     return recommendations_mapping
+
+
+def get_gas_sensors_by_models(model):
+    # Gas Sensors
+    gas_sensor_in_db = db.session.query(GasSensor).filter(GasSensor.model.in_(model))
+    gas_sensor_mapping = {sensor.model: sensor.id for sensor in gas_sensor_in_db}
+    return gas_sensor_mapping
 
 
 def save_test_results_and_campaigns(campaigns, test_results, tests):
@@ -2303,7 +2332,7 @@ def map_recommendations_names_to_ids(recommendations):
 
 
 def run_import():
-    LIMIT_NR = 1
+    LIMIT_NR = 12
 
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
