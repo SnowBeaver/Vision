@@ -270,6 +270,7 @@ def fetch_equipment_data(equipments):
                          'current_rating': None,                # there is no old column name for current_rating
                          'threephase': equipment[13],              #TriPhase
                          'interrupting_medium_id': equipment[68],  #TODO TypeHuile
+                         'switch': None,       # We should add this field (open) to switch table - in either case, it was not used in the old DB
                     }
                 }
             }

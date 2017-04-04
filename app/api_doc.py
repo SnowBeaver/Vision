@@ -3199,6 +3199,7 @@ to the currently logged in user or are private.
 @apiSuccess {Integer}       id
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {Boolean}       threephase
+@apiSuccess {Boolean}       open
 @apiSuccess {Integer}       interrupting_medium_id
 @apiSuccess {Dict}          interrupting_medium     see: interrupting_medium->get an item
 @apiSuccess {Integer}       equipment_id
@@ -3218,6 +3219,7 @@ to the currently logged in user or are private.
 @apiParam   {Integer}       equipment_id required
 @apiParam   {Integer(6)}    current_rating
 @apiParam   {Boolean}       threephase
+@apiParam   {Boolean}       open
 @apiParam   {Integer}       interrupting_medium_id
 @apiUse PostItemSuccess
 @apiUse Error400

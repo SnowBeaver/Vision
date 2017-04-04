@@ -1465,6 +1465,7 @@ class Switch(db.Model):
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
     current_rating = db.Column(db.Numeric(6))
     threephase = db.Column(db.Boolean)
+    open = db.Column(db.Boolean, default=True)      # We should add this field (open) to switch table
 
     interrupting_medium_id = db.Column(db.Integer, db.ForeignKey("interrupting_medium.id"))
     interrupting_medium = db.relationship('InterruptingMedium', foreign_keys='Switch.interrupting_medium_id')
@@ -1481,6 +1482,7 @@ class Switch(db.Model):
             'id': self.id,
             'current_rating': self.current_rating,
             'threephase': self.threephase,
+            'open': self.open,
             'interrupting_medium_id': self.interrupting_medium_id,
             'interrupting_medium': self.interrupting_medium and self.interrupting_medium.serialize(),
             'equipment_id': self.equipment_id,

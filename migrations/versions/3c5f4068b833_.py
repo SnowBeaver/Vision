@@ -21,6 +21,9 @@ def upgrade():
 
     -- mva4: should really be third_cooling_stage_power = Puissance4
     ALTER TABLE public.transformer RENAME COLUMN mva4 TO third_cooling_stage_power;
+
+    -- We should add this field (open) to switch table
+    ALTER TABLE public.switch ADD COLUMN open BOOLEAN NULL;
 """
     op.execute(sql=sql)
 
@@ -32,5 +35,8 @@ def downgrade():
 
     -- mva4: should really be third_cooling_stage_power = Puissance4
     ALTER TABLE public.transformer RENAME COLUMN third_cooling_stage_power TO mva4;
+
+    -- We should add this field (open) to switch table
+    ALTER TABLE public.switch DROP COLUMN open;
 """
     op.execute(sql=sql)
