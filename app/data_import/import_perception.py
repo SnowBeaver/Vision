@@ -18,8 +18,8 @@ from app.users.models import User
 from app import db
 
 
-# DB_PATH = os.path.abspath('./Example_English.MDB')
-DB_PATH = os.path.abspath('./Industiesavril2008.sei')
+DB_PATH = os.path.abspath('./Example_English.MDB')
+# DB_PATH = os.path.abspath('./Industiesavril2008.sei')
 odbc_connection_str = 'DRIVER={MDBTools};DBQ=%s;unicode_results=True;ansi=True;' % (DB_PATH,)
 
 
@@ -213,9 +213,9 @@ def fetch_equipment_data(equipments):
                         'windings': equipment[28],              #Bobine
                         'cooling_rating': None,                 #transformer cooling_rating did not exist in old db
                         'autotransformer': equipment[29],       #Auto_Transfo
-                        'threephase': equipment[13],            #Boolean flag - TriPhase - if true=3, else=1
+                        'threephase':  equipment[13],           #Boolean flag. TriPhase - Phase_number = Triphase
                         'gassensor_id': equipment[15],          #Capteur
-                        'phase_number': None,          #TODO: TriPhase - Phase_number = Triphase.
+                        'phase_number': '1',                    #TriPhase - if true=3, else=1
                         'frequency': str(equipment[54]),        #Frequence
                         'primary_tension': equipment[22],       #Tension1
                         'secondary_tension': equipment[23],     #Tension2
@@ -479,6 +479,11 @@ class ExtraEquipmentProps:
         # gas_sensor_id
         data = add_gas_sensor_id(item=data, fld='gassensor_id')
         additional_equipment = cls.add_to_session(data, model)
+        # threephase
+        if data['threephase']:
+            data['phase_number'] = OldDBNotations.triphase_old_new().get('true')
+        else:
+            data['phase_number'] = OldDBNotations.triphase_old_new().get('false')
         return additional_equipment
 
     @classmethod
@@ -534,7 +539,6 @@ class ExtraEquipmentProps:
 
     @classmethod
     def transformer(cls, data):
-        # gas sensor id
         return cls.add_winding_metal_and_gas_sensor_id(data['transformer_data'], Transformer)
 
     @classmethod
@@ -2575,6 +2579,16 @@ class OldDBNotations:
         items = {
             0: 'Copper',
             1: 'Aluminium',
+        }
+        return items
+
+    @staticmethod
+    def triphase_old_new():
+        # TriPhase field from Equipement table
+        # Phase_number = Triphase. if true=3, else=1
+        items = {
+            'true': '3',
+            'false': '1',
         }
         return items
 
