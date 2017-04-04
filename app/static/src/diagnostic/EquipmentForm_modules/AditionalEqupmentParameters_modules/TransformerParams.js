@@ -171,10 +171,10 @@ var TransformerParams = React.createClass({
                 'ratio_tag7':'', 'ratio_tag8':'', 'static_shield3':'', 'static_shield4':'',
                 'bushing_neutral1':'', 'bushing_neutral2':'', 'bushing_neutral3':'', 'bushing_neutral4':'',
                 'windings':'', 'winding_metal1':'', 'primary_winding_connection':'', 'secondary_winding_connection':'',
-                'tertiary_winding_connection':'', 'quaternary_winding_connection':'', 'based_transformerp_ower':'', 'autotransformer':'',
+                'tertiary_winding_connection':'', 'quaternary_winding_connection':'', 'based_transformer_power':'', 'autotransformer':'',
                 'bil1':'', 'bil2':'', 'ltc1':'', 'ltc2':'',
                 'first_cooling_stage_power':'', 'second_cooling_stage_power':'',
-                'bil3':'', 'bil4':'', 'ltc3':'', 'mva4':'',
+                'bil3':'', 'bil4':'', 'ltc3':'', 'third_cooling_stage_power':'',
                 'temperature_rise':'', 'cooling_rating':'', 'primary_tension':'', 'secondary_tension':'',
                 'tertiary_tension':'', 'impedance1':'', 'impedance2':'', 'impedance3':'',
                 'formula_ratio1':'', 'formula_ratio2':'', 'formula_ratio3':'',
@@ -647,8 +647,8 @@ var TransformerParams = React.createClass({
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Based Power"
-                                   name="based_transformerp_ower"
-                                   value={this.state.based_transformerp_ower}
+                                   name="based_transformer_power"
+                                   value={this.state.based_transformer_power}
                                    errors={errors}
                                    data-type="float"/>
                     </div>
@@ -734,8 +734,8 @@ var TransformerParams = React.createClass({
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Mva 4"
-                                   name="mva4"
-                                   value={this.state.mva4}
+                                   name="third_cooling_stage_power"
+                                   value={this.state.third_cooling_stage_power}
                                    errors={errors}
                                    data-type="float"/>
                     </div>

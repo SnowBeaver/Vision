@@ -198,7 +198,7 @@ def fetch_equipment_data(equipments):
                         'primary_tension': equipment[22],       #Tension1
                         'secondary_tension': equipment[23],     #Tension2
                         'tertiary_tension': equipment[24],      #Tension3
-                        'based_transformerp_ower': equipment[25],             #Puissance1
+                        'based_transformer_power': equipment[25],             #Puissance1
                         'first_cooling_stage_power': equipment[26],           #Puissance2
                         'second_cooling_stage_power': equipment[27],          #Puissance3
                         'primary_winding_connection': equipment[30],          #Raccord_Bobine1
@@ -253,7 +253,7 @@ def fetch_equipment_data(equipments):
                         'mvarreserve': equipment[101],          #MVARReserve
                         'mwultime': equipment[102],             #MWUltime
                         'mvarultime': equipment[103],           #MVARUltime
-                        'mva4': equipment[105],                 #Puissance4 - ?
+                        'third_cooling_stage_power': equipment[105],                 #Puissance4 - ?
                         'quaternary_winding_connection': equipment[106], #Raccord_Bobine4
                         'bil4': equipment[107],                 #BIL4
                         'static_shield4': equipment[108],       #Ecran_Electro4

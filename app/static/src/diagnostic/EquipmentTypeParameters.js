@@ -2029,8 +2029,8 @@ var TransformerParams = React.createClass({
                                    value={this.state.tertiary_tension}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Based Power" name="based_transformerp_ower"
-                                   value={this.state.based_transformerp_ower}/>
+                        <TextField label="Based Power" name="based_transformer_power"
+                                   value={this.state.based_transformer_power}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="First Cooling Stage Power" name="first_cooling_stage_power"
@@ -2297,7 +2297,7 @@ var TransformerParams = React.createClass({
                         <TextField label="Mva 3" name="mva3" value={this.state.mva3}/>
                     </div>
                     <div className="col-md-1">
-                        <TextField label="Mva 4" name="mva4" value={this.state.mva4}/>
+                        <TextField label="Mva 4" name="third_cooling_stage_power" value={this.state.third_cooling_stage_power}/>
                     </div>
                 </div>
                 <div className="row">

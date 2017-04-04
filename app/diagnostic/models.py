@@ -610,7 +610,7 @@ class Transformer(db.Model):
     secondary_tension = db.Column(db.Float(53))  # Volt2. Secondary voltage in kV
     tertiary_tension = db.Column(db.Float(53))  # Volt3. Tertiary voltage in kV
 
-    based_transformerp_ower = db.Column(db.Float(53))  # MVA1. Based transformer power
+    based_transformer_power = db.Column(db.Float(53))  # MVA1. Based transformer power
     first_cooling_stage_power = db.Column(db.Float(53))  # MVA2. First cooling stage power
     second_cooling_stage_power = db.Column(db.Float(53))  # MVA3. second cooling stage power
 
@@ -777,7 +777,7 @@ class Transformer(db.Model):
     mvarultime = db.Column(db.Float(53))  # MVARUltima. How much MVAR can ultimately be used in emergency
 
     # transformer device property
-    mva4 = db.Column(db.Float(53))  # MVA4
+    third_cooling_stage_power = db.Column(db.Float(53))  # MVA4. third cooling stage power
 
     # it transformer property
     # QuatConnection. Quaternary windings connection on a multi phase transformer
@@ -820,7 +820,7 @@ class Transformer(db.Model):
             'primary_tension': self.primary_tension,
             'secondary_tension': self.secondary_tension,
             'tertiary_tension': self.tertiary_tension,
-            'based_transformerp_ower': self.based_transformerp_ower,
+            'based_transformer_power': self.based_transformer_power,
             'first_cooling_stage_power': self.first_cooling_stage_power,
             'second_cooling_stage_power': self.second_cooling_stage_power,
             'primary_winding_connection': self.primary_winding_connection,
@@ -900,7 +900,7 @@ class Transformer(db.Model):
             'mvarreserve': self.mvarreserve,
             'mwultime': self.mwultime,
             'mvarultime': self.mvarultime,
-            'mva4': self.mva4,
+            'third_cooling_stage_power': self.third_cooling_stage_power,
             'quaternary_winding_connection': self.quaternary_winding_connection,
             'bil4': self.bil4,
             'static_shield4': self.static_shield4,

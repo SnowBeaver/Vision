@@ -1841,7 +1841,7 @@ to the currently logged in user or are private.
 @apiSuccess {Float}       primary_tension
 @apiSuccess {Float}       secondary_tension
 @apiSuccess {Float}       tertiary_tension
-@apiSuccess {Float}       based_transformerp_ower
+@apiSuccess {Float}       based_transformer_power
 @apiSuccess {Float}       first_cooling_stage_power
 @apiSuccess {Float}       second_cooling_stage_power
 @apiSuccess {Integer}     primary_winding_connection
@@ -1914,7 +1914,7 @@ to the currently logged in user or are private.
 @apiSuccess {Float}       mvarreserve
 @apiSuccess {Float}       mwultime
 @apiSuccess {Float}       mvarultime
-@apiSuccess {Float}       mva4
+@apiSuccess {Float}       third_cooling_stage_power
 @apiSuccess {Float}       quaternary_winding_connection
 @apiSuccess {Float}       bil4
 @apiSuccess {Float}       static_shield4
@@ -1950,7 +1950,7 @@ to the currently logged in user or are private.
 @apiParam   {Float}       primary_tension
 @apiParam   {Float}       secondary_tension
 @apiParam   {Float}       tertiary_tension
-@apiParam   {Float}       based_transformerp_ower
+@apiParam   {Float}       based_transformer_power
 @apiParam   {Float}       first_cooling_stage_power
 @apiParam   {Float}       second_cooling_stage_power
 @apiParam   {Integer}     primary_winding_connection
@@ -2011,7 +2011,7 @@ to the currently logged in user or are private.
 @apiParam   {Float}       mvarreserve
 @apiParam   {Float}       mwultime
 @apiParam   {Float}       mvarultime
-@apiParam   {Float}       mva4
+@apiParam   {Float}       third_cooling_stage_power
 @apiParam   {Float}       quaternary_winding_connection
 @apiParam   {Float}       bil4
 @apiParam   {Float}       static_shield4
