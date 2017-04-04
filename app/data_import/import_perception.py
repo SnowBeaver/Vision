@@ -133,11 +133,11 @@ def fetch_equipment_data(equipments):
                     },
                     'breaker_data': {                               # D
                         'current_rating': None,                     # there is no old column name for current_rating
-                        'open': equipment[94],                      # LocEntretienEtat TODO
+                        'open': equipment[94],                      # LocEntretienEtat TODO in either case, it was not used in the old DB
                         'fluid_type_id': equipment[68],             # TypeHuile
                         'fluid_level_id': None,                     #TODO
-                        'interrupting_medium_id': None,             #TODO
-                        'breaker_mechanism_id': None,               #TODO
+                        'interrupting_medium_id': equipment[68],    #TODO About interrupting_medium, it is equivalent to Fluide type - Interrupting_medium = TypeHuile in table Equipment
+                        'breaker_mechanism_id': None,               # there is no equivalent to breaker_mechanism_id
                     },
                     'power_source_data': {                          # E
                         'kv': equipment[22],                        # Tension1
@@ -147,23 +147,23 @@ def fetch_equipment_data(equipments):
                         'model': None,                          # Added in new DB
                         'sealed': equipment[11],                # Scelle
                         'threephase': equipment[13],            # TriPhase,
-                        'insulation_id': None,                  # TODO
+                        'insulation_id': None,                  # TODO Cable: insulation_id has no equivalent.
                         'current_rating': None                  # TODO: add fld to model and DB - Following equipment must have current_rating fields
                     },
                     'switchgear_data': {                        # H
                          'current_rating': None,                # there is no old column name for current_rating
-                         'insulation_id': None,                 # TODO
+                         'insulation_id': None,                 # TODO switchgear: insulation_id has no equivalent
                     },
                     'induction_machine_data': {                 # I
                          'current_rating': None,                # there is no old column name for current_rating
-                         'hp': None,                # TODO
-                         'kva': None,                # TODO
-                         'pf': None,                # TODO
+                         'hp': None,                # TODO HP= no equivalent
+                         'kva': equipment[25],      # TODO KVA=Puissance1
+                         'pf': None,                # TODO pf=no equivalent
                     },
                     'synchronous_machine_data': {                    # J
                         'current_rating': None,    # there is no old column name for current_rating
-                        'hp': None,                # TODO
-                        'kw': None,                # TODO
+                        'hp': None,                # TODO HP: no equivalent
+                        'kw': equipment[25],       # TODO KW=Puissance1
                     },
                     'load_tap_changer_data': {                      # P
                         'filter': equipment[21],                    # Filtreur
@@ -179,9 +179,9 @@ def fetch_equipment_data(equipments):
                          'fluid_volume': equipment[4],          #LitreHuile
                          'sealed': equipment[11],               #Scelle
                          'welded_cover': equipment[12],         #CouvSoude
-                         'cooling_rating': None,                # TODO
+                         'cooling_rating': None,                # TODO Rectifier: no equivalent
                          'fluid_type_id':  equipment[68],       # TypeHuile
-                         'fluid_level_id': None,                # TODO
+                         'fluid_level_id': None,                # TODO Rectifier: no equivalent
                          'gas_sensor_id': equipment[15],        #Capteur
                     },
                     'transformer_data': {                       # T
@@ -269,7 +269,7 @@ def fetch_equipment_data(equipments):
                     'switch_data': {                            # Z
                          'current_rating': None,                # there is no old column name for current_rating
                          'threephase': equipment[13],              #TriPhase
-                         'interrupting_medium_id': None,  #TODO
+                         'interrupting_medium_id': equipment[68],  #TODO TypeHuile
                     }
                 }
             }
@@ -773,7 +773,7 @@ def fetch_fluid_profiles(items):
                 'furans': item[35],          #FUR_SER
                 'inhibitor': item[5],        #ANT_SER
                 'pcb': item[6],              #BPC_SER
-                'qty_ser': None,                 #TODO: check
+                'qty_ser': None,             #TODO: container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
                 'sampling': item[7],         #Lieu_SER
 
                 # jar
@@ -786,7 +786,7 @@ def fetch_fluid_profiles(items):
                 'dielec_2': item[14],        #TestD1816_2
                 'color': item[25],           #TestCouleur
                 'pf': item[19],              #TestFacteurP
-                'particles': item[11],       # TODO
+                'particles': item[11],       # TODO fluid_profile, there is no equivalent
                 'metals': item[12],          #MDH
                 'viscosity': item[24],       #TestViscosite
                 'dielec_d': item[15],        #TestD877
@@ -797,13 +797,13 @@ def fetch_fluid_profiles(items):
                 'corr': item[28],            #TestSCorrosif
                 'dielec_i': item[16],        #TestCEI156
                 'visual': item[29],          #TestVisuel
-                'qty_jar': None,             #TODO:check
+                'qty_jar': None,             #TODO: container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
                 'sampling_jar': item[30],    #Lieu_POT
 
                 # vial
                 'pcb_vial': item[34],        # BPC_FIO
                 'antioxidant': item[32],     #ANT_FIO
-                'qty_vial': None,            #TODO:check
+                'qty_vial': None,            #TODO: container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
                 'sampling_vial': item[34],   #Lieu_FIO
             }
         )
