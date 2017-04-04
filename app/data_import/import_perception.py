@@ -2270,42 +2270,40 @@ def map_recommendations_names_to_ids(recommendations):
 
 
 def run_import():
-    equi
-    pass
-    # LIMIT_NR = 12
-    #
-    # connection = pypyodbc.connect(odbc_connection_str)
-    # connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
-    # cursor = connection.cursor()
-    #
-    # #TODO Extract data partially using LIMIT OFFSER
-    #
-    # # Save predefined norms
-    # process_norms(cursor)
-    #
-    # # Save gas sensor data (Capteur_GAZ)
-    # process_gas_sensor(cursor)
-    #
-    # # Save electrical profile
-    # process_electrical_profile(cursor)
-    #
-    # # Save fluid profile
-    # process_fluid_profile(cursor)
-    #
-    # # Save laboratories
-    # process_labs(cursor)
-    #
-    # # Save laboratories from Analyse table
-    # process_labs_from_test_result(cursor)
-    #
-    # # Get equipment partially
-    # # TODO: Treat special symbols correctly
-    # equipment_data = process_equipment_records(cursor, limit=LIMIT_NR, last_pk=None)
-    # while equipment_data['items']:
-    #     equipment_data = process_equipment_in_batches(cursor, equipment_data, LIMIT_NR)
-    #
-    # cursor.close()
-    # connection.close()
+    LIMIT_NR = 12
+
+    connection = pypyodbc.connect(odbc_connection_str)
+    connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
+    cursor = connection.cursor()
+
+    #TODO Extract data partially using LIMIT OFFSER
+
+    # Save predefined norms
+    process_norms(cursor)
+
+    # Save gas sensor data (Capteur_GAZ)
+    process_gas_sensor(cursor)
+
+    # Save electrical profile
+    process_electrical_profile(cursor)
+
+    # Save fluid profile
+    process_fluid_profile(cursor)
+
+    # Save laboratories
+    process_labs(cursor)
+
+    # Save laboratories from Analyse table
+    process_labs_from_test_result(cursor)
+
+    # Get equipment partially
+    # TODO: Treat special symbols correctly
+    equipment_data = process_equipment_records(cursor, limit=LIMIT_NR, last_pk=None)
+    while equipment_data['items']:
+        equipment_data = process_equipment_in_batches(cursor, equipment_data, LIMIT_NR)
+
+    cursor.close()
+    connection.close()
 
 
 def process_equipment_in_batches(cursor, equipment_data, limit):
@@ -2537,7 +2535,7 @@ def __equipment_sql(last_pk):
                'Bush_Mfr_X1,Bush_Mfr_X2,Bush_Mfr_X3,Bush_Mfr_XN,Bush_Mfr_T1,Bush_Mfr_T2,Bush_Mfr_T3,Bush_Mfr_TN,Bush_Mfr_Q1,Bush_Mfr_Q2,' \
                'Bush_Mfr_Q3,Bush_Mfr_QN,Bush_Type_H,Bush_Type_HN,Bush_Type_X,Bush_Type_XN,Bush_Type_T,Bush_Type_TN,Bush_Type_Q,Bush_Type_QN,' \
                'Valider,EnValidation,NoSerieEquipeAnc,NoEquipementAnc,Fratrie'
-    query = "SELECT {} FROM Equipement WHERE TypeEquipement == 'G'".format(all_cols)
+    query = "SELECT {} FROM Equipement".format(all_cols)
 
     if last_pk:
         query += """
