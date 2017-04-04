@@ -18,7 +18,6 @@ def upgrade():
     sql = """
     -- in test_result tabel, we should rename qty for qty_ser in TestResult
     -- we should rename qty for qty_ser in FluidProfile
-    -- ALTER TABLE public.test_result RENAME COLUMN qty TO qty_ser;
     ALTER TABLE public.fluid_profile RENAME COLUMN qty TO qty_ser;
 """
     op.execute(sql=sql)
@@ -28,7 +27,6 @@ def downgrade():
     sql = """
     -- in test_result tabel, we should rename qty for qty_ser in TestResult
     -- we should rename qty for qty_ser in FluidProfile
-    -- ALTER TABLE public.test_result RENAME COLUMN qty_ser TO qty;
     ALTER TABLE public.fluid_profile RENAME COLUMN qty_ser TO qty;
 """
     op.execute(sql=sql)
