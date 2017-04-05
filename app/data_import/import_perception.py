@@ -4,6 +4,8 @@ import pypyodbc
 import datetime
 
 from sqlalchemy import or_, and_
+from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 
 from app.diagnostic.models import EquipmentType, Equipment, Location, Manufacturer, \
     NormPhysic, NormPhysicData, NormFuran, NormFuranData, NormGas, NormGasData, \
@@ -14,13 +16,18 @@ from app.diagnostic.models import EquipmentType, Equipment, Location, Manufactur
     MetalsInOilTest, VisualInspectionTest, WindingResistanceTest, ParticleTest, FuranTest, Material, \
     Breaker, LoadTapChanger, AirCircuitBreaker, Bushing, Capacitor, PowerSource, Cable, SwitchGear, \
     InductionMachine, SynchronousMachine, Rectifier, Tank, Switch, EquipmentConnection
+from app.api_utility import Tree, TreeTranslation, eq_type_dict
 from app.users.models import User
-from app import db
 
 
-# DB_PATH = os.path.abspath('./Example_English.MDB')
-DB_PATH = os.path.abspath('./Industiesavril2008.sei')
-odbc_connection_str = 'DRIVER={MDBTools};DBQ=%s;unicode_results=True;ansi=True;' % (DB_PATH,)
+# OLD_DB_PATH = os.path.abspath('./Example_English.MDB')
+OLD_DB_PATH = os.path.abspath('./Industiesavril2008.sei')
+ODBC_CONNECTION_STR = 'DRIVER={MDBTools};DBQ=%s;unicode_results=True;ansi=True;' % (OLD_DB_PATH,)
+PSQL_CONNECTION_STR = "postgresql://vision:ViSiOn@localhost/vision_import"
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = PSQL_CONNECTION_STR
+db = SQLAlchemy(app, session_options={'autoflush': False})
 
 
 # Helper functions
@@ -370,6 +377,8 @@ def save_equipment(data):
         equipment = Equipment(**item)              # Equipment
         equipment = add_equipment_to_norms(equipment_norms, equipment)
 
+        save_equipment_tree_entry(equipment)
+
         # Add equipment to transformer record
         if additional_equipment:
             additional_equipment.equipment = equipment
@@ -389,6 +398,28 @@ def save_equipment(data):
         print(e)
         db.session.rollback()
     return True
+
+
+def save_equipment_tree_entry(equipment):
+    short_name = eq_type_dict.get(equipment.equipment_type_id, '')
+    tree_data = {
+        'equipment': equipment,
+        'parent_id': 32,
+        'icon': '../app/static/img/icons/{0}_b.ico'.format(short_name),
+        'type': '{0}'.format(short_name)
+    }
+    db.session.add(Tree(**tree_data))
+    #
+    # # Transaltion
+    # tree_trans_data = {
+    #     'id': item_tree.id,
+    #     'locale': 'en',
+    #     'text': equipment.name,
+    #     'tooltip': equipment.name
+    #     # 'text': param_dict['name'],
+    #     # 'tooltip': param_dict['name']
+    # }
+    # trans = db.session.add(TreeTranslation(**tree_trans_data))
 
 
 def save_upstreams(equipment_key_item_mapping):
@@ -808,7 +839,7 @@ def fetch_fluid_profiles(items):
     for item in items:
         if item[0] in existing_items:
             continue
-
+        print(item[34] if type(item[34]) == bool else True if item[34] == 1 else False)
         data['items'].append(
             {
                 'name': item[0],             # NoProfil
@@ -849,7 +880,7 @@ def fetch_fluid_profiles(items):
                 'sampling_jar': item[30],    #Lieu_POT
 
                 # vial
-                'pcb_vial': item[34],        # BPC_FIO
+                'pcb_vial': item[34] if type(item[34]) == bool else True if item[34] == 1 else False,        # BPC_FIO
                 'antioxidant': item[32],     #ANT_FIO
                 'qty_vial': None,            #container quantity cannot be set in advance because it depends to which lab it will be send to, and lab are not known at the Profile level
                 'sampling_vial': item[34],   #Lieu_FIO
@@ -907,7 +938,9 @@ def fetch_labs(items):
 def process_equipment_records(cursor, limit, last_pk):
     # Get all equipment
     equipments, cursor = get_equipment(cursor, limit, last_pk)
-    while equipments:
+    # Limit to 100 records for now
+    i = 0
+    while equipments and i < 10:
         equipments_list = equipments
         # Prepare and save additional data from equipment
         additional_data = fetch_additional_data(equipments_list)
@@ -916,6 +949,7 @@ def process_equipment_records(cursor, limit, last_pk):
         # Save equipment
         equipment_data = fetch_equipment_data(equipments_list)
         save_equipment(equipment_data)                  # Equipment and norms related to them
+        i += 1
         equipments = cursor.fetchmany(limit)
     return equipment_data
 
@@ -2379,7 +2413,7 @@ def map_recommendations_names_to_ids(recommendations):
 def run_import():
     LIMIT_NR = 10
 
-    connection = pypyodbc.connect(odbc_connection_str)
+    connection = pypyodbc.connect(ODBC_CONNECTION_STR)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
     cursor = connection.cursor()
 
@@ -2614,6 +2648,17 @@ class OldDBNotations:
         items = {
             'true': '3',
             'false': '1',
+        }
+        return items
+
+    @staticmethod
+    def interrupting_medium_old_new():
+        # TODO: review
+        # Same as TypeHuile
+        # {old db id: new db value}
+        items = {
+            0: 'oil',
+            1: 'SF6',
         }
         return items
 
