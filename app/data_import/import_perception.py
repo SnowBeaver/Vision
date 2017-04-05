@@ -18,8 +18,8 @@ from app.users.models import User
 from app import db
 
 
-DB_PATH = os.path.abspath('./Example_English.MDB')
-# DB_PATH = os.path.abspath('./Industiesavril2008.sei')
+# DB_PATH = os.path.abspath('./Example_English.MDB')
+DB_PATH = os.path.abspath('./Industiesavril2008.sei')
 odbc_connection_str = 'DRIVER={MDBTools};DBQ=%s;unicode_results=True;ansi=True;' % (DB_PATH,)
 
 
@@ -53,7 +53,7 @@ def get_keys_by_val(items, value):
 def get_equipment(cursor, limit, last_pk=None):
     query = __equipment_sql(last_pk)
     cursor.execute(query)
-    return cursor.fetchmany(limit)
+    return cursor.fetchmany(limit), cursor
 
 
 def fetch_additional_data(equipments):
@@ -478,12 +478,21 @@ class ExtraEquipmentProps:
         data = get_winding_metal_id(data)
         # gas_sensor_id
         data = add_gas_sensor_id(item=data, fld='gassensor_id')
-        additional_equipment = cls.add_to_session(data, model)
         # threephase
         if data['threephase']:
             data['phase_number'] = OldDBNotations.triphase_old_new().get('true')
         else:
             data['phase_number'] = OldDBNotations.triphase_old_new().get('false')
+        additional_equipment = cls.add_to_session(data, model)
+        return additional_equipment
+
+    @classmethod
+    def add_fluid_type_and_interrupting_medium_id(cls, data, model):
+        # fluid_type_id
+        data = add_fluid_type_id(data)
+        # interrupting_medium_id
+        data = add_interrupting_medium_id(data)
+        additional_equipment = cls.add_to_session(data, model)
         return additional_equipment
 
     @classmethod
@@ -515,7 +524,7 @@ class ExtraEquipmentProps:
 
     @classmethod
     def breaker(cls, data):
-        return cls.add_fluid_type_id(data['breaker_data'], Breaker)
+        return cls.add_fluid_type_and_interrupting_medium_id(data['breaker_data'], Breaker)
 
     @classmethod
     def power_source(cls, data):
@@ -543,7 +552,7 @@ class ExtraEquipmentProps:
 
     @classmethod
     def load_tap_changer(cls, data):
-        return cls.add_fluid_type_id(data['load_tap_changer_data'], LoadTapChanger)
+        return cls.add_fluid_type_and_interrupting_medium_id(data['load_tap_changer_data'], LoadTapChanger)
 
     @classmethod
     def rectifier(cls, data):
@@ -897,15 +906,17 @@ def fetch_labs(items):
 
 def process_equipment_records(cursor, limit, last_pk):
     # Get all equipment
-    equipments = get_equipment(cursor, limit, last_pk)
+    equipments, cursor = get_equipment(cursor, limit, last_pk)
+    while equipments:
+        equipments_list = equipments
+        # Prepare and save additional data from equipment
+        additional_data = fetch_additional_data(equipments_list)
+        save_additional_data(data=additional_data)      # Location and manufacturers
 
-    # Prepare and save additional data from equipment
-    additional_data = fetch_additional_data(equipments)
-    save_additional_data(data=additional_data)      # Location and manufacturers
-
-    # Save equipment
-    equipment_data = fetch_equipment_data(equipments)
-    save_equipment(equipment_data)                  # Equipment and norms related to them
+        # Save equipment
+        equipment_data = fetch_equipment_data(equipments_list)
+        save_equipment(equipment_data)                  # Equipment and norms related to them
+        equipments = cursor.fetchmany(limit)
     return equipment_data
 
 
@@ -1500,7 +1511,7 @@ def save_tests(tests, test_nr, test_result):
 
     # Visual Inspection
     if tests['visual'].get(test_nr):
-        # TODO: Check ids in new and old DBs
+        # TODO: Instead of 0 write 1 to DB for now
         # Increase all ids by 1 for now, as they start with 0 in old DB
         vis_inp_data = tests['visual'].get(test_nr)
         for key, value in vis_inp_data.items():
@@ -1785,6 +1796,23 @@ def fetch_bushing_tests(items):
                 'test_kv_q2': item[70],                       # Test_kV_Q2
                 'test_kv_q3': item[71],                       # Test_kV_Q3
                 'test_kv_qn': item[72],                       # Test_kV_QN
+
+                'test_pfc2_h1': item[73],                       # Test_PFC2_H1
+                'test_pfc2_h2': item[74],                       # Test_PFC2_H2
+                'test_pfc2_h3': item[75],                       # Test_PFC2_H3
+                'test_pfc2_hn': item[76],                       # Test_PFC2_HN
+                'test_pfc2_x1': item[77],                       # Test_PFC2_X1
+                'test_pfc2_x2': item[78],                       # Test_PFC2_X2
+                'test_pfc2_x3': item[79],                       # Test_PFC2_X3
+                'test_pfc2_xn': item[80],                       # Test_PFC2_XN
+                'test_pfc2_t1': item[81],                       # Test_PFC2_T1
+                'test_pfc2_t2': item[82],                       # Test_PFC2_T2
+                'test_pfc2_t3': item[83],                       # Test_PFC2_T3
+                'test_pfc2_tn': item[84],                       # Test_PFC2_TN
+                'test_pfc2_q1': item[85],                       # Test_PFC2_Q1
+                'test_pfc2_q2': item[86],                       # Test_PFC2_Q2
+                'test_pfc2_q3': item[87],                       # Test_PFC2_Q3
+                'test_pfc2_qn': item[88],                       # Test_PFC2_QN
 
                 'facteurn': item[89],                         # FacteurN
                 'facteurn1': item[90],                        # FacteurN1
@@ -2349,13 +2377,11 @@ def map_recommendations_names_to_ids(recommendations):
 
 
 def run_import():
-    LIMIT_NR = 12
+    LIMIT_NR = 10
 
     connection = pypyodbc.connect(odbc_connection_str)
     connection.add_output_converter(pypyodbc.SQL_TYPE_TIMESTAMP, timestamp_to_date)
     cursor = connection.cursor()
-
-    #TODO Extract data partially using LIMIT OFFSER
 
     # Save predefined norms
     process_norms(cursor)
@@ -2376,7 +2402,6 @@ def run_import():
     process_labs_from_test_result(cursor)
 
     # Get equipment partially
-    # TODO: Treat special symbols correctly
     equipment_data = process_equipment_records(cursor, limit=LIMIT_NR, last_pk=None)
     # while equipment_data['items']:
     #     equipment_data = process_equipment_in_batches(cursor, equipment_data, LIMIT_NR)
