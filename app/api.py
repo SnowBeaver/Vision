@@ -964,6 +964,39 @@ def finish_campaign_handler(item_id):
     return return_json('result', item.id)
 
 
+@api_blueprint.route('/campaign/', methods=['GET'])
+@login_required
+def get_campaigns_handler():
+    last_id = request.args.get('last_id')
+    if last_id and not last_id.isnumeric():
+        abort(400, {'last_id': 'Invalid value'})
+
+    path = 'campaign'
+    items_model = get_model_by_path(path)
+    filter_clause = None
+    page_len = 20
+    search_val = request.args.get('q')
+    args = request.args
+
+    if args:
+        kwargs = {k: v for k, v in args.items() if hasattr(items_model, k)}
+        if search_val:
+            filter_clause = func.concat(items_model.date_created, ' ', items_model.description).like('%{}%'.format(search_val))
+            if last_id:
+                filter_clause = and_(filter_clause, items_model.id > last_id)
+        query = db.session.query(items_model)
+        if filter_clause is not None:
+            query = query.filter(filter_clause)
+        total_count = query.filter_by(**kwargs).count()
+        return return_json('result', {
+            'items': [item.serialize() for item in query
+                           .filter_by(**kwargs)
+                           .order_by(items_model.date_created.asc())
+                           .limit(page_len)],
+            'total_count': total_count})
+    return return_json('result', get_items(path, args))
+
+
 # Get release version
 @api_blueprint.route('/release_version/', methods=['GET'])
 @login_required

@@ -1,5 +1,7 @@
 import {Component} from 'react';
 import React from 'react';
+import Select2 from 'react-select2-wrapper';
+
 // import EquipmentList from '../EquipmentList';
 import TestResultForm from '../TestResultForm';
 import EquipmentTestForm from '../EquipmentTestForm';
@@ -12,39 +14,18 @@ import {DATETIME_FORMAT} from '../appConstants.js';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
+
 var CampaignSelectField = React.createClass({
     getInitialState: function () {
         return {
             items: [],
-            isVisible: false
+            isVisible: false,
+            placeholder: 'Filter by campaign (Sample: 2017-04-10 18:07:51 | non detectable)'
         };
     },
 
     isVisible: function () {
         return this.state.isVisible;
-    },
-
-    componentDidMount: function () {
-        var source = '/api/v1.0/' + this.props.source + '/';
-        this.serverRequest = $.authorizedGet(source, function (result) {
-            this.setState({items: (this.sortItemsByKey(result['result'], 'date_created'))});
-        }.bind(this), 'json');
-    },
-
-    sortItemsByKey: function (array, key){
-        return array.sort(function(a, b) {
-            var a = a[key];
-            var b = b[key];
-            if (a === null) {
-                return 1;
-            } else if (b === null) {
-                return -1;
-            } else if (a === b) {
-                return 0;
-            } else {
-                return a < b ? 1 : -1;
-            }
-        });
     },
 
     componentWillUnmount: function () {
@@ -58,7 +39,7 @@ var CampaignSelectField = React.createClass({
     formatCampaignName: function (data) {
         var optionName = [];
         if (data.date_created) {
-            optionName.push(moment(data.date_created).format(DATETIME_FORMAT));
+            optionName.push(moment(data.date_created).utc().format(DATETIME_FORMAT));
         }
         if (data.description) {
             optionName.push(data.description.substr(0, 20));
@@ -66,28 +47,70 @@ var CampaignSelectField = React.createClass({
         return optionName.join(" | ") || "";
     },
 
+    formatRepo: function (campaign) {
+        if (campaign.loading) return campaign.text;
+        var markup = "<div class='select2-result-repository__title' " +
+            "title='" + campaign.description + "'>" + this.formatCampaignName(campaign) +
+            "</div>";
+        return markup;
+    },
+
+    formatRepoSelection: function (campaign) {
+        return this.formatCampaignName(campaign) || campaign.text;
+    },
+
+    onSelect: function (e) {
+        let current_state = this.state;
+        current_state.placeholder = this.formatCampaignName(e.params.data);
+        this.setState(current_state);
+        this.props.onSelect(e);
+    },
+
     render: function () {
-        var label = (this.props.label != null) ? this.props.label : "";
-        var name = (this.props.name != null) ? this.props.name : "";
-        var value = (this.props.value != null) ? this.props.value : "";
         var className = (this.props.className != null) ? this.props.className : "";
-        var menuItems = [];
-        for (var key in this.state.items) {
-            menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.formatCampaignName(this.state.items[key])}`}</option>);
-        }
+
         return (
             <FormGroup className={className}>
-                <FormControl componentClass="select"
-                             onChange={this.props.onChange}
-                             name={name}
-                             value={value}
-                             disabled={this.props.disabled}
-                >
-                    <option value="">{label}</option>
-                    {menuItems}
-                    <FormControl.Feedback />
-                </FormControl>
+                <Select2
+                    className="col-md-12 form-control"
+                    onSelect={this.onSelect}
+                    disabled={this.props.disabled}
+                    options={
+                    {
+                      placeholder: this.state.placeholder,
+                      dropdownAutoWidth: true,
+                      language: { errorLoading:function(){ return "Searching..." }},
+                      ajax: {
+                            url: '/api/v1.0/' + this.props.source + '/',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                              return {
+                                q: params.term, // search term
+                                last_id: params.last_id
+                              };
+                            },
+                            processResults: function (data, params) {
+                              params.page = params.page || 1;
+                              if (data.result.items.length) {
+                                params.last_id = data.result.items[data.result.items.length - 1].id;
+                              }
+                              return {
+                                results: data.result.items,
+                                pagination: {
+                                  more: (params.page * 20) < data.result.total_count
+                                }
+                              };
+                            },
+                            cache: true
+                          },
+                      escapeMarkup: function (markup) { return markup; },
+                      minimumInputLength: 1,
+                      templateResult: this.formatRepo,
+                      templateSelection: this.formatRepoSelection
+                    }
+                  }
+                />
             </FormGroup>
         );
     }
@@ -239,7 +262,7 @@ var Home = React.createClass({
                                          name='campaign_id'
                                          className="col-md-6 nopadding"
                                          value={this.state.campaignId}
-                                         onChange={this.onCampaignFilterChange}/>
+                                         onSelect={this.onCampaignFilterChange}/>
                     <div className="col-md-6">
                         <TextField label="Search"
                                    showLabel={false}
