@@ -72,7 +72,7 @@ var CampaignSelectField = React.createClass({
         return (
             <FormGroup className={className}>
                 <Select2
-                    className="col-md-12 form-control"
+                    className="col-md-12"
                     onSelect={this.onSelect}
                     disabled={this.props.disabled}
                     options={
@@ -210,7 +210,7 @@ var Home = React.createClass({
     },
 
     onCampaignFilterChange: function (e) {
-        var value = e.target.value;
+        var value = e.params.data.id;
         this.setState({campaignId: value});
         this.loadEquipment(this.state.equipmentId || 0, value);
     },

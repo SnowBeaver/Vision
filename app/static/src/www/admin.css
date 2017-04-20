@@ -123,3 +123,6 @@ legend.scheduler-border {
 .container {
     width: 80%;
 }
+.select2-selection {
+    height: 33px!important;
+}
