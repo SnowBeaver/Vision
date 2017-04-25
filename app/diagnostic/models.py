@@ -2,11 +2,15 @@
 # -*- coding: utf-8 -*-
 import sqlalchemy as sqla
 from datetime import datetime
-from app import db
+from app import db, app
 from sqlalchemy.orm import relationship, relation
+from sqlalchemy.ext.hybrid import hybrid_property
+from .helpers import AESCipher
 from sqlalchemy.sql.expression import cast
 from sqlalchemy import Enum
 
+
+ENCRYPT_KEY = app.config['SECURITY_DB_ENCRYPT']
 
 
 def dump_datetime(value):
@@ -1536,7 +1540,7 @@ class Equipment(db.Model):
     equipment_number = db.Column(db.String(50), nullable=False, index=True)
     # EquipmentSerialNum: Equipment ID given by manufacturer.
     # Index key, along with Equipment number to uniquely identify equipment
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    _serial = db.Column('serial', db.String(50), nullable=False, index=True, unique=True)
     # EquipmentType. Define equipment by a single letter code. T:transformer, D; breaker etc...
     equipment_type_id = db.Column('equipment_type_id', db.ForeignKey("equipment_type.id"), nullable=False)
     equipment_type = relation('EquipmentType', foreign_keys='Equipment.equipment_type_id')
@@ -1608,6 +1612,21 @@ class Equipment(db.Model):
                                          self.serial.encode('utf-8') if self.serial else '',
                                          self.equipment_number.encode('utf-8') if self.equipment_number else ''),
                        'utf-8')
+
+    @hybrid_property
+    def serial(self):
+        if self._serial:
+            cipher = AESCipher(ENCRYPT_KEY)
+            msg = cipher.decrypt(self._serial)
+            return msg
+        else:
+            return None
+
+    @serial.setter
+    def email(self, val):
+        cipher = AESCipher(ENCRYPT_KEY)
+        msg = cipher.encrypt(val)
+        self._serial = msg
 
     def serialize(self):
         """Return object data in easily serializeable format"""
