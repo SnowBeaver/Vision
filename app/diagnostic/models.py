@@ -1623,7 +1623,7 @@ class Equipment(db.Model):
             return None
 
     @serial.setter
-    def email(self, val):
+    def serial(self, val):
         cipher = AESCipher(ENCRYPT_KEY)
         msg = cipher.encrypt(val)
         self._serial = msg
