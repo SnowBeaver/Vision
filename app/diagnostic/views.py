@@ -1317,6 +1317,10 @@ class BushingTestView(MyTestView):
     BushingTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(BushingTestView, self).__init__(
             BushingTest, dbsession, name="Bushing test"
@@ -1327,6 +1331,10 @@ class WindingTestView(MyTestView):
     """
     WindingTest management view
     """
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(WindingTestView, self).__init__(
@@ -1339,6 +1347,10 @@ class VisualInspectionTestView(MyTestView):
     VisualInspectionTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(VisualInspectionTestView, self).__init__(
             VisualInspectionTest, dbsession, name="Visual inspection test"
@@ -1349,6 +1361,10 @@ class InsulationResistanceTestView(MyTestView):
     """
     InsulationResistanceTest management view
     """
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(InsulationResistanceTestView, self).__init__(
@@ -1362,6 +1378,10 @@ class PolymerisationDegreeTestView(MyTestView):
     PolymerisationDegreeTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(PolymerisationDegreeTestView, self).__init__(
             PolymerisationDegreeTest, dbsession,
@@ -1373,6 +1393,10 @@ class TransformerTurnRatioTestView(MyTestView):
     """
     TransformerTurnRatioTest management view
     """
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(TransformerTurnRatioTestView, self).__init__(
@@ -1386,6 +1410,10 @@ class WindingResistanceTestView(MyTestView):
     WindingResistanceTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(WindingResistanceTestView, self).__init__(
             WindingResistanceTest, dbsession, name="Winding resistance test"
@@ -1396,6 +1424,10 @@ class DissolvedGasTestView(MyTestView):
     """
     DissolvedGasTest management view
     """
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(DissolvedGasTestView, self).__init__(
@@ -1408,6 +1440,10 @@ class WaterTestView(MyTestView):
     WaterTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(WaterTestView, self).__init__(
             WaterTest, dbsession, name="Water test"
@@ -1418,6 +1454,10 @@ class FuranTestView(MyTestView):
     """
     FuranTest management view
     """
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(FuranTestView, self).__init__(
@@ -1430,6 +1470,10 @@ class InhibitorTestView(MyTestView):
     InhibitorTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(InhibitorTestView, self).__init__(
             InhibitorTest, dbsession, name="Inhibitor test"
@@ -1440,6 +1484,10 @@ class PCBTestView(MyTestView):
     """
     PCBTest management view
     """
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(PCBTestView, self).__init__(
@@ -1452,6 +1500,10 @@ class ParticleTestView(MyTestView):
     ParticleTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(ParticleTestView, self).__init__(
             ParticleTest, dbsession, name="Particle test"
@@ -1463,6 +1515,10 @@ class MetalsInOilTestView(MyTestView):
     MetalsInOilTest management view
     """
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
+
     def __init__(self, dbsession):
         super(MetalsInOilTestView, self).__init__(
             MetalsInOilTest, dbsession, name="Metals in oil test"
@@ -1473,6 +1529,10 @@ class FluidTestView(MyTestView):
     """
     FluidTest management view
     """
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(FluidTestView, self).__init__(
