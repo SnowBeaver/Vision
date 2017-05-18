@@ -172,7 +172,7 @@ class User(db.Model, UserMixin):
         if self._name:
             cipher = AESCipher(ENCRYPT_KEY)
             msg = cipher.decrypt(self._name)
-            return msg
+            return msg.encode('utf-8')
         else:
             return None
 

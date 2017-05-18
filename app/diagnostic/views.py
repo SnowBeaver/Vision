@@ -54,6 +54,16 @@ class EquipmentView(MyModelView):
         'manufactured': {'coerce': int}
     }
 
+    form_ajax_refs = {
+        'manufacturer': {'fields': (Manufacturer.name,)},
+        'location': {'fields': (Location.name,)},
+        'norm_isolation_data': {'fields': (NormIsolationData.name,)},
+        'norm_furan_data': {'fields': (NormFuranData.name,)},
+        'norm_particles_data': {'fields': (NormParticlesData.name,)},
+        'norm_physic_data': {'fields': (NormPhysicData.name,)},
+        'norm_gas_data': {'fields': (NormGasData.name,)},
+    }
+
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession, name="Equipment", category="Equipment")
 #
@@ -228,6 +238,10 @@ class AirCircuitBreakerView(MyModelView):
     # Visible columns in the list view
     column_hide_backrefs = False
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(AirCircuitBreakerView, self).__init__(
             AirCircuitBreaker, dbsession,
@@ -239,6 +253,26 @@ class BushingView(MyModelView):
     column_hide_backrefs = False
     column_list = ('id')
 
+    form_ajax_refs = {
+        'mfr_h1': {'fields': (Manufacturer.name,)},
+        'mfr_h2': {'fields': (Manufacturer.name,)},
+        'mfr_h3': {'fields': (Manufacturer.name,)},
+        'mfr_hn': {'fields': (Manufacturer.name,)},
+        'mfr_x1': {'fields': (Manufacturer.name,)},
+        'mfr_x2': {'fields': (Manufacturer.name,)},
+        'mfr_x3': {'fields': (Manufacturer.name,)},
+        'mfr_xn': {'fields': (Manufacturer.name,)},
+        'mfr_t1': {'fields': (Manufacturer.name,)},
+        'mfr_t2': {'fields': (Manufacturer.name,)},
+        'mfr_t3': {'fields': (Manufacturer.name,)},
+        'mfr_tn': {'fields': (Manufacturer.name,)},
+        'mfr_q1': {'fields': (Manufacturer.name,)},
+        'mfr_q2': {'fields': (Manufacturer.name,)},
+        'mfr_q3': {'fields': (Manufacturer.name,)},
+        'mfr_qn': {'fields': (Manufacturer.name,)},
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(BushingView, self).__init__(
             Bushing, dbsession, name="Bushing", category="Equipment"
@@ -247,6 +281,10 @@ class BushingView(MyModelView):
 
 class CableView(MyModelView):
     column_hide_backrefs = False
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
 
     def __init__(self, dbsession):
         super(CableView, self).__init__(
@@ -257,6 +295,10 @@ class CableView(MyModelView):
 class CapacitorView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
 
     def __init__(self, dbsession):
         super(CapacitorView, self).__init__(
@@ -274,6 +316,10 @@ class RectifierView(MyModelView):
     #     },
     # }
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(RectifierView, self).__init__(
             Rectifier, dbsession, name="Rectifier", category="Equipment"
@@ -281,6 +327,10 @@ class RectifierView(MyModelView):
 
 
 class InductanceView(MyModelView):
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(InductanceView, self).__init__(
             Inductance, dbsession, name="Inductance", category="Equipment"
@@ -290,6 +340,10 @@ class InductanceView(MyModelView):
 class NeutralResistanceView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
 
     def __init__(self, dbsession):
         super(NeutralResistanceView, self).__init__(
@@ -301,6 +355,10 @@ class TankView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(TankView, self).__init__(
             Tank, dbsession, name="Tank", category="Equipment"
@@ -310,6 +368,10 @@ class TankView(MyModelView):
 class LoadTapChangerView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
 
     def __init__(self, dbsession):
         super(LoadTapChangerView, self).__init__(
@@ -321,6 +383,10 @@ class BreakerView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(BreakerView, self).__init__(
             Breaker, dbsession, name="Breaker", category="Equipment"
@@ -330,6 +396,10 @@ class BreakerView(MyModelView):
 class SwitchView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
 
     def __init__(self, dbsession):
         super(SwitchView, self).__init__(
@@ -341,6 +411,10 @@ class SwitchGearView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(SwitchGearView, self).__init__(
             SwitchGear, dbsession, name="Switch gear", category="Equipment"
@@ -350,6 +424,10 @@ class SwitchGearView(MyModelView):
 class SynchronousMachineView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
 
     def __init__(self, dbsession):
         super(SynchronousMachineView, self).__init__(
@@ -362,6 +440,10 @@ class InductionMachineView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(InductionMachineView, self).__init__(
             InductionMachine, dbsession,
@@ -373,6 +455,11 @@ class GasSensorView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
     inline_models = (Transformer,)
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+        'manufacturer': {'fields': (Manufacturer.name,)},
+    }
 
     def __init__(self, dbsession):
         super(GasSensorView, self).__init__(
@@ -396,6 +483,10 @@ class TransformerView(MyModelView):
         'phase_number': {
             'style': 'width: 50px'
         },
+    }
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
     }
 
     def __init__(self, dbsession):
@@ -431,6 +522,10 @@ class LabView(MyModelView):
     column_searchable_list = (['name', 'code', 'analyser'])
 
     # inline_models = (Campaign,)
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)}
+    }
 
     def __init__(self, dbsession):
         super(LabView, self).__init__(
@@ -496,6 +591,7 @@ class CampaignView(MyModelView):
         # 'fluid_type': {'fields': (FluidType.name,)},
         # 'lab': {'fields': (Lab.name,)},
         'contract': {'fields': (Contract.name,)},
+        'test_result': {'fields': (TestResult.remark,)},
         # 'lab_contract': {'fields': (Contract.name,)},
     }
 
@@ -563,6 +659,13 @@ class TestTypeView(MyModelView):
 
     # inline_models = (TestResult,)
 
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+        'test_repair_note': {'fields': (TestRepairNote.remark,)},
+        'test_diagnosis': {'fields': (TestDiagnosis.diagnosis_notes,)},
+        'test_recommendation': {'fields': (TestRecommendation.recommendation_notes,)},
+    }
+
     def __init__(self, dbsession):
         super(TestTypeView, self).__init__(
             TestType, dbsession, name="Test type", category="Types"
@@ -605,6 +708,36 @@ class TestResultView(MyModelView):
     #                  TransformerTurnRatioTest, WindingResistanceTest, DissolvedGasTest, WaterTest, FuranTest,
     #                  InhibitorTest, PCBTest, ParticleTest, MetalsInOilTest, FluidTest
     #                  )
+    form_excluded_columns = ('bushing_test', 'winding_test', 'insulation_resistance_test',
+                             'polymerisation_degree_test', 'transformer_turn_ratio_test',
+                             'winding_resistance_test', 'dissolved_gas_test',
+                             'furan_test', 'pcb_test',
+                             'particle_test', 'metals_in_oil_test', 'fluid_test',)
+    # TODO: fix other relations
+    form_ajax_refs = {
+        'campaign': {'fields': (Campaign.description,)},
+        'sampling_point': {'fields': (SamplingPoint.name,)},
+        'equipment': {'fields': (Equipment.name,)},
+        'lab_contract': {'fields': (Contract.name,)},
+        'test_recommendation': {'fields': (TestRecommendation.recommendation_notes,)},
+        'test_repair_note': {'fields': (TestRepairNote.remark,)},
+        'test_diagnosis': {'fields': (TestDiagnosis.diagnosis_notes,)},
+        # 'bushing_test': {'fields': (BushingTest.h1,)},
+        # 'winding_test': {'fields': (WindingTest.test_kv1,)},
+        'visual_inspection_test': {'fields': (VisualInspectionTest.notes,)},
+        # 'insulation_resistance_test': {'fields': (InsulationResistanceTest.test_kv1,)},
+        # 'polymerisation_degree_test': {'fields': (PolymerisationDegreeTest.phase_a1,)},
+        # 'transformer_turn_ratio_test': {'fields': (TransformerTurnRatioTest.winding,)},
+        # 'winding_resistance_test': {'fields': (WindingResistanceTest.winding,)},
+        # 'dissolved_gas_test': {'fields': (DissolvedGasTest.h2,)},
+        'water_test': {'fields': (WaterTest.remark,)},
+        # 'furan_test': {'fields': (FuranTest.hmf,)},
+        'inhibitor_test': {'fields': (InhibitorTest.remark,)},
+        # 'pcb_test': {'fields': (PCBTest.aroclor_1242,)},
+        # 'particle_test': {'fields': (ParticleTest._2um,)},
+        # 'metals_in_oil_test': {'fields': (MetalsInOilTest.iron,)},
+        # 'fluid_test': {'fields': (FluidTest.dielectric_1816,)},
+    }
 
     def __init__(self, dbsession):
         super(TestResultView, self).__init__(
@@ -683,6 +816,10 @@ class PowerSourceView(MyModelView):
     can_view_details = True
     column_hide_backrefs = False
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(PowerSourceView, self).__init__(
             PowerSource, dbsession, name="Power source", category="Equipment"
@@ -727,6 +864,9 @@ class RecommendationView(MyModelView):
     column_searchable_list = ('name', 'code', 'description')
 
     # inline_models = (Campaign,)
+    form_ajax_refs = {
+        'test_recommendation': {'fields': (TestRecommendation.recommendation_notes,)},
+    }
 
     def __init__(self, dbsession):
         super(RecommendationView, self).__init__(
@@ -763,6 +903,10 @@ class TestStatusView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = (['name', 'code'])
     column_searchable_list = (['name', 'code'])
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(TestStatusView, self).__init__(
@@ -801,6 +945,12 @@ class TestScheduleView(MyModelView):
     # column_sortable_list = ('equipment', 'start_date', 'assigned_to', 'description')
     column_searchable_list = ('date_start', 'assigned_to_id', 'description')
 
+    form_ajax_refs = {
+        'assigned_to': {'fields': (User.name,)},
+        'test_recommendation': {'fields': (TestRecommendation.recommendation_notes,)},
+        'status': {'fields': (TaskStatus.name,)},
+    }
+
     def __init__(self, dbsession):
         super(TestScheduleView, self).__init__(
             TestSchedule, dbsession, name="Test schedule", category="Statuses"
@@ -833,6 +983,10 @@ class TestReasonView(MySimpleTypesView):
     """
 
     # inline_models = (TestResult,)
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(TestReasonView, self).__init__(
@@ -868,6 +1022,9 @@ class SamplingPointView(MySimpleTypesView):
     """
 
     # inline_models = (TestResult,)
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(SamplingPointView, self).__init__(
@@ -883,6 +1040,10 @@ class EquipmentConnectionView(MySimpleView):
     column_sortable_list = ()
     column_searchable_list = ()
 
+    form_ajax_refs = {
+        'parent': {'fields': (Equipment.name,)},
+    }
+
     def __init__(self, dbsession):
         super(EquipmentConnectionView, self).__init__(
             EquipmentConnection, dbsession, category="Equipment", name="Equipment connection"
@@ -896,6 +1057,11 @@ class SiblingView(MySimpleView):
     # List of columns that can be sorted.
     column_sortable_list = ()
     column_searchable_list = ()
+
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+        'sibling': {'fields': (Equipment.name,)},
+    }
 
     def __init__(self, dbsession):
         super(SiblingView, self).__init__(
@@ -924,6 +1090,12 @@ class TestRecommendationView(MySimpleView):
     # List of columns that can be sorted.
     column_sortable_list = ()
     column_searchable_list = ()
+
+    form_ajax_refs = {
+        'user': {'fields': (User.name,)},
+        'test_result': {'fields': (TestResult.remark,)},
+        'recommendation': {'fields': (Recommendation.name,)},
+    }
 
     def __init__(self, dbsession):
         super(TestRecommendationView, self).__init__(
@@ -1315,6 +1487,10 @@ class TestSamplingCardView(MySimpleView):
     # List of columns that can be sorted.
     column_sortable_list = ()
     column_searchable_list = ()
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     def __init__(self, dbsession):
         super(TestSamplingCardView, self).__init__(
