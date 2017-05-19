@@ -502,6 +502,10 @@ class LocationView(MyModelView):
     column_searchable_list = ('name',)
     column_sortable_list = ('id', 'name')
 
+    form_ajax_refs = {
+        'equipment': {'fields': (Equipment.name,)},
+    }
+
     # inline_models = (Equipment,)
     def __init__(self, dbsession):
         super(LocationView, self).__init__(
@@ -799,6 +803,10 @@ class MaterialView(MyModelView):
     # # List of columns that can be sorted.
     column_sortable_list = ('name', 'code')
     column_searchable_list = ('name', 'code')
+
+    form_ajax_refs = {
+        'test_result': {'fields': (TestResult.remark,)},
+    }
 
     # inline_models = (Campaign,)
 
