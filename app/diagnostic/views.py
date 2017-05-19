@@ -946,14 +946,27 @@ class TestScheduleView(MyModelView):
     column_searchable_list = ('date_start', 'assigned_to_id', 'description')
 
     form_ajax_refs = {
-        'assigned_to': {'fields': (User.name,)},
         'test_recommendation': {'fields': (TestRecommendation.recommendation_notes,)},
-        'status': {'fields': (TaskStatus.name,)},
+        'assigned_to': {'fields': (User.name,)},
     }
 
     def __init__(self, dbsession):
         super(TestScheduleView, self).__init__(
             TestSchedule, dbsession, name="Test schedule", category="Statuses"
+        )
+
+
+class TaskStatusView(MyModelView):
+    """
+    TaskStatus management view
+    """
+    # Visible columns in the list view
+    can_view_details = True
+    column_hide_backrefs = False
+
+    def __init__(self, dbsession):
+        super(TaskStatusView, self).__init__(
+            TaskStatus, dbsession, name="Task status", category="Statuses"
         )
 
 
@@ -1589,7 +1602,7 @@ other_views = [
     InductionMachineView, TransformerView, GasSensorView, FluidTypeView, LocationView, LabView, CampaignView,
     ContractView, FluidProfileView, TestStatusView, TestTypeView, TestResultView,
     EquipmentTypeView, ElectricalProfileView, MaterialView, PowerSourceView, NormView, RecommendationView,
-    SyringeView, TestScheduleView, InhibitorTypeView, CampaignStatusView, CountryView
+    SyringeView, TestScheduleView, InhibitorTypeView, CampaignStatusView, CountryView, TaskStatusView
 ]
 admin_views = simple_views
 admin_views.extend(test_views)
