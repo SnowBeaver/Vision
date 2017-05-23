@@ -182,14 +182,16 @@ class User(db.Model, UserMixin):
         msg = cipher.encrypt(val)
         self._name = msg
 
-    # @hybrid_method
-    # def contains(self, val):
-    #     cipher = AESCipher(ENCRYPT_KEY)
-    #     msg = cipher.encrypt(val)
-    #     msg = msg.encode('utf-8')
-    #     print('---', self.name)
-    #     print('---', msg)
-    #     return self._name.ilike(msg)
+    @hybrid_method
+    def contains(self, val):
+        cipher = AESCipher(ENCRYPT_KEY)
+        msg = cipher.encrypt(val)
+        msg = msg.encode('utf-8')
+        return self._name.ilike(msg)
+
+    @name.expression
+    def name(cls):
+        return User._name
 
     def serialize(self):
         """Return object data in easily serializeable format"""

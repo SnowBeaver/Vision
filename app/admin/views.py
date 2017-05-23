@@ -277,7 +277,7 @@ class UserAdmin(MyModelView):
         alias='Username',
     )
 
-    column_searchable_list = ('alias', 'name', 'email', 'id')
+    column_searchable_list = ('alias', 'email', 'id')
     column_formatters = dict(_name=lambda v, c, m, p: m.name)
 
     def __init__(self, dbsession):
