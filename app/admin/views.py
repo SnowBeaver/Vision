@@ -265,19 +265,20 @@ class UserAdmin(MyModelView):
         'address',
         'mobile',
         'website',
-        'country'
+        'country',
     ]
 
     # # List of columns that can be sorted.
-    column_sortable_list = ('name', 'email', 'alias')
+    column_sortable_list = ('email', 'alias')
 
     # # rename column names
     column_labels = dict(
-        name='Full Name',
+        _name='Full Name',
         alias='Username',
     )
 
     column_searchable_list = ('alias', 'name', 'email', 'id')
+    column_formatters = dict(_name=lambda v, c, m, p: m.name)
 
     def __init__(self, dbsession):
         super(UserAdmin, self).__init__(User, dbsession, name="User", category='CMS')

@@ -1615,10 +1615,14 @@ class Equipment(db.Model):
 
     @hybrid_property
     def serial(self):
+        # can be called for InstrumentedAttribute
+        if type(self._serial) not in (unicode, str):
+            return self._serial
+
         if self._serial:
             cipher = AESCipher(ENCRYPT_KEY)
             msg = cipher.decrypt(self._serial)
-            return msg
+            return msg.encode('utf-8')
         else:
             return None
 
@@ -1802,12 +1806,31 @@ class Syringe(db.Model):
     __tablename__ = u'syringe'
 
     id = db.Column(db.Integer(), primary_key=True, nullable=False)
-    serial = db.Column(db.String(50), nullable=False, index=True, unique=True)
+    _serial = db.Column('serial', db.String(300), nullable=False, index=True, unique=True)
     lab_id = db.Column('lab_id', db.ForeignKey('lab.id'), nullable=True)
     lab = db.relationship('Lab', backref='syringe')
 
     def __repr__(self):
         return self.serial
+
+    @hybrid_property
+    def serial(self):
+        # can be called for InstrumentedAttribute
+        if type(self._serial) not in (unicode, str):
+            return self._serial
+
+        if self._serial:
+            cipher = AESCipher(ENCRYPT_KEY)
+            msg = cipher.decrypt(self._serial)
+            return msg.encode('utf-8')
+        else:
+            return None
+
+    @serial.setter
+    def serial(self, val):
+        cipher = AESCipher(ENCRYPT_KEY)
+        msg = cipher.encrypt(val)
+        self._serial = msg
 
     def serialize(self):
         """Return object data in easily serializeable format"""

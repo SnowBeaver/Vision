@@ -893,6 +893,7 @@ class SyringeView(MyModelView):
     # # List of columns that can be sorted.
     # column_sortable_list = ('name', 'serial', 'manufacturer')
     column_searchable_list = ('serial', 'lab_id')
+    column_formatters = dict(_serial=lambda v, c, m, p: m.serial)
 
     def __init__(self, dbsession):
         super(SyringeView, self).__init__(
