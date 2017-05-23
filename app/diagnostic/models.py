@@ -1596,7 +1596,7 @@ class Equipment(db.Model):
 
     # PrevSerielNum. If InValidation is true, indicate what was the previous value to retreive the correct equipment
     # information from Lab
-    prev_serial_number = db.Column(db.String(50))
+    _prev_serial_number = db.Column('prev_serial_number', db.String(300))
 
     # PrevEquipmentNum.
     # If InValidation is true,
@@ -1631,6 +1631,34 @@ class Equipment(db.Model):
         cipher = AESCipher(ENCRYPT_KEY)
         msg = cipher.encrypt(val)
         self._serial = msg
+
+    def _set_prev_serial_number(self, val):
+        cipher = AESCipher(ENCRYPT_KEY)
+        msg = cipher.encrypt(val)
+        self._prev_serial_number = msg
+
+    @hybrid_property
+    def prev_serial_number(self):
+        # can be called for InstrumentedAttribute
+        if type(self._prev_serial_number) not in (unicode, str):
+            return self._prev_serial_number
+
+        if self._prev_serial_number:
+            cipher = AESCipher(ENCRYPT_KEY)
+            msg = cipher.decrypt(self._prev_serial_number)
+            return msg.encode('utf-8')
+        else:
+            return None
+
+    @prev_serial_number.expression
+    def prev_serial_number(cls):
+        return cls._prev_serial_number
+
+    @prev_serial_number.setter
+    def prev_serial_number(self, val):
+        cipher = AESCipher(ENCRYPT_KEY)
+        msg = cipher.encrypt(val)
+        self._prev_serial_number = msg
 
     def serialize(self):
         """Return object data in easily serializeable format"""

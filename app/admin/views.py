@@ -280,6 +280,11 @@ class UserAdmin(MyModelView):
     column_searchable_list = ('alias', 'email', 'id')
     column_formatters = dict(_name=lambda v, c, m, p: m.name)
 
+    def scaffold_form(self):
+        form_class = super(UserAdmin, self).scaffold_form()
+        form_class.name = TextField('Full Name')
+        return form_class
+
     def __init__(self, dbsession):
         super(UserAdmin, self).__init__(User, dbsession, name="User", category='CMS')
 

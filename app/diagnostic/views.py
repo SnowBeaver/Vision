@@ -7,6 +7,8 @@ from flask.ext import login
 from .models import *
 from app.users.models import User
 
+from wtforms.fields import TextField
+
 
 class EquipmentView(MyModelView):
     """
@@ -63,6 +65,12 @@ class EquipmentView(MyModelView):
         'norm_physic_data': {'fields': (NormPhysicData.name,)},
         'norm_gas_data': {'fields': (NormGasData.name,)},
     }
+
+    def scaffold_form(self):
+        form_class = super(EquipmentView, self).scaffold_form()
+        form_class.prev_serial_number = TextField('Prev Serial Number')
+        form_class.serial = TextField('Serial')
+        return form_class
 
     def __init__(self, dbsession):
         super(EquipmentView, self).__init__(Equipment, dbsession, name="Equipment", category="Equipment")
@@ -892,9 +900,14 @@ class SyringeView(MyModelView):
 
     # # List of columns that can be sorted.
     # column_sortable_list = ('name', 'serial', 'manufacturer')
-    column_sortable_list = ()
+    # column_sortable_list = ('name', 'serial', 'manufacturer')
     column_searchable_list = ('lab_id',)
     column_formatters = dict(_serial=lambda v, c, m, p: m.serial)
+
+    def scaffold_form(self):
+        form_class = super(SyringeView, self).scaffold_form()
+        form_class.serial = TextField('Serial')
+        return form_class
 
     def __init__(self, dbsession):
         super(SyringeView, self).__init__(

@@ -19,6 +19,7 @@ def upgrade():
     ALTER TABLE public.users_user ALTER COLUMN name TYPE VARCHAR(300) USING name::VARCHAR(300);
     ALTER TABLE public.equipment ALTER COLUMN serial TYPE VARCHAR(300) USING serial::VARCHAR(300);
     ALTER TABLE public.syringe ALTER COLUMN serial TYPE VARCHAR(300) USING serial::VARCHAR(300);
+    ALTER TABLE public.equipment ALTER COLUMN prev_serial_number TYPE VARCHAR(300) USING serial::VARCHAR(300);
 """
     op.execute(sql=sql)
 
@@ -28,5 +29,6 @@ def downgrade():
     ALTER TABLE public.users_user ALTER COLUMN name TYPE VARCHAR(50) USING name::VARCHAR(50);
     ALTER TABLE public.equipment ALTER COLUMN serial TYPE VARCHAR(50) USING serial::VARCHAR(50);
     ALTER TABLE public.syringe ALTER COLUMN serial TYPE VARCHAR(50) USING serial::VARCHAR(50);
+    ALTER TABLE public.equipment ALTER COLUMN prev_serial_number TYPE VARCHAR(50) USING serial::VARCHAR(50);
 """
     op.execute(sql=sql)
