@@ -1070,3 +1070,8 @@
 .semitransparent {
     opacity: 0.5
 }
+/*Make tree scrollable*/
+#tree {
+	height: 60rem;
+	overflow-y: auto;
+}
