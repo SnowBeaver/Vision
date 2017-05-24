@@ -725,7 +725,6 @@ class TestResultView(MyModelView):
                              'winding_resistance_test', 'dissolved_gas_test',
                              'furan_test', 'pcb_test',
                              'particle_test', 'metals_in_oil_test', 'fluid_test',)
-    # TODO: fix other relations
     form_ajax_refs = {
         'campaign': {'fields': (Campaign.description,)},
         'sampling_point': {'fields': (SamplingPoint.name,)},
@@ -734,21 +733,9 @@ class TestResultView(MyModelView):
         'test_recommendation': {'fields': (TestRecommendation.recommendation_notes,)},
         'test_repair_note': {'fields': (TestRepairNote.remark,)},
         'test_diagnosis': {'fields': (TestDiagnosis.diagnosis_notes,)},
-        # 'bushing_test': {'fields': (BushingTest.h1,)},
-        # 'winding_test': {'fields': (WindingTest.test_kv1,)},
         'visual_inspection_test': {'fields': (VisualInspectionTest.notes,)},
-        # 'insulation_resistance_test': {'fields': (InsulationResistanceTest.test_kv1,)},
-        # 'polymerisation_degree_test': {'fields': (PolymerisationDegreeTest.phase_a1,)},
-        # 'transformer_turn_ratio_test': {'fields': (TransformerTurnRatioTest.winding,)},
-        # 'winding_resistance_test': {'fields': (WindingResistanceTest.winding,)},
-        # 'dissolved_gas_test': {'fields': (DissolvedGasTest.h2,)},
         'water_test': {'fields': (WaterTest.remark,)},
-        # 'furan_test': {'fields': (FuranTest.hmf,)},
         'inhibitor_test': {'fields': (InhibitorTest.remark,)},
-        # 'pcb_test': {'fields': (PCBTest.aroclor_1242,)},
-        # 'particle_test': {'fields': (ParticleTest._2um,)},
-        # 'metals_in_oil_test': {'fields': (MetalsInOilTest.iron,)},
-        # 'fluid_test': {'fields': (FluidTest.dielectric_1816,)},
     }
 
     def __init__(self, dbsession):

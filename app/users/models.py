@@ -99,7 +99,8 @@ class User(db.Model, UserMixin):
         fields = [prop.key for prop in class_mapper(self.__class__).iterate_properties if
                   isinstance(prop, ColumnProperty)]
         for arg, val in kwargs.items():
-            if arg in fields:
+            if arg in fields or arg == 'name':
+                print('---', arg, val)
                 setattr(self, arg, val)
 
     @property
@@ -178,6 +179,7 @@ class User(db.Model, UserMixin):
 
     @name.setter
     def name(self, val):
+        print('setter', val)
         cipher = AESCipher(ENCRYPT_KEY)
         msg = cipher.encrypt(val)
         self._name = msg
