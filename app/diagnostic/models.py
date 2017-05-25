@@ -491,12 +491,35 @@ class Location(db.Model):
     # therefore each site is named after each city where the plant is.
     name = db.Column(db.String(50), index=True)  # should be relation
 
+    children = relationship("Equipment")
+
     def __repr__(self):
         return self.name
 
     def serialize(self):
         """Return object data in easily serializeable format"""
-        return {'id': self.id, 'name': self.name}
+        return {
+            'id': self.id,
+            'name': self.name,
+            'text': self.name,
+            'icon': "../app/static/img/root.png",
+            'opened': True,
+            'disabled': False,
+            'selected': True,
+            'type': 'default',
+            'view': 'home',
+            'status': 1,
+            'children': self.serialize_many2many(True)
+        }
+
+    def serialize_many2many(self, tree_view=False):
+        """
+        Return object's relations in easily serializeable format.
+        NB! Calls many2many's serialize property.
+        """
+        if not self.children:
+            return None
+        return [item.serialize(tree_view) for item in self.children]
 
 
 class Manufacturer(db.Model):
@@ -1660,9 +1683,9 @@ class Equipment(db.Model):
         msg = cipher.encrypt(val)
         self._prev_serial_number = msg
 
-    def serialize(self):
+    def serialize(self, tree_view=False):
         """Return object data in easily serializeable format"""
-        return {'id': self.id,
+        data = {'id': self.id,
                 'name': self.name,
                 'serial': self.serial,
                 'equipment_number': self.equipment_number,
@@ -1674,7 +1697,7 @@ class Equipment(db.Model):
                 'frequency': self.frequency,
                 'description': self.description,
                 'location_id': self.location_id,
-                'location': self.location and self.location.serialize(),
+                # 'location': self.location and self.location.serialize() if not tree_view else None,
                 'modifier': self.modifier,
                 'comments': self.comments,
                 'assigned_to_id': self.assigned_to_id,
@@ -1690,6 +1713,22 @@ class Equipment(db.Model):
                 'prev_equipment_number': self.prev_equipment_number,
                 'sibling': self.sibling,
                 }
+        if tree_view:
+            # costumed columns for TreeView, ignore location field
+            data.update({
+                'equipment_id': self.id,
+                'text': self.name,
+                'icon': "../app/static/img/icons/transfo_b.ico",
+                'opened': False,
+                'disabled': False,
+                'selected': False,
+                'type': 'default',
+                'view': 'home',
+            })
+        else:
+            # Include location by default
+            data['location'] = self.location and self.location.serialize()
+        return data
 
 
 class Norm(db.Model):

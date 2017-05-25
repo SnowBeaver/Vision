@@ -7,7 +7,7 @@ from app import app
 from sqlalchemy.orm.session import make_transient
 import json
 from flask import jsonify
-from app.diagnostic.models import EquipmentType
+from app.diagnostic.models import EquipmentType, Location
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -64,6 +64,24 @@ def get_tree():
     # except Exception as e:
     #     import logging
     #     logging.error(e)
+
+
+def get_owner_tree():
+    """ Get tree which lists owners and equipment which belong to them """
+    trees = db.session.query(Location).options(joinedload_all('children')).all()
+
+    res = []
+    for tree in trees:
+        res.append(tree.serialize())
+    response = json.dumps(res)
+    return response
+
+
+def serialize_equipment(tree):
+    children = []
+    for item in tree:
+        children.append(item.serialize())
+    return children
 
 
 def get_switch_ids():
