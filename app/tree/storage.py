@@ -68,11 +68,11 @@ def get_tree():
 
 def get_owner_tree():
     """ Get tree which lists owners and equipment which belong to them """
-    trees = db.session.query(Location).options(joinedload_all('children')).all()
+    locations = db.session.query(Location).options(joinedload_all('children')).all()
 
     res = []
-    for tree in trees:
-        res.append(tree.serialize())
+    for location in locations:
+        res.append(location.serialize(True))
     response = json.dumps(res)
     return response
 

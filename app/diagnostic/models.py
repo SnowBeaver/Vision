@@ -496,21 +496,27 @@ class Location(db.Model):
     def __repr__(self):
         return self.name
 
-    def serialize(self):
+    def serialize(self, tree_view=False):
         """Return object data in easily serializeable format"""
-        return {
+        params = {
             'id': self.id,
-            'name': self.name,
-            'text': self.name,
-            'icon': "../app/static/img/root.png",
-            'opened': True,
-            'disabled': False,
-            'selected': True,
-            'type': 'default',
-            'view': 'home',
-            'status': 1,
-            'children': self.serialize_many2many(True)
+            'name': self.name
         }
+        if tree_view:
+            # costumed columns for TreeView
+            params.update({
+                'text': self.name,
+                'icon': "../app/static/img/root.png",
+                'opened': True,
+                'disabled': False,
+                'selected': True,
+                'type': 'default',
+                'view': 'home',
+                'status': 1,
+                'equipment_id': None,
+                'children': self.serialize_many2many(tree_view)
+            })
+        return params
 
     def serialize_many2many(self, tree_view=False):
         """
