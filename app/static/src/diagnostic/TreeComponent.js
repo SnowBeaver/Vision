@@ -143,8 +143,8 @@ var TreeComponent = React.createClass({
 
         var struct = this.props.struct;
 
-        nodes = struct.map(function (n) {
-            return <TreeNode node={n} children={n.children} key={n.id}/>
+        nodes = struct.map(function (n, i) {
+            return <TreeNode node={n} children={n.children} key={n.id + '_' + i}/>
         }.bind(this));
 
 
@@ -408,11 +408,11 @@ const contextMenu = {
                     var inst = $.jstree.reference(data.reference),
                         obj = inst.get_node(data.reference);
                     $.post(url.treeCreate, {
-                            'parent': obj.id,
+                            'parent': obj.state.id,
                             'text': "New Main",
                             'icon': '../app/static/img/icons/main_b.ico',
                             'type': 'main',
-                            tooltip: "Main tooltip"
+                            'tooltip': "Main tooltip"
                         }
                         , function (data) {
 
@@ -420,15 +420,14 @@ const contextMenu = {
                                     'id': data.id,
                                     'text': 'New Main' + data.id,
                                     'icon': '../app/static/img/icons/main_b.ico',
-                                    type: 'main'
+                                    'type': 'main'
                                 }
                                 , "last", function (new_node) {
-
                                     setTimeout(function () {
+                                        new_node.state.id = data.id;
                                         inst.edit(new_node);
                                     }, 0);
                                 });
-
 
                         }).fail(function () {
                         data.instance.refresh();
