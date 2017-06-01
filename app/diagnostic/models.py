@@ -506,11 +506,11 @@ class Location(db.Model):
             # costumed columns for TreeView
             params.update({
                 'text': self.name,
-                'icon': "../app/static/img/root.png",
+                'icon': None,
                 'opened': True,
                 'disabled': False,
                 'selected': True,
-                'type': 'default',
+                'type': 'main',
                 'view': 'home',
                 'status': 1,
                 'equipment_id': None,
@@ -1724,12 +1724,12 @@ class Equipment(db.Model):
             data.update({
                 'equipment_id': self.id,
                 'text': self.name,
-                'icon': "../app/static/img/icons/transfo_b.ico",
-                'opened': False,
-                'disabled': False,
-                'selected': False,
-                'type': 'default',
-                'view': 'home',
+                'opened': False,    # Equipment nodes do not contain children, so they are closed
+                'icon': None,
+                'disabled': None,
+                'selected': None,
+                'type': None,
+                'view': None,
             })
         else:
             # Include location by default

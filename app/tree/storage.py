@@ -69,12 +69,66 @@ def get_tree():
 def get_owner_tree():
     """ Get tree which lists owners and equipment which belong to them """
     locations = db.session.query(Location).options(joinedload_all('children')).all()
-
+    tree_nodes = get_tree_nodes(locations)
+    tree_root = db.session.query(TreeNode).filter(TreeNode.type == 'default').first()
+    tree_main = db.session.query(TreeNode).filter(TreeNode.type == 'main').first()
     res = []
     for location in locations:
-        res.append(location.serialize(True))
+        serialized_location = location.serialize(True)
+        serialized_location = add_tree_data(
+            location=serialized_location,
+            tree_nodes=tree_nodes,
+            tree_root=tree_root,
+            tree_main=tree_main
+        )
+        res.append(serialized_location)
     response = json.dumps(res)
     return response
+
+
+def get_tree_nodes(locations):
+    """ Get tree nodes which correspond to the loaded equipment """
+    equipment_ids = set()
+    for location in locations:
+        if location.children:
+            for equipment in location.children:
+                equipment_ids.add(equipment.id)
+    # Get tree nodes
+    tree_nodes = db.session.query(TreeNode).filter(TreeNode.equipment_id.in_(equipment_ids)).all()
+    # Map tree nodes
+    tree_nodes = {tree_node.equipment_id: tree_node for tree_node in tree_nodes}
+    return tree_nodes
+
+
+def add_tree_data(location, tree_nodes, tree_root, tree_main):
+    """ Add tree data to the location and equipment """
+    location = add_equipment_tree_data(location=location, tree_nodes=tree_nodes)
+    location = add_owner_tree_data(location=location, tree_root=tree_root, tree_main=tree_main)
+    return location
+
+
+def add_equipment_tree_data(location, tree_nodes):
+    """ Add tree data to the equipment """
+    if location['children']:
+        for equipment in location['children']:
+            tree_node = tree_nodes.get(int(equipment['id']))
+            if tree_node:
+                equipment['id'] = tree_node.id
+                equipment['text'] = tree_node.text
+                equipment['icon'] = tree_node.icon
+                equipment['disabled'] = tree_node.disabled
+                equipment['selected'] = tree_node.selected
+                equipment['type'] = tree_node.type
+                equipment['view'] = tree_node.view
+    return location
+
+
+def add_owner_tree_data(location, tree_root, tree_main):
+    """ Add tree data to the location (owner) """
+    if tree_root:
+        location['icon'] = tree_root.icon
+        location['id'] = tree_main.id
+    return location
 
 
 def serialize_equipment(tree):
@@ -101,6 +155,7 @@ def serialize(tree, res):
     # item = tree.serialize()
     # res.append(item)
     return res
+
 
 # create generate tree
 def create_node(parent, text, icon, type, tooltip):
