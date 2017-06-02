@@ -121,7 +121,21 @@ def add_equipment_tree_data(location, tree_nodes):
                 equipment['type'] = tree_node.type
                 equipment['view'] = tree_node.view
                 equipment['location_id'] = location['id']
+                equipment['parent_id'] = tree_node.parent_id
+        location['children'] = make_equipment_tree(location['children'])
     return location
+
+
+def make_equipment_tree(equipments):
+    for equipment in equipments[:]:
+        equipment_id = equipment['id']
+        for child in equipments:
+            if child.get('parent_id') == equipment_id:
+                if not equipment.get('children'):
+                    equipment['children'] = []
+                equipment['children'].append(child)
+                equipments.remove(child)
+    return equipments
 
 
 def add_owner_tree_data(location, tree_root, tree_main):
