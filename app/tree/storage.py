@@ -83,16 +83,6 @@ def get_owner_tree():
         )
         res.append(serialized_location)
     response = json.dumps(res)
-
-    locations = db.session.query(Location).options(joinedload_all('children')).all()
-    equipment_ids = set()
-    for location in locations:
-        if location.children:
-            for equipment in location.children:
-                equipment_ids.add(equipment.id)
-
-
-
     return response
 
 
