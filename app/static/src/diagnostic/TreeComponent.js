@@ -38,6 +38,43 @@ var TreeComponent = React.createClass({
         var item = data.instance.get_node(data.node.id);
         var parent = data.instance.get_node(data.parent);
 
+        if (parent.state.type == 'main' && parent.parents.length == 1) {
+            // Node is moved directly to the another location
+            this.handleMoveNodeToLocation(e, data);
+        } else {
+            // Node is moved to another node
+            // node len-1 is root node, node len-2 is the location node closest to the root
+            var parent_location = data.instance.get_node(parent.parents[parent.parents.length - 2]);
+            if (parent_location.state.location_id == item.state.location_id) {
+                // Node is moved to another node on the same location
+                this.handleMoveNodeToNode(e, data);
+            } else {
+                // Node is moved to another node on another location
+                this.handleMoveNodeToLocation(e, data, parent_location);     // Move to location
+                this.handleMoveNodeToNode(e, data);
+            }
+        }
+    },
+
+    handleMoveNodeToLocation: function (e, data, parent) {
+        var item = data.instance.get_node(data.node.id);
+        if (!parent) {
+            parent = data.instance.get_node(data.parent);
+        }
+
+        $.post(url.treeMoveToLocation, {
+            'node_id': item.state.id,
+            'location_id': parent.state.location_id
+        }, function (data) {
+        }).fail(function () {
+            data.instance.refresh();
+        });
+    },
+
+    handleMoveNodeToNode: function (e, data) {
+        var item = data.instance.get_node(data.node.id);
+        var parent = data.instance.get_node(data.parent);
+
         $.post(url.treeMove, {
             'node_id': item.state.id,
             'parent_id': parent.state.id
@@ -187,7 +224,8 @@ var TreeNode = React.createClass({
         opts += ', \"type\":\"' + this.props.node.type + '\"';
         opts += ', \"equipment_id\":\"' + this.props.node.equipment_id + '\"';
         opts += ', \"text\":\"' + this.props.node.text + '\"';
-        opts += ', \"status\":\"' + this.props.node.status + '\"}';
+        opts += ', \"status\":\"' + this.props.node.status + '\"';
+        opts += ', \"location_id\":\"' + this.props.node.location_id + '\"}';
 
         var className = switchIds.indexOf(this.props.node.equipment_type_id) > -1 && this.props.node.tie_status == 0 ? "semitransparent" : "";
 

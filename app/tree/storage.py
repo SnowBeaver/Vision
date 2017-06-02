@@ -83,6 +83,16 @@ def get_owner_tree():
         )
         res.append(serialized_location)
     response = json.dumps(res)
+
+    locations = db.session.query(Location).options(joinedload_all('children')).all()
+    equipment_ids = set()
+    for location in locations:
+        if location.children:
+            for equipment in location.children:
+                equipment_ids.add(equipment.id)
+
+
+
     return response
 
 
@@ -120,12 +130,14 @@ def add_equipment_tree_data(location, tree_nodes):
                 equipment['selected'] = tree_node.selected
                 equipment['type'] = tree_node.type
                 equipment['view'] = tree_node.view
+                equipment['location_id'] = location['id']
     return location
 
 
 def add_owner_tree_data(location, tree_root, tree_main):
     """ Add tree data to the location (owner) """
     if tree_root:
+        location['location_id'] = location['id']
         location['icon'] = tree_root.icon
         location['id'] = tree_main.id
     return location
@@ -253,6 +265,22 @@ def move_node(node_id, parent_id):
         import logging
         logging.error(e)
         res = None
+
+    return res
+
+
+# move node tree to another location
+def move_node_to_location(node_id, location_id):
+    res = None
+    tree_node = db.session.query(TreeNode).filter(TreeNode.id == node_id).first()
+    if tree_node and tree_node.equipment_id:
+        try:
+            tree_node.equipment.location_id = location_id
+            db.session.commit()
+            res = True
+        except Exception as e:
+            import logging
+            logging.error(e)
 
     return res
 

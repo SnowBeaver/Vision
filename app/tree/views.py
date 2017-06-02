@@ -132,6 +132,20 @@ def move():
         return redirect(url_for('home.home'))
 
 
+@mod.route("/move_to_location/", methods=['POST'])
+def move_to_location():
+    if request.is_xhr:
+        status = "NOK"
+        if request.form['node_id']:
+            res = move_node_to_location(request.form['node_id'], request.form['location_id'])
+            if res is not None:
+                status = "OK"
+        return jsonify({'status': status})
+    else:
+        # redirect to home
+        return redirect(url_for('home.home'))
+
+
 @mod.route("/copy/", methods=['POST'])
 def copy():
     if request.is_xhr:
