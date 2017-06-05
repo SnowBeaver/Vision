@@ -1075,3 +1075,9 @@
 	height: 60rem;
 	overflow-y: auto;
 }
+#tree a {
+  white-space: normal !important;
+  height: auto;
+  padding: 1px 2px;
+  width: 80%;
+}
