@@ -70,16 +70,16 @@ def get_owner_tree():
     """ Get tree which lists owners and equipment which belong to them """
     locations = db.session.query(Location).options(joinedload_all('children')).all()
     tree_nodes = get_tree_nodes(locations)
-    tree_root = db.session.query(TreeNode).filter(TreeNode.type == 'default').first()
-    tree_main = db.session.query(TreeNode).filter(TreeNode.type == 'main').first()
+    generic_tree_nodes = db.session.query(TreeNode).filter(TreeNode.type.in_({'default', 'main'})).limit(2)
+    generic_tree_nodes = {node.type: node for node in generic_tree_nodes}
     res = []
     for location in locations:
         serialized_location = location.serialize(True)
         serialized_location = add_tree_data(
             location=serialized_location,
             tree_nodes=tree_nodes,
-            tree_root=tree_root,
-            tree_main=tree_main
+            tree_root=generic_tree_nodes['default'],
+            tree_main=generic_tree_nodes['main'],
         )
         res.append(serialized_location)
     response = json.dumps(res)
@@ -88,13 +88,8 @@ def get_owner_tree():
 
 def get_tree_nodes(locations):
     """ Get tree nodes which correspond to the loaded equipment """
-    equipment_ids = set()
-    for location in locations:
-        if location.children:
-            for equipment in location.children:
-                equipment_ids.add(equipment.id)
     # Get tree nodes
-    tree_nodes = db.session.query(TreeNode).filter(TreeNode.equipment_id.in_(equipment_ids)).all()
+    tree_nodes = db.session.query(TreeNode).all()
     # Map tree nodes
     tree_nodes = {tree_node.equipment_id: tree_node for tree_node in tree_nodes}
     return tree_nodes

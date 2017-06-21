@@ -10,6 +10,7 @@ from flask.ext.security import Security, SQLAlchemyUserDatastore, \
 from flask.ext.admin import Admin
 from flask.ext import admin, login
 from flask.ext.babel import Babel
+from flask.ext.cache import Cache
 from flask.ext.blogging import SQLAStorage, BloggingEngine
 from sqlalchemy import create_engine, MetaData
 from flask.ext.principal import Principal, RoleNeed, Permission, ActionNeed
@@ -18,6 +19,13 @@ from raven.contrib.flask import Sentry
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
 db = SQLAlchemy(app, session_options={'autoflush':False})
+cache = Cache(app, config={
+    'CACHE_TYPE': 'redis',
+    'CACHE_KEY_PREFIX': 'flcache',
+    'CACHE_REDIS_HOST': 'localhost',
+    'CACHE_REDIS_PORT': '6379',
+    'CACHE_REDIS_URL': 'redis://:pass@localhost:6379',
+})
 
 # blogging
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
