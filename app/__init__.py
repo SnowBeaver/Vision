@@ -19,13 +19,7 @@ from raven.contrib.flask import Sentry
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
 db = SQLAlchemy(app, session_options={'autoflush':False})
-cache = Cache(app, config={
-    'CACHE_TYPE': 'redis',
-    'CACHE_KEY_PREFIX': 'flcache',
-    'CACHE_REDIS_HOST': 'localhost',
-    'CACHE_REDIS_PORT': '6379',
-    'CACHE_REDIS_URL': 'redis://:pass@localhost:6379',
-})
+cache = Cache(app, config=app.config['REDIS'])
 
 # blogging
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
