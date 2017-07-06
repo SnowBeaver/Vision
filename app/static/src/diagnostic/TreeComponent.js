@@ -421,7 +421,32 @@ const contextMenu = {
                 }
             }
 
+            tmp['join'] = {
+                'label': 'Graph'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    //var inst = $.jstree.reference(node.reference),
+                    //    obj = inst.get_node(node.reference);
+                    //
+                    //var ids = [];
+                    //$.each($('#tree').jstree(true).get_selected('full', true), function (index, value) {
+                    //    if (value.id != obj.id) {
+                    //        ids[ids.length] = value.id;
+                    //    }
+                    //});
+                    //
+                    $.get(url.graph, function (data) {
+                            $('.react-bs-table-container').html(data);
+                        }).fail(function () {
+                        data.instance.refresh();
+                    });
+                }
+            }
+
         }
+
+
 
         if (typeof current !== 'undefined') {
             if (current.parents.length >= 9) {
