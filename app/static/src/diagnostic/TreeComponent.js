@@ -136,10 +136,21 @@ var TreeComponent = React.createClass({
         });
     },
 
+    toggle_checkboxes: function (state) {
+        if (!state) {
+            state = true;
+        }
+        if (state) {
+            $('#tree').jstree(true).show_checkboxes();
+        } else {
+            $('#tree').jstree(true).hide_checkboxes();
+        }
+    },
+
     componentDidMount: function () {
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
-                "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed']
+                "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
                 , "core": {
                     "icons": false,
                     "animation": 0
@@ -163,6 +174,11 @@ var TreeComponent = React.createClass({
                 , "types": types
                 , "contextmenu": contextMenu
                 , 'onStatusChange': this.handleStatusChange
+                , "checkbox" : {
+                    "keep_selected_style" : false,
+                    "whole_node": false,
+                    "visible": false
+                }
             }
         ).on('delete_node.jstree', this.handleDeleteNode
         ).on('rename_node.jstree', this.handleRenameNode
@@ -327,9 +343,11 @@ function toggle_graph_block(action) {
     // block for showing test results
     if (action != 'hide') {
         $('#graph').html("Loading...").show();
+        $('#graphBlock').show();
         $('#testResultListId').hide();
     } else {
         $('#graph').html("").hide();
+        $('#graphBlock').hide();
         $('#testResultListId').show();
     }
 }
@@ -599,4 +617,3 @@ const contextMenu = {
     }
 }
 export default TreeComponent;
-

@@ -4,6 +4,7 @@ import Select2 from 'react-select2-wrapper';
 
 // import EquipmentList from '../EquipmentList';
 import TestResultForm from '../TestResultForm';
+import Graph from '../Graph';
 import EquipmentTestForm from '../EquipmentTestForm';
 import TreeComponent from '../TreeComponent';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
@@ -269,7 +270,7 @@ var Home = React.createClass({
                                    value={this.state.searchValue}
                                    onChange={this.searchTests}/>
                     </div>
-                    <div className="col-md-12" id="graph"></div>
+                    <Graph onClick={this.refs['tree'] ? this.refs['tree'].toggle_checkboxes:null}/>
                     <br/>
                     <TestResultForm ref="testResultList"
                                     source={this.state.source}/>

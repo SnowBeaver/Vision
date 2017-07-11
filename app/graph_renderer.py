@@ -57,7 +57,8 @@ class DGAGraph(AbstractGraph):
         for gas in gases:
             records = []
             for record in self.query:
-                records.append((record.test_result.date_analyse.year, getattr(record, gas)))
+                if record.test_result.date_analyse:
+                    records.append((record.test_result.date_analyse.year, getattr(record, gas) or 0))
             self.graph_data.append({'data': records, 'label': gas.upper()})
 
     def fetch_mpl_obj(self):
