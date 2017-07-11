@@ -115,7 +115,7 @@ var TestResultForm = React.createClass({
         };
 
         return (
-            <div>
+            <div id="testResultListId">
                 <BootstrapTable data={this.state.data}
                                 cellEdit={cellEditProp}
                                 striped={true}

@@ -22,6 +22,7 @@ var TreeComponent = React.createClass({
         });
     },
     handleNodeClick: function (e, data) {
+        toggle_graph_block('hide');
         var item = data.instance.get_node(data.node.id);
         var selected = data.instance.get_selected(true);
         var selected_equipment_ids = selected.filter(
@@ -321,6 +322,18 @@ const types = {
     }
 }
 
+function toggle_graph_block(action) {
+    // Toggle block with for displaying graph and
+    // block for showing test results
+    if (action != 'hide') {
+        $('#graph').html("Loading...").show();
+        $('#testResultListId').hide();
+    } else {
+        $('#graph').html("").hide();
+        $('#testResultListId').show();
+    }
+}
+
 const contextMenu = {
     'items': function (node) {
         var tmp = $.jstree.defaults.contextmenu.items();
@@ -426,27 +439,18 @@ const contextMenu = {
                 , "separator_before": false    // Insert a separator before the item
                 , "separator_after": true,     // Insert a separator after the item
                 "action": function (node) {
-                    //var inst = $.jstree.reference(node.reference),
-                    //    obj = inst.get_node(node.reference);
-                    //
-                    //var ids = [];
-                    //$.each($('#tree').jstree(true).get_selected('full', true), function (index, value) {
-                    //    if (value.id != obj.id) {
-                    //        ids[ids.length] = value.id;
-                    //    }
-                    //});
-                    //
-                    $.get(url.graph, function (data) {
-                            $('.react-bs-table-container').html(data);
+                    var inst = $.jstree.reference(node.reference),
+                       obj = inst.get_node(node.reference);
+                    toggle_graph_block();
+                    $.get(url.graph.replace('-1', obj.state.id), function (data) {
+                            $('#graph').html(data);
                         }).fail(function () {
                         data.instance.refresh();
+                        toggle_graph_block('hide');
                     });
                 }
             }
-
         }
-
-
 
         if (typeof current !== 'undefined') {
             if (current.parents.length >= 9) {

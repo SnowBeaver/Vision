@@ -23,7 +23,7 @@
             treeMoveToLocation: '{{ url_for("tree.move_to_location") }}',
             treeCopy: '{{ url_for("tree.copy") }}',
             treeGetView: '{{ url_for("tree.getview")}}',
-            graph: '{{ url_for("tree.graph")}}'
+            graph: '{{ url_for("tree.graph", id=-1)}}'
         };
         var treeStruct = {{ _(tree) or '[]' }};
         var switchIds = {{ _(switchIds) or '[]' }};

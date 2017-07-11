@@ -269,6 +269,7 @@ var Home = React.createClass({
                                    value={this.state.searchValue}
                                    onChange={this.searchTests}/>
                     </div>
+                    <div className="col-md-12" id="graph"></div>
                     <br/>
                     <TestResultForm ref="testResultList"
                                     source={this.state.source}/>
