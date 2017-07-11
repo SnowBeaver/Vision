@@ -22,6 +22,7 @@ var TreeComponent = React.createClass({
         });
     },
     handleNodeClick: function (e, data) {
+        toggle_graph_block('hide');
         var item = data.instance.get_node(data.node.id);
         var selected = data.instance.get_selected(true);
         var selected_equipment_ids = selected.filter(
@@ -135,10 +136,21 @@ var TreeComponent = React.createClass({
         });
     },
 
+    toggle_checkboxes: function (state) {
+        if (!state) {
+            state = true;
+        }
+        if (state) {
+            $('#tree').jstree(true).show_checkboxes();
+        } else {
+            $('#tree').jstree(true).hide_checkboxes();
+        }
+    },
+
     componentDidMount: function () {
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
-                "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed']
+                "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
                 , "core": {
                     "icons": false,
                     "animation": 0
@@ -162,6 +174,11 @@ var TreeComponent = React.createClass({
                 , "types": types
                 , "contextmenu": contextMenu
                 , 'onStatusChange': this.handleStatusChange
+                , "checkbox" : {
+                    "keep_selected_style" : false,
+                    "whole_node": false,
+                    "visible": false
+                }
             }
         ).on('delete_node.jstree', this.handleDeleteNode
         ).on('rename_node.jstree', this.handleRenameNode
@@ -321,6 +338,20 @@ const types = {
     }
 }
 
+function toggle_graph_block(action) {
+    // Toggle block with for displaying graph and
+    // block for showing test results
+    if (action != 'hide') {
+        $('#graph').html("Loading...").show();
+        $('#graphBlock').show();
+        $('#testResultListId').hide();
+    } else {
+        $('#graph').html("").hide();
+        $('#graphBlock').hide();
+        $('#testResultListId').show();
+    }
+}
+
 const contextMenu = {
     'items': function (node) {
         var tmp = $.jstree.defaults.contextmenu.items();
@@ -421,6 +452,22 @@ const contextMenu = {
                 }
             }
 
+            tmp['join'] = {
+                'label': 'Graph'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                       obj = inst.get_node(node.reference);
+                    toggle_graph_block();
+                    $.get(url.graph.replace('-1', obj.state.id), function (data) {
+                            $('#graph').html(data);
+                        }).fail(function () {
+                        data.instance.refresh();
+                        toggle_graph_block('hide');
+                    });
+                }
+            }
         }
 
         if (typeof current !== 'undefined') {
@@ -570,4 +617,3 @@ const contextMenu = {
     }
 }
 export default TreeComponent;
-
