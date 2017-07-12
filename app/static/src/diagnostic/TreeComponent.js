@@ -22,7 +22,9 @@ var TreeComponent = React.createClass({
         });
     },
     handleNodeClick: function (e, data) {
-        toggle_graph_block('hide');
+        if (this.props.toggleGraph){
+            this.props.toggleGraph('hide');
+        }
         var item = data.instance.get_node(data.node.id);
         var selected = data.instance.get_selected(true);
         var selected_equipment_ids = selected.filter(
@@ -103,7 +105,6 @@ var TreeComponent = React.createClass({
             'id': item.state.id,
             'text': data.text
         }, function (data) {
-            //alert(data.success == true );
         }).fail(function () {
             data.instance.refresh();
         });
@@ -136,7 +137,7 @@ var TreeComponent = React.createClass({
         });
     },
 
-    toggle_checkboxes: function (state) {
+    toggleCheckboxes: function (state) {
         if (!state) {
             state = true;
         }
@@ -148,6 +149,7 @@ var TreeComponent = React.createClass({
     },
 
     componentDidMount: function () {
+        var toggleGraph = this.props.toggleGraph;
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
                 "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
@@ -172,7 +174,7 @@ var TreeComponent = React.createClass({
                     }
                 }
                 , "types": types
-                , "contextmenu": contextMenu
+                , "contextmenu": getContextMenu(toggleGraph)
                 , 'onStatusChange': this.handleStatusChange
                 , "checkbox" : {
                     "keep_selected_style" : false,
@@ -338,21 +340,9 @@ const types = {
     }
 }
 
-function toggle_graph_block(action) {
-    // Toggle block with for displaying graph and
-    // block for showing test results
-    if (action != 'hide') {
-        $('#graph').html("Loading...").show();
-        $('#graphBlock').show();
-        $('#testResultListId').hide();
-    } else {
-        $('#graph').html("").hide();
-        $('#graphBlock').hide();
-        $('#testResultListId').show();
-    }
-}
 
-const contextMenu = {
+function getContextMenu(toggleGraph) {
+    const contextMenu = {
     'items': function (node) {
         var tmp = $.jstree.defaults.contextmenu.items();
         delete tmp.create.action;
@@ -399,7 +389,7 @@ const contextMenu = {
                                         $("#tree #" + obj.id + " > a > i").css('background-image', 'url(' + data.src + ')');
                                     }
                                 }).fail(function () {
-                                
+
                                 data.instance.refresh();
                             });
                         }
@@ -431,7 +421,7 @@ const contextMenu = {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
-                    
+
                     var ids = [];
                     $.each($('#tree').jstree(true).get_selected('full', true), function (index, value) {
                         if (value.id != obj.id) {
@@ -458,13 +448,13 @@ const contextMenu = {
                 , "separator_after": true,     // Insert a separator after the item
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
-                       obj = inst.get_node(node.reference);
-                    toggle_graph_block();
+                        obj = inst.get_node(node.reference);
+                    toggleGraph();
                     $.get(url.graph.replace('-1', obj.state.id), function (data) {
                             $('#graph').html(data);
                         }).fail(function () {
                         data.instance.refresh();
-                        toggle_graph_block('hide');
+                        toggleGraph('hide');
                     });
                 }
             }
@@ -616,4 +606,8 @@ const contextMenu = {
         return tmp;
     }
 }
+    return contextMenu
+}
+
+
 export default TreeComponent;
