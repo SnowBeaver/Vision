@@ -221,13 +221,17 @@ var Home = React.createClass({
         this.refs.testResultList.searchTests(e);
     },
 
-    toggleGraphBlock: function(action) {
+    toggleGraphBlock: function (action) {
         // Toggle block for displaying graph and
         // block for showing test results
         this.refs['graph'].toggle(action);
         // The other action for test results
         action = action == 'hide' ? null:'hide';
         this.refs['testResultList'].toggle(action);
+    },
+
+    loadGraph: function (data) {
+        this.refs['graph'].load(data);
     },
 
     render: function () {
@@ -264,6 +268,7 @@ var Home = React.createClass({
                             struct={treeStruct}
                             onTreeNodeClick={this.onTreeNodeClick}
                             toggleGraph={this.toggleGraphBlock}
+                            loadGraph={this.loadGraph}
                         />
                     </div>
                 </div>
@@ -281,7 +286,8 @@ var Home = React.createClass({
                                    onChange={this.searchTests}/>
                     </div>
                     <Graph ref="graph"
-                           onClick={this.refs['tree'] ? this.refs['tree'].toggleCheckboxes:null}/>
+                           onClick={this.refs['tree'] ? this.refs['tree'].toggleCheckboxes:null}
+                           toggleGraphBlock={this.toggleGraphBlock} />
                     <br/>
                     <TestResultForm ref="testResultList"
                                     source={this.state.source}/>

@@ -22,6 +22,7 @@ var TreeComponent = React.createClass({
         });
     },
     handleNodeClick: function (e, data) {
+        this.toggleCheckboxes(false);
         if (this.props.toggleGraph){
             this.props.toggleGraph('hide');
         }
@@ -35,6 +36,7 @@ var TreeComponent = React.createClass({
                 }
             );
         this.props.onTreeNodeClick(item.state, selected_equipment_ids);
+        e.stopPropagation();
     },
 
     handleMoveNode: function (e, data) {
@@ -93,7 +95,6 @@ var TreeComponent = React.createClass({
         $.post(url.treeDelete, {
             'id': item.state.id
         }, function (data) {
-            //alert(data.id == true );
         }).fail(function () {
             data.instance.refresh();
         });
@@ -138,18 +139,20 @@ var TreeComponent = React.createClass({
     },
 
     toggleCheckboxes: function (state) {
-        if (!state) {
+        if (state == undefined) {
             state = true;
         }
         if (state) {
             $('#tree').jstree(true).show_checkboxes();
         } else {
+            $('#tree').jstree(true).uncheck_all();
             $('#tree').jstree(true).hide_checkboxes();
         }
     },
 
     componentDidMount: function () {
-        var toggleGraph = this.props.toggleGraph;
+        let toggleGraph = this.props.toggleGraph;
+        let loadGraph = this.props.loadGraph;
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
                 "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
@@ -174,12 +177,13 @@ var TreeComponent = React.createClass({
                     }
                 }
                 , "types": types
-                , "contextmenu": getContextMenu(toggleGraph)
+                , "contextmenu": getContextMenu(toggleGraph, loadGraph)
                 , 'onStatusChange': this.handleStatusChange
                 , "checkbox" : {
                     "keep_selected_style" : false,
-                    "whole_node": false,
-                    "visible": false
+                    "whole_node": false,    // to avoid checking the box just clicking the node
+                    "visible": false,
+                    "tie_selection": false,  // for checking without selecting and selecting without checking
                 }
             }
         ).on('delete_node.jstree', this.handleDeleteNode
@@ -341,7 +345,7 @@ const types = {
 }
 
 
-function getContextMenu(toggleGraph) {
+function getContextMenu(toggleGraph, loadGraph) {
     const contextMenu = {
     'items': function (node) {
         var tmp = $.jstree.defaults.contextmenu.items();
@@ -450,12 +454,7 @@ function getContextMenu(toggleGraph) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
                     toggleGraph();
-                    $.get(url.graph.replace('-1', obj.state.id), function (data) {
-                            $('#graph').html(data);
-                        }).fail(function () {
-                        data.instance.refresh();
-                        toggleGraph('hide');
-                    });
+                    loadGraph(obj.state.equipment_id);
                 }
             }
         }
@@ -611,3 +610,4 @@ function getContextMenu(toggleGraph) {
 
 
 export default TreeComponent;
+

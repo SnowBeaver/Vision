@@ -1,1 +1,5 @@
-{{ graph|safe }}
+{% if graph %}
+    {{ graph|safe }}
+{% else %}
+    No data for graph
+{% endif %}

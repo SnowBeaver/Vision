@@ -49,17 +49,36 @@ class DGAGraph(AbstractGraph):
     def load_from_db(self):
         self.query = db.session.query(DissolvedGasTest). \
             join(DissolvedGasTest.test_result) .\
-            filter(TestResult.equipment_id == self.equipment_id). \
+            filter(TestResult.equipment_id.in_(self.equipment_id)). \
             order_by(TestResult.date_analyse)
 
     def fetch_mpl_data(self):
+        tests = self.group_by_equipment()
+        self.group_by_gases(tests=tests)
+
+    def group_by_equipment(self):
+        tests = {}
+        for record in self.query:
+            equipment = record.test_result.equipment
+            if equipment.id not in tests:
+                tests[equipment.id] = {
+                    'obj': [],
+                    'equipment': '{} {}'.format(equipment.equipment_number, equipment.serial)
+                }
+            tests[equipment.id]['obj'].append(record)
+        return tests
+
+    def group_by_gases(self, tests):
         gases = ('h2', 'o2', 'n2', 'co', 'ch4', 'co2', 'c2h2', 'c2h4', 'c2h6', 'cap_gaz', 'content_gaz',)
-        for gas in gases:
-            records = []
-            for record in self.query:
-                if record.test_result.date_analyse:
-                    records.append((record.test_result.date_analyse.year, getattr(record, gas) or 0))
-            self.graph_data.append({'data': records, 'label': gas.upper()})
+        for equipment_id, data in tests.items():
+            test_objs = data['obj']
+            equipment = data['equipment']
+            for gas in gases:
+                records = []
+                for record in test_objs:
+                    if record.test_result.date_analyse:
+                        records.append((record.test_result.date_analyse.year, getattr(record, gas) or 0))
+                self.graph_data.append({'data': records, 'label': '{} {}'.format(gas.upper(), equipment)})
 
     def fetch_mpl_obj(self):
         group = "Gas Concentration vs Time"
@@ -77,13 +96,13 @@ class DGAGraph(AbstractGraph):
             else:
                 graph = graph_inter
         opts = {'Curve': {'plot': plot}, 'Overlay': {'plot': legend}}
-        self.mpl_obj = graph(opts)
+        self.mpl_obj = graph(opts) if graph else None
 
     def html(self):
         self.load_from_db()
         self.fetch_mpl_data()
         self.fetch_mpl_obj()
-        return GraphRenderer(obj=self.mpl_obj).html()
+        return GraphRenderer(obj=self.mpl_obj).html() if self.mpl_obj else None
 
 
 class GraphGenerator:
