@@ -197,5 +197,7 @@ def status():
 def graph():
     ids = request.args.get('id')
     id = ids.split(',')
+    equipments = db.session.query(Equipment).filter(Equipment.id.in_(id)).all()
+    equipments = ['{} {}'.format(equipment.name, equipment.serial) for equipment in equipments]
     html = GraphGenerator(equipment_id=id, graph_type='gas_concentration_vs_time').render()
-    return render_template('admin/graph.html', graph=html)
+    return render_template('admin/graph.html', graph=html, equipments=equipments)

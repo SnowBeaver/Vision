@@ -37,6 +37,7 @@ var Graph = React.createClass({
             if (ids.length) {
                 this.load(ids.join(','));
             }
+            this.props.onClick(false);
         }
     },
 
