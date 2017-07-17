@@ -248,7 +248,8 @@ var TreeNode = React.createClass({
         opts += ', \"equipment_id\":\"' + this.props.node.equipment_id + '\"';
         opts += ', \"text\":\"' + this.props.node.text + '\"';
         opts += ', \"status\":\"' + this.props.node.status + '\"';
-        opts += ', \"location_id\":\"' + this.props.node.location_id + '\"}';
+        opts += ', \"location_id\":\"' + this.props.node.location_id + '\"';
+        opts += ', \"equipment_type\":\"' + (this.props.node.equipment_type ? equipTypeToUrl[this.props.node.equipment_type.table_name] : null) + '\"}';
 
         var className = switchIds.indexOf(this.props.node.equipment_type_id) > -1 && this.props.node.tie_status == 0 ? "semitransparent" : "";
 
@@ -446,18 +447,6 @@ function getContextMenu(toggleGraph, loadGraph) {
                     });
                 }
             }
-
-            tmp['join'] = {
-                'label': 'Graph'
-                , "separator_before": false    // Insert a separator before the item
-                , "separator_after": true,     // Insert a separator after the item
-                "action": function (node) {
-                    var inst = $.jstree.reference(node.reference),
-                        obj = inst.get_node(node.reference);
-                    toggleGraph();
-                    loadGraph(obj.state.equipment_id);
-                }
-            }
         }
 
         if (typeof current !== 'undefined') {
@@ -572,6 +561,32 @@ function getContextMenu(toggleGraph, loadGraph) {
             }
 
         };
+
+        tmp['graph'] = {
+                'label': 'Graph'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    toggleGraph();
+                    loadGraph(obj.state.equipment_id);
+                }
+            }
+            tmp['info'] = {
+                'label': 'Info'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    if (obj.state.equipment_id && obj.state.equipment_type) {
+                        window.location = url.info
+                            .replace(':id', obj.state.equipment_id)
+                            .replace(':type', obj.state.equipment_type);
+                    }
+                }
+            }
 
 
         if ((this.get_type(node) === "default")

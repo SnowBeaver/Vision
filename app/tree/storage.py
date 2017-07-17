@@ -7,7 +7,10 @@ from app import app
 from sqlalchemy.orm.session import make_transient
 import json
 from flask import jsonify
-from app.diagnostic.models import EquipmentType, Location
+from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
+    Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
+    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor
+
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -405,3 +408,25 @@ def render_tree_filter(tree):
     data += "</ul>"
 
     return data
+
+
+def get_equipment_type_to_url():
+    return json.dumps({
+        'air_breaker': AirCircuitBreaker.__name__.lower(),
+        'bushing': Bushing.__name__.lower(),
+        'capacitor': Capacitor.__name__.lower(),
+        'breaker': Breaker.__name__.lower(),
+        'powersource': PowerSource.__name__.lower(),
+        'cable': Cable.__name__.lower(),
+        'switchgear': SwitchGear.__name__.lower(),
+        'induction_machine': InductionMachine.__name__.lower(),
+        'synchronous_machine': SynchronousMachine.__name__.lower(),
+        'tap_changer': LoadTapChanger.__name__.lower(),
+        'rectifier': Rectifier.__name__.lower(),
+        'transformer': Transformer.__name__.lower(),
+        'tank': Tank.__name__.lower(),
+        'switch': Switch.__name__.lower(),
+        'inductance': Inductance.__name__.lower(),
+        'resistance': NeutralResistance.__name__.lower(),
+        'gas_sensor': GasSensor.__name__.lower(),
+    })

@@ -16,7 +16,7 @@ from flask import current_app
 from werkzeug.security import check_password_hash
 from app import admin_per, admin_or_performer_per
 # from app import , user_per, guest_per, blogger_per
-from app.tree.storage import get_tree, get_switch_ids, get_owner_tree
+from app.tree.storage import get_tree, get_switch_ids, get_owner_tree, get_equipment_type_to_url
 from app.tree.forms import TreeView
 from .models import File, Image
 from jinja2 import Markup
@@ -86,6 +86,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
         self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
         self._template_args['user_is_admin'] = g.user.has_role(Role.query.get(1))
+        self._template_args['equipTypeToUrl'] = get_equipment_type_to_url()
         # self._template_args['diagnostic'] = popups
         # self._template_args['batch'] = BatchViewForm()
         # self._template_args['report'] = EquipmentTestReportViewForm()
