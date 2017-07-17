@@ -8,7 +8,8 @@ gulp.task('backend-style', function() {
   gulp.src([
       'src/www/**/*.css',
       'node_modules/react-notifications/lib/notifications.css',
-      'node_modules/select2/dist/css/select2.css'
+      'node_modules/select2/dist/css/select2.css',
+      'node_modules/react-progress-bar-plus/lib/progress-bar.css',
   ])
       .pipe(cleanCSS({compatibility: 'ie8'}))
       .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9'))
