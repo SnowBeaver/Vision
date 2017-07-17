@@ -347,7 +347,8 @@ const types = {
 
 function getContextMenu(toggleGraph, loadGraph) {
     const contextMenu = {
-    'items': function (node) {
+        'select_node': false,
+        'items': function (node) {
         var tmp = $.jstree.defaults.contextmenu.items();
         delete tmp.create.action;
         var current = $('#tree').jstree(true).get_selected('full', true)[0];
