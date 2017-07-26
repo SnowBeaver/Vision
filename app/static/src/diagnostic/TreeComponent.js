@@ -22,7 +22,10 @@ var TreeComponent = React.createClass({
         });
     },
     handleNodeClick: function (e, data) {
-        toggle_graph_block('hide');
+        this.toggleCheckboxes(false);
+        if (this.props.toggleGraph){
+            this.props.toggleGraph('hide');
+        }
         var item = data.instance.get_node(data.node.id);
         var selected = data.instance.get_selected(true);
         var selected_equipment_ids = selected.filter(
@@ -33,6 +36,7 @@ var TreeComponent = React.createClass({
                 }
             );
         this.props.onTreeNodeClick(item.state, selected_equipment_ids);
+        e.stopPropagation();
     },
 
     handleMoveNode: function (e, data) {
@@ -91,7 +95,6 @@ var TreeComponent = React.createClass({
         $.post(url.treeDelete, {
             'id': item.state.id
         }, function (data) {
-            //alert(data.id == true );
         }).fail(function () {
             data.instance.refresh();
         });
@@ -103,7 +106,6 @@ var TreeComponent = React.createClass({
             'id': item.state.id,
             'text': data.text
         }, function (data) {
-            //alert(data.success == true );
         }).fail(function () {
             data.instance.refresh();
         });
@@ -136,18 +138,21 @@ var TreeComponent = React.createClass({
         });
     },
 
-    toggle_checkboxes: function (state) {
-        if (!state) {
+    toggleCheckboxes: function (state) {
+        if (state == undefined) {
             state = true;
         }
         if (state) {
             $('#tree').jstree(true).show_checkboxes();
         } else {
+            $('#tree').jstree(true).uncheck_all();
             $('#tree').jstree(true).hide_checkboxes();
         }
     },
 
     componentDidMount: function () {
+        let toggleGraph = this.props.toggleGraph;
+        let loadGraph = this.props.loadGraph;
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
                 "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
@@ -172,12 +177,13 @@ var TreeComponent = React.createClass({
                     }
                 }
                 , "types": types
-                , "contextmenu": contextMenu
+                , "contextmenu": getContextMenu(toggleGraph, loadGraph)
                 , 'onStatusChange': this.handleStatusChange
                 , "checkbox" : {
                     "keep_selected_style" : false,
-                    "whole_node": false,
-                    "visible": false
+                    "whole_node": false,    // to avoid checking the box just clicking the node
+                    "visible": false,
+                    "tie_selection": false,  // for checking without selecting and selecting without checking
                 }
             }
         ).on('delete_node.jstree', this.handleDeleteNode
@@ -242,7 +248,8 @@ var TreeNode = React.createClass({
         opts += ', \"equipment_id\":\"' + this.props.node.equipment_id + '\"';
         opts += ', \"text\":\"' + this.props.node.text + '\"';
         opts += ', \"status\":\"' + this.props.node.status + '\"';
-        opts += ', \"location_id\":\"' + this.props.node.location_id + '\"}';
+        opts += ', \"location_id\":\"' + this.props.node.location_id + '\"';
+        opts += ', \"equipment_type\":\"' + (this.props.node.equipment_type ? equipTypeToUrl[this.props.node.equipment_type.table_name] : null) + '\"}';
 
         var className = switchIds.indexOf(this.props.node.equipment_type_id) > -1 && this.props.node.tie_status == 0 ? "semitransparent" : "";
 
@@ -338,22 +345,11 @@ const types = {
     }
 }
 
-function toggle_graph_block(action) {
-    // Toggle block with for displaying graph and
-    // block for showing test results
-    if (action != 'hide') {
-        $('#graph').html("Loading...").show();
-        $('#graphBlock').show();
-        $('#testResultListId').hide();
-    } else {
-        $('#graph').html("").hide();
-        $('#graphBlock').hide();
-        $('#testResultListId').show();
-    }
-}
 
-const contextMenu = {
-    'items': function (node) {
+function getContextMenu(toggleGraph, loadGraph) {
+    const contextMenu = {
+        'select_node': false,
+        'items': function (node) {
         var tmp = $.jstree.defaults.contextmenu.items();
         delete tmp.create.action;
         var current = $('#tree').jstree(true).get_selected('full', true)[0];
@@ -399,7 +395,7 @@ const contextMenu = {
                                         $("#tree #" + obj.id + " > a > i").css('background-image', 'url(' + data.src + ')');
                                     }
                                 }).fail(function () {
-                                
+
                                 data.instance.refresh();
                             });
                         }
@@ -431,7 +427,7 @@ const contextMenu = {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
-                    
+
                     var ids = [];
                     $.each($('#tree').jstree(true).get_selected('full', true), function (index, value) {
                         if (value.id != obj.id) {
@@ -448,23 +444,6 @@ const contextMenu = {
                             }
                         }).fail(function () {
                         data.instance.refresh();
-                    });
-                }
-            }
-
-            tmp['join'] = {
-                'label': 'Graph'
-                , "separator_before": false    // Insert a separator before the item
-                , "separator_after": true,     // Insert a separator after the item
-                "action": function (node) {
-                    var inst = $.jstree.reference(node.reference),
-                       obj = inst.get_node(node.reference);
-                    toggle_graph_block();
-                    $.get(url.graph.replace('-1', obj.state.id), function (data) {
-                            $('#graph').html(data);
-                        }).fail(function () {
-                        data.instance.refresh();
-                        toggle_graph_block('hide');
                     });
                 }
             }
@@ -583,6 +562,32 @@ const contextMenu = {
 
         };
 
+        tmp['graph'] = {
+                'label': 'Graph'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    toggleGraph();
+                    loadGraph(obj.state.equipment_id);
+                }
+            }
+            tmp['info'] = {
+                'label': 'Info'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    if (obj.state.equipment_id && obj.state.equipment_type) {
+                        window.location = url.info
+                            .replace(':id', obj.state.equipment_id)
+                            .replace(':type', obj.state.equipment_type);
+                    }
+                }
+            }
+
 
         if ((this.get_type(node) === "default")
             || ((this.get_type(node) === "root"))
@@ -616,4 +621,9 @@ const contextMenu = {
         return tmp;
     }
 }
+    return contextMenu
+}
+
+
 export default TreeComponent;
+

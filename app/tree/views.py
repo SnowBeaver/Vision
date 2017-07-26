@@ -193,7 +193,11 @@ def status():
         return redirect(url_for('home.home'))
 
 
-@mod.route('/graph/<int:id>', methods=['GET'])
-def graph(id):
+@mod.route('/graph/', methods=['GET'])
+def graph():
+    ids = request.args.get('id')
+    id = ids.split(',')
+    equipments = db.session.query(Equipment).filter(Equipment.id.in_(id)).values('name')
+    equipments = [equipment.name for equipment in equipments]
     html = GraphGenerator(equipment_id=id, graph_type='gas_concentration_vs_time').render()
-    return render_template('admin/graph.html', graph=html)
+    return render_template('admin/graph.html', graph=html, equipments=equipments)

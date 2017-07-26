@@ -1,1 +1,11 @@
-{{ graph|safe }}
+<h4>Equipement:
+    {% for equipment in equipments %}<span>{{ equipment }}</span>
+        {% if loop.index != equipments|length %}, {% endif %}
+    {% endfor %}
+</h4>
+
+{% if graph %}
+    {{ graph|safe }}
+{% else %}
+    No data for graph
+{% endif %}

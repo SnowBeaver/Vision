@@ -104,6 +104,16 @@ var TestResultForm = React.createClass({
         this.updateSource(src);
     },
 
+    toggle: function (action) {
+        var state = this.state;
+        if (action != 'hide') {
+            state.isVisible = true;
+        } else {
+            state.isVisible = false;
+        }
+        this.setState(state);
+    },
+
     render: function () {
 
         if (!this.state.data) {
@@ -115,7 +125,7 @@ var TestResultForm = React.createClass({
         };
 
         return (
-            <div id="testResultListId">
+            <div className={!this.state.isVisible ? 'collapse':null}>
                 <BootstrapTable data={this.state.data}
                                 cellEdit={cellEditProp}
                                 striped={true}

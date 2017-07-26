@@ -34,6 +34,7 @@ import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {findDOMNode} from 'react-dom';
 import ReactDOM from 'react-dom';
 import {EQUIPMENT_STATUS} from './appConstants.js';
+import ProgressBar from 'react-progress-bar-plus/lib/ProgressBar'
 
 
 var SelectField = React.createClass({
@@ -811,7 +812,11 @@ var EquipmentTestForm = React.createClass({
             errors: {},
             data: null,
             campaignAdministrator: {},
-            equipmentStatusChanged: false   // Reset this flag not to save same equipment status twice
+            equipmentStatusChanged: false,   // Reset this flag not to save same equipment status twice
+            progressBar: {
+                percent: 40,
+                intervalTime: 500
+            }
         }
     },
 
@@ -1144,10 +1149,20 @@ var EquipmentTestForm = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.authorizedGet('/api/v1.0/test_result/' + this.props.selectedRowId, this._addDataToStateAndGetIndicator, 'json');
+        this.serverRequest = $.authorizedGet(
+            '/api/v1.0/test_result/' + this.props.selectedRowId,
+            this._addDataToStateAndGetIndicator,
+            'json'
+        );
     },
 
     _addDataToStateAndGetIndicator: function (result) {
+        let state = this.state;
+        state.progressBar = {
+            percent: 100,
+            intervalTime: 500
+        };
+        this.setState(state);
         $.authorizedGet('/api/v1.0/campaign/' + result['result'].campaign_id, function (campaignResult){
             var data = result['result'];
             data.equipment_status = result['result'].equipment.status;
@@ -1192,6 +1207,9 @@ var EquipmentTestForm = React.createClass({
         }
         return (
             <div>
+                <ProgressBar spinner={false}
+                             autoIncrement={true}
+                             {...this.state.progressBar}/>
                 <input type="hidden" value={this.state.csrf_token}/>
                 <div className="maxwidth padding-top-lg margin-bottom-xs">
                     <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
