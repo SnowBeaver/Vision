@@ -19,3 +19,5 @@ flask-blog
 *.rdb
 *.pid
 celerybeat-schedule
+node_modules
+npm-debug.log

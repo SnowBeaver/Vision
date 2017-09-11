@@ -271,7 +271,9 @@ def register():
                             if item.has_role(Role.query.get(1))
                             ]
         msg = 'A new user with login {} was created'.format(user.name)
-        send_email(email_recipients, msg)
+
+        if current_app.config['SEND_EMAILS']:
+            send_email(email_recipients, msg)
 
         # flash will display a message to the user
         flash(gettext(u'Thanks for registering'))
