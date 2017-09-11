@@ -8,7 +8,7 @@ from flask import jsonify
 from .forms import TreeView
 from app import admin_per
 from flask import redirect, url_for
-from app.graph_renderer import GraphGenerator
+#from app.graph_renderer import GraphGenerator
 
 mod = Blueprint('tree', __name__, url_prefix='/admin/tree')
 
@@ -199,5 +199,6 @@ def graph():
     id = ids.split(',')
     equipments = db.session.query(Equipment).filter(Equipment.id.in_(id)).values('name')
     equipments = [equipment.name for equipment in equipments]
-    html = GraphGenerator(equipment_id=id, graph_type='gas_concentration_vs_time').render()
+    # html = GraphGenerator(equipment_id=id, graph_type='gas_concentration_vs_time').render()
+    html = ''
     return render_template('admin/graph.html', graph=html, equipments=equipments)
