@@ -132,8 +132,10 @@ def send_confirmation():
     msg.html += "<br>Future notifications will be sent to this email address."
     msg.html += "<br>Thank you,"
     msg.html += "<br><br>Team."
-
-    mail.send(msg)
+ 
+ 
+    if current_app.config['SEND_EMAILS'] == True:
+        mail.send(msg)
 
 
 # @mod.route('/forgot-password', methods=['GET', 'POST'])
@@ -272,8 +274,16 @@ def register():
                             ]
         msg = 'A new user with login {} was created'.format(user.name)
 
-        if current_app.config['SEND_EMAILS']:
-            send_email(email_recipients, msg)
+        import logging
+
+        
+        if current_app.config['SEND_EMAILS'] == True:
+            try:
+                send_email(email_recipients, msg)
+            except Exception as e:
+                logging.warning(current_app.config['SEND_EMAILS'])
+                logging.warning("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                pass
 
         # flash will display a message to the user
         flash(gettext(u'Thanks for registering'))
