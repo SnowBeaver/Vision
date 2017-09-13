@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 import matplotlib as mpl
+
 mpl.use('Agg')      # Force matplotlib to not use any Xwindows backend. Do this before loading any plotting lib
 import holoviews as hv
 import holoviews.plotting.mpl       # Enable matplotlib renderer in the store
@@ -37,7 +38,7 @@ class AbstractGraph:
 
 
 class GraphRenderer:
-    def __init__(self, obj, renderer_backend='matplotlib', size=1000, fig='svg'):
+    def __init__(self, obj, renderer_backend='matplotlib', size=400, fig='svg'):
         self.obj = obj
         self.renderer = hv.Store.renderers[renderer_backend].instance(size=size, fig=fig)
 
@@ -46,6 +47,9 @@ class GraphRenderer:
 
 
 class DGAGraph(AbstractGraph):
+    def set_gases(self):
+        self.gases = {'h2':'red', 'o2':'green', 'n2':'orange', 'co':'black', 'ch4':'yellow', 'co2':'blue', 'c2h2':'pink', 'c2h4':'cyan', 'c2h6':'purple', 'cap_gaz':'grey', 'content_gaz':'magenta'}
+        
     def load_from_db(self):
         self.query = db.session.query(DissolvedGasTest). \
             join(DissolvedGasTest.test_result) .\
@@ -69,22 +73,35 @@ class DGAGraph(AbstractGraph):
         return tests
 
     def group_by_gases(self, tests):
-        gases = ('h2', 'o2', 'n2', 'co', 'ch4', 'co2', 'c2h2', 'c2h4', 'c2h6', 'cap_gaz', 'content_gaz',)
+        self.set_gases()
+        labels = []
         for equipment_id, data in tests.items():
             test_objs = data['obj']
             equipment = data['equipment']
-            for gas in gases:
+            for gas in self.gases.keys():
                 records = []
+                i = 0
                 for record in test_objs:
                     if record.test_result.date_analyse:
-                        records.append((record.test_result.date_analyse.year, getattr(record, gas) or 0))
+                        i += 1
+                        records.append((record.test_result.date_analyse.strftime('%Y%m%d'), getattr(record, gas) or 0))
+                        if i > 0:
+                            labels.append({
+                                'key':record.test_result.date_analyse.strftime('%Y%m%d') ,
+                                'date':record.test_result.date_analyse.strftime('%m-%d-%Y'), 
+                                'value':getattr(record, gas)})
                 self.graph_data.append({'data': records, 'label': '{} {}'.format(gas.upper(), equipment)})
+        self.text_labels = labels
 
     def fetch_mpl_obj(self):
         group = "Gas Concentration vs Time"
         plot = dict(aspect=2)
-        legend = dict(legend_position='top_left', aspect=2)
+        legend = dict(legend_position='best', aspect=2)
         graph = None
+
+        options = hv.Store.options(backend='matplotlib')
+        options.Curve = hv.Options('style', color=hv.Cycle(values=self.gases.values()), linewidth=2)
+        
         for data in self.graph_data:
             graph_inter = hv.Curve(data['data'],
                                    vdims=['Gas Concentration'],
@@ -95,6 +112,9 @@ class DGAGraph(AbstractGraph):
                 graph *= graph_inter
             else:
                 graph = graph_inter
+        for data in self.text_labels:
+            graph *= hv.Text(data['key'], data['value'], data['date'],fontsize=10)
+
         opts = {'Curve': {'plot': plot}, 'Overlay': {'plot': legend}}
         self.mpl_obj = graph(opts) if graph else None
 
