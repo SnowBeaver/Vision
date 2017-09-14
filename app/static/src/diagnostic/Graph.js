@@ -48,6 +48,7 @@ var Graph = React.createClass({
             state.loading = false;
             that.setState(state);
             $('#graph').html(img);
+            $("a.fancy_iframe").fancybox({'type':'iframe', 'width' : '75%','height': '75%',});
         }).fail(function () {
             that.props.toggleGraphBlock('hide');
         });

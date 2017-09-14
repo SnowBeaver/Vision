@@ -40,7 +40,7 @@ class AbstractGraph:
 class GraphRenderer:
     def __init__(self, obj, renderer_backend='matplotlib', size=400, fig='svg'):
         self.obj = obj
-        self.renderer = hv.Store.renderers[renderer_backend].instance(size=size, fig=fig)
+        self.renderer = hv.Store.renderers[renderer_backend].instance(size=int(size), fig=fig)
 
     def html(self):
         return self.renderer.html(self.obj)
@@ -118,11 +118,11 @@ class DGAGraph(AbstractGraph):
         opts = {'Curve': {'plot': plot}, 'Overlay': {'plot': legend}}
         self.mpl_obj = graph(opts) if graph else None
 
-    def html(self):
+    def html(self, size):
         self.load_from_db()
         self.fetch_mpl_data()
         self.fetch_mpl_obj()
-        return GraphRenderer(obj=self.mpl_obj).html() if self.mpl_obj else None
+        return GraphRenderer(obj=self.mpl_obj, size=size).html() if self.mpl_obj else None
 
 
 class GraphGenerator:
@@ -130,8 +130,8 @@ class GraphGenerator:
         self.graph_type = graph_type
         self.equipment_id = equipment_id
 
-    def render(self):
-        html = GRAPH_TYPE_FUNCTIONALITY.get(self.graph_type)(equipment_id=self.equipment_id).html()
+    def render(self, size=400):
+        html = GRAPH_TYPE_FUNCTIONALITY.get(self.graph_type)(equipment_id=self.equipment_id).html(size)
         return html
 
 
