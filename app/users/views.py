@@ -274,15 +274,10 @@ def register():
                             ]
         msg = 'A new user with login {} was created'.format(user.name)
 
-        import logging
-
-        
         if current_app.config['SEND_EMAILS'] == True:
             try:
                 send_email(email_recipients, msg)
             except Exception as e:
-                logging.warning(current_app.config['SEND_EMAILS'])
-                logging.warning("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 pass
 
         # flash will display a message to the user
