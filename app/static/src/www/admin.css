@@ -203,7 +203,31 @@ legend.scheduler-border {
 .line.h2 {
     stroke: #7dc7f4;
 }
-.line.co2 {
+.line.co {
     stroke: #E60D0D;
+}
+.line.c2h6 {
+    stroke: #6AE60D;
+}
+.line.c2h4 {
+    stroke: #EDF418;
+}
+.line.content_gaz {
+    stroke: #E60DD5;
+}
+.line.co2 {
+    stroke: #A50DE6;
+}
+.line.ch4 {
+    stroke: #346B0F;
+}
+.line.cap_gaz {
+    stroke: #988300;
+}
+.line.n2 {
+    stroke: #692E62;
+}
+.line.o2 {
+    stroke: #0DE686;
 }
 

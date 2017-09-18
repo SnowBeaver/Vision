@@ -3,6 +3,16 @@ import ReactDOM from 'react-dom';
 import * as d3 from "d3";
 
 
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
+
 var Graph = React.createClass({
     getInitialState: function () {
         return {
@@ -46,42 +56,54 @@ var Graph = React.createClass({
     load: function (equipmentId) {
         let that = this;
         $.get(url.graph + '?id=' + equipmentId, function (data) {
+            console.log(data)
             let state = that.state;
             state.loading = false;
             that.setState(state);
             
-            var data = {
-                'h2':{
-                    'label':'H2 label',
-                    'data':[
-                        {day:'02-11-2016',count:180},
-                        {day:'02-12-2016',count:250},
-                        {day:'02-13-2016',count:150},
-                        {day:'02-14-2016',count:496},
-                        {day:'02-15-2016',count:140},
-                        {day:'02-16-2016',count:380},
-                        {day:'02-17-2016',count:100},
-                        {day:'02-18-2016',count:150}
-                    ]
-                },
-                'co2':{
-                    'label':'Co2 label',
-                    'data':[
-                        {day:'02-11-2016',count:100},
-                        {day:'02-12-2016',count:150},
-                        {day:'02-13-2016',count:250},
-                        {day:'02-14-2016',count:228},
-                        {day:'02-15-2016',count:200},
-                        {day:'02-16-2016',count:300},
-                        {day:'02-17-2016',count:290},
-                        {day:'02-18-2016',count:275}
-                    ]
+            var chart_data = {};
+            data.map(function(v){
+                var ind = v.label.split(" ")[0].toLowerCase();
+                chart_data[ind] = {
+                    'label': v.label,
+                    'data': []
                 }
-            };
+                v.data.map(function(data_obj){
+                    data_obj.date = d3.timeParse("%d.%m.%Y %H:%M")(data_obj.day);
+                    chart_data[ind]['data'].push(data_obj);
+                })
+            })
+            // var cart_data = {
+            //     'h2':{
+            //         'label':'H2 label',
+            //         'data':[
+            //             {day:'02-11-2016',count:180,"date":d3.timeParse("%m-%d-%Y")("02-11-2016")},
+            //             {day:'02-12-2016',count:250,"date":d3.timeParse("%m-%d-%Y")("02-12-2016")},
+            //             {day:'02-13-2016',count:150,"date":d3.timeParse("%m-%d-%Y")("02-13-2016")},
+            //             {day:'02-14-2016',count:496,"date":d3.timeParse("%m-%d-%Y")("02-14-2016")},
+            //             {day:'02-15-2016',count:140,"date":d3.timeParse("%m-%d-%Y")("02-15-2016")},
+            //             {day:'02-16-2016',count:380,"date":d3.timeParse("%m-%d-%Y")("02-16-2016")},
+            //             {day:'02-17-2016',count:100,"date":d3.timeParse("%m-%d-%Y")("02-17-2016")},
+            //             {day:'02-18-2016',count:150,"date":d3.timeParse("%m-%d-%Y")("02-18-2016")}
+            //         ]
+            //     },
+            //     'co2':{
+            //         'label':'Co2 label',
+            //         'data':[
+            //             {day:'02-11-2016',count:100,"date":d3.timeParse("%m-%d-%Y")("02-11-2016")},
+            //             {day:'02-12-2016',count:150,"date":d3.timeParse("%m-%d-%Y")("02-12-2016")},
+            //             {day:'02-13-2016',count:250,"date":d3.timeParse("%m-%d-%Y")("02-13-2016")},
+            //             {day:'02-14-2016',count:228,"date":d3.timeParse("%m-%d-%Y")("02-14-2016")},
+            //             {day:'02-15-2016',count:200,"date":d3.timeParse("%m-%d-%Y")("02-15-2016")},
+            //             {day:'02-16-2016',count:300,"date":d3.timeParse("%m-%d-%Y")("02-16-2016")},
+            //             {day:'02-17-2016',count:290,"date":d3.timeParse("%m-%d-%Y")("02-17-2016")},
+            //             {day:'02-18-2016',count:275,"date":d3.timeParse("%m-%d-%Y")("02-18-2016")}
+            //         ]
+            //     }
+            // };
+            ReactDOM.render(<LineChart chart_data={chart_data} />,document.getElementById("graph"));
             
-            ReactDOM.render(<LineChart chart_data={data} />,document.getElementById("graph"));
-            
-        }).fail(function () { //, "json"
+        }, "json").fail(function () { //, "json"
             that.props.toggleGraphBlock('hide');
         });
     },
@@ -212,14 +234,11 @@ var Dots=React.createClass({
 
     },
     render:function(){
-        console.log("dot render");
-        
         var _self=this;
 
         //remove last & first point
-        var data=this.props.data.splice(1);
-        data.pop();
-
+        var data=this.props.data
+        
         var circles=data.map(function(d,i){
             var formatter = d3.timeParse("%b %e");
             return (<circle className="dot" r="7" cx={_self.props.x(d.date)} cy={_self.props.y(d.count)} fill="#7dc7f4"
@@ -259,36 +278,25 @@ var LineChart=React.createClass({
         };
     },
     render:function(){
-        var _self=this;
-
-        console.log(_self.props.chart_data);
-        console.log("render chart");
-        var chart_data =  Object.assign({},_self.props.chart_data);
-        console.log("before parse");
-        console.log(chart_data);
-
+        var chart_data =  clone(this.props.chart_data);
+        
         var margin = {top: 5, right: 50, bottom: 20, left: 50},
             w = this.state.width - (margin.left + margin.right),
             h = this.props.height - (margin.top + margin.bottom);
 
-        for (var key in chart_data) {
-            var d = chart_data[key];
-            for (var d_key in d['data']) {
-                var one_row = d['data'][d_key];
-                chart_data[key]['data'][d_key].date = d3.timeParse("%m-%d-%Y")(one_row.day);
-            };
-        };
-        console.log("after parse");
-        console.log(chart_data);
+        var all_data = [];
+        for (var i in chart_data){
+            all_data = all_data.concat(chart_data[i].data);
+        }
 
         var x = d3.scaleTime()
-            .domain(d3.extent(chart_data.h2['data'], function (d) {
+            .domain(d3.extent(all_data, function (d) {
                 return d.date;
             }))
             .rangeRound([0, w]);
 
         var y = d3.scaleLinear()
-            .domain([0,d3.max(chart_data.h2['data'],function(d){
+            .domain([0,d3.max(all_data,function(d){
                 return d.count+100;
             })])
             .range([h, 0]);
@@ -297,7 +305,7 @@ var LineChart=React.createClass({
             .ticks(5);
 
         var xAxis = d3.axisBottom(x)
-            .tickValues(chart_data.h2['data'].map(function(d,i){
+            .tickValues(all_data.map(function(d,i){
                 return d.date;
             }))
             .ticks(4);
@@ -317,15 +325,12 @@ var LineChart=React.createClass({
 
         var transform='translate(' + margin.left + ',' + margin.top + ')';
         
-        console.log("before loop");
-        console.log(chart_data);
-
         var rows = [];
         for (var i in chart_data){
             var className = "line shadow " + i;
-            rows.push(<g><path className={className} d={line(chart_data[i].data)} strokeLinecap="round"/><Dots data={chart_data[i].data} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip}/></g>);
-            console.log("in loop");
-            console.log(chart_data[i].data);
+            var dot_data = clone(chart_data[i].data);
+            rows.push(<g><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip}/></g>);
+
         }
 
         return (
@@ -350,6 +355,9 @@ var LineChart=React.createClass({
 
             </div>
         );
+        // return (
+        //     <div></div>
+        // );
     },
     showToolTip:function(e){
         e.target.setAttribute('fill', '#FFFFFF');
@@ -375,6 +383,5 @@ var LineChart=React.createClass({
 
 
 });
-
 
 export default Graph;
