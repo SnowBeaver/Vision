@@ -56,7 +56,6 @@ var Graph = React.createClass({
     load: function (equipmentId) {
         let that = this;
         $.get(url.graph + '?id=' + equipmentId, function (data) {
-            console.log(data)
             let state = that.state;
             state.loading = false;
             that.setState(state);
@@ -73,34 +72,7 @@ var Graph = React.createClass({
                     chart_data[ind]['data'].push(data_obj);
                 })
             })
-            // var cart_data = {
-            //     'h2':{
-            //         'label':'H2 label',
-            //         'data':[
-            //             {day:'02-11-2016',count:180,"date":d3.timeParse("%m-%d-%Y")("02-11-2016")},
-            //             {day:'02-12-2016',count:250,"date":d3.timeParse("%m-%d-%Y")("02-12-2016")},
-            //             {day:'02-13-2016',count:150,"date":d3.timeParse("%m-%d-%Y")("02-13-2016")},
-            //             {day:'02-14-2016',count:496,"date":d3.timeParse("%m-%d-%Y")("02-14-2016")},
-            //             {day:'02-15-2016',count:140,"date":d3.timeParse("%m-%d-%Y")("02-15-2016")},
-            //             {day:'02-16-2016',count:380,"date":d3.timeParse("%m-%d-%Y")("02-16-2016")},
-            //             {day:'02-17-2016',count:100,"date":d3.timeParse("%m-%d-%Y")("02-17-2016")},
-            //             {day:'02-18-2016',count:150,"date":d3.timeParse("%m-%d-%Y")("02-18-2016")}
-            //         ]
-            //     },
-            //     'co2':{
-            //         'label':'Co2 label',
-            //         'data':[
-            //             {day:'02-11-2016',count:100,"date":d3.timeParse("%m-%d-%Y")("02-11-2016")},
-            //             {day:'02-12-2016',count:150,"date":d3.timeParse("%m-%d-%Y")("02-12-2016")},
-            //             {day:'02-13-2016',count:250,"date":d3.timeParse("%m-%d-%Y")("02-13-2016")},
-            //             {day:'02-14-2016',count:228,"date":d3.timeParse("%m-%d-%Y")("02-14-2016")},
-            //             {day:'02-15-2016',count:200,"date":d3.timeParse("%m-%d-%Y")("02-15-2016")},
-            //             {day:'02-16-2016',count:300,"date":d3.timeParse("%m-%d-%Y")("02-16-2016")},
-            //             {day:'02-17-2016',count:290,"date":d3.timeParse("%m-%d-%Y")("02-17-2016")},
-            //             {day:'02-18-2016',count:275,"date":d3.timeParse("%m-%d-%Y")("02-18-2016")}
-            //         ]
-            //     }
-            // };
+            
             ReactDOM.render(<LineChart chart_data={chart_data} />,document.getElementById("graph"));
             
         }, "json").fail(function () { //, "json"
@@ -274,10 +246,34 @@ var LineChart=React.createClass({
     getInitialState:function(){
         return {
             tooltip:{ display:false,data:{key:'',value:''}},
-            width:this.props.width
+            width:this.props.width,
+            zoom:1,
+            margin:{top: 5, right: 50, bottom: 20, left: 50},
+            pos_x:0,
+            pos_y:0,
+            offset_x:0,
+            offset_y:0
         };
     },
+    
+    componentDidMount() {
+        var self = this;
+        d3.select("#" + self.props.chartId)
+        .call(d3.zoom()
+        .scaleExtent([-10000, 10000])
+        .on("zoom", function(){
+            var translation = d3.zoomTransform(this);
+            
+            self.setState({zoom:translation.k, 
+                           pos_x:translation.x, 
+                           pos_y:translation.y, 
+                           offset_x:self.props.width - d3.event.sourceEvent.layerX,
+                           offset_y:self.props.width - d3.event.sourceEvent.layerY});
+        }));
+    },
+
     render:function(){
+        console.log("redraw")
         var chart_data =  clone(this.props.chart_data);
         
         var margin = {top: 5, right: 50, bottom: 20, left: 50},
@@ -289,16 +285,32 @@ var LineChart=React.createClass({
             all_data = all_data.concat(chart_data[i].data);
         }
 
+        var max_x = d3.extent(all_data, function (d) {
+            return d.date;
+        });
+        var dif = Math.abs(max_x[0].getTime() - max_x[1].getTime()) / this.state.zoom;
+        console.log(dif)
+        var min_x = this.state.pos_x == 0 ? 0 : (this.state.pos_x / w * dif);
+        max_x[0] = new Date(max_x[0].getTime() - min_x );
+        max_x[1] = new Date(max_x[0].getTime() - min_x  + dif);
+        
         var x = d3.scaleTime()
-            .domain(d3.extent(all_data, function (d) {
-                return d.date;
-            }))
+            .domain(max_x)
             .rangeRound([0, w]);
 
+        
+        
+        var max_y = d3.max(all_data,function(d){
+            return d.count;
+        }) / this.state.zoom;
+        
+        var min_y = this.state.pos_y == 0 ? 0 : (this.state.pos_y / h * max_y);
+        max_y += min_y;
+
+
+
         var y = d3.scaleLinear()
-            .domain([0,d3.max(all_data,function(d){
-                return d.count+100;
-            })])
+            .domain([min_y,max_y])
             .range([h, 0]);
 
         var yAxis = d3.axisLeft(y)
@@ -334,10 +346,10 @@ var LineChart=React.createClass({
         }
 
         return (
-            <div>
-                <svg id={this.props.chartId} width={this.state.width} height={this.props.height}>
+            <div onWheel={this.zoom_ev}>
+                <svg id={this.props.chartId} width={this.state.width} height={this.props.height} onDragStart={this.drag} >
 
-                    <g transform={transform}>
+                    <g transform={transform} >
 
                         <Grid h={h} grid={yGrid} gridType="y"/>
                         {/*<Grid h={h} grid={xGrid} gridType="x"/> */}
@@ -359,6 +371,11 @@ var LineChart=React.createClass({
         //     <div></div>
         // );
     },
+
+    drag:function(e){
+        console.log("is dragged");
+    },
+
     showToolTip:function(e){
         e.target.setAttribute('fill', '#FFFFFF');
         
