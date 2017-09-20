@@ -73,7 +73,7 @@ var Graph = React.createClass({
                 })
             })
             
-        ReactDOM.render((<div><LineChart chart_data={chart_data} /><Legend chart_data={chart_data}/></div>),document.getElementById("graph"));
+        ReactDOM.render((<LineChart chart_data={chart_data} />),document.getElementById("graph"));
             
         }, "json").fail(function () { //, "json"
             that.props.toggleGraphBlock('hide');
@@ -178,7 +178,6 @@ var ToolTip=React.createClass({
             }
 
 
-
         }else{
             visibility="hidden"
         }
@@ -209,7 +208,6 @@ var Dots=React.createClass({
     render:function(){
         var _self=this;
 
-        //remove last & first point
         var data=this.props.data;
         
         var circles=data.map(function(d,i){
@@ -253,7 +251,8 @@ var LineChart=React.createClass({
             pos_x:0,
             pos_y:0,
             offset_x:0,
-            offset_y:0
+            offset_y:0,
+            chart_data:this.props.chart_data
         };
     },
     
@@ -274,8 +273,8 @@ var LineChart=React.createClass({
     },
 
     render:function(){
-        console.log("redraw")
-        var chart_data =  clone(this.props.chart_data);
+        var _self = this;
+        var chart_data =  clone(this.state.chart_data);
         
         var margin = {top: 5, right: 50, bottom: 20, left: 50},
             w = this.state.width - (margin.left + margin.right),
@@ -291,17 +290,33 @@ var LineChart=React.createClass({
                 return d.date;
             }))
             .rangeRound([0, w]);
+        
+        var visible_one = false;
+        var visible_row = [];
+        Object.keys(chart_data).map(function(key, index){
+            if (chart_data[key].hide == true)
+            {
+                visible_one = true;
+                _self.state.pos_y = 0;
+            }
+            else
+                visible_row = chart_data[key].data;
+        })
 
-        
-        
-        var max_y = d3.max(all_data,function(d){
-            return d.count;
-        }) / this.state.zoom;
+        if (visible_one){
+            var max_y = d3.max(visible_row,function(d){
+                return d.count;
+            }) * 1.1;
+            console.log(max_y);
+        }
+        else{
+            var max_y = d3.max(all_data,function(d){
+                return d.count;
+            }) / this.state.zoom;
+        }
         
         var min_y = this.state.pos_y == 0 ? 0 : ((this.state.pos_y + 25 ) / h * max_y);
         max_y += min_y;
-
-
 
         var y = d3.scaleLinear()
             .domain([min_y,max_y])
@@ -333,9 +348,13 @@ var LineChart=React.createClass({
         
         var rows = [];
         for (var i in chart_data){
-            var className = "line shadow " + i;
+            var className = "line shadow " + i ;
             var dot_data = clone(chart_data[i].data);
-            rows.push(<g><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} label={chart_data[i].label} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip}/></g>);
+            if (chart_data[i].hide == true)
+                var style = {opacity:0.3};
+            else
+                style = {};
+            rows.push(<g key={i} style={style} ><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} label={chart_data[i].label} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip}/></g>);
 
         }
 
@@ -346,8 +365,7 @@ var LineChart=React.createClass({
                     <g transform={transform} >
 
                         <Grid h={h} grid={yGrid} gridType="y"/>
-                        {/*<Grid h={h} grid={xGrid} gridType="x"/> */}
-
+                        
                         <Axis h={h} axis={yAxis} axisType="y" />
                         <Axis h={h} axis={xAxis} axisType="x"/>
 
@@ -355,15 +373,38 @@ var LineChart=React.createClass({
 
                         <ToolTip tooltip={this.state.tooltip}/>
                     </g>
-
                 </svg>
-
-
+                <div className="legend">
+                    {Object.keys(chart_data).map(function(key, index){
+                        var classname = "line " + key;
+                        return <div className="item" key={index} onClick={_self.selectRow} data-row={key}><div className={classname}></div>{chart_data[key].label}</div>;
+                    })}
+                    <div className="item" key="all" onClick={_self.showAll} >View all</div>
+                </div>
             </div>
         );
-        // return (
-        //     <div></div>
-        // );
+    },
+
+    selectRow:function(e){
+        var s_key = e.target.getAttribute('data-row');
+        var chart_data = this.state.chart_data 
+        Object.keys(chart_data).map(function(key, index){
+            if (key != s_key)
+                chart_data[key].hide = true;
+            else
+                chart_data[key].hide = false;
+        })
+        console.log("#" + this.props.chartId)
+        d3.zoomTransform(d3.select("#" + this.props.chartId)).scale(1);
+        this.setState({chart_data:chart_data});
+    },
+
+    showAll:function(){
+        var chart_data = this.state.chart_data 
+        Object.keys(chart_data).map(function(key, index){
+            chart_data[key].hide = false;
+        })
+        this.setState({chart_data:chart_data});
     },
 
     showToolTip:function(e){
@@ -377,9 +418,7 @@ var LineChart=React.createClass({
             pos:{
                 x:e.target.getAttribute('cx'),
                 y:e.target.getAttribute('cy')
-            }
-
-            }
+            }}
         });
     },
     hideToolTip:function(e){
@@ -387,29 +426,6 @@ var LineChart=React.createClass({
         this.setState({tooltip:{ display:false,data:{},label:''}});
     }
 
-
 });
-
-
-var Legend =React.createClass({
-    
-        render:function(){
-            console.log("legend draw")
-            var chart_data =  clone(this.props.chart_data);
-            
-    
-            return (
-                <div className="legend">
-                    {Object.keys(chart_data).map(function(key, index){
-                        var classname = "line " + key;
-                        return <div className="item" key={index}><div className={classname}></div>{chart_data[key].label}</div>;
-                    })}
-                </div>
-            );
-        },
-    
-    
-    
-    });
     
 export default Graph;
