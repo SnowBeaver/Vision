@@ -73,7 +73,7 @@ var Graph = React.createClass({
                 })
             })
             
-            ReactDOM.render(<LineChart chart_data={chart_data} />,document.getElementById("graph"));
+        ReactDOM.render((<div><LineChart chart_data={chart_data} /><Legend chart_data={chart_data}/></div>),document.getElementById("graph"));
             
         }, "json").fail(function () { //, "json"
             that.props.toggleGraphBlock('hide');
@@ -157,8 +157,8 @@ var ToolTip=React.createClass({
         var transform="";
         var x=0;
         var y=0;
-        var width=150,height=70;
-        var transformText='translate('+width/2+','+(height/2-5)+')';
+        var width=250,height=100;
+        var transformText='translate('+width/2+',20)';
         var transformArrow="";
 
         if(this.props.tooltip.display==true){
@@ -182,15 +182,16 @@ var ToolTip=React.createClass({
         }else{
             visibility="hidden"
         }
-
+        var date = new Date(this.props.tooltip.date).toLocaleDateString();
         return (
             <g transform={transform}>
                 <rect class="shadow" is width={width} height={height} rx="5" ry="5" visibility={visibility} fill="#6391da" opacity=".9"/>
                 <polygon class="shadow" is points="10,0  30,0  20,10" transform={transformArrow}
                          fill="#6391da" opacity=".9" visibility={visibility}/>
                 <text is visibility={visibility} transform={transformText}>
-                    <tspan is x="0" text-anchor="middle" font-size="15px" fill="#ffffff">{this.props.tooltip.data.key}</tspan>
-                    <tspan is x="0" text-anchor="middle" dy="25" font-size="20px" fill="#a9f3ff">{this.props.tooltip.data.value+" visits"}</tspan>
+                    <tspan is x="0" text-anchor="middle" dy="0" font-size="15px" fill="#ffffff" textLength="200" lengthAdjust="spacingAndGlyphs">{this.props.tooltip.label}</tspan>
+                    <tspan is x="0" text-anchor="middle" dy="20" font-size="15px" fill="#ffffff">{date}</tspan>
+                    <tspan is x="0" text-anchor="middle" dy="35" font-size="20px" fill="#a9f3ff">{this.props.tooltip.count}</tspan>
                 </text>
             </g>
         );
@@ -209,14 +210,14 @@ var Dots=React.createClass({
         var _self=this;
 
         //remove last & first point
-        var data=this.props.data
+        var data=this.props.data;
         
         var circles=data.map(function(d,i){
             var formatter = d3.timeParse("%b %e");
             return (<circle className="dot" r="7" cx={_self.props.x(d.date)} cy={_self.props.y(d.count)} fill="#7dc7f4"
                             stroke="#3f5175" strokeWidth="5px" key={i}
                             onMouseOver={_self.props.showToolTip} onMouseOut={_self.props.hideToolTip}
-                            data-key={d.day} data-value={d.count}/>)
+                            data-date={d.date} data-count={d.count} label={_self.props.label}/>)
         });
 
         return(
@@ -285,17 +286,10 @@ var LineChart=React.createClass({
             all_data = all_data.concat(chart_data[i].data);
         }
 
-        var max_x = d3.extent(all_data, function (d) {
-            return d.date;
-        });
-        var dif = Math.abs(max_x[0].getTime() - max_x[1].getTime()) / this.state.zoom;
-        console.log(dif)
-        var min_x = this.state.pos_x == 0 ? 0 : (this.state.pos_x / w * dif);
-        max_x[0] = new Date(max_x[0].getTime() - min_x );
-        max_x[1] = new Date(max_x[0].getTime() - min_x  + dif);
-        
         var x = d3.scaleTime()
-            .domain(max_x)
+            .domain(d3.extent(all_data, function (d) {
+                return d.date;
+            }))
             .rangeRound([0, w]);
 
         
@@ -304,7 +298,7 @@ var LineChart=React.createClass({
             return d.count;
         }) / this.state.zoom;
         
-        var min_y = this.state.pos_y == 0 ? 0 : (this.state.pos_y / h * max_y);
+        var min_y = this.state.pos_y == 0 ? 0 : ((this.state.pos_y + 25 ) / h * max_y);
         max_y += min_y;
 
 
@@ -341,13 +335,13 @@ var LineChart=React.createClass({
         for (var i in chart_data){
             var className = "line shadow " + i;
             var dot_data = clone(chart_data[i].data);
-            rows.push(<g><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip}/></g>);
+            rows.push(<g><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} label={chart_data[i].label} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip}/></g>);
 
         }
 
         return (
-            <div onWheel={this.zoom_ev}>
-                <svg id={this.props.chartId} width={this.state.width} height={this.props.height} onDragStart={this.drag} >
+            <div >
+                <svg id={this.props.chartId} width={this.state.width} height={this.props.height} >
 
                     <g transform={transform} >
 
@@ -372,19 +366,14 @@ var LineChart=React.createClass({
         // );
     },
 
-    drag:function(e){
-        console.log("is dragged");
-    },
-
     showToolTip:function(e){
         e.target.setAttribute('fill', '#FFFFFF');
         
         this.setState({tooltip:{
             display:true,
-            data: {
-                key:e.target.getAttribute('data-key'),
-                value:e.target.getAttribute('data-value')
-                },
+            date:e.target.getAttribute('data-date'),
+            count:e.target.getAttribute('data-count'),
+            label:e.target.getAttribute('label'),
             pos:{
                 x:e.target.getAttribute('cx'),
                 y:e.target.getAttribute('cy')
@@ -395,10 +384,32 @@ var LineChart=React.createClass({
     },
     hideToolTip:function(e){
         e.target.setAttribute('fill', '#7dc7f4');
-        this.setState({tooltip:{ display:false,data:{key:'',value:''}}});
+        this.setState({tooltip:{ display:false,data:{},label:''}});
     }
 
 
 });
 
+
+var Legend =React.createClass({
+    
+        render:function(){
+            console.log("legend draw")
+            var chart_data =  clone(this.props.chart_data);
+            
+    
+            return (
+                <div className="legend">
+                    {Object.keys(chart_data).map(function(key, index){
+                        var classname = "line " + key;
+                        return <div className="item" key={index}><div className={classname}></div>{chart_data[key].label}</div>;
+                    })}
+                </div>
+            );
+        },
+    
+    
+    
+    });
+    
 export default Graph;

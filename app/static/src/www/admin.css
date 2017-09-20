@@ -171,7 +171,7 @@ legend.scheduler-border {
 .line {
     fill: none;
     stroke: #7dc7f4;
-    stroke-width: 5px;
+    stroke-width: 3px;
 
 }
 
@@ -202,32 +202,57 @@ legend.scheduler-border {
 }
 .line.h2 {
     stroke: #7dc7f4;
+    background: #7dc7f4;
 }
 .line.co {
     stroke: #E60D0D;
+    background: #E60D0D;
+}
+.line.c2h2 {
+    stroke: #4C0DE6;
+    background: #4C0DE6;
 }
 .line.c2h6 {
     stroke: #6AE60D;
+    background: #6AE60D;
 }
 .line.c2h4 {
     stroke: #EDF418;
+    background: #EDF418;
 }
 .line.content_gaz {
     stroke: #E60DD5;
+    background:#E60DD5;
 }
 .line.co2 {
     stroke: #A50DE6;
+    background: #A50DE6;
 }
 .line.ch4 {
     stroke: #346B0F;
+    background: #346B0F;
 }
 .line.cap_gaz {
     stroke: #988300;
+    background: #988300;
 }
 .line.n2 {
     stroke: #692E62;
+    background: #692E62;
 }
 .line.o2 {
     stroke: #0DE686;
+    background: #0DE686;
 }
 
+.legend{
+    padding:20px 0 20px 30px;
+}
+.legend .item{}
+.legend .line{
+    display: inline-block;
+    width: 30px;
+    height: 5px;
+    margin:0 5px 0 0;
+    vertical-align: middle;
+}
