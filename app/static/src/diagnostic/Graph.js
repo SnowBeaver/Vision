@@ -114,9 +114,14 @@ var Axis=React.createClass({
     render: function () {
 
         var translate = "translate(0,"+(this.props.h)+")";
-
+        if (this.props.axisType == "y")
+            var rect = "";
+        else
+            var rect = <rect width="800" height="20" style={{"fill":"white"}} x="-20" y="1"/>
         return (
-            <g className="axis" transform={this.props.axisType=='x'?translate:""} >
+            <g transform={this.props.axisType=='x'?translate:""}>
+                {rect}
+                <g className="axis"  ></g>
             </g>
         );
     }
@@ -276,7 +281,7 @@ var LineChart=React.createClass({
         var _self = this;
         var chart_data =  clone(this.state.chart_data);
         
-        var margin = {top: 5, right: 50, bottom: 20, left: 50},
+        var margin = {top: 5, right: 50, bottom: 20, left: 70},
             w = this.state.width - (margin.left + margin.right),
             h = this.props.height - (margin.top + margin.bottom);
 
@@ -307,7 +312,6 @@ var LineChart=React.createClass({
             var max_y = d3.max(visible_row,function(d){
                 return d.count;
             }) * 1.1;
-            console.log(max_y);
         }
         else{
             var max_y = d3.max(all_data,function(d){
@@ -342,7 +346,7 @@ var LineChart=React.createClass({
             })
             .y(function (d) {
                 return y(d.count);
-            }).curve(d3.curveCardinal);
+            }).curve(d3.curveLinear);
 
         var transform='translate(' + margin.left + ',' + margin.top + ')';
         
@@ -365,11 +369,13 @@ var LineChart=React.createClass({
                     <g transform={transform} >
 
                         <Grid h={h} grid={yGrid} gridType="y"/>
-                        
-                        <Axis h={h} axis={yAxis} axisType="y" />
-                        <Axis h={h} axis={xAxis} axisType="x"/>
-
                         {rows}
+                        
+                        <g fill="white">
+                            <Axis h={h} axis={yAxis} axisType="y" fill="white" />
+                            <Axis h={h} axis={xAxis} axisType="x" fill="white"/>
+                        </g>
+
 
                         <ToolTip tooltip={this.state.tooltip}/>
                     </g>
@@ -377,7 +383,8 @@ var LineChart=React.createClass({
                 <div className="legend">
                     {Object.keys(chart_data).map(function(key, index){
                         var classname = "line " + key;
-                        return <div className="item" key={index} onClick={_self.selectRow} data-row={key}><div className={classname}></div>{chart_data[key].label}</div>;
+                        var lineClassName = "item " + (chart_data[key].selected == true ? "active" : "");
+                        return <div className={lineClassName} key={index} onClick={_self.selectRow} data-row={key}><div className={classname}></div>{chart_data[key].label}</div>;
                     })}
                     <div className="item" key="all" onClick={_self.showAll} >View all</div>
                 </div>
@@ -389,12 +396,15 @@ var LineChart=React.createClass({
         var s_key = e.target.getAttribute('data-row');
         var chart_data = this.state.chart_data 
         Object.keys(chart_data).map(function(key, index){
-            if (key != s_key)
+            if (key != s_key){
                 chart_data[key].hide = true;
-            else
+                chart_data[key].selected = false;
+            }
+            else{
                 chart_data[key].hide = false;
+                chart_data[key].selected = true;
+            }
         })
-        console.log("#" + this.props.chartId)
         d3.zoomTransform(d3.select("#" + this.props.chartId)).scale(1);
         this.setState({chart_data:chart_data});
     },
@@ -403,6 +413,7 @@ var LineChart=React.createClass({
         var chart_data = this.state.chart_data 
         Object.keys(chart_data).map(function(key, index){
             chart_data[key].hide = false;
+            chart_data[key].selected = false;
         })
         this.setState({chart_data:chart_data});
     },

@@ -178,6 +178,7 @@ legend.scheduler-border {
 .axis{
     fill:#bbc7d9;
     opacity: 1;
+    background: #fff;
 }
 
 .axis path,
@@ -248,7 +249,12 @@ legend.scheduler-border {
 .legend{
     padding:20px 0 20px 30px;
 }
-.legend .item{}
+.legend .item{
+    cursor: pointer;
+}
+.legend .item:hover,.legend .item.active{
+    font-weight:bold;
+}
 .legend .line{
     display: inline-block;
     width: 30px;

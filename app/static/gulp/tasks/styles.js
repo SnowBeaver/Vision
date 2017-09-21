@@ -26,3 +26,7 @@ gulp.task('frontend-style', function() {
       .pipe(concat('style.min.css'))
       .pipe(gulp.dest('./build'))
 });
+gulp.task('move-images', function() {
+    gulp.src("./img/**/*.*")
+        .pipe(gulp.dest('./build'));
+})
