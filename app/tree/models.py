@@ -43,7 +43,7 @@ class TreeNode(Translatable, BaseManager):
     # previously it was sqla.Integer field as this table was used for
     # storing both  equipment and pages
     equipment_id = sqla.Column(sqla.ForeignKey(Equipment.id), nullable=True)
-    equipment = relationship(Equipment, backref='tree')
+    equipment = relationship(Equipment, backref='tree',cascade="all, delete")
 
     # costumed column
     icon = sqla.Column(sqla.String(126), default="../app/static/img/file.png")
