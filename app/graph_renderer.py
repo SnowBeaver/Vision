@@ -84,13 +84,13 @@ class DGAGraph(AbstractGraph):
                 for record in test_objs:
                     if record.test_result.date_analyse:
                         i += 1
-                        records.append((record.test_result.date_analyse.strftime('%Y%m%d'), getattr(record, gas) or 0))
+                        records.append({"day":record.test_result.date_analyse.strftime('%d.%m.%Y %H:%M'), "count":getattr(record, gas) or 0})
                         if i > 0:
                             labels.append({
                                 'key':record.test_result.date_analyse.strftime('%Y%m%d') ,
                                 'date':record.test_result.date_analyse.strftime('%m-%d-%Y'), 
                                 'value':getattr(record, gas)})
-                self.graph_data.append({'data': records, 'label': '{} {}'.format(gas.upper(), equipment)})
+                self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment)})
         self.text_labels = labels
 
     def fetch_mpl_obj(self):
@@ -123,7 +123,10 @@ class DGAGraph(AbstractGraph):
         self.fetch_mpl_data()
         self.fetch_mpl_obj()
         return GraphRenderer(obj=self.mpl_obj, size=size).html() if self.mpl_obj else None
-
+    def json(self):
+        self.load_from_db()
+        self.fetch_mpl_data()
+        return self.graph_data
 
 class GraphGenerator:
     def __init__(self, equipment_id, graph_type='gas_concentration_vs_time'):
@@ -131,8 +134,9 @@ class GraphGenerator:
         self.equipment_id = equipment_id
 
     def render(self, size=400):
-        html = GRAPH_TYPE_FUNCTIONALITY.get(self.graph_type)(equipment_id=self.equipment_id).html(size)
-        return html
+        #html = GRAPH_TYPE_FUNCTIONALITY.get(self.graph_type)(equipment_id=self.equipment_id).html(size)
+        json = GRAPH_TYPE_FUNCTIONALITY.get(self.graph_type)(equipment_id=self.equipment_id).json()
+        return json
 
 
 # Map graph type to the class which loads data and renders the graph
