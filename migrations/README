@@ -1,1 +1,7 @@
 Generic single-database configuration.
+
+
+generate new migration file
+----------------------------
+python manage.py db revision
+----------------------------
