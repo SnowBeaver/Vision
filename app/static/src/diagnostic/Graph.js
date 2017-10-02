@@ -251,30 +251,61 @@ var LineChart=React.createClass({
         return {
             tooltip:{ display:false,data:{key:'',value:''}},
             width:this.props.width,
-            zoom:1,
+            scale:1,
             margin:{top: 5, right: 50, bottom: 20, left: 50},
-            pos_x:0,
-            pos_y:0,
-            offset_x:0,
+            delta:0,
             offset_y:0,
+            origin:0,
             chart_data:this.props.chart_data
         };
     },
     
     componentDidMount() {
         var self = this;
+        var down = false,
+            origin = 0;
+        
         d3.select("#" + self.props.chartId)
-        .call(d3.zoom()
-        .scaleExtent([-10000, 10000])
-        .on("zoom", function(){
-            var translation = d3.zoomTransform(this);
-            
-            self.setState({zoom:translation.k, 
-                           pos_x:translation.x, 
-                           pos_y:translation.y, 
-                           offset_x:self.props.width - d3.event.sourceEvent.layerX,
-                           offset_y:self.props.width - d3.event.sourceEvent.layerY});
-        }));
+        .on("mousedown", function() {
+            down = true;
+            d3.event.preventDefault();
+            origin = d3.event.offsetY;
+        })
+        .on("mouseup", function() {
+            down = false;
+        })
+        .on("mousemove", function() {
+            if (down == true){
+                var dif = d3.event.offsetY - origin;
+                self.setState({
+                    offset_y:self.state.offset_y + dif
+                });
+                origin = d3.event.offsetY;
+            }
+        })
+        .on("wheel", function(){
+            d3.event.preventDefault();
+            var zoom = (d3.event.wheelDelta / 120) * 0.2;
+            self.setState({
+                old_scale : self.state.scale,
+                scale:self.state.scale + zoom,
+                is_zoom : true,
+                mouse_pos : d3.event.layerY - 40
+            });
+        })
+        
+        /*
+        .call(d3.zoom().scaleExtent([-10000, 10000])
+            .on("zoom", function(){
+                //var translation = d3.zoomTransform(this);
+               // console.log(d3.event);
+                //self.setState({
+               //             offset_y:self.props.width - d3.event.sourceEvent.offsetY - 5,
+              //              delta:d3.event.sourceEvent.wheelDelta
+                //            });
+            })
+        );
+        */
     },
 
     render:function(){
@@ -308,20 +339,44 @@ var LineChart=React.createClass({
                 visible_row = chart_data[key].data;
         })
 
+        var max_y = 0,
+            min_y = 0;
+
         if (visible_one){
-            var max_y = d3.max(visible_row,function(d){
+            max_y = d3.max(visible_row,function(d){
                 return d.count;
             }) * 1.1;
+            var dif_pos = (this.state.offset_y / 400) * max_y;
+            min_y = d3.min(visible_row,function(d){
+                return d.count;
+            }) - dif_pos;
         }
         else{
-            var max_y = d3.max(all_data,function(d){
+            max_y = d3.max(all_data,function(d){
                 return d.count;
-            }) / this.state.zoom;
+            }) / Math.pow(this.state.scale, 2);
+            var original_max_y = max_y;
+
+            if(this.state.is_zoom){
+                var pos = this.state.mouse_pos; // where mouse is now
+                var px1 = max_y / 375; // how many units per pixel
+                
+                var pos_y =  this.state.old_max_y - (pos / 375) * (this.state.old_max_y - this.state.old_min_y) ; // Y coordinate of unit under mouse
+                
+                var offset_top = 375 - pos_y / px1; // new Y coordinate of unit that was under mouse
+                this.state.offset_y = pos - offset_top; // moving grid to get to the same unit uder mouse
+            }
+
+            var dif_pos = (this.state.offset_y / 375) * max_y;
+            max_y += dif_pos ;
+            min_y = dif_pos;
+
+            this.state.old_max_y = max_y;
+            this.state.old_min_y = min_y;
+            
+            this.state.is_zoom = false;
         }
         
-        var min_y = this.state.pos_y == 0 ? 0 : ((this.state.pos_y + 25 ) / h * max_y);
-        max_y += min_y;
-
         var y = d3.scaleLinear()
             .domain([min_y,max_y])
             .range([h, 0]);
