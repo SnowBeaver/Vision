@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Graph details</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='build/admin.min.css') }}">
+    </head>
+    <body style="padding:10px">
+        <h2>{{equipments|join(", ")}}</h2>
+        <h4>{{date}}</h4>
+        <table class="table">
+            {% for row in graph %}
+            <tr>
+                <td>{{row.label}}</td>
+                {% for data_row in row.data %}
+                <td>{{data_row.count}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

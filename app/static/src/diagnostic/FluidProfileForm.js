@@ -56,6 +56,7 @@ var SamplPointSelectField1 = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+        var value = (this.props.value) || '1';  // By default Undetermined
 
         return (
             <FormGroup controlId="samplingPointSelect1">
@@ -64,6 +65,7 @@ var SamplPointSelectField1 = React.createClass({
                              placeholder="sampling point"
                              onChange={this.handleChange}
                              name="sampling"
+                             value={value}
                 >
                     {menuItems}
                 </FormControl>
@@ -115,6 +117,7 @@ var SamplPointSelectField2 = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+        var value = (this.props.value) || '1';  // By default Undetermined
 
         return (
             <FormGroup controlId="samplingPointSelect2">
@@ -123,6 +126,7 @@ var SamplPointSelectField2 = React.createClass({
                              placeholder="sampling point"
                              onChange={this.handleChange}
                              name="sampling_jar"
+                             value={value}
                 >
                     {menuItems}
                 </FormControl>
@@ -174,6 +178,7 @@ var SamplPointSelectField3 = React.createClass({
             menuItems.push(<option key={this.state.items[key].id}
                                    value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
         }
+        var value = (this.props.value) || '1';  // By default Undetermined
 
         return (
             <FormGroup controlId="samplingPointSelect3">
@@ -182,6 +187,7 @@ var SamplPointSelectField3 = React.createClass({
                              placeholder="sampling point"
                              name="sampling_vial"
                              onChange={this.handleChange}
+                             value={value}
                 >
                     {menuItems}
                 </FormControl>
@@ -284,16 +290,22 @@ const FluidProfileForm = React.createClass({
                 'point', 'viscosity', 'corr', 'dielec_i',
                 'visual', 'pcb_vial', 'antioxidant',
                 'sampling', 'sampling_jar', 'sampling_vial',
-                'qty', 'qty_jar', 'qty_vial', 'sampling',
+                'qty_ser', 'qty_jar', 'qty_vial', 'sampling',
                 'shared', 'name', 'description'
             ]
         }
     },
     componentDidMount: function () {
+        if (this.props.fluidProfileId) {
+            this.serverRequest = $.authorizedGet('/api/v1.0/fluid_profile/' + this.props.fluidProfileId, function (result) {
+                this.fillUpForm(result['result']);
+            }.bind(this), 'json');
+        } else {
+            this.fillUpForm(this.props.testResultData);
+        }
     },
 
     fillUpForm: function (saved_data) {
-
         if (null == saved_data) {
             this.refs.fluid_profile.reset();
         } else {
@@ -322,7 +334,7 @@ const FluidProfileForm = React.createClass({
             // if profile name is not empty and radio is checked then use this url to save profile
             // and save to test_result
             // otherwise just use these values for saving test_result
-            return $.authorizedAjax({
+            $.authorizedAjax({
                 url: url,
                 type: 'POST',
                 dataType: 'json',
@@ -486,7 +498,7 @@ const FluidProfileForm = React.createClass({
         }
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);
-        state['data']['qty'] = this.calculate_qty(state['data']);
+        state['data']['qty_ser'] = this.calculate_qty(state['data']);
         state['data']['qty_jar'] = this.calculate_qty_jar(state['data']);
         state['data']['qty_vial'] = this.calculate_qty_vial(state['data']);
         this.setState(state);
@@ -565,7 +577,8 @@ const FluidProfileForm = React.createClass({
                                 <div className="col-md-3">
                                     <FormGroup>
                                         <TestProfileSelectField fillUpForm={this.fillUpForm}
-                                                                source="/api/v1.0/fluid_profile"/>
+                                                                source="/api/v1.0/fluid_profile"
+                                            />
                                     </FormGroup>
                                 </div>
                             </div>
@@ -617,17 +630,17 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
-                                            <div className="col-md-2 nopadding padding-right-xs">
-                                                <FormGroup validationState={this.state.errors.qty ? 'error' : null}>
+                                            <div className="col-md-3 nopadding padding-right-xs">
+                                                <FormGroup validationState={this.state.errors.qty_ser ? 'error' : null}>
                                                     <ControlLabel>Quantity</ControlLabel>
-                                                    <FormControl type="text" ref="qty" name="qty"
-                                                                 value={this.state.data.qty}
+                                                    <FormControl type="text" ref="qty_ser" name="qty_ser"
+                                                                 value={this.state.data.qty_ser}
                                                                  data-type="float"/>
-                                                    <HelpBlock className="warning">{this.state.errors.qty}</HelpBlock>
+                                                    <HelpBlock className="warning">{this.state.errors.qty_ser}</HelpBlock>
 								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-10 nopadding">
+                                            <div className="col-md-9 nopadding">
                                                 <SamplPointSelectField1
                                                     source="/api/v1.0/sampling_point"
                                                     value={this.state.data.sampling}
@@ -796,7 +809,7 @@ const FluidProfileForm = React.createClass({
                                                 >Visual(D1524)</Checkbox>
                                             </div>
                                             <div className="maxwidth">
-                                                <div className="col-md-2 nopadding padding-right-xs">
+                                                <div className="col-md-3 nopadding padding-right-xs">
                                                     <FormGroup validationState={this.state.errors.qty_jar ? 'error' : null}>
                                                         <ControlLabel>Quantity</ControlLabel>
                                                         <FormControl type="text" name="qty_jar"
@@ -806,10 +819,10 @@ const FluidProfileForm = React.createClass({
 								                        <FormControl.Feedback />
                                                     </FormGroup>
                                                 </div>
-                                                <div className="col-md-10 nopadding">
+                                                <div className="col-md-9 nopadding">
                                                     <SamplPointSelectField2
                                                         source="/api/v1.0/sampling_point"
-                                                        value={ this.state.data.sampling_jar}
+                                                        value={this.state.data.sampling_jar}
                                                     />
                                                 </div>
                                             </div>
@@ -839,7 +852,7 @@ const FluidProfileForm = React.createClass({
                                             </div>
                                         </div>
                                         <div className="col-md-4 nopadding">
-                                            <div className="col-md-2 nopadding padding-right-xs">
+                                            <div className="col-md-3 nopadding padding-right-xs">
                                                 <FormGroup validationState={this.state.errors.qty_vial ? 'error' : null}>
                                                     <ControlLabel>Quantity</ControlLabel>
                                                     <FormControl type="text" name="qty_vial"
@@ -849,10 +862,10 @@ const FluidProfileForm = React.createClass({
 								                    <FormControl.Feedback />
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-10 nopadding">
+                                            <div className="col-md-9 nopadding">
                                                 <SamplPointSelectField3
                                                     source="/api/v1.0/sampling_point"
-                                                    value={ this.state.data.sampling_vial}/>
+                                                    value={this.state.data.sampling_vial}/>
                                             </div>
                                         </div>
                                     </div>

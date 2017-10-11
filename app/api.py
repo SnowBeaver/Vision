@@ -1,10 +1,12 @@
 from functools import wraps
+import os
+from datetime import datetime, timedelta
 from flask import Flask, Blueprint, jsonify, abort, make_response, request, g
 from flask.ext.sqlalchemy import SQLAlchemy
 from api_utility import MyValidator as Validator
 from api_utility import model_dict, eq_type_dict
 from app.diagnostic.models import EquipmentType, TestResult, Campaign, FluidProfile, \
-    Country, TestReason, TestType, TestStatus, Equipment
+    Country, TestReason, TestType, TestStatus, Equipment, Norm
 from app.diagnostic.models import ElectricalProfile
 from app.users.models import User, Role
 from collections import Iterable
@@ -18,6 +20,7 @@ from flask.ext.security.utils import encrypt_password
 from flask.ext import login
 from sqlalchemy.orm.session import make_transient
 from .mail_utility import send_email, generate_message
+from tasks import apply_send_email_task, setup_periodic_email_task
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -111,12 +114,15 @@ def prepare_data_for_tree_translation(tree_item_id, equipment_name):
 
 
 # Verifications
-def validate_or_abort(path, data_to_validate=None, update=False):
+def validate_or_abort(path, data_to_validate=None, update=False, abort_request=True):
     if not data_to_validate:
         data_to_validate = request.json
     v = Validator(ignore_none_values=True)
     if not v.validate(data_to_validate, get_schema_by_path(path), update):
-        abort(400, v.errors)
+        if abort_request:
+            abort(400, v.errors)
+        else:
+            return {'errors': v.errors}
     return v.document
 
 
@@ -235,6 +241,25 @@ def build_seach_equipment_query(items_model, search_value):
             Equipment.equipment_number.ilike("%{}%".format(search_value)),
             ))\
         .all()
+
+
+def validate_multi(path, group_by_field):
+    validation_errors = {}
+    validated_norms = []
+
+    # Validate all items at once
+    for item in request.json:
+        if 'id' not in item:
+            validated_data = validate_or_abort(path, item, abort_request=False)
+            if validated_data.get('errors'):
+                # Save errors
+                if not validation_errors.get(item[group_by_field]):
+                    validation_errors[item[group_by_field]] = {}
+                validation_errors[item[group_by_field]].update(validated_data['errors'])
+            else:
+                # Save validated document
+                validated_norms.append(validated_data)
+    return validation_errors, validated_norms
 
 
 # Update
@@ -366,6 +391,62 @@ def delete_upstream_of_equipment(item_id, upstream_id):
 # Remove connection between equipment and its downstream
 def delete_downstream_of_equipment(item_id, downstream_id):
     return delete_upstream_of_equipment(downstream_id, item_id)
+
+
+# Add standard norms to an equipment
+def add_standard_norms_to_equipment(item_id):
+    available_norms = get_available_norms()
+    if available_norms:
+        equipment = db.session.query(Equipment).filter_by(id=item_id).first()
+        if equipment:
+            equipment_type_id = equipment.equipment_type_id
+            add_equipment_norms_to_session(available_norms, equipment_type_id, item_id)
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                abort(500, e.args)
+    return True
+
+
+# Get all currently available norms
+def get_available_norms():
+    norms = db.session.query(Norm).all()
+    available_norms = {}
+    for norm in norms:
+        norm_model = model_dict.get(norm.table_name, {}).get('model')
+        if norm_model:
+            available_norms[norm_model] = norm.table_name
+    return available_norms
+
+
+def add_equipment_norms_to_session(available_norms, equipment_type_id, item_id):
+    for norm_model, norm_table_name in available_norms.items():
+        # Get standard norm
+        equipment_norm = db.session.query(norm_model) \
+            .filter_by(equipment_type_id=equipment_type_id) \
+            .order_by(norm_model.date_created.desc()) \
+            .first()
+        if equipment_norm:
+            equipment_norm = prepare_equipment_norm_data(equipment_norm, norm_table_name, item_id)
+            if equipment_norm:
+                db.session.add(equipment_norm)
+
+
+# Pre-process standard norm to save it to norm data table
+def prepare_equipment_norm_data(equipment_norm, norm_table_name, item_id):
+    equipment_norm = equipment_norm.serialize()
+    equipment_norm_model = model_dict.get("{}_data".format(norm_table_name), {}).get('model')
+    if equipment_norm_model:
+        equipment_norm['norm_id'] = equipment_norm.pop('id')
+        equipment_norm['equipment_id'] = item_id
+        equipment_norm['user_id'] = login.current_user.id
+        del equipment_norm['equipment_type_id']
+        del equipment_norm['equipment_type']
+        del equipment_norm['date_created']
+        equipment_norm = equipment_norm_model(**equipment_norm)
+        return equipment_norm
+    return {}
 
 
 # Add a lot of test results
@@ -667,6 +748,14 @@ def delete_equipment_downstream_handler(item_id, downstream_id):
     return return_json('result', delete_downstream_of_equipment(item_id, downstream_id))
 
 
+# Add standard norms to the equipment
+@api_blueprint.route('/equipment/<int:item_id>/norm/', methods=['POST'])
+@login_required
+def create_equipment_standard_norms_handler(item_id):
+    abort_if_wrong_id(item_id)
+    return return_json('result', add_standard_norms_to_equipment(item_id))
+
+
 # Create a lot of test_results with equipment using one query
 @api_blueprint.route('/test_result/equipment/', methods=['POST'])
 @login_required
@@ -792,8 +881,44 @@ def create_task_handler():
     new_item = add_item(path, validated_data)
 
     email_recipients = [new_item.assigned_to.email, g.user.email]
-    send_email(email_recipients, generate_message(path, new_item), 'Vision - Task Created #{}'.format(new_item.id))
+    email_message = generate_message(path, new_item)
+    send_email(email_recipients, email_message, 'Vision - Task Created #{}'.format(new_item.id))
+    send_task_emails_to_queue(email_recipients, email_message, new_item, validated_data)
+
     return return_json('result', new_item.id)
+
+
+def send_task_emails_to_queue(email_recipients, email_message, new_item, validated_data):
+    kwargs = {}
+    date_start = datetime.strptime(validated_data.get('date_start'), '%Y-%m-%dT%H:%M')
+    notify_before_in_days = validated_data.get('notify_before_in_days')
+    recurring = validated_data.get('recurring')
+    if date_start:
+        if recurring:
+            period_data = prepare_period_data(validated_data)
+            if period_data:
+                setup_periodic_email_task(email_recipients,
+                                          email_message,
+                                          'Vision - Periodic Task #{} Reminder'.format(new_item.id),
+                                          period_data,
+                                          date_start)
+        if notify_before_in_days:
+            kwargs['eta'] = date_start - timedelta(days=notify_before_in_days)
+            apply_send_email_task(email_recipients,
+                                  email_message,
+                                  'Vision - Notification of Created Task #{}'.format(new_item.id),
+                                  kwargs)
+
+
+def prepare_period_data(data):
+    period_data = {}
+    if data.get('period_days'):
+        period_data = {'period_days': data.get('period_days')}
+    elif data.get('period_months'):
+        period_data = {'period_months': data.get('period_months')}
+    elif data.get('period_years'):
+        period_data = {'period_years': data.get('period_years')}
+    return period_data
 
 
 # Update schedule
@@ -822,5 +947,62 @@ def delete_task_handler(item_id):
     abort_if_wrong_id(item_id)
     abort_if_not_owner_or_admin(path, item_id, check_owner_field='assigned_to_id')
     return return_json('result', delete_item(path, item_id))
+
+
+@api_blueprint.route('/campaign/<int:item_id>/finish/', methods=['GET'])
+@login_required
+def finish_campaign_handler(item_id):
+    path = 'campaign'
+    abort_if_wrong_id(item_id)
+    item = db.session.query(Campaign).get(item_id)
+    test_results = db.session.query(TestResult).filter(Campaign.id == item_id).all()
+    email_recipients = [test_result.performed_by.email for test_result in test_results if test_result.performed_by]
+    email_recipients.extend([item.created_by.email, g.user.email])
+    send_email(email_recipients,
+               generate_message(path, item),
+               'Vision - Campaign setup finished #{:%m/%d/%Y %I:%M %p}'.format(item.date_created))
+    return return_json('result', item.id)
+
+
+@api_blueprint.route('/campaign/', methods=['GET'])
+@login_required
+def get_campaigns_handler():
+    last_id = request.args.get('last_id')
+    if last_id and not last_id.isnumeric():
+        abort(400, {'last_id': 'Invalid value'})
+
+    path = 'campaign'
+    items_model = get_model_by_path(path)
+    filter_clause = None
+    page_len = 20
+    search_val = request.args.get('q')
+    args = request.args
+
+    if args:
+        kwargs = {k: v for k, v in args.items() if hasattr(items_model, k)}
+        if search_val:
+            filter_clause = func.concat(items_model.date_created, ' ', items_model.description).like('%{}%'.format(search_val))
+            if last_id:
+                filter_clause = and_(filter_clause, items_model.id > last_id)
+        query = db.session.query(items_model)
+        if filter_clause is not None:
+            query = query.filter(filter_clause)
+        total_count = query.filter_by(**kwargs).count()
+        return return_json('result', {
+            'items': [item.serialize() for item in query
+                           .filter_by(**kwargs)
+                           .order_by(items_model.date_created.asc())
+                           .limit(page_len)],
+            'total_count': total_count})
+    return return_json('result', get_items(path, args))
+
+
+# Get release version
+@api_blueprint.route('/release_version/', methods=['GET'])
+@login_required
+def get_release_version_handler():
+    answer = os.popen('git tag -l "v*"').read()
+    current_version = answer.rstrip().split('\n')[-1:]
+    return return_json('result', current_version)
 
 api.register_blueprint(api_blueprint)

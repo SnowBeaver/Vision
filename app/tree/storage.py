@@ -7,6 +7,9 @@ from app import app
 from sqlalchemy.orm.session import make_transient
 import json
 from flask import jsonify
+from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
+    Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
+    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor
 
 
 def set_locale():
@@ -66,6 +69,99 @@ def get_tree():
     #     logging.error(e)
 
 
+def get_owner_tree():
+    """ Get tree which lists owners and equipment which belong to them """
+    locations = db.session.query(Location).options(joinedload_all('children')).all()
+    tree_nodes, generic_tree_nodes = get_tree_nodes()
+    res = []
+    for location in locations:
+        serialized_location = location.serialize(True)
+        serialized_location = add_tree_data(
+            location=serialized_location,
+            tree_nodes=tree_nodes,
+            tree_root=generic_tree_nodes['default'],
+            tree_main=generic_tree_nodes['main'],
+        )
+        res.append(serialized_location)
+    response = json.dumps(res)
+    return response
+
+
+def get_tree_nodes():
+    """ Get tree nodes which correspond to the loaded equipment """
+    # Get tree nodes
+    tree_nodes = db.session.query(TreeNode).all()
+    # Map tree nodes
+    mapped_tree_nodes = {}
+    generic_tree_nodes = {}
+    for tree_node in tree_nodes:
+        mapped_tree_nodes[tree_node.equipment_id] = tree_node
+        if tree_node.type in ('default', 'main'):
+            generic_tree_nodes[tree_node.type] = tree_node
+    return mapped_tree_nodes, generic_tree_nodes
+
+
+def add_tree_data(location, tree_nodes, tree_root, tree_main):
+    """ Add tree data to the location and equipment """
+    location = add_equipment_tree_data(location=location, tree_nodes=tree_nodes)
+    location = add_owner_tree_data(location=location, tree_root=tree_root, tree_main=tree_main)
+    return location
+
+
+def add_equipment_tree_data(location, tree_nodes):
+    """ Add tree data to the equipment """
+    if location['children']:
+        for equipment in location['children']:
+            tree_node = tree_nodes.get(int(equipment['id']))
+            if tree_node:
+                equipment['id'] = tree_node.id
+                equipment['text'] = tree_node.text
+                equipment['icon'] = tree_node.icon
+                equipment['disabled'] = tree_node.disabled
+                equipment['selected'] = tree_node.selected
+                equipment['type'] = tree_node.type
+                equipment['view'] = tree_node.view
+                equipment['location_id'] = location['id']
+                equipment['parent_id'] = tree_node.parent_id
+        location['children'] = make_equipment_tree(location['children'])
+    return location
+
+
+def make_equipment_tree(equipments):
+    for equipment in equipments[:]:
+        equipment_id = equipment['id']
+        for child in equipments:
+            if child.get('parent_id') == equipment_id:
+                if not equipment.get('children'):
+                    equipment['children'] = []
+                equipment['children'].append(child)
+                equipments.remove(child)
+    return equipments
+
+
+def add_owner_tree_data(location, tree_root, tree_main):
+    """ Add tree data to the location (owner) """
+    if tree_root:
+        location['location_id'] = location['id']
+        location['icon'] = tree_root.icon
+        location['id'] = tree_main.id
+    return location
+
+
+def serialize_equipment(tree):
+    children = []
+    for item in tree:
+        children.append(item.serialize())
+    return children
+
+
+def get_switch_ids():
+    switch_names = ("Air circuit breaker", "Breaker", "Switch")
+    switches = db.session.query(EquipmentType).filter(EquipmentType.name.in_(switch_names)).values("id")
+    switches = [switch[0] for switch in switches]
+    return json.dumps(switches)
+
+
 def serialize(tree, res):
     if type(tree) == list:
         for item in tree:
@@ -76,6 +172,7 @@ def serialize(tree, res):
     # item = tree.serialize()
     # res.append(item)
     return res
+
 
 # create generate tree
 def create_node(parent, text, icon, type, tooltip):
@@ -173,6 +270,22 @@ def move_node(node_id, parent_id):
         import logging
         logging.error(e)
         res = None
+
+    return res
+
+
+# move node tree to another location
+def move_node_to_location(node_id, location_id):
+    res = None
+    tree_node = db.session.query(TreeNode).filter(TreeNode.id == node_id).first()
+    if tree_node and tree_node.equipment_id:
+        try:
+            tree_node.equipment.location_id = location_id
+            db.session.commit()
+            res = True
+        except Exception as e:
+            import logging
+            logging.error(e)
 
     return res
 
@@ -295,3 +408,25 @@ def render_tree_filter(tree):
     data += "</ul>"
 
     return data
+
+
+def get_equipment_type_to_url():
+    return json.dumps({
+        'air_breaker': AirCircuitBreaker.__name__.lower(),
+        'bushing': Bushing.__name__.lower(),
+        'capacitor': Capacitor.__name__.lower(),
+        'breaker': Breaker.__name__.lower(),
+        'powersource': PowerSource.__name__.lower(),
+        'cable': Cable.__name__.lower(),
+        'switchgear': SwitchGear.__name__.lower(),
+        'induction_machine': InductionMachine.__name__.lower(),
+        'synchronous_machine': SynchronousMachine.__name__.lower(),
+        'tap_changer': LoadTapChanger.__name__.lower(),
+        'rectifier': Rectifier.__name__.lower(),
+        'transformer': Transformer.__name__.lower(),
+        'tank': Tank.__name__.lower(),
+        'switch': Switch.__name__.lower(),
+        'inductance': Inductance.__name__.lower(),
+        'resistance': NeutralResistance.__name__.lower(),
+        'gas_sensor': GasSensor.__name__.lower(),
+    })

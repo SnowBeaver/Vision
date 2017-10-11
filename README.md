@@ -56,6 +56,9 @@ MacOSX
 Ubuntu Linux
 ============
 
+Vagrant/Virtualbox
+------------------
+
 1. $ sudo apt-get install virtualbox vagrant
 2. $ sudo bash
 3. $ echo "192.168.88.88 dev.vision.local" >> /etc/hosts
@@ -66,4 +69,18 @@ Ubuntu Linux
 8. $ cd project
 9. $ vagrant up
 10. Open browser and type in url: http://dev.vision.local
+
+Docker
+------------------
+1. $ curl -fsSL get.docker.com | sh
+2. $ cd ~ && git clone https://github.com/SnowBeaver/Vision.git
+3. $ sudo gpasswd -a {your_user} docker
+4. Relogin
+5. sudo apt-get -y install python-pip && sudo pip install docker-compose
+6. $ cd ~/Vision
+7. docker-compose up -d
+
+
+
+
 

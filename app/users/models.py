@@ -1,7 +1,7 @@
 from app.users import constants as USER
 from app import db, app
 from hashlib import md5
-from sqlalchemy import event
+from sqlalchemy import event, select, func
 from sqlalchemy.sql import text
 from sqlalchemy.orm import class_mapper, ColumnProperty
 import datetime
@@ -9,6 +9,12 @@ from flask.ext.security import RoleMixin, UserMixin
 from flask.ext.security.utils import verify_password
 from itsdangerous import (JSONWebSignatureSerializer
 as Serializer, BadSignature, SignatureExpired)
+
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from app.diagnostic.helpers import AESCipher
+
+
+ENCRYPT_KEY = app.config['SECURITY_DB_ENCRYPT']
 
 # Define models
 users_roles = db.Table(
@@ -64,7 +70,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users_user'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=False)
+    _name = db.Column('name', db.String(250), unique=False)
     alias = db.Column(db.String(50), unique=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
@@ -93,7 +99,8 @@ class User(db.Model, UserMixin):
         fields = [prop.key for prop in class_mapper(self.__class__).iterate_properties if
                   isinstance(prop, ColumnProperty)]
         for arg, val in kwargs.items():
-            if arg in fields:
+            if arg in fields or arg == 'name':
+                print('---', arg, val)
                 setattr(self, arg, val)
 
     @property
@@ -156,6 +163,37 @@ class User(db.Model, UserMixin):
         except BadSignature:
             return None  # invalid token
         return User.query.get(data['id'])
+
+    @hybrid_property
+    def name(self):
+        # can be called for InstrumentedAttribute
+        if type(self._name) not in (unicode, str):
+            return self._name
+
+        if self._name:
+            cipher = AESCipher(ENCRYPT_KEY)
+            msg = cipher.decrypt(self._name)
+            return msg.encode('utf-8')
+        else:
+            return None
+
+    @name.setter
+    def name(self, val):
+        print('setter', val)
+        cipher = AESCipher(ENCRYPT_KEY)
+        msg = cipher.encrypt(val)
+        self._name = msg
+
+    @hybrid_method
+    def contains(self, val):
+        cipher = AESCipher(ENCRYPT_KEY)
+        msg = cipher.encrypt(val)
+        msg = msg.encode('utf-8')
+        return self._name.ilike(msg)
+
+    @name.expression
+    def name(cls):
+        return User._name
 
     def serialize(self):
         """Return object data in easily serializeable format"""

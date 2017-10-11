@@ -107,7 +107,7 @@ class NewTestFluid(Form):
     furans = BooleanField('Furans', validators=[Optional()])
     inhibitor = BooleanField('Inhibitor', validators=[Optional()])
     pcb = BooleanField('PCB', validators=[Optional()])
-    qty = IntegerField('Qty', validators=[Optional()])
+    qty_ser = IntegerField('Qty', validators=[Optional()])
     sampling = SelectField('Sampling point', choices=point_choice, validators=[Required()])
     # jar
     dielec = BooleanField('Dielec.D1816(1mm)(kV)', validators=[Optional()])

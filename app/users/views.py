@@ -10,6 +10,7 @@ from flask_mail import Message
 from werkzeug import secure_filename
 from app import db
 from app import mail
+from app.mail_utility import send_email
 from app.users.forms import RegisterForm, LoginForm, ProfileForm, ForgotForm
 from app.users.constants import UPLOAD_FOLDER
 from app.users.models import User, Role, users_roles
@@ -131,8 +132,10 @@ def send_confirmation():
     msg.html += "<br>Future notifications will be sent to this email address."
     msg.html += "<br>Thank you,"
     msg.html += "<br><br>Team."
-
-    mail.send(msg)
+ 
+ 
+    if current_app.config['SEND_EMAILS'] == True:
+        mail.send(msg)
 
 
 # @mod.route('/forgot-password', methods=['GET', 'POST'])
@@ -176,6 +179,8 @@ def login():
                                       identity=Identity(user.id))
 
                 flash(gettext(u'Welcome') + " " + user.name)
+                if not user.is_confirmed():
+                    return redirect(url_for('users.pleaseconfirm', next=url_for('home.home')))
                 return redirect(url_for('home.home'))
         flash(gettext(u'Wrong email or password'), 'error-message')
 
@@ -264,11 +269,22 @@ def register():
             current_app.logger.exception(e)
 
         db.session.commit()
+        email_recipients = [item.email for item in db.session.query(User).all()
+                            if item.has_role(Role.query.get(1))
+                            ]
+        msg = 'A new user with login {} was created'.format(user.name)
+
+        if current_app.config['SEND_EMAILS'] == True:
+            try:
+                send_email(email_recipients, msg)
+            except Exception as e:
+                pass
 
         # flash will display a message to the user
         flash(gettext(u'Thanks for registering'))
         # redirect user to the 'home' method of the user module.
-        return redirect(url_for('users.home'))
+        if not user.is_confirmed():
+            return redirect(url_for('users.pleaseconfirm', next=url_for('users.home')))
 
     return render_template('users/register.html', form=form)
 

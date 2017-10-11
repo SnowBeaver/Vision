@@ -1,0 +1,17 @@
+<h4>Equipement:
+    {% for equipment in equipments %}<span>{{ equipment }}</span>
+        {% if loop.index != equipments|length %}, {% endif %}
+    {% endfor %}
+</h4>
+
+{% if graph %}
+    {%if not is_pop_up %}
+    <a href="/admin/tree/graph/?id={{id}}&size=1000" class="fancy_iframe">
+    {% endif %}
+        {{ graph|safe }}
+    {%if not is_pop_up %}
+    </a>
+    {% endif %} 
+{% else %}
+    No data for graph
+{% endif %}

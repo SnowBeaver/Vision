@@ -7,6 +7,10 @@ var nodes = null;
 
 var TreeComponent = React.createClass({
 
+    //componentWillMount: function () {
+    //  this.getSwitchers();
+    //},
+
     getInitialState: function () {
         return {
             struct: this.props.struct
@@ -18,11 +22,61 @@ var TreeComponent = React.createClass({
         });
     },
     handleNodeClick: function (e, data) {
+        this.toggleCheckboxes(false);
+        if (this.props.toggleGraph){
+            this.props.toggleGraph('hide');
+        }
         var item = data.instance.get_node(data.node.id);
-        this.props.onTreeNodeClick(item.state);
+        var selected = data.instance.get_selected(true);
+        var selected_equipment_ids = selected.filter(
+                function(selected_item) {
+                    return selected_item.state.equipment_id != 'null';
+                }).map(function(selected_item) {
+                    return selected_item.state.equipment_id;
+                }
+            );
+        this.props.onTreeNodeClick(item.state, selected_equipment_ids);
+        e.stopPropagation();
     },
 
     handleMoveNode: function (e, data) {
+        var item = data.instance.get_node(data.node.id);
+        var parent = data.instance.get_node(data.parent);
+
+        if (parent.state.type == 'main' && parent.parents.length == 1) {
+            // Node is moved directly to the another location
+            this.handleMoveNodeToLocation(e, data);
+        } else {
+            // Node is moved to another node
+            // node len-1 is root node, node len-2 is the location node closest to the root
+            var parent_location = data.instance.get_node(parent.parents[parent.parents.length - 2]);
+            if (parent_location.state.location_id == item.state.location_id) {
+                // Node is moved to another node on the same location
+                this.handleMoveNodeToNode(e, data);
+            } else {
+                // Node is moved to another node on another location
+                this.handleMoveNodeToLocation(e, data, parent_location);     // Move to location
+                this.handleMoveNodeToNode(e, data);
+            }
+        }
+    },
+
+    handleMoveNodeToLocation: function (e, data, parent) {
+        var item = data.instance.get_node(data.node.id);
+        if (!parent) {
+            parent = data.instance.get_node(data.parent);
+        }
+
+        $.post(url.treeMoveToLocation, {
+            'node_id': item.state.id,
+            'location_id': parent.state.location_id
+        }, function (data) {
+        }).fail(function () {
+            data.instance.refresh();
+        });
+    },
+
+    handleMoveNodeToNode: function (e, data) {
         var item = data.instance.get_node(data.node.id);
         var parent = data.instance.get_node(data.parent);
 
@@ -41,7 +95,6 @@ var TreeComponent = React.createClass({
         $.post(url.treeDelete, {
             'id': item.state.id
         }, function (data) {
-            //alert(data.id == true );
         }).fail(function () {
             data.instance.refresh();
         });
@@ -53,7 +106,6 @@ var TreeComponent = React.createClass({
             'id': item.state.id,
             'text': data.text
         }, function (data) {
-            //alert(data.success == true );
         }).fail(function () {
             data.instance.refresh();
         });
@@ -86,11 +138,25 @@ var TreeComponent = React.createClass({
         });
     },
 
-    componentDidMount: function () {
+    toggleCheckboxes: function (state) {
+        if (state == undefined) {
+            state = true;
+        }
+        if (state) {
+            $('#tree').jstree(true).show_checkboxes();
+        } else {
+            $('#tree').jstree(true).uncheck_all();
+            $('#tree').jstree(true).hide_checkboxes();
+        }
+    },
 
+    componentDidMount: function () {
+        let toggleGraph = this.props.toggleGraph;
+        let loadGraph = this.props.loadGraph;
+        $.jstree.defaults.search.show_only_matches = true;
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
-                "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed']
+                "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
                 , "core": {
                     "icons": false,
                     "animation": 0
@@ -112,8 +178,14 @@ var TreeComponent = React.createClass({
                     }
                 }
                 , "types": types
-                , "contextmenu": contextMenu
+                , "contextmenu": getContextMenu(toggleGraph, loadGraph)
                 , 'onStatusChange': this.handleStatusChange
+                , "checkbox" : {
+                    "keep_selected_style" : false,
+                    "whole_node": false,    // to avoid checking the box just clicking the node
+                    "visible": false,
+                    "tie_selection": false,  // for checking without selecting and selecting without checking
+                }
             }
         ).on('delete_node.jstree', this.handleDeleteNode
         ).on('rename_node.jstree', this.handleRenameNode
@@ -131,9 +203,10 @@ var TreeComponent = React.createClass({
     render: function () {
 
         var struct = this.props.struct;
-        nodes = struct.map(function (n) {
-            return <TreeNode node={n} children={n.children} key={n.id}/>
-        });
+
+        nodes = struct.map(function (n, i) {
+            return <TreeNode node={n} children={n.children} key={n.id + '_' + i}/>
+        }.bind(this));
 
 
         return (
@@ -175,10 +248,14 @@ var TreeNode = React.createClass({
         opts += ', \"type\":\"' + this.props.node.type + '\"';
         opts += ', \"equipment_id\":\"' + this.props.node.equipment_id + '\"';
         opts += ', \"text\":\"' + this.props.node.text + '\"';
-        opts += ', \"status\":\"' + this.props.node.status + '\"}';
+        opts += ', \"status\":\"' + this.props.node.status + '\"';
+        opts += ', \"location_id\":\"' + this.props.node.location_id + '\"';
+        opts += ', \"equipment_type\":\"' + (this.props.node.equipment_type ? equipTypeToUrl[this.props.node.equipment_type.table_name] : null) + '\"}';
+
+        var className = switchIds.indexOf(this.props.node.equipment_type_id) > -1 && this.props.node.tie_status == 0 ? "semitransparent" : "";
 
         return (
-            <li key={this.props.node.id} data-jstree={opts}>
+            <li key={this.props.node.id} data-jstree={opts} className={className}>
                 {this.props.node.text}
                 { cnodes ? <ul>{cnodes}</ul> : null }
             </li>
@@ -269,8 +346,11 @@ const types = {
     }
 }
 
-const contextMenu = {
-    'items': function (node) {
+
+function getContextMenu(toggleGraph, loadGraph) {
+    const contextMenu = {
+        'select_node': false,
+        'items': function (node) {
         var tmp = $.jstree.defaults.contextmenu.items();
         delete tmp.create.action;
         var current = $('#tree').jstree(true).get_selected('full', true)[0];
@@ -316,7 +396,7 @@ const contextMenu = {
                                         $("#tree #" + obj.id + " > a > i").css('background-image', 'url(' + data.src + ')');
                                     }
                                 }).fail(function () {
-                                
+
                                 data.instance.refresh();
                             });
                         }
@@ -348,7 +428,7 @@ const contextMenu = {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
-                    
+
                     var ids = [];
                     $.each($('#tree').jstree(true).get_selected('full', true), function (index, value) {
                         if (value.id != obj.id) {
@@ -368,7 +448,6 @@ const contextMenu = {
                     });
                 }
             }
-
         }
 
         if (typeof current !== 'undefined') {
@@ -394,11 +473,11 @@ const contextMenu = {
                     var inst = $.jstree.reference(data.reference),
                         obj = inst.get_node(data.reference);
                     $.post(url.treeCreate, {
-                            'parent': obj.id,
+                            'parent': obj.state.id,
                             'text': "New Main",
                             'icon': '../app/static/img/icons/main_b.ico',
                             'type': 'main',
-                            tooltip: "Main tooltip"
+                            'tooltip': "Main tooltip"
                         }
                         , function (data) {
 
@@ -406,15 +485,14 @@ const contextMenu = {
                                     'id': data.id,
                                     'text': 'New Main' + data.id,
                                     'icon': '../app/static/img/icons/main_b.ico',
-                                    type: 'main'
+                                    'type': 'main'
                                 }
                                 , "last", function (new_node) {
-
                                     setTimeout(function () {
+                                        new_node.state.id = data.id;
                                         inst.edit(new_node);
                                     }, 0);
                                 });
-
 
                         }).fail(function () {
                         data.instance.refresh();
@@ -485,6 +563,32 @@ const contextMenu = {
 
         };
 
+        tmp['graph'] = {
+                'label': 'Graph'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    toggleGraph();
+                    loadGraph(obj.state.equipment_id);
+                }
+            }
+            tmp['info'] = {
+                'label': 'Info'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    if (obj.state.equipment_id && obj.state.equipment_type) {
+                        window.location = url.info
+                            .replace(':id', obj.state.equipment_id)
+                            .replace(':type', obj.state.equipment_type);
+                    }
+                }
+            }
+
 
         if ((this.get_type(node) === "default")
             || ((this.get_type(node) === "root"))
@@ -518,5 +622,9 @@ const contextMenu = {
         return tmp;
     }
 }
+    return contextMenu
+}
+
+
 export default TreeComponent;
 

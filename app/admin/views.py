@@ -3,7 +3,7 @@ import os.path as op
 # from flask import Flask
 # from flask import Blueprint, request, render_template
 from flask.ext.admin.contrib import sqla
-from app import db
+from app import db, cache
 from app.users.models import User, Role
 from flask import flash, g, session, redirect, url_for
 from flask.ext.admin.contrib.sqla import ModelView
@@ -16,7 +16,7 @@ from flask import current_app
 from werkzeug.security import check_password_hash
 from app import admin_per, admin_or_performer_per
 # from app import , user_per, guest_per, blogger_per
-from app.tree.storage import get_tree
+from app.tree.storage import get_tree, get_switch_ids, get_owner_tree, get_equipment_type_to_url
 from app.tree.forms import TreeView
 from .models import File, Image
 from jinja2 import Markup
@@ -75,7 +75,9 @@ class MyAdminIndexView(admin.AdminIndexView):
         #     , 'doc': DocInfoViewForm()
         # }
         #
-        self._template_args['tree'] = get_tree()
+        # self._template_args['tree'] = get_tree()
+        self._template_args['tree'] = get_owner_tree()
+        self._template_args['switchIds'] = get_switch_ids()
         self._template_args['tree_view'] = TreeView()
         # front page views
         self._template_args['identification'] = IdentificationViewForm()
@@ -83,6 +85,7 @@ class MyAdminIndexView(admin.AdminIndexView):
         self._template_args['records_diagnosis'] = RecordsDiagnosticViewForm()
         self._template_args['equipment_diagnosis'] = EquipmentDiagnosisViewForm()
         self._template_args['user_is_admin'] = g.user.has_role(Role.query.get(1))
+        self._template_args['equipTypeToUrl'] = get_equipment_type_to_url()
         # self._template_args['diagnostic'] = popups
         # self._template_args['batch'] = BatchViewForm()
         # self._template_args['report'] = EquipmentTestReportViewForm()
@@ -264,19 +267,25 @@ class UserAdmin(MyModelView):
         'address',
         'mobile',
         'website',
-        'country'
+        'country',
     ]
 
     # # List of columns that can be sorted.
-    column_sortable_list = ('name', 'email', 'alias')
+    column_sortable_list = ('email', 'alias')
 
     # # rename column names
     column_labels = dict(
-        name='Full Name',
+        _name='Full Name',
         alias='Username',
     )
 
-    column_searchable_list = ('alias', 'name', 'email', 'id')
+    column_searchable_list = ('alias', 'email', 'id')
+    column_formatters = dict(_name=lambda v, c, m, p: m.name)
+
+    def scaffold_form(self):
+        form_class = super(UserAdmin, self).scaffold_form()
+        form_class.name = TextField('Full Name')
+        return form_class
 
     def __init__(self, dbsession):
         super(UserAdmin, self).__init__(User, dbsession, name="User", category='CMS')

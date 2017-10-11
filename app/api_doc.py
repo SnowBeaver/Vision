@@ -323,15 +323,9 @@ doc = ApiDoc(app=api)
 @apiSuccess {Dict}            location                    see: location->get an item
 @apiSuccess {Boolean}         modifier
 @apiSuccess {String}          comments
-@apiSuccess {String}          visual_date                 Date where was done the last visual inspection.
-@apiSuccess {Integer}         visual_inspection_by_id     User
-@apiSuccess {Dict}            visual_inspection_by        see: user->get an item
 @apiSuccess {Integer}         assigned_to_id              User
 @apiSuccess {Dict}            assigned_to                 see: user->get an item
-@apiSuccess {String}          visual_inspection_comments  Visual inspection comments,
 @apiSuccess {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
-@apiSuccess {Integer}         norm_id
-@apiSuccess {Dict}            norm                        see: norm->get an item
 @apiSuccess {Integer}         tie_status                  TieAnalysisState.
 @apiSuccess {Integer}         status                      EquipmentState.
 @apiSuccess {Integer}         phys_position
@@ -351,17 +345,15 @@ doc = ApiDoc(app=api)
 @apiGroup equipment
 @apiExample {curl} Example usage:
     curl -i -H "Content-Type: application/json" -X POST \
-         -d '{"equipment_number":"987abc", "equipment_type_id":1, "location_id":4, "visual_inspection_by_id": "4", \
-              "assigned_to_id": 4, "norm_id":2, "frequency":"25", "name": "Name"}' \
+         -d '{"equipment_number":"987abc", "equipment_type_id":1, "location_id":4, \
+              "assigned_to_id": 4, "frequency":"25", "name": "Name"}' \
           http://localhost:8001/api/v1.0/equipment/
 
 @apiParam {String(50)}      name                        Required.
 @apiParam {String(50)}      equipment_number            Required.
 @apiParam {Integer}         equipment_type_id           Required.
 @apiParam {Integer}         location_id                 Required.
-@apiParam {Integer}         visual_inspection_by_id     Required. User id
 @apiParam {Integer}         assigned_to_id              Required. User id
-@apiParam {Integer}         norm_id                     Required.
 @apiParam {String(50)}      serial
 @apiParam {Integer}         manufacturer_id
 @apiParam {Integer}         manufactured                Year manufactured, from 1900
@@ -369,8 +361,6 @@ doc = ApiDoc(app=api)
 @apiParam {String}          description
 @apiParam {Boolean}         modifier
 @apiParam {String}          comments
-@apiParam {String}          visual_date                 Date where was done the last visual inspection.
-@apiParam {String}          visual_inspection_comments  Visual inspection comments,
 @apiParam {String}          nbr_of_tap_change_ltc       Number of tap change on LTC
 @apiParam {Integer}         tie_status                  TieAnalysisState.
 @apiParam {Integer}         status                      EquipmentState.
@@ -390,7 +380,6 @@ doc = ApiDoc(app=api)
 @api {put}/{post} /equipment/:id Update an item by id. If only status field changed,
                                  send email notifications to the user who updated the
                                  equipment, the user who is assigned to the equipment
-                                 and the user who is doing visual inspection
 @apiVersion 1.0.0
 @apiName update_equipment_handler
 @apiGroup equipment
@@ -959,7 +948,7 @@ doc = ApiDoc(app=api)
 @apiSuccess {String(1024)}  description
 @apiSuccess {Boolean}       shared
 @apiSuccess {String}        profile_type  fluid_profile
-@apiSuccess {Integer}       qty
+@apiSuccess {Integer}       qty_ser
 @apiSuccess {Integer}       sampling
 @apiSuccess {Integer}       qty_jar
 @apiSuccess {Integer}       sampling_jar
@@ -1009,7 +998,7 @@ doc = ApiDoc(app=api)
 @apiParam {String(256)}   name
 @apiParam {String(1024)}  description
 @apiParam {Boolean}       shared
-@apiParam {Integer}       qty
+@apiParam {Integer}       qty_ser
 @apiParam {Integer}       sampling
 @apiParam {Integer}       qty_jar
 @apiParam {Integer}       sampling_jar
@@ -1183,7 +1172,7 @@ Can filter also by:
 @apiSuccess {Boolean}   furans
 @apiSuccess {Boolean}   inhibitor
 @apiSuccess {Boolean}   pcb
-@apiSuccess {Integer}   qty
+@apiSuccess {Integer}   qty_ser
 @apiSuccess {Integer}   sampling
 @apiSuccess {Boolean}   dielec
 @apiSuccess {Boolean}   acidity
@@ -1266,7 +1255,7 @@ Can filter also by:
 @apiParam {Boolean}   furans
 @apiParam {Boolean}   inhibitor
 @apiParam {Boolean}   pcb
-@apiParam {Integer}   qty
+@apiParam {Integer}   qty_ser
 @apiParam {Integer}   sampling
 @apiParam {Boolean}   dielec
 @apiParam {Boolean}   acidity
@@ -1415,6 +1404,18 @@ to the currently logged in user or are private.
 @apiSuccess {Dict}          status              see: campaign_status->get an item
 @apiSuccess {List}          test_result         list of related test results, see: test_result->get items
 @apiUse GetItemSuccess
+@apiUse Error404
+"""
+"""
+@api {get} /campaign/:id/finish Finish campaign setup. Send email notifications to performers,
+                                person who created campaign, user who finishes the campaign
+@apiVersion 1.0.0
+@apiName finish_campaign_handler
+@apiGroup campaign
+@apiExample {curl} Example usage:
+      curl -i http://localhost:8001/api/v1.0/campaign/1/finish
+
+@apiUse GetItemsSuccess
 @apiUse Error404
 """
 """
@@ -1840,13 +1841,13 @@ to the currently logged in user or are private.
 @apiSuccess {Float}       primary_tension
 @apiSuccess {Float}       secondary_tension
 @apiSuccess {Float}       tertiary_tension
-@apiSuccess {Float}       based_transformerp_ower
+@apiSuccess {Float}       based_transformer_power
 @apiSuccess {Float}       first_cooling_stage_power
 @apiSuccess {Float}       second_cooling_stage_power
 @apiSuccess {Integer}     primary_winding_connection
 @apiSuccess {Integer}     secondary_winding_connection
 @apiSuccess {Integer}     tertiary_winding_connection
-@apiSuccess {Integer}     windind_metal
+@apiSuccess {Integer}     winding_metal1
 @apiSuccess {Float}       bil1
 @apiSuccess {Float}       bil2
 @apiSuccess {Float}       bil3
@@ -1913,12 +1914,12 @@ to the currently logged in user or are private.
 @apiSuccess {Float}       mvarreserve
 @apiSuccess {Float}       mwultime
 @apiSuccess {Float}       mvarultime
-@apiSuccess {Float}       mva4
+@apiSuccess {Float}       third_cooling_stage_power
 @apiSuccess {Float}       quaternary_winding_connection
 @apiSuccess {Float}       bil4
 @apiSuccess {Float}       static_shield4
 @apiSuccess {Float}       ratio_tag7
-@apiSuccess {Float}       ratiot_ag8
+@apiSuccess {Float}       ratio_tag8
 @apiSuccess {Float}       formula_ratio3
 @apiUse GetItemSuccess
 @apiUse Error404
@@ -1949,13 +1950,13 @@ to the currently logged in user or are private.
 @apiParam   {Float}       primary_tension
 @apiParam   {Float}       secondary_tension
 @apiParam   {Float}       tertiary_tension
-@apiParam   {Float}       based_transformerp_ower
+@apiParam   {Float}       based_transformer_power
 @apiParam   {Float}       first_cooling_stage_power
 @apiParam   {Float}       second_cooling_stage_power
 @apiParam   {Integer}     primary_winding_connection
 @apiParam   {Integer}     secondary_winding_connection
 @apiParam   {Integer}     tertiary_winding_connection
-@apiParam   {Integer}     windind_metal
+@apiParam   {Integer}     winding_metal1
 @apiParam   {Float}       bil1
 @apiParam   {Float}       bil2
 @apiParam   {Float}       bil3
@@ -2010,12 +2011,12 @@ to the currently logged in user or are private.
 @apiParam   {Float}       mvarreserve
 @apiParam   {Float}       mwultime
 @apiParam   {Float}       mvarultime
-@apiParam   {Float}       mva4
+@apiParam   {Float}       third_cooling_stage_power
 @apiParam   {Float}       quaternary_winding_connection
 @apiParam   {Float}       bil4
 @apiParam   {Float}       static_shield4
 @apiParam   {Float}       ratio_tag7
-@apiParam   {Float}       ratiot_ag8
+@apiParam   {Float}       ratio_tag8
 @apiParam   {Float}       formula_ratio3
 @apiUse PostItemSuccess
 @apiUse Error400
@@ -2170,6 +2171,7 @@ to the currently logged in user or are private.
 @apiSuccess {String}    filter
 @apiSuccess {Integer}   counter
 @apiSuccess {Integer}   number_of_taps
+@apiSuccess {Integer}   tap_set
 @apiSuccess {Integer}   fluid_type_id
 @apiSuccess {Dict}      fluid_type                 see: fluid_type->get an item
 @apiSuccess {Integer}   fluid_level_id
@@ -2194,6 +2196,7 @@ to the currently logged in user or are private.
 @apiParam   {String(30)}    filter
 @apiParam   {Integer}       counter
 @apiParam   {Integer}       number_of_taps
+@apiParam   {Integer}       tap_set
 @apiParam   {Integer}       fluid_type_id
 @apiParam   {Integer}       fluid_level_id
 @apiParam   {Integer}       interrupting_medium_id
@@ -2260,7 +2263,7 @@ to the currently logged in user or are private.
 @apiSuccess {String}    type    'phase' or 'Neutral'
 @apiSuccess {Float}     kv
 @apiSuccess {Boolean}   sealed
-@apiSuccess {Integer}   current
+@apiSuccess {Integer}   current_rating
 @apiSuccess {Float}     fluid_volume
 @apiSuccess {Integer}   bil
 @apiSuccess {Float}     c1
@@ -2287,7 +2290,7 @@ to the currently logged in user or are private.
 @apiParam   {String}        type      allowed: 'phase' or 'Neutral'
 @apiParam   {Float}         kv
 @apiParam   {Boolean}       sealed
-@apiParam   {Integer}       current
+@apiParam   {Integer}       current_rating
 @apiParam   {Float}         fluid_volume
 @apiParam   {Integer(8)}    bil
 @apiParam   {Float}         c1
@@ -3198,6 +3201,7 @@ to the currently logged in user or are private.
 @apiSuccess {Integer}       id
 @apiSuccess {Integer(6)}    current_rating
 @apiSuccess {Boolean}       threephase
+@apiSuccess {Boolean}       open
 @apiSuccess {Integer}       interrupting_medium_id
 @apiSuccess {Dict}          interrupting_medium     see: interrupting_medium->get an item
 @apiSuccess {Integer}       equipment_id
@@ -3217,6 +3221,7 @@ to the currently logged in user or are private.
 @apiParam   {Integer}       equipment_id required
 @apiParam   {Integer(6)}    current_rating
 @apiParam   {Boolean}       threephase
+@apiParam   {Boolean}       open
 @apiParam   {Integer}       interrupting_medium_id
 @apiUse PostItemSuccess
 @apiUse Error400

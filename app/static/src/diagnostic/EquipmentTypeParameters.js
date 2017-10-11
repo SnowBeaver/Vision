@@ -229,7 +229,7 @@ var BushingParams = React.createClass({
         return {
             loading: false,
             errors: {},
-            fields: ["phase_number", "sealed", "winding", "model", "kw", "current", "fluid_volume",
+            fields: ["phase_number", "sealed", "winding", "model", "kw", "current_rating", "fluid_volume",
                 "bushing_manufacturer_h1", "bushing_manufacturer_h2", "bushing_manufacturer_h3", "bushing_manufacturer_hn",
                 "bushing_manufacturer_x1", "bushing_manufacturer_x2", "bushing_manufacturer_x3", "bushing_manufacturer_xn",
                 "bushing_manufacturer_t1", "bushing_manufacturer_t2", "bushing_manufacturer_t3", "bushing_manufacturer_tn",
@@ -395,7 +395,7 @@ var BushingParams = React.createClass({
 
                 <div className="row">
                     <div className="col-md-2">
-                        <TextField label="Current" name="current" value={this.state.current}/>
+                        <TextField label="Current" name="current_rating" value={this.state.current_rating}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="BIL" name="bil" value={this.state.bil}/>
@@ -2029,8 +2029,8 @@ var TransformerParams = React.createClass({
                                    value={this.state.tertiary_tension}/>
                     </div>
                     <div className="col-md-2">
-                        <TextField label="Based Power" name="based_transformerp_ower"
-                                   value={this.state.based_transformerp_ower}/>
+                        <TextField label="Based Power" name="based_transformer_power"
+                                   value={this.state.based_transformer_power}/>
                     </div>
                     <div className="col-md-2">
                         <TextField label="First Cooling Stage Power" name="first_cooling_stage_power"
@@ -2167,7 +2167,7 @@ var TransformerParams = React.createClass({
                         <TextField label="Ratio Tag 7" name="ratio_tag7" value={this.state.ratio_tag7}/>
                     </div>
                     <div className="col-md-1">
-                        <TextField label="Ratio Tag 8" name="ratiot_ag8" value={this.state.ratiot_ag8}/>
+                        <TextField label="Ratio Tag 8" name="ratio_tag8" value={this.state.ratio_tag8}/>
                     </div>
 
                 </div>
@@ -2297,7 +2297,7 @@ var TransformerParams = React.createClass({
                         <TextField label="Mva 3" name="mva3" value={this.state.mva3}/>
                     </div>
                     <div className="col-md-1">
-                        <TextField label="Mva 4" name="mva4" value={this.state.mva4}/>
+                        <TextField label="Mva 4" name="third_cooling_stage_power" value={this.state.third_cooling_stage_power}/>
                     </div>
                 </div>
                 <div className="row">

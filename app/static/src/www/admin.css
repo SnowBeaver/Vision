@@ -123,3 +123,142 @@ legend.scheduler-border {
 .container {
     width: 80%;
 }
+.select2-selection {
+    height: 33px!important;
+}
+
+
+/* Styles for charts */
+.bottom-left{
+    background-color: #3f5175;
+    border-radius: 4px;
+    height: 400px;
+    box-shadow: 1px 1px 1px 0px rgba(37,41,51,1);
+}
+
+.bottom-right{
+    background-color: #3f5175;
+    border-radius: 4px;
+    height: 400px;
+
+    box-shadow: 1px 1px 1px 0px rgba(37,41,51,1);
+}
+
+.shadow {
+    -webkit-filter: drop-shadow( 0px 2px 2px rgba(0,0,0,.3) );
+    filter: drop-shadow( 0px 2px 2px rgba(0,0,0,.3) );
+}
+
+.pad{
+    padding:20px;
+}
+
+.browser-legend{
+    font-size:14px;
+    opacity:.8;
+}
+
+.bottom-left-svg{
+    padding-top:40px;
+    text-align: center;
+}
+
+
+.bottom-right-svg{
+    text-align: center;
+}
+
+.line {
+    fill: none;
+    stroke: #7dc7f4;
+    stroke-width: 3px;
+
+}
+
+.axis{
+    fill:#bbc7d9;
+    opacity: 1;
+    background: #fff;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: none;
+    shape-rendering: crispEdges;
+
+}
+
+.axis text {
+    font-size: 14px;
+}
+
+.y-grid .tick{
+    stroke: #4b5f87;
+    opacity: 1;
+}
+
+.default-svg{
+
+}
+.line.h2 {
+    stroke: #7dc7f4;
+    background: #7dc7f4;
+}
+.line.co {
+    stroke: #E60D0D;
+    background: #E60D0D;
+}
+.line.c2h2 {
+    stroke: #4C0DE6;
+    background: #4C0DE6;
+}
+.line.c2h6 {
+    stroke: #6AE60D;
+    background: #6AE60D;
+}
+.line.c2h4 {
+    stroke: #EDF418;
+    background: #EDF418;
+}
+.line.content_gaz {
+    stroke: #E60DD5;
+    background:#E60DD5;
+}
+.line.co2 {
+    stroke: #A50DE6;
+    background: #A50DE6;
+}
+.line.ch4 {
+    stroke: #346B0F;
+    background: #346B0F;
+}
+.line.cap_gaz {
+    stroke: #988300;
+    background: #988300;
+}
+.line.n2 {
+    stroke: #692E62;
+    background: #692E62;
+}
+.line.o2 {
+    stroke: #0DE686;
+    background: #0DE686;
+}
+
+.legend{
+    padding:20px 0 20px 30px;
+}
+.legend .item{
+    cursor: pointer;
+}
+.legend .item:hover,.legend .item.active{
+    font-weight:bold;
+}
+.legend .line{
+    display: inline-block;
+    width: 30px;
+    height: 5px;
+    margin:0 5px 0 0;
+    vertical-align: middle;
+}

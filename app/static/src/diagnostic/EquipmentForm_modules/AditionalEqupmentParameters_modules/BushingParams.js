@@ -105,7 +105,7 @@ var BushingParams = React.createClass({
             'winding':'',
             'model':'',
             'kw':'',
-            'current':'',
+            'current_rating':'',
             'fluid_volume':'',
             'bushing_manufacturer_h1':'',
             'bushing_manufacturer_h2':'',
@@ -222,8 +222,8 @@ var BushingParams = React.createClass({
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
                                    label="Current"
-                                   name="current"
-                                   value={this.state.current}
+                                   name="current_rating"
+                                   value={this.state.current_rating}
                                    errors={errors}
                                    data-type="int"/>
                     </div>

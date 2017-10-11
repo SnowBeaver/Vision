@@ -654,6 +654,7 @@ var NewTestForm = React.createClass({
                 form.changedFields = this.state.changedFields.concat(['date_analyse']);
             }
             form.errors = {};
+            form.initialTestResult = result['result'];
             this.setState(form);
         }.bind(this), 'json');
     },
@@ -723,7 +724,9 @@ var NewTestForm = React.createClass({
         }
         xhr.done(this._onSuccess)
             .fail(this._onError)
-            .always(this.hideLoading)
+            .always(this.hideLoading);
+
+        this.props.handleClose();
     },
 
     is_valid: function () {
@@ -1296,6 +1299,7 @@ var NewTestForm = React.createClass({
                                             >Save</Button>
                                             <Button bsStyle="danger"
                                                     className="pull-right margin-right-xs"
+                                                    onClick={this.props.handleClose}
                                             >Cancel</Button>
                                         </div>
                                     </div>
@@ -1305,7 +1309,11 @@ var NewTestForm = React.createClass({
                     </form>
 
                     <Modal show={this.state.showElectroProfileForm}>
-                        <ElectricalProfileForm data={this.state} handleClose={this.closeElectricalProfileForm}/>
+                        <ElectricalProfileForm data={this.state}
+                                               handleClose={this.closeElectricalProfileForm}
+                                               electricalProfileId={this.state.electrical_profile_id}
+                                               testResultData={this.state.initialTestResult}
+                            />
                     </Modal>
 
                     <Modal show={this.state.showFluidProfileForm}>
@@ -1313,6 +1321,7 @@ var NewTestForm = React.createClass({
                                           equipmentId={this.state.equipment_id}
                                           campaignId={this.state.campaign_id}
                                           fluidProfileId={this.state.fluid_profile_id}
+                                          testResultData={this.state.initialTestResult}
                                           handleClose={this.closeFluidProfileForm}/>
                     </Modal>
 

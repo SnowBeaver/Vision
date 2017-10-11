@@ -25,8 +25,9 @@ SECRET_KEY = '&)\xfe\x8a\xee;\x0c\xb1\xbe\xe5\x94Z\xc3Ejs*\xe8\xfe\x13LS\x97\xd0
 SECURITY_RECOVERABLE = True
 SECURITY_RESET_URL = '/users/forgot-password'
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
+SECURITY_DB_ENCRYPT = 'encryptionkeencryptionkeYouCan'
 
-SQLALCHEMY_DATABASE_URI = "postgresql://vision:ViSiOn@localhost/vision"
+SQLALCHEMY_DATABASE_URI = "postgresql://vision:pass@localhost/vision"
 DATABASE_CONNECT_OPTIONS = {}
 
 CSRF_ENABLED = True
@@ -59,3 +60,15 @@ BLOGGING_SITENAME = APP_NAME
 BLOGGING_PERMISSIONS = True
 
 SENTRY_DSN = ''
+
+REDIS = {
+    'CACHE_TYPE': 'redis',
+    'CACHE_KEY_PREFIX': 'flcache',
+    'CACHE_REDIS_HOST': 'cache',
+    'CACHE_REDIS_PORT': '6379',
+    'CACHE_REDIS_PASSWORD': 'redis',
+    'CACHE_REDIS_URL': 'redis://:redis$@localhost:6379'
+}
+
+CELERY_BACKEND = REDIS['CACHE_REDIS_URL']
+CELERY_BROKER_URL = REDIS['CACHE_REDIS_URL']

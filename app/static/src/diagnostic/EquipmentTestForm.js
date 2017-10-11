@@ -34,6 +34,7 @@ import HelpBlock from 'react-bootstrap/lib/HelpBlock';
 import {findDOMNode} from 'react-dom';
 import ReactDOM from 'react-dom';
 import {EQUIPMENT_STATUS} from './appConstants.js';
+import ProgressBar from 'react-progress-bar-plus/lib/ProgressBar'
 
 
 var SelectField = React.createClass({
@@ -811,7 +812,11 @@ var EquipmentTestForm = React.createClass({
             errors: {},
             data: null,
             campaignAdministrator: {},
-            equipmentStatusChanged: false   // Reset this flag not to save same equipment status twice
+            equipmentStatusChanged: false,   // Reset this flag not to save same equipment status twice
+            progressBar: {
+                percent: 40,
+                intervalTime: 500
+            }
         }
     },
 
@@ -1144,10 +1149,20 @@ var EquipmentTestForm = React.createClass({
     },
 
     componentDidMount: function () {
-        this.serverRequest = $.authorizedGet('/api/v1.0/test_result/' + this.props.selectedRowId, this._addDataToStateAndGetIndicator, 'json');
+        this.serverRequest = $.authorizedGet(
+            '/api/v1.0/test_result/' + this.props.selectedRowId,
+            this._addDataToStateAndGetIndicator,
+            'json'
+        );
     },
 
     _addDataToStateAndGetIndicator: function (result) {
+        let state = this.state;
+        state.progressBar = {
+            percent: 100,
+            intervalTime: 500
+        };
+        this.setState(state);
         $.authorizedGet('/api/v1.0/campaign/' + result['result'].campaign_id, function (campaignResult){
             var data = result['result'];
             data.equipment_status = result['result'].equipment.status;
@@ -1177,8 +1192,24 @@ var EquipmentTestForm = React.createClass({
 
     render: function () {
         var data = (this.state.data != null) ? this.state.data : {};
+        var test_values_test_type = {};
+        if (data.test_values_test_type_id != null &&
+            data.test_values_test_type_id != undefined) {
+            var result = $.grep(data.selected_subtests,
+                                           function(e){
+                                               return e.id == data.test_values_test_type_id;
+                                           });
+            if (result.length == 1) {
+                test_values_test_type = result[0];
+            } else {
+              // error
+            }
+        }
         return (
             <div>
+                <ProgressBar spinner={false}
+                             autoIncrement={true}
+                             {...this.state.progressBar}/>
                 <input type="hidden" value={this.state.csrf_token}/>
                 <div className="maxwidth padding-top-lg margin-bottom-xs">
                     <ul id="tabs" className="nav nav-tabs " data-tabs="tabs">
@@ -1191,14 +1222,29 @@ var EquipmentTestForm = React.createClass({
                     <div id="my-tab-content" className="tab-content col-lg-12 nopadding">
                         <div id="tabs-1" role="tabpanel" className="tab-pane active">
                             <AdministratorInfoForm data={this.state.campaignAdministrator} />
-                            <EquipmentTestIdentificationForm data={data}
-                                                             onChange={this._onChange}
-                                                             onDateTimeFieldChange={this._onDateTimeFieldChange}/>
+                            <EquipmentTestIdentificationForm
+                                data={data}
+                                onChange={this._onChange}
+                                onDateTimeFieldChange={this._onDateTimeFieldChange}
+                            />
                         </div>
                         <div id="tabs-2" role="tabpanel" className="tab-pane">
                             <AdministratorInfoForm data={this.state.campaignAdministrator} />
+                            <div className="col-md-12 nopadding">
+                                <div className="col-md-4 nopadding">
+                                    <TestTypeSelectField
+                                        key={data.selected_subtests}
+                                        selectedSubtests={data.selected_subtests}
+                                        testType={data.test_type}
+                                        handleChange={this._onChange}
+                                        name="test_values_test_type_id"
+                                        errors={this.state.errors}
+                                        required={this.state.formEdited}
+                                    />
+                                </div>
+                            </div>
                             <TestValuesForm testResultId={this.props.selectedRowId}
-                                            testType={data.test_type}/>
+                                            testType={test_values_test_type}/>
                         </div>
                         <div id="tabs-3" role="tabpanel" className="tab-pane">
                             <AdministratorInfoForm data={this.state.campaignAdministrator} />

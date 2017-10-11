@@ -87,6 +87,7 @@ var WaterTestForm = React.createClass({
         }
         if ('id' in this.state) {
             url += this.state['id'];
+            delete data.id;
         }
         return $.authorizedAjax({
             url: url,
@@ -122,6 +123,9 @@ var WaterTestForm = React.createClass({
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
         NotificationManager.success('Test values have been saved successfully.');
+        if ($.isNumeric(data.result)) {
+            this.setState({id: data.result});
+        }
     },
 
     _onError: function (data) {
@@ -166,7 +170,7 @@ var WaterTestForm = React.createClass({
             state[e.target.name] = e.target.value;
         }
         else {
-            state[e.target.name] = $.trim(e.target.value);
+            state[e.target.name] = e.target.value;
         }
         var errors = this._validate(e);
         state = this._updateFieldErrors(e.target.name, state, errors);

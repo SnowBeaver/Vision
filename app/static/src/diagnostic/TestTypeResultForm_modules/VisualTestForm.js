@@ -163,6 +163,7 @@ var VisualTestForm = React.createClass({
         }
         if ('id' in this.state) {
             url += this.state['id'];
+            delete data.id;
         }
         return $.authorizedAjax({
             url: url,
@@ -197,6 +198,9 @@ var VisualTestForm = React.createClass({
     _onSuccess: function (data) {
         // this.setState(this.getInitialState());
         NotificationManager.success('Test values have been saved successfully.');
+        if ($.isNumeric(data.result)) {
+            this.setState({id: data.result});
+        }
     },
 
     _onError: function (data) {
@@ -293,7 +297,7 @@ var VisualTestForm = React.createClass({
 
     render: function() {
         return (
-            <div className="form-container">
+            <div className="col-md-12">
                 <h3>Visual inspection</h3>
                 <form method="post" action="#" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div className="tab_row text-center">

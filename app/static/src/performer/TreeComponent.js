@@ -60,7 +60,6 @@ var TreeComponent = React.createClass({
     },
 
     handleStatusChange: function (e, data) {
-        console.log(data);
         return;
     },
 
@@ -177,8 +176,10 @@ var TreeNode = React.createClass({
         opts += ', \"text\":\"' + this.props.node.text + '\"';
         opts += ', \"status\":\"' + this.props.node.status + '\"}';
 
+        var className = switchIds.indexOf(this.props.node.equipment_type_id) > -1 && this.props.node.tie_status == 0 ? "semitransparent" : "";
+
         return (
-            <li key={this.props.node.id} data-jstree={opts}>
+            <li key={this.props.node.id} data-jstree={opts} className={className}>
                 {this.props.node.text}
                 { cnodes ? <ul>{cnodes}</ul> : null }
             </li>
@@ -316,7 +317,6 @@ const contextMenu = {
                                         $("#tree #" + obj.id + " > a > i").css('background-image', 'url(' + data.src + ')');
                                     }
                                 }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -334,7 +334,6 @@ const contextMenu = {
                                         $("#tree #" + obj.id + " > a > i").css('background-image', 'url(' + data.src + ')');
                                     }
                                 }).fail(function () {
-                                console.log(fail);
                                 data.instance.refresh();
                             });
                         }
@@ -349,10 +348,7 @@ const contextMenu = {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
-
-                    console.log("Join " + obj.id);
                     var ids = [];
-                    console.log(ids.length);
                     $.each($('#tree').jstree(true).get_selected('full', true), function (index, value) {
                         if (value.id != obj.id) {
                             ids[ids.length] = value.id;
@@ -367,7 +363,6 @@ const contextMenu = {
                                 });
                             }
                         }).fail(function () {
-                        console.log(fail);
                         data.instance.refresh();
                     });
                 }
@@ -421,7 +416,6 @@ const contextMenu = {
 
 
                         }).fail(function () {
-                        console.log(fail);
                         data.instance.refresh();
                     });
                 }
@@ -458,7 +452,6 @@ const contextMenu = {
                 //                     inst.edit(new_node); },0);
                 //             });
                 //     }).fail(function () {
-                //     console.log(fail);
                 //     data.instance.refresh();
                 // });
             }
@@ -482,7 +475,6 @@ const contextMenu = {
                                 });
                             }
                         }).fail(function () {
-                        console.log(fail);
                         data.instance.refresh();
                         window.location.href = '#/campaign'
                     });
@@ -498,7 +490,6 @@ const contextMenu = {
         ) {
             $.each(tmp.create.submenu, function (index, value) {
                 if (value.label !== 'Main') {
-                    //console.log(tmp.create.submenu[index]);
                     delete tmp.create.submenu[index];
                     //delete value;
                     //delete this;

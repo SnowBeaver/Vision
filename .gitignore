@@ -16,3 +16,8 @@ Flask-Blogging
 flask-blog
 *.sql
 .DS_Store
+*.rdb
+*.pid
+celerybeat-schedule
+node_modules
+npm-debug.log
