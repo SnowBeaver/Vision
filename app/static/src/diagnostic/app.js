@@ -44,6 +44,7 @@ import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import EqConnectionsManager from './EqConnectionsManager';
 import NewTaskForm from './NewTaskForm';
 import TaskList from './TaskList';
+import GraphDetails from './GraphDetails';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
@@ -268,6 +269,7 @@ render((
             <Route path="up_down_streams" component={EqConnectionsManager}/>
             <Route path="schedule_task" component={NewTaskForm}/>
             <Route path="tasks" component={TaskList}/>
+            <Route path="graph_details/:equipmentId/:date" component={GraphDetails}/>
 
             {/*This route should be the last, otherwise it will match all subsequent routes*/}
             <Route path=":equipmentId" component={Home}/>

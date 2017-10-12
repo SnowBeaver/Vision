@@ -231,7 +231,8 @@ var Dots=React.createClass({
     },
     openPop:function(e){
         var d = e.target.getAttribute('data-day');
-        window.open(url.graph_details + "?id=" + this.props.equipmentId + "&date=" + d, "", "width=600,height=400");
+        //window.open(url.graph_details + "?id=" + this.props.equipmentId + "&date=" + d, "", "width=600,height=400");
+        var win = window.open("#/graph_details/" + this.props.equipmentId + "/" + d, "", "width=600,height=600");
     }
 });
 

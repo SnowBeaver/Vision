@@ -196,35 +196,18 @@ def status():
 @mod.route('/graph/', methods=['GET'])
 def graph():
     ids = request.args.get('id')
-    size = request.args.get('size')
-    is_pop_up = request.args.get('size')
-    if not size:
-        size = 400
     id = ids.split(',')
-    equipments = db.session.query(Equipment).filter(Equipment.id.in_(id)).values('name')
-    equipments = [equipment.name for equipment in equipments]
-    json_res = GraphGenerator(equipment_id=id, graph_type='gas_concentration_vs_time').render(size=size)
-    print("this is res")
-    print(json.dumps(json_res))
-
+    json_res = GraphData(equipment_id=id).fetch()
+    
     return json.dumps(json_res)
-    #return render_template('admin/graph.html', graph=html, equipments=equipments, id=ids, is_pop_up=is_pop_up)
 
-@mod.route('/graph_details/', methods=['GET'])
-def graph_details():
-    ids = request.args.get('id')
+@mod.route('/graph/search/', methods=['GET'])
+def graph_search():
+    ids = request.args.get('equipmentId')
     date = request.args.get('date')
     id = ids.split(',')
     equipments = db.session.query(Equipment).filter(Equipment.id.in_(id)).values('name')
     equipments = [equipment.name for equipment in equipments]
-    json_res = GraphGenerator(equipment_id=id, graph_type='gas_concentration_vs_time').render(size=400)
-
-    final_res = []
-    for row in json_res:
-        tmp_res = []
-        for data_row in row['data']:
-            if (data_row['day'] == date):
-               tmp_res.append(data_row)
-        final_res.append({"label" : row['label'], "data" : tmp_res}) 
+    json_res = GraphData(equipment_id=id).search({'date':date})
     
-    return render_template('admin/graph_details.html', graph=final_res, date=date,equipments=equipments)
+    return json.dumps({"equipment" : equipment, "data": json_res})

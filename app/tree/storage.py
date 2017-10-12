@@ -9,8 +9,7 @@ import json
 from flask import jsonify
 from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
     Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
-    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor
-
+    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, DissolvedGasTest, TestResult
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -430,3 +429,60 @@ def get_equipment_type_to_url():
         'resistance': NeutralResistance.__name__.lower(),
         'gas_sensor': GasSensor.__name__.lower(),
     })
+
+class GraphData:
+    def __init__(self, equipment_id = 0):
+        self.gases = {'h2', 'o2', 'n2', 'co', 'ch4', 'co2', 'c2h2', 'c2h4', 'c2h6', 'cap_gaz', 'content_gaz'}
+        self.equipment_id = equipment_id
+        self.graph_data = []
+
+    def load_from_db(self):
+        db.session.execute("SET datestyle = dmy;")
+        self.query = db.session.query(DissolvedGasTest). \
+            join(DissolvedGasTest.test_result)
+        if self.equipment_id > 0:
+            self.query = self.query.filter(TestResult.equipment_id.in_(self.equipment_id))
+        self.query = self.query.order_by(TestResult.date_analyse)
+    
+    def group_by_equipment(self):
+        tests = {}
+        for record in self.query:
+            equipment = record.test_result.equipment
+            if equipment.id not in tests:
+                tests[equipment.id] = {
+                    'obj': [],
+                    'equipment': '{} {}'.format(equipment.equipment_number, equipment.serial)
+                }
+            tests[equipment.id]['obj'].append(record)
+        return tests
+
+    def group_by_gases(self, tests):
+        for equipment_id, data in tests.items():
+            test_objs = data['obj']
+            equipment = data['equipment']
+            for gas in self.gases:
+                records = []
+                for record in test_objs:
+                    if record.test_result.date_analyse:
+                        records.append({"day":record.test_result.date_analyse.strftime('%d.%m.%Y %H:%M'), "count":getattr(record, gas) or 0})
+                self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment)})
+      
+    def fetch(self):
+        self.load_from_db()
+        tests = self.group_by_equipment()
+        self.group_by_gases(tests=tests)
+        return self.graph_data
+
+    def search(self, params):
+        self.load_from_db()
+        for key, param in params.viewitems():
+            if key == 'date':
+                self.query = self.query.filter(TestResult.date_analyse==param)
+            if key == 'campaignId':
+                self.query = self.query.filter(TestResult.campaign_id==param)
+            if key == 'testId':
+                self.query = self.query.filter(TestResult.id==param)
+        tests = self.group_by_equipment()
+        self.group_by_gases(tests=tests)
+        return self.graph_data
+        
