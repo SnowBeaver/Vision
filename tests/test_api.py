@@ -6,7 +6,7 @@ sys.path.append('..')
 from app.api_utility import model_dict
 
 
-url = 'http://localhost:8001/api/v1.0/{path}/'
+url = 'http://localhost:9000/api/v1.0/{path}/'
 user = 'test@example.com'
 password = 'test-123'
 path_to_get_token = 'token'

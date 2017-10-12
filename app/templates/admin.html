@@ -25,6 +25,7 @@
             treeCopy: '{{ url_for("tree.copy") }}',
             treeGetView: '{{ url_for("tree.getview")}}',
             graph: '{{ url_for("tree.graph")}}',
+            graph_details: '{{ url_for("tree.graph_search")}}',
             info: '/admin/:type/details?id=:id'
         };
         var equipTypeToUrl = {{ _(equipTypeToUrl) }};

@@ -73,7 +73,7 @@ var Graph = React.createClass({
                 })
             })
             
-        ReactDOM.render((<LineChart chart_data={chart_data} />),document.getElementById("graph"));
+        ReactDOM.render((<LineChart chart_data={chart_data} equipmentId={equipmentId}/>),document.getElementById("graph"));
             
         }, "json").fail(function () { //, "json"
             that.props.toggleGraphBlock('hide');
@@ -220,7 +220,7 @@ var Dots=React.createClass({
             return (<circle className="dot" r="7" cx={_self.props.x(d.date)} cy={_self.props.y(d.count)} fill="#7dc7f4"
                             stroke="#3f5175" strokeWidth="5px" key={i}
                             onMouseOver={_self.props.showToolTip} onMouseOut={_self.props.hideToolTip}
-                            data-date={d.date} data-count={d.count} label={_self.props.label}/>)
+                            data-date={d.date} data-day={d.day} data-count={d.count} label={_self.props.label} onClick={_self.openPop}/>)
         });
 
         return(
@@ -228,6 +228,11 @@ var Dots=React.createClass({
                 {circles}
             </g>
         );
+    },
+    openPop:function(e){
+        var d = e.target.getAttribute('data-day');
+        //window.open(url.graph_details + "?id=" + this.props.equipmentId + "&date=" + d, "", "width=600,height=400");
+        var win = window.open("#/graph_details/" + this.props.equipmentId + "/" + d, "", "width=600,height=600");
     }
 });
 
@@ -256,7 +261,8 @@ var LineChart=React.createClass({
             delta:0,
             offset_y:0,
             origin:0,
-            chart_data:this.props.chart_data
+            chart_data:this.props.chart_data,
+            slider:1
         };
     },
     
@@ -288,9 +294,10 @@ var LineChart=React.createClass({
             var zoom = (d3.event.wheelDelta / 120) * 0.2;
             self.setState({
                 old_scale : self.state.scale,
-                scale:self.state.scale + zoom,
+                scale:self.state.scale * 1 + zoom,
                 is_zoom : true,
-                mouse_pos : d3.event.layerY - 40
+                mouse_pos : d3.event.layerY - 40,
+                slider:self.state.scale + zoom
             });
         })
         
@@ -307,7 +314,19 @@ var LineChart=React.createClass({
         );
         */
     },
-
+    handleChange(event){
+        let value = event.target.value;
+        if(this.state.slider != value)
+        {
+            this.setState({
+                old_scale : this.state.scale,
+                scale:value,
+                is_zoom : true,
+                mouse_pos : 375,
+                slider:value
+            });
+        }
+    },
     render:function(){
         var _self = this;
         var chart_data =  clone(this.state.chart_data);
@@ -413,7 +432,7 @@ var LineChart=React.createClass({
                 var style = {opacity:0.3};
             else
                 style = {};
-            rows.push(<g key={i} style={style} ><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} label={chart_data[i].label} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip}/></g>);
+            rows.push(<g key={i} style={style} ><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} label={chart_data[i].label} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip} equipmentId={this.props.equipmentId}/></g>);
 
         }
 
@@ -435,6 +454,7 @@ var LineChart=React.createClass({
                         <ToolTip tooltip={this.state.tooltip}/>
                     </g>
                 </svg>
+                <input type="range" min="1" step="0.2" max="100" value={this.state.slider} onChange={this.handleChange}/>
                 <div className="legend">
                     {Object.keys(chart_data).map(function(key, index){
                         var classname = "line " + key;

@@ -14,7 +14,6 @@ app/static/docs/
 blenv
 Flask-Blogging
 flask-blog
-*.sql
 .DS_Store
 *.rdb
 *.pid
