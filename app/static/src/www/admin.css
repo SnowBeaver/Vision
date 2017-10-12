@@ -245,7 +245,34 @@ legend.scheduler-border {
     stroke: #0DE686;
     background: #0DE686;
 }
-
+.line.dielectric_1816 {stroke: #a4b712;background: #a4b7126;}
+.line.dielectric_1816_2 {stroke: #6585dd;background: #6585dd;}
+.line.dielectric_877 {stroke: #a00f59;background: #a00f59;}
+.line.dielectric_iec_156 {stroke: #0DE686;background: #0DE686;}
+.line.acidity {stroke: #cbed85;background: #cbed85;}
+.line.color {stroke: #11703d;background: #11703d;}
+.line.ift {stroke: #8fd833;background: #8fd833;}
+.line.density {stroke: #be387c;background: #be387c;}
+.line.pf20c {stroke: #5a887f;background: #5a887f;}
+.line.pf100c {stroke: #a2ecc5;background: #a2ecc5;}
+.line.sludge {stroke: #f3baa2;background: #f3baa2;}
+.line.aniline_point {stroke: #442127;background: #442127;}
+.line.viscosity {stroke: #88761b;background: #88761b;}
+.line.flash_point {stroke: #963c08;background: #963c08;}
+.line.pour_point {stroke: #e9c10f;background: #e9c10f;}
+.line.inhibitor {stroke: #d2c8b1;background: #d2c8b1;}
+.line.water {stroke: #fe0c81;background: #fe0c81;}
+.line.aroclor_1242 {stroke: #1ece1a;background: #1ece1a;}
+.line.aroclor_1254 {stroke: #c702f7;background: #c702f7;}
+.line.aroclor_1260 {stroke: #359189;background: #359189;}
+.line.hmf {stroke: #ccbabf;background: #ccbabf;}
+.line.fol {stroke: #455a3f;background: #455a3f;}
+.line.fal {stroke: #a1c315;background: #a1c315;}
+.line.acf {stroke: #fd47c6;background: #fd47c6;}
+.line.mef {stroke: #121212;background: #121212;}
+#v1_chart{
+    cursor:ns-resize;
+}
 .legend{
     padding:20px 0 20px 30px;
 }
