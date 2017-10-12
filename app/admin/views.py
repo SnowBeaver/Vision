@@ -48,6 +48,7 @@ from .forms import *
 
 class MyAdminIndexView(admin.AdminIndexView):
     @expose('/')
+    @cache.memoize(timeout=3600)
     @admin_or_performer_per.require(http_exception=403)
     def index(self):
         if not login.current_user.is_authenticated():

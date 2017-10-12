@@ -3,10 +3,12 @@
 """  Main configuration file  """
 
 from unipath import Path
+import os
 
 APP_NAME = 'Vision Diagnostic'
 HOST = 'visiondiagnostic.org'
 DEBUG = True
+LOG_EMAIL = True
 
 CACHE_TIMEOUT = 300
 ROOT_DIR = Path(__file__).ancestor(1)
@@ -37,6 +39,9 @@ NOREPLY_EMAIL = 'noreply@visiondiagnostic.org'
 SUPPORT_EMAIL = 'support@visiondiagnostic.org'
 SECURITY_EMAIL_SENDER = 'noreply@visiondiagnostic.org'
 
+
+SEND_EMAILS = False
+SEND_EMAILS = os.environ.get('SEND_EMAILS', False)
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USERNAME = ''
