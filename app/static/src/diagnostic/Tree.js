@@ -161,6 +161,7 @@ $(document).ready(function(){
         
     });
 
+    /*
     var to = false;
     $('#plugins4_q').keyup(function () {
         if(to) { clearTimeout(to); }
@@ -169,7 +170,7 @@ $(document).ready(function(){
             $('#tree').jstree(true).search(v);
         }, 250);
     });
-    
+    */
 
     //  next part 
 
@@ -860,6 +861,8 @@ $(document).ready(function(){
         });
 
     var to = false;
+    $.jstree.defaults.search.show_only_matches = true;
+    console.log("treee")
     $('#plugins4_q').keyup(function () {
         if(to) { clearTimeout(to); }
         to = setTimeout(function () {
