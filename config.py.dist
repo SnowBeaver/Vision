@@ -25,7 +25,7 @@ SECRET_KEY = '&)\xfe\x8a\xee;\x0c\xb1\xbe\xe5\x94Z\xc3Ejs*\xe8\xfe\x13LS\x97\xd0
 SECURITY_RECOVERABLE = True
 SECURITY_RESET_URL = '/users/forgot-password'
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
-SECURITY_DB_ENCRYPT = 'encryptionkeencryptionkeYouCan'
+SECURITY_DB_ENCRYPT = 'v4uPPqe7wuerWofETwQcmI7AYEGGoJ4K'
 
 SQLALCHEMY_DATABASE_URI = "postgresql://vision:pass@localhost/vision"
 DATABASE_CONNECT_OPTIONS = {}
