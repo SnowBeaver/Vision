@@ -8,7 +8,6 @@ from flask import jsonify
 from .forms import TreeView
 from app import admin_per
 from flask import redirect, url_for
-from app.graph_renderer import GraphGenerator
 
 mod = Blueprint('tree', __name__, url_prefix='/admin/tree')
 
