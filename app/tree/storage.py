@@ -9,7 +9,8 @@ import json
 from flask import jsonify
 from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
     Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
-    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, DissolvedGasTest, TestResult
+    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, DissolvedGasTest, TestResult, Graph
+import datetime
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -432,22 +433,23 @@ def get_equipment_type_to_url():
 
 class GraphData:
     def __init__(self, equipment_id = 0):
-        self.gases = {'h2', 'o2', 'n2', 'co', 'ch4', 'co2', 'c2h2', 'c2h4', 'c2h6', 'cap_gaz', 'content_gaz'}
+        self.gases = {'h2', 'o2', 'n2', 'co', 'ch4', 'co2', 'c2h2', 'c2h4', 'c2h6', 'cap_gaz', 'content_gaz','dielectric_1816', 'dielectric_1816_2', 'dielectric_877',
+        'dielectric_iec_156', 'acidity', 'color', 'ift', 'density', 'pf20c', 'pf100c', 'sludge', 'aniline_point', 'viscosity', 'flash_point', 'pour_point', 'inhibitor',
+        'water', 'aroclor_1242', 'aroclor_1254', 'aroclor_1260', 'hmf', 'fol', 'fal', 'acf', 'mef'}
         self.equipment_id = equipment_id
         self.graph_data = []
 
     def load_from_db(self):
         db.session.execute("SET datestyle = dmy;")
-        self.query = db.session.query(DissolvedGasTest). \
-            join(DissolvedGasTest.test_result)
+        self.query = db.session.query(Graph)
         if self.equipment_id > 0:
-            self.query = self.query.filter(TestResult.equipment_id.in_(self.equipment_id))
-        self.query = self.query.order_by(TestResult.date_analyse)
+            self.query = self.query.filter(Graph.equipment_id.in_(self.equipment_id))
+        self.query = self.query.order_by(Graph.date_analyse)
     
     def group_by_equipment(self):
         tests = {}
         for record in self.query:
-            equipment = record.test_result.equipment
+            equipment = record.equipment
             if equipment.id not in tests:
                 tests[equipment.id] = {
                     'obj': [],
@@ -463,25 +465,27 @@ class GraphData:
             for gas in self.gases:
                 records = []
                 for record in test_objs:
-                    if record.test_result.date_analyse:
-                        records.append({"day":record.test_result.date_analyse.strftime('%d.%m.%Y %H:%M'), "count":getattr(record, gas) or 0})
+                    if isinstance(record.date_analyse, datetime.datetime) and getattr(record, gas):
+                        records.append({"day":record.date_analyse.strftime('%d.%m.%Y %H:%M'), "count":getattr(record, gas)})
                 self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment)})
       
     def fetch(self):
         self.load_from_db()
         tests = self.group_by_equipment()
         self.group_by_gases(tests=tests)
+        print(self.graph_data)
         return self.graph_data
 
     def search(self, params):
         self.load_from_db()
         for key, param in params.viewitems():
             if key == 'date':
-                self.query = self.query.filter(TestResult.date_analyse==param)
-            if key == 'campaignId':
-                self.query = self.query.filter(TestResult.campaign_id==param)
-            if key == 'testId':
-                self.query = self.query.filter(TestResult.id==param)
+                self.query = self.query.filter(Graph.date_analyse==param)
+            # need to change DB view for searching
+            #if key == 'campaignId':
+            #    self.query = self.query.filter(TestResult.campaign_id==param)
+            #if key == 'testId':
+            #    self.query = self.query.filter(TestResult.id==param)
         tests = self.group_by_equipment()
         self.group_by_gases(tests=tests)
         return self.graph_data
