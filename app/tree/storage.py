@@ -10,6 +10,7 @@ from flask import jsonify
 from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
     Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
     LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, Graph
+
 import datetime
 
 def set_locale():
@@ -468,13 +469,16 @@ class GraphData:
                 for record in test_objs:
                     if isinstance(record.date_analyse, datetime.datetime) and getattr(record, gas):
                         records.append({"day":record.date_analyse.strftime('%d.%m.%Y %H:%M'), "count":getattr(record, gas)})
+
                 if len(records) > 0:
                     self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment)})
+
       
     def fetch(self):
         self.load_from_db()
         tests = self.group_by_equipment()
         self.group_by_gases(tests=tests)
+        print(self.graph_data)
         return self.graph_data
 
     def search(self, params):
