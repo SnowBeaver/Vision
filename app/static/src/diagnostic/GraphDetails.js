@@ -11,6 +11,7 @@ var GraphDetails = React.createClass({
     },
     componentDidMount: function () { 
         var _self = this;
+        $(".navbar").hide();
         $.get(url.graph_details + "?equipmentId=" + this.props.params['equipmentId'] + "&date=" + this.props.params['date'], function(result){
             _self.setState({"data" : result.data, "equipment" : result.equipment})
         }, "json");
@@ -24,7 +25,7 @@ var GraphDetails = React.createClass({
             <div>
                 <h2>{_self.state.equipment}</h2>
                 <h4>{_self.props.params['date']}</h4>
-                <table className="table">
+                <table className="grapth_table">
                     {Object.keys(_self.state.data).map(function(key, index){
                         return (<tr>
                                 <td>{_self.state.data[key].label}</td>
