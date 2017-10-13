@@ -117,7 +117,10 @@ var TreeComponent = React.createClass({
     },
 
     handleTreeSearch: function (value) {
-        $('#tree').jstree(true).search(value);
+        if (value.length < 3)
+            $('#tree').jstree("clear_search");
+        else
+            $('#tree').jstree(true).search(value);
     },
 
     handleSearchResult: function (data) {
