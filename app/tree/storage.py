@@ -9,12 +9,8 @@ import json
 from flask import jsonify
 from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
     Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
-<<<<<<< HEAD
     LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, Graph
 import datetime
-=======
-    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, DissolvedGasTest, TestResult
->>>>>>> master
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
