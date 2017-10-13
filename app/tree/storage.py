@@ -9,7 +9,8 @@ import json
 from flask import jsonify
 from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
     Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
-    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, DissolvedGasTest, TestResult, Graph
+    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, Graph
+
 import datetime
 
 def set_locale():
@@ -436,6 +437,7 @@ class GraphData:
         self.gases = {'h2', 'o2', 'n2', 'co', 'ch4', 'co2', 'c2h2', 'c2h4', 'c2h6', 'cap_gaz', 'content_gaz','dielectric_1816', 'dielectric_1816_2', 'dielectric_877',
         'dielectric_iec_156', 'acidity', 'color', 'ift', 'density', 'pf20c', 'pf100c', 'sludge', 'aniline_point', 'viscosity', 'flash_point', 'pour_point', 'inhibitor',
         'water', 'aroclor_1242', 'aroclor_1254', 'aroclor_1260', 'hmf', 'fol', 'fal', 'acf', 'mef'}
+
         self.equipment_id = equipment_id
         self.graph_data = []
 
@@ -467,7 +469,10 @@ class GraphData:
                 for record in test_objs:
                     if isinstance(record.date_analyse, datetime.datetime) and getattr(record, gas):
                         records.append({"day":record.date_analyse.strftime('%d.%m.%Y %H:%M'), "count":getattr(record, gas)})
-                self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment)})
+
+                if len(records) > 0:
+                    self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment)})
+
       
     def fetch(self):
         self.load_from_db()
@@ -489,4 +494,3 @@ class GraphData:
         tests = self.group_by_equipment()
         self.group_by_gases(tests=tests)
         return self.graph_data
-        

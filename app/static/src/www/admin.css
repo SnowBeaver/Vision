@@ -245,7 +245,9 @@ legend.scheduler-border {
     stroke: #0DE686;
     background: #0DE686;
 }
-.line.dielectric_1816 {stroke: #a4b712;background: #a4b7126;}
+
+.line.dielectric_1816 {stroke: #a4b712;background: #a4b712;}
+
 .line.dielectric_1816_2 {stroke: #6585dd;background: #6585dd;}
 .line.dielectric_877 {stroke: #a00f59;background: #a00f59;}
 .line.dielectric_iec_156 {stroke: #0DE686;background: #0DE686;}
