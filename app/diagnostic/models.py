@@ -4306,3 +4306,96 @@ class NormParticlesData(db.Model):
                 'equipment_id': self.equipment_id,
                 'equipment': self.equipment and self.equipment.serialize(),
                 }
+
+
+class Graph(db.Model):
+
+    __tablename__ = 'data_view'
+
+    id = db.Column(db.String(50), primary_key=True)
+    date_analyse = db.Column('date_analyse', db.DateTime)
+    h2 = db.Column(u'h2', db.Float(53))
+    o2 = db.Column(u'o2', db.Float(53))
+    n2 = db.Column(u'n2', db.Float(53))
+    co = db.Column(u'co', db.Float(53))
+    co2 = db.Column(u'co2', db.Float(53))
+    ch4 = db.Column(u'ch4', db.Float(53))
+    c2h2 = db.Column(u'c2h2', db.Float(53))
+    c2h4 = db.Column(u'c2h4', db.Float(53))
+    c2h6 = db.Column(u'c2h6', db.Float(53))
+    cap_gaz = db.Column(u'cap_gaz', db.Float(53))
+    content_gaz = db.Column(u'content_gaz', db.Float(53))
+    dielectric_1816 = db.Column(u'dielectric_1816', db.Float(53))
+    dielectric_1816_2 = db.Column(u'dielectric_1816_2', db.Float(53))
+    dielectric_877 = db.Column(u'dielectric_877', db.Float(53))
+    dielectric_iec_156 = db.Column(u'dielectric_iec_156', db.Float(53))
+    acidity = db.Column(u'acidity', db.Float(53))
+    color = db.Column(u'color', db.Float(53))
+    ift = db.Column(u'ift', db.Float(53))
+    density = db.Column(u'density', db.Float(53))
+    pf20c = db.Column(u'pf20c', db.Float(53))
+    pf100c = db.Column(u'pf100c', db.Float(53))
+    sludge = db.Column(u'sludge', db.Float(53))
+    aniline_point = db.Column(u'aniline_point', db.Float(53))
+    viscosity = db.Column(u'viscosity', db.Float(53))
+    flash_point = db.Column(u'flash_point', db.Float(53))
+    pour_point = db.Column(u'pour_point', db.Float(53))
+    inhibitor = db.Column(u'inhibitor', db.Float(53))
+    water = db.Column(u'water', db.Float(53))
+    aroclor_1242 = db.Column(u'aroclor_1242', db.Float(53))
+    aroclor_1254 = db.Column(u'aroclor_1254', db.Float(53))
+    aroclor_1260 = db.Column(u'aroclor_1260', db.Float(53))
+    hmf = db.Column(u'hmf', db.Float(53))
+    fol = db.Column(u'fol', db.Float(53))
+    fal = db.Column(u'fal', db.Float(53))
+    acf = db.Column(u'acf', db.Float(53))
+    mef = db.Column(u'mef', db.Float(53))
+    equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
+    equipment = db.relationship('Equipment', foreign_keys='Graph.equipment_id')
+    
+    def __repr__(self):
+        return self.id
+
+    def serialize(self):
+        """Return object data in easily serializable format"""
+        return {'id': self.id,
+                'date_analyse': dump_datetime(self.date_analyse),
+                'h2': self.h2,
+                'o2': self.o2,
+                'n2': self.n2,
+                'co': self.co,
+                'co2': self.co2,
+                'ch4': self.ch4,
+                'c2h2': self.c2h2,
+                'c2h4': self.c2h4,
+                'c2h6': self.c2h6,
+                'cap_gaz': self.cap_gaz,
+                'content_gaz': self.content_gaz,
+                'dielectric_1816h2': self.dielectric_1816,
+                'dielectric_1816_2': self.dielectric_1816,
+                'dielectric_877': self.dielectric_877,
+                'dielectric_iec_156': self.dielectric_iec_156,
+                'acidity': self.acidity,
+                'color': self.color,
+                'ift': self.ift,
+                'density': self.density,
+                'pf20c': self.pf20c,
+                'pf100c': self.pf100c,
+                'sludge': self.sludge,
+                'aniline_point': self.aniline_point,
+                'viscosity': self.viscosity,
+                'flash_point': self.flash_point,
+                'pour_point': self.pour_point,
+                'inhibitor': self.inhibitor,
+                'water': self.water,
+                'aroclor_1242': self.aroclor_1242,
+                'aroclor_1254': self.aroclor_1254,
+                'aroclor_1260': self.aroclor_1260,
+                'hmf': self.hmf,
+                'fol': self.fol,
+                'fal': self.fal,
+                'acf': self.acf,
+                'mef': self.mef,
+                'equipment_id': self.equipment_id,
+                'equipment': self.equipment and self.equipment.serialize()
+                }
