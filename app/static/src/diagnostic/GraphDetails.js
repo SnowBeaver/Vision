@@ -11,6 +11,7 @@ var GraphDetails = React.createClass({
     },
     componentDidMount: function () { 
         var _self = this;
+        // @todo should be a different template in the future
         $(".navbar").hide();
         $.get(url.graph_details + "?equipmentId=" + this.props.params['equipmentId'] + "&date=" + this.props.params['date'], function(result){
             _self.setState({"data" : result.data, "equipment" : result.equipment})
