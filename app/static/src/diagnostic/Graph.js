@@ -261,8 +261,7 @@ var LineChart=React.createClass({
             delta:0,
             offset_y:0,
             origin:0,
-            chart_data:this.props.chart_data,
-            slider:1
+            chart_data:this.props.chart_data
         };
     },
     
@@ -296,8 +295,7 @@ var LineChart=React.createClass({
                 old_scale : self.state.scale,
                 scale:self.state.scale * 1 + zoom,
                 is_zoom : true,
-                mouse_pos : d3.event.layerY - 40,
-                slider:self.state.scale + zoom
+                mouse_pos : d3.event.layerY - 40
             });
         })
         
@@ -316,14 +314,13 @@ var LineChart=React.createClass({
     },
     handleChange(event){
         let value = event.target.value;
-        if(this.state.slider != value)
+        if(this.state.scale != value)
         {
             this.setState({
                 old_scale : this.state.scale,
                 scale:value,
                 is_zoom : true,
-                mouse_pos : 375,
-                slider:value
+                mouse_pos : 375
             });
         }
     },
@@ -364,11 +361,18 @@ var LineChart=React.createClass({
         if (visible_one){
             max_y = d3.max(visible_row,function(d){
                 return d.count;
-            }) * 1.1;
-            var dif_pos = (this.state.offset_y / 400) * max_y;
+            });
+            var dif_pos = (this.state.offset_y / 375) * max_y;
             min_y = d3.min(visible_row,function(d){
                 return d.count;
-            }) - dif_pos;
+            }) + dif_pos;
+            max_y += dif_pos;
+
+            if (max_y == min_y){
+                max_y = max_y * 1.2;
+                min_y = min_y * 0.8;
+            }
+
         }
         else{
             max_y = d3.max(all_data,function(d){
@@ -445,7 +449,7 @@ var LineChart=React.createClass({
                         <Grid h={h} grid={yGrid} gridType="y"/>
                         {rows}
                         
-                        <g fill="white">
+                        <g fill="white" className="graph">
                             <Axis h={h} axis={yAxis} axisType="y" fill="white" />
                             <Axis h={h} axis={xAxis} axisType="x" fill="white"/>
                         </g>
@@ -454,13 +458,34 @@ var LineChart=React.createClass({
                         <ToolTip tooltip={this.state.tooltip}/>
                     </g>
                 </svg>
-                <input type="range" min="1" step="0.2" max="100" value={this.state.slider} onChange={this.handleChange}/>
+                <input type="range" min="1" step="0.2" max="100" value={this.state.scale} onChange={this.handleChange}/>
+                <div>
+                    <i className="fa fa-search-plus" style={{fontSize:22+'px', float:'right'}}></i>
+                    <i className="fa fa-search-minus"></i>
+                    <div className="clearfix"></div>
+                </div>
                 <div className="legend">
-                    {Object.keys(chart_data).map(function(key, index){
-                        var classname = "line " + key;
-                        var lineClassName = "item " + (chart_data[key].selected == true ? "active" : "");
-                        return <div className={lineClassName} key={index} onClick={_self.selectRow} data-row={key}><div className={classname}></div>{chart_data[key].label}</div>;
-                    })}
+                    <div className="col-md-6">
+                        {Object.keys(chart_data).map(function(key, index){
+
+                            if (index % 2){
+
+                                var classname = "line " + key;
+                                var lineClassName = "item " + (chart_data[key].selected == true ? "active" : "");
+                                return <div className={lineClassName} key={index} onClick={_self.selectRow} data-row={key}><div className={classname}></div>{chart_data[key].label}</div>;
+                            }
+                        })}
+                    </div>
+                    <div className="col-md-6">
+                        {Object.keys(chart_data).map(function(key, index){
+
+                            if (index % 2 != 1){
+                                var classname = "line " + key;
+                                var lineClassName = "item " + (chart_data[key].selected == true ? "active" : "");
+                                return <div className={lineClassName} key={index} onClick={_self.selectRow} data-row={key}><div className={classname}></div>{chart_data[key].label}</div>;
+                            }
+                        })}
+                    </div>
                     <div className="item" key="all" onClick={_self.showAll} >View all</div>
                 </div>
             </div>
@@ -481,7 +506,9 @@ var LineChart=React.createClass({
             }
         })
         d3.zoomTransform(d3.select("#" + this.props.chartId)).scale(1);
-        this.setState({chart_data:chart_data});
+
+        this.setState({chart_data:chart_data, offset_y:0});
+
     },
 
     showAll:function(){
@@ -490,7 +517,9 @@ var LineChart=React.createClass({
             chart_data[key].hide = false;
             chart_data[key].selected = false;
         })
-        this.setState({chart_data:chart_data});
+
+        this.setState({chart_data:chart_data,offset_y:0, scale:1, old_scale:1});
+
     },
 
     showToolTip:function(e){
