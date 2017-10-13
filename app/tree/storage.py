@@ -9,8 +9,12 @@ import json
 from flask import jsonify
 from app.diagnostic.models import EquipmentType, Location, Transformer, AirCircuitBreaker, Bushing, \
     Capacitor, Breaker, PowerSource, Cable, SwitchGear, InductionMachine, SynchronousMachine, \
+<<<<<<< HEAD
     LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, Graph
 import datetime
+=======
+    LoadTapChanger, Rectifier, Tank, Switch, Inductance, NeutralResistance, GasSensor, DissolvedGasTest, TestResult
+>>>>>>> master
 
 def set_locale():
     sqlalchemy_utils.i18n.get_locale = get_locale
@@ -436,6 +440,7 @@ class GraphData:
         self.gases = {'h2', 'o2', 'n2', 'co', 'ch4', 'co2', 'c2h2', 'c2h4', 'c2h6', 'cap_gaz', 'content_gaz','dielectric_1816', 'dielectric_1816_2', 'dielectric_877',
         'dielectric_iec_156', 'acidity', 'color', 'ift', 'density', 'pf20c', 'pf100c', 'sludge', 'aniline_point', 'viscosity', 'flash_point', 'pour_point', 'inhibitor',
         'water', 'aroclor_1242', 'aroclor_1254', 'aroclor_1260', 'hmf', 'fol', 'fal', 'acf', 'mef'}
+
         self.equipment_id = equipment_id
         self.graph_data = []
 
