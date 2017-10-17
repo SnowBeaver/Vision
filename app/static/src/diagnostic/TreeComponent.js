@@ -124,7 +124,7 @@ var TreeComponent = React.createClass({
     },
 
     handleSearchResult: function (data) {
-
+        $('#tree').find('.jstree-search:eq(0)')[0].scrollIntoView(); 
     },
 
     handleTreeReady: function (e, data) {
@@ -156,7 +156,6 @@ var TreeComponent = React.createClass({
     componentDidMount: function () {
         let toggleGraph = this.props.toggleGraph;
         let loadGraph = this.props.loadGraph;
-        $.jstree.defaults.search.show_only_matches = true;
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
                 "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
