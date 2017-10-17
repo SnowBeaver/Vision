@@ -272,14 +272,26 @@ legend.scheduler-border {
 .line.fal {stroke: #a1c315;background: #a1c315;}
 .line.acf {stroke: #fd47c6;background: #fd47c6;}
 .line.mef {stroke: #121212;background: #121212;}
-#v1_chart{
-    cursor:ns-resize;
-}
+
 .legend{
     padding:20px 0 20px 30px;
 }
+.legend_head label{
+    display: block;
+    background: rgba(0,0,0,0.5);
+    color:#fff;
+    font-weight:bold;
+    padding:5px 0 5px 40px;
+}
+.legend_block{
+    border:1px solid rgba(0,0,0,0.2);
+    border-radius:4px;
+    margin:4px;
+    width:calc(50% - 8px);
+    overflow: hidden;
+}
 .legend .item{
-    cursor: pointer;
+    padding:0 0 0 5px;
 }
 .legend .item:hover,.legend .item.active{
     font-weight:bold;
@@ -299,4 +311,13 @@ legend.scheduler-border {
 .grapth_table td{
     padding: 5px;
     background: #fff;
+}
+input[type=range][orient=vertical]
+{
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 8px;
+    height: 375px;
+    padding: 0 5px;
+    margin:10px 15px 0 0;
 }

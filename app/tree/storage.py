@@ -466,20 +466,30 @@ class GraphData:
             equipment = data['equipment']
             for gas in self.gases:
                 records = []
+                test_name = ""
                 for record in test_objs:
                     if isinstance(record.date_analyse, datetime.datetime) and getattr(record, gas):
-                        records.append({"day":record.date_analyse.strftime('%d.%m.%Y %H:%M'), "count":getattr(record, gas)})
+                        records.append({"day":record.date_analyse.strftime('%Y.%m.%d'), "count":getattr(record, gas)})
+                        test_name = record.test_name
 
                 if len(records) > 0:
-                    self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment)})
+                    self.graph_data.append({"data": records, "label": "{} {}".format(gas.upper(), equipment), "test_name" : test_name})
 
-      
+
+    def group_by_test(self,data):
+        final = {}
+        for record in data:
+            if record['test_name'] not in final:
+                final[record['test_name']] = []
+            final[record['test_name']].append(record)    
+        return final  
+
     def fetch(self):
         self.load_from_db()
         tests = self.group_by_equipment()
         self.group_by_gases(tests=tests)
-        print(self.graph_data)
-        return self.graph_data
+        graph_data = self.group_by_test(self.graph_data)
+        return graph_data
 
     def search(self, params):
         self.load_from_db()

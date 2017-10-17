@@ -136,32 +136,33 @@ var TestResultForm = React.createClass({
                                 updateSource={this.updateSource}
                                 options={options}
                                 ref="table">
-                    <TableHeaderColumn editable={false} dataField="id" hidden={true} width="15">Id</TableHeaderColumn>
+                    <TableHeaderColumn editable={false} dataField="id" hidden={true} width="15px">Id</TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="date"
                                        dataSort={true}
-                                       width="95"
+                                       width="145px"
                                        dataFormat={this._formatDateTime}>Acquisition Date
                     </TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="reason"
                                        dataSort={true}
-                                       width="85">Reason
+                                       width="110px">Reason
                     </TableHeaderColumn>
                     <TableHeaderColumn editable={false} dataField="type" dataSort={true}>Type</TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="contract"
                                        filter={{type: "TextFilter", placeholder: "Contract number"}}
                                        dataSort={true}
-                                       width="85">Contract No.
+                                       width="85px">Contract No.
                     </TableHeaderColumn>
-                    <TableHeaderColumn dataField="test_status" dataSort={true} width="155">Analysis stage</TableHeaderColumn>
+                    <TableHeaderColumn dataField="test_status" dataSort={true} width="155px">Analysis stage</TableHeaderColumn>
                     <TableHeaderColumn editable={false}
                                        dataField="analysis_number"
                                        filter={{type: "TextFilter", placeholder: "Analysis number"}}
                                        isKey={true}
-                                       width="85">Analysis Nr
+                                       width="85px">Analysis Nr
                     </TableHeaderColumn>
+                    {/*
                     <TableHeaderColumn editable={false}
                                        dataField="serial"
                                        filter={{type: "TextFilter", placeholder: "Please enter a value"}}
@@ -172,6 +173,7 @@ var TestResultForm = React.createClass({
                                        dataField="equipment_number"
                                        width="80">Equipment No.
                     </TableHeaderColumn>
+                    */}
                 </BootstrapTable>
                 <Modal show={this.state.showEquipmentTestForm}>
                     <EquipmentTestForm handleClose={this.closeEquipmentTestForm}

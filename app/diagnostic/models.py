@@ -4352,6 +4352,7 @@ class Graph(db.Model):
     mef = db.Column(u'mef', db.Float(53))
     equipment_id = db.Column('equipment_id', db.ForeignKey("equipment.id"))
     equipment = db.relationship('Equipment', foreign_keys='Graph.equipment_id')
+    test_name = db.Column(u'test_name', db.String(50))
     
     def __repr__(self):
         return self.id
@@ -4397,5 +4398,6 @@ class Graph(db.Model):
                 'acf': self.acf,
                 'mef': self.mef,
                 'equipment_id': self.equipment_id,
-                'equipment': self.equipment and self.equipment.serialize()
+                'equipment': self.equipment and self.equipment.serialize(),
+                'test_name': self.test_name
                 }
