@@ -39,12 +39,13 @@ import PolymerisationDegreeTestForm from './TestTypeResultForm_modules/Polymeris
 import NewTransformerTestForm from './TestTypeResultForm_modules/NewTransformerTestForm';
 import NewWindingResistanceTestForm from './TestTypeResultForm_modules/NewWindingResistanceTestForm';
 import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
-import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
+import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';ItemDetails
 import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import EqConnectionsManager from './EqConnectionsManager';
 import NewTaskForm from './NewTaskForm';
 import TaskList from './TaskList';
 import GraphDetails from './GraphDetails';
+import ItemDetails from './ItemDetails';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
@@ -68,7 +69,7 @@ function getAPIToken() {
 			}
 		};
 		return $.ajax(settings);
-	};
+	};ItemDetails
 })(jQuery);
 
 (function ($) {
@@ -270,7 +271,7 @@ render((
             <Route path="schedule_task" component={NewTaskForm}/>
             <Route path="tasks" component={TaskList}/>
             <Route path="graph_details/:equipmentId/:date" component={GraphDetails}/>
-
+            
             {/*This route should be the last, otherwise it will match all subsequent routes*/}
             <Route path=":equipmentId" component={Home}/>
         </Route>

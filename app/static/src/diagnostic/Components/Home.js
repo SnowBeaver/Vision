@@ -5,6 +5,7 @@ import Select2 from 'react-select2-wrapper';
 // import EquipmentList from '../EquipmentList';
 import TestResultForm from '../TestResultForm';
 import Graph from '../Graph';
+import ItemDetails from '../ItemDetails';
 import EquipmentTestForm from '../EquipmentTestForm';
 import TreeComponent from '../TreeComponent';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
@@ -228,10 +229,17 @@ var Home = React.createClass({
         // The other action for test results
         action = action == 'hide' ? null:'hide';
         this.refs['testResultList'].toggle(action);
+        this.refs['itemDetails'].toggle("hide");
     },
 
     loadGraph: function (data) {
         this.refs['graph'].load(data);
+        this.refs['itemDetails'].toggle("hide");
+    },
+    loadInfo: function (data) {
+        this.refs['itemDetails'].load(data);
+        this.refs['graph'].toggle("hide");
+        this.refs['testResultList'].toggle("hide");
     },
 
     render: function () {
@@ -269,6 +277,7 @@ var Home = React.createClass({
                             onTreeNodeClick={this.onTreeNodeClick}
                             toggleGraph={this.toggleGraphBlock}
                             loadGraph={this.loadGraph}
+                            loadInfo={this.loadInfo}
                         />
                     </div>
                 </div>
@@ -288,6 +297,8 @@ var Home = React.createClass({
                     <Graph ref="graph"
                            onClick={this.refs['tree'] ? this.refs['tree'].toggleCheckboxes:null}
                            toggleGraphBlock={this.toggleGraphBlock} />
+                    <br/>
+                    <ItemDetails ref="itemDetails"/>
                     <br/>
                     <TestResultForm ref="testResultList"
                                     source={this.state.source}/>
