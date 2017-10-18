@@ -827,7 +827,8 @@ class Transformer(db.Model):
     formula_ratio3 = db.Column(db.Float(53))  # RatioFormula3
 
     def __repr__(self):
-        return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        #return "{} {} {}".format(self.__tablename__, self.name, self.serial)
+        return self.__tablename__
 
     def serialize(self):
         """Return object data in easily serializeable format"""
