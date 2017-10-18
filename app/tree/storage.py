@@ -455,7 +455,7 @@ class GraphData:
             if equipment.id not in tests:
                 tests[equipment.id] = {
                     'obj': [],
-                    'equipment': '{} {}'.format(equipment.equipment_number, equipment.serial)
+                    'equipment': '{} {}'.format(equipment.equipment_number.encode('utf-8'), equipment.serial.encode('utf-8'))
                 }
             tests[equipment.id]['obj'].append(record)
         return tests
