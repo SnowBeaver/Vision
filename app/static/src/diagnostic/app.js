@@ -69,7 +69,7 @@ function getAPIToken() {
 			}
 		};
 		return $.ajax(settings);
-	};ItemDetails
+	};
 })(jQuery);
 
 (function ($) {
