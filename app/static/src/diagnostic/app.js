@@ -39,7 +39,7 @@ import PolymerisationDegreeTestForm from './TestTypeResultForm_modules/Polymeris
 import NewTransformerTestForm from './TestTypeResultForm_modules/NewTransformerTestForm';
 import NewWindingResistanceTestForm from './TestTypeResultForm_modules/NewWindingResistanceTestForm';
 import VisualTestForm from './TestTypeResultForm_modules/VisualTestForm';
-import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';ItemDetails
+import WaterTestForm from './TestTypeResultForm_modules/WaterTestForm';
 import WindingTestForm from './TestTypeResultForm_modules/WindingTestForm';
 import EqConnectionsManager from './EqConnectionsManager';
 import NewTaskForm from './NewTaskForm';
@@ -69,7 +69,7 @@ function getAPIToken() {
 			}
 		};
 		return $.ajax(settings);
-	};ItemDetails
+	};
 })(jQuery);
 
 (function ($) {
