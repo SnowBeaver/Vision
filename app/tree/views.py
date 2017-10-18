@@ -8,6 +8,8 @@ from flask import jsonify
 from .forms import TreeView
 from app import admin_per
 from flask import redirect, url_for
+import app.diagnostic.models as DiagnosticModel
+from app.diagnostic.models import *
 
 mod = Blueprint('tree', __name__, url_prefix='/admin/tree')
 
@@ -210,3 +212,18 @@ def graph_search():
     json_res = GraphData(equipment_id=id).search({'date':date})
     
     return json.dumps({"equipment" : equipment, "data": json_res})
+
+@mod.route('/item_details/<id>/', methods=['GET'])
+def item_details(id):
+    
+    equipment = db.session.query(Equipment).filter(Equipment.id == id).first()
+    mod = DiagnosticModel.get_class_by_tablename(equipment.equipment_type.table_name)
+    res = db.session.query(mod).filter(mod.equipment_id == id).first().serialize()
+    final = []
+    for key, value in res.iteritems():
+        if key != 'equipment_id' and key != 'id':
+            key = key.replace("_", " ")
+            key = key.title()
+            final.append({"key" : key, "value": value})
+
+    return json.dumps(final)

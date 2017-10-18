@@ -26,7 +26,7 @@
             treeGetView: '{{ url_for("tree.getview")}}',
             graph: '{{ url_for("tree.graph")}}',
             graph_details: '{{ url_for("tree.graph_search")}}',
-            info: '/admin/:type/details?id=:id'
+            info: '{{ url_for("tree.item_details", id=":id")}}'
         };
         var equipTypeToUrl = {{ _(equipTypeToUrl) }};
         var treeStruct = {{ _(tree) or '[]' }};

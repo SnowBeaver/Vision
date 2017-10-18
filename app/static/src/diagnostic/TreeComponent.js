@@ -156,6 +156,7 @@ var TreeComponent = React.createClass({
     componentDidMount: function () {
         let toggleGraph = this.props.toggleGraph;
         let loadGraph = this.props.loadGraph;
+        let loadInfo = this.props.loadInfo;
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
                 "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
@@ -180,7 +181,7 @@ var TreeComponent = React.createClass({
                     }
                 }
                 , "types": types
-                , "contextmenu": getContextMenu(toggleGraph, loadGraph)
+                , "contextmenu": getContextMenu(toggleGraph, loadGraph, loadInfo)
                 , 'onStatusChange': this.handleStatusChange
                 , "checkbox" : {
                     "keep_selected_style" : false,
@@ -349,7 +350,7 @@ const types = {
 }
 
 
-function getContextMenu(toggleGraph, loadGraph) {
+function getContextMenu(toggleGraph, loadGraph, loadInfo) {
     const contextMenu = {
         'select_node': false,
         'items': function (node) {
@@ -583,11 +584,7 @@ function getContextMenu(toggleGraph, loadGraph) {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
-                    if (obj.state.equipment_id && obj.state.equipment_type) {
-                        window.location = url.info
-                            .replace(':id', obj.state.equipment_id)
-                            .replace(':type', obj.state.equipment_type);
-                    }
+                    loadInfo(obj.state.equipment_id);
                 }
             }
 
