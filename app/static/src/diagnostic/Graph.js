@@ -485,13 +485,14 @@ var LineChart=React.createClass({
         for (var i in chart_data){
             for (var k in chart_data[i]){
                 if (chart_data[i][k].show){
-                    var className = "line shadow " + chart_data[i][k].label.split(" ")[0].toLowerCase() ;
+                    var split_label = chart_data[i][k].label.split(" ");
+                    var className = "line shadow " + split_label[0].toLowerCase() ;
                     var dot_data = clone(chart_data[i][k].data);
                     if (chart_data[i][k].hide == true)
                         var style = {opacity:0.3};
                     else
                         style = {};
-                    var key = i + "_" + chart_data[i][k].label.split(" ")[0].toLowerCase();
+                    var key = i + "_" + split_label[0].toLowerCase() + "_" + split_label[split_label.length - 1].toLowerCase();
                     rows.push(<g key={key} style={style} ><path className={className} d={line(dot_data)} strokeLinecap="round"/><Dots data={dot_data} label={chart_data[i][k].label} x={x} y={y} showToolTip={this.showToolTip} hideToolTip={this.hideToolTip} equipmentId={this.props.equipmentId}/></g>);
                 }
             }

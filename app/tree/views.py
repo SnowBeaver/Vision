@@ -198,7 +198,11 @@ def status():
 def graph():
     ids = request.args.get('id')
     id = ids.split(',')
-    json_res = GraphData(equipment_id=id).fetch()
+    ids = []
+    for value in id:
+        if value != "null" and value:
+            ids.append(value)
+    json_res = GraphData(equipment_id=ids).fetch()
     
     return json.dumps(json_res)
 
@@ -207,9 +211,13 @@ def graph_search():
     ids = request.args.get('equipmentId')
     date = request.args.get('date')
     id = ids.split(',')
-    equipments = db.session.query(Equipment).filter(Equipment.id.in_(id)).values('name')
+    ids = []
+    for value in id:
+        if value != "null" and value:
+            ids.append(value)
+    equipments = db.session.query(Equipment).filter(Equipment.id.in_(ids)).values('name')
     equipments = [equipment.name for equipment in equipments]
-    json_res = GraphData(equipment_id=id).search({'date':date})
+    json_res = GraphData(equipment_id=ids).search({'date':date})
     
     return json.dumps({"equipment" : equipment, "data": json_res})
 
