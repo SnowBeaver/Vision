@@ -27,6 +27,13 @@ var ItemDetails = React.createClass({
         var _self = this;
         
         $.get(url.info.replace(":id", equipmentId), function(data){
+            for (var k in data){
+                var row = data[k];
+                console.log(row.key, typeof(row.value), row.value)
+                if (row.value != null && typeof(row.value) == "object" && Object.keys(row.value).length){
+                    row.value = row.value.name;
+                }
+            }
             _self.setState({"data" : data, "isVisible" : true})
         }, "json");
     },
