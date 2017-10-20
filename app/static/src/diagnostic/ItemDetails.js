@@ -27,12 +27,6 @@ var ItemDetails = React.createClass({
         var _self = this;
         
         $.get(url.info.replace(":id", equipmentId), function(data){
-            for (var k in data){
-                var row = data[k];
-                if (row.value != null && typeof(row.value) == "object" && Object.keys(row.value).length){
-                    row.value = row.value.name;
-                }
-            }
             _self.setState({"data" : data, "isVisible" : true})
         }, "json");
     },
@@ -41,26 +35,35 @@ var ItemDetails = React.createClass({
         if (!this.state.data || !this.state.data.length) {
             return null
         }
+        var final_rows = [];
+        this.state.data.map(function(row){
+            var tmp_row = [];
+            row.value.map(function(subrow){
+                if (typeof(subrow.value) == "boolean"){
+                    if (subrow.value)
+                        subrow.value = <i className={['fa', 'fa-check-circle'].join(' ')} style={{color:'green'}}></i>;
+                    else
+                        subrow.value = <i className={['fa', 'fa-minus-circle'].join(' ')} style={{color:'red'}} ></i>;
+                }
+                else{
+                    if (typeof(subrow.value) == "object" && subrow.value != null){
+                        var tmp_subrow = [];
+                        for (var sub_row_key in subrow.value){
+                            tmp_subrow.push(<li key={sub_row_key}>{sub_row_key} - {subrow.value[sub_row_key]}</li>);
+                        }
+                        subrow.value = <ul>{tmp_subrow}</ul>
+                    }
+                }
+                
+                tmp_row.push(<tr key={subrow.key}>
+                    <td>{subrow.key}</td><td>{subrow.value}</td> 
+                </tr>);
+            })
+            final_rows.push(<div key={row.cat}><h4>{row.cat}</h4><table className="grapth_table" width="100%"><tbody>{tmp_row}</tbody></table></div>);
+        })
         return (
             <div className={"col-md-12" + (!this.state.isVisible ? " collapse": "")} id="infoBlock">
-                <BootstrapTable data={this.state.data}
-                                striped={true}
-                                hover={true}
-                                search={false}
-                                condensed={true}
-                                ref="table">
-                    <TableHeaderColumn editable={false}
-                                       dataSort={true}
-                                       isKey={true}
-                                       dataField="key"
-                                       width="250px">Key
-                    </TableHeaderColumn>
-                    <TableHeaderColumn editable={false}
-                                       dataField="value"
-                                       dataSort={true} >Value
-                    </TableHeaderColumn>
-                    
-                </BootstrapTable>
+                {final_rows}
             </div>
         );
     }
