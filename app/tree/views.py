@@ -226,7 +226,7 @@ def item_details(id):
     
     equipment = db.session.query(Equipment).filter(Equipment.id == id).first()
     mod = DiagnosticModel.get_class_by_tablename(equipment.equipment_type.table_name)
-    // @todo remove hardcoded value when received information about other equipment types 
+    # @todo remove hardcoded value when received information about other equipment types 
     if equipment.equipment_type_id == 14:
         res = db.session.query(mod).filter(mod.equipment_id == id).first().xserialize()
         final = []
