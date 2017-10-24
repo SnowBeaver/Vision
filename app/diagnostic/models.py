@@ -943,6 +943,40 @@ class Transformer(db.Model):
             'formula_ratio3': self.formula_ratio3,
             'equipment_id': self.equipment_id,
         }
+    def xserialize(self):
+        """Return object data in easily serializeable format"""
+        return [
+            ("General" , [
+                ('based_transformer_power', self.based_transformer_power),
+                ('first_cooling_stage_power', self.first_cooling_stage_power),
+                ('second_cooling_stage_power', self.second_cooling_stage_power),
+                ('mvaforced12', self.mvaforced12),
+                ('primary_tension', self.primary_tension),
+                ('secondary_tension', self.secondary_tension),
+                ('threephase', self.threephase),
+                ('autotransformer', self.autotransformer),
+                ('bil1', self.bil1),
+                ('temperature_rise', self.temperature_rise),
+                ('imp_base1', self.imp_base1),
+                ('tertiary_tension', self.tertiary_tension),
+                ('frequency', self.frequency),
+                ('sealed', self.sealed),
+                ('winding_metal1', self.winding_metal1),
+                ('winding_metal2', self.winding_metal2),
+                ('winding_metal3', self.winding_metal3),
+                ('winding_metal4', self.winding_metal4),
+                ('ltc1', self.ltc1),
+                ('ltc2', self.ltc2),
+                ('ltc3', self.ltc3),
+                ('primary_winding_connection', self.primary_winding_connection),
+                ('secondary_winding_connection', self.secondary_winding_connection),
+                ('tertiary_winding_connection', self.tertiary_winding_connection),
+                ('mvaforced11', self.mvaforced11),
+                ('gas_sensor', self.gas_sensor  and self.gas_sensor.serialize()),
+                ('windings', self.windings),
+                ('welded_cover', self.welded_cover)
+            ])
+        ]
 
 
 class Breaker(db.Model):

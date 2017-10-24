@@ -616,7 +616,7 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo) {
             delete tmp.ccp.submenu.paste;
             delete tmp.ccp.submenu.cut;
         }
-
+        delete tmp.rename;
         delete tmp.ccp.submenu.copy;
         return tmp;
     }
