@@ -749,7 +749,7 @@ var NormAdditionalParams = React.createClass({
 
     reload: function() {
         var norm_option_text = this.props.data.norm_option_text;
-        this.setState({norm_option_text : norm_option_text})
+        this.setState({norm_option_text : norm_option_text , 'errors' : {}})
     },
 
     render: function () {
