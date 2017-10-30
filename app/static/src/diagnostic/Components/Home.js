@@ -245,6 +245,7 @@ var Home = React.createClass({
     render: function () {
         return (
             <div>
+                {/*
                 <div className="row">
                     <div className="col-md-3 equal_col">
                         <Link to={{ pathname: '/campaign',
@@ -256,6 +257,7 @@ var Home = React.createClass({
                     </div>
                 </div>
                 <br/>
+                */}
                 <div className="col-md-3 equal_col">
                     <div className="maxwidth">
                         <FormGroup>

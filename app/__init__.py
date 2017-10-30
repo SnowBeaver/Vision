@@ -16,6 +16,8 @@ from sqlalchemy import create_engine, MetaData
 from flask.ext.principal import Principal, RoleNeed, Permission, ActionNeed
 from raven.contrib.flask import Sentry
 
+from flask.ext.admin.base import MenuLink
+
 app = Flask(__name__, static_url_path='/app/static')
 app.config.from_object('config')
 db = SQLAlchemy(app, session_options={'autoflush':False})
@@ -105,6 +107,10 @@ def error_403(error):
 def equipment_new():
     return redirect('/admin/#/equipment')
 
+@app.route('/admin/campaign/new/')
+def campaign_new():
+    return redirect('/admin/#/campaign?equipment_ids=0')
+
 # Initialize flask-login
 def init_login():
     login_manager = login.LoginManager()
@@ -137,6 +143,7 @@ app.register_blueprint(treeModule) # register tree
 from app.diagnostic.views import admin_views
 for view_class in admin_views:
     backend.add_view(view_class(db.session))
+backend.add_link(MenuLink(name='New Campaign', category='Campaign', url='/admin/#/campaign?equipment_ids=0'))
 
 # from diagnostic.api import api_blueprint
 # app.register_blueprint(api_blueprint)
