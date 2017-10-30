@@ -224,27 +224,19 @@ def graph_search():
 @mod.route('/item_details/<id>/', methods=['GET'])
 def item_details(id):
     
-    equipment = db.session.query(Equipment).filter(Equipment.id == id).first()
-    mod = DiagnosticModel.get_class_by_tablename(equipment.equipment_type.table_name)
-    # @todo remove hardcoded value when received information about other equipment types 
-    if equipment.equipment_type_id == 14:
-        res = db.session.query(mod).filter(mod.equipment_id == id).first().xserialize()
-        final = []
-        for super_key, super_value in res:
-            tmp_final = []
-            for key, value in super_value:
-                key = key.replace("_", " ")
-                key = key.title()
-                tmp_final.append({"key" : key, "value": value})
-            final.append({"cat" : super_key, "value": tmp_final})
-        return json.dumps(final)
-    # temporary view for other items beside transformers
-    else: 
-        res = db.session.query(mod).filter(mod.equipment_id == id).first().serialize()
-        final = []
-        for key, value in res.iteritems():
-            if key != 'equipment_id' and key != 'id':
-                key = key.replace("_", " ")
-                key = key.title()
-            final.append({"key" : key, "value": value})
-        return json.dumps([{'cat':'General', 'value':final}])
+    equipment = db.session.query(Equipment).filter(Equipment.id == id).first().serialize()
+    mod = DiagnosticModel.get_class_by_tablename(equipment['equipment_type']['table_name'])
+    res = db.session.query(mod).filter(mod.equipment_id == id).first().serialize()
+
+    equipment['norm_type'] = "standart"
+    norms = db.session.query(Norm).all()
+    for norm in norms:
+        norm = norm.serialize()
+        data_mod = DiagnosticModel.get_class_by_tablename(norm['table_name'] + "_data")
+        data = db.session.query(data_mod).filter(data_mod.equipment_id == id).count()
+        if data > 0:
+            equipment['norm_type'] = "custom"
+            equipment['norm_option_text'] = {"name" : norm['table_name'], "id" : norm['id'], "text" : norm['name']}
+            break
+        
+    return json.dumps({'equipment':equipment, 'equipment_item':res})

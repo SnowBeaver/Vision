@@ -22,6 +22,7 @@ const TextField = React.createClass({
         var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
         var validationState = (this.props.errors[name]) ? 'error' : null;
         var error = this.props.errors[name];
+        var value = (this.props["value"] != null) ? this.props["value"]: "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
@@ -31,6 +32,7 @@ const TextField = React.createClass({
                                  data-type={type}
                                  data-len={len}
                                  onChange={this._onChange}
+                                 value={value}
                     />
                     <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
@@ -54,6 +56,7 @@ var InductionMachineParams = React.createClass({
             'hp':'',
             'kva':'',
             'pf':'',
+            'id':'',
             'errors': {}
         }
     },
@@ -65,6 +68,10 @@ var InductionMachineParams = React.createClass({
     },
 
     componentDidMount: function () {
+    },
+
+    load:function() {
+        this.setState(this.props.equipment_item)
     },
 
     render: function () {

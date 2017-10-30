@@ -53,7 +53,7 @@ var SelectField = React.createClass({
             <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
-                             defaultValue={value}
+                             value={value}
                              name={name}
                 >
                     <option>{this.props.label}</option>);
@@ -71,16 +71,24 @@ var TankParams = React.createClass({
         return {
             'sealed': '',
             'welded_cover': '',
+            'id':'',
             'errors': {}
         }
     },
 
     handleChange: function(e){
         var state = this.state;
-        state[e.target.name] = e.target.value;
+        if (e.target.type == "checkbox"){
+            state[e.target.name] = e.target.checked;
+        }
+        else
+            state[e.target.name] = e.target.value;
         this.setState(state);
     },
 
+    load:function() {
+        this.setState(this.props.equipment_item)
+    },
 
     render: function () {
         var errors = (Object.keys(this.state.errors).length) ? this.state.errors : this.props.errors;
@@ -104,7 +112,7 @@ var TankParams = React.createClass({
                             errors={errors}/>
                     </div>
                     <div className="col-md-2">
-                        <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>
+                        <Checkbox name="welded_cover" checked={this.state.welded_cover} onChange={this.handleChange}><b>Welded Cover</b></Checkbox>
                     </div>
                 </div>
             </div>

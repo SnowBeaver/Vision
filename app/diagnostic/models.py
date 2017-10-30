@@ -636,7 +636,7 @@ class Transformer(db.Model):
     gas_sensor = relationship('GasSensor', backref='transformer')
 
     phase_number = db.Column(db.Enum('1', '3', '6', name="Phase number"))  # PhaseNum. 1=single phase, 3=triphase, 6=hexaphase
-    frequency = db.Column(db.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
+    #frequency = db.Column(db.Enum('25', '50', '60', 'DC', name="Frequency"), default=db.text('25'))  # frequency. Operating frequency
 
 
     primary_tension = db.Column(db.Float(53))  # Volt1. Primary voltage in kV
@@ -850,7 +850,7 @@ class Transformer(db.Model):
             'gassensor_id': self.gassensor_id,
             'gas_sensor': self.gas_sensor and self.gas_sensor.serialize(),
             'phase_number': self.phase_number,
-            'frequency': self.frequency,
+            #'frequency': self.frequency,
             'primary_tension': self.primary_tension,
             'secondary_tension': self.secondary_tension,
             'tertiary_tension': self.tertiary_tension,
@@ -959,7 +959,7 @@ class Transformer(db.Model):
                 ('temperature_rise', self.temperature_rise),
                 ('imp_base1', self.imp_base1),
                 ('tertiary_tension', self.tertiary_tension),
-                ('frequency', self.frequency),
+                #('frequency', self.frequency),
                 ('sealed', self.sealed),
                 ('winding_metal1', self.winding_metal1),
                 ('winding_metal2', self.winding_metal2),
@@ -1442,7 +1442,7 @@ class Rectifier(db.Model):
             'id': self.id,
             'fluid_volume': self.fluid_volume,
             'sealed': self.sealed,
-            'windings': self.windings,
+            #'windings': self.windings,
             'welded_cover': self.welded_cover,
             'cooling_rating': self.cooling_rating,
             'fluid_type_id': self.fluid_type_id,
