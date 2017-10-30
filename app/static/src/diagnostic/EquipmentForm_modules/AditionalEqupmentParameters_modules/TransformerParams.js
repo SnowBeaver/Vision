@@ -23,6 +23,7 @@ const TextField = React.createClass({
         var choice = (this.props["data-choice"] != null) ? this.props["data-choice"]: undefined;
         var validationState = (this.props.errors[name]) ? 'error' : null;
         var error = this.props.errors[name];
+        var value = (this.props["value"] != null) ? this.props["value"]: "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
@@ -33,6 +34,7 @@ const TextField = React.createClass({
                                  data-len={len}
                                  data-choice={choice}
                                  onChange={this._onChange}
+                                 value={value}
                     />
                     <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
@@ -43,10 +45,8 @@ const TextField = React.createClass({
 });
 
 var SelectField = React.createClass({
-    handleChange: function (event, index, value) {
-        this.setState({
-            value: event.target.value
-        });
+    handleChange: function (e) {
+        this.props.onChange(e);
     },
     getInitialState: function () {
         return {
@@ -80,13 +80,13 @@ var SelectField = React.createClass({
         var menuItems = [];
         for (var key in this.state.items) {
             menuItems.push(<option key={this.state.items[key].id}
-                                   value={this.state.items[key].id}>{`${this.state.items[key].name}`}</option>);
+                                   value={this.state.items[key].id}>{`${this.state.items[key].name ? this.state.items[key].name : this.state.items[key].model}`}</option>);
         }
         return (
             <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
-                             defaultValue={value}
+                             value={value}
                              name={name}
                              required={required}
                 >
@@ -159,26 +159,26 @@ var TransformerParams = React.createClass({
     getInitialState: function () {
         return {
             'phase_number':'', 'threephase':'', 'fluid_volume':'', 'fluid_type_id':'',
-                'fluid_level_id':'', 'gas_sensor_id':'', 'bushing_serial1_id':'', 'bushing_serial2_id':'',
+                'fluid_level_id':'', 'gassensor_id':'', 'bushing_serial1_id':'', 'bushing_serial2_id':'',
                 'bushing_serial3_id':'', 'bushing_serial4_id':'', 'bushing_serial5_id':'', 'bushing_serial6_id':'',
                 'bushing_serial7_id':'', 'bushing_serial8_id':'', 'bushing_serial9_id':'', 'bushing_serial10_id':'',
                 'bushing_serial11_id':'', 'bushing_serial12_id':'', 'mvaforced11':'', 'mvaforced12':'', 'mvaforced13':'',
-                'mvaforced14':'', 'imp_base1':'', 'imp_base2':'', 'mvaforced21':'', 'mvaforced22':'',
+                'mvaforced14':'', 'imp_base1':'', 'imp_base2':'', 'impbasedmva3':'', 'impbasedmva4':'', 'mvaforced21':'', 'mvaforced22':'',
                 'mvaforced23':'', 'mvaforced24':'', 'mvaactual':'', 'mvaractual':'',
                 'mwreserve':'', 'mvareserve':'', 'mwultime':'', 'mvarultime':'',
                 'ratio_tag1':'', 'ratio_tag2':'', 'ratio_tag3':'', 'ratio_tag4':'',
-                ',static_shield1':'', ',static_shield2':'', 'ratio_tag5':'', 'ratio_tag6':'',
+                'static_shield1':'', 'static_shield2':'', 'ratio_tag5':'', 'ratio_tag6':'',
                 'ratio_tag7':'', 'ratio_tag8':'', 'static_shield3':'', 'static_shield4':'',
                 'bushing_neutral1':'', 'bushing_neutral2':'', 'bushing_neutral3':'', 'bushing_neutral4':'',
-                'windings':'', 'winding_metal1':'', 'primary_winding_connection':'', 'secondary_winding_connection':'',
+                'windings':'', 'winding_metal1':'', 'winding_metal2':'', 'winding_metal3':'', 'winding_metal4':'', 'primary_winding_connection':'', 'secondary_winding_connection':'',
                 'tertiary_winding_connection':'', 'quaternary_winding_connection':'', 'based_transformer_power':'', 'autotransformer':'',
                 'bil1':'', 'bil2':'', 'ltc1':'', 'ltc2':'',
                 'first_cooling_stage_power':'', 'second_cooling_stage_power':'',
                 'bil3':'', 'bil4':'', 'ltc3':'', 'third_cooling_stage_power':'',
                 'temperature_rise':'', 'cooling_rating':'', 'primary_tension':'', 'secondary_tension':'',
-                'tertiary_tension':'', 'impedance1':'', 'impedance2':'', 'impedance3':'',
+                'tertiary_tension':'', 'impedance1':'', 'impedance2':'', 'impedance3':'', 'impedance4':'',
                 'formula_ratio1':'', 'formula_ratio2':'', 'formula_ratio3':'',
-                'sealed':'', 'welded_cover':'',
+                'sealed':'', 'welded_cover':'','id':'',
             'errors': {}
 
         }
@@ -186,8 +186,16 @@ var TransformerParams = React.createClass({
 
     handleChange: function(e){
         var state = this.state;
-        state[e.target.name] = e.target.value;
+        if (e.target.type == "checkbox"){
+            state[e.target.name] = e.target.checked;
+        }
+        else
+            state[e.target.name] = e.target.value;
         this.setState(state);
+    },
+
+    load:function() {
+        this.setState(this.props.equipment_item)
     },
 
     render: function () {
@@ -204,7 +212,7 @@ var TransformerParams = React.createClass({
                                    data-choice={['1', '3', '6']}/>
                     </div>
                     <div className="col-md-2">
-                        <Checkbox name="threephase" value="1"><b>Three Phase</b></Checkbox>
+                        <Checkbox name="threephase" checked={this.state.threephase} onChange={this.handleChange}><b>Three Phase</b></Checkbox>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
@@ -214,6 +222,7 @@ var TransformerParams = React.createClass({
                                    errors={errors}
                                    data-type="float"/>
                     </div>
+                    {/*
                     <div className="col-md-2">
                         <SelectField
                             source="fluid_type"
@@ -223,6 +232,7 @@ var TransformerParams = React.createClass({
                             name="fluid_type_id"
                             required={(this.props.edited)}/>
                     </div>
+                    */}
                     {/*<div className="col-md-2">
                         <SelectField
                             source="fluid_level"
@@ -232,7 +242,7 @@ var TransformerParams = React.createClass({
                             name="fluid_level_id"/>
                     </div>*/}
                     <div className="col-md-2">
-                        <SelectField
+                        <SelectField onChange={this.handleChange}
                             source="gas_sensor"
                             label="Gas Sensor"
                             value={this.state.gassensor_id}
@@ -424,6 +434,22 @@ var TransformerParams = React.createClass({
                                    errors={errors}
                                    data-type="float"/>
                     </div>
+                    <div className="col-md-2">
+                        <TextField onChange={this.handleChange}
+                                   label="Base Impedance 3"
+                                   name="impbasedmva3"
+                                   value={this.state.impbasedmva3}
+                                   errors={errors}
+                                   data-type="float"/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField onChange={this.handleChange}
+                                   label="Base Impedance 4"
+                                   name="impbasedmva4"
+                                   value={this.state.impbasedmva4}
+                                   errors={errors}
+                                   data-type="float"/>
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col-md-2">
@@ -510,10 +536,10 @@ var TransformerParams = React.createClass({
                     </div>
 
                     <div className="col-md-2">
-                        <Checkbox name="static_shield1" value="1"><b>Static Shield 1</b></Checkbox>
+                        <Checkbox name="static_shield1" checked={this.state.static_shield1} onChange={this.handleChange}><b>Static Shield 1</b></Checkbox>
                     </div>
                     <div className="col-md-2">
-                        <Checkbox name="static_shield2" value="1"><b>Static Shield 2</b></Checkbox>
+                        <Checkbox name="static_shield2" checked={this.state.static_shield2} onChange={this.handleChange}><b>Static Shield 2</b></Checkbox>
                     </div>
                 </div>
                 <div className="row">
@@ -550,7 +576,7 @@ var TransformerParams = React.createClass({
                                    data-len="20"/>
                     </div>
                     <div className="col-md-2">
-                        <Checkbox name="static_shield3" value="1"><b>Static Shield 3</b></Checkbox>
+                        <Checkbox name="static_shield3" checked={this.state.static_shield3} onChange={this.handleChange}><b>Static Shield 3</b></Checkbox>
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
@@ -604,9 +630,33 @@ var TransformerParams = React.createClass({
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
-                                   label="Winding Metal"
+                                   label="Winding Metal 1"
                                    name="winding_metal1"
                                    value={this.state.winding_metal1}
+                                   errors={errors}
+                                   data-type="int"/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField onChange={this.handleChange}
+                                   label="Winding Metal 2"
+                                   name="winding_metal2"
+                                   value={this.state.winding_metal2}
+                                   errors={errors}
+                                   data-type="int"/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField onChange={this.handleChange}
+                                   label="Winding Metal 3"
+                                   name="winding_metal3"
+                                   value={this.state.winding_metal3}
+                                   errors={errors}
+                                   data-type="int"/>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField onChange={this.handleChange}
+                                   label="Winding Metal 4"
+                                   name="winding_metal4"
+                                   value={this.state.winding_metal4}
                                    errors={errors}
                                    data-type="int"/>
                     </div>
@@ -653,7 +703,7 @@ var TransformerParams = React.createClass({
                                    data-type="float"/>
                     </div>
                     <div className="col-md-2">
-                        <Checkbox name="autotransformer" value="1"><b>Autotransformer</b></Checkbox>
+                        <Checkbox name="autotransformer" checked={this.state.autotransformer} onChange={this.handleChange}><b>Autotransformer</b></Checkbox>
                     </div>
                 </div>
                 <div className="row">
@@ -733,7 +783,7 @@ var TransformerParams = React.createClass({
                     </div>
                     <div className="col-md-2">
                         <TextField onChange={this.handleChange}
-                                   label="Mva 4"
+                                   label="Third colling stage power"
                                    name="third_cooling_stage_power"
                                    value={this.state.third_cooling_stage_power}
                                    errors={errors}
@@ -831,11 +881,19 @@ var TransformerParams = React.createClass({
                                    errors={errors}
                                    data-type="float"/>
                     </div>
-                    <div className="col-md-1 ">
-                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
+                    <div className="col-md-2 ">
+                        <Checkbox name="sealed" checked={this.state.sealed} onChange={this.handleChange}><b>Sealed</b></Checkbox>
                     </div>
                     <div className="col-md-2">
-                        <Checkbox name="welded_cover" value="1"><b>Welded Cover</b></Checkbox>
+                        <Checkbox name="welded_cover" checked={this.state.welded_cover} onChange={this.handleChange}><b>Welded Cover</b></Checkbox>
+                    </div>
+                    <div className="col-md-2">
+                        <TextField onChange={this.handleChange}
+                                   label="Impedance 4"
+                                   name="impedance4"
+                                   value={this.state.impedance4}
+                                   errors={errors}
+                                   data-type="float"/>
                     </div>
                 </div>
             </div>

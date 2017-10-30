@@ -161,7 +161,14 @@ var NewNormGasForm = React.createClass({
     },
 
     componentDidMount: function () {
-        this.setState({norms: this.props.data || {}, errors: this.props.errorData || {}});
+        $.authorizedGet("/api/v1.0/norm_gas_data/item_id/" + this.props.equipmentId, function (result) {
+            var item = (result['result']);
+            var norms = this.props.data || {};
+            for (var key in norms){
+                item[key] = norms[key];
+            }
+            this.setState({norms: item, errors: this.props.errorData || {}});
+        }.bind(this), 'json');
     },
 
     handleChange: function(e){
@@ -196,20 +203,25 @@ var NewNormGasForm = React.createClass({
 
     _save: function (equipmentId) {
         var norms = this.state.norms;
+        var norm_id = norms.id;
         var normData = {equipment_id: equipmentId};
 
         for (var key in norms) {
             var value = norms[key];
-            if (value == "") {
+            if (value === "") {
                 value = null;
             }
             normData[key] = value;
         }
+        delete normData.equipment;
+        delete normData.id;
+        delete normData.date_created;
+        delete normData.norm;
 
         var xhr;
         if (Object.keys(normData).length) {
            xhr = $.authorizedAjax({
-                url: '/api/v1.0/norm_gas_data/',
+                url: '/api/v1.0/norm_gas_data/' + norm_id,
                 type: 'POST',
                 beforeSend: function(jqXHR, settings) {
                     jqXHR.normName = 'norm_gas';

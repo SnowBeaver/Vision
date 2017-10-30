@@ -23,6 +23,7 @@ const TextField = React.createClass({
         var len = (this.props["data-len"] != null) ? this.props["data-len"]: undefined;
         var validationState = (this.props.errors[name]) ? 'error' : null;
         var error = this.props.errors[name];
+        var value = (this.props["value"] != null) ? this.props["value"]: "";
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
@@ -32,6 +33,7 @@ const TextField = React.createClass({
                                  data-type={type}
                                  data-len={len}
                                  onChange={this._onChange}
+                                 value={value}
                     />
                     <HelpBlock className="warning">{error}</HelpBlock>
                     <FormControl.Feedback />
@@ -84,7 +86,7 @@ var SelectField = React.createClass({
             <FormGroup validationState={validationState}>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
-                             defaultValue={value}
+                             value={value}
                              name={this.props.name}
                 >
                     <option>{this.props.label}</option>);
@@ -136,6 +138,7 @@ var BushingParams = React.createClass({
             'c2':'',
             'c2pf':'',
             'bil':'',
+            'id':'',
             errors: {}
 
     }
@@ -143,8 +146,16 @@ var BushingParams = React.createClass({
 
     handleChange: function(e){
         var state = this.state;
-        state[e.target.name] = e.target.value;
+        if (e.target.type == "checkbox"){
+            state[e.target.name] = e.target.checked;
+        }
+        else
+            state[e.target.name] = e.target.value;
         this.setState(state);
+    },
+
+    load:function() {
+        this.setState(this.props.equipment_item)
     },
 
     render: function () {
@@ -237,7 +248,7 @@ var BushingParams = React.createClass({
                                    data-len="8"/>
                     </div>
                     <div className="col-md-1 ">
-                        <Checkbox name="sealed" value="1"><b>Sealed</b></Checkbox>
+                        <Checkbox name="sealed" checked={this.state.sealed} onChange={this.handleChange}><b>Sealed</b></Checkbox>
                     </div>
                 </div>
             </div>
