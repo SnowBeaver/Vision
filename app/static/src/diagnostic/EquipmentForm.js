@@ -607,58 +607,57 @@ var EqAdditionalParams = React.createClass({
     },
 
     render: function () {
-
         if (typeof this.props.data.option_text == 'undefined') {
             return (<div></div>);
         }
         switch (this.props.data.option_text.text) {
             case 'Air circuit breaker':
-                return (<AirBreakerParams errors={this.props.data.errors}/>);
+                return (<AirBreakerParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Bushing':
-                return (<BushingParams errors={this.props.data.errors}/>);
+                return (<BushingParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Capacitor':
-                return (<CapacitorParams errors={this.props.data.errors}/>);
+                return (<CapacitorParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Breaker':
-                return (<BreakerParams errors={this.props.data.errors}/>);
+                return (<BreakerParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Power Source':
-                return (<PowerSourceParams errors={this.props.data.errors}/>);
+                return (<PowerSourceParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Cable':
-                return (<CableParams errors={this.props.data.errors}/>);
+                return (<CableParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Switchgear':
-                return (<SwitchGearParams errors={this.props.data.errors}/>);
+                return (<SwitchGearParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Induction machine':
-                return (<InductionMachineParams errors={this.props.data.errors}/>);
+                return (<InductionMachineParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Synchronous machine':
-                return (<SyncroMachineParams errors={this.props.data.errors}/>);
+                return (<SyncroMachineParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Tap changer':
-                return (<TapChangerParams errors={this.props.data.errors}/>);
+                return (<TapChangerParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Rectifier':
-                return (<RectifierParams errors={this.props.data.errors}/>);
+                return (<RectifierParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Transformer':
-                return (<TransformerParams errors={this.props.data.errors} edited={this.props.edited}/>);
+                return (<TransformerParams errors={this.props.data.errors} edited={this.props.edited} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Tank':
-                return (<TankParams errors={this.props.data.errors}/>);
+                return (<TankParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Switch':
-                return (<SwitchParams errors={this.props.data.errors}/>);
+                return (<SwitchParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Inductance':
-                return (<InductanceParams errors={this.props.data.errors}/>);
+                return (<InductanceParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
             case 'Gas sensor':
-                return (<GasSensorParams errors={this.props.data.errors}/>);
+                return (<GasSensorParams errors={this.props.data.errors} equipment_item={this.props.equipment_item} ref="additionalParams"/>);
                 break;
 
             default:
@@ -748,6 +747,11 @@ var NormAdditionalParams = React.createClass({
         this.setState({norms: norms, errors: errors});
     },
 
+    reload: function() {
+        var norm_option_text = this.props.data.norm_option_text;
+        this.setState({norm_option_text : norm_option_text , 'errors' : {}})
+    },
+
     render: function () {
         let normSelectField = <NormSelectField
             source="/api/v1.0/norm"
@@ -775,7 +779,8 @@ var NormAdditionalParams = React.createClass({
                                 errorData={this.state.errors.norm_furan || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
-                                cleanForm={this.props.clearForm} />
+                                cleanForm={this.props.clearForm} 
+                                equipmentId={this.props.data.id} />
                         </div>
                     </div>);
                 break;
@@ -792,7 +797,8 @@ var NormAdditionalParams = React.createClass({
                                 errorData={this.state.errors.norm_gas || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
-                                cleanForm={this.props.clearForm} />
+                                cleanForm={this.props.clearForm} 
+                                equipmentId={this.props.data.id}/>
                         </div>
                     </div>);
                 break;
@@ -809,7 +815,8 @@ var NormAdditionalParams = React.createClass({
                                 errorData={this.state.errors.norm_isolation || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
-                                cleanForm={this.props.clearForm} />
+                                cleanForm={this.props.clearForm} 
+                                equipmentId={this.props.data.id} />
                         </div>
                     </div>);
                 break;
@@ -826,7 +833,8 @@ var NormAdditionalParams = React.createClass({
                                 errorData={this.state.errors.norm_physic || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
-                                cleanForm={this.props.clearForm} />
+                                cleanForm={this.props.clearForm} 
+                                equipmentId={this.props.data.id}/>
                         </div>
                     </div>);
                 break;
@@ -843,7 +851,8 @@ var NormAdditionalParams = React.createClass({
                                 errorData={this.state.errors.particles || {}}
                                 saveNormGlobally={this.saveNormGlobally}
                                 setNormSubformSaved={this.props.setNormSubformSaved}
-                                cleanForm={this.props.clearForm} />
+                                cleanForm={this.props.clearForm} 
+                                equipmentId={this.props.data.id} />
                         </div>
                     </div>);
                 break;
@@ -892,9 +901,47 @@ const EquipmentForm = React.createClass({
         return response;
     },
 
+    loadData: function() {
+        var equipment = this.props.equipment;
+        equipment.equipment_item = this.props.equipment_item;
+        
+        $.authorizedGet("/api/v1.0/equipment_type", function (result) {
+            var option_text = {};
+            items = (result['result']);
+            
+            for (var key in items){
+                if(items[key].id == equipment.equipment_type_id){
+                    equipment.option_text = {
+                        name: "EquipmentTypeSelectField",
+                        id: equipment.equipment_type_id,
+                        text: items[key].name};
+                }
+            }
+            equipment.errors = {};
+            this.setState(equipment);
+            this.refs['EqAdditionalParams'].refs['additionalParams'].load();
+            this.refs['normAdditionalParams'].reload();
+        }.bind(this), 'json');
+        
+
+    },
 
     _save: function () {
-        var fields = this.state.changedFields;
+        var fields = {};
+        var fields_aditional = {};
+        for (var key in this.state){
+            if (key != "upstream1" && this.state.fields.indexOf(key) > -1) {
+                fields[key] = this.state[key];
+            }
+            
+        }
+        for (var key in this.refs['EqAdditionalParams'].refs['additionalParams'].state){
+            if (Object.keys(this.refs['EqAdditionalParams'].refs['additionalParams'].getInitialState()).indexOf(key) > -1 && key != "errors") {
+                fields_aditional[key] = this.refs['EqAdditionalParams'].refs['additionalParams'].state[key];
+            }
+            
+        }
+        
         var subform = this.state.subform;
         var data = {};
         var path = this.state.table_name;
@@ -911,30 +958,48 @@ const EquipmentForm = React.createClass({
         var that = this
             , xhr;
 
-        // If the main form haven't been saved yet
-        if (!this.state.equipmentId) {
+        if (this.state.id){
             xhr = $.authorizedAjax({
-                url: '/api/v1.0/equipment/',
+                url: '/api/v1.0/equipment/' + that.state.id,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify(data),
+                data: JSON.stringify(fields),
                 success: function (data) {
-                    that.setState({equipmentId: data['result']});
-                    that._saveSubform(subform, data['result'], path);
-                    that._saveNormAdditionalParams(data['result']);
+                    that._saveSubform(fields_aditional, that.state.id, that.state.equipment_type.table_name);
+                    that._saveNormAdditionalParams(that.state.id);
                 },
                 beforeSend: function () {
                     this.setState({loading: true});
                 }.bind(this)
             })
-        } else {
-            // Save only subform (for instance, when saving subform for the first time, API returned errors)
-            if (!this.state.equipmentSubformSaved) {
-                xhr = this._saveSubform(subform, this.state.equipmentId, path);
-            }
-            if (!this.state.normSubformSaved) {
-                xhr = this._saveNormAdditionalParams(this.state.equipmentId);
+        }
+        else{
+            // If the main form haven't been saved yet
+            if (!this.state.equipmentId) {
+                xhr = $.authorizedAjax({
+                    url: '/api/v1.0/equipment/',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(fields),
+                    success: function (data) {
+                        that.setState({equipmentId: data['result']});
+                        that._saveSubform(subform, data['result'], path);
+                        that._saveNormAdditionalParams(data['result']);
+                    },
+                    beforeSend: function () {
+                        this.setState({loading: true});
+                    }.bind(this)
+                })
+            } else {
+                // Save only subform (for instance, when saving subform for the first time, API returned errors)
+                if (!this.state.equipmentSubformSaved) {
+                    xhr = this._saveSubform(subform, this.state.equipmentId, path);
+                }
+                if (!this.state.normSubformSaved) {
+                    xhr = this._saveNormAdditionalParams(this.state.equipmentId);
+                }
             }
         }
         return xhr;
@@ -972,8 +1037,10 @@ const EquipmentForm = React.createClass({
                     subform[field] = null;
                 }
             }
+            var id = subform.id;
+            delete subform.id;
             return $.authorizedAjax({
-                url: '/api/v1.0/' + path + '/',
+                url: '/api/v1.0/' + path + '/' + id,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -1014,7 +1081,7 @@ const EquipmentForm = React.createClass({
         // Clean the form
         this.setState({equipmentSubformSaved: true});
         if (this.state.norm_type == 'standard') {
-            this.setState(this.getInitialState());
+            //this.setState(this.getInitialState());
         }
         NotificationManager.success('Equipment has been successfully saved');
     },
@@ -1053,7 +1120,7 @@ const EquipmentForm = React.createClass({
     },
 
     clearForm: function () {
-        this.setState(this.getInitialState());
+        //this.setState(this.getInitialState());
     },
 
     _onChange: function (e) {
@@ -1311,7 +1378,7 @@ const EquipmentForm = React.createClass({
                     <div>
                         <Panel header="Add Equipment">
                             <div className="row">
-                                <div className="col-lg-11">
+                                <div className={(this.props.action == 'edit' ? 'col-lg-12' : 'col-lg-11')}>
                                     <EquipmentTypeSelectField
                                         source="/api/v1.0/equipment_type"
                                         value={this.state.equipment_type_id}
@@ -1320,7 +1387,7 @@ const EquipmentForm = React.createClass({
                                         required
                                     />
                                 </div>
-                                <div className="col-md-1">
+                                <div className={"col-md-1" + (this.props.action == 'edit' ? " collapse": "")}>
                                     <a id="eq_type"
                                        className="btn btn-primary"
                                        onClick={this.onNewButtonClick}
@@ -1328,14 +1395,17 @@ const EquipmentForm = React.createClass({
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-md-11">
+                                <div className={(this.props.action == 'edit' ? 'col-lg-12' : 'col-lg-11')}>
                                     <EqAdditionalParams
                                         data={this.state}
-                                        edited={(this.state.subform && Object.keys(this.state.subform).length > 0) ? true : false}/>
+                                        edited={(this.state.subform && Object.keys(this.state.subform).length > 0) ? true : false}
+                                        equipment_item={this.state.equipment_item}
+                                        ref="EqAdditionalParams"
+                                        />
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-lg-11">
+                                <div className={(this.props.action == 'edit' ? 'col-lg-12' : 'col-lg-11')}>
                                     <ManufacturerSelectField
                                         source="/api/v1.0/manufacturer"
                                         value={this.state.manufacturer_id}
@@ -1343,7 +1413,7 @@ const EquipmentForm = React.createClass({
                                         ref="manufacturer_id"
                                     />
                                 </div>
-                                <div className="col-md-1">
+                                <div className={"col-md-1" + (this.props.action == 'edit' ? " collapse": "")}>
                                     <a id="manufac"
                                        className="btn btn-primary"
                                        onClick={this.onNewButtonClick}
@@ -1352,7 +1422,7 @@ const EquipmentForm = React.createClass({
                             </div>
 
                             <div className="row">
-                                <div className="col-lg-11">
+                                <div className={(this.props.action == 'edit' ? 'col-lg-12' : 'col-lg-11')}>
                                     <LocationSelectField
                                         source="/api/v1.0/location"
                                         value={this.state.location_id}
@@ -1360,7 +1430,7 @@ const EquipmentForm = React.createClass({
                                         ref="location_id"
                                         required/>
                                 </div>
-                                <div className="col-md-1">
+                                <div className={"col-md-1" + (this.props.action == 'edit' ? " collapse": "")}>
                                     <a id="location"
                                        className="btn btn-primary"
                                        onClick={this.onNewButtonClick}
@@ -1369,7 +1439,7 @@ const EquipmentForm = React.createClass({
                             </div>
 
                             <div className="row">
-                                <div className="col-lg-11">
+                                <div className={(this.props.action == 'edit' ? 'col-lg-12' : 'col-lg-11')}>
                                     <AssignedToSelectField
                                         source="/api/v1.0/assigned_to"
                                         value={this.state.assigned_to_id}
@@ -1378,7 +1448,7 @@ const EquipmentForm = React.createClass({
                                         required
                                     />
                                 </div>
-                                <div className="col-md-1">
+                                <div className={"col-md-1" + (this.props.action == 'edit' ? " collapse": "")}>
                                     <a id="assign_to"
                                        className="btn btn-primary"
                                        onClick={this.onNewButtonClick}
@@ -1387,7 +1457,7 @@ const EquipmentForm = React.createClass({
                             </div>
 
                             <div className="row">
-                                <div className="col-lg-11">
+                                <div className={(this.props.action == 'edit' ? 'col-lg-12' : 'col-lg-11')}>
                                     <NormTypeSelectField
                                         onChange={this._onChange}
                                         value={this.state.norm_type}
@@ -1421,7 +1491,7 @@ const EquipmentForm = React.createClass({
                                              name="name"
                                              required
                                              data-len="50"
-                                             value={this.state.name}
+                                             value={this.state.name ? this.state.name : ""}
                                 />
                                 <HelpBlock className="warning">{this.state.errors.name}</HelpBlock>
                                 <FormControl.Feedback />
@@ -1434,7 +1504,7 @@ const EquipmentForm = React.createClass({
                                     type="text"
                                     placeholder="Equipment number"
                                     name="equipment_number"
-                                    value={this.state.equipment_number}
+                                    value={this.state.equipment_number ? this.state.equipment_number : ""}
                                     data-len="50"
                                     required
                                 />
@@ -1450,7 +1520,7 @@ const EquipmentForm = React.createClass({
                                              placeholder="Serial number"
                                              ref="serial"
                                              data-len="50"
-                                             value={this.state.serial}
+                                             value={this.state.serial ? this.state.serial : ""}
                                 />
                                 <HelpBlock className="warning">{this.state.errors.serial}</HelpBlock>
                                 <FormControl.Feedback />
@@ -1484,7 +1554,7 @@ const EquipmentForm = React.createClass({
                                                      name="description"
                                                      placeholder="Description"
                                                      ref="description"
-                                                     value={this.state.description}
+                                                     value={this.state.description ? this.state.description : ""}
                                                      required
                                         />
                                         <HelpBlock className="warning">{this.state.errors.description}</HelpBlock>
@@ -1502,7 +1572,7 @@ const EquipmentForm = React.createClass({
                                                      name="comments"
                                                      placeholder="Comments"
                                                      ref="comments"
-                                                     value={this.state.comments}
+                                                     value={this.state.comments ? this.state.comments : ""}
                                         />
                                         <HelpBlock className="warning">{this.state.errors.comments}</HelpBlock>
                                         <FormControl.Feedback />
@@ -1518,7 +1588,7 @@ const EquipmentForm = React.createClass({
                                                      name="nbr_of_tap_change_ltc"
                                                      placeholder="Tap changes"
                                                      ref="nr_taps"
-                                                     value={this.state.nbr_of_tap_change_ltc}
+                                                     value={this.state.nbr_of_tap_change_ltc ? this.state.nbr_of_tap_change_ltc : ""}
                                                      data-type="int"
                                         />
                                         <HelpBlock
@@ -1536,7 +1606,7 @@ const EquipmentForm = React.createClass({
                                                      placeholder="Physical position"
                                                      ref="phys_position"
                                                      name="phys_position"
-                                                     value={this.state.phys_position}
+                                                     value={this.state.phys_position ? this.state.phys_position : ""}
                                                      data-type="int"
                                         />
                                         <HelpBlock className="warning">{this.state.errors.phys_position}</HelpBlock>
@@ -1555,7 +1625,7 @@ const EquipmentForm = React.createClass({
                                                      name="tension4"
                                                      placeholder="Tension"
                                                      ref="tension4"
-                                                     value={this.state.tension4}
+                                                     value={this.state.tension4 ? this.state.tension4 : ""}
                                                      data-type="float"
                                         />
                                         <HelpBlock className="warning">{this.state.errors.tension4}</HelpBlock>

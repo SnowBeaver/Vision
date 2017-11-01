@@ -176,7 +176,7 @@ def coerce_to_float(value):
 def coerce_to_str(value):
     if value is None:
         return None
-    return str(value)
+    return str(value.encode('utf-8'))
 
 
 def coerce_to_date_str(value):
