@@ -156,7 +156,7 @@ backend.add_view(RoleAdmin(db.session))
 backend.add_view(FileView(db.session))
 backend.add_view(ImageView(db.session))
 
-backend.add_view(MenuView(name="Menu"))
+backend.add_view(MenuView(name="Menu",category='CMS'))
 
 # create tree table
 from app.tree.models import BaseManager

@@ -577,7 +577,7 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo) {
                     loadGraph(obj.state.equipment_id);
                 }
             }
-            tmp['info'] = {
+        tmp['info'] = {
                 'label': 'Info'
                 , "separator_before": false    // Insert a separator before the item
                 , "separator_after": true,     // Insert a separator after the item
@@ -585,6 +585,16 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
                     loadInfo(obj.state.equipment_id);
+                }
+            }
+        tmp['report'] = {
+                'label': 'Report'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    window.location.href = '#/equipment_report/' + obj.state.equipment_id;
                 }
             }
 

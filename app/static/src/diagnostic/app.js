@@ -46,6 +46,7 @@ import NewTaskForm from './NewTaskForm';
 import TaskList from './TaskList';
 import GraphDetails from './GraphDetails';
 import ItemDetails from './ItemDetails';
+import EquipmentReport from './EquipmentReport';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 
@@ -271,6 +272,7 @@ render((
             <Route path="schedule_task" component={NewTaskForm}/>
             <Route path="tasks" component={TaskList}/>
             <Route path="graph_details/:equipmentId/:date" component={GraphDetails}/>
+            <Route path="equipment_report/:equipmentId" component={EquipmentReport}/>
             
             {/*This route should be the last, otherwise it will match all subsequent routes*/}
             <Route path=":equipmentId" component={Home}/>

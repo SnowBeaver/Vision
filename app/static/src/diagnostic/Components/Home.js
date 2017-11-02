@@ -30,10 +30,6 @@ var CampaignSelectField = React.createClass({
         return this.state.isVisible;
     },
 
-    componentWillUnmount: function () {
-        this.serverRequest.abort();
-    },
-
     setVisible: function () {
         this.state.isVisible = true;
     },
