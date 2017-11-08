@@ -194,6 +194,11 @@ def get_item_by_item_id(path, item_id):
     item = db.session.query(items_model).filter(items_model.equipment_id == item_id).first() or abort(404)
     return item.serialize()
 
+def get_items_by_item_id(path, item_id):
+    items_model = get_model_by_path(path)
+    items = [item.serialize() for item in db.session.query(items_model).filter(items_model.equipment_id == item_id).all() or abort(404)]
+    return items
+
 def get_items(path, args):
     items_model = get_model_by_path(path)
     if args:
@@ -643,6 +648,13 @@ def read_item_handler_equipment_id(path, item_id):
     abort_if_wrong_path(path)
     abort_if_wrong_id(item_id)
     return return_json('result', get_item_by_item_id(path, item_id))
+
+@api_blueprint.route('/<path>/item_id/<int:item_id>/all', methods=['GET'])
+@login_required
+def read_items_handler_equipment_id(path, item_id):
+    abort_if_wrong_path(path)
+    abort_if_wrong_id(item_id)
+    return return_json('result', get_items_by_item_id(path, item_id))
 
 # Update
 @api_blueprint.route('/<path>/<int:item_id>', methods=['PUT', 'POST'])
