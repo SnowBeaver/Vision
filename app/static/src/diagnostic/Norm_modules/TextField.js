@@ -1,6 +1,7 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
 import HelpBlock from 'react-bootstrap/lib/HelpBlock';
@@ -22,6 +23,7 @@ const TextField = React.createClass({
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
+                    <ControlLabel>{label}</ControlLabel>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}

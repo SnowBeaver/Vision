@@ -203,88 +203,88 @@ legend.scheduler-border {
 }
 .line.h2 {
     stroke: #7dc7f4;
-    background: #7dc7f4;
+    background: #7dc7f4 !important;
 }
 .line.co {
     stroke: #E60D0D;
-    background: #E60D0D;
+    background: #E60D0D !important;
 }
 .line.c2h2 {
     stroke: #4C0DE6;
-    background: #4C0DE6;
+    background: #4C0DE6 !important;
 }
 .line.c2h6 {
     stroke: #6AE60D;
-    background: #6AE60D;
+    background: #6AE60D !important;
 }
 .line.c2h4 {
     stroke: #EDF418;
-    background: #EDF418;
+    background: #EDF418 !important;
 }
 .line.content_gaz {
     stroke: #E60DD5;
-    background:#E60DD5;
+    background:#E60DD5 !important;
 }
 .line.co2 {
     stroke: #A50DE6;
-    background: #A50DE6;
+    background: #A50DE6 !important;
 }
 .line.ch4 {
     stroke: #346B0F;
-    background: #346B0F;
+    background: #346B0F !important;
 }
 .line.cap_gaz {
     stroke: #988300;
-    background: #988300;
+    background: #988300 !important;
 }
 .line.n2 {
     stroke: #692E62;
-    background: #692E62;
+    background: #692E62 !important;
 }
 .line.o2 {
     stroke: #0DE686;
-    background: #0DE686;
+    background: #0DE686 !important;
 }
 
-.line.dielectric_1816 {stroke: #a4b712;background: #a4b712;}
+.line.dielectric_1816 {stroke: #a4b712;background: #a4b712 !important;}
 
-.line.dielectric_1816_2 {stroke: #6585dd;background: #6585dd;}
-.line.dielectric_877 {stroke: #a00f59;background: #a00f59;}
-.line.dielectric_iec_156 {stroke: #0DE686;background: #0DE686;}
-.line.acidity {stroke: #cbed85;background: #cbed85;}
-.line.color {stroke: #11703d;background: #11703d;}
-.line.ift {stroke: #8fd833;background: #8fd833;}
-.line.density {stroke: #be387c;background: #be387c;}
-.line.pf20c {stroke: #5a887f;background: #5a887f;}
-.line.pf100c {stroke: #a2ecc5;background: #a2ecc5;}
-.line.sludge {stroke: #f3baa2;background: #f3baa2;}
-.line.aniline_point {stroke: #442127;background: #442127;}
-.line.viscosity {stroke: #88761b;background: #88761b;}
-.line.flash_point {stroke: #963c08;background: #963c08;}
-.line.pour_point {stroke: #e9c10f;background: #e9c10f;}
-.line.inhibitor {stroke: #d2c8b1;background: #d2c8b1;}
-.line.water {stroke: #fe0c81;background: #fe0c81;}
-.line.aroclor_1242 {stroke: #1ece1a;background: #1ece1a;}
-.line.aroclor_1254 {stroke: #c702f7;background: #c702f7;}
-.line.aroclor_1260 {stroke: #359189;background: #359189;}
-.line.hmf {stroke: #ccbabf;background: #ccbabf;}
-.line.fol {stroke: #455a3f;background: #455a3f;}
-.line.fal {stroke: #a1c315;background: #a1c315;}
-.line.acf {stroke: #fd47c6;background: #fd47c6;}
-.line.mef {stroke: #121212;background: #121212;}
+.line.dielectric_1816_2 {stroke: #6585dd;background: #6585dd !important;}
+.line.dielectric_877 {stroke: #a00f59;background: #a00f59 !important;}
+.line.dielectric_iec_156 {stroke: #0DE686;background: #0DE686 !important;}
+.line.acidity {stroke: #cbed85;background: #cbed85 !important;}
+.line.color {stroke: #11703d;background: #11703d !important;}
+.line.ift {stroke: #8fd833;background: #8fd833 !important;}
+.line.density {stroke: #be387c;background: #be387c !important;}
+.line.pf20c {stroke: #5a887f;background: #5a887f !important;}
+.line.pf100c {stroke: #a2ecc5;background: #a2ecc5 !important;}
+.line.sludge {stroke: #f3baa2;background: #f3baa2 !important;}
+.line.aniline_point {stroke: #442127;background: #442127 !important;}
+.line.viscosity {stroke: #88761b;background: #88761b !important;}
+.line.flash_point {stroke: #963c08;background: #963c08 !important;}
+.line.pour_point {stroke: #e9c10f;background: #e9c10f !important;}
+.line.inhibitor {stroke: #d2c8b1;background: #d2c8b1 !important;}
+.line.water {stroke: #fe0c81;background: #fe0c81 !important;}
+.line.aroclor_1242 {stroke: #1ece1a;background: #1ece1a !important;}
+.line.aroclor_1254 {stroke: #c702f7;background: #c702f7 !important;}
+.line.aroclor_1260 {stroke: #359189;background: #359189 !important;}
+.line.hmf {stroke: #ccbabf;background: #ccbabf !important;}
+.line.fol {stroke: #455a3f;background: #455a3f !important;}
+.line.fal {stroke: #a1c315;background: #a1c315 !important;}
+.line.acf {stroke: #fd47c6;background: #fd47c6 !important;}
+.line.mef {stroke: #121212;background: #121212 !important;}
 
 .legend{
     padding:20px 0 20px 30px;
 }
 .legend_head label{
     display: block;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.5) !important;
     color:#fff;
     font-weight:bold;
     padding:5px 0 5px 40px;
 }
 .legend_block{
-    border:1px solid rgba(0,0,0,0.2);
+    border:1px solid rgba(0,0,0,0.2) !important;
     border-radius:4px;
     margin:4px;
     width:calc(50% - 8px);
@@ -304,13 +304,13 @@ legend.scheduler-border {
     vertical-align: middle;
 }
 .grapth_table{
-    background:rgba(0,0,0,0.15);
+    background:rgba(0,0,0,0.15) !important;
     border-spacing: 3px;
     border-collapse: separate;
 }
 .grapth_table td{
     padding: 5px;
-    background: #fff;
+    background: #fff !important;
 }
 input[type=range][orient=vertical]
 {
@@ -320,4 +320,12 @@ input[type=range][orient=vertical]
     height: 375px;
     padding: 0 5px;
     margin:10px 15px 0 0;
+}
+table, tr, td, th, tbody, thead, tfoot {
+    page-break-inside: avoid !important;
+}
+@media print{
+    .no_print{
+        display:none;
+    }
 }
