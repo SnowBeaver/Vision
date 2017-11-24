@@ -24,6 +24,7 @@ const TextField = React.createClass({
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
+                    <ControlLabel>{label}</ControlLabel>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}

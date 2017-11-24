@@ -116,6 +116,7 @@ var EquipmentTypeSelectField = React.createClass({
                         placeholder="Equipment type"
                         onChange={this.handleChange}
                         required={this.props.required}
+                        disabled={this.props.readonly}
                         value={this.props.value}>
                         <option value="">Choose equipment type{this.props.required ? " *" : ""}</option>
                         {menuItems}
@@ -248,6 +249,7 @@ var ManufacturerSelectField = React.createClass({
             <div>
                 <FormGroup controlId="formControlsSelect2"
                            validationState={this.props.errors.manufacturer_id ? 'error' : null}>
+                    <ControlLabel>Manufacturer</ControlLabel>
                     <FormControl
                         name="manufacturer_id"
                         componentClass="select"
@@ -314,6 +316,7 @@ var LocationSelectField = React.createClass({
             <div>
                 <FormGroup controlId="formControlsSelect3"
                            validationState={this.props.errors.location_id ? 'error' : null}>
+                    <ControlLabel>Select location</ControlLabel>
                     <FormControl
                         name="location_id"
                         componentClass="select"
@@ -381,6 +384,7 @@ var AssignedToSelectField = React.createClass({
             <div>
                 <FormGroup controlId="formControlsSelect5"
                            validationState={this.props.errors.assigned_to_id ? 'error' : null}>
+                    <ControlLabel>Assigned to</ControlLabel>
                     <FormControl
                         componentClass="select"
                         name="assigned_to_id"
@@ -450,6 +454,7 @@ var NormSelectField = React.createClass({
             <div>
                 <FormGroup controlId="formControlsSelect6"
                            validationState={this.props.errors.norm_id ? 'error' : null}>
+                    <ControlLabel>Select norm</ControlLabel>
                     <FormControl
                         name="norm_id"
                         componentClass="select"
@@ -473,6 +478,7 @@ var NormTypeSelectField = React.createClass({
             <div>
                 <FormGroup controlId="formControlsSelect6"
                            validationState={this.props.errors.norm_type ? 'error' : null}>
+                    <ControlLabel>Select norm type</ControlLabel>
                     <FormControl
                         name="norm_type"
                         componentClass="select"
@@ -531,6 +537,7 @@ var FrequencySelectField = React.createClass({
             <div>
                 <FormGroup controlId="formControlsSelect7"
                            validationState={this.props.errors.frequency ? 'error' : null}>
+                    <ControlLabel>Select frequency</ControlLabel>
                     <FormControl componentClass="select"
                                  name="frequency"
                                  placeholder="Select frequency"
@@ -581,6 +588,7 @@ var ManufacturedSelectField = React.createClass({
             <div>
                 <FormGroup controlId="formControlsSelect8"
                            validationState={this.props.errors.manufactured ? 'error' : null}>
+                    <ControlLabel>Select manufactured date</ControlLabel>
                     <FormControl componentClass="select"
                                  name="manufactured"
                                  placeholder="Select manufactured date"
@@ -1376,7 +1384,7 @@ const EquipmentForm = React.createClass({
             <div className="form-container">
                 <form id="eqtype_form" ref="eqtype_form" onSubmit={this._onSubmit} onChange={this._onChange}>
                     <div>
-                        <Panel header="Add Equipment">
+                        <Panel header={(this.props.action == 'edit' ? "Edit Equipment": "Add Equipment")}>
                             <div className="row">
                                 <div className={(this.props.action == 'edit' ? 'col-lg-12' : 'col-lg-11')}>
                                     <EquipmentTypeSelectField
@@ -1384,6 +1392,7 @@ const EquipmentForm = React.createClass({
                                         value={this.state.equipment_type_id}
                                         errors={this.state.errors}
                                         ref="equipment_type_id"
+                                        readonly={(this.props.action == 'edit' )}
                                         required
                                     />
                                 </div>

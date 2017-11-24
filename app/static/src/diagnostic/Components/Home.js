@@ -14,7 +14,9 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {Link} from 'react-router'
 import {DATETIME_FORMAT} from '../appConstants.js';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
-
+import Modal from 'react-bootstrap/lib/Modal';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
+import Button from 'react-bootstrap/lib/Button';
 
 
 var CampaignSelectField = React.createClass({
@@ -146,7 +148,8 @@ var Home = React.createClass({
             equipmentId: null,
             campaignId: null,
             searchValue: "",
-            selected_equipment_ids: []
+            selected_equipment_ids: [],
+            showTestForm : false
         }
     },
 
@@ -237,6 +240,9 @@ var Home = React.createClass({
         this.refs['graph'].toggle("hide");
         this.refs['testResultList'].toggle("hide");
     },
+    loadTestForm: function (equipmentId) {
+        this.setState({showTestForm : true, equipmentId:equipmentId});
+    },
 
     render: function () {
         return (
@@ -276,6 +282,7 @@ var Home = React.createClass({
                             toggleGraph={this.toggleGraphBlock}
                             loadGraph={this.loadGraph}
                             loadInfo={this.loadInfo}
+                            loadTestForm={this.loadTestForm}
                         />
                     </div>
                 </div>
@@ -300,9 +307,71 @@ var Home = React.createClass({
                     <br/>
                     <TestResultForm ref="testResultList"
                                     source={this.state.source}/>
+                    <Modal show={this.state.showTestForm}>
+                        <Modal.Header>
+                            <Modal.Title>Test report</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <TestResultModal equipmentId={this.state.equipmentId}/>
+                        </Modal.Body>
+                    </Modal>
                 </div>
             </div>
         )
     }
 });
+
+var TestResultModal = React.createClass({
+    getInitialState:function(){
+        return{
+            'disolved_gas':true,
+            'water' : true,
+            'pcb' : true,
+            'inhibitor' : true,
+            'fluid' : true,
+            'furan' : true
+        }
+    },
+    handleChange:function(e){
+        var name = e.target.getAttribute("data-name");
+        this.state[name] = this.state[name] ? false : true;
+        this.setState(this.state);
+    },
+    goToReport: function(){
+        window.location.href = '#/equipment_report/' + this.props.equipmentId + "?" + $.param(this.state);
+    },
+    render : function(){
+        return(
+            <div>
+                <Checkbox checked={this.state['disolved_gas']} data-name='disolved_gas' onChange={this.handleChange}>
+                    Disolved Gas
+                </Checkbox>
+                <Checkbox checked={this.state['water']} data-name='water' onChange={this.handleChange}>
+                    Water
+                </Checkbox>
+                <Checkbox checked={this.state['pcb']} data-name='pcb' onChange={this.handleChange}>
+                    PCB
+                </Checkbox>
+                <Checkbox checked={this.state['inhibitor']} data-name='inhibitor' onChange={this.handleChange}>
+                    Inhibitor
+                </Checkbox>
+                <Checkbox checked={this.state['fluid']} data-name='fluid' onChange={this.handleChange}>
+                    Fluid
+                </Checkbox>
+                <Checkbox checked={this.state['furan']} data-name='furan' onChange={this.handleChange}>
+                    Furan
+                </Checkbox>
+                <Button bsStyle="success"
+                        className="btn btn-success "
+                        type="submit"
+                        onClick={this.goToReport}
+                >View report</Button>
+            </div>
+        );
+    },
+    componentWillUnmount:function(){
+
+    }
+})
+
 export default Home;

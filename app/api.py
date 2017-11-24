@@ -21,6 +21,7 @@ from flask.ext import login
 from sqlalchemy.orm.session import make_transient
 from .mail_utility import send_email, generate_message
 from tasks import apply_send_email_task, setup_periodic_email_task
+from flask import Response
 
 
 api = Flask(__name__, static_url_path='/app/static')
@@ -1027,5 +1028,26 @@ def get_release_version_handler():
     answer = os.popen('git tag -l "v*"').read()
     current_version = answer.rstrip().split('\n')[-1:]
     return return_json('result', current_version)
+
+import requests
+from flask import request
+
+# Get release version
+@api_blueprint.route('/download/<id>', methods=['GET'])
+@login_required
+def generate_pdf(id):
+    url = 'http://vision_nginx_1/admin/#/equipment_report/' + id + "?" + request.query_string
+    auth = request.headers.get('Authorization')
+    r = requests.post('http://wkhtml:5001/', data = {'html' : url ,'auth' : auth, 'pdfId' : request.args.get('pdfId')})
+    return return_json('result', 1)
+
+# Get release version
+@api_blueprint.route('/check_pdf/<pdfId>', methods=['GET'])
+@login_required
+def check_pdf(pdfId):
+    if os.path.isfile("/app/output/" + pdfId + ".pdf"):
+        return return_json('result', 1)
+    return return_json('result', 0)
+
 
 api.register_blueprint(api_blueprint)

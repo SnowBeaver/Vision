@@ -157,6 +157,7 @@ var TreeComponent = React.createClass({
         let toggleGraph = this.props.toggleGraph;
         let loadGraph = this.props.loadGraph;
         let loadInfo = this.props.loadInfo;
+        var loadReport = this.props.loadTestForm;
         $(ReactDOM.findDOMNode(this)).jstree({
                 //  for admin "contextmenu"
                 "plugins": ["search", "json_data", "types", "contextmenu", 'dnd', 'state', 'changed', 'checkbox']
@@ -181,7 +182,7 @@ var TreeComponent = React.createClass({
                     }
                 }
                 , "types": types
-                , "contextmenu": getContextMenu(toggleGraph, loadGraph, loadInfo)
+                , "contextmenu": getContextMenu(toggleGraph, loadGraph, loadInfo, loadReport)
                 , 'onStatusChange': this.handleStatusChange
                 , "checkbox" : {
                     "keep_selected_style" : false,
@@ -350,7 +351,7 @@ const types = {
 }
 
 
-function getContextMenu(toggleGraph, loadGraph, loadInfo) {
+function getContextMenu(toggleGraph, loadGraph, loadInfo, loadReport) {
     const contextMenu = {
         'select_node': false,
         'items': function (node) {
@@ -594,7 +595,9 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo) {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
-                    window.location.href = '#/equipment_report/' + obj.state.equipment_id;
+                    //window.location.href = '#/equipment_report/' + obj.state.equipment_id;
+                    console.log("click")
+                    loadReport(obj.state.equipment_id)
                 }
             }
 
