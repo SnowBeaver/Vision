@@ -1,6 +1,7 @@
 import React from 'react';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {findDOMNode} from 'react-dom';
 import {hashHistory} from 'react-router';
 import {Link} from 'react-router';
@@ -27,6 +28,7 @@ const TextField = React.createClass({
         return (
             <OverlayTrigger overlay={tooltip} placement="top">
                 <FormGroup validationState={validationState}>
+                    <ControlLabel>{label}</ControlLabel>
                     <FormControl type="text"
                                  placeholder={label}
                                  name={name}
@@ -84,6 +86,7 @@ var SelectField = React.createClass({
         }
         return (
             <FormGroup validationState={validationState}>
+                <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              value={value}

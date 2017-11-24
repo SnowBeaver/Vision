@@ -51,6 +51,7 @@ var SelectField = React.createClass({
         }
         return (
             <FormGroup validationState={validationState}>
+                <ControlLabel>{label}</ControlLabel>
                 <FormControl componentClass="select"
                              onChange={this.handleChange}
                              value={value}

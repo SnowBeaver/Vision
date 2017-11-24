@@ -11,18 +11,30 @@ function clone(obj) {
     }
     return copy;
 }
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
 
 var EquipmentReport = React.createClass({
     getInitialState: function () {
         return {
             equipmentId : 0,
             tests : [],
-            tests_data : {}
+            tests_data : {},
+            pdfId : makeid(),
+            download_url : ''
         }
     },
 
     componentDidMount: function () { 
         var _self = this;
+        
         var equipmentId = this.props.params['equipmentId'];
         $.get(url.info.replace(":id", equipmentId), function(data){
             _self.setState({"equipment" : data.equipment , "equipment_item" : data.equipment_item, equipmentId : equipmentId})
@@ -31,12 +43,29 @@ var EquipmentReport = React.createClass({
             _self.setState({"tests" : data.result})
         }, "json");
         $.get(url.graph + '?id=' + equipmentId, function (data) {
+            for (var k in data){
+                var small_key = k.toLowerCase().replace(" ", "_");
+                if (!_self.props.location.query[small_key] || _self.props.location.query[small_key] == "false")
+                    delete data[k];
+            }
             _self.setState({"tests_data" : data})
         }, 'json')
+        this.download();
     },
 
-    download:function(){
-        
+    download: function(){
+        var _self = this;
+        var downloadHref = "/api/v1.0/download/"  + this.props.params['equipmentId'] + this.props.location.search + "&pdfId=" + this.state.pdfId;
+        $.authorizedGet(downloadHref, function(data){
+            _self.state.intervalId = setInterval(function(){
+                $.authorizedGet('/api/v1.0/check_pdf/' + _self.state.pdfId, function(data){
+                    if (data.result == 1){
+                        clearInterval(_self.state.intervalId)
+                        _self.setState({download_url : '/output/' + _self.state.pdfId + ".pdf"})
+                    }
+                }, "json");
+            }, 3000)
+        }, "json");
     },
 
     render: function () {
@@ -49,24 +78,29 @@ var EquipmentReport = React.createClass({
         for (var test_type in this.state.tests_data){
             var obj = this.state.tests_data[test_type];
             var dates = [];
-            dates.push(<th>Date</th>);
+            var uid = makeid();
+            dates.push(<th key={uid}>Date</th>);
             var items = [];
             for (var k in obj[0].data){
-                dates.push(<th>{obj[0].data[k].day}</th>)
+                var uid = makeid();
+                dates.push(<th key={uid}>{obj[0].data[k].day}</th>)
             }
             for (var k in obj){
                 var item_data = obj[k];
                 
                 var results = [];
-                results.push(<td>{item_data.label}</td>);
+                var uid = makeid();
+                results.push(<td key={uid}>{item_data.label}</td>);
                 for (var res_key in item_data.data){
-                    results.push(<td>{item_data.data[res_key].count}</td>)
+                    var uid = makeid();
+                    results.push(<td key={uid}>{item_data.data[res_key].count}</td>)
                 }
-                items.push(<tr>
+                var uid = makeid();
+                items.push(<tr key={uid}>
                     {results}
                 </tr>)
             }
-            var last_report = {};
+            var last_report = {'test_reason' : {'name' : ''}};
             this.state.tests.map(function(one_test){
                 if (one_test.test_type.name == test_type){
                     if (!last_report.date_analyse)
@@ -77,13 +111,19 @@ var EquipmentReport = React.createClass({
                     }
                 }
             })
+            obj.map(function(obj_item, index){
+                var split_label = obj_item.label.split(" ");
+                if (split_label[0] == "O2" || split_label[0] == "N2"){
+                    obj.splice(index, 1);
+                }
+            })
             test_results.push(
                 <div>    
                     <h2>{test_type}</h2>
-                    <table width="100%" className="grapth_table" style={{'margin-bottom' : '10px'}}>
+                    <table width="100%" className="grapth_table" style={{marginBottom : '10px'}}>
                         <thead>
                             <tr>
-                                Last result
+                                <th colSpan="6">Last result</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,10 +155,12 @@ var EquipmentReport = React.createClass({
                 </div>
             );
         }
+
         return (
             <div className={"col-md-12"} >
                 <h2>Equipment Report</h2>
-                
+                <a href={this.state.download_url} style={{display : this.state.download_url != '' ? 'inline' : 'none'}} className="no_print" target='_blank'>Download</a>
+
                 <table width="100%" className="grapth_table">
                     <thead>
                         <tr>
@@ -337,8 +379,9 @@ var LineChart=React.createClass({
         var legend = [];
         chart_data.map(function(obj){
             var className = "line " +obj.label.split(" ")[0].toLowerCase();
+            var uid = makeid();
             legend.push(
-                <div className="item">
+                <div className="item" key={uid}>
                     <div className={className}></div>
                     <label>
                         {obj.label}
