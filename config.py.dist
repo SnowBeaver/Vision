@@ -77,3 +77,11 @@ REDIS = {
 
 CELERY_BACKEND = REDIS['CACHE_REDIS_URL']
 CELERY_BROKER_URL = REDIS['CACHE_REDIS_URL']
+
+# docker local use
+EQUIPMENT_REPORT_DIR = "/app/output/"
+EQUIPMENT_REPORT_URL = 'http://vision_nginx_1/admin/#/equipment_report/'
+
+# production
+#EQUIPMENT_REPORT_URL = 'http://visiondiagnostic.org/admin/#/equipment_report/'
+#EQUIPMENT_REPORT_DIR = "./output/"
