@@ -324,7 +324,7 @@ var Home = React.createClass({
 var TestResultModal = React.createClass({
     getInitialState:function(){
         return{
-            'disolved_gas':true,
+            'dissolved_gas':true,
             'water' : true,
             'pcb' : true,
             'inhibitor' : true,
@@ -343,8 +343,8 @@ var TestResultModal = React.createClass({
     render : function(){
         return(
             <div>
-                <Checkbox checked={this.state['disolved_gas']} data-name='disolved_gas' onChange={this.handleChange}>
-                    Disolved Gas
+                <Checkbox checked={this.state['dissolved_gas']} data-name='dissolved_gas' onChange={this.handleChange}>
+                    Dissolved Gas
                 </Checkbox>
                 <Checkbox checked={this.state['water']} data-name='water' onChange={this.handleChange}>
                     Water
