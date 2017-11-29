@@ -45,6 +45,9 @@ var EquipmentReport = React.createClass({
         $.get(url.graph + '?id=' + equipmentId, function (data) {
             for (var k in data){
                 var small_key = k.toLowerCase().replace(" ", "_");
+                data[k].map(function(data_obj, index){
+                    data[k][index].label = data[k][index].label.replace(_self.state.equipment.equipment_number, ""); 
+                })
                 if (!_self.props.location.query[small_key] || _self.props.location.query[small_key] == "false")
                     delete data[k];
             }
@@ -81,19 +84,23 @@ var EquipmentReport = React.createClass({
             var uid = makeid();
             dates.push(<th key={uid}>Date</th>);
             var items = [];
-            for (var k in obj[0].data){
-                var uid = makeid();
-                dates.push(<th key={uid}>{obj[0].data[k].day}</th>)
-            }
+            var total_dates = 0;
             for (var k in obj){
-                var item_data = obj[k];
-                
+                var uid = makeid();
+                dates.push(<th key={uid}>{obj[k].label}</th>)
+            }
+
+            for (var k in obj[0].data){
                 var results = [];
                 var uid = makeid();
-                results.push(<td key={uid}>{item_data.label}</td>);
-                for (var res_key in item_data.data){
+                total_dates++;
+                results.push(<td key={uid}>{moment(d3.timeParse("%Y.%m.%d")(obj[0].data[k].day)).format("MM.DD.YYYY")}</td>);
+                for (var kk in obj){
+
+                    var item_data = obj[kk];
+                
                     var uid = makeid();
-                    results.push(<td key={uid}>{item_data.data[res_key].count}</td>)
+                    results.push(<td key={uid}>{Math.round(item_data.data[k].count * 100000)/100000}</td>)
                 }
                 var uid = makeid();
                 items.push(<tr key={uid}>
@@ -111,6 +118,7 @@ var EquipmentReport = React.createClass({
                     }
                 }
             })
+            last_report.date_analyse = moment(last_report.date_analyse).format("MM.DD.YYYY");
             obj.map(function(obj_item, index){
                 var split_label = obj_item.label.split(" ");
                 if (split_label[0] == "O2" || split_label[0] == "N2"){
@@ -151,7 +159,9 @@ var EquipmentReport = React.createClass({
                             {items}
                         </tbody>
                     </table>
-                    <LineChart chart_data={obj}/>
+                    {test_type != 'PCB' && total_dates > 1 &&
+                        <LineChart chart_data={obj}/>
+                    }
                 </div>
             );
         }
