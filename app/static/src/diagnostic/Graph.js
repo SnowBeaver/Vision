@@ -380,6 +380,12 @@ var LineChart=React.createClass({
         var _self = this;
         var chart_data =  clone(this.state.chart_data);
         
+        var graphItems = localStorage.getItem("graphItems");
+        if (!graphItems)
+            graphItems = {};
+        else
+            graphItems = JSON.parse(graphItems);
+            
         var margin = {top: 5, right: 50, bottom: 20, left: 70},
             w = this.state.width - (margin.left + margin.right),
             h = this.props.height - (margin.top + margin.bottom);
@@ -388,7 +394,10 @@ var LineChart=React.createClass({
         var all_dates = [];
         for (var i in chart_data){
             for (var k in chart_data[i]){
-                if (chart_data[i][k].show){
+                var split_label = chart_data[i][k].label.split(" ");
+                var obj_key = split_label[0].toLowerCase();
+
+                if (graphItems[obj_key] !== 0 || graphItems[obj_key] == 1){
                     all_data = all_data.concat(chart_data[i][k].data);
                     for (var d in chart_data[i][k].data){
                         all_dates.push(new Date(chart_data[i][k].data[d].day))
@@ -480,12 +489,14 @@ var LineChart=React.createClass({
             }).curve(d3.curveLinear);
 
         var transform='translate(' + margin.left + ',' + margin.top + ')';
-        
+
         var rows = [];
         for (var i in chart_data){
             for (var k in chart_data[i]){
-                if (chart_data[i][k].show){
-                    var split_label = chart_data[i][k].label.split(" ");
+                var split_label = chart_data[i][k].label.split(" ");
+                var obj_key = split_label[0].toLowerCase();
+
+                if (graphItems[obj_key] !== 0 || graphItems[obj_key] == 1){
                     var className = "line shadow " + split_label[0].toLowerCase() ;
                     var dot_data = clone(chart_data[i][k].data);
                     if (chart_data[i][k].hide == true)
@@ -498,19 +509,21 @@ var LineChart=React.createClass({
             }
         }
         var legend = [];
+        
         Object.keys(chart_data).map(function(key, index){
             var legend_inner = [];
             var total = chart_data[key].length;
             var total_visible = 0;
             for (var i in chart_data[key]){
-                var className = "line " + chart_data[key][i].label.split(" ")[0].toLowerCase();
-                if (chart_data[key][i].show == true)
+                var obj_key = chart_data[key][i].label.split(" ")[0].toLowerCase();
+                var className = "line " + obj_key;
+                if (graphItems[obj_key] !== 0 || graphItems[obj_key] == 1) // chart_data[key][i].show == true
                     total_visible++;
                 legend_inner.push(
                     <div className="item">
                         <div className={className}></div>
                         <label>
-                            <input type="checkbox" checked={chart_data[key][i].show} data-k={key} data-i={i} onChange={_self.toggleChange}/> {chart_data[key][i].label}
+                            <input type="checkbox" checked={graphItems[obj_key] !== 0 || graphItems[obj_key] == 1} data-k={key} data-i={i} onChange={_self.toggleChange}/> {chart_data[key][i].label}
                         </label>
                     </div>    
                 );
@@ -536,7 +549,7 @@ var LineChart=React.createClass({
                 </div>
             );
         })
-
+        localStorage.setItem('graphItems', JSON.stringify(graphItems));
         return (
             <div key="graph_div">
                 <div style={{float:'left'}}>
@@ -574,8 +587,15 @@ var LineChart=React.createClass({
         );
     },
     toggleChange: function(e) {
+        var graphItems = localStorage.getItem("graphItems");
+        graphItems = JSON.parse(graphItems);
+        
         var i = e.target.getAttribute("data-i");
         var k = e.target.getAttribute("data-k");
+        
+        var obj_key = this.state.chart_data[k][i].label.split(" ")[0].toLowerCase();
+        graphItems[obj_key] = graphItems[obj_key] !== 0 ? 0 : 1;
+        localStorage.setItem('graphItems', JSON.stringify(graphItems));
         this.state.chart_data[k][i].show = !this.state.chart_data[k][i].show; 
         this.setState({
           chart_data: this.state.chart_data,
@@ -599,26 +619,33 @@ var LineChart=React.createClass({
     },
 
     toggleSuperChange: function(e) {
+        var graphItems = localStorage.getItem("graphItems");
+        graphItems = JSON.parse(graphItems);
+
         var key = e.target.getAttribute("data-key");
         var chart_data = this.state.chart_data;
         
         var total = chart_data[key].length;
         var total_visible = 0;
         for (var i in chart_data[key]){
-            if (chart_data[key][i].show == true)
+            var obj_key = this.state.chart_data[key][i].label.split(" ")[0].toLowerCase();
+            if (graphItems[obj_key] !== 0 || graphItems[obj_key] == 1)
                 total_visible++;
         }
-        var show = false;
+        var show = 0;
         if (total_visible == 0){
-            show = true;
+            show = 1;
         }
         if (total != total_visible && total_visible > 0)
-            show = true;
+            show = 1;
 
         for (var i in chart_data[key]){
+            var obj_key = this.state.chart_data[key][i].label.split(" ")[0].toLowerCase();
             chart_data[key][i].show = show;
+            graphItems[obj_key] = show;
         }
-       
+        
+        localStorage.setItem('graphItems', JSON.stringify(graphItems));
         this.setState({
           chart_data: this.state.chart_data,
           offset_x:0,
