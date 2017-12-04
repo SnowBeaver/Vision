@@ -446,7 +446,7 @@ class GraphData:
         self.query = db.session.query(Graph)
         if self.equipment_id > 0:
             self.query = self.query.filter(Graph.equipment_id.in_(self.equipment_id))
-        self.query = self.query.order_by(Graph.date_analyse)
+        self.query = self.query.order_by(Graph.date_analyse.asc(), Graph.equipment_id.asc())
     
     def group_by_equipment(self):
         tests = {}
@@ -488,6 +488,7 @@ class GraphData:
         self.load_from_db()
         tests = self.group_by_equipment()
         self.group_by_gases(tests=tests)
+        self.graph_data = sorted(self.graph_data, key=lambda k: k['label']) 
         graph_data = self.group_by_test(self.graph_data)
         return graph_data
 

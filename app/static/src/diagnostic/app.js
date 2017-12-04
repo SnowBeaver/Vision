@@ -216,8 +216,8 @@ const App = React.createClass({
             //     </div>
             // </div>
 
-            <div className="content">
-                Release version: {version}
+            <div className="content ">
+                <span className="no_print">Release version: {version}</span>
                 <NotificationContainer/>
                 <div className='app-container'>
                     <hr/>
