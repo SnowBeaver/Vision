@@ -100,7 +100,8 @@ var EquipmentReport = React.createClass({
                     var item_data = obj[kk];
                 
                     var uid = makeid();
-                    results.push(<td key={uid}>{Math.round(item_data.data[k].count * 100000)/100000}</td>)
+                    if(item_data.data[k])
+                        results.push(<td key={uid}>{Math.round(item_data.data[k].count * 100000)/100000}</td>)
                 }
                 var uid = makeid();
                 items.push(<tr key={uid}>
