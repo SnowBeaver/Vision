@@ -1036,7 +1036,7 @@ from flask import request
 @api_blueprint.route('/download/<id>', methods=['GET'])
 @login_required
 def generate_pdf(id):
-    url = 'http://vision_nginx_1/admin/#/equipment_report/' + id + "?" + request.query_string
+    url = api.config['EQUIPMENT_REPORT_URL'] + id + "?" + request.query_string
     auth = request.headers.get('Authorization')
     r = requests.post('http://wkhtml:5001/', data = {'html' : url ,'auth' : auth, 'pdfId' : request.args.get('pdfId')})
     return return_json('result', 1)
@@ -1045,7 +1045,7 @@ def generate_pdf(id):
 @api_blueprint.route('/check_pdf/<pdfId>', methods=['GET'])
 @login_required
 def check_pdf(pdfId):
-    if os.path.isfile("/app/output/" + pdfId + ".pdf"):
+    if os.path.isfile(api.config['EQUIPMENT_REPORT_DIR'] + pdfId + ".pdf"):
         return return_json('result', 1)
     return return_json('result', 0)
 
