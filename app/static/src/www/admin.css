@@ -329,3 +329,7 @@ table, tr, td, th, tbody, thead, tfoot {
         display:none;
     }
 }
+li .active{
+    font-weight: bold;
+    color: #f00 !important;
+}
