@@ -574,6 +574,8 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo, loadReport) {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
+                    $("#tree .active").removeClass("active");
+                    $(node.reference).addClass("active");
                     toggleGraph();
                     loadGraph(obj.state.equipment_id);
                 }
@@ -585,6 +587,8 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo, loadReport) {
                 "action": function (node) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
+                    $("#tree .active").removeClass("active");
+                    $(node.reference).addClass("active");
                     loadInfo(obj.state.equipment_id);
                 }
             }
@@ -598,6 +602,17 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo, loadReport) {
                     //window.location.href = '#/equipment_report/' + obj.state.equipment_id;
                     console.log("click")
                     loadReport(obj.state.equipment_id)
+                }
+            }
+        tmp['results'] = {
+                'label': 'Test Result Table'
+                , "separator_before": false    // Insert a separator before the item
+                , "separator_after": true,     // Insert a separator after the item
+                "action": function (node) {
+                    var inst = $.jstree.reference(node.reference),
+                        obj = inst.get_node(node.reference);
+                    window.location.href = '#/equipment_results/' + obj.state.equipment_id;
+                    
                 }
             }
 
