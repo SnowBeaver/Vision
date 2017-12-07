@@ -4,14 +4,13 @@
     <div class="logo"></div>
   </a>
   <div class="left-footer">
-    <div>© 2015 Vision Diagnostic</div>
+    <div>© 2015-2018 Vision Diagnostic</div>
   </div>
   <div class="right-footer">
 	  <div style="float:right">
 	  </div>
 	  <ul class="footer-menu">
 		  <li class="active"><a href="/">{{ _('Home') }}</a></li>
-		  {{ li_menu('Top Menu') | safe }}
 		  <li><a href="{{ url_for('users.register') }}">{{ _('Register') }}</a></li>
 		  <li><a href="{{ url_for('users.login') }}">{{ _('Login') }}</a></li>
 	  </ul>

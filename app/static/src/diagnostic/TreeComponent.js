@@ -36,6 +36,11 @@ var TreeComponent = React.createClass({
                 }
             );
         this.props.onTreeNodeClick(item.state, selected_equipment_ids);
+        
+        if (data.event){
+            $("#tree .active").removeClass("active");
+            $(data.event.currentTarget).addClass("active");
+        }
         e.stopPropagation();
     },
 
@@ -600,7 +605,6 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo, loadReport) {
                     var inst = $.jstree.reference(node.reference),
                         obj = inst.get_node(node.reference);
                     //window.location.href = '#/equipment_report/' + obj.state.equipment_id;
-                    console.log("click")
                     loadReport(obj.state.equipment_id)
                 }
             }
