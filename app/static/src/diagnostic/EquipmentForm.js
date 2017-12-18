@@ -1377,6 +1377,9 @@ const EquipmentForm = React.createClass({
     getEquipmentType: function () {
         return this.state.equipment_type_id;
     },
+    set_location:function(location_id){
+        this.setState({"location_id": location_id});
+    },
 
     render: function () {
         // Do not set dateTime property if date is null/undefined/empty string, calendar will be broken
