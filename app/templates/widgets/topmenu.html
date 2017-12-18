@@ -15,7 +15,21 @@
 				<li {% if request.path == "/content/page/1/" %} class="active" {% endif %}>
 				<a href="{{ url_for('blogging.page_by_id', post_id=1) }}">{{ _('About') }}</a></li>
 				<li><a href="/forum"><i class="fa fa-comment"></i>&nbsp;{{ _('Forum') }}</a></li>
-				<li> {{ ul_menu('Top Menu') | safe }} </li>
+				<li>
+					<ul class="nav navbar-nav">
+						<li> 
+							<a href="#" class="dropdown-toggle active" data-toggle="dropdown">Wiki <span class="caret"></span></a>
+							
+							<ul class='dropdown-menu multi-level'>
+								<li><a href="/wiki/vision-diagnostic-objectives">Objectives</a></li>
+								<li><a href="/wiki/Users">Users</a></li>
+								<li><a href="/wiki/How to">How to</a></li>
+								<li><a href="/manual/technical-information">Technical Information</a></li>
+								<li><a href="/wiki/developers">Developers</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
                 <li><a href="http://159.203.47.5/" title="WITTAM is a transformer thermal model simulator in steady and transient mode. Include moisture and gas (future) modeling partition between oil and paper">
                     <i class="fa fa-connectdevelop"></i>&nbsp;{{ _('Transformer thermal model simulator') }}</a></li>
 			</ul>
