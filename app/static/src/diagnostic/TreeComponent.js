@@ -478,37 +478,45 @@ function getContextMenu(toggleGraph, loadGraph, loadInfo, loadReport) {
         tmp.create.submenu = {
             'main': {
                 "separator_after": true
-                , "label": "Main"
+                , "label": "Location"
                 , "action": function (data) {
                     var inst = $.jstree.reference(data.reference),
                         obj = inst.get_node(data.reference);
-                    $.post(url.treeCreate, {
-                            'parent': obj.state.id,
-                            'text': "New Main",
-                            'icon': '../app/static/img/icons/main_b.ico',
-                            'type': 'main',
-                            'tooltip': "Main tooltip"
-                        }
-                        , function (data) {
-
-                            inst.create_node(obj, {
-                                    'id': data.id,
-                                    'text': 'New Main' + data.id,
-                                    'icon': '../app/static/img/icons/main_b.ico',
-                                    'type': 'main'
+                    $.authorizedAjax({
+                            url: '/api/v1.0/location/',
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            data: JSON.stringify({"name" : "New location"}),
+                            success: function (data) {
+                                var node_id = data.result;
+                                inst.create_node(obj.parent, {
+                                    'id': node_id,
+                                    'text': 'New location ' + node_id,
+                                    'icon': '../app/static/img/root.png',
+                                    'type': 'Vision Diagnostic'
                                 }
                                 , "last", function (new_node) {
                                     setTimeout(function () {
-                                        new_node.state.id = data.id;
-                                        new_node.state.equipment_id = data.id;
-                                        new_node.equipment_id = data.id;
+                                        new_node.state.id = node_id;
+                                        new_node.state.equipment_id = node_id;
+                                        new_node.equipment_id = node_id;
                                         inst.edit(new_node);
+                                        $.authorizedAjax({
+                                            url: '/api/v1.0/location/' + node_id,
+                                            type: 'PUT',
+                                            dataType: 'json',
+                                            contentType: 'application/json',
+                                            data: JSON.stringify({"name" : "New location " + node_id})
+                                        })
+                                        data.instance.refresh();
                                     }, 0);
                                 });
-
-                        }).fail(function () {
-                        data.instance.refresh();
-                    });
+                            },
+                            error: function(){
+                                data.instance.refresh();
+                            }
+                        })
                 }
             }
             , 'equipment': {
