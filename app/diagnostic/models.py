@@ -1673,7 +1673,7 @@ class Equipment(db.Model):
 
     def __repr__(self):
         return unicode("{} {} {}".format(self.name.encode('utf-8') if self.name else '',
-                                         self.serial.encode('utf-8') if self.serial else '',
+                                         self.serial if self.serial else '',
                                          self.equipment_number.encode('utf-8') if self.equipment_number else ''),
                        'utf-8')
 
